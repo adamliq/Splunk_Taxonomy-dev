@@ -7204,12 +7204,12 @@ Provide a concise assessment of the overall cyber value of the supplied logging.
     </div>
   </div>
   <div class="stats">
-    <span class="stat"><strong>85</strong> taxonomy terms</span>
-    <span class="stat"><strong>721</strong> current entries</span>
-    <span class="stat"><strong>16</strong> populated sources</span>
-    <span class="stat"><strong>18</strong> reference source families</span>
-    <span class="stat"><strong>39</strong> governed logging patterns</span>
-    <span class="stat"><strong>390</strong> reusable health checks</span>
+    <span class="stat"><strong id="statTaxonomyTerms">&ndash;</strong> taxonomy terms</span>
+    <span class="stat"><strong id="statCurrentEntries">&ndash;</strong> current entries</span>
+    <span class="stat"><strong id="statPopulatedSources">&ndash;</strong> populated sources</span>
+    <span class="stat"><strong id="statSourceFamilies">&ndash;</strong> reference source families</span>
+    <span class="stat"><strong id="statLoggingPatterns">&ndash;</strong> governed logging patterns</span>
+    <span class="stat"><strong id="statHealthChecks">&ndash;</strong> reusable health checks</span>
     <span class="stat">Taxonomy explorer opens fully collapsed</span>
   </div>
   <div class="layout">
@@ -13608,6 +13608,16 @@ document.getElementById("exportIcdAssessment").addEventListener("click", event =
   const old = event.currentTarget.textContent; event.currentTarget.textContent = "Exported"; setTimeout(()=>event.currentTarget.textContent=old,1200);
 });
 document.addEventListener("keydown", event => { if (event.key === "Escape" && icdModal.classList.contains("open")) closeIcdAssessment(); });
+
+function updateTaxonomyStats() {
+  document.getElementById("statTaxonomyTerms").textContent = nodes.filter(n => n.nodeType === "taxonomy").length;
+  document.getElementById("statCurrentEntries").textContent = nodes.filter(n => n.nodeType === "instance").length;
+  document.getElementById("statPopulatedSources").textContent = siemSourceCatalogueData.filter(r => (r.mappedComponentIds || "").trim() !== "").length;
+  document.getElementById("statSourceFamilies").textContent = siemSourceCatalogueData.length;
+  document.getElementById("statLoggingPatterns").textContent = loggingPatternTableData.length;
+  document.getElementById("statHealthChecks").textContent = healthCheckTableData.length;
+}
+updateTaxonomyStats();
 
 renderTree();
 renderDetail();
