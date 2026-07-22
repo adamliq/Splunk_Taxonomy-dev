@@ -2594,6 +2594,11 @@
     .onboarding-branch-arrow { display:flex; align-items:center; gap:8px; color:#0e7490; font-size:13px; font-weight:700; padding:8px 0; }
     .onboarding-branch-arrow .glyph { font-size:20px; font-weight:900; }
     .onboarding-branch-arrow em { color:#64748b; font-weight:500; font-style:normal; font-size:11.5px; }
+    .flow-badge.state { background:#e2e8f0; color:#334155; }
+    .onboarding-loopback { width:100%; max-width:660px; border-radius:12px; padding:13px 18px; border:1px dashed #fbbf24; background:#fffbeb; display:flex; gap:10px; align-items:flex-start; }
+    .onboarding-loopback .flow-badge { flex:none; margin-top:2px; }
+    .onboarding-loopback strong { display:block; color:#92400e; font-size:12.5px; }
+    .onboarding-loopback span.detail { display:block; margin-top:3px; color:#78350f; font-size:12px; line-height:1.55; }
     @media(max-width:760px){.onboarding-spine{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:500px){.onboarding-spine{grid-template-columns:1fr}}
 
@@ -2896,12 +2901,13 @@
       <span><span class="flow-badge hold">HOLD</span>Loops back for rework</span>
       <span><span class="flow-badge stop">STOP</span>Reject, park or retire</span>
       <span><span class="flow-badge feed">FEEDS IN</span>Input from outside the main path</span>
+      <span><span class="flow-badge state">STATE</span>Lifecycle state, TAX-06.04.01</span>
     </div>
 
     <div class="onboarding-flow">
 
       <div class="onboarding-stage">
-        <h4>Candidate log source identified</h4>
+        <h4>Candidate log source identified <span class="flow-badge state">PLANNED</span></h4>
         <p>A platform, application or data source is proposed for onboarding.</p>
       </div>
       <div class="onboarding-arrow">↓</div>
@@ -2916,7 +2922,7 @@
       <div class="onboarding-arrow">↓</div>
 
       <div class="onboarding-stage">
-        <h4>Phase 1 &mdash; Viability Assessment <span class="assessment-tag">TAX-06.01.02 / TAX-07.01</span></h4>
+        <h4>Phase 1 &mdash; Viability Assessment <span class="assessment-tag">TAX-06.01.02 / TAX-07.01</span> <span class="flow-badge state">ONBOARDING</span></h4>
         <p>Scores security value, technical readiness and operational assurance. Custom-solution, reverse-engineering and discovery-gap modifiers adjust the result before a decision is reached.</p>
       </div>
       <div class="onboarding-arrow">↓</div>
@@ -2958,11 +2964,27 @@
         <h4>Select logging pattern &amp; topology</h4>
         <p>Choose the governed collection pattern and record transport, authentication and firewall prerequisites.</p>
       </div>
+
+      <div class="onboarding-feed">
+        <span class="flow-badge feed">FEEDS IN</span>
+        <div>
+          <strong>Shared infrastructure dependencies</strong>
+          <span>If the topology relies on shared infrastructure &mdash; a syslog relay, forwarder pool or intermediary platform &mdash; that dependency is recorded via Dependency Mapping <span class="assessment-tag">TAX-06.02.01</span> so its health and ownership stay traceable back to this source.</span>
+        </div>
+      </div>
       <div class="onboarding-arrow">↓</div>
 
       <div class="onboarding-stage">
         <h4>Engineering build <span class="assessment-tag">TAX-04.01&ndash;04.09</span></h4>
         <p>Datetime standards &amp; parsing, line breaking, line length, log format detection &amp; parsing, field extraction, field normalisation (CIM/ECS mapping), event volume profile, parsing performance &mdash; plus collection components (TAX-03) and sourcetype identity (TAX-04.11).</p>
+      </div>
+
+      <div class="onboarding-feed">
+        <span class="flow-badge feed">FEEDS IN</span>
+        <div>
+          <strong>Naming &amp; logging standards</strong>
+          <span>Index and sourcetype names, and the logging configuration itself, must comply with the approved Naming Convention and Logging Standard <span class="assessment-tag">TAX-02.06.01 / TAX-02.06.03</span> before the build is considered complete.</span>
+        </div>
       </div>
       <div class="onboarding-arrow">↓</div>
 
@@ -3044,14 +3066,22 @@
       <div class="onboarding-arrow">↓</div>
 
       <div class="onboarding-stage">
-        <h4><span class="flow-badge proceed">GO-LIVE</span>&nbsp; Onboarding Record <span class="assessment-tag">TAX-06.01.01</span></h4>
+        <h4><span class="flow-badge proceed">GO-LIVE</span>&nbsp; Onboarding Record <span class="assessment-tag">TAX-06.01.01</span> <span class="flow-badge state">ACTIVE</span></h4>
         <p>Owner, phase, status and go-live date for the source, from request through to production.</p>
       </div>
       <div class="onboarding-arrow">↓</div>
 
       <div class="onboarding-stage">
         <h4>Log Sustainment <span class="assessment-tag">TAX-07.04</span></h4>
-        <p>Operational maturity, health &amp; monitoring coverage, and review/improvement actions &mdash; backed by reusable health checks (TAX-04.10) and assurance roll-ups (TAX-06.03).</p>
+        <p>Operational maturity, health &amp; monitoring coverage, and review/improvement actions &mdash; backed by reusable health checks (TAX-04.10) and assurance roll-ups (TAX-06.03). A failing health check or assurance roll-up moves the lifecycle state to <span class="flow-badge state">DEGRADED</span> until remediated.</p>
+      </div>
+
+      <div class="onboarding-loopback">
+        <span class="flow-badge state">EXPIRED</span>
+        <div>
+          <strong>Governance approval expiry</strong>
+          <span class="detail">When the Expiry / Review Date on the System Approval / Accreditation passes without renewal <span class="assessment-tag">TAX-02.03.06</span>, the lifecycle state moves to Expired and the source loops back to Governance Approval for re-authorisation.</span>
+        </div>
       </div>
 
       <div class="onboarding-branch-arrow"><span class="glyph">⤷</span> Detection Engineering <em>(parallel branch, once the source is live)</em></div>
@@ -3071,6 +3101,12 @@
       <div class="onboarding-arrow">↓</div>
 
       <div class="onboarding-stage">
+        <h4>Response readiness <span class="assessment-tag">TAX-05.04 / TAX-02.07</span></h4>
+        <p>A validated detection isn't production-ready until someone knows what to do when it fires: attach its Response Action, Incident Response Plan, Runbook and Escalation Matrix references.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
         <h4>90-day value review <span class="assessment-tag">TAX-06.05.14</span></h4>
         <p>Investigations, detections, alerts and true positives against the source feed a realised-value rank, compared against the rank predicted at onboarding.</p>
       </div>
@@ -3081,7 +3117,7 @@
         <div class="onboarding-branches">
           <div class="onboarding-branch"><span class="flow-badge proceed">RETAIN</span>Continue in sustainment</div>
           <div class="onboarding-branch"><span class="flow-badge hold">FILTER</span>Adjust pre-ingest filtering, then continue</div>
-          <div class="onboarding-branch"><span class="flow-badge stop">RETIRE</span>Offboard the source</div>
+          <div class="onboarding-branch"><span class="flow-badge stop">RETIRE</span>Offboard the source <span class="flow-badge state">RETIRED</span></div>
         </div>
       </div>
 
