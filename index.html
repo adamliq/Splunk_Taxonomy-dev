@@ -3940,6 +3940,7 @@ TZ = Australia/Sydney</pre><p>Where the timestamp already includes an explicit U
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptInvestigativeNoisePercentage" aria-selected="false">Investigative Noise Percentage</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptEntityCoverage" aria-selected="false">Entity Coverage</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptMarginalNovelty" aria-selected="false">Marginal Novelty</button>
+          <button type="button" class="prompt-submenu-button" data-prompt-target="promptSemanticValue" aria-selected="false">Semantic Value</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptLogSourceCyberValue" aria-selected="false">Log Source Cyber Value</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptTimestampQuality" aria-selected="false">Timestamp Quality</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptLogFormatQuality" aria-selected="false">Log Format Quality</button>
@@ -6163,6 +6164,44 @@ Return
 6. Duplicated capabilities and avoidable ingestion.
 7. Recommendation: high-priority onboarding, targeted onboarding, enrichment-only, archive-only or do not onboard.
 8. Confidence and evidence gaps.</pre>
+        </article>
+        <article id="promptSemanticValue" class="prompt-card" data-prompt-panel hidden>
+          <div class="prompt-card-header">
+            <div><h4>Semantic Value</h4><p>AI prompt for measuring whether events explain the action taken and its outcome.</p><div id="semanticValuePromptStatus" class="prompt-status" aria-live="polite"></div></div>
+            <button type="button" class="prompt-copy-button" data-copy-prompt="semanticValuePrompt" data-copy-status="semanticValuePromptStatus">Copy prompt</button>
+          </div>
+          <pre id="semanticValuePrompt" class="prompt-body">Copilot Prompt — Semantic Value Score
+
+You are a cyber security logging analyst. Measure how completely the supplied log sample explains what action occurred and what result it had.
+
+Definition
+Semantic Value is the combined percentage of a representative sample where an event explicitly states the specific action performed and the result of that action, in dedicated fields — not something the analyst must infer from free text, an unexplained event code or tribal knowledge.
+
+Assess two components
+1. Action Completeness — does a dedicated field identify the specific action or operation performed, not just an event type or generic category? Evidence: action, operation, change_type, command.
+2. Outcome Completeness — does a dedicated field state the explicit result: success, failure, reason or enforcement decision? Evidence: result, status, outcome, reason, decision, error_code.
+
+Rules
+- Score each component as the percentage of the sample where it is explicitly and reliably populated, not inferred.
+- Do not credit success inferred only from the absence of a separate failure event.
+- Do not credit an unexplained numeric code as an explicit action or outcome.
+- A category field (for example "AccountManagement") is not the same as an action field (for example "account disabled").
+- Report the two component percentages separately, even though they are averaged for the final score — a wide gap between them is itself a finding, not just noise to be smoothed over.
+
+Calculation
+Semantic Value (%) = (Action Completeness % + Outcome Completeness %) / 2
+
+Scoring bands (local Log Source Cyber Value model, weight ×1.5, max 7.5 of 40 points)
+0–<10% = score 0; 10–<25% = score 1; 25–<50% = score 2; 50–<75% = score 3; 75–<90% = score 4; 90–100% = score 5.
+
+Return
+1. Sample summary and event classes covered.
+2. Action Completeness percentage with evidence and representative examples.
+3. Outcome Completeness percentage with evidence and representative examples.
+4. Combined Semantic Value percentage, 0–5 score and weighted contribution (score × 1.5).
+5. Events where meaning had to be inferred rather than read directly, with counts.
+6. Recommended parsing, extraction or enrichment changes to close the largest gap.
+7. Confidence and evidence gaps.</pre>
         </article>
         <article id="promptLogSourceCyberValue" class="prompt-card" data-prompt-panel hidden>
           <div class="prompt-card-header">
