@@ -2906,6 +2906,15 @@
       </div>
       <div class="onboarding-arrow">↓</div>
 
+      <div class="onboarding-gate">
+        <h5>Gate &middot; Platform Registered? <span class="assessment-tag">TAX-01.01 / TAX-01.02</span></h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Not registered &rarr; capture Platform &amp; System Identity and Ownership &amp; Accountability (owner, technical owner, security owner), then continue</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Already registered &rarr; continue to viability assessment</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
       <div class="onboarding-stage">
         <h4>Phase 1 &mdash; Viability Assessment <span class="assessment-tag">TAX-06.01.02 / TAX-07.01</span></h4>
         <p>Scores security value, technical readiness and operational assurance. Custom-solution, reverse-engineering and discovery-gap modifiers adjust the result before a decision is reached.</p>
@@ -3013,7 +3022,23 @@
         <h5>Gate &middot; Build &amp; Acceptance Result</h5>
         <div class="onboarding-branches">
           <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Outstanding actions &rarr; back to implementation</div>
-          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Accepted &rarr; go live</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Accepted &rarr; governance approval</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
+        <h4>Governance approval <span class="assessment-tag">TAX-02.03</span></h4>
+        <p>System Approval / Accreditation: a named approval authority records a decision, scope and expiry/review date before the source is allowed into production.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; Approval Decision <span class="assessment-tag">TAX-02.03.03</span></h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge stop">STOP</span>Rejected &rarr; does not proceed to production</div>
+          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Approved with conditions &rarr; resolve conditions, then re-submit</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Approved &rarr; go live</div>
         </div>
       </div>
       <div class="onboarding-arrow">↓</div>
