@@ -2564,6 +2564,31 @@
     @media(max-width:1200px){.framework-flow{grid-template-columns:repeat(3,1fr)} .framework-step:nth-child(3)::after{display:none}}
     @media(max-width:700px){.framework-flow{grid-template-columns:1fr}.framework-step::after{content:'↓';right:50%;top:auto;bottom:-13px;transform:translateX(50%)}.concept-toolbar{grid-template-columns:1fr}.reference-section-heading{display:block}}
 
+    /* Onboarding flow page */
+    .onboarding-spine { display:grid; grid-template-columns:repeat(4,minmax(160px,1fr)); gap:10px; margin:18px 0 30px; }
+    .onboarding-spine .framework-step { min-height:110px; }
+    .flow-badge { display:inline-block; padding:3px 9px; border-radius:999px; font-size:10px; font-weight:800; letter-spacing:.02em; white-space:nowrap; }
+    .flow-badge.proceed { background:#dcfce7; color:#166534; }
+    .flow-badge.hold { background:#fef3c7; color:#92400e; }
+    .flow-badge.stop { background:#fee2e2; color:#b91c1c; }
+    .flow-badge.gate { background:#e0e7ff; color:#3730a3; }
+    .onboarding-legend { display:flex; flex-wrap:wrap; gap:8px 18px; margin:0 0 26px; font-size:12.5px; color:#64748b; align-items:center; }
+    .onboarding-legend span.flow-badge { margin-right:6px; }
+    .onboarding-flow { display:flex; flex-direction:column; align-items:center; gap:0; }
+    .onboarding-stage, .onboarding-gate { width:100%; max-width:660px; border-radius:14px; padding:16px 20px; }
+    .onboarding-stage { border:1px solid var(--border); background:#fff; box-shadow:0 6px 18px rgba(15,23,42,.05); }
+    .onboarding-stage h4 { margin:0; font-size:15px; color:#0f172a; display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+    .onboarding-stage p { margin:7px 0 0; color:#64748b; font-size:12.5px; line-height:1.55; }
+    .onboarding-gate { border:1px solid #fde68a; border-left:4px solid #b45309; background:#fffbeb; }
+    .onboarding-gate h5 { margin:0 0 10px; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:#92400e; font-weight:800; }
+    .onboarding-branches { display:flex; flex-direction:column; gap:7px; }
+    .onboarding-branch { display:flex; gap:9px; align-items:flex-start; font-size:12.5px; color:#475569; line-height:1.5; }
+    .onboarding-branch .flow-badge { flex:none; margin-top:1px; }
+    .onboarding-arrow { color:#94a3b8; font-size:20px; font-weight:900; line-height:1; padding:6px 0; }
+    .onboarding-endnote { margin-top:6px; padding:16px 18px; border-left:4px solid #1f4e78; border-radius:10px; background:#eff6ff; color:#334155; font-size:13px; line-height:1.6; max-width:660px; }
+    @media(max-width:760px){.onboarding-spine{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:500px){.onboarding-spine{grid-template-columns:1fr}}
+
 
     .prompt-library { display:grid; gap:14px; }
     .prompt-card { overflow:hidden; border:1px solid var(--border); border-radius:16px; background:#fff; box-shadow:0 6px 18px rgba(15,23,42,.05); }
@@ -2768,6 +2793,7 @@
 <main class="wrap">
   <nav class="page-navigation" aria-label="Splunk taxonomy pages">
     <button id="showInfoPage" class="page-tab active" type="button" role="tab" aria-selected="true" aria-controls="infoPage">Info</button>
+    <button id="showOnboardingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="onboardingPage">Onboarding flow</button>
     <button id="showTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="taxonomyPage">Taxonomy explorer</button>
     <button id="showAssessmentsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentsPage">Assessments</button>
     <button id="showReferencePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="referencePage">Reference</button>
@@ -2815,6 +2841,7 @@
 
     <h3 class="info-section-title">Quick actions</h3>
     <div class="info-action-grid" aria-label="Quick actions">
+      <button type="button" class="info-action-card" data-info-page="onboarding"><strong>See the full onboarding flow</strong><span>Walk the end-to-end path from viability through go-live and the 90-day value review.</span><em>Open onboarding flow →</em></button>
       <button type="button" class="info-action-card" data-info-page="viability"><strong>Assess a new data source</strong><span>Open the viability assessment and question-based calculator.</span><em>Open viability assessment →</em></button>
       <button type="button" class="info-action-card" data-info-page="patterns"><strong>Choose a logging pattern</strong><span>Review governed collection patterns and prerequisites.</span><em>Open logging patterns →</em></button>
       <button type="button" class="info-action-card" data-info-page="catalogue"><strong>Review known source families</strong><span>Inspect priority, expected events, use cases and example technologies.</span><em>Open data source catalogue →</em></button>
@@ -2837,6 +2864,173 @@
 
     <div class="info-note">
       The default path is intentionally decision-first: assess value and viability before committing engineering time to collection, parsing, dashboards or detections.
+    </div>
+  </section>
+
+
+  <section id="onboardingPage" class="page-view" role="tabpanel" aria-labelledby="showOnboardingPage" hidden>
+    <div class="reference-hero">
+      <div class="eyebrow">Log onboarding lifecycle</div>
+      <h2>Onboarding flow, end to end</h2>
+      <p>Every stage and decision below is a real taxonomy record, not an illustrative diagram &mdash; the Phase 1 viability gate, the pre-ingest cyber-value gates, the implementation acceptance gate, and the 90-day retain/filter/retire review that closes the loop back into sustainment.</p>
+    </div>
+
+    <div class="onboarding-spine" aria-label="The four-stage assessment spine">
+      <div class="framework-step"><b>TAX-07.01</b><strong>Log Viability</strong><span>Is onboarding feasible, supportable and proportionate?</span></div>
+      <div class="framework-step"><b>TAX-07.02&ndash;03</b><strong>Worthiness &amp; Implementation</strong><span>Is it worth building, and was it built and accepted correctly?</span></div>
+      <div class="framework-step"><b>TAX-06.05</b><strong>Cyber Value Gates</strong><span>Does the parsed data clear the minimum bar to ingest?</span></div>
+      <div class="framework-step"><b>TAX-07.04</b><strong>Log Sustainment</strong><span>Does it stay healthy, used and worth keeping?</span></div>
+    </div>
+
+    <div class="onboarding-legend" aria-label="Flow legend">
+      <span><span class="flow-badge gate">GATE</span>Decision point</span>
+      <span><span class="flow-badge proceed">PROCEED</span>Continues toward production</span>
+      <span><span class="flow-badge hold">HOLD</span>Loops back for rework</span>
+      <span><span class="flow-badge stop">STOP</span>Reject, park or retire</span>
+    </div>
+
+    <div class="onboarding-flow">
+
+      <div class="onboarding-stage">
+        <h4>Candidate log source identified</h4>
+        <p>A platform, application or data source is proposed for onboarding.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
+        <h4>Phase 1 &mdash; Viability Assessment <span class="assessment-tag">TAX-06.01.02 / TAX-07.01</span></h4>
+        <p>Scores security value, technical readiness and operational assurance. Custom-solution, reverse-engineering and discovery-gap modifiers adjust the result before a decision is reached.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; Viability Decision <span class="assessment-tag">TAX-07.01.04</span></h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge stop">STOP</span>Not Justified / Not Currently Viable &rarr; reject or park</div>
+          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Further Investigation Required &rarr; back to viability scoring</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Viable / Viable with Conditions &rarr; continue</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
+        <h4>Log Worthiness <span class="assessment-tag">TAX-07.02</span></h4>
+        <p>Is the security or operational value proportionate to the cost and volume of onboarding &mdash; independent of pure technical feasibility?</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; Worthiness Decision</h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge stop">STOP</span>Not worth building &rarr; reject or park</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Worth building &rarr; select a logging pattern</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
+        <h4>Select logging pattern &amp; topology</h4>
+        <p>Choose the governed collection pattern and record transport, authentication and firewall prerequisites.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
+        <h4>Engineering build <span class="assessment-tag">TAX-04.01&ndash;04.09</span></h4>
+        <p>Datetime standards &amp; parsing, line breaking, line length, log format detection &amp; parsing, field extraction, field normalisation (CIM/ECS mapping), event volume profile, parsing performance &mdash; plus collection components (TAX-03) and sourcetype identity (TAX-04.11).</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
+        <h4>Data quality assessment <span class="assessment-tag">TAX-07.05&ndash;07.10</span></h4>
+        <p>Timestamp quality, log format quality, line length quality, event type coverage, required field coverage, event context completeness.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; Quality gates pass?</h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>No &rarr; back to engineering build</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Yes &rarr; pre-ingest cyber-value gates</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
+        <h4>Pre-ingest cyber-value gates <span class="assessment-tag">TAX-06.05.02</span></h4>
+        <p>Minimum parse rate, timestamp &amp; timezone, and schema stability must all pass before any value scoring runs.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; Overall Gate Result <span class="assessment-tag">TAX-06.05.02.04</span></h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Fail &rarr; remediate, then back to engineering build</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Pass &rarr; cyber value scoring</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
+        <h4>Cyber value scoring <span class="assessment-tag">TAX-06.05.03&ndash;10</span></h4>
+        <p>Marginal novelty, pivot density &amp; breadth (TAX-07.13/14), semantic value, entity coverage &rarr; log source value score &rarr; cyber value density &rarr; candidate rank.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; Ingestion Decision <span class="assessment-tag">TAX-06.05.11</span></h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge stop">STOP</span>Reject &rarr; do not ingest</div>
+          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Filter &rarr; record a pre-ingest filtering recommendation (TAX-06.05.12), then continue</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Proceed &rarr; log implementation</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
+        <h4>Log Implementation <span class="assessment-tag">TAX-07.03</span></h4>
+        <p>Tracks build &amp; integration status through to a validation and acceptance result.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; Build &amp; Acceptance Result</h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Outstanding actions &rarr; back to implementation</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Accepted &rarr; go live</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
+        <h4><span class="flow-badge proceed">GO-LIVE</span>&nbsp; Onboarding Record <span class="assessment-tag">TAX-06.01.01</span></h4>
+        <p>Owner, phase, status and go-live date for the source, from request through to production.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
+        <h4>Log Sustainment <span class="assessment-tag">TAX-07.04</span></h4>
+        <p>Operational maturity, health &amp; monitoring coverage, and review/improvement actions &mdash; backed by reusable health checks (TAX-04.10) and assurance roll-ups (TAX-06.03).</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
+        <h4>90-day value review <span class="assessment-tag">TAX-06.05.14</span></h4>
+        <p>Investigations, detections, alerts and true positives against the source feed a realised-value rank, compared against the rank predicted at onboarding.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; Retain, Filter or Retire Decision</h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge proceed">RETAIN</span>Continue in sustainment</div>
+          <div class="onboarding-branch"><span class="flow-badge hold">FILTER</span>Adjust pre-ingest filtering, then continue</div>
+          <div class="onboarding-branch"><span class="flow-badge stop">RETIRE</span>Offboard the source</div>
+        </div>
+      </div>
+
+      <div class="onboarding-endnote">
+        <strong>This is a loop, not a one-way door.</strong> Further-investigation, quality-gate failures, filtering adjustments and the 90-day review all route back into an earlier stage rather than dead-ending &mdash; onboarding is treated as reversible until value is actually demonstrated in production.
+      </div>
     </div>
   </section>
 
@@ -10792,6 +10986,7 @@ catalogueDetail.addEventListener("click", event => {
 
 const pageTabs = {
   info: document.getElementById("showInfoPage"),
+  onboarding: document.getElementById("showOnboardingPage"),
   taxonomy: document.getElementById("showTaxonomyPage"),
   assessments: document.getElementById("showAssessmentsPage"),
   reference: document.getElementById("showReferencePage"),
@@ -10805,6 +11000,7 @@ const pageTabs = {
 };
 const pageViews = {
   info: document.getElementById("infoPage"),
+  onboarding: document.getElementById("onboardingPage"),
   taxonomy: document.getElementById("taxonomyPage"),
   assessments: document.getElementById("assessmentsPage"),
   reference: document.getElementById("referencePage"),
@@ -12321,7 +12517,7 @@ function exportViabilityCalculator(event) {
 }
 
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "taxonomy", "assessments", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "onboarding", "taxonomy", "assessments", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : "");
   
@@ -12503,6 +12699,8 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
   if (updateHash && history.replaceState) {
     const hash = selected === "info"
       ? "#info"
+      : selected === "onboarding"
+        ? "#onboarding-flow"
       : selected === "assessments"
         ? "#assessments"
         : selected === "reference"
@@ -12529,6 +12727,7 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
 
 function pageNameFromHash() {
   if (location.hash === "#info") return "info";
+  if (location.hash === "#onboarding-flow") return "onboarding";
   if (location.hash === "#taxonomy") return "taxonomy";
   if (location.hash === "#assessments") return "assessments";
   if (location.hash === "#reference") return "reference";
