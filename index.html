@@ -2586,6 +2586,14 @@
     .onboarding-branch .flow-badge { flex:none; margin-top:1px; }
     .onboarding-arrow { color:#94a3b8; font-size:20px; font-weight:900; line-height:1; padding:6px 0; }
     .onboarding-endnote { margin-top:6px; padding:16px 18px; border-left:4px solid #1f4e78; border-radius:10px; background:#eff6ff; color:#334155; font-size:13px; line-height:1.6; max-width:660px; }
+    .flow-badge.feed { background:#cffafe; color:#155e75; }
+    .onboarding-feed { width:100%; max-width:660px; border-radius:12px; padding:13px 18px; border:1px dashed #67e8f9; background:#ecfeff; display:flex; gap:10px; align-items:flex-start; }
+    .onboarding-feed .flow-badge { flex:none; margin-top:2px; }
+    .onboarding-feed strong { display:block; color:#0e7490; font-size:12.5px; }
+    .onboarding-feed span { display:block; margin-top:3px; color:#155e75; font-size:12px; line-height:1.55; }
+    .onboarding-branch-arrow { display:flex; align-items:center; gap:8px; color:#0e7490; font-size:13px; font-weight:700; padding:8px 0; }
+    .onboarding-branch-arrow .glyph { font-size:20px; font-weight:900; }
+    .onboarding-branch-arrow em { color:#64748b; font-weight:500; font-style:normal; font-size:11.5px; }
     @media(max-width:760px){.onboarding-spine{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:500px){.onboarding-spine{grid-template-columns:1fr}}
 
@@ -2887,6 +2895,7 @@
       <span><span class="flow-badge proceed">PROCEED</span>Continues toward production</span>
       <span><span class="flow-badge hold">HOLD</span>Loops back for rework</span>
       <span><span class="flow-badge stop">STOP</span>Reject, park or retire</span>
+      <span><span class="flow-badge feed">FEEDS IN</span>Input from outside the main path</span>
     </div>
 
     <div class="onboarding-flow">
@@ -2916,6 +2925,14 @@
       <div class="onboarding-stage">
         <h4>Log Worthiness <span class="assessment-tag">TAX-07.02</span></h4>
         <p>Is the security or operational value proportionate to the cost and volume of onboarding &mdash; independent of pure technical feasibility?</p>
+      </div>
+
+      <div class="onboarding-feed">
+        <span class="flow-badge feed">FEEDS IN</span>
+        <div>
+          <strong>Named detection use cases</strong>
+          <span>When a source is proposed specifically to enable a known detection, its Threat Detection Use Case and Use Case&ndash;Data Source Mapping <span class="assessment-tag">TAX-05.01 / TAX-05.02</span> weigh directly into the worthiness decision, not just raw security/operational value.</span>
+        </div>
       </div>
       <div class="onboarding-arrow">↓</div>
 
@@ -3010,6 +3027,21 @@
       <div class="onboarding-stage">
         <h4>Log Sustainment <span class="assessment-tag">TAX-07.04</span></h4>
         <p>Operational maturity, health &amp; monitoring coverage, and review/improvement actions &mdash; backed by reusable health checks (TAX-04.10) and assurance roll-ups (TAX-06.03).</p>
+      </div>
+
+      <div class="onboarding-branch-arrow"><span class="glyph">⤷</span> Detection Engineering <em>(parallel branch, once the source is live)</em></div>
+
+      <div class="onboarding-stage">
+        <h4>Detection Engineering <span class="assessment-tag">TAX-05.03&ndash;05.05</span></h4>
+        <p>Build the Detection Analytic &amp; Rule against the now-live source, then run Detection Validation and record Detection Coverage &mdash; confirming the use case this source was meant to enable actually works in production.</p>
+      </div>
+
+      <div class="onboarding-feed">
+        <span class="flow-badge feed">FEEDS IN</span>
+        <div>
+          <strong>Threat Detection Index</strong>
+          <span>Validated detection coverage against this source rolls up into the Threat Detection Index <span class="assessment-tag">TAX-07.17</span> &mdash; how effectively detections actually use the logging data that was onboarded.</span>
+        </div>
       </div>
       <div class="onboarding-arrow">↓</div>
 
