@@ -11169,7 +11169,7 @@ function catalogueImplementationTable(record) {
     <td>${escapeHtml(component.index)}</td>
     <td>${escapeHtml(component.owner)}</td>
     <td>${assuranceStatusBadge(component.health)}</td>
-  </tr>`).join("");
+  </tr>`);
   const componentTable = record.components.length
     ? assuranceMiniTable(["Component", "Sourcetype", "Input type", "Platform", "Index", "Owner", "Health"], componentRows, "")
     : '<div class="assurance-empty">No operational input components are mapped to this source family.</div>';
@@ -11179,7 +11179,7 @@ function catalogueImplementationTable(record) {
     <td>${escapeHtml(assuranceValue(platform, "Platform Type"))}</td>
     <td>${escapeHtml(assuranceValue(platform, "Environment"))}</td>
     <td>${assuranceStatusBadge(assuranceValue(platform, "Status"))}</td>
-  </tr>`).join("");
+  </tr>`);
   const platformTable = record.platforms.length
     ? `<div class="assurance-section"><h4>Registered platforms</h4>${assuranceMiniTable(["Platform", "Name", "Type", "Environment", "Status"], platformRows, "")}</div>`
     : "";
@@ -11190,7 +11190,7 @@ function catalogueImplementationTable(record) {
     <td>${escapeHtml(assuranceValue(node, "Platform"))}</td>
     <td>${assuranceStatusBadge(assuranceValue(node, "Stage"))}</td>
     <td>${escapeHtml(assuranceValue(node, "Target Date"))}</td>
-  </tr>`).join("");
+  </tr>`);
   const onboardingTable = record.onboarding.length
     ? `<div class="assurance-section"><h4>Onboarding pipeline</h4>${assuranceMiniTable(["Request", "Data source", "Input type", "Platform", "Stage", "Target"], onboardingRows, "")}</div>`
     : '<div class="assurance-section"><h4>Onboarding pipeline</h4><div class="assurance-empty">No onboarding records are mapped to this source family.</div></div>';
@@ -11208,7 +11208,7 @@ function catalogueAssuranceBody(record) {
     <td>${component.cimScore === null ? assuranceStatusBadge("Not assessed") : `${escapeHtml(component.cimScore)}%`}</td>
     <td>${component.detectionScore === null ? assuranceStatusBadge("Not assessed") : `${escapeHtml(component.detectionScore)}%`}</td>
     <td>${assuranceStatusBadge(component.assurance)}</td>
-  </tr>`).join("");
+  </tr>`);
   return `<div class="assurance-dimension-grid">
       <div class="assurance-score-card"><h4>Average CIM</h4><div class="assurance-score-large"><strong>${record.cimScore === null ? "—" : `${record.cimScore.toFixed(1)}%`}</strong><span>${record.components.filter(component => component.cim).length} assessed</span></div>${record.cimScore === null ? "" : `<div class="assurance-score-track"><div class="assurance-score-fill" style="width:${Math.max(0, Math.min(100, record.cimScore))}%"></div></div>`}</div>
       <div class="assurance-score-card"><h4>Average detection coverage</h4><div class="assurance-score-large"><strong>${record.detectionScore === null ? "—" : `${record.detectionScore.toFixed(1)}%`}</strong><span>${record.components.filter(component => component.detection).length} assessed</span></div>${record.detectionScore === null ? "" : `<div class="assurance-score-track"><div class="assurance-score-fill" style="width:${Math.max(0, Math.min(100, record.detectionScore))}%"></div></div>`}</div>
