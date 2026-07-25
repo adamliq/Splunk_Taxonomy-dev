@@ -4215,6 +4215,144 @@
       </section>
     </article>
 
+    <article id="eventTypeCoverageReferenceView" class="eccs-reference" aria-labelledby="eventTypeCoverageReferenceTitle" hidden>
+      <a id="backToReferencesETC" class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Detailed reference</div>
+        <h2 id="eventTypeCoverageReferenceTitle">Event Type Coverage (ETC)</h2>
+        <p>ETC measures whether the required security-relevant event types are represented in a source -- not how many events it produces. Event diversity is assessed within ETC rather than as a separate score: repeating one event class, or counting cosmetic message variations, does not raise coverage.</p>
+        <nav class="eccs-anchor-nav" aria-label="Event Type Coverage reference sections">
+          <a href="#etc-definition">Definition</a>
+          <a href="#etc-categories">Required event-type categories</a>
+          <a href="#etc-scoring">Calculation</a>
+          <a href="#etc-examples">Worked examples</a>
+          <a href="#etc-interpretation">Interpretation</a>
+          <a href="#etc-relationship">Value relationship</a>
+        </nav>
+      </div>
+      <section id="etc-definition" class="eccs-detail-section">
+        <h3>Definition</h3>
+        <p>ETC asks whether the required security-relevant event types are present, not simply how many events were collected. Do not reward vendor-specific aliases, parameter changes or raw repetition as if they were behavioural diversity -- assess whether the underlying behaviour is actually represented.</p>
+      </section>
+      <section id="etc-categories" class="eccs-detail-section">
+        <h3>Required event-type categories</h3>
+        <div class="eccs-field-list"><code>Authentication</code><code>Identity &amp; Account Management</code><code>Authorization &amp; Access</code><code>Configuration Changes</code><code>Administrative Activity</code><code>Process Execution</code><code>Network Activity</code><code>Data Access</code><code>Security Events</code><code>System Events</code><code>Availability</code><code>Cloud Activity</code><code>Detection Events</code><code>Technology-specific event types</code></div>
+        <div class="eccs-note" style="margin-top:12px">Unless a technology-specific event catalogue is supplied, assess against these 14 categories. Where a governed catalogue exists for the source family -- see the Required SIEM Event Type catalogue, TAX-03.01.01.01 -- use that instead of the generic list.</div>
+      </section>
+      <section id="etc-scoring" class="eccs-detail-section">
+        <h3>Calculation</h3>
+        <div class="eccs-formula">ETC (%) = Required event types captured &divide; Total required event types &times; 100</div>
+      </section>
+      <section id="etc-examples" class="eccs-detail-section">
+        <h3>Worked examples</h3>
+        <div class="eccs-examples">
+          <details open><summary>Worked Example 1 &mdash; WEC Server / Windows Security Events: not currently recorded as ETC</summary><div class="eccs-example-body"><p>MITRE ATT&amp;CK detection coverage (95.5%) is a different measure -- technique-level, not required-event-type-level. ETC specifically has not been separately assessed against the 14 categories for this source.</p><div class="eccs-example-result">ETC = Not currently recorded</div></div></details>
+          <details><summary>Worked Example 2 &mdash; Okta / SaaS Authentication Logs: 12 of 14 = 86%, Good</summary><div class="eccs-example-body"><p>Authentication, Identity &amp; Account Management, Authorization &amp; Access, Configuration Changes, Administrative Activity, Security Events, Availability and Detection Events are all represented. Process Execution and Cloud Activity (infrastructure-level) are not applicable to an identity-provider source and are excluded from the denominator; System Events and Data Access are genuinely absent.</p><div class="eccs-example-result">12 / 14 = 86% &nbsp; | &nbsp; Rating = Good</div></div></details>
+          <details><summary>Worked Example 3 &mdash; Firewall (traffic-only feed): 5 of 14 = 36%, Poor</summary><div class="eccs-example-body"><p>Network Activity and Availability are strong; Authorization &amp; Access, Security Events and Configuration Changes are partially present. Authentication, Identity, Administrative Activity, Process Execution, Data Access, System Events, Cloud Activity and Detection Events are absent -- this feed carries only traffic events, not the management-plane and threat-detection events the same platform is capable of producing.</p><div class="eccs-example-result">5 / 14 = 36% &nbsp; | &nbsp; Rating = Poor</div><p>A reminder that ETC describes the feed actually being collected, not the platform's theoretical capability -- see the Firewall requirements under TAX-03.01.01.01 for what a fuller feed would add.</p></div></details>
+        </div>
+      </section>
+      <section id="etc-interpretation" class="eccs-detail-section">
+        <h3>Interpretation</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="ETC interpretation bands" tabindex="0"><table class="eccs-matrix eccs-interpretation"><thead><tr><th>ETC</th><th>Rating</th></tr></thead><tbody><tr><td>90&ndash;100%</td><td>Excellent</td></tr><tr><td>75&ndash;89%</td><td>Good</td></tr><tr><td>60&ndash;74%</td><td>Adequate</td></tr><tr><td>40&ndash;59%</td><td>Weak</td></tr><tr><td>0&ndash;39%</td><td>Poor</td></tr></tbody></table></div>
+      </section>
+      <section id="etc-relationship" class="eccs-detail-section">
+        <h3>Relationship to CVI</h3>
+        <div class="eccs-note"><strong>ETC carries the highest weight in the Cyber Value Index</strong> (&times;0.30 of 4 components, alongside RFC &times;0.25, ECCS &times;0.25 and DQS &times;0.20) -- missing event-type categories is the single biggest driver of a low CVI, since no amount of field quality or timestamp precision compensates for a category of activity that was never captured at all.</div>
+      </section>
+    </article>
+
+    <article id="requiredFieldCoverageReferenceView" class="eccs-reference" aria-labelledby="requiredFieldCoverageReferenceTitle" hidden>
+      <a id="backToReferencesRFC" class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Detailed reference</div>
+        <h2 id="requiredFieldCoverageReferenceTitle">Required Field Coverage (RFC)</h2>
+        <p>RFC measures whether mandatory investigative fields are present, consistently populated, correctly formatted and usable -- not just whether a field key exists somewhere in the schema.</p>
+        <nav class="eccs-anchor-nav" aria-label="Required Field Coverage reference sections">
+          <a href="#rfc-definition">Definition</a>
+          <a href="#rfc-fields">Required field groups</a>
+          <a href="#rfc-scoring">Calculation</a>
+          <a href="#rfc-examples">Worked examples</a>
+          <a href="#rfc-interpretation">Interpretation</a>
+          <a href="#rfc-relationship">Value relationship</a>
+        </nav>
+      </div>
+      <section id="rfc-definition" class="eccs-detail-section">
+        <h3>Definition</h3>
+        <p>RFC does not simply count field names. A field only counts as covered when it is present, consistently populated, correctly formatted, and actually usable for investigation, detection, correlation, threat hunting or incident response -- a field that is present but empty, null, placeholder or malformed does not count.</p>
+      </section>
+      <section id="rfc-fields" class="eccs-detail-section">
+        <h3>Required field groups</h3>
+        <div class="eccs-field-list"><code>Time (event time, creation time, received time)</code><code>Identity (user, account, service account, SID)</code><code>Network (source/dest IP, source/dest port)</code><code>Host / Asset (hostname, device, asset ID, cloud resource)</code><code>Event Classification (event type, category, action, object, resource)</code><code>Outcome (result, status, success/failure, status code, error reason)</code><code>Severity (severity, risk, priority, classification)</code><code>Correlation (session, transaction, trace, correlation, process ID)</code><code>Additional Context (message, vendor, product, sourcetype, tenant, region, command, file, URL)</code></div>
+      </section>
+      <section id="rfc-scoring" class="eccs-detail-section">
+        <h3>Calculation</h3>
+        <div class="eccs-formula">RFC (%) = Fields present, correctly populated and usable &divide; Total required fields &times; 100</div>
+        <div class="eccs-note" style="margin-top:12px">For each field, evaluate presence, population frequency (always/usually/sometimes/rarely/never), consistency (high/medium/low), format quality and investigation usefulness -- a field that's "present" but rarely populated or inconsistently formatted should not be counted as covered.</div>
+      </section>
+      <section id="rfc-examples" class="eccs-detail-section">
+        <h3>Worked examples</h3>
+        <div class="eccs-examples">
+          <details open><summary>Worked Example 1 &mdash; WEC Server / Windows Security Events: not currently recorded as RFC</summary><div class="eccs-example-body"><p>The Minimum Required Fields list is recorded per event type in the Required SIEM Event Type catalogue (TAX-03.01.01.01), but no assessment has scored actual presence, consistency and format quality against that list for this source.</p><div class="eccs-example-result">RFC = Not currently recorded</div></div></details>
+          <details><summary>Worked Example 2 &mdash; Okta / SaaS Authentication Logs: 30 of 34 = 88%, Good</summary><div class="eccs-example-body"><p>Time, Identity, Event Classification, Outcome and Correlation groups are all consistently populated and well-formatted. Network fields are present but only for network-bound sign-in events, not every event type; two Additional Context fields (region, command) are not applicable to this source and excluded.</p><div class="eccs-example-result">30 / 34 applicable fields = 88% &nbsp; | &nbsp; Rating = Good</div></div></details>
+          <details><summary>Worked Example 3 &mdash; Custom API Health Telemetry (VIA-002): 9 of 30 = 30%, Poor</summary><div class="eccs-example-body"><p>Time and a coarse Event Classification are present; Identity, Network, Host/Asset, Outcome, Severity and Correlation fields are largely missing or inconsistently populated -- consistent with this source's own record of weak schema availability and required discovery work.</p><div class="eccs-example-result">9 / 30 applicable fields = 30% &nbsp; | &nbsp; Rating = Poor</div></div></details>
+        </div>
+      </section>
+      <section id="rfc-interpretation" class="eccs-detail-section">
+        <h3>Interpretation</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="RFC interpretation bands" tabindex="0"><table class="eccs-matrix eccs-interpretation"><thead><tr><th>RFC</th><th>Rating</th></tr></thead><tbody><tr><td>90&ndash;100%</td><td>Excellent</td></tr><tr><td>75&ndash;89%</td><td>Good</td></tr><tr><td>60&ndash;74%</td><td>Adequate</td></tr><tr><td>40&ndash;59%</td><td>Weak</td></tr><tr><td>0&ndash;39%</td><td>Poor</td></tr></tbody></table></div>
+      </section>
+      <section id="rfc-relationship" class="eccs-detail-section">
+        <h3>Relationship to CVI</h3>
+        <div class="eccs-note"><strong>RFC is weighted &times;0.25 in the Cyber Value Index</strong>, alongside ETC (&times;0.30), ECCS (&times;0.25) and DQS (&times;0.20). RFC and ECCS overlap in spirit -- both assess whether an event carries enough usable detail -- but RFC checks a fixed, named field list against presence and format quality, while ECCS scores how completely seven investigative questions (When, Who, Where, What, Outcome, Impact, Correlation) are answered, on a 0&ndash;4 scale per dimension rather than a field checklist.</div>
+      </section>
+    </article>
+
+    <article id="dataQualityScoreReferenceView" class="eccs-reference" aria-labelledby="dataQualityScoreReferenceTitle" hidden>
+      <a id="backToReferencesDQS" class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Detailed reference</div>
+        <h2 id="dataQualityScoreReferenceTitle">Data Quality Score (DQS)</h2>
+        <p>DQS measures the technical quality, reliability and usability of logging data -- timestamp quality, parsing success, consistency, normalisation and completeness -- independent of whether the right event types or fields are present.</p>
+        <nav class="eccs-anchor-nav" aria-label="Data Quality Score reference sections">
+          <a href="#dqs-definition">Definition</a>
+          <a href="#dqs-dimensions">Five dimensions</a>
+          <a href="#dqs-scoring">Calculation</a>
+          <a href="#dqs-examples">Worked examples</a>
+          <a href="#dqs-interpretation">Interpretation</a>
+          <a href="#dqs-relationship">Value relationship</a>
+        </nav>
+      </div>
+      <section id="dqs-definition" class="eccs-detail-section">
+        <h3>Definition</h3>
+        <p>DQS assesses the quality of the data, not merely whether fields exist -- ETC and RFC ask "is the right thing present," DQS asks "is what's present technically trustworthy." A source can score well on ETC and RFC while still scoring poorly here if timestamps drift, parsing silently fails, or naming is inconsistent across event classes.</p>
+      </section>
+      <section id="dqs-dimensions" class="eccs-detail-section">
+        <h3>Five dimensions</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="DQS dimensions and weights" tabindex="0"><table class="eccs-matrix"><thead><tr><th>Dimension</th><th>Cyber-weighted</th><th>0 vs. 4</th></tr></thead><tbody><tr><td>Timestamp Quality</td><td>30%</td><td>Missing/invalid timestamp &rarr; ISO 8601, UTC, millisecond precision, fully normalised</td></tr><tr><td>Parsing Success</td><td>25%</td><td>Most fields unavailable &rarr; complete parsing, no observed issues</td></tr><tr><td>Consistency</td><td>20%</td><td>Highly inconsistent naming/formats &rarr; completely consistent across events</td></tr><tr><td>Normalisation</td><td>15%</td><td>No normalisation &rarr; fully normalised to CIM/ECS/taxonomy standards</td></tr><tr><td>Completeness</td><td>10%</td><td>Large portions missing &rarr; complete with virtually no gaps</td></tr></tbody></table></div>
+      </section>
+      <section id="dqs-scoring" class="eccs-detail-section">
+        <h3>Calculation</h3>
+        <div class="eccs-formula">Equal-weighted DQS (%) = (sum of five dimension scores &divide; 20) &times; 100<small>Each dimension scored 0&ndash;4. Use the cyber-weighted formula below when an approved rubric requires it.</small></div>
+        <div class="eccs-formula" style="margin-top:12px">Cyber-weighted DQS (%) = &Sigma;(dimension score &times; weight) &times; 100<small>Weights: Timestamp Quality 30%, Parsing Success 25%, Consistency 20%, Normalisation 15%, Completeness 10%.</small></div>
+      </section>
+      <section id="dqs-examples" class="eccs-detail-section">
+        <h3>Worked examples</h3>
+        <div class="eccs-examples">
+          <details open><summary>Worked Example 1 &mdash; WEC Server / Windows Security Events: not currently recorded as DQS</summary><div class="eccs-example-body"><p>CIM compliance of 100% is evidence of strong normalisation specifically, but the other four dimensions -- timestamp quality, parsing success, consistency, completeness -- have not been independently scored for this source.</p><div class="eccs-example-result">DQS = Not currently recorded</div></div></details>
+          <details><summary>Worked Example 2 &mdash; Okta / SaaS Authentication Logs: 17/20 equal-weighted = 85%, Good</summary><div class="eccs-example-body"><table class="eccs-example-table"><thead><tr><th>Dimension</th><th>Score</th></tr></thead><tbody><tr><td>Timestamp Quality</td><td>4 -- ISO 8601, UTC, millisecond precision</td></tr><tr><td>Parsing Success</td><td>4 -- structured JSON, complete field extraction</td></tr><tr><td>Consistency</td><td>3</td></tr><tr><td>Normalisation</td><td>3 -- CIM-mapped</td></tr><tr><td>Completeness</td><td>3</td></tr></tbody></table><div class="eccs-example-result">(4+4+3+3+3) / 20 = 85% &nbsp; | &nbsp; Rating = Good</div></div></details>
+          <details><summary>Worked Example 3 &mdash; Custom API Health Telemetry (VIA-002): 4/20 equal-weighted = 20%, Poor</summary><div class="eccs-example-body"><table class="eccs-example-table"><thead><tr><th>Dimension</th><th>Score</th></tr></thead><tbody><tr><td>Timestamp Quality</td><td>1 -- present, no timezone, inconsistent formatting</td></tr><tr><td>Parsing Success</td><td>1 -- only a few fields extracted</td></tr><tr><td>Consistency</td><td>0</td></tr><tr><td>Normalisation</td><td>0</td></tr><tr><td>Completeness</td><td>2</td></tr></tbody></table><div class="eccs-example-result">(1+1+0+0+2) / 20 = 20% &nbsp; | &nbsp; Rating = Poor</div></div></details>
+        </div>
+      </section>
+      <section id="dqs-interpretation" class="eccs-detail-section">
+        <h3>Interpretation</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="DQS interpretation bands" tabindex="0"><table class="eccs-matrix eccs-interpretation"><thead><tr><th>DQS</th><th>Rating</th></tr></thead><tbody><tr><td>90&ndash;100%</td><td>Excellent</td></tr><tr><td>75&ndash;89%</td><td>Good</td></tr><tr><td>60&ndash;74%</td><td>Adequate</td></tr><tr><td>40&ndash;59%</td><td>Weak</td></tr><tr><td>0&ndash;39%</td><td>Poor</td></tr></tbody></table></div>
+      </section>
+      <section id="dqs-relationship" class="eccs-detail-section">
+        <h3>Relationship to CVI</h3>
+        <div class="eccs-note"><strong>DQS is weighted &times;0.20 in the Cyber Value Index</strong> -- the lowest weight of the four components (ETC &times;0.30, RFC &times;0.25, ECCS &times;0.25), but not because it matters less: DQS failures tend to be systemic rather than partial, since broken parsing or drifting timestamps degrade every event, not just some of them. Timestamp Quality and Log Format Quality (their own detailed references, TAX-07.05 and TAX-07.06) are the deep-dive assessments that typically feed the Timestamp Quality and Parsing Success dimensions here.</div>
+      </section>
+    </article>
+
     <article id="lineLengthReferenceView" class="eccs-reference" aria-labelledby="lineLengthReferenceTitle" hidden>
       <a class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
       <div class="eccs-reference-hero"><div class="eyebrow">References / Splunk event sizing</div><h2 id="lineLengthReferenceTitle">Line Length Quality Score</h2><p>Evaluates whether valid logical events are sized safely for Splunk ingestion and whether <code>TRUNCATE</code> is evidence-based, bounded and operationally appropriate.</p><nav class="eccs-anchor-nav"><a href="#line-length-definition">Definition</a><a href="#line-length-dimensions">Scoring</a><a href="#line-length-example">Worked example</a><a href="#line-length-calculator">Calculator</a><a href="#line-length-props">props.conf</a></nav></div>
@@ -13475,7 +13613,7 @@ function exportViabilityCalculator(event) {
 function setActivePage(pageName, updateHash = true) {
   const selected = ["info", "onboarding", "taxonomy", "assessments", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
-  if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : "");
+  if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : "");
   
 const frameworkConcepts = [
   {term:"Logging Pattern",category:"Collection",definition:"An approved reusable reference architecture for collecting a class of data sources.",example:"Syslog via SC4S to Splunk Cloud."},
@@ -13531,10 +13669,13 @@ const frameworkConcepts = [
   {term:"Cyber Value Index (CVI)",category:"Cyber value",definition:"The weighted overall data-quality score for an already-onboarded source, combining Event Type Coverage (30%), Required Field Coverage (25%), ECCS (25%) and Data Quality Score (20%).",example:"ETC 70%, RFC 75%, ECCS 64%, DQS 65% combine to a CVI of 68.75% -- Adequate.",detailView:"cyber-value-index"},
   {term:"Log Source Cyber Value",category:"Cyber value",definition:"The 40-point pre-onboarding model scoring a candidate source's intrinsic value from Marginal Novelty, Pivot Density, Semantic Value, Pivot Breadth, Entity Coverage and Detection Value.",example:"28 of 40 weighted points = 70% -- Adequate, onboard with targeted scope.",detailView:"log-source-cyber-value"},
   {term:"Identity Diversity (IDS)",category:"Cyber value",definition:"The breadth, quality, population spread and investigative usefulness of the identities a source represents, without rewarding repeated activity from the same identity.",example:"A thousand events from one service account still score low identity diversity.",detailView:"identity-diversity"},
-  {term:"Investigation Breadth (IBS)",category:"Cyber value",definition:"The range of investigative questions, entities, timelines and response paths a source can support across identity, asset, activity, timeline, outcome, impact and correlation.",example:"Strong network tracing but no identity or impact evidence caps a firewall traffic log at Limited.",detailView:"investigation-breadth"}
+  {term:"Investigation Breadth (IBS)",category:"Cyber value",definition:"The range of investigative questions, entities, timelines and response paths a source can support across identity, asset, activity, timeline, outcome, impact and correlation.",example:"Strong network tracing but no identity or impact evidence caps a firewall traffic log at Limited.",detailView:"investigation-breadth"},
+  {term:"Event Type Coverage (ETC)",category:"Cyber value",definition:"The percentage of required security-relevant event-type categories actually represented in a source, assessed against 14 categories or a governed source-family catalogue.",example:"5 of 14 categories present for a traffic-only firewall feed = 36% -- Poor.",detailView:"event-type-coverage"},
+  {term:"Required Field Coverage (RFC)",category:"Cyber value",definition:"The percentage of mandatory investigative fields that are present, consistently populated, correctly formatted and usable -- not just present in the schema.",example:"30 of 34 applicable fields consistently populated and well-formatted = 88% -- Good.",detailView:"required-field-coverage"},
+  {term:"Data Quality Score (DQS)",category:"Cyber value",definition:"The technical quality and reliability of logging data across timestamp quality, parsing success, consistency, normalisation and completeness.",example:"Broken parsing and inconsistent naming score 20% even when the right fields exist.",detailView:"data-quality-score"}
 ];
 function conceptId(term){return "concept-"+term.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");}
-const detailViewLabels={eccs:'ECCS',icd:'ICD',pivot:'Pivot Density & Breadth','timestamp-quality':'Timestamp Quality','log-format-quality':'Log Format Quality','datetime-format':'Datetime Format','datetime-parse':'Datetime Parse','line-break':'Line Break','log-format-parse':'Log Format Detection & Parsing','line-length':'Line Length Quality Score','semantic-value':'Semantic Value','response-readiness':'Response Readiness Index','operational-assurance':'Operational Assurance Index','threat-detection':'Threat Detection Index','business-impact-level':'Business Impact Level','marginal-novelty':'Marginal Novelty','cyber-value-index':'Cyber Value Index','log-source-cyber-value':'Log Source Cyber Value','entity-coverage':'Entity Coverage','identity-diversity':'Identity Diversity','investigation-breadth':'Investigation Breadth','context-dimension-coverage':'Context Dimension Coverage','investigative-noise-percentage':'Investigative Noise Percentage','data-source-assurance':'Data Source Assurance'};
+const detailViewLabels={eccs:'ECCS',icd:'ICD',pivot:'Pivot Density & Breadth','timestamp-quality':'Timestamp Quality','log-format-quality':'Log Format Quality','datetime-format':'Datetime Format','datetime-parse':'Datetime Parse','line-break':'Line Break','log-format-parse':'Log Format Detection & Parsing','line-length':'Line Length Quality Score','semantic-value':'Semantic Value','response-readiness':'Response Readiness Index','operational-assurance':'Operational Assurance Index','threat-detection':'Threat Detection Index','business-impact-level':'Business Impact Level','marginal-novelty':'Marginal Novelty','cyber-value-index':'Cyber Value Index','log-source-cyber-value':'Log Source Cyber Value','entity-coverage':'Entity Coverage','identity-diversity':'Identity Diversity','investigation-breadth':'Investigation Breadth','context-dimension-coverage':'Context Dimension Coverage','investigative-noise-percentage':'Investigative Noise Percentage','data-source-assurance':'Data Source Assurance','event-type-coverage':'Event Type Coverage','required-field-coverage':'Required Field Coverage','data-quality-score':'Data Quality Score'};
 function renderFrameworkConcepts(){
   const grid=document.getElementById("conceptGrid"); if(!grid) return;
   const q=(document.getElementById("conceptSearch")?.value||"").trim().toLowerCase();
@@ -13570,6 +13711,9 @@ function setReferenceDetailVisibility(detailName){
   const contextDimensionCoverage=document.getElementById("contextDimensionCoverageReferenceView");
   const investigativeNoisePercentage=document.getElementById("investigativeNoisePercentageReferenceView");
   const dataSourceAssurance=document.getElementById("dataSourceAssuranceReferenceView");
+  const eventTypeCoverage=document.getElementById("eventTypeCoverageReferenceView");
+  const requiredFieldCoverage=document.getElementById("requiredFieldCoverageReferenceView");
+  const dataQualityScore=document.getElementById("dataQualityScoreReferenceView");
   if(index) index.hidden=Boolean(detailName);
   if(eccs) eccs.hidden=detailName!=="eccs";
   if(novelty) novelty.hidden=detailName!=="marginal-novelty";
@@ -13595,11 +13739,14 @@ function setReferenceDetailVisibility(detailName){
   if(contextDimensionCoverage) contextDimensionCoverage.hidden=detailName!=="context-dimension-coverage";
   if(investigativeNoisePercentage) investigativeNoisePercentage.hidden=detailName!=="investigative-noise-percentage";
   if(dataSourceAssurance) dataSourceAssurance.hidden=detailName!=="data-source-assurance";
+  if(eventTypeCoverage) eventTypeCoverage.hidden=detailName!=="event-type-coverage";
+  if(requiredFieldCoverage) requiredFieldCoverage.hidden=detailName!=="required-field-coverage";
+  if(dataQualityScore) dataQualityScore.hidden=detailName!=="data-quality-score";
 }
 function showReferenceDetail(detailName){
   setActivePage("reference");
   setReferenceDetailVisibility(detailName);
-  const detailConfig={eccs:{hash:"#eccs-definition",view:"eccsReferenceView"},"marginal-novelty":{hash:"#novelty-definition",view:"marginalNoveltyReferenceView"},icd:{hash:"#icd-definition",view:"icdReferenceView"},pivot:{hash:"#pivot-definition",view:"pivotReferenceView"},"timestamp-quality":{hash:"#timestamp-definition",view:"timestampQualityReferenceView"},"log-format-quality":{hash:"#format-definition",view:"logFormatQualityReferenceView"},"datetime-format":{hash:"#datetime-format-definition",view:"datetimeFormatReferenceView"},"datetime-parse":{hash:"#datetime-parse-definition",view:"datetimeParseReferenceView"},"line-break":{hash:"#line-break-definition",view:"lineBreakReferenceView"},"log-format-parse":{hash:"#log-format-parse-definition",view:"logFormatParseReferenceView"},"line-length":{hash:"#line-length-definition",view:"lineLengthReferenceView"},"semantic-value":{hash:"#semantic-value-definition",view:"semanticValueReferenceView"},"response-readiness":{hash:"#rri-definition",view:"responseReadinessReferenceView"},"operational-assurance":{hash:"#oai-definition",view:"operationalAssuranceReferenceView"},"threat-detection":{hash:"#tdi-definition",view:"threatDetectionReferenceView"},"business-impact-level":{hash:"#bil-definition",view:"businessImpactLevelReferenceView"},"cyber-value-index":{hash:"#cvi-definition",view:"cyberValueIndexReferenceView"},"log-source-cyber-value":{hash:"#lscv-definition",view:"logSourceCyberValueReferenceView"},"entity-coverage":{hash:"#entity-definition",view:"entityCoverageReferenceView"},"identity-diversity":{hash:"#identity-definition",view:"identityDiversityReferenceView"},"investigation-breadth":{hash:"#ibs-definition",view:"investigationBreadthReferenceView"},"context-dimension-coverage":{hash:"#cdc-definition",view:"contextDimensionCoverageReferenceView"},"investigative-noise-percentage":{hash:"#inp-definition",view:"investigativeNoisePercentageReferenceView"},"data-source-assurance":{hash:"#dsa-definition",view:"dataSourceAssuranceReferenceView"}};
+  const detailConfig={eccs:{hash:"#eccs-definition",view:"eccsReferenceView"},"marginal-novelty":{hash:"#novelty-definition",view:"marginalNoveltyReferenceView"},icd:{hash:"#icd-definition",view:"icdReferenceView"},pivot:{hash:"#pivot-definition",view:"pivotReferenceView"},"timestamp-quality":{hash:"#timestamp-definition",view:"timestampQualityReferenceView"},"log-format-quality":{hash:"#format-definition",view:"logFormatQualityReferenceView"},"datetime-format":{hash:"#datetime-format-definition",view:"datetimeFormatReferenceView"},"datetime-parse":{hash:"#datetime-parse-definition",view:"datetimeParseReferenceView"},"line-break":{hash:"#line-break-definition",view:"lineBreakReferenceView"},"log-format-parse":{hash:"#log-format-parse-definition",view:"logFormatParseReferenceView"},"line-length":{hash:"#line-length-definition",view:"lineLengthReferenceView"},"semantic-value":{hash:"#semantic-value-definition",view:"semanticValueReferenceView"},"response-readiness":{hash:"#rri-definition",view:"responseReadinessReferenceView"},"operational-assurance":{hash:"#oai-definition",view:"operationalAssuranceReferenceView"},"threat-detection":{hash:"#tdi-definition",view:"threatDetectionReferenceView"},"business-impact-level":{hash:"#bil-definition",view:"businessImpactLevelReferenceView"},"cyber-value-index":{hash:"#cvi-definition",view:"cyberValueIndexReferenceView"},"log-source-cyber-value":{hash:"#lscv-definition",view:"logSourceCyberValueReferenceView"},"entity-coverage":{hash:"#entity-definition",view:"entityCoverageReferenceView"},"identity-diversity":{hash:"#identity-definition",view:"identityDiversityReferenceView"},"investigation-breadth":{hash:"#ibs-definition",view:"investigationBreadthReferenceView"},"context-dimension-coverage":{hash:"#cdc-definition",view:"contextDimensionCoverageReferenceView"},"investigative-noise-percentage":{hash:"#inp-definition",view:"investigativeNoisePercentageReferenceView"},"data-source-assurance":{hash:"#dsa-definition",view:"dataSourceAssuranceReferenceView"},"event-type-coverage":{hash:"#etc-definition",view:"eventTypeCoverageReferenceView"},"required-field-coverage":{hash:"#rfc-definition",view:"requiredFieldCoverageReferenceView"},"data-quality-score":{hash:"#dqs-definition",view:"dataQualityScoreReferenceView"}};
   const config=detailConfig[detailName]||detailConfig.eccs;
   if(history.replaceState) history.replaceState(null,"",config.hash);
   requestAnimationFrame(()=>document.getElementById(config.view)?.scrollIntoView({behavior:"smooth",block:"start"}));
