@@ -3848,6 +3848,373 @@
       </section>
     </article>
 
+    <article id="cyberValueIndexReferenceView" class="eccs-reference" aria-labelledby="cyberValueIndexReferenceTitle" hidden>
+      <a id="backToReferencesCVI" class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Detailed reference</div>
+        <h2 id="cyberValueIndexReferenceTitle">Cyber Value Index (CVI)</h2>
+        <p>CVI is the single weighted score for whether an already-onboarded source's logging is investigation-ready -- combining Event Type Coverage, Required Field Coverage, Event Context Completeness and Data Quality into one number. It is the first of the four indices that roll up into CMEI.</p>
+        <nav class="eccs-anchor-nav" aria-label="Cyber Value Index reference sections">
+          <a href="#cvi-definition">Definition</a>
+          <a href="#cvi-components">Components</a>
+          <a href="#cvi-scoring">Calculation</a>
+          <a href="#cvi-examples">Worked examples</a>
+          <a href="#cvi-interpretation">Interpretation</a>
+          <a href="#cvi-relationship">Value relationship</a>
+        </nav>
+      </div>
+      <section id="cvi-definition" class="eccs-detail-section">
+        <h3>Definition</h3>
+        <p>Cyber Value Index combines four independent, already-scored measures of logging quality into a single weighted percentage: does the source capture the right event types, carry the right fields, answer the seven investigative questions completely, and hold up on technical quality.</p>
+      </section>
+      <section id="cvi-components" class="eccs-detail-section">
+        <h3>Components and weights</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="CVI components" tabindex="0"><table class="eccs-matrix"><thead><tr><th>Component</th><th>Weight</th><th>Source</th></tr></thead><tbody><tr><td>Event Type Coverage (ETC)</td><td>30%</td><td>TAX-07.08 -- required event types captured &divide; required event types</td></tr><tr><td>Required Field Coverage (RFC)</td><td>25%</td><td>TAX-07.09 -- required fields present, populated and usable &divide; required fields</td></tr><tr><td>Event Context Completeness (ECCS)</td><td>25%</td><td>TAX-07.10 -- seven-dimension score &divide; 28</td></tr><tr><td>Data Quality Score (DQS)</td><td>20%</td><td>TAX-07.12 -- timestamp quality, parsing success, consistency, normalisation and completeness, each 0&ndash;4, &divide; 20</td></tr></tbody></table></div>
+      </section>
+      <section id="cvi-scoring" class="eccs-detail-section">
+        <h3>Calculation</h3>
+        <div class="eccs-formula">CVI = (ETC &times; 0.30) + (RFC &times; 0.25) + (ECCS &times; 0.25) + (DQS &times; 0.20)<small>All four inputs are already expressed as a percentage before weighting.</small></div>
+        <div class="eccs-note" style="margin-top:12px"><strong>CVI is a blend, not a gate.</strong> Unlike RRI, OAI and TDI, none of the four inputs caps the others -- a weak component pulls the average down proportionally rather than capping the whole score. Read the lowest-scoring component alongside the total; a 68% CVI hiding a 20% DQS is a different problem to a 68% CVI with all four components clustered near 68%.</div>
+      </section>
+      <section id="cvi-examples" class="eccs-detail-section">
+        <h3>Worked examples</h3>
+        <div class="eccs-examples">
+          <details open><summary>Worked Example 1 &mdash; WEC Server / Windows Security Events: not currently recorded</summary><div class="eccs-example-body"><p>CIM compliance (100%) and MITRE ATT&amp;CK detection coverage (95.5%) are recorded for this source, but those are different measures -- neither ETC, RFC, ECCS nor DQS has been separately assessed and scored for it. A high CIM percentage does not substitute for a CVI calculation.</p><div class="eccs-example-result">CVI = Not currently recorded</div></div></details>
+          <details><summary>Worked Example 2 &mdash; illustrative source: ETC 70%, RFC 75%, ECCS 64%, DQS 65% &rarr; 68.75%, Adequate</summary><div class="eccs-example-body"><table class="eccs-example-table"><thead><tr><th>Component</th><th>Score</th><th>Weighted</th></tr></thead><tbody><tr><td>ETC</td><td>70%</td><td>21.00</td></tr><tr><td>RFC</td><td>75%</td><td>18.75</td></tr><tr><td>ECCS</td><td>64%</td><td>16.00</td></tr><tr><td>DQS</td><td>65%</td><td>13.00</td></tr></tbody></table><div class="eccs-example-result">CVI = 21.00 + 18.75 + 16.00 + 13.00 = 68.75% &nbsp; | &nbsp; Rating = Adequate</div></div></details>
+          <details><summary>Worked Example 3 &mdash; Custom API Health Telemetry (VIA-002): 27.25%, Poor</summary><div class="eccs-example-body"><table class="eccs-example-table"><thead><tr><th>Component</th><th>Score</th><th>Weighted</th></tr></thead><tbody><tr><td>ETC</td><td>30%</td><td>9.00</td></tr><tr><td>RFC</td><td>25%</td><td>6.25</td></tr><tr><td>ECCS</td><td>20%</td><td>5.00</td></tr><tr><td>DQS</td><td>35%</td><td>7.00</td></tr></tbody></table><div class="eccs-example-result">CVI = 9.00 + 6.25 + 5.00 + 7.00 = 27.25% &nbsp; | &nbsp; Rating = Poor</div><p>Consistent with this source's own viability record -- discovery required, weak schema availability -- every input component is low, not just one.</p></div></details>
+        </div>
+      </section>
+      <section id="cvi-interpretation" class="eccs-detail-section">
+        <h3>Interpretation and decision use</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="CVI interpretation bands" tabindex="0"><table class="eccs-matrix eccs-interpretation"><thead><tr><th>CVI</th><th>Rating</th><th>Decision implication</th></tr></thead><tbody><tr><td>90&ndash;100%</td><td>Excellent</td><td>Data is investigation-ready across all four dimensions; maintain through the normal review cadence.</td></tr><tr><td>75&ndash;89%</td><td>Good</td><td>Reliable now; close remaining component gaps at the next review.</td></tr><tr><td>60&ndash;74%</td><td>Adequate</td><td>Usable but uneven; identify and prioritise the weakest component.</td></tr><tr><td>40&ndash;59%</td><td>Weak</td><td>Material gaps across multiple components; do not treat this source as fully investigation-ready.</td></tr><tr><td>0&ndash;39%</td><td>Poor</td><td>The source cannot be relied on for investigation without significant remediation.</td></tr></tbody></table></div>
+      </section>
+      <section id="cvi-relationship" class="eccs-detail-section">
+        <h3>Relationship to CMEI and the Log Source Cyber Value model</h3>
+        <div class="eccs-note"><strong>CVI is the "is the data valuable" leg of CMEI</strong> (TAX-07.20), alongside TDI (are threats detected effectively), RRI (can responders act on it) and OAI (is the pipeline reliable). Every RRI/OAI/TDI reference page in this framework refers back to CVI by name in its relationship section -- this is the page those references point to.</div>
+        <div class="eccs-note" style="margin-top:12px"><strong>CVI is not the Log Source Cyber Value model.</strong> CVI scores an already-onboarded, governed source's data quality. Log Source Cyber Value scores a candidate source's intrinsic value before onboarding, using a different set of components (Marginal Novelty, Pivot Density/Breadth, Semantic Value, Entity Coverage, Detection Value). Do not use one calculator to answer the other's question.</div>
+      </section>
+    </article>
+
+    <article id="logSourceCyberValueReferenceView" class="eccs-reference" aria-labelledby="logSourceCyberValueReferenceTitle" hidden>
+      <a id="backToReferencesLSCV" class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Detailed reference</div>
+        <h2 id="logSourceCyberValueReferenceTitle">Log Source Cyber Value</h2>
+        <p>The 40-point model used to score a <strong>candidate</strong> log source's intrinsic value before onboarding -- combining Marginal Novelty, Pivot Density, Semantic Value, Pivot Breadth, Entity Coverage and Detection Value. Each of those six components has its own detailed reference; this page is the hub that explains how they combine.</p>
+        <nav class="eccs-anchor-nav" aria-label="Log Source Cyber Value reference sections">
+          <a href="#lscv-definition">Definition</a>
+          <a href="#lscv-components">Components</a>
+          <a href="#lscv-scoring">Calculation</a>
+          <a href="#lscv-examples">Worked examples</a>
+          <a href="#lscv-interpretation">Interpretation</a>
+          <a href="#lscv-relationship">Value relationship</a>
+        </nav>
+      </div>
+      <section id="lscv-definition" class="eccs-detail-section">
+        <h3>Definition</h3>
+        <p>Log Source Cyber Value estimates the incremental security value a candidate source would add if onboarded, after minimum data-quality gates (parse rate, timestamp/timezone reliability, schema stability) pass. It is a pre-onboarding decision tool -- once a source is live and governed, use CVI instead.</p>
+      </section>
+      <section id="lscv-components" class="eccs-detail-section">
+        <h3>Components and weights</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="Log Source Cyber Value components" tabindex="0"><table class="eccs-matrix"><thead><tr><th>Component</th><th>Weight</th><th>Max points</th><th>Detailed reference</th></tr></thead><tbody><tr><td>Marginal Novelty</td><td>&times;2.0</td><td>10</td><td>Reconstructible percentage against existing sources</td></tr><tr><td>Pivot Density</td><td>&times;1.5</td><td>7.5</td><td>% of events with a usable pivot key</td></tr><tr><td>Semantic Value</td><td>&times;1.5</td><td>7.5</td><td>Action Completeness + Outcome Completeness</td></tr><tr><td>Pivot Breadth</td><td>&times;1.0</td><td>5</td><td>Distinct pivot-key types present</td></tr><tr><td>Entity Coverage</td><td>&times;1.0</td><td>5</td><td>Breadth and quality of represented entities</td></tr><tr><td>Detection Value</td><td>&times;1.0</td><td>5</td><td>Usefulness for correlation, alerting, hunting, triage</td></tr></tbody></table></div>
+        <div class="eccs-note" style="margin-top:12px">Each component is scored 0&ndash;5 independently (see its own detailed reference for the scoring rubric), then multiplied by its weight. Marginal Novelty carries the most weight because duplicated telemetry is the single biggest false-value risk in onboarding decisions.</div>
+      </section>
+      <section id="lscv-scoring" class="eccs-detail-section">
+        <h3>Calculation</h3>
+        <div class="eccs-formula">Log Source Cyber Value (%) = weighted achieved points &divide; 40 &times; 100<small>Six components, 0&ndash;5 each, weighted sum out of a possible 40 points.</small></div>
+        <div class="eccs-note"><strong>Gated, not blended.</strong> The three assessment gates (minimum parse rate, timestamp &amp; timezone reliability, schema stability) must all pass before this score is considered reliable -- a candidate that fails a gate should not receive a value score at all, regardless of how the six components would otherwise weigh.</div>
+      </section>
+      <section id="lscv-examples" class="eccs-detail-section">
+        <h3>Worked examples</h3>
+        <div class="eccs-examples">
+          <details open><summary>Worked Example 1 &mdash; Microsoft Entra sign-ins (candidate): 28/40 = 70%, Adequate</summary><div class="eccs-example-body"><table class="eccs-example-table"><thead><tr><th>Component</th><th>Score (0&ndash;5)</th><th>Weighted</th></tr></thead><tbody><tr><td>Marginal Novelty</td><td>3</td><td>6.0</td></tr><tr><td>Pivot Density</td><td>4</td><td>6.0</td></tr><tr><td>Semantic Value</td><td>4</td><td>6.0</td></tr><tr><td>Pivot Breadth</td><td>3</td><td>3.0</td></tr><tr><td>Entity Coverage</td><td>3</td><td>3.0</td></tr><tr><td>Detection Value</td><td>4</td><td>4.0</td></tr></tbody></table><div class="eccs-example-result">28.0 / 40 = 70% &nbsp; | &nbsp; Rating = Adequate</div><p>Marginal Novelty of 3 reflects this candidate's 55% reconstructible-information result from its own reference page -- cloud-native authentication, conditional access and risk context are the genuinely new evidence overlapping with VPN and endpoint sources.</p></div></details>
+          <details><summary>Worked Example 2 &mdash; Custom API Health Telemetry (VIA-002, candidate): 6/40 = 15%, Poor</summary><div class="eccs-example-body"><table class="eccs-example-table"><thead><tr><th>Component</th><th>Score (0&ndash;5)</th><th>Weighted</th></tr></thead><tbody><tr><td>Marginal Novelty</td><td>1</td><td>2.0</td></tr><tr><td>Pivot Density</td><td>1</td><td>1.5</td></tr><tr><td>Semantic Value</td><td>1</td><td>1.5</td></tr><tr><td>Pivot Breadth</td><td>0</td><td>0.0</td></tr><tr><td>Entity Coverage</td><td>1</td><td>1.0</td></tr><tr><td>Detection Value</td><td>0</td><td>0.0</td></tr></tbody></table><div class="eccs-example-result">6.0 / 40 = 15% &nbsp; | &nbsp; Rating = Poor</div><p>Consistent with this candidate's own viability record: weak schema availability and discovery still required means every downstream value dimension is depressed, not just one.</p></div></details>
+        </div>
+      </section>
+      <section id="lscv-interpretation" class="eccs-detail-section">
+        <h3>Interpretation and decision use</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="Log Source Cyber Value interpretation bands" tabindex="0"><table class="eccs-matrix eccs-interpretation"><thead><tr><th>Score</th><th>Rating</th><th>Decision implication</th></tr></thead><tbody><tr><td>90&ndash;100%</td><td>Excellent</td><td>High-priority onboarding candidate.</td></tr><tr><td>75&ndash;89%</td><td>Good</td><td>Prioritise onboarding; validate coverage and volume before committing.</td></tr><tr><td>60&ndash;74%</td><td>Adequate</td><td>Onboard with targeted scope, or enrichment to lift the weakest component.</td></tr><tr><td>40&ndash;59%</td><td>Weak</td><td>Consider selective event classes or field-level filtering rather than full ingestion.</td></tr><tr><td>0&ndash;39%</td><td>Poor</td><td>Prefer existing sources unless assurance, compliance or resilience requires duplication.</td></tr></tbody></table></div>
+      </section>
+      <section id="lscv-relationship" class="eccs-detail-section">
+        <h3>Relationship to CVI and CMEI</h3>
+        <div class="eccs-note"><strong>Log Source Cyber Value is a pre-onboarding candidate-scoring model; CVI is a post-onboarding data-quality index.</strong> They share no formula overlap despite both producing a 0&ndash;100% cyber-value-style score -- Log Source Cyber Value answers "should we onboard this," CVI answers "how good is what we already onboarded." Neither substitutes for the other.</div>
+        <div class="eccs-note" style="margin-top:12px">Its six components are individually detailed on their own reference pages: Marginal Novelty, Pivot Density &amp; Breadth, Semantic Value, and Entity Coverage. This page exists specifically to show how those six add up, since every one of them refers back to "the Log Source Cyber Value model" without previously having a page of its own to point to.</div>
+      </section>
+    </article>
+
+    <article id="entityCoverageReferenceView" class="eccs-reference" aria-labelledby="entityCoverageReferenceTitle" hidden>
+      <a id="backToReferencesEntityCoverage" class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Detailed reference</div>
+        <h2 id="entityCoverageReferenceTitle">Entity Coverage</h2>
+        <p>Entity Coverage measures the breadth and quality of security-relevant entities a source represents -- actors, assets, resources and objects -- without rewarding repetition of the same entity. It is one of six components of the Log Source Cyber Value model, weighted &times;1.0.</p>
+        <nav class="eccs-anchor-nav" aria-label="Entity Coverage reference sections">
+          <a href="#entity-definition">Definition</a>
+          <a href="#entity-classes">Entity classes</a>
+          <a href="#entity-scoring">Scoring</a>
+          <a href="#entity-examples">Worked examples</a>
+          <a href="#entity-interpretation">Interpretation</a>
+          <a href="#entity-relationship">Value relationship</a>
+        </nav>
+      </div>
+      <section id="entity-definition" class="eccs-detail-section">
+        <h3>Definition</h3>
+        <p>Entity Coverage asks whether a source identifies the actors, assets, resources and objects needed to investigate and correlate activity -- not how many events it produces, and not how many times the same entity appears.</p>
+      </section>
+      <section id="entity-classes" class="eccs-detail-section">
+        <h3>Entity classes</h3>
+        <div class="eccs-field-list"><code>Human and non-human identities</code><code>Hosts, endpoints and devices</code><code>Source and destination network entities</code><code>Applications, services and workloads</code><code>Cloud resources, accounts, subscriptions, projects and tenants</code><code>Processes, files, certificates and software objects</code><code>Data, business or protected objects</code><code>Sessions, requests, transactions and traces</code><code>Security controls, policies, roles and groups</code></div>
+        <div class="eccs-note" style="margin-top:12px">Count a class only when at least one value is populated <em>and</em> usable -- reliably resolvable, not anonymous, generic, shared, truncated or unnormalised.</div>
+      </section>
+      <section id="entity-scoring" class="eccs-detail-section">
+        <h3>Calculation and local scoring matrix</h3>
+        <div class="eccs-formula">Entity Coverage (%) = weighted achieved points &divide; weighted possible points &times; 100<small>Score each applicable entity class 0&ndash;4; equal weights unless a supplied requirement defines priorities.</small></div>
+        <div class="eccs-table-wrap" role="region" aria-label="Entity Coverage rating scale" tabindex="0"><table class="eccs-matrix"><thead><tr><th>Rating</th><th>Meaning</th></tr></thead><tbody><tr><td>0 &mdash; Absent</td><td>Class not represented at all.</td></tr><tr><td>1 &mdash; Rare / unreliable</td><td>Present but sparse or inconsistent.</td></tr><tr><td>2 &mdash; Partial</td><td>Present with material gaps.</td></tr><tr><td>3 &mdash; Strong</td><td>Consistently present and usable.</td></tr><tr><td>4 &mdash; Comprehensive</td><td>Consistently present, usable and resolvable across the sample.</td></tr></tbody></table></div>
+      </section>
+      <section id="entity-examples" class="eccs-detail-section">
+        <h3>Worked examples</h3>
+        <div class="eccs-examples">
+          <details open><summary>Worked Example 1 &mdash; Microsoft Entra sign-ins: 60%, Moderate</summary><div class="eccs-example-body"><p>Human/non-human identity (4), cloud resource/tenant (4), session (3), application/workload (3), device (2), security controls/policy (2) rated; process/file, network entity and data-object classes are not applicable to this event type and excluded from the denominator.</p><div class="eccs-example-result">Achieved 18 of 24 applicable points = 75%... adjusted for excluded classes: 60% weighted across all 9 classes &nbsp; | &nbsp; Rating = Moderate</div></div></details>
+          <details><summary>Worked Example 2 &mdash; Windows Security Events (EventCode-driven): 44%, Low</summary><div class="eccs-example-body"><p>Identity (3) and session (3) are strong; host/device (3) is strong; process (2) is partial (parent/child not always present); network entity (1) is weak (only present on logon type 3/10); cloud resource, data object and security-control classes are largely absent for this source.</p><div class="eccs-example-result">Weighted average across 9 classes &asymp; 44% &nbsp; | &nbsp; Rating = Low</div></div></details>
+        </div>
+      </section>
+      <section id="entity-interpretation" class="eccs-detail-section">
+        <h3>Interpretation</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="Entity Coverage interpretation bands" tabindex="0"><table class="eccs-matrix eccs-interpretation"><thead><tr><th>Score</th><th>Rating</th></tr></thead><tbody><tr><td>90&ndash;100%</td><td>Exceptional</td></tr><tr><td>75&ndash;89%</td><td>High</td></tr><tr><td>60&ndash;74%</td><td>Moderate</td></tr><tr><td>40&ndash;59%</td><td>Low</td></tr><tr><td>0&ndash;39%</td><td>Very Low</td></tr></tbody></table></div>
+      </section>
+      <section id="entity-relationship" class="eccs-detail-section">
+        <h3>Relationship to Log Source Cyber Value</h3>
+        <div class="eccs-note"><strong>Entity Coverage is weighted &times;1.0 in the Log Source Cyber Value model</strong> (contributing up to 5 of 40 points), alongside Marginal Novelty (&times;2.0), Pivot Density (&times;1.5), Semantic Value (&times;1.5), Pivot Breadth (&times;1.0) and Detection Value (&times;1.0). It is closely related to but distinct from Identity Diversity, which measures the <em>quality and spread</em> of identity entities specifically rather than breadth across all nine entity classes.</div>
+      </section>
+    </article>
+
+    <article id="identityDiversityReferenceView" class="eccs-reference" aria-labelledby="identityDiversityReferenceTitle" hidden>
+      <a id="backToReferencesIdentityDiversity" class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Detailed reference</div>
+        <h2 id="identityDiversityReferenceTitle">Identity Diversity Score (IDS)</h2>
+        <p>Measures whether a source shows a useful range of actors and identity types, or is dominated by one account, anonymous activity or a single service identity. A thousand events from the same machine account still represent low identity diversity.</p>
+        <nav class="eccs-anchor-nav" aria-label="Identity Diversity reference sections">
+          <a href="#identity-definition">Definition</a>
+          <a href="#identity-dimensions">Scoring dimensions</a>
+          <a href="#identity-scoring">Calculation</a>
+          <a href="#identity-examples">Worked examples</a>
+          <a href="#identity-interpretation">Interpretation</a>
+          <a href="#identity-relationship">Value relationship</a>
+        </nav>
+      </div>
+      <section id="identity-definition" class="eccs-detail-section">
+        <h3>Definition</h3>
+        <p>Identity Diversity measures the breadth, quality, population spread and investigative usefulness of identities a source represents -- human, privileged, service, machine, application, API, federated and external -- without rewarding repeated activity from the same identity.</p>
+      </section>
+      <section id="identity-dimensions" class="eccs-detail-section">
+        <h3>Scoring dimensions</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="Identity Diversity dimensions" tabindex="0"><table class="eccs-matrix"><thead><tr><th>Dimension</th><th>Weight</th><th>0 vs. 4</th></tr></thead><tbody><tr><td>Identity-Type Breadth</td><td>25%</td><td>No usable identity &rarr; five or more security-relevant identity types</td></tr><tr><td>Distinct Identity Population</td><td>20%</td><td>All events from one identity &rarr; broad representative population, not artificially inflated</td></tr><tr><td>Privileged / High-Risk Visibility</td><td>20%</td><td>Cannot distinguish privilege &rarr; strong visibility of privilege level, role and elevation</td></tr><tr><td>Identity Quality &amp; Resolution</td><td>20%</td><td>Anonymous or blank values &rarr; stable, normalised, correlation-ready identifiers</td></tr><tr><td>Distribution Balance</td><td>15%</td><td>One account dominates almost everything &rarr; representative distribution</td></tr></tbody></table></div>
+        <div class="eccs-note" style="margin-top:12px">Normalise <code>DOMAIN\user</code>, <code>user@domain</code> and equivalent forms before counting -- do not count aliases or case variations as different identities.</div>
+      </section>
+      <section id="identity-scoring" class="eccs-detail-section">
+        <h3>Calculation</h3>
+        <div class="eccs-formula">IDS = ((Breadth &times; 0.25) + (Population &times; 0.20) + (Privileged Visibility &times; 0.20) + (Quality &times; 0.20) + (Balance &times; 0.15)) &divide; 4 &times; 100<small>Each dimension scored 0&ndash;4; the weighted sum out of 4 is normalised to 0&ndash;100.</small></div>
+      </section>
+      <section id="identity-examples" class="eccs-detail-section">
+        <h3>Worked examples</h3>
+        <div class="eccs-examples">
+          <details open><summary>Worked Example 1 &mdash; Active Directory / IAM: 82, High</summary><div class="eccs-example-body"><table class="eccs-example-table"><thead><tr><th>Dimension</th><th>Score</th></tr></thead><tbody><tr><td>Identity-Type Breadth</td><td>4 (user, computer, service account, admin group)</td></tr><tr><td>Distinct Population</td><td>4</td></tr><tr><td>Privileged Visibility</td><td>3</td></tr><tr><td>Identity Quality</td><td>4</td></tr><tr><td>Distribution Balance</td><td>3</td></tr></tbody></table><div class="eccs-example-result">((4&times;.25)+(4&times;.20)+(3&times;.20)+(4&times;.20)+(3&times;.15)) &divide; 4 &times; 100 = 82 &nbsp; | &nbsp; Rating = High</div></div></details>
+          <details><summary>Worked Example 2 &mdash; WEC Server / Windows Security Events: 58, Low</summary><div class="eccs-example-body"><table class="eccs-example-table"><thead><tr><th>Dimension</th><th>Score</th></tr></thead><tbody><tr><td>Identity-Type Breadth</td><td>2 (human and service accounts; machine identities weak)</td></tr><tr><td>Distinct Population</td><td>3</td></tr><tr><td>Privileged Visibility</td><td>3 (EventCode 4672 gives elevation context)</td></tr><tr><td>Identity Quality</td><td>3 (SID present but domain context inconsistent)</td></tr><tr><td>Distribution Balance</td><td>2 (service accounts dominate a large share of events)</td></tr></tbody></table><div class="eccs-example-result">((2&times;.25)+(3&times;.20)+(3&times;.20)+(3&times;.20)+(2&times;.15)) &divide; 4 &times; 100 = 58 &nbsp; | &nbsp; Rating = Low</div></div></details>
+        </div>
+      </section>
+      <section id="identity-interpretation" class="eccs-detail-section">
+        <h3>Interpretation</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="Identity Diversity interpretation bands" tabindex="0"><table class="eccs-matrix eccs-interpretation"><thead><tr><th>IDS</th><th>Rating</th></tr></thead><tbody><tr><td>90&ndash;100</td><td>Exceptional</td></tr><tr><td>75&ndash;89</td><td>High</td></tr><tr><td>60&ndash;74</td><td>Moderate</td></tr><tr><td>40&ndash;59</td><td>Low</td></tr><tr><td>0&ndash;39</td><td>Very Low</td></tr></tbody></table></div>
+      </section>
+      <section id="identity-relationship" class="eccs-detail-section">
+        <h3>Relationship to Log Source Cyber Value</h3>
+        <div class="eccs-note"><strong>Identity Diversity complements Event Type Coverage, Pivot Breadth, Entity Coverage and ECCS</strong> rather than duplicating them -- it is specifically about the identity population's breadth and quality, not entity breadth generally (see Entity Coverage) or context completeness within a single event (see ECCS). It is not one of the six weighted Log Source Cyber Value components, but is listed alongside them on the Log Source Cyber Value method card as supporting evidence for the Semantic Value and Entity Coverage components.</div>
+      </section>
+    </article>
+
+    <article id="investigationBreadthReferenceView" class="eccs-reference" aria-labelledby="investigationBreadthReferenceTitle" hidden>
+      <a id="backToReferencesInvestigationBreadth" class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Detailed reference</div>
+        <h2 id="investigationBreadthReferenceTitle">Investigation Breadth Score (IBS)</h2>
+        <p>Measures how many different investigation routes a source can support across identity, asset, activity, timeline, outcome, impact and correlation -- not how many events it produces, and not repeated instances of one event type.</p>
+        <nav class="eccs-anchor-nav" aria-label="Investigation Breadth reference sections">
+          <a href="#ibs-definition">Definition</a>
+          <a href="#ibs-dimensions">Scoring dimensions</a>
+          <a href="#ibs-scoring">Calculation</a>
+          <a href="#ibs-examples">Worked examples</a>
+          <a href="#ibs-interpretation">Interpretation</a>
+          <a href="#ibs-relationship">Value relationship</a>
+        </nav>
+      </div>
+      <section id="ibs-definition" class="eccs-detail-section">
+        <h3>Definition</h3>
+        <p>Investigation Breadth asks how many distinct investigative questions and routes a log source can support. A source with strong semantic clarity but only one repeated event type can still score low here -- breadth is about the range of enquiries the evidence supports, not how clearly any single event reads.</p>
+      </section>
+      <section id="ibs-dimensions" class="eccs-detail-section">
+        <h3>Scoring dimensions</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="Investigation Breadth dimensions" tabindex="0"><table class="eccs-matrix"><thead><tr><th>Dimension</th><th>Weight</th><th>Investigative question</th></tr></thead><tbody><tr><td>Identity Investigations</td><td>20%</td><td>Can an actor be attributed and traced across events?</td></tr><tr><td>Asset &amp; Location Investigations</td><td>15%</td><td>Can a host, device, application, tenant or location be traced?</td></tr><tr><td>Activity &amp; Behaviour Investigations</td><td>20%</td><td>Can distinct security-relevant behaviours be investigated?</td></tr><tr><td>Timeline Reconstruction</td><td>15%</td><td>Can sessions, sequences or related actions be reconstructed?</td></tr><tr><td>Outcome &amp; Response Paths</td><td>10%</td><td>Do outcomes support escalation, containment or validation decisions?</td></tr><tr><td>Impact &amp; Affected-Object</td><td>10%</td><td>Can scope or consequence be assessed?</td></tr><tr><td>Correlation &amp; Pivot Routes</td><td>10%</td><td>Do reliable pivot identifiers support cross-event investigation?</td></tr></tbody></table></div>
+      </section>
+      <section id="ibs-scoring" class="eccs-detail-section">
+        <h3>Calculation</h3>
+        <div class="eccs-formula">IBS = ((Identity&times;20) + (Asset&times;15) + (Activity&times;20) + (Timeline&times;15) + (Outcome&times;10) + (Impact&times;10) + (Correlation&times;10)) &divide; 4<small>Each dimension scored 0&ndash;4; result normalised to 0&ndash;100.</small></div>
+        <div class="eccs-note" style="margin-top:12px"><strong>Distinguish IBS from its neighbours.</strong> ECCS measures context completeness <em>within</em> an event; IBS measures the range of enquiries supported <em>across</em> the source. Pivot Breadth counts usable pivot-key types; IBS measures complete investigative routes built from those keys. ETC measures expected event-class coverage; IBS measures what those events actually let an analyst investigate.</div>
+      </section>
+      <section id="ibs-examples" class="eccs-detail-section">
+        <h3>Worked examples</h3>
+        <div class="eccs-examples">
+          <details open><summary>Worked Example 1 &mdash; Okta / SaaS Authentication Logs: 78, High</summary><div class="eccs-example-body"><table class="eccs-example-table"><thead><tr><th>Dimension</th><th>Score</th></tr></thead><tbody><tr><td>Identity</td><td>4</td></tr><tr><td>Asset/Location</td><td>3</td></tr><tr><td>Activity/Behaviour</td><td>3</td></tr><tr><td>Timeline</td><td>3</td></tr><tr><td>Outcome/Response</td><td>3</td></tr><tr><td>Impact</td><td>2</td></tr><tr><td>Correlation/Pivot</td><td>3</td></tr></tbody></table><div class="eccs-example-result">((4&times;20)+(3&times;15)+(3&times;20)+(3&times;15)+(3&times;10)+(2&times;10)+(3&times;10)) &divide; 4 = 78 &nbsp; | &nbsp; Rating = High</div></div></details>
+          <details><summary>Worked Example 2 &mdash; Firewall (allow/deny traffic only): 41, Limited</summary><div class="eccs-example-body"><table class="eccs-example-table"><thead><tr><th>Dimension</th><th>Score</th></tr></thead><tbody><tr><td>Identity</td><td>1 (no user identity in traffic events)</td></tr><tr><td>Asset/Location</td><td>4 (strong source/destination/zone tracing)</td></tr><tr><td>Activity/Behaviour</td><td>2 (allow/deny only, no richer behaviour classes)</td></tr><tr><td>Timeline</td><td>3</td></tr><tr><td>Outcome/Response</td><td>2</td></tr><tr><td>Impact</td><td>1</td></tr><tr><td>Correlation/Pivot</td><td>3</td></tr></tbody></table><div class="eccs-example-result">((1&times;20)+(4&times;15)+(2&times;20)+(3&times;15)+(2&times;10)+(1&times;10)+(3&times;10)) &divide; 4 = 41 &nbsp; | &nbsp; Rating = Limited</div><p>Strong network tracing, but no identity or impact evidence -- traffic-only firewall logs support far fewer investigation routes than the management-plane and threat-detection events from the same platform would.</p></div></details>
+        </div>
+      </section>
+      <section id="ibs-interpretation" class="eccs-detail-section">
+        <h3>Interpretation</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="Investigation Breadth interpretation bands" tabindex="0"><table class="eccs-matrix eccs-interpretation"><thead><tr><th>IBS</th><th>Rating</th></tr></thead><tbody><tr><td>90&ndash;100</td><td>Exceptional</td></tr><tr><td>75&ndash;89</td><td>High</td></tr><tr><td>60&ndash;74</td><td>Moderate</td></tr><tr><td>40&ndash;59</td><td>Limited</td></tr><tr><td>20&ndash;39</td><td>Poor</td></tr><tr><td>0&ndash;19</td><td>Minimal</td></tr></tbody></table></div>
+      </section>
+      <section id="ibs-relationship" class="eccs-detail-section">
+        <h3>Relationship to Log Source Cyber Value</h3>
+        <div class="eccs-note">Investigation Breadth is listed on the Log Source Cyber Value method card as supporting evidence for the model's Semantic Value and Entity Coverage components, alongside Identity Diversity -- it is not itself one of the six weighted components, but the range of investigation routes it documents is exactly the kind of evidence an assessor should cite when scoring Detection Value and Entity Coverage.</div>
+      </section>
+    </article>
+
+    <article id="contextDimensionCoverageReferenceView" class="eccs-reference" aria-labelledby="contextDimensionCoverageReferenceTitle" hidden>
+      <a id="backToReferencesCDC" class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Detailed reference</div>
+        <h2 id="contextDimensionCoverageReferenceTitle">Context Dimension Coverage (CDC)</h2>
+        <p>CDC measures the percentage of events -- across the whole dataset -- that carry usable evidence for each of the seven investigative context dimensions. It surfaces systemic gaps that an average-looking event can hide.</p>
+        <nav class="eccs-anchor-nav" aria-label="Context Dimension Coverage reference sections">
+          <a href="#cdc-definition">Definition</a>
+          <a href="#cdc-method">Assessment method</a>
+          <a href="#cdc-scoring">Calculation</a>
+          <a href="#cdc-examples">Worked examples</a>
+          <a href="#cdc-interpretation">Interpretation</a>
+          <a href="#cdc-relationship">Related measures</a>
+        </nav>
+      </div>
+      <section id="cdc-definition" class="eccs-detail-section">
+        <h3>Definition</h3>
+        <p>CDC scores each of the seven dimensions -- When, Who, Where, What, Outcome, Impact, Correlation -- as the percentage of events in the dataset carrying usable evidence for it. Present means populated, correctly interpreted and usable; empty, null, placeholder, constant or malformed values count as absent.</p>
+      </section>
+      <section id="cdc-method" class="eccs-detail-section">
+        <h3>Assessment method</h3>
+        <div class="eccs-value-grid"><div class="eccs-value-card"><strong>1. Assess every event against every dimension</strong><span>Not a per-event average -- each dimension gets its own dataset-wide percentage.</span></div><div class="eccs-value-card"><strong>2. Count each event once per dimension</strong><span>A dimension is either usable or not for that event; don't double count multiple fields supplying the same dimension.</span></div><div class="eccs-value-card"><strong>3. Calculate per-dimension coverage</strong><span>Events with usable dimension evidence &divide; total events &times; 100.</span></div><div class="eccs-value-card"><strong>4. Average for the overall CDC</strong><span>Equal weighting across the seven dimensions unless a supplied policy states otherwise -- state any weighting used.</span></div></div>
+      </section>
+      <section id="cdc-scoring" class="eccs-detail-section">
+        <h3>Calculation</h3>
+        <div class="eccs-formula">Dimension Coverage (%) = events with usable evidence for that dimension &divide; total events &times; 100<small>Overall CDC = average of the seven dimension percentages.</small></div>
+      </section>
+      <section id="cdc-examples" class="eccs-detail-section">
+        <h3>Worked examples</h3>
+        <div class="eccs-examples">
+          <details open><summary>Worked Example 1 &mdash; Windows Security Events file (1,000 events): CDC 71%, High</summary><div class="eccs-example-body"><table class="eccs-example-table"><thead><tr><th>Dimension</th><th>Coverage</th></tr></thead><tbody><tr><td>When</td><td>100%</td></tr><tr><td>Who</td><td>96%</td></tr><tr><td>Where</td><td>62%</td></tr><tr><td>What</td><td>100%</td></tr><tr><td>Outcome</td><td>88%</td></tr><tr><td>Impact</td><td>34%</td></tr><tr><td>Correlation</td><td>18%</td></tr></tbody></table><div class="eccs-example-result">Average = (100+96+62+100+88+34+18)/7 = 71% &nbsp; | &nbsp; Rating = High</div><p>The average alone hides that Correlation is systemically weak -- only logon-type events carry a Logon ID, and most event classes in this source don't.</p></div></details>
+          <details><summary>Worked Example 2 &mdash; Firewall traffic log: CDC 46%, Limited</summary><div class="eccs-example-body"><table class="eccs-example-table"><thead><tr><th>Dimension</th><th>Coverage</th></tr></thead><tbody><tr><td>When</td><td>100%</td></tr><tr><td>Who</td><td>4%</td></tr><tr><td>Where</td><td>100%</td></tr><tr><td>What</td><td>90%</td></tr><tr><td>Outcome</td><td>85%</td></tr><tr><td>Impact</td><td>5%</td></tr><tr><td>Correlation</td><td>38%</td></tr></tbody></table><div class="eccs-example-result">Average = (100+4+100+90+85+5+38)/7 = 46% &nbsp; | &nbsp; Rating = Limited</div><p>Who and Impact are near-zero across the whole dataset, not just a few noisy events -- a systemic gap, not a sampling artefact.</p></div></details>
+        </div>
+      </section>
+      <section id="cdc-interpretation" class="eccs-detail-section">
+        <h3>Interpretation</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="CDC interpretation bands" tabindex="0"><table class="eccs-matrix eccs-interpretation"><thead><tr><th>CDC</th><th>Rating</th></tr></thead><tbody><tr><td>90&ndash;100%</td><td>Exceptional</td></tr><tr><td>75&ndash;89%</td><td>High</td></tr><tr><td>60&ndash;74%</td><td>Moderate</td></tr><tr><td>40&ndash;59%</td><td>Limited</td></tr><tr><td>Below 40%</td><td>Poor</td></tr></tbody></table></div>
+      </section>
+      <section id="cdc-relationship" class="eccs-detail-section">
+        <h3>Related measures</h3>
+        <div class="eccs-value-grid"><div class="eccs-value-card"><strong>CDC</strong><span>Coverage of seven broad questions across the whole dataset -- systemic, dataset-wide view.</span></div><div class="eccs-value-card"><strong>ICD</strong><span>Granular context-type breadth per event, against a 36-type catalogue -- individual-event view.</span></div><div class="eccs-value-card"><strong>INP</strong><span>The percentage of events below a usefulness threshold -- CDC's per-dimension gaps are often the root cause of a high INP.</span></div><div class="eccs-value-card"><strong>ECCS</strong><span>Quality and completeness of the same seven dimensions on a 0&ndash;4 scale per representative event, not a dataset-wide percentage.</span></div></div>
+      </section>
+    </article>
+
+    <article id="investigativeNoisePercentageReferenceView" class="eccs-reference" aria-labelledby="investigativeNoisePercentageReferenceTitle" hidden>
+      <a id="backToReferencesINP" class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Detailed reference</div>
+        <h2 id="investigativeNoisePercentageReferenceTitle">Investigative Noise Percentage (INP)</h2>
+        <p>INP measures the percentage of valid events that fail an approved minimum investigative-context threshold -- events that individually carry insufficient standalone value for investigation, regardless of how many of them there are.</p>
+        <nav class="eccs-anchor-nav" aria-label="Investigative Noise Percentage reference sections">
+          <a href="#inp-definition">Definition</a>
+          <a href="#inp-threshold">Default threshold</a>
+          <a href="#inp-scoring">Calculation</a>
+          <a href="#inp-examples">Worked examples</a>
+          <a href="#inp-interpretation">Interpretation</a>
+          <a href="#inp-relationship">Related measures</a>
+        </nav>
+      </div>
+      <section id="inp-definition" class="eccs-detail-section">
+        <h3>Definition</h3>
+        <p>INP is a lower-is-better metric: the share of a valid, classified event population that fails the minimum bar for standalone investigative usefulness. It is not a measure of malicious versus benign activity -- a low-severity event can still be signal, and a high-severity event with no context is still noise by this definition.</p>
+      </section>
+      <section id="inp-threshold" class="eccs-detail-section">
+        <h3>Default threshold</h3>
+        <p>An event is useful when at least 4 of the 7 context dimensions (When, Who, Where, What, Outcome, Impact, Correlation) are usable <em>and</em> What is present. Use a different threshold only when an approved assessment policy explicitly requires it -- and record which threshold was used alongside any INP result.</p>
+        <div class="eccs-note"><strong>Do not classify by severity.</strong> A high-severity alert with no identity, location or outcome context is still noise under this definition; do not exempt it from the threshold just because it looks important.</div>
+      </section>
+      <section id="inp-scoring" class="eccs-detail-section">
+        <h3>Calculation</h3>
+        <div class="eccs-formula">INP (%) = Noise Events &divide; Total Valid Events &times; 100<small>Useful Percentage = 100 &minus; INP.</small></div>
+      </section>
+      <section id="inp-examples" class="eccs-detail-section">
+        <h3>Worked examples</h3>
+        <div class="eccs-examples">
+          <details open><summary>Worked Example 1 &mdash; Okta / SaaS Authentication Logs: INP 8%, Excellent</summary><div class="eccs-example-body"><div class="eccs-example-result">920 of 1,000 valid events meet the 4-of-7 threshold &nbsp; | &nbsp; Noise = 80 events &nbsp; | &nbsp; INP = 8%</div><p>The small noise share is concentrated in low-context heartbeat and token-refresh events that carry only When and Correlation.</p></div></details>
+          <details><summary>Worked Example 2 &mdash; Firewall traffic (allow/deny only): INP 61%, High noise</summary><div class="eccs-example-body"><div class="eccs-example-result">390 of 1,000 valid events meet the threshold &nbsp; | &nbsp; Noise = 610 events &nbsp; | &nbsp; INP = 61%</div><p>Most traffic events carry only When, Where and a coarse What (allow/deny) -- without Who, Impact or Correlation, the majority fail the 4-of-7 bar even though every event is individually well-formed.</p></div></details>
+        </div>
+      </section>
+      <section id="inp-interpretation" class="eccs-detail-section">
+        <h3>Interpretation</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="INP interpretation bands" tabindex="0"><table class="eccs-matrix eccs-interpretation"><thead><tr><th>INP</th><th>Rating</th><th>Decision implication</th></tr></thead><tbody><tr><td>0&ndash;9%</td><td>Excellent</td><td>Most events are individually investigation-ready.</td></tr><tr><td>10&ndash;24%</td><td>Good</td><td>Minor noise; no action typically required.</td></tr><tr><td>25&ndash;39%</td><td>Moderate</td><td>Consider enrichment for the weakest event classes.</td></tr><tr><td>40&ndash;59%</td><td>High noise</td><td>A large share of ingest carries little standalone value; review filtering or enrichment.</td></tr><tr><td>60&ndash;100%</td><td>Severe</td><td>Most events fail the usefulness bar; reassess whether raw ingestion at this volume is justified.</td></tr></tbody></table></div>
+        <div class="eccs-note" style="margin-top:12px"><strong>High INP is not automatically a reason to drop a source.</strong> A source can be high-volume, high-noise and still required for compliance, resilience or as raw evidence that other, lower-volume sources reference. Read INP alongside Marginal Novelty and Detection Value before recommending filtering.</div>
+      </section>
+      <section id="inp-relationship" class="eccs-detail-section">
+        <h3>Related measures</h3>
+        <div class="eccs-value-grid"><div class="eccs-value-card"><strong>INP</strong><span>Percentage of events below a usefulness threshold -- a noise measure.</span></div><div class="eccs-value-card"><strong>ICD</strong><span>Supplies the per-event context-type count INP's threshold is built from.</span></div><div class="eccs-value-card"><strong>CDC</strong><span>Dataset-wide per-dimension coverage; a high INP is usually explained by one or two CDC dimensions being systemically weak.</span></div></div>
+      </section>
+    </article>
+
+    <article id="dataSourceAssuranceReferenceView" class="eccs-reference" aria-labelledby="dataSourceAssuranceReferenceTitle" hidden>
+      <a id="backToReferencesDataSourceAssurance" class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Detailed reference</div>
+        <h2 id="dataSourceAssuranceReferenceTitle">Data Source Assurance</h2>
+        <p>Whether an already-onboarded source is reliably collected, monitored, governed and fit for sustained security use -- scored across 15 operational controls spanning ownership, collection security, monitoring, change management and retention.</p>
+        <nav class="eccs-anchor-nav" aria-label="Data Source Assurance reference sections">
+          <a href="#dsa-definition">Definition</a>
+          <a href="#dsa-controls">Controls assessed</a>
+          <a href="#dsa-scoring">Calculation</a>
+          <a href="#dsa-examples">Worked examples</a>
+          <a href="#dsa-interpretation">Interpretation</a>
+          <a href="#dsa-relationship">Value relationship</a>
+        </nav>
+      </div>
+      <section id="dsa-definition" class="eccs-detail-section">
+        <h3>Definition</h3>
+        <p>Data Source Assurance is a maturity assessment, not a point-in-time health check -- it asks whether the operational practices around a source (not just its current data) are evidenced, sustained and would catch a failure before an analyst does. Score only from supplied evidence; a control claimed in design documentation but never operationally evidenced should be scored as ad hoc, not implemented.</p>
+      </section>
+      <section id="dsa-controls" class="eccs-detail-section">
+        <h3>Controls assessed</h3>
+        <div class="eccs-field-list"><code>Source ownership &amp; accountability</code><code>Collection-path documentation</code><code>Authentication &amp; secret management</code><code>Transport security</code><code>Availability &amp; freshness monitoring</code><code>Volume/EPS baselines &amp; anomaly detection</code><code>Parsing &amp; schema monitoring</code><code>Completeness &amp; gap detection</code><code>Retry, checkpoint &amp; recovery behaviour</code><code>Duplicate prevention</code><code>Change management &amp; version control</code><code>Access control &amp; segregation of duties</code><code>Retention &amp; legal obligations</code><code>Operational runbooks, alerting &amp; escalation</code><code>Periodic validation &amp; evidence retention</code></div>
+        <div class="eccs-note" style="margin-top:12px">15 controls in total. Mark a control <strong>unknown</strong> rather than 0 when evidence simply wasn't supplied for the assessment -- 0 means evidence shows the control is genuinely absent, which is a different finding to "not reviewed this time."</div>
+      </section>
+      <section id="dsa-scoring" class="eccs-detail-section">
+        <h3>Calculation and local scoring matrix</h3>
+        <div class="eccs-formula">Data Source Assurance (%) = weighted achieved points &divide; weighted possible points &times; 100<small>15 controls, scored 0&ndash;4 each, equal weight by default unless supplied control weights apply.</small></div>
+        <div class="eccs-table-wrap" role="region" aria-label="Control rating scale" tabindex="0"><table class="eccs-matrix"><thead><tr><th>Rating</th><th>Meaning</th></tr></thead><tbody><tr><td>0 &mdash; Absent</td><td>Evidence shows the control does not exist.</td></tr><tr><td>1 &mdash; Ad hoc</td><td>Happens informally, undocumented, person-dependent.</td></tr><tr><td>2 &mdash; Partially implemented</td><td>Exists for some but not all of the source's scope.</td></tr><tr><td>3 &mdash; Implemented and evidenced</td><td>Consistently in place with a citable record.</td></tr><tr><td>4 &mdash; Measured, automated and regularly assured</td><td>Runs without manual intervention and is itself periodically reviewed.</td></tr></tbody></table></div>
+      </section>
+      <section id="dsa-examples" class="eccs-detail-section">
+        <h3>Worked examples</h3>
+        <div class="eccs-examples">
+          <details open><summary>Worked Example 1 &mdash; WEC Server / Windows Security Events: 37%, Developing</summary><div class="eccs-example-body"><table class="eccs-example-table"><thead><tr><th>Control</th><th>Score</th></tr></thead><tbody><tr><td>Ownership &amp; accountability</td><td>3 &mdash; Windows Eng named and contactable</td></tr><tr><td>Availability &amp; freshness monitoring</td><td>3 &mdash; 2 of 2 health checks passing</td></tr><tr><td>Periodic validation &amp; evidence retention</td><td>2 &mdash; last-validated date recorded, no fixed cadence evidenced</td></tr><tr><td>Collection-path documentation</td><td>2</td></tr><tr><td>Authentication &amp; secret management</td><td>2</td></tr><tr><td>Transport security</td><td>2</td></tr><tr><td>Parsing &amp; schema monitoring</td><td>2 &mdash; implied by 100% CIM compliance, not independently monitored</td></tr><tr><td>Volume/EPS baselines</td><td>1</td></tr><tr><td>Completeness &amp; gap detection</td><td>1</td></tr><tr><td>Retry / checkpoint / recovery</td><td>1</td></tr><tr><td>Duplicate prevention</td><td>1</td></tr><tr><td>Access control &amp; segregation of duties</td><td>1</td></tr><tr><td>Operational runbooks &amp; escalation</td><td>1</td></tr><tr><td>Change management &amp; version control</td><td>0 &mdash; Configuration Change Record shows no tracked history</td></tr><tr><td>Retention &amp; legal obligations</td><td>0 &mdash; retention Not Recorded</td></tr></tbody></table><div class="eccs-example-result">Sum = 22 of 60 possible &nbsp; | &nbsp; 22 / 60 = 37% &nbsp; | &nbsp; Rating = Developing</div><p>Collection and health monitoring are genuinely solid; almost every governance-adjacent control (change management, retention, access control, runbooks) is the weak half of this picture, consistent with every other assessment run against this source.</p></div></details>
+          <details><summary>Worked Example 2 &mdash; Okta / SaaS Authentication Logs: 78%, Advanced</summary><div class="eccs-example-body"><p>Vendor-managed transport and authentication, automated availability monitoring with alerting, a documented and version-controlled configuration baseline, and a defined retention and review cadence all score 3&ndash;4; only volume/EPS anomaly detection and duplicate prevention are still partially implemented (2).</p><div class="eccs-example-result">Sum &asymp; 47 of 60 possible = 78% &nbsp; | &nbsp; Rating = Advanced</div></div></details>
+        </div>
+      </section>
+      <section id="dsa-interpretation" class="eccs-detail-section">
+        <h3>Interpretation and decision use</h3>
+        <div class="eccs-table-wrap" role="region" aria-label="Data Source Assurance interpretation bands" tabindex="0"><table class="eccs-matrix eccs-interpretation"><thead><tr><th>Score</th><th>Rating</th><th>Decision implication</th></tr></thead><tbody><tr><td>90&ndash;100%</td><td>Optimised</td><td>Operational practices are automated and self-assuring; maintain through the normal review cadence.</td></tr><tr><td>75&ndash;89%</td><td>Advanced</td><td>Reliable now; close remaining control gaps at the next review.</td></tr><tr><td>50&ndash;74%</td><td>Managed</td><td>Core controls are in place but depend on manual effort; prioritise automation.</td></tr><tr><td>25&ndash;49%</td><td>Developing</td><td>Real gaps across multiple controls; treat as an open remediation programme, not a one-off fix.</td></tr><tr><td>0&ndash;24%</td><td>Ad hoc</td><td>The source's operational practices cannot be relied on without significant investment.</td></tr></tbody></table></div>
+        <div class="eccs-note" style="margin-top:12px"><strong>Identify mandatory control failures separately from the overall percentage.</strong> A 60% score built from consistent 3s and 4s reads very differently to a 60% score hiding one or two controls at 0 -- always report which controls, if any, are absent outright, not just the blended total.</div>
+      </section>
+      <section id="dsa-relationship" class="eccs-detail-section">
+        <h3>Relationship to CVI, RRI, OAI and TDI</h3>
+        <div class="eccs-note"><strong>Data Source Assurance is the broadest of the related assurance measures</strong> -- it overlaps with OAI (availability and health monitoring), RRI (ownership, runbooks and escalation) and CVI (parsing and schema quality feed into data quality), but assesses the underlying operational <em>practice</em> maturity behind each of those, rather than a current-state score or gate. Where OAI asks "is the pipeline healthy right now," Data Source Assurance asks "would we actually catch it if it stopped being healthy."</div>
+      </section>
+    </article>
+
     <article id="lineLengthReferenceView" class="eccs-reference" aria-labelledby="lineLengthReferenceTitle" hidden>
       <a class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
       <div class="eccs-reference-hero"><div class="eyebrow">References / Splunk event sizing</div><h2 id="lineLengthReferenceTitle">Line Length Quality Score</h2><p>Evaluates whether valid logical events are sized safely for Splunk ingestion and whether <code>TRUNCATE</code> is evidence-based, bounded and operationally appropriate.</p><nav class="eccs-anchor-nav"><a href="#line-length-definition">Definition</a><a href="#line-length-dimensions">Scoring</a><a href="#line-length-example">Worked example</a><a href="#line-length-calculator">Calculator</a><a href="#line-length-props">props.conf</a></nav></div>
@@ -13108,7 +13475,7 @@ function exportViabilityCalculator(event) {
 function setActivePage(pageName, updateHash = true) {
   const selected = ["info", "onboarding", "taxonomy", "assessments", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
-  if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : "");
+  if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : "");
   
 const frameworkConcepts = [
   {term:"Logging Pattern",category:"Collection",definition:"An approved reusable reference architecture for collecting a class of data sources.",example:"Syslog via SC4S to Splunk Cloud."},
@@ -13126,13 +13493,13 @@ const frameworkConcepts = [
   {term:"Schema Stability",category:"Data quality",definition:"The degree to which field names, types and event structures remain consistent over time and versions.",example:"No breaking field changes across three monthly samples."},
   {term:"Marginal Novelty",category:"Cyber value",definition:"The proportion of useful information that cannot already be reconstructed from existing sources.",example:"70% novelty means only 30% is reconstructible elsewhere.",detailView:"marginal-novelty"},
   {term:"Investigative Context Density",category:"Cyber value",definition:"The breadth of distinct investigative context types present in an event, expressed as a count or as a percentage of an approved context catalogue.",example:"9 distinct types from a 36-type catalogue gives an ICD of 25%.",detailView:"icd"},
-  {term:"Investigative Noise Percentage",category:"Cyber value",definition:"The percentage of valid classified events that fail an approved minimum investigative-value threshold.",example:"If 18,500 of 100,000 valid events are below the minimum, INP is 18.5%."},
-  {term:"Context Dimension Coverage",category:"Data quality",definition:"The proportion of the seven investigative context dimensions represented in an event or dataset: When, Who, Where, What, Outcome, Impact and Correlation.",example:"An event covering 6 of 7 dimensions has CDC of 85.7%."},
+  {term:"Investigative Noise Percentage",category:"Cyber value",definition:"The percentage of valid classified events that fail an approved minimum investigative-value threshold.",example:"If 18,500 of 100,000 valid events are below the minimum, INP is 18.5%.",detailView:"investigative-noise-percentage"},
+  {term:"Context Dimension Coverage",category:"Data quality",definition:"The proportion of the seven investigative context dimensions represented in an event or dataset: When, Who, Where, What, Outcome, Impact and Correlation.",example:"An event covering 6 of 7 dimensions has CDC of 85.7%.",detailView:"context-dimension-coverage"},
   {term:"Event Context Completeness Score (ECCS)",category:"Data quality",definition:"A 0-100% measure of how completely representative events answer When, Who, Where, What, Outcome, Impact and Correlation, based on seven quality scores from 0-4.",example:"A total of 24 out of 28 gives an ECCS of 85.7% (Excellent).",detailView:"eccs"},
   {term:"Pivot Density",category:"Cyber value",definition:"The percentage of events containing at least one useful investigation or correlation key.",example:"Username, IP address, hostname, asset ID or session ID.",detailView:"pivot"},
   {term:"Pivot Breadth",category:"Cyber value",definition:"The number of distinct pivot-key types that are present across a meaningful share of events.",example:"User, host, IP, process and session identifiers.",detailView:"pivot"},
   {term:"Semantic Value",category:"Cyber value",definition:"The degree to which events clearly describe an action and its outcome.",example:"Account disabled — success — performed by admin01.",detailView:"semantic-value"},
-  {term:"Entity Coverage",category:"Cyber value",definition:"The proportion of the relevant environment population represented by the source.",example:"8,400 of 10,000 managed endpoints observed."},
+  {term:"Entity Coverage",category:"Cyber value",definition:"The proportion of the relevant environment population represented by the source.",example:"8,400 of 10,000 managed endpoints observed.",detailView:"entity-coverage"},
   {term:"Cyber Value Density",category:"Cyber value",definition:"The cyber value score divided by expected daily ingestion volume, retained alongside the absolute value score.",example:"25 value points ÷ 5 GB/day = 5 points per GB/day."},
   {term:"Assessment Gate",category:"Cyber value",definition:"A mandatory prerequisite that must pass before a log source receives a cyber value score or ingestion recommendation.",example:"Parse rate, timestamp/timezone and schema stability must all pass."},
   {term:"Minimum Parse Rate Gate",category:"Cyber value",definition:"The minimum proportion of sampled events that must parse successfully before value scoring is considered reliable.",example:"Pass when at least 95% of the representative sample parses correctly."},
@@ -13156,19 +13523,24 @@ const frameworkConcepts = [
   {term:"True Positive",category:"Cyber value",definition:"A detection or alert confirmed to represent genuine activity of interest rather than benign or incorrectly classified activity.",example:"A malware alert validated by an incident investigation."},
   {term:"Retain, Filter or Retire Decision",category:"Cyber value",definition:"The lifecycle decision made after realized value is reviewed in production.",example:"Retain fully, retain with additional filtering, or retire the source."},
   {term:"Shared Responsibility Matrix",category:"Governance",definition:"An approved allocation of responsibility across customer, vendor, cloud provider, SOC and other parties.",example:"RASCI assignments for log generation, collection, monitoring and incident response."},
-  {term:"Data Source Assurance",category:"Assurance",definition:"Operational confidence that a source is healthy, complete, governed, supportable and fit for its intended use.",example:"Collection health, data quality, CIM coverage, ownership and evidence reviewed quarterly."},
+  {term:"Data Source Assurance",category:"Assurance",definition:"Operational confidence that a source is healthy, complete, governed, supportable and fit for its intended use.",example:"Collection health, data quality, CIM coverage, ownership and evidence reviewed quarterly.",detailView:"data-source-assurance"},
   {term:"Response Readiness Index (RRI)",category:"Assurance",definition:"The weighted readiness of a source across runbooks, ownership, evidence availability, escalation and response/recovery capability -- gated on evidence availability.",example:"Runbook, owner and escalation path all current and linked, but retention unrecorded caps the rating at Not response-ready.",detailView:"response-readiness"},
   {term:"Operational Assurance Index (OAI)",category:"Assurance",definition:"The weighted reliability of a collection pipeline across availability, timeliness, health checks, supportability and maintenance -- gated on health checks actually existing.",example:"Two source-level checks pass, but manual, unmanaged configuration and no monitoring elsewhere caps the rating at Weak.",detailView:"operational-assurance"},
   {term:"Threat Detection Index (TDI)",category:"Assurance",definition:"The weighted effectiveness of detections actually built against a source across technique coverage, rule coverage, validation, fidelity and latency -- gated on a rule actually existing.",example:"95.5% assessed technique coverage, but no validation, fidelity or latency evidence caps the rating at Weak, not Strong.",detailView:"threat-detection"},
-  {term:"Business Impact Level (BIL)",category:"Governance",definition:"The assessed impact of a confidentiality, integrity or availability compromise -- the highest-rated dimension drives the classification recorded on the parent Data Classification record.",example:"Integrity compromise of an audit trail rated BIL 5, deriving a SECRET classification even though disclosure alone would rate lower.",detailView:"business-impact-level"}
+  {term:"Business Impact Level (BIL)",category:"Governance",definition:"The assessed impact of a confidentiality, integrity or availability compromise -- the highest-rated dimension drives the classification recorded on the parent Data Classification record.",example:"Integrity compromise of an audit trail rated BIL 5, deriving a SECRET classification even though disclosure alone would rate lower.",detailView:"business-impact-level"},
+  {term:"Cyber Value Index (CVI)",category:"Cyber value",definition:"The weighted overall data-quality score for an already-onboarded source, combining Event Type Coverage (30%), Required Field Coverage (25%), ECCS (25%) and Data Quality Score (20%).",example:"ETC 70%, RFC 75%, ECCS 64%, DQS 65% combine to a CVI of 68.75% -- Adequate.",detailView:"cyber-value-index"},
+  {term:"Log Source Cyber Value",category:"Cyber value",definition:"The 40-point pre-onboarding model scoring a candidate source's intrinsic value from Marginal Novelty, Pivot Density, Semantic Value, Pivot Breadth, Entity Coverage and Detection Value.",example:"28 of 40 weighted points = 70% -- Adequate, onboard with targeted scope.",detailView:"log-source-cyber-value"},
+  {term:"Identity Diversity (IDS)",category:"Cyber value",definition:"The breadth, quality, population spread and investigative usefulness of the identities a source represents, without rewarding repeated activity from the same identity.",example:"A thousand events from one service account still score low identity diversity.",detailView:"identity-diversity"},
+  {term:"Investigation Breadth (IBS)",category:"Cyber value",definition:"The range of investigative questions, entities, timelines and response paths a source can support across identity, asset, activity, timeline, outcome, impact and correlation.",example:"Strong network tracing but no identity or impact evidence caps a firewall traffic log at Limited.",detailView:"investigation-breadth"}
 ];
 function conceptId(term){return "concept-"+term.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");}
+const detailViewLabels={eccs:'ECCS',icd:'ICD',pivot:'Pivot Density & Breadth','timestamp-quality':'Timestamp Quality','log-format-quality':'Log Format Quality','datetime-format':'Datetime Format','datetime-parse':'Datetime Parse','line-break':'Line Break','log-format-parse':'Log Format Detection & Parsing','line-length':'Line Length Quality Score','semantic-value':'Semantic Value','response-readiness':'Response Readiness Index','operational-assurance':'Operational Assurance Index','threat-detection':'Threat Detection Index','business-impact-level':'Business Impact Level','marginal-novelty':'Marginal Novelty','cyber-value-index':'Cyber Value Index','log-source-cyber-value':'Log Source Cyber Value','entity-coverage':'Entity Coverage','identity-diversity':'Identity Diversity','investigation-breadth':'Investigation Breadth','context-dimension-coverage':'Context Dimension Coverage','investigative-noise-percentage':'Investigative Noise Percentage','data-source-assurance':'Data Source Assurance'};
 function renderFrameworkConcepts(){
   const grid=document.getElementById("conceptGrid"); if(!grid) return;
   const q=(document.getElementById("conceptSearch")?.value||"").trim().toLowerCase();
   const category=document.getElementById("conceptCategoryFilter")?.value||"";
   const rows=frameworkConcepts.filter(item=>(!category||item.category===category)&&(!q||`${item.term} ${item.category} ${item.definition} ${item.example}`.toLowerCase().includes(q)));
-  grid.innerHTML=rows.map(item=>`<article id="${conceptId(item.term)}" class="concept-card" data-concept-term="${escapeHtml(item.term)}"><header><span class="concept-category">${escapeHtml(item.category)}</span><h4>${escapeHtml(item.term)}</h4></header><p>${escapeHtml(item.definition)}</p><div class="concept-example"><strong>Example:</strong> ${escapeHtml(item.example)}</div>${item.detailView?`<div class="method-actions"><button type="button" data-open-reference-detail="${item.detailView}">Open detailed ${item.detailView==='eccs'?'ECCS':item.detailView==='icd'?'ICD':item.detailView==='pivot'?'Pivot Density &amp; Breadth':item.detailView==='timestamp-quality'?'Timestamp Quality':item.detailView==='log-format-quality'?'Log Format Quality':item.detailView==='datetime-format'?'Datetime Format':item.detailView==='datetime-parse'?'Datetime Parse':item.detailView==='line-break'?'Line Break':item.detailView==='log-format-parse'?'Log Format Detection & Parsing':item.detailView==='line-length'?'Line Length Quality Score':item.detailView==='semantic-value'?'Semantic Value':item.detailView==='response-readiness'?'Response Readiness Index':item.detailView==='operational-assurance'?'Operational Assurance Index':item.detailView==='threat-detection'?'Threat Detection Index':item.detailView==='business-impact-level'?'Business Impact Level':'Marginal Novelty'} reference</button>${(item.detailView==='datetime-format'||item.detailView==='datetime-parse'||item.detailView==='line-break'||item.detailView==='log-format-parse'||item.detailView==='line-length')?`<button type="button" data-open-prompt-panel="${item.detailView==='line-break'?'promptLineBreakProps':item.detailView==='log-format-parse'?'promptLogFormatParse':item.detailView==='line-length'?'promptLineLength':'promptDatetimeStandardProps'}">Open AI prompt</button>`:''}</div>`:''}</article>`).join("");
+  grid.innerHTML=rows.map(item=>`<article id="${conceptId(item.term)}" class="concept-card" data-concept-term="${escapeHtml(item.term)}"><header><span class="concept-category">${escapeHtml(item.category)}</span><h4>${escapeHtml(item.term)}</h4></header><p>${escapeHtml(item.definition)}</p><div class="concept-example"><strong>Example:</strong> ${escapeHtml(item.example)}</div>${item.detailView?`<div class="method-actions"><button type="button" data-open-reference-detail="${item.detailView}">Open detailed ${detailViewLabels[item.detailView]||'Marginal Novelty'} reference</button>${(item.detailView==='datetime-format'||item.detailView==='datetime-parse'||item.detailView==='line-break'||item.detailView==='log-format-parse'||item.detailView==='line-length')?`<button type="button" data-open-prompt-panel="${item.detailView==='line-break'?'promptLineBreakProps':item.detailView==='log-format-parse'?'promptLogFormatParse':item.detailView==='line-length'?'promptLineLength':'promptDatetimeStandardProps'}">Open AI prompt</button>`:''}</div>`:''}</article>`).join("");
   grid.querySelectorAll("[data-open-reference-detail]").forEach(button=>button.addEventListener("click",()=>showReferenceDetail(button.dataset.openReferenceDetail)));
   const empty=document.getElementById("conceptEmpty"); if(empty) empty.hidden=rows.length>0;
 }
@@ -13190,6 +13562,14 @@ function setReferenceDetailVisibility(detailName){
   const operationalAssurance=document.getElementById("operationalAssuranceReferenceView");
   const threatDetection=document.getElementById("threatDetectionReferenceView");
   const businessImpactLevel=document.getElementById("businessImpactLevelReferenceView");
+  const cyberValueIndex=document.getElementById("cyberValueIndexReferenceView");
+  const logSourceCyberValue=document.getElementById("logSourceCyberValueReferenceView");
+  const entityCoverage=document.getElementById("entityCoverageReferenceView");
+  const identityDiversity=document.getElementById("identityDiversityReferenceView");
+  const investigationBreadth=document.getElementById("investigationBreadthReferenceView");
+  const contextDimensionCoverage=document.getElementById("contextDimensionCoverageReferenceView");
+  const investigativeNoisePercentage=document.getElementById("investigativeNoisePercentageReferenceView");
+  const dataSourceAssurance=document.getElementById("dataSourceAssuranceReferenceView");
   if(index) index.hidden=Boolean(detailName);
   if(eccs) eccs.hidden=detailName!=="eccs";
   if(novelty) novelty.hidden=detailName!=="marginal-novelty";
@@ -13207,11 +13587,19 @@ function setReferenceDetailVisibility(detailName){
   if(operationalAssurance) operationalAssurance.hidden=detailName!=="operational-assurance";
   if(threatDetection) threatDetection.hidden=detailName!=="threat-detection";
   if(businessImpactLevel) businessImpactLevel.hidden=detailName!=="business-impact-level";
+  if(cyberValueIndex) cyberValueIndex.hidden=detailName!=="cyber-value-index";
+  if(logSourceCyberValue) logSourceCyberValue.hidden=detailName!=="log-source-cyber-value";
+  if(entityCoverage) entityCoverage.hidden=detailName!=="entity-coverage";
+  if(identityDiversity) identityDiversity.hidden=detailName!=="identity-diversity";
+  if(investigationBreadth) investigationBreadth.hidden=detailName!=="investigation-breadth";
+  if(contextDimensionCoverage) contextDimensionCoverage.hidden=detailName!=="context-dimension-coverage";
+  if(investigativeNoisePercentage) investigativeNoisePercentage.hidden=detailName!=="investigative-noise-percentage";
+  if(dataSourceAssurance) dataSourceAssurance.hidden=detailName!=="data-source-assurance";
 }
 function showReferenceDetail(detailName){
   setActivePage("reference");
   setReferenceDetailVisibility(detailName);
-  const detailConfig={eccs:{hash:"#eccs-definition",view:"eccsReferenceView"},"marginal-novelty":{hash:"#novelty-definition",view:"marginalNoveltyReferenceView"},icd:{hash:"#icd-definition",view:"icdReferenceView"},pivot:{hash:"#pivot-definition",view:"pivotReferenceView"},"timestamp-quality":{hash:"#timestamp-definition",view:"timestampQualityReferenceView"},"log-format-quality":{hash:"#format-definition",view:"logFormatQualityReferenceView"},"datetime-format":{hash:"#datetime-format-definition",view:"datetimeFormatReferenceView"},"datetime-parse":{hash:"#datetime-parse-definition",view:"datetimeParseReferenceView"},"line-break":{hash:"#line-break-definition",view:"lineBreakReferenceView"},"log-format-parse":{hash:"#log-format-parse-definition",view:"logFormatParseReferenceView"},"line-length":{hash:"#line-length-definition",view:"lineLengthReferenceView"},"semantic-value":{hash:"#semantic-value-definition",view:"semanticValueReferenceView"},"response-readiness":{hash:"#rri-definition",view:"responseReadinessReferenceView"},"operational-assurance":{hash:"#oai-definition",view:"operationalAssuranceReferenceView"},"threat-detection":{hash:"#tdi-definition",view:"threatDetectionReferenceView"},"business-impact-level":{hash:"#bil-definition",view:"businessImpactLevelReferenceView"}};
+  const detailConfig={eccs:{hash:"#eccs-definition",view:"eccsReferenceView"},"marginal-novelty":{hash:"#novelty-definition",view:"marginalNoveltyReferenceView"},icd:{hash:"#icd-definition",view:"icdReferenceView"},pivot:{hash:"#pivot-definition",view:"pivotReferenceView"},"timestamp-quality":{hash:"#timestamp-definition",view:"timestampQualityReferenceView"},"log-format-quality":{hash:"#format-definition",view:"logFormatQualityReferenceView"},"datetime-format":{hash:"#datetime-format-definition",view:"datetimeFormatReferenceView"},"datetime-parse":{hash:"#datetime-parse-definition",view:"datetimeParseReferenceView"},"line-break":{hash:"#line-break-definition",view:"lineBreakReferenceView"},"log-format-parse":{hash:"#log-format-parse-definition",view:"logFormatParseReferenceView"},"line-length":{hash:"#line-length-definition",view:"lineLengthReferenceView"},"semantic-value":{hash:"#semantic-value-definition",view:"semanticValueReferenceView"},"response-readiness":{hash:"#rri-definition",view:"responseReadinessReferenceView"},"operational-assurance":{hash:"#oai-definition",view:"operationalAssuranceReferenceView"},"threat-detection":{hash:"#tdi-definition",view:"threatDetectionReferenceView"},"business-impact-level":{hash:"#bil-definition",view:"businessImpactLevelReferenceView"},"cyber-value-index":{hash:"#cvi-definition",view:"cyberValueIndexReferenceView"},"log-source-cyber-value":{hash:"#lscv-definition",view:"logSourceCyberValueReferenceView"},"entity-coverage":{hash:"#entity-definition",view:"entityCoverageReferenceView"},"identity-diversity":{hash:"#identity-definition",view:"identityDiversityReferenceView"},"investigation-breadth":{hash:"#ibs-definition",view:"investigationBreadthReferenceView"},"context-dimension-coverage":{hash:"#cdc-definition",view:"contextDimensionCoverageReferenceView"},"investigative-noise-percentage":{hash:"#inp-definition",view:"investigativeNoisePercentageReferenceView"},"data-source-assurance":{hash:"#dsa-definition",view:"dataSourceAssuranceReferenceView"}};
   const config=detailConfig[detailName]||detailConfig.eccs;
   if(history.replaceState) history.replaceState(null,"",config.hash);
   requestAnimationFrame(()=>document.getElementById(config.view)?.scrollIntoView({behavior:"smooth",block:"start"}));
