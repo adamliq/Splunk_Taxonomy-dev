@@ -9302,10 +9302,15 @@ const namingPatterns = {
   changeRecord: { label: "Change Record ID", example: "CCR-002", regex: /^CCR-\d{3}$/, help: "Use CCR- followed by exactly three digits." },
   bil: { label: "Business Impact Level ID", example: "BIL-002", regex: /^BIL-\d{3}$/, help: "Use BIL- followed by exactly three digits." },
   soar: { label: "SOAR Integration ID", example: "SOAR-002", regex: /^SOAR-\d{3}$/, help: "Use SOAR- followed by exactly three digits." },
+  dependency: { label: "Dependency ID", example: "DEP-007", regex: /^DEP-\d{3}$/, help: "Use DEP- followed by exactly three digits." },
+  onboarding: { label: "Onboarding ID", example: "ONB-005", regex: /^ONB-\d{3}$/, help: "Use ONB- followed by exactly three digits." },
+  viability: { label: "Viability Assessment ID", example: "VIA-001", regex: /^VIA-\d{3}$/, help: "Use VIA- followed by exactly three digits." },
   requiredEventType: { label: "Required SIEM Event Type ID", example: "SRC-010-EVT-004-01", regex: /^SRC-\d{3}-EVT-\d{3}-\d{2}$/, help: "Use SRC-###-EVT-###-## matching the parent source family, requirement and sequence." },
   test: { label: "Health Test ID", example: "TC-HEC-004", regex: /^TC-[A-Z0-9]{2,8}-\d{3}$/, help: "Use TC-<TYPE>-### with an approved uppercase type code." },
   health: { label: "Event Health Check", example: "HC_entra_signin_freshness", regex: /^HC_[a-z0-9]+(?:_[a-z0-9]+){2,5}$/, help: "Use HC_<platform>_<source>_<check> with lowercase words and underscores." },
   detection: { label: "Detection Use Case ID", example: "DET-IDM-012", regex: /^DET-[A-Z0-9]{2,12}-\d{3}$/, help: "Use DET-<DOMAIN>-### with an approved uppercase domain code." },
+  detectionSearch: { label: "Detection Search", example: "Identity - Entra ID - Repeated MFA Denial", regex: /^[A-Z][\w/&()]*(?:\s[A-Z][\w/&()]*)*(?:\s-\s[A-Z][\w/&()]*(?:\s[A-Z][\w/&()]*)*){2}$/, help: "Use Title Case segments separated by ' - ': <Domain> - <Platform> - <Behaviour>." },
+  dashboard: { label: "Dashboard", example: "Security - Entra ID - Operations", regex: /^[A-Z][\w/&()]*(?:\s[A-Z][\w/&()]*)*(?:\s-\s[A-Z][\w/&()]*(?:\s[A-Z][\w/&()]*)*){2}$/, help: "Use Title Case segments separated by ' - ': <Domain> - <Platform> - <Audience>." },
   index: { label: "Index", example: "aws_cloudtrail", regex: /^[a-z][a-z0-9_]{0,62}$/, help: "Use lowercase letters, digits and underscores, starting with a letter." },
   sourcetype: { label: "Sourcetype", example: "azure:aad:signin", regex: /^[A-Za-z][A-Za-z0-9_-]*(?::[A-Za-z0-9_-]+){0,3}$/, help: "Prefer vendor:product:dataset. Existing single-token sourcetypes may remain documented exceptions." }
 };
