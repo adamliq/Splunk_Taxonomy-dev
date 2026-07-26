@@ -2538,6 +2538,7 @@
     .reference-link { padding:0; border:0; background:transparent; color:#1d4ed8; text-decoration:underline; text-underline-offset:3px; font-weight:800; white-space:normal; }
     .reference-link:hover { background:transparent; color:#1e3a8a; }
     .reference-empty { padding:24px; border:1px dashed #cbd5e1; border-radius:12px; background:#fff; color:#64748b; text-align:center; }
+    .reference-search-scope { margin: -4px 0 12px; color: #64748b; font-size: 12px; }
     .eccs-reference { padding-bottom:42px; }
     .eccs-reference-hero { padding:24px; border:1px solid #c4b5fd; border-radius:18px; background:linear-gradient(135deg,#0f2034 0%,#1f4e78 58%,#7030a0 100%); color:#fff; box-shadow:var(--shadow); }
     .eccs-reference-hero .eyebrow { color:#dbeafe; }
@@ -3191,16 +3192,17 @@
     <section id="conceptDefinitions" class="reference-section">
       <div class="reference-section-heading"><div><h3>Concepts &amp; definitions</h3><p>Authoritative short definitions for terms introduced by the framework.</p></div></div>
       <div class="concept-toolbar">
-        <input id="conceptSearch" type="search" placeholder="Search concepts, definitions or examples…" aria-label="Search concepts" />
+        <input id="conceptSearch" type="search" placeholder="Search concepts, methodologies, standards…" aria-label="Search the whole reference page" />
         <select id="conceptCategoryFilter" aria-label="Filter concept category"><option value="">All categories</option><option>Collection</option><option>Data quality</option><option>Cyber value</option><option>Governance</option><option>Assurance</option></select>
       </div>
+      <p class="reference-search-scope">Also searches Assessment methodologies and Standards &amp; references below.</p>
       <div id="conceptGrid" class="concept-grid"></div>
       <div id="conceptEmpty" class="reference-empty" hidden>No concepts match the current search.</div>
     </section>
 
     <section id="assessmentMethods" class="reference-section">
       <div class="reference-section-heading"><div><h3>Assessment methodologies</h3><p>Purpose, inputs, outputs and interpretation for each scoring tool.</p></div></div>
-      <div class="method-grid">
+      <div id="assessmentMethodsGrid" class="method-grid">
         <article class="method-card"><h4>Log Onboarding Viability</h4><p>Determines whether engineering should proceed and how complex the engagement is likely to be.</p><ul class="method-list"><li>Security value</li><li>Technical readiness</li><li>Operational assurance</li><li>Engagement complexity</li></ul><div class="method-actions"><button type="button" data-assessment-page="viability">Open assessment</button></div></article>
         <article class="method-card"><h4>Timestamp Quality</h4><p>Scores consistency, timezone, precision, completeness, event-time reliability and Splunk parsing complexity.</p><ul class="method-list"><li>Six criteria scored 0–4</li><li>Total score out of 24</li><li>Exceptional to Fail rating</li></ul><div class="method-actions"><button type="button" data-quality-assessment="timestamp">Open calculator</button><button type="button" data-open-reference-detail="timestamp-quality">Open detailed reference</button><button type="button" data-open-prompt-panel="promptTimestampQuality">Open AI prompt</button></div></article>
         <article class="method-card"><h4>Log Format Quality</h4><p>Measures how consistently and reliably events can be separated, parsed and normalised.</p><ul class="method-list"><li>Structure and delimiters</li><li>Schema and event boundaries</li><li>Encoding and parsing complexity</li></ul><div class="method-actions"><button type="button" data-quality-assessment="format">Open calculator</button><button type="button" data-open-reference-detail="log-format-quality">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLogFormatQuality">Open AI prompt</button></div></article>
@@ -3213,11 +3215,12 @@
         <article class="method-card"><h4>Log Source Cyber Value</h4><p>Measures incremental cyber value and value density after minimum data-quality gates pass.</p><ul class="method-list"><li>Marginal novelty</li><li>Pivot density and breadth</li><li>Semantic value, entity coverage, identity diversity and investigation breadth</li><li><strong>Detection Value</strong>: correlation, alerting, anomaly detection, threat hunting, control validation and triage usefulness</li><li>90-day realised-value review</li></ul><div class="method-actions"><button type="button" data-open-cyber-value>Open calculator</button></div></article>
         <article class="method-card"><h4>Data Source Assurance</h4><p>Measures whether an implemented source remains complete, healthy, governed and useful.</p><ul class="method-list"><li>Collection health</li><li>Data quality</li><li>CIM and detection coverage</li><li>Ownership and evidence</li></ul><div class="method-actions"><button type="button" data-assessment-page="assurance">Open assessment</button></div></article>
       </div>
+      <div id="assessmentMethodsEmpty" class="reference-empty" hidden>No assessment methodologies match the current search.</div>
     </section>
 
     <section id="standardsReferences" class="reference-section">
       <div class="reference-section-heading"><div><h3>Standards &amp; references</h3><p>Record the authoritative sources used to define local requirements and scoring.</p></div></div>
-      <div class="method-grid">
+      <div id="standardsReferencesGrid" class="method-grid">
         <article class="method-card"><h4>Splunk configuration and CIM</h4><p>Use Splunk product documentation, Common Information Model guidance, validated add-on documentation and deployment requirements as implementation references.</p></article>
         <article class="method-card"><h4>Datetime Format</h4><p>Defines the timestamp representation used by the source event, including the literal layout, date standard, precision, timezone expression and example value.</p><ul class="method-list"><li>Raw timestamp example</li><li>Named standard or vendor format</li><li>Timezone and precision</li><li>Equivalent Splunk <code>strptime</code> pattern</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="datetime-format">Open detailed reference</button><button type="button" data-open-prompt-panel="promptDatetimeStandardProps">Open AI prompt</button></div></article>
         <article class="method-card"><h4>Datetime Parse</h4><p>Defines how Splunk locates, interprets and assigns event time for a sourcetype using timestamp parsing settings.</p><ul class="method-list"><li><code>TIME_PREFIX</code></li><li><code>TIME_FORMAT</code></li><li><code>MAX_TIMESTAMP_LOOKAHEAD</code></li><li><code>TZ</code></li></ul><div class="method-actions"><button type="button" data-open-reference-detail="datetime-parse">Open detailed reference</button><button type="button" data-open-prompt-panel="promptDatetimeStandardProps">Open AI prompt</button></div></article>
@@ -3227,6 +3230,7 @@
         <article class="method-card"><h4>Security and logging obligations</h4><p>Map applicable organisational policy, ACSC guidance, ISM controls, incident-response requirements and retention obligations to TAX-02 and TAX-05 records.</p></article>
         <article class="method-card"><h4>Local scoring rubrics</h4><p>Assessment thresholds and weights must carry a rubric version, owner, approval status, calibration date and evidence source. Locally defined scoring should not be presented as an external standard.</p></article>
       </div>
+      <div id="standardsReferencesEmpty" class="reference-empty" hidden>No standards &amp; references match the current search.</div>
     </section>
     </div>
 
@@ -13763,6 +13767,19 @@ function renderFrameworkConcepts(){
   grid.innerHTML=rows.map(item=>`<article id="${conceptId(item.term)}" class="concept-card" data-concept-term="${escapeHtml(item.term)}"><header><span class="concept-category">${escapeHtml(item.category)}</span><h4>${escapeHtml(item.term)}</h4></header><p>${escapeHtml(item.definition)}</p><div class="concept-example"><strong>Example:</strong> ${escapeHtml(item.example)}</div>${item.detailView?`<div class="method-actions"><button type="button" data-open-reference-detail="${item.detailView}">Open detailed ${detailViewLabels[item.detailView]||'Marginal Novelty'} reference</button>${(item.detailView==='datetime-format'||item.detailView==='datetime-parse'||item.detailView==='line-break'||item.detailView==='log-format-parse'||item.detailView==='line-length')?`<button type="button" data-open-prompt-panel="${item.detailView==='line-break'?'promptLineBreakProps':item.detailView==='log-format-parse'?'promptLogFormatParse':item.detailView==='line-length'?'promptLineLength':'promptDatetimeStandardProps'}">Open AI prompt</button>`:''}</div>`:''}</article>`).join("");
   grid.querySelectorAll("[data-open-reference-detail]").forEach(button=>button.addEventListener("click",()=>showReferenceDetail(button.dataset.openReferenceDetail)));
   const empty=document.getElementById("conceptEmpty"); if(empty) empty.hidden=rows.length>0;
+  filterReferenceMethodCards("assessmentMethodsGrid","assessmentMethodsEmpty",q);
+  filterReferenceMethodCards("standardsReferencesGrid","standardsReferencesEmpty",q);
+}
+function filterReferenceMethodCards(gridId,emptyId,q){
+  const grid=document.getElementById(gridId); if(!grid) return;
+  const cards=Array.from(grid.querySelectorAll(".method-card"));
+  let visibleCount=0;
+  cards.forEach(card=>{
+    const match=!q||card.textContent.toLowerCase().includes(q);
+    card.hidden=!match;
+    if(match) visibleCount++;
+  });
+  const empty=document.getElementById(emptyId); if(empty) empty.hidden=visibleCount>0;
 }
 function setReferenceDetailVisibility(detailName){
   const index=document.getElementById("referenceIndexView");
