@@ -878,6 +878,29 @@
     @media (max-width: 1100px) {
       .health-scroll-hint { display: block; }
     }
+    #patternsPage .pattern-table th:first-child,
+    #patternsPage .pattern-table td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      box-shadow: 2px 0 5px rgba(15, 23, 42, .08);
+    }
+    #patternsPage .pattern-table td:first-child { background: #fff; }
+    #patternsPage .pattern-table thead th:first-child { z-index: 4; }
+    .patterns-scroll-hint {
+      display: none;
+      margin: 0 0 8px;
+      padding: 7px 12px;
+      border-radius: 8px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+    }
+    @media (max-width: 1100px) {
+      .patterns-scroll-hint { display: block; }
+    }
     .priority-badge,
     .automation-badge {
       display: inline-flex;
@@ -8907,6 +8930,7 @@ Provide a concise assessment of the overall cyber value of the supplied logging.
       <span class="patterns-stat"><strong>13</strong> comparison columns</span>
     </div>
 
+    <p class="patterns-scroll-hint" aria-hidden="true">&#8596; Swipe sideways to see category, destination, transport and more</p>
     <div class="pattern-table-shell" tabindex="0" aria-label="Scrollable logging patterns table">
       <table class="pattern-table">
         <colgroup><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /></colgroup>
