@@ -3273,6 +3273,7 @@
 <article class="method-card"><h4>Line Break</h4><p>Defines how Splunk separates the incoming data stream into individual events for a sourcetype.</p><ul class="method-list"><li><code>SHOULD_LINEMERGE</code></li><li><code>LINE_BREAKER</code></li><li>Single-line and multiline behaviour</li><li>Boundary validation</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="line-break">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLineBreakProps">Open AI prompt</button></div></article>
 <article class="method-card"><h4>Line Length</h4><p>Measures whether event sizes are safe, consistent and suitable for Splunk ingestion without truncation or accidental merging.</p><ul class="method-list"><li><code>TRUNCATE</code> sizing</li><li>UTF-8 byte length analysis</li><li>Boundary-integrity checks</li><li>Line Length Quality Score</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="line-length">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLineLength">Open AI prompt</button></div></article>
 <article class="method-card"><h4>Log Format Detection & Parsing</h4><p>Defines how Splunk interprets CSV, TSV, JSON, XML, structured, semi-structured and unstructured events after line breaking and timestamp recognition.</p><ul class="method-list"><li>Format detection</li><li>Index-time versus search-time extraction</li><li><code>props.conf</code></li><li>Optional <code>transforms.conf</code></li></ul><div class="method-actions"><button type="button" data-open-reference-detail="log-format-parse">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLogFormatParse">Open AI prompt</button></div></article>
+<article class="method-card"><h4>Log Assessment Framework</h4><p>Reusable line-by-line and event-level procedure for deriving structural conformance from a raw log file using a self-calibrating majority baseline, feeding Timestamp Quality, Log Format Quality and the pre-ingest schema-stability gate.</p><ul class="method-list"><li>Physical line vs logical event</li><li>Per-line dimension extraction</li><li>Majority baseline &amp; conformance scoring</li><li>Common pitfalls checklist</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="log-assessment-framework">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLogAssessmentFramework">Open AI prompt</button></div></article>
         <article class="method-card"><h4>Security and logging obligations</h4><p>Map applicable organisational policy, ACSC guidance, ISM controls, incident-response requirements and retention obligations to TAX-02 and TAX-05 records.</p></article>
         <article class="method-card"><h4>Local scoring rubrics</h4><p>Assessment thresholds and weights must carry a rubric version, owner, approval status, calibration date and evidence source. Locally defined scoring should not be presented as an external standard.</p></article>
       </div>
@@ -4622,7 +4623,7 @@ TZ = Australia/Sydney</pre><p>Where the timestamp already includes an explicit U
 07/21/2026 08:00:12 ...
 1784592013000 ...</pre><div class="eccs-example-result">Representative score: 7 / 24 = 29.2% — Very Poor. Mixed locale order and undocumented epoch units create material parsing and ordering risk.</div></div></details>
       </div></section>
-      <section id="timestamp-splunk" class="eccs-detail-section"><h3>Splunk parsing guidance</h3><div class="eccs-note"><strong>Only propose settings supported by the sample.</strong> Record <code>TIME_PREFIX</code> when a stable prefix exists, <code>TIME_FORMAT</code> when the format is known, and <code>MAX_TIMESTAMP_LOOKAHEAD</code> as the number of characters Splunk must inspect from the prefix to the end of the timestamp. Validate against representative events and timezone behaviour before production use.</div></section>
+      <section id="timestamp-splunk" class="eccs-detail-section"><h3>Splunk parsing guidance</h3><div class="eccs-note"><strong>Only propose settings supported by the sample.</strong> Record <code>TIME_PREFIX</code> when a stable prefix exists, <code>TIME_FORMAT</code> when the format is known, and <code>MAX_TIMESTAMP_LOOKAHEAD</code> as the number of characters Splunk must inspect from the prefix to the end of the timestamp. Validate against representative events and timezone behaviour before production use.</div><div class="method-actions" style="margin-top:12px"><button type="button" data-open-reference-detail="log-assessment-framework">Open Log Assessment Framework (the line-by-line procedure behind this scoring)</button></div></section>
       <section id="timestamp-interpretation" class="eccs-detail-section"><h3>Interpretation bands</h3><div class="eccs-table-wrap"><table class="eccs-matrix eccs-interpretation"><thead><tr><th>Percentage</th><th>Rating</th><th>Operational meaning</th></tr></thead><tbody><tr><td>90–100%</td><td>Exceptional</td><td>Reliable for ordering, correlation and investigation.</td></tr><tr><td>80–89%</td><td>Excellent</td><td>Strong with only minor limitations.</td></tr><tr><td>70–79%</td><td>Good</td><td>Operationally usable; document known limitations.</td></tr><tr><td>60–69%</td><td>Fair</td><td>Usable with remediation or enrichment.</td></tr><tr><td>40–59%</td><td>Poor</td><td>Material investigation and parsing risk.</td></tr><tr><td>20–39%</td><td>Very Poor</td><td>Significant source or parsing remediation required.</td></tr><tr><td>0–19%</td><td>Fail</td><td>Not dependable as event time.</td></tr></tbody></table></div></section>
     </article>
 
@@ -4647,8 +4648,95 @@ TZ = Australia/Sydney</pre><p>Where the timestamp already includes an explicit U
     SessionID=1A2C9B41</pre><table class="eccs-example-table"><tbody><tr><td>Structure</td><td>3</td><td>Recognisable timestamp/message plus key-value continuation.</td></tr><tr><td>Boundaries</td><td>2</td><td>Requires a reliable timestamp-start rule.</td></tr><tr><td>Delimiters</td><td>3</td><td>Stable equals delimiter.</td></tr><tr><td>Schema</td><td>3</td><td>Fields vary by event type but remain clear.</td></tr><tr><td>Encoding</td><td>4</td><td>No evidence of corruption.</td></tr><tr><td>Complexity</td><td>2</td><td>Multiline extraction and event-type handling required.</td></tr></tbody></table><div class="eccs-example-result">17 / 24 = 70.8% — Good</div></div></details>
         <details><summary>Example 3 — Mixed free text, malformed CSV and concatenated events</summary><div class="eccs-example-body"><div class="eccs-example-result">Representative score: 5 / 24 = 20.8% — Very Poor. Repair source delimiters and event boundaries before relying on search-time regular expressions.</div></div></details>
       </div></section>
-      <section id="format-splunk" class="eccs-detail-section"><h3>Splunk parsing guidance</h3><div class="eccs-note"><strong>Validate event breaking before field extraction.</strong> Determine whether <code>SHOULD_LINEMERGE</code>, <code>LINE_BREAKER</code>, structured parsing settings, character-set handling or source-side changes are required. Keep raw-event preservation and truncation checks in the acceptance test.</div></section>
+      <section id="format-splunk" class="eccs-detail-section"><h3>Splunk parsing guidance</h3><div class="eccs-note"><strong>Validate event breaking before field extraction.</strong> Determine whether <code>SHOULD_LINEMERGE</code>, <code>LINE_BREAKER</code>, structured parsing settings, character-set handling or source-side changes are required. Keep raw-event preservation and truncation checks in the acceptance test.</div><div class="method-actions" style="margin-top:12px"><button type="button" data-open-reference-detail="log-assessment-framework">Open Log Assessment Framework (the line-by-line procedure behind this scoring)</button></div></section>
       <section id="format-interpretation" class="eccs-detail-section"><h3>Interpretation bands</h3><div class="eccs-table-wrap"><table class="eccs-matrix eccs-interpretation"><thead><tr><th>Percentage</th><th>Rating</th><th>Operational meaning</th></tr></thead><tbody><tr><td>90–100%</td><td>Exceptional</td><td>Stable, efficient and low-risk parsing.</td></tr><tr><td>80–89%</td><td>Excellent</td><td>Strong format with minor manageable exceptions.</td></tr><tr><td>70–79%</td><td>Good</td><td>Operationally usable with documented parsing.</td></tr><tr><td>60–69%</td><td>Fair</td><td>Non-trivial parsing and assurance required.</td></tr><tr><td>40–59%</td><td>Poor</td><td>Material extraction and maintenance risk.</td></tr><tr><td>20–39%</td><td>Very Poor</td><td>Source-side or transport remediation strongly recommended.</td></tr><tr><td>0–19%</td><td>Fail</td><td>Not dependable for production ingestion.</td></tr></tbody></table></div></section>
+    </article>
+
+    <article id="logAssessmentFrameworkReferenceView" class="eccs-reference" aria-labelledby="logAssessmentFrameworkReferenceTitle" hidden>
+      <a class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Detailed reference</div>
+        <h2 id="logAssessmentFrameworkReferenceTitle">Log Assessment Framework</h2>
+        <p>A reusable, source-agnostic procedure for assessing the structure, format consistency and data quality of a raw log file at both the physical-line and logical-event level. It derives the dominant convention from the data itself -- the majority baseline -- and measures every deviation from it, rather than checking against an external spec.</p>
+        <nav class="eccs-anchor-nav" aria-label="Log Assessment Framework reference sections"><a href="#log-af-definition">Definition</a><a href="#log-af-dimensions">Assessment dimensions</a><a href="#log-af-procedure">Procedure</a><a href="#log-af-scoring">Conformance scoring</a><a href="#log-af-pitfalls">Common pitfalls</a><a href="#log-af-template">Assessment template</a><a href="#log-af-relationship">Relationship to other assessments</a></nav>
+      </div>
+      <section id="log-af-definition" class="eccs-detail-section">
+        <h3>Core concepts</h3>
+        <p><strong>Physical line vs. logical event.</strong> A physical line is one newline-terminated string. A logical event (record) is one meaningful unit, which may span several physical lines -- a stack trace, a pretty-printed JSON object, a wrapped message. Every assessment must decide the mapping between the two, because a naive line-oriented parser treats each continuation line as its own record and manufactures malformed events.</p>
+        <p><strong>Majority baseline.</strong> For each axis (delimiter, timestamp format, structure, etc.), find the value that dominates the file and treat it as the reference. Everything else is a non-conformer to be explained. This makes the assessment self-calibrating across sources without an external spec to check against.</p>
+        <p><strong>Two counting units.</strong> Report conformance at both line level (of all physical lines) and event level (of all logical records). They diverge exactly when multi-line records exist, and that divergence is itself a signal about how much of the file is continuation content.</p>
+        <div class="method-actions" style="margin-top:12px"><button type="button" data-open-prompt-panel="promptLogAssessmentFramework">Open AI prompt</button></div>
+      </section>
+      <section id="log-af-dimensions" class="eccs-detail-section">
+        <h3>Assessment dimensions</h3>
+        <p>The generalised feature set to extract per line and roll up per event. Not every dimension applies to every file -- pick the ones relevant to the source, and add domain-specific columns (severity, host, user, status code) as needed.</p>
+        <div class="eccs-table-wrap" role="region" aria-label="Assessment dimensions" tabindex="0"><table class="eccs-matrix"><thead><tr><th>Dimension</th><th>What it captures</th><th>Non-conformance signal</th></tr></thead><tbody>
+          <tr><td>Line number</td><td>Physical position in the file</td><td>Anchors every finding back to a source location</td></tr>
+          <tr><td>Record / Event ID</td><td>Which logical record the line belongs to</td><td>Multi-line records must map many lines to one event</td></tr>
+          <tr><td>Serialization format</td><td>Delimiter / structure family (CSV, TSV, JSON, logfmt, syslog)</td><td>Mixed formats in one stream break single-parser ingestion</td></tr>
+          <tr><td>Format conformance</td><td>Line matches the dominant format</td><td>Deviations need routing, transformation or rejection</td></tr>
+          <tr><td>Timestamp presence</td><td>Line carries a timestamp</td><td>Absence usually means a continuation line</td></tr>
+          <tr><td>Timestamp format</td><td>The date/time pattern used</td><td>Divergent patterns misparse or fail downstream</td></tr>
+          <tr><td>Timestamp conformance</td><td>Matches the dominant timestamp pattern</td><td>Mixed ordering, precision or separators cause silent misparse</td></tr>
+          <tr><td>Timestamp offset (distance)</td><td>Characters before the timestamp</td><td>Nonzero/variable offset means a prefix exists; fixed-slice extraction breaks</td></tr>
+          <tr><td>Timestamp width</td><td>Length of the timestamp token</td><td>Equal width across different formats can mask a defect</td></tr>
+          <tr><td>Field count</td><td>Number of delimited fields</td><td>Under/over-count flags truncated or corrupt records</td></tr>
+          <tr><td>Line length</td><td>Character count of the line, excluding the trailing newline</td><td>Extreme outliers flag truncation, binary junk or injected data</td></tr>
+          <tr><td>First character &amp; class</td><td>Leading character and its category (digit, alpha, whitespace, symbol)</td><td>Cheap record-boundary heuristic</td></tr>
+          <tr><td>Structure</td><td>Single- vs multi-line event, from record grouping</td><td>Determines whether line-oriented parsing is safe</td></tr>
+          <tr><td>Line ending</td><td>Newline convention (LF / CRLF / mixed)</td><td>A stray <code>\r</code> corrupts the last field of every record</td></tr>
+          <tr><td>Encoding</td><td>Byte encoding / BOM</td><td>A UTF-8 BOM or non-UTF-8 bytes break naive readers</td></tr>
+        </tbody></table></div>
+      </section>
+      <section id="log-af-procedure" class="eccs-detail-section">
+        <h3>Procedure</h3>
+        <ol class="method-list">
+          <li><strong>Ingest raw.</strong> Read bytes, not decoded text, first -- capture encoding, BOM and line endings before anything normalises them away.</li>
+          <li><strong>Split into physical lines</strong> and number them.</li>
+          <li><strong>Detect the dominant format</strong> by tallying delimiters/structure across lines; this is the majority baseline for the format axis.</li>
+          <li><strong>Establish a record-start rule</strong> (e.g. "a new record begins only on a line with a leading timestamp / leading digit / <code>{</code>") and fold continuation lines into their parent event. Assign event IDs.</li>
+          <li><strong>Extract per-line features</strong> from the dimension table for the axes that apply.</li>
+          <li><strong>Compute the majority baseline</strong> for each axis independently.</li>
+          <li><strong>Score conformance</strong> per line against each baseline (Yes/No), then roll up to events.</li>
+          <li><strong>Aggregate percentages</strong> at both line and event level; compute an overall "conforms on all axes" rate.</li>
+          <li><strong>Flag and explain outliers</strong> -- every non-conformer should have an attributed reason (wrong delimiter, day-first date, continuation line, truncated field, etc.).</li>
+        </ol>
+      </section>
+      <section id="log-af-scoring" class="eccs-detail-section">
+        <h3>Conformance scoring</h3>
+        <div class="eccs-formula">% conforming = conforming units &divide; total units<small>Computed at line level (&divide; total physical lines) and event level (&divide; total logical events).</small></div>
+        <p>Also compute the <strong>all-axes rate</strong>: the fraction of records that pass every applicable check. This is the single most useful "clean data" number, because a high per-axis rate can still hide a low all-axes rate when defects are spread thinly across many records for different reasons.</p>
+        <div class="eccs-note"><strong>Interpretation guide.</strong> One axis at 100% while others are lower means that convention is stable but says nothing about correctness (e.g. uniform line endings on a file full of malformed records). Several axes partitioning the file identically means they are likely detecting the same underlying split (e.g. "has timestamp", "starts with a digit" and "is a record start" all flagging the same continuation lines) -- treat that as one finding, not several. High per-axis rates with a low all-axes rate means many small, distinct defects rather than one systemic one -- triage record-by-record.</div>
+      </section>
+      <section id="log-af-pitfalls" class="eccs-detail-section">
+        <h3>Common pitfalls checklist</h3>
+        <p>These are the traps that make a log look consistent while silently misparsing. Check each explicitly.</p>
+        <ul class="method-list">
+          <li><strong>Delimiter collision.</strong> A delimiter character appearing inside a field (a comma before milliseconds like <code>43,512</code>; a comma inside a quoted CSV value) inflates the apparent format match. Validate structure and field count, not just the presence of the character.</li>
+          <li><strong>Fixed-width timestamp trap.</strong> Two different timestamp formats can share the same character width and both pass a length/offset check while parsing to different, or wrong, values. Always validate the pattern, not the width.</li>
+          <li><strong>Mixed date ordering.</strong> DD-MM-YYYY vs MM-DD-YYYY vs YYYY-MM-DD are ambiguous whenever the day is &le;12 -- misparses occur with no error raised. Anchor on ISO 8601 or require an explicit declared format.</li>
+          <li><strong>Prefix before the timestamp.</strong> Syslog priorities (<code>&lt;13&gt;</code>), log levels or leading hostnames push the timestamp off offset 0. Fixed-slice extraction breaks; use search-based extraction.</li>
+          <li><strong>Multi-line records.</strong> Stack traces, pretty-printed JSON and wrapped messages produce continuation lines with no timestamp. Fold them into the parent event via the record-start rule, or a line-oriented parser will emit one bogus event per continuation line.</li>
+          <li><strong>Line endings.</strong> LF vs CRLF vs mixed. Normalise on ingest; an unhandled trailing <code>\r</code> silently corrupts the final field of every record.</li>
+          <li><strong>Encoding.</strong> A UTF-8 BOM at the file start attaches invisible bytes to the first field; non-UTF-8 bytes crash or mojibake naive readers. Detect and normalise.</li>
+          <li><strong>Timezone.</strong> Naive (no offset) vs offset-aware timestamps. Missing or inconsistent timezones make cross-source correlation and ordering unreliable.</li>
+          <li><strong>Whitespace type.</strong> Tabs vs spaces in indentation change both the first-character class and the character count; do not assume one.</li>
+        </ul>
+      </section>
+      <section id="log-af-template" class="eccs-detail-section">
+        <h3>Assessment template</h3>
+        <p>Extract values per line, then compute the majority per column and the conformance flags. Drop or add columns to fit the source.</p>
+        <div class="eccs-table-wrap" role="region" aria-label="Assessment template columns" tabindex="0"><table class="eccs-matrix"><thead><tr><th>Line #</th><th>Evt #</th><th>Format</th><th>Fmt Conf</th><th>TS Present</th><th>TS Format</th><th>TS Conf</th><th>TS Offset</th><th>TS Width</th><th>Field Count</th><th>Chars</th><th>1st Char</th><th>Char Class</th><th>Structure</th><th>Line Ending</th></tr></thead><tbody><tr><td colspan="15">&nbsp;</td></tr></tbody></table></div>
+        <h4>Summary block to fill after scoring</h4>
+        <div class="eccs-table-wrap"><table class="eccs-matrix"><thead><tr><th>Axis</th><th>Majority (baseline)</th><th>Conforming (events)</th><th>Conforming (lines)</th></tr></thead><tbody><tr><td>Format</td><td></td><td></td><td></td></tr><tr><td>Timestamp format</td><td></td><td></td><td></td></tr><tr><td>Structure (single-line)</td><td></td><td></td><td></td></tr><tr><td>First-char class</td><td></td><td></td><td></td></tr><tr><td>Line ending</td><td></td><td></td><td></td></tr><tr><td><strong>Conforms on all axes</strong></td><td></td><td></td><td></td></tr></tbody></table></div>
+      </section>
+      <section id="log-af-relationship" class="eccs-detail-section">
+        <h3>Relationship to other assessments</h3>
+        <p>This framework is the procedural, line-by-line method for gathering the evidence that <strong>Timestamp Quality</strong> and <strong>Log Format Quality</strong> score by rubric. Its Timestamp Format/Offset/Conformance columns feed Timestamp Quality's "Format and parseability" and "Consistency" criteria; its Format/Structure/Line-Ending/Encoding columns feed Log Format Quality's structure, boundary, delimiter and encoding criteria. Both roll up into the <strong>Data Quality Score</strong>.</p>
+        <div class="method-actions"><button type="button" data-open-reference-detail="timestamp-quality">Open Timestamp Quality reference</button><button type="button" data-open-reference-detail="log-format-quality">Open Log Format Quality reference</button><button type="button" data-open-reference-detail="data-quality-score">Open Data Quality Score reference</button></div>
+        <div class="eccs-note">This framework also operationalises the onboarding <strong>Pre-ingest cyber-value gate (TAX-06.05.02)</strong> -- "minimum parse rate, timestamp &amp; timezone, and schema stability" -- whose pass criteria are exactly the all-axes conformance rate and majority-baseline schema check produced by this procedure.</div>
+        <p>Structural conformance answers "is this record well-formed and consistent?" It is orthogonal to "how important is this event?" -- severity or risk scoring is a separate concern, layered on top for detection and triage rather than data-quality purposes, and is out of scope for this framework.</p>
+      </section>
     </article>
   </section>
 
@@ -4787,6 +4875,7 @@ TZ = Australia/Sydney</pre><p>Where the timestamp already includes an explicit U
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptLineBreakProps" aria-selected="false">Line Break &amp; props.conf</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptLineLength" aria-selected="false">Line Length &amp; TRUNCATE</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptLogFormatParse" aria-selected="false">Log Format Detection & Parsing</button>
+          <button type="button" class="prompt-submenu-button" data-prompt-target="promptLogAssessmentFramework" aria-selected="false">Log Assessment Framework</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptDataSourceAssurance" aria-selected="false">Data Source Assurance</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptLogOnboardingViability" aria-selected="false">Log Onboarding Viability</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptCyberValueIndex" aria-selected="false">Cyber Value Index</button>
@@ -7594,6 +7683,59 @@ SHOULD_LINEMERGE = false
 LINE_BREAKER = ([\r\n]+)(?=\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})
 
 Explain that the newline separator is discarded while the timestamp remains at the beginning of the next event.</pre>
+        </article>
+        <article id="promptLogAssessmentFramework" class="prompt-card" data-prompt-panel hidden>
+          <div class="prompt-card-header">
+            <div><h4>Log Assessment Framework</h4><p>Derive a majority-baseline structural conformance assessment of a raw log sample at both line and event level.</p><div id="logAssessmentFrameworkPromptStatus" class="prompt-status" aria-live="polite"></div></div>
+            <button type="button" class="prompt-copy-button" data-copy-prompt="logAssessmentFrameworkPrompt" data-copy-status="logAssessmentFrameworkPromptStatus">Copy prompt</button>
+          </div>
+          <pre id="logAssessmentFrameworkPrompt" class="prompt-body">Copilot Prompt — Run the Log Assessment Framework on a Raw Log Sample
+
+You are a senior SIEM data-quality analyst applying a reusable, source-agnostic structural conformance methodology.
+
+Core principle
+Do not check the sample against an external spec. Derive the dominant convention for each axis from the data itself (the majority baseline) and measure every deviation from it. Report at both physical-line level and logical-event level, and treat their divergence as a signal, not noise.
+
+Evidence rules
+- Use only the supplied raw sample. Do not assume fields, formats or context that are not present.
+- Decide the physical-line-to-logical-event mapping before scoring anything else.
+- Do not award structured-format credit merely because braces, tags or delimiters appear somewhere in the line.
+- State uncertainty and flag insufficient sample size rather than inventing a baseline.
+
+Procedure
+1. Ingest raw. Note encoding, BOM and line-ending convention (LF / CRLF / mixed) before anything normalises them away.
+2. Split into physical lines and number them.
+3. Detect the dominant serialization format (CSV, TSV, JSON, XML, key-value/logfmt, syslog, fixed-width, other) by tallying structure across lines. This is the majority baseline for the format axis.
+4. Establish a record-start rule (e.g. leading timestamp, leading digit, leading brace) and fold continuation lines into their parent event. Assign sequential event IDs.
+5. Extract per-line features for the axes that apply: line number, event ID, serialization format, format conformance, timestamp presence, timestamp format, timestamp conformance, timestamp offset (characters before the match), timestamp width, field count, line length (chars, excluding trailing newline), first character and its class (digit/alpha/whitespace/symbol), structure (single- vs multi-line), line ending, encoding.
+6. Compute the majority baseline independently for each axis.
+7. Score conformance per line against each baseline (Yes/No), then roll up to events.
+8. Aggregate percentages at line level (÷ total physical lines) and event level (÷ total logical events). Compute the all-axes rate: the fraction of records passing every applicable check.
+9. Flag and explain every non-conformer with an attributed reason (wrong delimiter, day-first date, continuation line, truncated field, delimiter collision, etc.) — do not report a bare percentage without examples.
+
+Pitfalls to check explicitly
+- Delimiter collision (a delimiter character inside a field, e.g. a comma before milliseconds or inside a quoted CSV value).
+- Fixed-width timestamp trap: two different timestamp formats sharing the same character width. Validate the pattern, not the width.
+- Mixed date ordering (DD-MM-YYYY vs MM-DD-YYYY vs YYYY-MM-DD) — ambiguous whenever the day is ≤12, with no error raised.
+- A prefix before the timestamp (syslog priority, log level, hostname) that breaks fixed-slice extraction.
+- Multi-line records (stack traces, pretty-printed JSON, wrapped messages) that a naive line-oriented parser would treat as separate malformed events.
+- Line-ending inconsistency and an unhandled trailing \r corrupting the final field.
+- Encoding: a UTF-8 BOM attaching invisible bytes to the first field, or non-UTF-8 bytes.
+- Naive vs offset-aware timestamps and inconsistent timezones.
+- Whitespace type (tabs vs spaces) silently changing first-character class and character counts.
+
+Required output
+A. Executive conclusion — overall all-axes conformance rate (line and event level), the single most important finding, and whether the sample is large enough to trust the baseline.
+B. Per-line assessment table — Line # | Evt # | Format | Fmt Conf | TS Present | TS Format | TS Conf | TS Offset | TS Width | Field Count | Chars | 1st Char | Char Class | Structure | Line Ending.
+C. Majority baseline summary — Axis | Majority (baseline) | Conforming (events) | Conforming (lines).
+D. Non-conformer list — every flagged line/event with an attributed reason, grouped by root cause rather than listed as isolated defects.
+E. Pitfalls triggered — which of the checklist items were found, with the specific evidence.
+F. Assumptions and limitations — sample size, any axis that could not be assessed, and confidence in the derived baseline.
+
+Interpretation guidance
+- One axis at 100% while others are lower shows that convention is stable, not that the data is correct.
+- Several axes partitioning the file identically (e.g. "has timestamp", "starts with a digit" and "is a record start" all flagging the same lines) are one finding, not several — merge them.
+- High per-axis rates with a low all-axes rate mean many small, distinct defects rather than one systemic one — triage record-by-record rather than reporting a single blended cause.</pre>
         </article>
         <article id="promptDatetimeStandardProps" class="prompt-card" data-prompt-panel hidden>
           <div class="prompt-card-header">
@@ -13803,16 +13945,17 @@ const frameworkConcepts = [
   {term:"Investigation Breadth (IBS)",category:"Cyber value",definition:"The range of investigative questions, entities, timelines and response paths a source can support across identity, asset, activity, timeline, outcome, impact and correlation.",example:"Strong network tracing but no identity or impact evidence caps a firewall traffic log at Limited.",detailView:"investigation-breadth"},
   {term:"Event Type Coverage (ETC)",category:"Cyber value",definition:"The percentage of required security-relevant event-type categories actually represented in a source, assessed against 14 categories or a governed source-family catalogue.",example:"2 of 26 SRC-001 event types present for a traffic-only firewall feed = 8% -- Poor.",detailView:"event-type-coverage"},
   {term:"Required Field Coverage (RFC)",category:"Cyber value",definition:"The percentage of mandatory investigative fields that are present, consistently populated, correctly formatted and usable -- not just present in the schema.",example:"30 of 34 applicable fields consistently populated and well-formatted = 88% -- Good.",detailView:"required-field-coverage"},
-  {term:"Data Quality Score (DQS)",category:"Cyber value",definition:"The technical quality and reliability of logging data across timestamp quality, parsing success, consistency, normalisation and completeness.",example:"Broken parsing and inconsistent naming score 20% even when the right fields exist.",detailView:"data-quality-score"}
+  {term:"Data Quality Score (DQS)",category:"Cyber value",definition:"The technical quality and reliability of logging data across timestamp quality, parsing success, consistency, normalisation and completeness.",example:"Broken parsing and inconsistent naming score 20% even when the right fields exist.",detailView:"data-quality-score"},
+  {term:"Log Assessment Framework",category:"Data quality",definition:"A reusable, source-agnostic procedure for assessing the structure, format consistency and data quality of a raw log file at the physical-line and logical-event level, using a self-derived majority baseline rather than an external spec.",example:"A file where 9,850 of 10,000 lines match the dominant ISO 8601 timestamp pattern scores 98.5% timestamp-format conformance at line level.",detailView:"log-assessment-framework"}
 ];
 function conceptId(term){return "concept-"+term.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");}
-const detailViewLabels={eccs:'ECCS',icd:'ICD',pivot:'Pivot Density & Breadth','timestamp-quality':'Timestamp Quality','log-format-quality':'Log Format Quality','datetime-format':'Datetime Format','datetime-parse':'Datetime Parse','line-break':'Line Break','log-format-parse':'Log Format Detection & Parsing','line-length':'Line Length Quality Score','semantic-value':'Semantic Value','response-readiness':'Response Readiness Index','operational-assurance':'Operational Assurance Index','threat-detection':'Threat Detection Index','business-impact-level':'Business Impact Level','marginal-novelty':'Marginal Novelty','cyber-value-index':'Cyber Value Index','log-source-cyber-value':'Log Source Cyber Value','entity-coverage':'Entity Coverage','identity-diversity':'Identity Diversity','investigation-breadth':'Investigation Breadth','context-dimension-coverage':'Context Dimension Coverage','investigative-noise-percentage':'Investigative Noise Percentage','data-source-assurance':'Data Source Assurance','event-type-coverage':'Event Type Coverage','required-field-coverage':'Required Field Coverage','data-quality-score':'Data Quality Score'};
+const detailViewLabels={eccs:'ECCS',icd:'ICD',pivot:'Pivot Density & Breadth','timestamp-quality':'Timestamp Quality','log-format-quality':'Log Format Quality','datetime-format':'Datetime Format','datetime-parse':'Datetime Parse','line-break':'Line Break','log-format-parse':'Log Format Detection & Parsing','line-length':'Line Length Quality Score','semantic-value':'Semantic Value','response-readiness':'Response Readiness Index','operational-assurance':'Operational Assurance Index','threat-detection':'Threat Detection Index','business-impact-level':'Business Impact Level','marginal-novelty':'Marginal Novelty','cyber-value-index':'Cyber Value Index','log-source-cyber-value':'Log Source Cyber Value','entity-coverage':'Entity Coverage','identity-diversity':'Identity Diversity','investigation-breadth':'Investigation Breadth','context-dimension-coverage':'Context Dimension Coverage','investigative-noise-percentage':'Investigative Noise Percentage','data-source-assurance':'Data Source Assurance','event-type-coverage':'Event Type Coverage','required-field-coverage':'Required Field Coverage','data-quality-score':'Data Quality Score','log-assessment-framework':'Log Assessment Framework'};
 function renderFrameworkConcepts(){
   const grid=document.getElementById("conceptGrid"); if(!grid) return;
   const q=(document.getElementById("conceptSearch")?.value||"").trim().toLowerCase();
   const category=document.getElementById("conceptCategoryFilter")?.value||"";
   const rows=frameworkConcepts.filter(item=>(!category||item.category===category)&&(!q||`${item.term} ${item.category} ${item.definition} ${item.example}`.toLowerCase().includes(q)));
-  grid.innerHTML=rows.map(item=>`<article id="${conceptId(item.term)}" class="concept-card" data-concept-term="${escapeHtml(item.term)}"><header><span class="concept-category">${escapeHtml(item.category)}</span><h4>${escapeHtml(item.term)}</h4></header><p>${escapeHtml(item.definition)}</p><div class="concept-example"><strong>Example:</strong> ${escapeHtml(item.example)}</div>${item.detailView?`<div class="method-actions"><button type="button" data-open-reference-detail="${item.detailView}">Open detailed ${detailViewLabels[item.detailView]||'Marginal Novelty'} reference</button>${(item.detailView==='datetime-format'||item.detailView==='datetime-parse'||item.detailView==='line-break'||item.detailView==='log-format-parse'||item.detailView==='line-length')?`<button type="button" data-open-prompt-panel="${item.detailView==='line-break'?'promptLineBreakProps':item.detailView==='log-format-parse'?'promptLogFormatParse':item.detailView==='line-length'?'promptLineLength':'promptDatetimeStandardProps'}">Open AI prompt</button>`:''}</div>`:''}</article>`).join("");
+  grid.innerHTML=rows.map(item=>`<article id="${conceptId(item.term)}" class="concept-card" data-concept-term="${escapeHtml(item.term)}"><header><span class="concept-category">${escapeHtml(item.category)}</span><h4>${escapeHtml(item.term)}</h4></header><p>${escapeHtml(item.definition)}</p><div class="concept-example"><strong>Example:</strong> ${escapeHtml(item.example)}</div>${item.detailView?`<div class="method-actions"><button type="button" data-open-reference-detail="${item.detailView}">Open detailed ${detailViewLabels[item.detailView]||'Marginal Novelty'} reference</button>${(item.detailView==='datetime-format'||item.detailView==='datetime-parse'||item.detailView==='line-break'||item.detailView==='log-format-parse'||item.detailView==='line-length'||item.detailView==='log-assessment-framework')?`<button type="button" data-open-prompt-panel="${item.detailView==='line-break'?'promptLineBreakProps':item.detailView==='log-format-parse'?'promptLogFormatParse':item.detailView==='line-length'?'promptLineLength':item.detailView==='log-assessment-framework'?'promptLogAssessmentFramework':'promptDatetimeStandardProps'}">Open AI prompt</button>`:''}</div>`:''}</article>`).join("");
   grid.querySelectorAll("[data-open-reference-detail]").forEach(button=>button.addEventListener("click",()=>showReferenceDetail(button.dataset.openReferenceDetail)));
   const empty=document.getElementById("conceptEmpty"); if(empty) empty.hidden=rows.length>0;
   filterReferenceMethodCards("assessmentMethodsGrid","assessmentMethodsEmpty",q);
@@ -13858,6 +14001,7 @@ function setReferenceDetailVisibility(detailName){
   const eventTypeCoverage=document.getElementById("eventTypeCoverageReferenceView");
   const requiredFieldCoverage=document.getElementById("requiredFieldCoverageReferenceView");
   const dataQualityScore=document.getElementById("dataQualityScoreReferenceView");
+  const logAssessmentFramework=document.getElementById("logAssessmentFrameworkReferenceView");
   if(index) index.hidden=Boolean(detailName);
   if(eccs) eccs.hidden=detailName!=="eccs";
   if(novelty) novelty.hidden=detailName!=="marginal-novelty";
@@ -13886,11 +14030,12 @@ function setReferenceDetailVisibility(detailName){
   if(eventTypeCoverage) eventTypeCoverage.hidden=detailName!=="event-type-coverage";
   if(requiredFieldCoverage) requiredFieldCoverage.hidden=detailName!=="required-field-coverage";
   if(dataQualityScore) dataQualityScore.hidden=detailName!=="data-quality-score";
+  if(logAssessmentFramework) logAssessmentFramework.hidden=detailName!=="log-assessment-framework";
 }
 function showReferenceDetail(detailName){
   setActivePage("reference");
   setReferenceDetailVisibility(detailName);
-  const detailConfig={eccs:{hash:"#eccs-definition",view:"eccsReferenceView"},"marginal-novelty":{hash:"#novelty-definition",view:"marginalNoveltyReferenceView"},icd:{hash:"#icd-definition",view:"icdReferenceView"},pivot:{hash:"#pivot-definition",view:"pivotReferenceView"},"timestamp-quality":{hash:"#timestamp-definition",view:"timestampQualityReferenceView"},"log-format-quality":{hash:"#format-definition",view:"logFormatQualityReferenceView"},"datetime-format":{hash:"#datetime-format-definition",view:"datetimeFormatReferenceView"},"datetime-parse":{hash:"#datetime-parse-definition",view:"datetimeParseReferenceView"},"line-break":{hash:"#line-break-definition",view:"lineBreakReferenceView"},"log-format-parse":{hash:"#log-format-parse-definition",view:"logFormatParseReferenceView"},"line-length":{hash:"#line-length-definition",view:"lineLengthReferenceView"},"semantic-value":{hash:"#semantic-value-definition",view:"semanticValueReferenceView"},"response-readiness":{hash:"#rri-definition",view:"responseReadinessReferenceView"},"operational-assurance":{hash:"#oai-definition",view:"operationalAssuranceReferenceView"},"threat-detection":{hash:"#tdi-definition",view:"threatDetectionReferenceView"},"business-impact-level":{hash:"#bil-definition",view:"businessImpactLevelReferenceView"},"cyber-value-index":{hash:"#cvi-definition",view:"cyberValueIndexReferenceView"},"log-source-cyber-value":{hash:"#lscv-definition",view:"logSourceCyberValueReferenceView"},"entity-coverage":{hash:"#entity-definition",view:"entityCoverageReferenceView"},"identity-diversity":{hash:"#identity-definition",view:"identityDiversityReferenceView"},"investigation-breadth":{hash:"#ibs-definition",view:"investigationBreadthReferenceView"},"context-dimension-coverage":{hash:"#cdc-definition",view:"contextDimensionCoverageReferenceView"},"investigative-noise-percentage":{hash:"#inp-definition",view:"investigativeNoisePercentageReferenceView"},"data-source-assurance":{hash:"#dsa-definition",view:"dataSourceAssuranceReferenceView"},"event-type-coverage":{hash:"#etc-definition",view:"eventTypeCoverageReferenceView"},"required-field-coverage":{hash:"#rfc-definition",view:"requiredFieldCoverageReferenceView"},"data-quality-score":{hash:"#dqs-definition",view:"dataQualityScoreReferenceView"}};
+  const detailConfig={eccs:{hash:"#eccs-definition",view:"eccsReferenceView"},"marginal-novelty":{hash:"#novelty-definition",view:"marginalNoveltyReferenceView"},icd:{hash:"#icd-definition",view:"icdReferenceView"},pivot:{hash:"#pivot-definition",view:"pivotReferenceView"},"timestamp-quality":{hash:"#timestamp-definition",view:"timestampQualityReferenceView"},"log-format-quality":{hash:"#format-definition",view:"logFormatQualityReferenceView"},"datetime-format":{hash:"#datetime-format-definition",view:"datetimeFormatReferenceView"},"datetime-parse":{hash:"#datetime-parse-definition",view:"datetimeParseReferenceView"},"line-break":{hash:"#line-break-definition",view:"lineBreakReferenceView"},"log-format-parse":{hash:"#log-format-parse-definition",view:"logFormatParseReferenceView"},"line-length":{hash:"#line-length-definition",view:"lineLengthReferenceView"},"semantic-value":{hash:"#semantic-value-definition",view:"semanticValueReferenceView"},"response-readiness":{hash:"#rri-definition",view:"responseReadinessReferenceView"},"operational-assurance":{hash:"#oai-definition",view:"operationalAssuranceReferenceView"},"threat-detection":{hash:"#tdi-definition",view:"threatDetectionReferenceView"},"business-impact-level":{hash:"#bil-definition",view:"businessImpactLevelReferenceView"},"cyber-value-index":{hash:"#cvi-definition",view:"cyberValueIndexReferenceView"},"log-source-cyber-value":{hash:"#lscv-definition",view:"logSourceCyberValueReferenceView"},"entity-coverage":{hash:"#entity-definition",view:"entityCoverageReferenceView"},"identity-diversity":{hash:"#identity-definition",view:"identityDiversityReferenceView"},"investigation-breadth":{hash:"#ibs-definition",view:"investigationBreadthReferenceView"},"context-dimension-coverage":{hash:"#cdc-definition",view:"contextDimensionCoverageReferenceView"},"investigative-noise-percentage":{hash:"#inp-definition",view:"investigativeNoisePercentageReferenceView"},"data-source-assurance":{hash:"#dsa-definition",view:"dataSourceAssuranceReferenceView"},"event-type-coverage":{hash:"#etc-definition",view:"eventTypeCoverageReferenceView"},"required-field-coverage":{hash:"#rfc-definition",view:"requiredFieldCoverageReferenceView"},"data-quality-score":{hash:"#dqs-definition",view:"dataQualityScoreReferenceView"},"log-assessment-framework":{hash:"#log-af-definition",view:"logAssessmentFrameworkReferenceView"}};
   const config=detailConfig[detailName]||detailConfig.eccs;
   if(history.replaceState) history.replaceState(null,"",config.hash);
   requestAnimationFrame(()=>document.getElementById(config.view)?.scrollIntoView({behavior:"smooth",block:"start"}));
