@@ -13888,6 +13888,47 @@ function setActivePage(pageName, updateHash = true) {
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : "");
   
+Object.entries(pageTabs).forEach(([name, tab]) => {
+    if (!tab) return;
+    const active = name === selected;
+    tab.classList.toggle("active", active);
+    tab.setAttribute("aria-selected", String(active));
+    tab.tabIndex = active ? 0 : -1;
+  });
+  if (selected === "assurance") renderAssurancePage();
+  if (selected === "viability") renderViabilityPage();
+  if (selected === "catalogue") renderSourceCataloguePage();
+  if (selected === "patterns") renderLoggingPatternTable();
+  if (selected === "health") renderHealthCheckTable();
+  if (updateHash && history.replaceState) {
+    const hash = selected === "info"
+      ? "#info"
+      : selected === "onboarding"
+        ? "#onboarding-flow"
+      : selected === "assessments"
+        ? "#assessments"
+        : selected === "reference"
+          ? "#reference"
+        : selected === "prompts"
+          ? "#prompt-library"
+        : selected === "cmei"
+          ? "#framework"
+        : selected === "assurance"
+          ? "#assurance-model"
+        : selected === "viability"
+          ? "#viability-assessment"
+          : selected === "catalogue"
+            ? "#data-source-catalogue"
+            : selected === "patterns"
+              ? "#logging-patterns"
+              : selected === "health"
+                ? "#health-checks"
+                : "#taxonomy";
+    history.replaceState(null, "", hash);
+  }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 const frameworkConcepts = [
   {term:"Logging Pattern",category:"Collection",definition:"An approved reusable reference architecture for collecting a class of data sources.",example:"Syslog via SC4S to Splunk Cloud."},
   {term:"Collection Topology",category:"Collection",definition:"The actual implemented end-to-end path for one data source, including every collection and processing hop.",example:"FortiGate → syslog server → Universal Forwarder → Splunk indexers."},
@@ -14110,47 +14151,6 @@ document.querySelectorAll("[data-copy-prompt]").forEach(button => button.addEven
     if (status) status.textContent = "Prompt selected. Use Ctrl+C or Cmd+C to copy.";
   }
 }));
-
-Object.entries(pageTabs).forEach(([name, tab]) => {
-    if (!tab) return;
-    const active = name === selected;
-    tab.classList.toggle("active", active);
-    tab.setAttribute("aria-selected", String(active));
-    tab.tabIndex = active ? 0 : -1;
-  });
-  if (selected === "assurance") renderAssurancePage();
-  if (selected === "viability") renderViabilityPage();
-  if (selected === "catalogue") renderSourceCataloguePage();
-  if (selected === "patterns") renderLoggingPatternTable();
-  if (selected === "health") renderHealthCheckTable();
-  if (updateHash && history.replaceState) {
-    const hash = selected === "info"
-      ? "#info"
-      : selected === "onboarding"
-        ? "#onboarding-flow"
-      : selected === "assessments"
-        ? "#assessments"
-        : selected === "reference"
-          ? "#reference"
-        : selected === "prompts"
-          ? "#prompt-library"
-        : selected === "cmei"
-          ? "#framework"
-        : selected === "assurance"
-          ? "#assurance-model"
-        : selected === "viability"
-          ? "#viability-assessment"
-          : selected === "catalogue"
-            ? "#data-source-catalogue"
-            : selected === "patterns"
-              ? "#logging-patterns"
-              : selected === "health"
-                ? "#health-checks"
-                : "#taxonomy";
-    history.replaceState(null, "", hash);
-  }
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
 
 function pageNameFromHash() {
   if (location.hash === "#info") return "info";
