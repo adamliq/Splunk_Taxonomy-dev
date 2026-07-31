@@ -4658,7 +4658,7 @@ TZ = Australia/Sydney</pre><p>Where the timestamp already includes an explicit U
         <div class="eyebrow">References / Detailed reference</div>
         <h2 id="logAssessmentFrameworkReferenceTitle">Log Assessment Framework</h2>
         <p>A reusable, source-agnostic procedure for assessing the structure, format consistency and data quality of a raw log file at both the physical-line and logical-event level. It derives the dominant convention from the data itself -- the majority baseline -- and measures every deviation from it, rather than checking against an external spec.</p>
-        <nav class="eccs-anchor-nav" aria-label="Log Assessment Framework reference sections"><a href="#log-af-definition">Definition</a><a href="#log-af-dimensions">Assessment dimensions</a><a href="#log-af-procedure">Procedure</a><a href="#log-af-scoring">Conformance scoring</a><a href="#log-af-pitfalls">Common pitfalls</a><a href="#log-af-template">Assessment template</a><a href="#log-af-relationship">Relationship to other assessments</a></nav>
+        <nav class="eccs-anchor-nav" aria-label="Log Assessment Framework reference sections"><a href="#log-af-definition">Definition</a><a href="#log-af-dimensions">Assessment dimensions</a><a href="#log-af-procedure">Procedure</a><a href="#log-af-scoring">Conformance scoring</a><a href="#log-af-fingerprint">Structural fingerprinting</a><a href="#log-af-pitfalls">Common pitfalls</a><a href="#log-af-template">Assessment template</a><a href="#log-af-relationship">Relationship to other assessments</a></nav>
       </div>
       <section id="log-af-definition" class="eccs-detail-section">
         <h3>Core concepts</h3>
@@ -4682,7 +4682,9 @@ TZ = Australia/Sydney</pre><p>Where the timestamp already includes an explicit U
           <tr><td>Timestamp width</td><td>Length of the timestamp token</td><td>Equal width across different formats can mask a defect</td></tr>
           <tr><td>Field count</td><td>Number of delimited fields</td><td>Under/over-count flags truncated or corrupt records</td></tr>
           <tr><td>Line length</td><td>Character count of the line, excluding the trailing newline</td><td>Extreme outliers flag truncation, binary junk or injected data</td></tr>
+          <tr><td>Line size (bytes)</td><td>UTF-8 byte length of the line, plus 1 for the on-disk LF newline or 2 for CRLF</td><td>Byte weight &ne; record count -- drives storage, retention and keep/discard sizing; equals character count only for pure ASCII</td></tr>
           <tr><td>First character &amp; class</td><td>Leading character and its category (digit, alpha, whitespace, symbol)</td><td>Cheap record-boundary heuristic</td></tr>
+          <tr><td>First-char class conformance</td><td>Whether the leading-char class matches the dominant class</td><td>Divergent leading class flags a record-start anomaly or a continuation line</td></tr>
           <tr><td>Structure</td><td>Single- vs multi-line event, from record grouping</td><td>Determines whether line-oriented parsing is safe</td></tr>
           <tr><td>Line ending</td><td>Newline convention (LF / CRLF / mixed)</td><td>A stray <code>\r</code> corrupts the last field of every record</td></tr>
           <tr><td>Encoding</td><td>Byte encoding / BOM</td><td>A UTF-8 BOM or non-UTF-8 bytes break naive readers</td></tr>
@@ -4706,7 +4708,51 @@ TZ = Australia/Sydney</pre><p>Where the timestamp already includes an explicit U
         <h3>Conformance scoring</h3>
         <div class="eccs-formula">% conforming = conforming units &divide; total units<small>Computed at line level (&divide; total physical lines) and event level (&divide; total logical events).</small></div>
         <p>Also compute the <strong>all-axes rate</strong>: the fraction of records that pass every applicable check. This is the single most useful "clean data" number, because a high per-axis rate can still hide a low all-axes rate when defects are spread thinly across many records for different reasons.</p>
+        <p><strong>Report each partition three ways.</strong> For every axis, split records into the conforming set (matches the baseline) and the non-conforming set (the remainder), and report three metrics for each side: percentage, size in bytes, and event count. Percentage and event count measure how many records deviate; byte size measures how much of the file's weight they represent. These deliberately diverge whenever records differ in size -- a dominant format is often a larger share of the bytes than of the events, because its records are individually longer. Byte size is therefore the metric that storage, retention and keep-vs-discard decisions actually need; a count-based percentage alone will mis-size them. The percentage itself can be computed two ways -- by event count and by bytes -- and reporting both makes the size skew explicit.</p>
         <div class="eccs-note"><strong>Interpretation guide.</strong> One axis at 100% while others are lower means that convention is stable but says nothing about correctness (e.g. uniform line endings on a file full of malformed records). Several axes partitioning the file identically means they are likely detecting the same underlying split (e.g. "has timestamp", "starts with a digit" and "is a record start" all flagging the same continuation lines) -- treat that as one finding, not several. High per-axis rates with a low all-axes rate means many small, distinct defects rather than one systemic one -- triage record-by-record.</div>
+      </section>
+      <section id="log-af-fingerprint" class="eccs-detail-section">
+        <h3>Structural fingerprinting</h3>
+        <p>A compact way to measure how many structurally distinct record types a file contains: hash a tuple of the independent, varying properties and count the distinct results.</p>
+        <div class="eccs-formula">fingerprint = md5(format | timestamp_format)[:8]<small>Use the two axes that carry independent signal -- serialization format and timestamp format. The number of distinct fingerprints equals the number of structurally distinct record types in the file.</small></div>
+        <h4>Why only these two</h4>
+        <p>Most other assessed properties are either constant or derived, so they add no distinctions and only inflate the theoretical space:</p>
+        <ul class="method-list">
+          <li><strong>Constant properties</strong> (single-valued across the file -- encoding, line ending, field count or structure when uniform) contribute nothing to a fingerprint.</li>
+          <li><strong>Derived properties</strong> restate one of the two: first-character class is a function of format; timezone is a function of timestamp format. Including them leaves the distinct count unchanged.</li>
+          <li><strong>Positional properties</strong> (timestamp offset) are noisy -- in container formats like CEF the offset drifts with unrelated content (variable-length header fields), fragmenting the fingerprint without adding meaning. Exclude them.</li>
+        </ul>
+        <h4>Interpreting the count</h4>
+        <ul class="method-list">
+          <li>Compare distinct fingerprints against the theoretical maximum (the product of the two cardinalities). Sparse usage (e.g. 17 of a possible 64) means the timestamp formats are largely disjoint per serialization -- each format brings its own timestamp conventions.</li>
+          <li><strong>1 distinct fingerprint = structurally monolithic</strong> (a single-source, single-format feed).</li>
+        </ul>
+        <div class="eccs-note"><strong>Fold first (critical).</strong> Compute the fingerprint per logical event, on the record-start line, after boundary detection -- never per physical line. A multi-line record's continuation lines carry no format or timestamp signal and would each mint a junk signature (typically <code>OTHER | none</code>), inflating the count with noise. In a correctly folded multi-line file, structure never enters the fingerprint at all -- it is an attribute of the event, not a component of the hash.</div>
+        <h4>When the base tuple is degenerate</h4>
+        <p>For single-source structured logs (one XML schema, one timestamp format), both properties are constant and the fingerprint collapses to a single value. Extend the tuple with the one property that actually varies -- a type/ID field such as an EventID, or a hash of the record's field-name schema -- to regain separation:</p>
+        <div class="eccs-formula">fingerprint = md5(format | timestamp_format | type_key)[:8]</div>
+        <p>Which property is needed to make the fingerprint discriminating is itself diagnostic: a file separated by <code>format | timestamp_format</code> is a heterogeneous multi-source stream, while one that only separates once you add a semantic ID is a uniform single-source feed whose diversity lives in content, not structure.</p>
+        <h4>When the format has no name</h4>
+        <p><code>format</code> in the fingerprint is a label you assign, not something intrinsic -- an unnamed format is not a blocker, it just means falling back from a name to a derived structural signature. Split "unnamed" into two cases:</p>
+        <ul class="method-list">
+          <li><strong>Structured but unnamed</strong> (a proprietary or ad-hoc format that still has real structure -- delimiters, key=value, fixed columns). Do not dump it in <code>OTHER</code>; that collapses genuinely different structures into one signature and understates diversity. Derive a shape token to stand in for the name, two good options:
+            <ul class="method-list">
+              <li><strong>Delimiter + arity</strong> -- dominant separator and field count, e.g. <code>pipe/8</code>. This is literally what a name like "CSV" is -- shorthand for "comma-delimited, N fields." Every CSV in an assessment could be written <code>comma/7</code> with nothing lost.</li>
+              <li><strong>Masked token skeleton</strong> -- replace digit runs with <code>9</code>, letter runs with <code>A</code>, keep punctuation: <code>2026-07-31T04:03Z</code> &rarr; <code>9999-99-99T99:99A</code>, then hash it. Structurally identical lines collapse to one signature while different shapes stay distinct, regardless of the actual values. This is the log-template / Drain approach, and it means a pre-existing name is never actually required -- you can fingerprint purely on derived shape.</li>
+            </ul>
+            The fingerprint generalises to <code>md5(shape_hash | timestamp_format)</code>, where <code>shape_hash</code> is the family name when one matches and the derived skeleton otherwise.</li>
+          <li><strong>Genuinely unstructured</strong> (a free-text message, a banner, a wrapped line). There is no stable structure to name or fingerprint -- bucket it as <code>FREE_TEXT</code>. Note the overlap with the fold-first rule: continuation lines of multi-line records land here, but they should have been folded into their parent before fingerprinting, so in a correctly processed file they never reach this bucket.</li>
+        </ul>
+        <p>The meta-point: a format name is just a cached alias for a recurring structural profile. If a shape recurs often enough to matter, its derived signature earns it a de-facto name; if it is a true one-off or shapeless, <code>OTHER</code> / <code>FREE_TEXT</code> is the honest label. Names are optional human-friendly aliases over the real key, which is structure.</p>
+        <h4>Naming the derived shape</h4>
+        <p>A <code>shape_hash</code> like <code>ab2b2fe9</code> is stable but unreadable. Give each derived shape a deterministic codename -- a human-friendly encoding of the hash, never an RNG draw:</p>
+        <div class="eccs-formula">codename = "FMT-" + adjective[hash_byte0] + "-" + noun[hash_byte1] + "-" + hash[:4]<small>comma/19 &rarr; FMT-ember-shrike-0594 (always the same)</small></div>
+        <ul class="method-list">
+          <li><strong>Prefix <code>FMT-</code></strong> namespaces it so a codename is never mistaken for a real format name.</li>
+          <li><strong>Adjective + noun</strong>, indexed into two curated word lists by the first two hash bytes, make it memorable (the Docker / Heroku container-name pattern).</li>
+          <li><strong><code>-hash4</code> suffix</strong> (first 4 hex of the shape hash) is the collision safety net and ties the name back to the underlying signature.</li>
+        </ul>
+        <div class="eccs-note">The essential property is that <code>codename()</code> is a pure function of the shape: the same structure yields the same name across every run, file and machine. A random name would rename the same format on re-run, make two files disagree, and carry no information -- strictly worse than the raw hash. Compact alternatives on the same deterministic principle: proquint (pronounceable five-letter tokens from the hash bits, e.g. <code>FMT-bikih</code>), NATO-phonetic + number (<code>FMT-BRAVO-7</code>, unambiguous over voice), or a BIP-39 wordlist mapping. In every case the codename adds readability, never entropy.</div>
       </section>
       <section id="log-af-pitfalls" class="eccs-detail-section">
         <h3>Common pitfalls checklist</h3>
@@ -4726,9 +4772,11 @@ TZ = Australia/Sydney</pre><p>Where the timestamp already includes an explicit U
       <section id="log-af-template" class="eccs-detail-section">
         <h3>Assessment template</h3>
         <p>Extract values per line, then compute the majority per column and the conformance flags. Drop or add columns to fit the source.</p>
-        <div class="eccs-table-wrap" role="region" aria-label="Assessment template columns" tabindex="0"><table class="eccs-matrix"><thead><tr><th>Line #</th><th>Evt #</th><th>Format</th><th>Fmt Conf</th><th>TS Present</th><th>TS Format</th><th>TS Conf</th><th>TS Offset</th><th>TS Width</th><th>Field Count</th><th>Chars</th><th>1st Char</th><th>Char Class</th><th>Structure</th><th>Line Ending</th></tr></thead><tbody><tr><td colspan="15">&nbsp;</td></tr></tbody></table></div>
-        <h4>Summary block to fill after scoring</h4>
-        <div class="eccs-table-wrap"><table class="eccs-matrix"><thead><tr><th>Axis</th><th>Majority (baseline)</th><th>Conforming (events)</th><th>Conforming (lines)</th></tr></thead><tbody><tr><td>Format</td><td></td><td></td><td></td></tr><tr><td>Timestamp format</td><td></td><td></td><td></td></tr><tr><td>Structure (single-line)</td><td></td><td></td><td></td></tr><tr><td>First-char class</td><td></td><td></td><td></td></tr><tr><td>Line ending</td><td></td><td></td><td></td></tr><tr><td><strong>Conforms on all axes</strong></td><td></td><td></td><td></td></tr></tbody></table></div>
+        <div class="eccs-table-wrap" role="region" aria-label="Assessment template columns" tabindex="0"><table class="eccs-matrix"><thead><tr><th>Line #</th><th>Evt #</th><th>Format</th><th>Fmt Conf</th><th>TS Present</th><th>TS Format</th><th>TS Conf</th><th>TS Offset</th><th>TS Width</th><th>Field Count</th><th>Chars</th><th>Bytes</th><th>1st Char</th><th>Char Class</th><th>Cls Conf</th><th>Structure</th><th>Line Ending</th></tr></thead><tbody><tr><td colspan="17">&nbsp;</td></tr></tbody></table></div>
+        <h4>Assessment summary block to fill after scoring</h4>
+        <p>For each axis, report the conforming and non-conforming partitions, each with percentage, size in bytes and event count. Percentage may be given by event count and/or by bytes -- they differ when record sizes vary.</p>
+        <div class="eccs-table-wrap"><table class="eccs-matrix"><thead><tr><th>Axis</th><th>Baseline</th><th>Conf %</th><th>Conf events</th><th>Conf bytes</th><th>Non-conf %</th><th>Non-conf events</th><th>Non-conf bytes</th></tr></thead><tbody><tr><td>Serialization format</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Timestamp format</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Structure (single-line)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>First-char class</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Line ending</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td><strong>All axes combined</strong></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table></div>
+        <div class="eccs-note">Totals for reference: file = _ events / _ bytes. The conforming-bytes figure is what you retain if you keep only baseline-conforming records; non-conforming bytes is what you discard. Because these are byte totals rather than record counts, they translate directly into storage and retention numbers.</div>
       </section>
       <section id="log-af-relationship" class="eccs-detail-section">
         <h3>Relationship to other assessments</h3>
@@ -7707,11 +7755,12 @@ Procedure
 2. Split into physical lines and number them.
 3. Detect the dominant serialization format (CSV, TSV, JSON, XML, key-value/logfmt, syslog, fixed-width, other) by tallying structure across lines. This is the majority baseline for the format axis.
 4. Establish a record-start rule (e.g. leading timestamp, leading digit, leading brace) and fold continuation lines into their parent event. Assign sequential event IDs.
-5. Extract per-line features for the axes that apply: line number, event ID, serialization format, format conformance, timestamp presence, timestamp format, timestamp conformance, timestamp offset (characters before the match), timestamp width, field count, line length (chars, excluding trailing newline), first character and its class (digit/alpha/whitespace/symbol), structure (single- vs multi-line), line ending, encoding.
+5. Extract per-line features for the axes that apply: line number, event ID, serialization format, format conformance, timestamp presence, timestamp format, timestamp conformance, timestamp offset (characters before the match), timestamp width, field count, line length in characters (excluding trailing newline), line size in bytes (UTF-8 byte length, plus 1 for an on-disk LF newline or 2 for CRLF), first character and its class (digit/alpha/whitespace/symbol), first-char class conformance (matches the dominant class), structure (single- vs multi-line), line ending, encoding.
 6. Compute the majority baseline independently for each axis.
 7. Score conformance per line against each baseline (Yes/No), then roll up to events.
-8. Aggregate percentages at line level (÷ total physical lines) and event level (÷ total logical events). Compute the all-axes rate: the fraction of records passing every applicable check.
+8. Aggregate percentages at line level (÷ total physical lines) and event level (÷ total logical events). Compute the all-axes rate: the fraction of records passing every applicable check. For every axis, also split records into the conforming and non-conforming sets and report each side three ways: percentage (by event count and, where record sizes vary, by bytes too), event count, and byte size. Byte size is the metric storage/retention/keep-vs-discard decisions actually need — a count-based percentage alone mis-sizes them whenever the two partitions differ in average record length.
 9. Flag and explain every non-conformer with an attributed reason (wrong delimiter, day-first date, continuation line, truncated field, delimiter collision, etc.) — do not report a bare percentage without examples.
+10. Compute a structural fingerprint per logical event (on the record-start line, after boundary detection — never per physical line): fingerprint = md5(format | timestamp_format)[:8], using only serialization format and timestamp format (the two independent, varying axes — everything else is constant or derived and adds no distinctions, and timestamp offset is too positionally noisy to include). Count distinct fingerprints against the theoretical maximum (product of the two cardinalities); 1 distinct fingerprint means the file is structurally monolithic. If the base tuple is degenerate (both properties constant, e.g. one XML schema with one timestamp format), extend it with the one property that actually varies — a type/ID field such as an EventID, or a hash of the record's field-name schema: fingerprint = md5(format | timestamp_format | type_key)[:8]. If a format has no name but has real structure (delimiters, key=value, fixed columns), do not bucket it as OTHER — derive a shape token instead: delimiter+arity (e.g. pipe/8) or a masked token skeleton (digit runs → 9, letter runs → A, e.g. 2026-07-31T04:03Z → 9999-99-99T99:99A, then hash it), and use fingerprint = md5(shape_hash | timestamp_format)[:8]. Only bucket a line as FREE_TEXT if it is genuinely unstructured (a free-text message, banner or wrapped line) — continuation lines should already have been folded into their parent before this step, so they should never reach FREE_TEXT in a correctly processed file. Give each derived shape a deterministic codename (never randomly generated) for readability: codename = "FMT-" + adjective[hash_byte0] + "-" + noun[hash_byte1] + "-" + hash[:4], e.g. comma/19 → FMT-ember-shrike-0594, always the same for the same shape.
 
 Pitfalls to check explicitly
 - Delimiter collision (a delimiter character inside a field, e.g. a comma before milliseconds or inside a quoted CSV value).
@@ -7725,17 +7774,19 @@ Pitfalls to check explicitly
 - Whitespace type (tabs vs spaces) silently changing first-character class and character counts.
 
 Required output
-A. Executive conclusion — overall all-axes conformance rate (line and event level), the single most important finding, and whether the sample is large enough to trust the baseline.
-B. Per-line assessment table — Line # | Evt # | Format | Fmt Conf | TS Present | TS Format | TS Conf | TS Offset | TS Width | Field Count | Chars | 1st Char | Char Class | Structure | Line Ending.
-C. Majority baseline summary — Axis | Majority (baseline) | Conforming (events) | Conforming (lines).
-D. Non-conformer list — every flagged line/event with an attributed reason, grouped by root cause rather than listed as isolated defects.
-E. Pitfalls triggered — which of the checklist items were found, with the specific evidence.
-F. Assumptions and limitations — sample size, any axis that could not be assessed, and confidence in the derived baseline.
+A. Executive conclusion — overall all-axes conformance rate (line and event level, plus byte share), the single most important finding, and whether the sample is large enough to trust the baseline.
+B. Per-line assessment table — Line # | Evt # | Format | Fmt Conf | TS Present | TS Format | TS Conf | TS Offset | TS Width | Field Count | Chars | Bytes | 1st Char | Char Class | Cls Conf | Structure | Line Ending.
+C. Assessment summary block — for each axis (Serialization format, Timestamp format, Structure, First-char class, Line ending, All axes combined): Axis | Baseline | Conf % | Conf events | Conf bytes | Non-conf % | Non-conf events | Non-conf bytes. Include file totals (total events / total bytes) so the byte figures translate directly into storage and retention numbers.
+D. Structural fingerprint summary — distinct fingerprint count vs. theoretical maximum, the fingerprint (or codename) and event/byte share for each distinct structural type, and which tuple was needed (base two-axis tuple vs. an extended type_key) with what that implies about whether the file is a heterogeneous multi-source stream or a uniform single-source feed.
+E. Non-conformer list — every flagged line/event with an attributed reason, grouped by root cause rather than listed as isolated defects.
+F. Pitfalls triggered — which of the checklist items were found, with the specific evidence.
+G. Assumptions and limitations — sample size, any axis that could not be assessed, and confidence in the derived baseline.
 
 Interpretation guidance
 - One axis at 100% while others are lower shows that convention is stable, not that the data is correct.
 - Several axes partitioning the file identically (e.g. "has timestamp", "starts with a digit" and "is a record start" all flagging the same lines) are one finding, not several — merge them.
-- High per-axis rates with a low all-axes rate mean many small, distinct defects rather than one systemic one — triage record-by-record rather than reporting a single blended cause.</pre>
+- High per-axis rates with a low all-axes rate mean many small, distinct defects rather than one systemic one — triage record-by-record rather than reporting a single blended cause.
+- A dominant format's byte share is often larger than its event share, because its records tend to run longer — always report both, since a count-only percentage under-states what it would cost to discard the non-conforming minority.</pre>
         </article>
         <article id="promptDatetimeStandardProps" class="prompt-card" data-prompt-panel hidden>
           <div class="prompt-card-header">
