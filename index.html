@@ -3057,7 +3057,8 @@
 
       <div class="onboarding-stage">
         <h4>Engineering build <span class="assessment-tag">TAX-04.01&ndash;04.09</span></h4>
-        <p>Datetime standards &amp; parsing, line breaking, line length, log format detection &amp; parsing, field extraction, field normalisation (CIM/ECS mapping), event volume profile, parsing performance &mdash; plus collection components (TAX-03) and sourcetype identity (TAX-04.11).</p>
+        <p>Datetime standards &amp; parsing, line breaking, line length, log format detection &amp; parsing, field extraction, field normalisation (CIM/ECS mapping), event volume profile, parsing performance &mdash; plus collection components (TAX-03) and sourcetype identity (TAX-04.11). A structural fingerprint count from the sample (distinct format/timestamp-format combinations) is the concrete signal for whether the source needs one sourcetype or several.</p>
+        <div class="method-actions" style="margin-top:8px"><button type="button" data-open-reference-detail="log-assessment-framework">Log Assessment Framework: structural fingerprinting informs this sourcetype/parsing split</button></div>
       </div>
 
       <div class="onboarding-feed">
@@ -3072,6 +3073,7 @@
       <div class="onboarding-stage">
         <h4>Data quality assessment <span class="assessment-tag">TAX-07.05&ndash;07.10</span></h4>
         <p>Timestamp quality, log format quality, line length quality, event type coverage, required field coverage, event context completeness.</p>
+        <div class="method-actions" style="margin-top:8px"><button type="button" data-open-reference-detail="log-assessment-framework">Log Assessment Framework: the line-by-line procedure behind Timestamp &amp; Log Format Quality</button></div>
       </div>
       <div class="onboarding-arrow">↓</div>
 
@@ -3087,6 +3089,7 @@
       <div class="onboarding-stage">
         <h4>Pre-ingest cyber-value gates <span class="assessment-tag">TAX-06.05.02</span></h4>
         <p>Minimum parse rate, timestamp &amp; timezone, and schema stability must all pass before any value scoring runs.</p>
+        <div class="method-actions" style="margin-top:8px"><button type="button" data-open-reference-detail="log-assessment-framework">Log Assessment Framework: computes this gate's all-axes conformance rate</button></div>
       </div>
       <div class="onboarding-arrow">↓</div>
 
