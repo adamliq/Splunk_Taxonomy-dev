@@ -1,0 +1,92 @@
+{
+  "01_clean_baseline.log": {
+    "pitfall": null,
+    "total_lines": 100,
+    "total_events": 100,
+    "expected_all_axes_conforming_events": 100,
+    "expected_distinct_fingerprints": 1,
+    "purpose": "Specificity check: framework must NOT flag any non-conformers or false pitfalls on clean data."
+  },
+  "02_delimiter_collision.log": {
+    "pitfall": "Delimiter collision",
+    "total_lines": 100,
+    "total_events": 100,
+    "injected_at_line": 51,
+    "naive_field_count_at_injected_line": 5,
+    "correct_field_count_at_injected_line": 4,
+    "purpose": "Naive comma-split must overcount fields on line 51 (quoted comma) unless structure-aware parsing is used."
+  },
+  "03_fixed_width_timestamp_trap.log": {
+    "pitfall": "Fixed-width timestamp trap",
+    "total_lines": 100,
+    "total_events": 100,
+    "majority_pattern_lines": 90,
+    "minority_pattern_lines": 10,
+    "both_patterns_char_width": 19,
+    "purpose": "Both timestamp tokens are 19 characters wide but different patterns -- a width-only check would treat them as conformant when they are not."
+  },
+  "04_mixed_date_ordering.log": {
+    "pitfall": "Mixed date ordering",
+    "total_lines": 100,
+    "total_events": 100,
+    "day_first_intended_for_all": true,
+    "ambiguous_lines": 50,
+    "purpose": "All 100 rows are DD/MM/YYYY, but the 50 rows with day<=12 (04/03) are numerically ambiguous with MM/DD/YYYY -- framework should flag the ambiguity, not silently assume one reading."
+  },
+  "05_prefix_before_timestamp.log": {
+    "pitfall": "Prefix before the timestamp",
+    "total_lines": 100,
+    "total_events": 100,
+    "lines_with_prefix": 10,
+    "prefix": "<13>",
+    "expected_offset_on_prefixed_lines": 4,
+    "purpose": "10 lines carry a 4-character <13> priority prefix before the timestamp -- fixed-slice extraction (offset 0) would break on these; offset-conformance axis should flag them."
+  },
+  "06_multiline_records.log": {
+    "pitfall": "Multi-line records",
+    "total_lines": 110,
+    "total_events": 100,
+    "multiline_records": 5,
+    "continuation_lines_per_record": 2,
+    "total_continuation_lines": 10,
+    "purpose": "5 records have 2 tab-indented continuation lines each (stack trace). A naive line-oriented parser would emit 10 bogus extra events instead of folding them."
+  },
+  "07_mixed_line_endings.log": {
+    "pitfall": "Line endings",
+    "total_lines": 100,
+    "total_events": 100,
+    "lf_lines": 90,
+    "crlf_lines": 10,
+    "purpose": "10 of 100 lines use CRLF against an LF majority -- an unhandled trailing \\r would corrupt the last field of those 10 records."
+  },
+  "08_utf8_bom.log": {
+    "pitfall": "Encoding",
+    "total_lines": 100,
+    "total_events": 100,
+    "has_bom": true,
+    "purpose": "File-level UTF-8 BOM attaches invisible bytes to the first field of line 1 unless detected and stripped before parsing."
+  },
+  "09_timezone_naive_vs_aware.log": {
+    "pitfall": "Timezone",
+    "total_lines": 100,
+    "total_events": 100,
+    "offset_aware_lines": 90,
+    "naive_lines": 10,
+    "purpose": "10 timestamps omit the UTC offset entirely -- cross-source correlation/ordering becomes unreliable for those events."
+  },
+  "10_whitespace_type.log": {
+    "pitfall": "Whitespace type",
+    "total_lines": 105,
+    "total_events": 100,
+    "tab_indented_continuations": 3,
+    "space_indented_continuations": 2,
+    "purpose": "Continuation lines mix tab and space indentation -- changes both first-character class and character count between otherwise-equivalent continuation lines."
+  },
+  "11_ambiguous_continuation_default.log": {
+    "pitfall": "Ambiguous continuation default",
+    "total_lines": 103,
+    "total_events": 103,
+    "standalone_freetext_lines": 3,
+    "purpose": "3 unindented banner lines with no recognisable pattern must be recognised as their own (FREE_TEXT) events, not silently folded into the preceding JSON record."
+  }
+}
