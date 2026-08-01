@@ -94,9 +94,39 @@ for trial in range(N_FILES):
                 issues.append(f"trial {trial} [{label}]: has_bom {r['has_bom']} != actual {bom}")
             else:
                 oks += 1
+            # Invariant 7: conforming_lines >= conforming_events (line-level
+            # never counts fewer than event-level, since every conforming
+            # event contributes >=1 line)
+            if r["all_axes_conforming_lines"] < r["all_axes_conforming_events"]:
+                issues.append(f"trial {trial} [{label}]: conforming_lines {r['all_axes_conforming_lines']} < conforming_events {r['all_axes_conforming_events']}")
+            else:
+                oks += 1
+            # Invariant 8: no continuation lines -> line-level pct == event-level pct
+            if r["continuation_lines"] == 0 and r["line_level_pct"] != r["event_level_pct"]:
+                issues.append(f"trial {trial} [{label}]: no continuation lines but line_level_pct {r['line_level_pct']} != event_level_pct {r['event_level_pct']}")
+            else:
+                oks += 1
+            # Invariant 9: every summary_block axis reconciles conf+nonconf to the total
+            for row in r["summary_block"]:
+                if row["conf_events"] + row["nonconf_events"] != r["total_logical_events"]:
+                    issues.append(f"trial {trial} [{label}]: summary_block[{row['axis']}] conf+nonconf events != total")
+                else:
+                    oks += 1
+            # Invariant 10: non_conformers count matches total-conforming, every entry has a reason
+            expected_nc = r["total_logical_events"] - r["all_axes_conforming_events"]
+            if len(r["non_conformers"]) != expected_nc:
+                issues.append(f"trial {trial} [{label}]: non_conformers count {len(r['non_conformers'])} != expected {expected_nc}")
+            else:
+                oks += 1
+            if not all(nc["reasons"] for nc in r["non_conformers"]):
+                issues.append(f"trial {trial} [{label}]: a non-conformer has no attributed reason")
+            else:
+                oks += 1
 
         # Differential: v1 vs v2 event/line counts must agree
-        for field in ("total_physical_lines", "total_logical_events", "continuation_lines", "distinct_fingerprints_excl_freetext", "free_text_events"):
+        for field in ("total_physical_lines", "total_logical_events", "continuation_lines", "distinct_fingerprints_excl_freetext",
+                      "free_text_events", "all_axes_conforming_events", "all_axes_conforming_lines",
+                      "line_level_pct", "event_level_pct", "base_tuple_degenerate"):
             if r1[field] != r2[field]:
                 issues.append(f"trial {trial}: v1/v2 DISAGREE on {field}: v1={r1[field]} v2={r2[field]} (n_lines={n_lines}, minority_rate={minority_rate}, crlf_rate={crlf_rate}, freetext_rate={freetext_rate}, bom={bom})")
             else:

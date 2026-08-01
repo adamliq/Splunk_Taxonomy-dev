@@ -62,12 +62,13 @@ corpus_truth["02_delimiter_collision.log"] = {
 
 # ---------- 3. Fixed-width timestamp trap ----------
 # Two different timestamp *patterns*, same character width (19 chars):
-# "2026-08-01 09:15:30" (YYYY-MM-DD HH:MM:SS) vs "30-08-01 09:15:2026" (fake DD-MM-YY HH:MM:YYYY) -- contrived but same width, different pattern.
+# "2026-08-01 09:15:30" (dash-separated date) vs "2026/08/01 09:15:30"
+# (slash-separated date) -- a realistic scenario (a source or config change
+# swapping the date separator), same width, genuinely different pattern.
 lines = []
 for i in range(N):
     if i % 10 == 9:
-        # same width (19 chars), transposed pattern: DD-MM-YY HH:MM:SSYY (deliberately different meaning, same length)
-        text = f"01-08-26 09:{i%60:02d}:005026|user{i}|login|success"
+        text = f"2026/08/01 09:{i%60:02d}:00|user{i}|login|success"
     else:
         text = f"2026-08-01 09:{i%60:02d}:00|user{i}|login|success"
     lines.append((text, "\n"))
@@ -243,6 +244,52 @@ corpus_truth["13_shape_naming_masked_skeleton.log"] = {
     "expected_shape_hash": expected_shape_hash_13,
     "expected_codename": expected_codename_13,
     "purpose": "A comma-separated but non-csv_dated (no slash-date) unnamed format with no confident delimiter/arity signal -- must fall back to a masked digit/letter skeleton, not collapse into a bare OTHER bucket, and must still name it deterministically.",
+}
+
+# ---------- 14. Degenerate base tuple: same format + same timestamp format, two schemas ----------
+# Every line is JSON with the identical timestamp pattern -- format and
+# timestamp_format are BOTH constant, so fingerprint = md5(format|ts_format)
+# alone would collapse everything to ONE bucket. There genuinely are two
+# distinct record types here (different key sets), distinguishable only by
+# extending the tuple with a type_key (sorted JSON key set).
+DEGEN_N = 80
+lines = []
+for i in range(DEGEN_N):
+    ts = f"2026-08-01T09:{i%60:02d}:{(i*7)%60:02d}.000+10:00"
+    if i % 2 == 0:
+        text = f'{{"time":"{ts}","user":"user{i%9}","result":"success"}}'
+    else:
+        text = f'{{"time":"{ts}","host":"app0{1+i%3}","metric":"cpu","value":{i%100}}}'
+    lines.append((text, "\n"))
+write_file("14_degenerate_base_tuple.log", lines)
+corpus_truth["14_degenerate_base_tuple.log"] = {
+    "pitfall": "Degenerate base tuple (type_key extension)",
+    "total_lines": DEGEN_N, "total_events": DEGEN_N,
+    "expected_base_tuple_degenerate": True,
+    "expected_distinct_fingerprints": 2,
+    "purpose": "Format (json) and timestamp_format are both constant across the whole file, so the base fingerprint tuple is degenerate. Two genuinely distinct JSON schemas (different key sets) exist and must be told apart via a type_key extension, not silently collapsed into one fingerprint.",
+}
+
+# ---------- 15. Encoding: non-UTF-8 bytes ----------
+# One line contains a genuinely invalid UTF-8 byte sequence (a lone
+# continuation byte, 0x80, with no leading byte). Ingest must not crash --
+# "non-UTF-8 bytes crash or mojibake naive readers. Detect and normalise."
+NONUTF8_N = 30
+path15 = os.path.join(OUT_DIR, "15_non_utf8_bytes.log")
+with open(path15, "wb") as f:
+    for i in range(NONUTF8_N):
+        if i == 15:
+            # valid ASCII prefix/suffix around one deliberately invalid byte
+            f.write(f'{{"time":"2026-08-01T09:{i%60:02d}:00.000+10:00","user":"user'.encode("utf-8"))
+            f.write(b"\x80\x80")  # invalid: lone continuation bytes, no leading byte
+            f.write(f'","result":"success"}}\n'.encode("utf-8"))
+        else:
+            f.write((clean_line(i) + "\n").encode("utf-8"))
+corpus_truth["15_non_utf8_bytes.log"] = {
+    "pitfall": "Encoding (non-UTF-8 bytes)",
+    "total_lines": NONUTF8_N, "total_events": NONUTF8_N,
+    "invalid_byte_line": 16,
+    "purpose": "Line 16 contains two invalid lone UTF-8 continuation bytes (0x80 0x80) with no leading byte. Ingest must decode this without crashing (replacement-character fallback is acceptable) and must not lose or miscount the line.",
 }
 
 TRUTH_PATH = os.path.join(OUT_DIR, "corpus_ground_truth.json")

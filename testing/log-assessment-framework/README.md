@@ -54,6 +54,17 @@ produces correct and mutually-consistent results.
    compliance (`FMT-adjective-noun-hash4`) and determinism (recomputing from
    a recorded shape_hash or shape_token always reproduces the same result).
 
+6. **Coverage completeness.** Both implementations compute and expose every
+   mechanism the spec actually requires, not just the ones convenient to
+   test: the two counting units (line-level vs. event-level percentages,
+   which must diverge exactly when folded multi-line records exist and be
+   equal otherwise), the full byte/event/percentage three-way partition
+   report per axis, the non-conformer list with attributed reasons, field
+   count and timestamp offset/width tracking, and the degenerate-base-tuple
+   `type_key` fingerprint extension. Corpus file 14 isolates the degenerate
+   case (constant format + constant timestamp format, two genuinely
+   distinct JSON schemas); file 15 isolates non-UTF-8 byte handling.
+
 ## Running it
 
 ```bash
@@ -63,7 +74,7 @@ python3 run_regression_suite.py  # runs both implementations against the full co
 python3 fuzz_test.py             # 40 randomized property-based trials + 500 naming-primitive trials
 ```
 
-All four currently pass with 0 issues (298 checks in the regression suite, 1320
+All four currently pass with 0 issues (792 checks in the regression suite, 2240
 in the fuzz run).
 
 ## What this found
@@ -107,6 +118,44 @@ runs). `shape_naming.masked_skeleton()` implements the rule as literally
 stated (masking both), which is the more internally-consistent reading — the
 example itself may just be imprecise. Worth a small wording fix if picked
 up later, but it doesn't affect correctness of the implemented behaviour.
+
+A coverage audit ("does every spec mechanism actually have a test, not just
+the ones that happen to be exercised already") found the library refactor
+that made `run(path)` callable for the regression suite had silently
+*dropped* several things the original one-off script computed: line-level
+vs. event-level percentages were never computed at all (only event-level),
+the full byte/event/percentage summary block was gone, the non-conformer
+list was gone, and `ts_offset`/`ts_width`/field count were computed and then
+immediately discarded without ever being stored or checked. The degenerate-
+base-tuple `type_key` extension had never been implemented in either
+implementation. All were restored/implemented and are now covered by both
+the regression suite and the fuzz test.
+
+Closing those gaps immediately surfaced three more real, pre-existing bugs
+that no prior check had a way to catch:
+- Corpus file 03's "fixed-width timestamp trap" ground truth claimed both
+  patterns were 19 characters wide, but the minority pattern was actually
+  21 — nothing had ever verified the claim itself. Replaced the contrived
+  minority pattern with a realistic same-width one (dash- vs. slash-
+  separated date), genuinely 19 characters in both cases.
+- Corpus file 05 ("prefix before the timestamp") used an ISO 8601 timestamp
+  *without* milliseconds, which matched none of the six timestamp patterns
+  either implementation knew about -- every line in that file had `ts_format
+  = None` the entire time, so the prefix/offset mechanism it was built to
+  test was never actually exercised. Added an `iso8601_offset_no_ms`
+  pattern to both.
+- Corpus file 02's ("delimiter collision") rows used an ISO 8601 dash-format
+  timestamp, which doesn't match the `csv_dated` classifier's slash-date
+  requirement, so every row classified as `OTHER` rather than `csv_dated` --
+  the new field-count tracking (keyed only to named formats) silently
+  produced nothing for this file. Made field-count computation apply to any
+  format with a countable delimiter, not just two hardcoded named buckets.
+
+None of these three would have been caught by the differential (v1 vs v2)
+check alone, since both implementations shared the same underlying
+assumption. They only surfaced because the new checks asserted a *specific,
+independently-stated* ground-truth fact (a width, a pattern, a bucket name)
+rather than just "the two implementations agree."
 
 ## Regenerating after a spec change
 

@@ -108,5 +108,20 @@
     "expected_shape_hash": "00516ef8",
     "expected_codename": "FMT-amber-jackal-0051",
     "purpose": "A comma-separated but non-csv_dated (no slash-date) unnamed format with no confident delimiter/arity signal -- must fall back to a masked digit/letter skeleton, not collapse into a bare OTHER bucket, and must still name it deterministically."
+  },
+  "14_degenerate_base_tuple.log": {
+    "pitfall": "Degenerate base tuple (type_key extension)",
+    "total_lines": 80,
+    "total_events": 80,
+    "expected_base_tuple_degenerate": true,
+    "expected_distinct_fingerprints": 2,
+    "purpose": "Format (json) and timestamp_format are both constant across the whole file, so the base fingerprint tuple is degenerate. Two genuinely distinct JSON schemas (different key sets) exist and must be told apart via a type_key extension, not silently collapsed into one fingerprint."
+  },
+  "15_non_utf8_bytes.log": {
+    "pitfall": "Encoding (non-UTF-8 bytes)",
+    "total_lines": 30,
+    "total_events": 30,
+    "invalid_byte_line": 16,
+    "purpose": "Line 16 contains two invalid lone UTF-8 continuation bytes (0x80 0x80) with no leading byte. Ingest must decode this without crashing (replacement-character fallback is acceptable) and must not lose or miscount the line."
   }
 }

@@ -43,11 +43,44 @@ def run_invariants(result, label):
     fb_freetext = r["format_breakdown"].get("FREE_TEXT", 0)
     check(fb_freetext == r["free_text_events"], f"[{label}] FREE_TEXT format_breakdown ({fb_freetext}) matches free_text_events ({r['free_text_events']})")
 
+    # invariant: two counting units -- line-level conforming count >= event-level
+    # conforming count (a conforming event always contributes >=1 line), and they
+    # are EQUAL iff there are no continuation lines at all (no folded multi-line
+    # records anywhere, conforming or not -- so every event is exactly one line).
+    check(r["all_axes_conforming_lines"] >= r["all_axes_conforming_events"],
+          f"[{label}] conforming_lines ({r['all_axes_conforming_lines']}) >= conforming_events ({r['all_axes_conforming_events']})")
+    if r["continuation_lines"] == 0:
+        check(r["line_level_pct"] == r["event_level_pct"],
+              f"[{label}] no continuation lines -> line-level pct ({r['line_level_pct']}) == event-level pct ({r['event_level_pct']})")
+    else:
+        check(r["line_level_pct"] != r["event_level_pct"] or r["all_axes_conforming_events"] == 0,
+              f"[{label}] continuation lines present ({r['continuation_lines']}) -> line-level pct ({r['line_level_pct']}) diverges from event-level pct ({r['event_level_pct']})")
+
+    # invariant: per-axis summary_block partitions reconcile to the totals
+    total_events = r["total_logical_events"]
+    total_bytes = sum(row["conf_bytes"] + row["nonconf_bytes"] for row in r["summary_block"][:1]) if r["summary_block"] else 0
+    for row in r["summary_block"]:
+        check(row["conf_events"] + row["nonconf_events"] == total_events,
+              f"[{label}] summary_block[{row['axis']}] conf+nonconf events == total ({row['conf_events']}+{row['nonconf_events']} vs {total_events})")
+        if total_bytes:
+            check(row["conf_bytes"] + row["nonconf_bytes"] == total_bytes,
+                  f"[{label}] summary_block[{row['axis']}] conf+nonconf bytes == file total bytes")
+
+    # invariant: non-conformer list matches all_axes accounting, and every
+    # entry has at least one attributed reason (never a bare percentage).
+    expected_nonconf = total_events - r["all_axes_conforming_events"]
+    check(len(r["non_conformers"]) == expected_nonconf,
+          f"[{label}] non_conformers count ({len(r['non_conformers'])}) matches total-conforming ({expected_nonconf})")
+    check(all(nc["reasons"] for nc in r["non_conformers"]),
+          f"[{label}] every non-conformer has at least one attributed reason")
+
 
 def diff_v1_v2(r1, r2, fname):
     fields_to_compare = [
         "total_physical_lines", "total_logical_events", "continuation_lines",
         "distinct_fingerprints_excl_freetext", "free_text_events", "has_bom",
+        "all_axes_conforming_events", "all_axes_conforming_lines",
+        "line_level_pct", "event_level_pct", "base_tuple_degenerate",
     ]
     for f in fields_to_compare:
         if r1[f] != r2[f]:
@@ -87,6 +120,45 @@ def check_ground_truth(result, truth, fname):
         expected_cont = truth["multiline_records"] * truth["continuation_lines_per_record"]
         check(result["continuation_lines"] == expected_cont,
               f"[{fname}] continuation-line count matches ground truth ({result['continuation_lines']} vs {expected_cont})")
+    if "expected_offset_on_prefixed_lines" in truth:
+        # A prefix (e.g. syslog priority <13>) pushes the timestamp off
+        # offset 0 -- both offset 0 (unprefixed majority) and the prefixed
+        # offset must actually be observed under the SAME ts_format, proving
+        # search-based extraction found the timestamp regardless of the
+        # prefix rather than missing it or misclassifying it as a different
+        # pattern.
+        offsets = result.get("ts_offset_by_format", {})
+        maj_ts = result["majority"]["ts_format"]
+        observed = offsets.get(maj_ts, [])
+        check(0 in observed, f"[{fname}] offset 0 observed for unprefixed lines under {maj_ts} ({observed})")
+        check(truth["expected_offset_on_prefixed_lines"] in observed,
+              f"[{fname}] prefixed-line offset {truth['expected_offset_on_prefixed_lines']} observed under {maj_ts} ({observed})")
+    if "expected_base_tuple_degenerate" in truth:
+        check(result["base_tuple_degenerate"] == truth["expected_base_tuple_degenerate"],
+              f"[{fname}] base_tuple_degenerate matches ground truth ({result['base_tuple_degenerate']} vs {truth['expected_base_tuple_degenerate']})")
+    if "both_patterns_char_width" in truth:
+        # The fixed-width trap: majority AND minority timestamp patterns must
+        # both actually be observed at the SAME width, yet remain classified
+        # as two DIFFERENT ts_formats (proving width alone can't distinguish
+        # them -- pattern must be validated, not just length).
+        widths = result.get("ts_width_by_format", {})
+        check(len(widths) >= 2,
+              f"[{fname}] at least two distinct ts_formats observed ({list(widths.keys())})")
+        matching = [name for name, ws in widths.items() if truth["both_patterns_char_width"] in ws]
+        check(len(matching) >= 2,
+              f"[{fname}] >=2 ts_formats share width {truth['both_patterns_char_width']} (fixed-width trap reproduced): {matching}")
+    if "naive_field_count_at_injected_line" in truth and "correct_field_count_at_injected_line" in truth:
+        # Delimiter collision: the naive (structure-unaware) field counter
+        # must actually overcount on the collision row while every other
+        # csv_dated row reports the correct count -- proving the pitfall is
+        # mechanically real, not just "the event total happens to match."
+        maj_format = result["majority"]["format"]
+        dist = result.get("field_count_distribution", {}).get(maj_format, {})
+        correct, naive = truth["correct_field_count_at_injected_line"], truth["naive_field_count_at_injected_line"]
+        check(dist.get(naive, 0) == 1,
+              f"[{fname}] exactly one {maj_format} row shows the naive miscounted field_count {naive} ({dist})")
+        check(dist.get(correct, 0) == truth["total_events"] - 1,
+              f"[{fname}] all other {maj_format} rows show the correct field_count {correct} ({dist})")
     if "expected_shape_token" in truth:
         shape_entries = list(result.get("shape_names", {}).values())
         check(len(shape_entries) == 1,
