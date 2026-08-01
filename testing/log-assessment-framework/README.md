@@ -157,6 +157,16 @@ assumption. They only surfaced because the new checks asserted a *specific,
 independently-stated* ground-truth fact (a width, a pattern, a bucket name)
 rather than just "the two implementations agree."
 
+## PowerShell port
+
+`powershell/Assess-LogFile.ps1` is a standalone PowerShell implementation of
+the framework procedure itself (not of this test suite) for disconnected/
+air-gapped environments with no Python or AI access. It's validated against
+the same corpus and ground truth used above, and shares its word lists and
+hashing scheme with `shape_naming.py` so codenames agree across tools. See
+`powershell/README.md` for usage, the PowerShell-specific pitfalls it hit,
+and measured performance characteristics.
+
 ## Regenerating after a spec change
 
 If the Log Assessment Framework's wording changes again, rerun
