@@ -17,9 +17,12 @@ application of the method, built only from what the framework specifies:
 import re
 import json
 import hashlib
+import sys
 from collections import Counter, defaultdict
 
 import os
+sys.path.insert(0, os.path.dirname(__file__))
+import shape_naming
 PATH = os.path.join(os.path.dirname(__file__), "test_sample.log")
 
 # ---------- Step 1: Ingest raw ----------
@@ -223,26 +226,37 @@ for ev in events:
         non_conformers.append({"event_id": ev["event_id"], "line": ev["lines"][0][2], "reasons": reasons, "text": ev["lines"][0][0][:80]})
 
 # ---------- Step 10: structural fingerprinting ----------
+UNNAMED_FORMATS = ("pipe_delimited", "OTHER")
+
 def shape_token(text, fmt):
-    # Arity-based shape tokens are only for an UNNAMED format; csv_dated already
-    # has a name and must fingerprint on it directly, or a delimiter-collision row
-    # (a quoted comma) silently mints a spurious extra fingerprint bucket.
+    # Delimiter+arity / masked-skeleton derivation is only for an UNNAMED format;
+    # csv_dated already has a name and must fingerprint on it directly, or a
+    # delimiter-collision row (a quoted comma) silently mints a spurious extra
+    # fingerprint bucket. "OTHER" has no confident delimiter to count arity on,
+    # so it falls back to a masked digit/letter skeleton instead of collapsing
+    # every unrecognised shape into one OTHER bucket.
     if fmt == "pipe_delimited":
         return f"pipe/{text.count('|') + 1}"
+    if fmt == "OTHER":
+        return shape_naming.masked_skeleton(text)
     return fmt
 
 fingerprints = {}
 fp_examples = defaultdict(list)
+shape_names = {}
 for ev in events:
     if ev["format"] == "FREE_TEXT":
         fp = "FREE_TEXT"
     else:
-        shape = shape_token(ev["lines"][0][0], ev["format"]) if ev["format"] in ("pipe_delimited", "OTHER") else ev["format"]
+        shape = shape_token(ev["lines"][0][0], ev["format"]) if ev["format"] in UNNAMED_FORMATS else ev["format"]
         key = f"{shape}|{ev['ts_format']}"
         fp = hashlib.md5(key.encode()).hexdigest()[:8]
         fingerprints.setdefault(fp, {"shape": shape, "ts_format": ev["ts_format"], "count": 0, "bytes": 0})
         fingerprints[fp]["count"] += 1
         fingerprints[fp]["bytes"] += ev["bytes"]
+        if ev["format"] in UNNAMED_FORMATS and fp not in shape_names:
+            shape_hash, codename = shape_naming.codename_for_token(shape)
+            shape_names[fp] = {"shape_token": shape, "shape_hash": shape_hash, "codename": codename}
     fp_examples[fp].append(ev["event_id"])
 
 distinct_structural = len(fingerprints)  # excludes FREE_TEXT bucket by construction
@@ -261,7 +275,7 @@ report = {
     "step9_non_conformers_sample": non_conformers[:15],
     "step10_fingerprint": {
         "distinct_structural_types": distinct_structural,
-        "types": [{"fingerprint": k, **v, "example_event_ids": fp_examples[k][:3]} for k, v in fingerprints.items()],
+        "types": [{"fingerprint": k, **v, **shape_names.get(k, {}), "example_event_ids": fp_examples[k][:3]} for k, v in fingerprints.items()],
         "free_text_events": len(fp_examples.get("FREE_TEXT", [])),
     },
     "format_breakdown": dict(fmt_counter),

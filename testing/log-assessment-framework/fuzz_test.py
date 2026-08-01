@@ -13,6 +13,7 @@ import tempfile
 sys.path.insert(0, os.path.dirname(__file__))
 import apply_framework_v1_lib as v1
 import apply_framework_v2 as v2
+import shape_naming
 
 random.seed(1234)
 
@@ -100,8 +101,58 @@ for trial in range(N_FILES):
                 issues.append(f"trial {trial}: v1/v2 DISAGREE on {field}: v1={r1[field]} v2={r2[field]} (n_lines={n_lines}, minority_rate={minority_rate}, crlf_rate={crlf_rate}, freetext_rate={freetext_rate}, bom={bom})")
             else:
                 oks += 1
+
+        # Shape naming: every shape_names entry either implementation produced
+        # must be well-formed and deterministic; where both produced an entry
+        # for the same fingerprint, they must agree exactly.
+        for label, r in (("v1", r1), ("v2", r2)):
+            for fp, entry in r.get("shape_names", {}).items():
+                if not shape_naming.CODENAME_PATTERN.match(entry["codename"]):
+                    issues.append(f"trial {trial} [{label}]: codename {entry['codename']!r} does not match FMT-adjective-noun-hash4 pattern")
+                else:
+                    oks += 1
+                if shape_naming.codename_of(entry["shape_hash"]) != entry["codename"]:
+                    issues.append(f"trial {trial} [{label}]: codename not reproducible from shape_hash {entry['shape_hash']}")
+                else:
+                    oks += 1
+                if shape_naming.shape_hash_of(entry["shape_token"]) != entry["shape_hash"]:
+                    issues.append(f"trial {trial} [{label}]: shape_hash not reproducible from shape_token {entry['shape_token']!r}")
+                else:
+                    oks += 1
+        common_fps = set(r1.get("shape_names", {})) & set(r2.get("shape_names", {}))
+        for fp in common_fps:
+            if r1["shape_names"][fp] != r2["shape_names"][fp]:
+                issues.append(f"trial {trial}: v1/v2 DISAGREE on shape_names[{fp}]: v1={r1['shape_names'][fp]} v2={r2['shape_names'][fp]}")
+            else:
+                oks += 1
     finally:
         os.remove(path)
+
+# Direct property fuzz of the naming primitives themselves, independent of
+# any log file: random shape-token strings must always produce a
+# well-formed, deterministic codename, and re-hashing/re-naming a value
+# already seen must reproduce the identical result (a real pure-function
+# check, not just "didn't crash").
+random_tokens = ["".join(random.choices("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/|,-: ", k=random.randint(1, 40))) for _ in range(500)]
+seen = {}
+naming_issues = 0
+for tok in random_tokens:
+    h1, c1 = shape_naming.codename_for_token(tok)
+    h2, c2 = shape_naming.codename_for_token(tok)  # recompute independently
+    if h1 != h2 or c1 != c2:
+        issues.append(f"naming fuzz: token {tok!r} non-deterministic across calls: ({h1},{c1}) vs ({h2},{c2})")
+        naming_issues += 1
+        continue
+    if not shape_naming.CODENAME_PATTERN.match(c1):
+        issues.append(f"naming fuzz: token {tok!r} produced malformed codename {c1!r}")
+        naming_issues += 1
+        continue
+    if tok in seen and seen[tok] != (h1, c1):
+        issues.append(f"naming fuzz: token {tok!r} produced different results on repeat: {seen[tok]} vs {(h1, c1)}")
+        naming_issues += 1
+    seen[tok] = (h1, c1)
+    oks += 1
+print(f"Naming primitive fuzz: {len(random_tokens)} random tokens, {naming_issues} issue(s)")
 
 print(f"Ran {N_FILES} randomized trials.")
 print(f"Checks passed: {oks}")

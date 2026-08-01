@@ -11,8 +11,12 @@ Prints a JSON report to stdout.
 import re
 import sys
 import json
+import os
 import hashlib
 from collections import Counter
+
+sys.path.insert(0, os.path.dirname(__file__))
+import shape_naming
 
 TS_LIB = [
     ("iso8601_offset_ms", re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}[+-]\d{2}:\d{2}")),
@@ -117,19 +121,32 @@ def annotate(ev):
 
 
 def shape_of(head, fmt):
-    # Only an unnamed format falls back to arity; csv_dated already has a name
-    # and must fingerprint on it directly (see apply_framework_v1_lib.shape_token).
+    # Only an unnamed format falls back to a derived shape; csv_dated already
+    # has a name and must fingerprint on it directly (see
+    # apply_framework_v1_lib.shape_token). "OTHER" has no confident delimiter
+    # to count arity on, so it uses the masked-token-skeleton derivation
+    # instead of collapsing every unrecognised shape into one OTHER bucket.
     if fmt == "pipe_delimited":
         return f"pipe/{head.count('|') + 1}"
+    if fmt == "OTHER":
+        return shape_naming.masked_skeleton(head)
     return fmt
+
+
+UNNAMED_FORMATS = ("pipe_delimited", "OTHER")
 
 
 def fingerprint(ev, head):
     if ev["format"] == "FREE_TEXT":
-        return "FREE_TEXT"
+        return "FREE_TEXT", None
     shape = shape_of(head, ev["format"])
     key = f"{shape}|{ev['ts_format']}"
-    return hashlib.md5(key.encode()).hexdigest()[:8]
+    fp = hashlib.md5(key.encode()).hexdigest()[:8]
+    shape_name = None
+    if ev["format"] in UNNAMED_FORMATS:
+        shape_hash, codename = shape_naming.codename_for_token(shape)
+        shape_name = {"shape_token": shape, "shape_hash": shape_hash, "codename": codename}
+    return fp, shape_name
 
 
 def run(path):
@@ -154,8 +171,12 @@ def run(path):
                    e["structure"] == maj_struct and e["first_char_class"] == maj_fc and e["line_ending"] == maj_end)
 
     fps = Counter()
+    shape_names = {}
     for e in events:
-        fps[fingerprint(e, e["raw_lines"][0][0])] += 1
+        fp, shape_name = fingerprint(e, e["raw_lines"][0][0])
+        fps[fp] += 1
+        if shape_name is not None and fp not in shape_names:
+            shape_names[fp] = shape_name
 
     return {
         "file": path,
@@ -171,6 +192,7 @@ def run(path):
         "all_axes_conforming_events": all_conf,
         "distinct_fingerprints_excl_freetext": len([k for k in fps if k != "FREE_TEXT"]),
         "free_text_events": fps.get("FREE_TEXT", 0),
+        "shape_names": shape_names,
     }
 
 

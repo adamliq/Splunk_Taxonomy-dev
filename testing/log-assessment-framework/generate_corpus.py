@@ -6,6 +6,10 @@ Each file gets its own ground-truth record in corpus_ground_truth.json.
 """
 import json
 import os
+import sys
+
+sys.path.insert(0, os.path.dirname(__file__))
+import shape_naming
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), "corpus")
 os.makedirs(OUT_DIR, exist_ok=True)
@@ -196,6 +200,49 @@ corpus_truth["11_ambiguous_continuation_default.log"] = {
     "total_lines": len(lines), "total_events": N + 3,
     "standalone_freetext_lines": 3,
     "purpose": "3 unindented banner lines with no recognisable pattern must be recognised as their own (FREE_TEXT) events, not silently folded into the preceding JSON record.",
+}
+
+# ---------- 12. Shape naming: unnamed format via delimiter+arity ----------
+# 60 lines, ALL an unnamed pipe-delimited format (5 fields), so the majority
+# baseline IS the derived shape itself, not a minority pitfall.
+PIPE_SHAPE_N = 60
+lines = []
+for i in range(PIPE_SHAPE_N):
+    text = f"2026-08-01 09:{i%60:02d}:00|host1|WARN|disk_usage|92%"
+    lines.append((text, "\n"))
+write_file("12_shape_naming_delimiter_arity.log", lines)
+expected_shape_token_12 = "pipe/5"
+expected_shape_hash_12, expected_codename_12 = shape_naming.codename_for_token(expected_shape_token_12)
+corpus_truth["12_shape_naming_delimiter_arity.log"] = {
+    "pitfall": "Shape naming (unnamed format, delimiter+arity)",
+    "total_lines": PIPE_SHAPE_N, "total_events": PIPE_SHAPE_N,
+    "expected_distinct_fingerprints": 1,
+    "expected_shape_token": expected_shape_token_12,
+    "expected_shape_hash": expected_shape_hash_12,
+    "expected_codename": expected_codename_12,
+    "purpose": "Every line is the same unnamed pipe-delimited (5-field) format -- must derive shape token pipe/5 and a stable, deterministic FMT-adjective-noun-hash4 codename, not collapse into a bare OTHER bucket.",
+}
+
+# ---------- 13. Shape naming: unnamed format via masked token skeleton ----------
+# 60 lines, ALL an unnamed comma-separated-but-not-csv_dated format (fails
+# csv_dated's slash-date requirement, so it falls to OTHER and must use the
+# masked-skeleton derivation instead of delimiter+arity).
+SKEL_N = 60
+lines = []
+for i in range(SKEL_N):
+    text = f"2026-08-01 09:{i%60:02d}:00,LOGIN,jsmith,app01"
+    lines.append((text, "\n"))
+write_file("13_shape_naming_masked_skeleton.log", lines)
+expected_skeleton = shape_naming.masked_skeleton(f"2026-08-01 09:00:00,LOGIN,jsmith,app01")
+expected_shape_hash_13, expected_codename_13 = shape_naming.codename_for_token(expected_skeleton)
+corpus_truth["13_shape_naming_masked_skeleton.log"] = {
+    "pitfall": "Shape naming (unnamed format, masked token skeleton)",
+    "total_lines": SKEL_N, "total_events": SKEL_N,
+    "expected_distinct_fingerprints": 1,
+    "expected_shape_token": expected_skeleton,
+    "expected_shape_hash": expected_shape_hash_13,
+    "expected_codename": expected_codename_13,
+    "purpose": "A comma-separated but non-csv_dated (no slash-date) unnamed format with no confident delimiter/arity signal -- must fall back to a masked digit/letter skeleton, not collapse into a bare OTHER bucket, and must still name it deterministically.",
 }
 
 TRUTH_PATH = os.path.join(OUT_DIR, "corpus_ground_truth.json")

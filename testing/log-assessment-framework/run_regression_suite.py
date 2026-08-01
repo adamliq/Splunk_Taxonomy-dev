@@ -12,6 +12,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 import apply_framework_v1_lib as v1
 import apply_framework_v2 as v2
+import shape_naming
 
 BASE = os.path.dirname(__file__)
 CORPUS_DIR = os.path.join(BASE, "corpus")
@@ -86,6 +87,57 @@ def check_ground_truth(result, truth, fname):
         expected_cont = truth["multiline_records"] * truth["continuation_lines_per_record"]
         check(result["continuation_lines"] == expected_cont,
               f"[{fname}] continuation-line count matches ground truth ({result['continuation_lines']} vs {expected_cont})")
+    if "expected_shape_token" in truth:
+        shape_entries = list(result.get("shape_names", {}).values())
+        check(len(shape_entries) == 1,
+              f"[{fname}] exactly one shape_names entry produced ({len(shape_entries)})")
+        if shape_entries:
+            entry = shape_entries[0]
+            check(entry["shape_token"] == truth["expected_shape_token"],
+                  f"[{fname}] shape_token matches ground truth ({entry['shape_token']!r} vs {truth['expected_shape_token']!r})")
+            check(entry["shape_hash"] == truth["expected_shape_hash"],
+                  f"[{fname}] shape_hash matches ground truth ({entry['shape_hash']} vs {truth['expected_shape_hash']})")
+            check(entry["codename"] == truth["expected_codename"],
+                  f"[{fname}] codename matches ground truth ({entry['codename']} vs {truth['expected_codename']})")
+
+
+def check_shape_naming_properties(result, label):
+    """Structural checks on every shape_names entry a run produced: correct
+    FMT-adjective-noun-hash4 format, and determinism (recomputing codename_of
+    on the recorded shape_hash reproduces the same recorded codename --
+    proving it's a pure function, not a random draw that happened once)."""
+    for fp, entry in result.get("shape_names", {}).items():
+        check(bool(shape_naming.CODENAME_PATTERN.match(entry["codename"])),
+              f"[{label}] codename {entry['codename']!r} matches FMT-adjective-noun-hash4 pattern")
+        recomputed = shape_naming.codename_of(entry["shape_hash"])
+        check(recomputed == entry["codename"],
+              f"[{label}] codename is deterministic: recomputing from shape_hash {entry['shape_hash']} reproduces {entry['codename']!r} (got {recomputed!r})")
+        # shape_hash itself must be reproducible from the recorded shape_token
+        rehashed = shape_naming.shape_hash_of(entry["shape_token"])
+        check(rehashed == entry["shape_hash"],
+              f"[{label}] shape_hash is deterministic: rehashing token {entry['shape_token']!r} reproduces {entry['shape_hash']} (got {rehashed})")
+
+
+def diff_shape_names(r1, r2, fname):
+    """v1 and v2 must agree on shape_token/shape_hash/codename for every
+    fingerprint they both produced -- since shape_naming.py is shared
+    configuration, disagreement here means the two scripts derived a
+    DIFFERENT shape (or decided differently when to apply shape derivation
+    at all), which is a real signal about spec ambiguity, not a naming
+    library mismatch."""
+    common_fps = set(r1.get("shape_names", {})) & set(r2.get("shape_names", {}))
+    for fp in common_fps:
+        e1, e2 = r1["shape_names"][fp], r2["shape_names"][fp]
+        if e1 != e2:
+            issues.append(f"[{fname}] DISAGREEMENT v1 vs v2 on shape_names[{fp}]: v1={e1} v2={e2}")
+        else:
+            oks.append(f"[{fname}] v1/v2 agree on shape naming for fingerprint {fp}")
+    only_v1 = set(r1.get("shape_names", {})) - set(r2.get("shape_names", {}))
+    only_v2 = set(r2.get("shape_names", {})) - set(r1.get("shape_names", {}))
+    if only_v1:
+        issues.append(f"[{fname}] v1 produced shape_names for fingerprints v2 did not: {only_v1}")
+    if only_v2:
+        issues.append(f"[{fname}] v2 produced shape_names for fingerprints v1 did not: {only_v2}")
 
 
 def main():
@@ -101,6 +153,9 @@ def main():
         run_invariants(r1, f"{fname} v1")
         run_invariants(r2, f"{fname} v2")
         diff_v1_v2(r1, r2, fname)
+        check_shape_naming_properties(r1, f"{fname} v1")
+        check_shape_naming_properties(r2, f"{fname} v2")
+        diff_shape_names(r1, r2, fname)
         if fname in truth:
             check_ground_truth(r1, truth[fname], fname + " (v1)")
             check_ground_truth(r2, truth[fname], fname + " (v2)")
@@ -113,6 +168,9 @@ def main():
     run_invariants(r1, "combined v1")
     run_invariants(r2, "combined v2")
     diff_v1_v2(r1, r2, "test_sample.log (combined)")
+    check_shape_naming_properties(r1, "combined v1")
+    check_shape_naming_properties(r2, "combined v2")
+    diff_shape_names(r1, r2, "test_sample.log (combined)")
     check(r1["total_logical_events"] == combined_truth["total_logical_events"],
           f"[combined v1] total_events matches ground truth ({r1['total_logical_events']} vs {combined_truth['total_logical_events']})")
     check(r2["total_logical_events"] == combined_truth["total_logical_events"],

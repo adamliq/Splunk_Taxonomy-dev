@@ -7,7 +7,12 @@ including the corrected record-start rule.
 import re
 import json
 import hashlib
+import os
+import sys
 from collections import Counter, defaultdict
+
+sys.path.insert(0, os.path.dirname(__file__))
+import shape_naming
 
 TS_PATTERNS = [
     ("iso8601_offset_ms", re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}[+-]\d{2}:\d{2}")),
@@ -90,6 +95,11 @@ def shape_token(text, fmt):
     # format fingerprinting is supposed to be immune to.
     if fmt == "pipe_delimited":
         return f"pipe/{text.count('|') + 1}"
+    if fmt == "OTHER":
+        # Structured but unnamed, and not confidently delimiter-countable --
+        # do NOT dump it in a single OTHER bucket (understates diversity).
+        # Fall back to a masked token skeleton per the framework.
+        return shape_naming.masked_skeleton(text)
     return fmt
 
 
@@ -138,13 +148,19 @@ def run(path):
                    e["structure"] == maj_struct and e["first_char_class"] == maj_fc and e["line_ending"] == maj_end)
 
     fingerprints = Counter()
+    shape_names = {}  # fingerprint -> {shape_token, shape_hash, codename}
+    UNNAMED_FORMATS = ("pipe_delimited", "OTHER")
     for ev in events:
         if ev["format"] == "FREE_TEXT":
             fingerprints["FREE_TEXT"] += 1
             continue
         shape = shape_token(ev["lines"][0][0], ev["format"])
         key = f"{shape}|{ev['ts_format']}"
-        fingerprints[hashlib.md5(key.encode()).hexdigest()[:8]] += 1
+        fp = hashlib.md5(key.encode()).hexdigest()[:8]
+        fingerprints[fp] += 1
+        if ev["format"] in UNNAMED_FORMATS and fp not in shape_names:
+            shape_hash, codename = shape_naming.codename_for_token(shape)
+            shape_names[fp] = {"shape_token": shape, "shape_hash": shape_hash, "codename": codename}
 
     return {
         "file": path,
@@ -160,4 +176,5 @@ def run(path):
         "all_axes_conforming_events": all_conf,
         "distinct_fingerprints_excl_freetext": len([k for k in fingerprints if k != "FREE_TEXT"]),
         "free_text_events": fingerprints.get("FREE_TEXT", 0),
+        "shape_names": shape_names,
     }

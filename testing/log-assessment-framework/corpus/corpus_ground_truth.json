@@ -88,5 +88,25 @@
     "total_events": 103,
     "standalone_freetext_lines": 3,
     "purpose": "3 unindented banner lines with no recognisable pattern must be recognised as their own (FREE_TEXT) events, not silently folded into the preceding JSON record."
+  },
+  "12_shape_naming_delimiter_arity.log": {
+    "pitfall": "Shape naming (unnamed format, delimiter+arity)",
+    "total_lines": 60,
+    "total_events": 60,
+    "expected_distinct_fingerprints": 1,
+    "expected_shape_token": "pipe/5",
+    "expected_shape_hash": "044ff72e",
+    "expected_codename": "FMT-ember-heron-044f",
+    "purpose": "Every line is the same unnamed pipe-delimited (5-field) format -- must derive shape token pipe/5 and a stable, deterministic FMT-adjective-noun-hash4 codename, not collapse into a bare OTHER bucket."
+  },
+  "13_shape_naming_masked_skeleton.log": {
+    "pitfall": "Shape naming (unnamed format, masked token skeleton)",
+    "total_lines": 60,
+    "total_events": 60,
+    "expected_distinct_fingerprints": 1,
+    "expected_shape_token": "9999-99-99 99:99:99,AAAAA,AAAAAA,AAA99",
+    "expected_shape_hash": "00516ef8",
+    "expected_codename": "FMT-amber-jackal-0051",
+    "purpose": "A comma-separated but non-csv_dated (no slash-date) unnamed format with no confident delimiter/arity signal -- must fall back to a masked digit/letter skeleton, not collapse into a bare OTHER bucket, and must still name it deterministically."
   }
 }

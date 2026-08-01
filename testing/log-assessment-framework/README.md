@@ -37,7 +37,22 @@ produces correct and mutually-consistent results.
 4. **Property-based / fuzz testing.** `fuzz_test.py` generates 40 randomized
    files (random format mix, random minority rates, random line-ending and
    BOM combinations, 5–300 lines each) and checks the same invariants and
-   v1/v2 agreement hold universally, not just on the hand-picked corpus.
+   v1/v2 agreement hold universally, not just on the hand-picked corpus. It
+   also directly fuzzes the shape-naming primitives (below) with 500 random
+   token strings.
+
+5. **Shape naming** (Structural Fingerprinting → "Naming the derived shape").
+   `shape_naming.py` is shared configuration both implementations import
+   identically — the word lists and hashing scheme aren't the procedure
+   under test, so sharing them is what makes a codename comparable between
+   v1 and v2. What each script decides independently is *when* to invoke
+   shape derivation (named vs. unnamed format) and *which* method applies:
+   delimiter+arity (`pipe/5`) for a countable-delimiter unnamed format, or a
+   masked digit/letter skeleton (`9999-99-99 99:99:99,AAAAA,...`) when there's
+   no confident delimiter to count arity on. Corpus files 12 and 13 isolate
+   each path; the regression suite and fuzz test both check codename format
+   compliance (`FMT-adjective-noun-hash4`) and determinism (recomputing from
+   a recorded shape_hash or shape_token always reproduces the same result).
 
 ## Running it
 
@@ -45,10 +60,10 @@ produces correct and mutually-consistent results.
 python3 generate_test_log.py     # regenerates test_sample.log + ground_truth.json
 python3 generate_corpus.py       # regenerates corpus/*.log + corpus/corpus_ground_truth.json
 python3 run_regression_suite.py  # runs both implementations against the full corpus
-python3 fuzz_test.py             # 40 randomized property-based trials
+python3 fuzz_test.py             # 40 randomized property-based trials + 500 naming-primitive trials
 ```
 
-All four currently pass with 0 issues (192 checks in the regression suite, 680
+All four currently pass with 0 issues (298 checks in the regression suite, 1320
 in the fuzz run).
 
 ## What this found
@@ -76,6 +91,22 @@ fingerprinting to a *named* format instead of reserving it for genuinely
 unnamed ones — which re-exposed the delimiter-collision pitfall inside
 fingerprinting. Both were harness bugs, not spec bugs, but finding them is
 exactly what running two independent implementations is for.
+
+A third, pre-existing gap was found once shape-naming coverage was added:
+neither implementation had ever derived a real shape for the "OTHER" bucket
+(structured but unrecognised, no confident delimiter) — every such event
+collapsed into one bare `OTHER` fingerprint regardless of its actual shape,
+understating diversity exactly as the framework warns against. Both scripts
+now fall back to the masked-token-skeleton derivation for that case.
+
+One documentation-only inconsistency was noticed but not (yet) changed: the
+reference article's worked example `2026-07-31T04:03Z → 9999-99-99T99:99A`
+masks the trailing `Z` but leaves the `T` separator unmasked, which doesn't
+follow the stated rule "letter runs → A" literally (both are single-letter
+runs). `shape_naming.masked_skeleton()` implements the rule as literally
+stated (masking both), which is the more internally-consistent reading — the
+example itself may just be imprecise. Worth a small wording fix if picked
+up later, but it doesn't affect correctness of the implemented behaviour.
 
 ## Regenerating after a spec change
 
