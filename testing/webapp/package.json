@@ -1,0 +1,13 @@
+{
+  "name": "latch-webapp-regression-tests",
+  "private": true,
+  "description": "Regression suite for index.html (the LATCH SIEM onboarding & assurance app) -- structural checks on the shipped file plus Playwright browser tests.",
+  "scripts": {
+    "test": "./run-all.sh",
+    "test:structural": "node --test structural/*.test.js",
+    "test:browser": "node --test browser/*.spec.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
+}
