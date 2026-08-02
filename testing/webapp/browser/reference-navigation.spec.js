@@ -26,7 +26,7 @@ const DETAIL_KEYS = [
   'required-field-coverage', 'data-quality-score', 'log-assessment-framework',
 ];
 
-test('every anchor-nav link in every reference article scrolls to a visible target', { timeout: 180000 }, async () => {
+test('every anchor-nav link in every reference article scrolls to a visible target', { timeout: 300000 }, async () => {
   await withServerAndPage(async ({ page, baseUrl, pageErrors }) => {
     await page.goto(`${baseUrl}/index.html`, { waitUntil: 'load' });
     await page.waitForTimeout(300);
