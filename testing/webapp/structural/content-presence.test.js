@@ -151,3 +151,44 @@ describe('Field Extraction reference article (6 extraction methods)', () => {
     assert.match(section, /DELIMS/);
   });
 });
+
+describe('Default fields section (4 metadata / 5 other / 8 date_* fields)', () => {
+  test('section exists with a nav link in the article hero', () => {
+    assert.match(text, /id="field-extraction-defaults"/);
+    const hero = text.match(/<h2 id="fieldExtractionReferenceTitle">[\s\S]*?<\/nav>/)[0];
+    assert.match(hero, /href="#field-extraction-defaults"/);
+  });
+  test('exactly 4 metadata, 5 other and 8 date_* field rows', () => {
+    const section = text.match(/<section id="field-extraction-defaults"[\s\S]*?<\/section>/)[0];
+    const tables = section.match(/<table class="eccs-table">[\s\S]*?<\/table>/g) || [];
+    assert.equal(tables.length, 3, 'expected exactly 3 tables in the default fields section');
+    const rowCounts = tables.map(t => (t.match(/<tr>/g) || []).length - 1); // subtract header row
+    assert.deepEqual(rowCounts, [4, 5, 8]);
+  });
+  test('all four metadata default fields and their override mechanisms are present', () => {
+    const section = text.match(/<section id="field-extraction-defaults"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /<code>host<\/code>/);
+    assert.match(section, /<code>source<\/code>/);
+    assert.match(section, /<code>sourcetype<\/code>/);
+    assert.match(section, /<code>index<\/code>/);
+    assert.match(section, /MetaData:Host/);
+    assert.match(section, /MetaData:Source/);
+    assert.match(section, /MetaData:Sourcetype/);
+    assert.match(section, /_MetaData:Index/);
+  });
+  test('all eight date_* fields are present and DATETIME_CONFIG absence caveat is documented', () => {
+    const section = text.match(/<section id="field-extraction-defaults"[\s\S]*?<\/section>/)[0];
+    for (const f of ['date_year', 'date_month', 'date_mday', 'date_wday', 'date_hour', 'date_minute', 'date_second', 'date_zone']) {
+      assert.match(section, new RegExp(`<code>${f}<\\/code>`), `missing ${f}`);
+    }
+    assert.match(section, /DATETIME_CONFIG = CURRENT/);
+    assert.match(section, /DATETIME_CONFIG = NONE/);
+  });
+  test('distinguishes default fields from underscore-prefixed internal fields', () => {
+    const section = text.match(/<section id="field-extraction-defaults"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /Not the same as internal fields/);
+    assert.match(section, /<code>_raw<\/code>/);
+    assert.match(section, /<code>_time<\/code>/);
+    assert.match(section, /<code>_indextime<\/code>/);
+  });
+});
