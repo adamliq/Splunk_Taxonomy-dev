@@ -894,6 +894,8 @@ Default fields — assigned automatically by Splunk before any extraction rule i
 
 Default fields are distinct from Splunk's underscore-prefixed internal fields (`_raw`, `_time`, `_indextime`, and others), which are always present but not the same category.
 
+**Tags** — Splunk lets you attach one or more tags to any specific field/value pair, including an `eventtype` value, via `tags.conf`: a stanza named `[fieldname=value]` containing one `<tagname> = enabled` line per tag. Search with `tag::<field>=<tagname>` (or the shorthand `tag=<tagname>`) to retrieve every event sharing that tag across differently-named event types.
+
 Six extraction methods, each tagged with its pipeline stage:
 
 1. **`EXTRACT-*` / `REPORT-*` (regex)** — search-time; field defined by a regular expression inline (`EXTRACT-*`) or as a named `transforms.conf` stanza (`REPORT-*`).
@@ -904,6 +906,19 @@ Six extraction methods, each tagged with its pipeline stage:
 6. **`INGEST_EVAL`** — index-time (ingest pipeline); ingest-time eval expression run at the Ingest Processor or indexer layer, covering computed/conditional fields a plain regex can't.
 
 Index-time extraction is justified only for a specific operational reason — event routing/access-control decisions that must happen before search, or search cost at volumes where repeated search-time computation is measurably too expensive — otherwise search-time extraction is preferred, since it's both cheaper to get wrong and cheaper to fix.
+
+## Retention Policy
+**Category:** Splunk platform configuration (TAX-02.06.05, not in glossary — standalone reference article, no `frameworkConcepts` entry)
+
+Records the approved retention period for a data source, index or platform, including any regulatory or contractual minimum and its basis. Retention isn't just a documented number — it's enforced mechanically by an index's bucket lifecycle, so the recorded policy should match the deployed `indexes.conf` settings, not just organisational intent.
+
+**Sub-terms / dimensions / components:**
+
+Bucket lifecycle (5 stages): **Hot** (writable, newest data; rolls to warm on a `splunkd` restart, at `maxDataSize`, or at the age set by `maxHotSpanSecs`) → **Warm** (read-only, recently rolled off) → **Cold** (read-only, often on cheaper storage via `coldPath`) → **Frozen** (not searchable; deleted by default once a bucket ages past `frozenTimePeriodInSecs` or the index exceeds `maxTotalDataSizeMB`, unless `coldToFrozenDir`/`coldToFrozenScript` archives it instead) → **Thawed** (a frozen bucket manually restored via `thawedPath` + `splunk rebuild`; Splunk doesn't manage thawed buckets automatically).
+
+Key `indexes.conf` settings: `maxHotSpanSecs` (default 90 days), `maxDataSize` (default `auto`, ~750MB), `maxWarmDBCount` (default 300), `frozenTimePeriodInSecs` (default ~6 years), `maxTotalDataSizeMB` (default 500000), `coldToFrozenDir`, `coldToFrozenScript`, `homePath`/`coldPath`/`thawedPath`. An index with neither `coldToFrozenDir` nor `coldToFrozenScript` set silently and permanently **deletes** its data on freeze — freezing alone is not archival.
+
+Secure deletion (5 methods, only 3 of which are actually secure): bucket aging to frozen (secure only if storage is separately wiped), the SPL `delete` command (marks events non-searchable but leaves raw data on disk — **not** secure), overwriting storage, physical destruction of media, and encryption at rest (the only one of these that must be decided before ingestion, not at deletion time).
 
 ## Line Break
 **Category:** Splunk sourcetype definition (not in glossary)

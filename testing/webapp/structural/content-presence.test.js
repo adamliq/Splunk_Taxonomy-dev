@@ -191,6 +191,46 @@ describe('Default fields section (4 metadata / 5 other / 8 date_* fields)', () =
     assert.match(section, /<code>_time<\/code>/);
     assert.match(section, /<code>_indextime<\/code>/);
   });
+  test('tags.conf mechanism is documented next to eventtype', () => {
+    const section = text.match(/<section id="field-extraction-defaults"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /<strong>Tags\.<\/strong>/);
+    assert.match(section, /tags\.conf/);
+    assert.match(section, /tag::&lt;field&gt;=&lt;tagname&gt;/);
+    assert.match(section, /\[eventtype=login_failure\]/);
+  });
+});
+
+describe('Retention Policy reference article (bucket lifecycle, indexes.conf settings, secure deletion)', () => {
+  test('article exists and is wired into detailConfig / setReferenceDetailVisibility / method-card', () => {
+    assert.match(text, /id="retentionPolicyReferenceView"/);
+    assert.match(text, /"retention-policy":\{hash:"#retention-policy-definition",view:"retentionPolicyReferenceView"\}/);
+    assert.match(text, /if\(retentionPolicy\) retentionPolicy\.hidden=detailName!=="retention-policy"/);
+    assert.match(text, /data-open-reference-detail="retention-policy"/);
+  });
+  test('exactly 5 bucket lifecycle stages, in order hot to thawed', () => {
+    const section = text.match(/<section id="retention-policy-lifecycle"[\s\S]*?<\/section>/)[0];
+    const stages = [...section.matchAll(/<tr><td>(Hot|Warm|Cold|Frozen|Thawed)<\/td>/g)].map(m => m[1]);
+    assert.deepEqual(stages, ['Hot', 'Warm', 'Cold', 'Frozen', 'Thawed']);
+  });
+  test('exactly 8 indexes.conf settings rows', () => {
+    const section = text.match(/<section id="retention-policy-settings"[\s\S]*?<\/section>/)[0];
+    const table = section.match(/<table class="eccs-table">[\s\S]*?<\/table>/)[0];
+    const rows = (table.match(/<tr>/g) || []).length - 1; // subtract header row
+    assert.equal(rows, 8);
+  });
+  test('exactly 5 secure deletion methods, including the delete-command caveat', () => {
+    const section = text.match(/<section id="retention-policy-secure-deletion"[\s\S]*?<\/section>/)[0];
+    const table = section.match(/<table class="eccs-table">[\s\S]*?<\/table>/)[0];
+    const rows = (table.match(/<tr>/g) || []).length - 1;
+    assert.equal(rows, 5);
+    assert.match(section, /remains physically present on disk/);
+  });
+  test('deleted-vs-archived-on-freeze distinction is documented', () => {
+    const section = text.match(/<section id="retention-policy-settings"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /Deleted, not archived, by default/);
+    assert.match(section, /coldToFrozenDir/);
+    assert.match(section, /coldToFrozenScript/);
+  });
 });
 
 describe('Line Break: EVENT_BREAKER / EVENT_BREAKER_ENABLE (Universal Forwarder event breaking)', () => {
