@@ -233,6 +233,39 @@ describe('Retention Policy reference article (bucket lifecycle, indexes.conf set
   });
 });
 
+describe('Access Control reference article (4 predefined roles, 8 authorize.conf settings, 3 auth methods)', () => {
+  test('article exists and is wired into detailConfig / setReferenceDetailVisibility / method-card', () => {
+    assert.match(text, /id="accessControlReferenceView"/);
+    assert.match(text, /"access-control":\{hash:"#access-control-definition",view:"accessControlReferenceView"\}/);
+    assert.match(text, /if\(accessControl\) accessControl\.hidden=detailName!=="access-control"/);
+    assert.match(text, /data-open-reference-detail="access-control"/);
+  });
+  test('exactly 4 predefined roles: admin, power, user, can_delete', () => {
+    const section = text.match(/<section id="access-control-roles"[\s\S]*?<\/section>/)[0];
+    const roles = [...section.matchAll(/<tr><td><code>([a-z_]+)<\/code><\/td>/g)].map(m => m[1]);
+    assert.deepEqual(roles, ['admin', 'power', 'user', 'can_delete']);
+  });
+  test('exactly 8 authorize.conf settings rows', () => {
+    const section = text.match(/<section id="access-control-authorize"[\s\S]*?<\/section>/)[0];
+    const table = section.match(/<table class="eccs-table">[\s\S]*?<\/table>/)[0];
+    const rows = (table.match(/<tr>/g) || []).length - 1;
+    assert.equal(rows, 8);
+  });
+  test('all three authentication integration methods are covered, with the mapping-drift caveat', () => {
+    const section = text.match(/<section id="access-control-authentication"[\s\S]*?<\/section>/)[0];
+    assert.match(section, />Native<\/td>/);
+    assert.match(section, />LDAP<\/td>/);
+    assert.match(section, />SAML<\/td>/);
+    assert.match(section, /authentication\.conf/);
+    assert.match(section, /Mapping drift/);
+  });
+  test('capabilities-are-additive-only and importRoles best-practice guidance are present', () => {
+    const section = text.match(/<section id="access-control-authorize"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /additive only/);
+    assert.match(section, /<code>importRoles<\/code>/);
+  });
+});
+
 describe('Line Break: EVENT_BREAKER / EVENT_BREAKER_ENABLE (Universal Forwarder event breaking)', () => {
   test('both settings are in the line-breaking settings table with a Scope column', () => {
     const section = text.match(/<section id="line-break-settings"[\s\S]*?<\/section>/)[0];

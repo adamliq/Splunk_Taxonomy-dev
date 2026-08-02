@@ -920,6 +920,19 @@ Key `indexes.conf` settings: `maxHotSpanSecs` (default 90 days), `maxDataSize` (
 
 Secure deletion (5 methods, only 3 of which are actually secure): bucket aging to frozen (secure only if storage is separately wiped), the SPL `delete` command (marks events non-searchable but leaves raw data on disk — **not** secure), overwriting storage, physical destruction of media, and encryption at rest (the only one of these that must be decided before ingestion, not at deletion time).
 
+## Access Control
+**Category:** Splunk platform configuration (TAX-02.08, not in glossary — standalone reference article, no `frameworkConcepts` entry)
+
+Records who can access a data source, index or platform's data, the model used to grant that access (role-based/RBAC or attribute-based/ABAC), and the approval and review process governing it. In Splunk, RBAC is the default and dominant model — every user is assigned one or more roles.
+
+**Sub-terms / dimensions / components:**
+
+Four predefined roles (Splunk's guidance: don't edit these directly, build custom roles that `importRoles` from one of them instead): **`admin`** (most capabilities of any predefined role), **`power`** (can edit all shared objects, tag events, and similar privileged-but-non-admin tasks), **`user`** (can create/edit only their own saved searches and preferences), **`can_delete`** (grants the `delete` SPL command; not granted to any predefined role by default — high-risk).
+
+Custom roles are defined per-stanza in `authorize.conf`: capability lines (`<capability> = enabled`, additive only — no explicit deny, so effective permissions are the union of every role and imported role held), `importRoles` (inherit from another role), `srchIndexesAllowed`/`srchIndexesDefault` (which indexes are searchable / searched by default), `srchFilter` (an always-applied search-time filter), `srchJobsQuota`/`rtSrchJobsQuota` (concurrent job limits), `srchDiskQuota` (search-artifact disk cap), `srchTimeWin` (scheduled-search dispatch time-range limit).
+
+Authentication integration (separate from role assignment, both configured in `authentication.conf`): Native (Splunk's built-in username/password store), LDAP (external directory, group-to-role mapping stanza), SAML (external IdP for SSO, asserted group/role attributes mapped to Splunk roles). Mapping drift risk: an upstream LDAP group or SAML attribute change silently changes a user's effective Splunk capabilities on next login, without any change inside Splunk itself — a real gap for Access Review Cadence (TAX-02.08.04) if reviews only check Splunk's own role assignments.
+
 ## Line Break
 **Category:** Splunk sourcetype definition (not in glossary)
 
