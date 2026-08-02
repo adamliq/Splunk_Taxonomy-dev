@@ -198,6 +198,12 @@ describe('Default fields section (4 metadata / 5 other / 8 date_* fields)', () =
     assert.match(section, /tag::&lt;field&gt;=&lt;tagname&gt;/);
     assert.match(section, /\[eventtype=login_failure\]/);
   });
+  test('ANNOTATE_PUNCT is documented on the punct row', () => {
+    const section = text.match(/<section id="field-extraction-defaults"[\s\S]*?<\/section>/)[0];
+    const puntRow = section.match(/<tr><td><code>punct<\/code>[\s\S]*?<\/tr>/)[0];
+    assert.match(puntRow, /<code>ANNOTATE_PUNCT<\/code>/);
+    assert.match(puntRow, /ANNOTATE_PUNCT = false/);
+  });
 });
 
 describe('Retention Policy reference article (bucket lifecycle, indexes.conf settings, secure deletion)', () => {
