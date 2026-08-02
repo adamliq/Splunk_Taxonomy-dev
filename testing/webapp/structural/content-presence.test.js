@@ -312,3 +312,45 @@ describe('Line Length: TRUNCATE = 999999 alternative and recommended-value SPL s
     assert.match(section, /max_event_size \* 1\.10/);
   });
 });
+
+describe('Field Extraction: host_segment override mechanism', () => {
+  test('host_segment is documented on the host row with a worked path example', () => {
+    const section = text.match(/<section id="field-extraction-defaults"[\s\S]*?<\/section>/)[0];
+    const hostRow = section.match(/<tr><td><code>host<\/code>[\s\S]*?<\/tr>/)[0];
+    assert.match(hostRow, /<code>host_segment = &lt;N&gt;<\/code>/);
+    assert.match(hostRow, /monitor:\/\//);
+  });
+});
+
+describe('Field Normalisation reference article (22 CIM data models, 4 normalisation mechanisms)', () => {
+  test('article exists and is wired into detailConfig / setReferenceDetailVisibility / method-card', () => {
+    assert.match(text, /id="fieldNormalisationReferenceView"/);
+    assert.match(text, /"field-normalisation":\{hash:"#field-norm-definition",view:"fieldNormalisationReferenceView"\}/);
+    assert.match(text, /if\(fieldNormalisation\) fieldNormalisation\.hidden=detailName!=="field-normalisation"/);
+    assert.match(text, /data-open-reference-detail="field-normalisation"/);
+  });
+  test('exactly 22 CIM data model rows', () => {
+    const section = text.match(/<section id="field-norm-models"[\s\S]*?<\/section>/)[0];
+    const table = section.match(/<table class="eccs-table">[\s\S]*?<\/table>/)[0];
+    const rows = (table.match(/<tr>/g) || []).length - 1;
+    assert.equal(rows, 22);
+  });
+  test('exactly 4 normalisation mechanisms: field aliasing, calculated fields, automatic lookups, tags', () => {
+    const section = text.match(/<section id="field-norm-mechanisms"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /FIELDALIAS-&lt;class&gt;/);
+    assert.match(section, /EVAL-&lt;fieldname&gt;/);
+    assert.match(section, /LOOKUP-&lt;class&gt;/);
+    assert.match(section, /tags\.conf/);
+    const table = section.match(/<table class="eccs-table">[\s\S]*?<\/table>/)[0];
+    const rows = (table.match(/<tr>/g) || []).length - 1;
+    assert.equal(rows, 4);
+  });
+  test('the 6-step CIM compliance workflow and CIM-vs-ECS distinction are present', () => {
+    const section = text.match(/<section id="field-norm-workflow"[\s\S]*?<\/section>/)[0];
+    const steps = (section.match(/<li>/g) || []).length;
+    assert.equal(steps, 6);
+    const validation = text.match(/<section id="field-norm-validation"[\s\S]*?<\/section>/)[0];
+    assert.match(validation, /CIM Mapping \(TAX-04\.07\.04\)/);
+    assert.match(validation, /ECS Mapping \(TAX-04\.07\.05\)/);
+  });
+});

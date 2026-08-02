@@ -18,7 +18,7 @@ const { withServerAndPage } = require('../lib/browser-harness');
 // assertion if this list and that one drift apart.
 const DETAIL_KEYS = [
   'eccs', 'marginal-novelty', 'icd', 'pivot', 'timestamp-quality', 'log-format-quality',
-  'datetime-format', 'datetime-parse', 'username-format', 'line-break', 'field-extraction', 'retention-policy', 'access-control', 'log-format-parse',
+  'datetime-format', 'datetime-parse', 'username-format', 'line-break', 'field-extraction', 'retention-policy', 'access-control', 'field-normalisation', 'log-format-parse',
   'line-length', 'semantic-value', 'response-readiness', 'operational-assurance',
   'threat-detection', 'business-impact-level', 'cyber-value-index', 'log-source-cyber-value',
   'entity-coverage', 'identity-diversity', 'investigation-breadth', 'context-dimension-coverage',

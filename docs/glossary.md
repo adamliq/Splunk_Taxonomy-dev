@@ -890,7 +890,7 @@ Documents how a field is pulled from raw event data and, critically, at which pi
 
 Default fields — assigned automatically by Splunk before any extraction rule is configured, in three groups:
 
-- **Metadata default fields** (index-time, always present): `host`, `source`, `sourcetype`, `index` — each overridable via `inputs.conf`/`props.conf` inline settings or a `TRANSFORMS-*` stanza targeting the matching `MetaData:*` / `_MetaData:Index` destination key.
+- **Metadata default fields** (index-time, always present): `host`, `source`, `sourcetype`, `index` — each overridable via `inputs.conf`/`props.conf` inline settings or a `TRANSFORMS-*` stanza targeting the matching `MetaData:*` / `_MetaData:Index` destination key. `host` additionally supports `host_segment = <N>` on a `monitor://` stanza, deriving the host from the Nth `/`-separated path segment (e.g. `/data/syslog/cisco_asa/<host>/<host>.log` with `host_segment = 4`).
 - **Other default fields**: `timestamp` (search-time; human-readable rendering of `_time`), `linecount` (index-time; lines in the event before indexing), `punct` (index-time; automatic punctuation-pattern fingerprint, controlled by `ANNOTATE_PUNCT` in `props.conf`, default `true` — set to `false` on high-volume sourcetypes that never search on it, to reduce indexing load and per-event disk footprint), `splunk_server` (search-time; the serving Splunk instance), `eventtype` (search-time; a saved-search knowledge object name, not extracted from raw data at all).
 - **`date_*` fields** (index-time, timestamp-derived): `date_year`, `date_month`, `date_mday`, `date_wday`, `date_hour`, `date_minute`, `date_second`, `date_zone` — written only when Splunk successfully parses a timestamp; absent for `DATETIME_CONFIG = CURRENT` or `DATETIME_CONFIG = NONE` sourcetypes, making their absence a useful Datetime Parse diagnostic.
 
@@ -908,6 +908,24 @@ Six extraction methods, each tagged with its pipeline stage:
 6. **`INGEST_EVAL`** — index-time (ingest pipeline); ingest-time eval expression run at the Ingest Processor or indexer layer, covering computed/conditional fields a plain regex can't.
 
 Index-time extraction is justified only for a specific operational reason — event routing/access-control decisions that must happen before search, or search cost at volumes where repeated search-time computation is measurably too expensive — otherwise search-time extraction is preferred, since it's both cheaper to get wrong and cheaper to fix.
+
+## Field Normalisation
+**Category:** Splunk sourcetype definition (TAX-04.07, not in glossary — standalone reference article, no `frameworkConcepts` entry)
+
+Maps a sourcetype's already-extracted fields onto standard names, target data types and, where applicable, a Splunk Common Information Model (CIM) data model or the Elastic Common Schema (ECS). Extraction determines whether a field exists; normalisation determines whether it's called the same thing, and means the same thing, as the equivalent field on every other sourcetype.
+
+**Sub-terms / dimensions / components:**
+
+22 CIM data models (Alerts, Application State, Authentication, Certificates, Change, Data Loss Prevention, Databases, Email, Endpoint, Interprocess Messaging, Intrusion Detection, Inventory — formerly Compute Inventory, Java Virtual Machines, Malware, Network Resolution/DNS, Network Sessions, Network Traffic, Performance, Ticket Management, Updates, Vulnerabilities, Web), each the least-common-denominator field/tag set for a domain — the exact catalogue should be confirmed against the installed `Splunk_SA_CIM` version rather than treated as frozen.
+
+Four normalisation mechanisms:
+
+1. **Field aliasing** (`FIELDALIAS-<class> = <field> AS <alias> ...`) — maps a vendor field name to the CIM standard name (e.g. `username AS user`) at search time, after extraction and before calculated fields; one alias maps to only one source field.
+2. **Calculated fields** (`EVAL-<fieldname> = <eval expression>`) — derives a field from an eval expression (e.g. `action=if(status="0","success","failure")`); runs after field aliasing, so it can reference an aliased field.
+3. **Automatic lookups** (`LOOKUP-<class> = <transform> <match_field> OUTPUT <output_field>`) — enriches events at search time from a `transforms.conf`-defined lookup table without an explicit `| lookup` in every search.
+4. **Tags** (`tags.conf`) — marks events matching a field/value pair as belonging to a CIM dataset; see Field Extraction's Tags note for stanza syntax.
+
+CIM compliance workflow (6 steps): confirm the sourcetype's definition is stable → extract raw fields → create field aliases to standard names → create calculated fields for value transformations → create tags → validate coverage against the target data model's reference table with the `datamodel` command, against representative events. A certified Technology Add-on usually ships this mapping already done — check Splunkbase first. CIM Mapping (TAX-04.07.04) and ECS Mapping (TAX-04.07.05) are recorded separately, since they're not the same schema and rarely require identical field names.
 
 ## Retention Policy
 **Category:** Splunk platform configuration (TAX-02.06.05, not in glossary — standalone reference article, no `frameworkConcepts` entry)
