@@ -909,11 +909,21 @@ Terminal output: **Viability Gate Decision** — Viable / Viable with Conditions
 
 ```
 Log Assessment Framework  -- line-by-line/event-level procedure, self-calibrating majority baseline
+├── Encoding (dimension 17 of 17: byte encoding / BOM)  -- DETECTED here, earliest point
+│   └── feeds Log Format Quality's "Encoding and content integrity" criterion  -- SCORED there
 ├── feeds Timestamp Quality        -- underlies its per-line/per-event scoring
 ├── feeds Log Format Quality       -- underlies its per-line/per-event scoring
 ├── feeds Schema Stability Gate    -- supplies its all-axes conformance rate
 └── Structural Fingerprinting      -- informs the sourcetype/parsing split decision
     (one sourcetype vs several, from distinct format/timestamp-format combinations)
+
+Log Format Quality  -- 6 criteria, 0-4 each, /24
+├── Structure and format identification
+├── Event boundary reliability
+├── Delimiter, quoting and escaping integrity
+├── Schema and field stability
+├── Encoding and content integrity          -- ⇐ Log Assessment Framework's Encoding dimension
+└── Parsing and normalisation complexity
 
 Cyber Monitoring Effectiveness Index (CMEI)  -- weights not yet defined (Proposed)
 ├── Cyber Value Index (CVI)              -- post-onboarding data quality
@@ -923,6 +933,8 @@ Cyber Monitoring Effectiveness Index (CMEI)  -- weights not yet defined (Propose
 │   └── Data Quality Score (DQS)         ×20%
 │       ├── Timestamp Quality ×30% (⇐ Log Assessment Framework), Parsing Success ×25%,
 │       │   Consistency ×20%, Normalisation ×15%, Completeness ×10%
+│       │   (Log Format Quality -- and so Encoding -- rolls into DQS conceptually via
+│       │    Parsing Success/Consistency; it is not one of DQS's 5 named weighted criteria)
 ├── Response Readiness Index (RRI)       -- can we act on it
 ├── Operational Assurance Index (OAI)    -- is the pipeline healthy
 └── Threat Detection Index (TDI)         -- are detections effective
