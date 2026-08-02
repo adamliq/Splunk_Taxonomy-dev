@@ -354,3 +354,31 @@ describe('Field Normalisation reference article (22 CIM data models, 4 normalisa
     assert.match(validation, /ECS Mapping \(TAX-04\.07\.05\)/);
   });
 });
+
+describe('New AI prompts for the six reference articles added this session', () => {
+  const newPrompts = [
+    { id: 'promptBusinessImpactLevel', copyTarget: 'businessImpactLevelPrompt', section: 'bil-definition' },
+    { id: 'promptUsernameFormat', copyTarget: 'usernameFormatPrompt', section: 'username-format-definition' },
+    { id: 'promptFieldExtraction', copyTarget: 'fieldExtractionPrompt', section: 'field-extraction-definition' },
+    { id: 'promptRetentionPolicy', copyTarget: 'retentionPolicyPrompt', section: 'retention-policy-definition' },
+    { id: 'promptAccessControl', copyTarget: 'accessControlPrompt', section: 'access-control-definition' },
+    { id: 'promptFieldNormalisation', copyTarget: 'fieldNormalisationPrompt', section: 'field-norm-definition' },
+  ];
+  for (const { id, copyTarget, section } of newPrompts) {
+    test(`${id} exists as a prompt-card with a working copy button and submenu entry`, () => {
+      assert.match(text, new RegExp(`<article id="${id}" class="prompt-card" data-prompt-panel hidden>`));
+      assert.match(text, new RegExp(`data-copy-prompt="${copyTarget}"`));
+      assert.match(text, new RegExp(`<pre id="${copyTarget}" class="prompt-body">`));
+      assert.match(text, new RegExp(`data-prompt-target="${id}"`));
+    });
+    test(`${id}'s reference article Definition section links to it via Open AI prompt`, () => {
+      const sec = text.match(new RegExp(`<section id="${section}"[\\s\\S]*?<\\/section>`))[0];
+      assert.match(sec, new RegExp(`data-open-prompt-panel="${id}"`));
+    });
+  }
+  test('all 6 new prompts are wired into the alphabetically-sorted submenu', () => {
+    for (const { id } of newPrompts) {
+      assert.match(text, new RegExp(`<button type="button" class="prompt-submenu-button" data-prompt-target="${id}"`));
+    }
+  });
+});

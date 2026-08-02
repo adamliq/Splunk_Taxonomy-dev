@@ -70,7 +70,7 @@ describe('Prompt library submenu is alphabetically ordered', () => {
     const section = text.match(/<nav class="prompt-submenu"[\s\S]*?<\/nav>/)[0];
     const labels = [...section.matchAll(/<button[^>]*class="prompt-submenu-button[^"]*"[^>]*>([^<]+)<\/button>/g)]
       .map(m => m[1].replace(/&amp;/g, '&').trim());
-    assert.equal(labels.length, 27);
+    assert.equal(labels.length, 33);
     const sorted = [...labels].sort((a, b) => a.localeCompare(b));
     assert.deepEqual(labels, sorted);
   });
