@@ -192,3 +192,29 @@ describe('Default fields section (4 metadata / 5 other / 8 date_* fields)', () =
     assert.match(section, /<code>_indextime<\/code>/);
   });
 });
+
+describe('Line Break: EVENT_BREAKER / EVENT_BREAKER_ENABLE (Universal Forwarder event breaking)', () => {
+  test('both settings are in the line-breaking settings table with a Scope column', () => {
+    const section = text.match(/<section id="line-break-settings"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /<th>Setting<\/th><th>Scope<\/th><th>Definition<\/th>/);
+    assert.match(section, /<code>EVENT_BREAKER_ENABLE<\/code>/);
+    assert.match(section, /<code>EVENT_BREAKER<\/code>/);
+    assert.match(section, /ChunkedLBProcessor/);
+    assert.match(section, /Universal Forwarder only/);
+  });
+  test('exactly 4 settings rows (SHOULD_LINEMERGE, LINE_BREAKER, EVENT_BREAKER_ENABLE, EVENT_BREAKER)', () => {
+    const section = text.match(/<section id="line-break-settings"[\s\S]*?<\/section>/)[0];
+    const table = section.match(/<table class="eccs-table">[\s\S]*?<\/table>/)[0];
+    const rows = (table.match(/<tr>/g) || []).length - 1; // subtract header row
+    assert.equal(rows, 4);
+  });
+  test('example shows the forwarder-side and indexer-side stanzas together', () => {
+    const section = text.match(/<section id="line-break-examples"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /Universal Forwarder event breaking \(EVENT_BREAKER\)/);
+    assert.match(section, /EVENT_BREAKER_ENABLE = true/);
+  });
+  test('validation notes flag the EVENT_BREAKER / LINE_BREAKER sync requirement', () => {
+    const section = text.match(/<section id="line-break-validation"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /EVENT_BREAKER.*matches.*LINE_BREAKER/);
+  });
+});

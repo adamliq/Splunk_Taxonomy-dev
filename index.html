@@ -4546,10 +4546,13 @@ MV_ADD = true</pre></section>
       </section>
       <section id="line-break-settings" class="eccs-detail-section">
         <h3>Splunk line-breaking settings</h3>
-        <div class="eccs-table-wrap"><table class="eccs-table"><thead><tr><th>Setting</th><th>Definition</th></tr></thead><tbody>
-          <tr><td><code>SHOULD_LINEMERGE</code></td><td>Controls whether Splunk attempts to merge multiple physical lines into a single logical event. A value of <code>false</code> is preferred when event boundaries can be expressed explicitly with <code>LINE_BREAKER</code>.</td></tr>
-          <tr><td><code>LINE_BREAKER</code></td><td>A regular expression defining the separator between events. The text matched by the first capturing group is discarded at the split point.</td></tr>
+        <div class="eccs-table-wrap"><table class="eccs-table"><thead><tr><th>Setting</th><th>Scope</th><th>Definition</th></tr></thead><tbody>
+          <tr><td><code>SHOULD_LINEMERGE</code></td><td>Indexer (parsing)</td><td>Controls whether Splunk attempts to merge multiple physical lines into a single logical event. A value of <code>false</code> is preferred when event boundaries can be expressed explicitly with <code>LINE_BREAKER</code>.</td></tr>
+          <tr><td><code>LINE_BREAKER</code></td><td>Indexer (parsing)</td><td>A regular expression defining the separator between events. The text matched by the first capturing group is discarded at the split point.</td></tr>
+          <tr><td><code>EVENT_BREAKER_ENABLE</code></td><td>Universal Forwarder only</td><td>Enables the lightweight <code>ChunkedLBProcessor</code> on a Universal Forwarder so it breaks the byte stream into events before forwarding, distributing events more evenly across multiple indexers instead of load-balancing whole raw chunks. Default <code>false</code>; only valid on Universal Forwarder instances -- indexers and Heavy Forwarders ignore it.</td></tr>
+          <tr><td><code>EVENT_BREAKER</code></td><td>Universal Forwarder only</td><td>The regular expression a Universal Forwarder uses to find event boundaries when <code>EVENT_BREAKER_ENABLE = true</code>. Default is empty. Must match the same pattern as the indexer-side <code>LINE_BREAKER</code> for the sourcetype -- if the indexer doesn't set <code>LINE_BREAKER</code>, <code>EVENT_BREAKER</code> isn't required either.</td></tr>
         </tbody></table></div>
+        <div class="eccs-note" style="margin-top:12px"><strong>Relationship to LINE_BREAKER.</strong> <code>EVENT_BREAKER</code> doesn't replace <code>LINE_BREAKER</code> -- it solves a different problem, even distribution of events across the indexer tier from a Universal Forwarder, and only applies there. The indexer still performs its own <code>LINE_BREAKER</code>-based event breaking during parsing; keeping the two regexes in sync avoids the forwarder and indexer disagreeing about where one event ends and the next begins.</div>
       </section>
       <section id="line-break-examples" class="eccs-detail-section">
         <h3>Examples</h3>
@@ -4563,6 +4566,17 @@ LINE_BREAKER = ([\r\n]+)</pre>
 SHOULD_LINEMERGE = false
 LINE_BREAKER = ([\r\n]+)(?=\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})</pre>
         <p>The newline separator is removed while the timestamp remains at the start of the next event. Indented continuation lines remain attached to the preceding event.</p>
+        <h4>Universal Forwarder event breaking (EVENT_BREAKER)</h4>
+        <pre class="prompt-body"># Indexer-side props.conf:
+[replace_with_sourcetype]
+SHOULD_LINEMERGE = false
+LINE_BREAKER = ([\r\n]+)(?=\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})
+
+# Universal Forwarder-side props.conf:
+[replace_with_sourcetype]
+EVENT_BREAKER_ENABLE = true
+EVENT_BREAKER = ([\r\n]+)(?=\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})</pre>
+        <p>Only add <code>EVENT_BREAKER</code> when a high-volume sourcetype is forwarded through Universal Forwarders and events are landing unevenly across the indexer tier. Keep its regex identical to the indexer's <code>LINE_BREAKER</code> for the same sourcetype.</p>
       </section>
       <section id="line-break-validation" class="eccs-detail-section">
         <h3>Implementation and validation notes</h3>
@@ -4573,6 +4587,7 @@ LINE_BREAKER = ([\r\n]+)(?=\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})</pre>
           <li>Confirm expected event counts and inspect the first and last characters of adjacent events.</li>
           <li>Ensure the first capture group removes only the separator and does not consume useful event content.</li>
           <li>Use separate sourcetypes when one stream contains incompatible boundary patterns.</li>
+          <li>For high-volume sourcetypes forwarded through Universal Forwarders, confirm <code>EVENT_BREAKER</code> (when enabled) matches <code>LINE_BREAKER</code> exactly -- a mismatch causes the forwarder and indexer to disagree about event boundaries.</li>
         </ul>
       </section>
     </article>

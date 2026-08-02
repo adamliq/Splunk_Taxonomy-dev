@@ -912,10 +912,14 @@ Defines how Splunk separates the incoming data stream into individual logical ev
 
 **Sub-terms / dimensions / components:**
 
-Two Splunk index-time settings:
+Four Splunk settings, split by scope:
 
-1. **`SHOULD_LINEMERGE`** — controls whether Splunk attempts to merge multiple physical lines into a single logical event; `false` is preferred when event boundaries can be expressed explicitly with `LINE_BREAKER`.
-2. **`LINE_BREAKER`** — a regular expression defining the separator between events; the text matched by the first capturing group is discarded at the split point.
+1. **`SHOULD_LINEMERGE`** (indexer/parsing) — controls whether Splunk attempts to merge multiple physical lines into a single logical event; `false` is preferred when event boundaries can be expressed explicitly with `LINE_BREAKER`.
+2. **`LINE_BREAKER`** (indexer/parsing) — a regular expression defining the separator between events; the text matched by the first capturing group is discarded at the split point.
+3. **`EVENT_BREAKER_ENABLE`** (Universal Forwarder only) — enables the lightweight `ChunkedLBProcessor` on a UF so it breaks the byte stream into events before forwarding, distributing events more evenly across multiple indexers instead of load-balancing whole raw chunks. Default `false`; indexers and Heavy Forwarders ignore it.
+4. **`EVENT_BREAKER`** (Universal Forwarder only) — the regex a UF uses to find event boundaries when `EVENT_BREAKER_ENABLE = true`. Must match the same pattern as the indexer-side `LINE_BREAKER` for the sourcetype — a mismatch causes the forwarder and indexer to disagree about event boundaries.
+
+`EVENT_BREAKER`/`EVENT_BREAKER_ENABLE` solve a different problem than `LINE_BREAKER` — even distribution of events across the indexer tier from a Universal Forwarder — and don't replace it; the indexer still does its own `LINE_BREAKER`-based event breaking during parsing.
 
 ## Log Onboarding Viability Assessment
 **Category:** Lifecycle, Assurance & Dependency (TAX-06.01.02, not in glossary)
