@@ -879,6 +879,24 @@ Documents how a user or service identity is represented in raw event data — th
 
 A 37-entry format catalogue across 13 categories (SAML, AWS, internet/email-style, phone, Windows, Entra ID, GCP, database, LDAP, Kerberos, social/OAuth, network auth, generic), each with an example, a template, a matching regex and notes — plus a separate 37-row **detector precedence table** giving the order formats are checked in when auto-classifying a raw principal string, numbered 1 to 37.
 
+## Field Extraction
+**Category:** Splunk sourcetype definition (not in glossary — standalone reference article, no `frameworkConcepts` entry)
+
+Documents how a field is pulled from raw event data and, critically, at which pipeline stage — search time or index time — that extraction happens. Index-time fields are the fastest to search but permanently written into the indexed data (cost: storage/license, immutability); search-time fields are cheap to add, change or delete but computed fresh on every search.
+
+**Sub-terms / dimensions / components:**
+
+Six extraction methods, each tagged with its pipeline stage:
+
+1. **`EXTRACT-*` / `REPORT-*` (regex)** — search-time; field defined by a regular expression inline (`EXTRACT-*`) or as a named `transforms.conf` stanza (`REPORT-*`).
+2. **`KV_MODE`** — search-time; automatic key-value pair extraction (`none`, `auto`, `json`, `xml`, `multi`).
+3. **`DELIMS`** — search-time (default); delimiter-based field extraction (CSV/TSV/pipe) as an alternative to regex.
+4. **`INDEXED_EXTRACTIONS`** — index-time; structured formats (JSON, CSV, W3C, TSV) parsed and every field written into the index at ingest.
+5. **Custom indexed field (`TRANSFORMS-*` with `WRITE_META`)** — index-time; a `transforms.conf` stanza with `WRITE_META = true` and `DEST_KEY = _meta` writes an arbitrary regex-derived `field::value` pair into the event's indexed metadata.
+6. **`INGEST_EVAL`** — index-time (ingest pipeline); ingest-time eval expression run at the Ingest Processor or indexer layer, covering computed/conditional fields a plain regex can't.
+
+Index-time extraction is justified only for a specific operational reason — event routing/access-control decisions that must happen before search, or search cost at volumes where repeated search-time computation is measurably too expensive — otherwise search-time extraction is preferred, since it's both cheaper to get wrong and cheaper to fix.
+
 ## Line Break
 **Category:** Splunk sourcetype definition (not in glossary)
 

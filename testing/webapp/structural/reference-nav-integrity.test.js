@@ -22,7 +22,7 @@ const articles = parseReferenceArticles(text);
 
 describe('reference article discovery', () => {
   test('finds all reference articles (update this count if one is added/removed)', () => {
-    assert.equal(articles.length, 29);
+    assert.equal(articles.length, 30);
   });
 });
 

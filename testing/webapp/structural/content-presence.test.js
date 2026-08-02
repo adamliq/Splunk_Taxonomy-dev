@@ -129,3 +129,25 @@ describe('Encoding & character set detection section (5 BOM signatures / 8 non-U
     assert.match(section, /AUTO/);
   });
 });
+
+describe('Field Extraction reference article (6 extraction methods)', () => {
+  test('article exists and is wired into detailConfig / setReferenceDetailVisibility / method-card', () => {
+    assert.match(text, /id="fieldExtractionReferenceView"/);
+    assert.match(text, /"field-extraction":\{hash:"#field-extraction-definition",view:"fieldExtractionReferenceView"\}/);
+    assert.match(text, /if\(fieldExtraction\) fieldExtraction\.hidden=detailName!=="field-extraction"/);
+    assert.match(text, /data-open-reference-detail="field-extraction"/);
+  });
+  test('exactly 6 rows in the extraction methods table', () => {
+    const section = text.match(/<section id="field-extraction-methods"[\s\S]*?<\/section>/)[0];
+    const rows = section.match(/<tr>/g) || [];
+    assert.equal(rows.length, 6 + 1); // 6 data rows + 1 header row
+  });
+  test('both index-time and search-time mechanisms are covered', () => {
+    const section = text.match(/<section id="field-extraction-methods"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /INDEXED_EXTRACTIONS/);
+    assert.match(section, /WRITE_META/);
+    assert.match(section, /INGEST_EVAL/);
+    assert.match(section, /KV_MODE/);
+    assert.match(section, /DELIMS/);
+  });
+});
