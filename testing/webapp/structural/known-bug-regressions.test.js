@@ -75,3 +75,26 @@ describe('Prompt library submenu is alphabetically ordered', () => {
     assert.deepEqual(labels, sorted);
   });
 });
+
+describe('Splunk Index Sizing Calculator page', () => {
+  const text = readIndexHtml();
+  test('tab, page section and calculate button all exist and are wired into page navigation', () => {
+    assert.match(text, /<button id="showSizingPage" class="page-tab"/);
+    assert.match(text, /<section id="sizingCalculatorPage" class="page-view reference-page" role="tabpanel" aria-labelledby="showSizingPage" hidden>/);
+    assert.match(text, /sizing: document\.getElementById\("showSizingPage"\)/);
+    assert.match(text, /sizing: document\.getElementById\("sizingCalculatorPage"\)/);
+    assert.match(text, /"info", "onboarding", "taxonomy", "assessments", "sizing", "reference"/);
+    assert.match(text, /<button id="calculateIndexSizing" type="button">Calculate<\/button>/);
+  });
+  test('on-premises and cloud deployment toggle buttons both exist with distinct tier terminology', () => {
+    const section = text.match(/<section id="sizingCalculatorPage"[\s\S]*?<\/section>\s*<\/section>/)[0];
+    assert.match(section, /id="sizingDeployOnPrem"/);
+    assert.match(section, /id="sizingDeployCloud"/);
+    assert.match(section, /Hot &rarr; Warm &rarr; Cold &rarr; Frozen &rarr; Thawed/);
+    assert.match(section, /Dynamic Data Active \(searchable\) &rarr; Dynamic Data Self Storage \(archive\)/);
+  });
+  test('indexer clustering inputs (RF, SF, indexer capacity) are on-premises only', () => {
+    assert.match(text, /<section id="sizingClusterSection" class="reference-section">/);
+    assert.match(text, /clusterSection\.hidden = cloud;/);
+  });
+});

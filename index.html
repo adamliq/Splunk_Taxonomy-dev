@@ -2560,6 +2560,18 @@
     .reference-section-heading { display:flex; justify-content:space-between; gap:14px; align-items:end; margin-bottom: 12px; }
     .reference-section-heading h3 { margin:0; font-size: 21px; }
     .reference-section-heading p { margin:4px 0 0; color:#64748b; font-size:13px; line-height:1.45; }
+    .sizing-deployment-toggle { display:flex; gap:10px; flex-wrap:wrap; }
+    .sizing-toggle-btn { flex:1 1 220px; padding:14px 16px; border:2px solid var(--border); border-radius:12px; background:#fff; color:#334155; font-weight:800; font-size:14px; cursor:pointer; text-align:center; }
+    .sizing-toggle-btn:hover { border-color:#94a3b8; }
+    .sizing-toggle-btn.active { border-color:#1e3a8a; background:#eff6ff; color:#1e3a8a; }
+    .sizing-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+    .sizing-grid label { display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:700; color:#334155; }
+    .sizing-grid label input[type="number"] { padding:9px 11px; border:1px solid #cbd5e1; border-radius:9px; font:inherit; }
+    .sizing-grid label.sizing-checkbox-label { flex-direction:row; align-items:center; gap:8px; font-weight:700; }
+    .sizing-grid label.sizing-checkbox-label input[type="checkbox"] { width:auto; }
+    .sizing-result { margin-top:20px; }
+    .sizing-result .eccs-table-wrap { margin-top:14px; }
+    @media(max-width:640px){.sizing-toggle-btn{flex:1 1 100%}}
     .framework-flow { display:grid; grid-template-columns: repeat(6,minmax(145px,1fr)); gap:10px; }
     .framework-step { position:relative; min-height:130px; padding:16px; border:1px solid var(--border); border-radius:14px; background:#fff; box-shadow:0 6px 18px rgba(15,23,42,.05); }
     .framework-step::after { content:'→'; position:absolute; right:-9px; top:50%; transform:translateY(-50%); color:#94a3b8; font-weight:900; z-index:2; }
@@ -2894,6 +2906,7 @@
     <button id="showOnboardingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="onboardingPage">Onboarding flow</button>
     <button id="showTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="taxonomyPage">Taxonomy explorer</button>
     <button id="showAssessmentsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentsPage">Assessments</button>
+    <button id="showSizingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="sizingCalculatorPage">Sizing calculator</button>
     <button id="showReferencePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="referencePage">Reference</button>
     <button id="showPromptLibraryPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="promptLibraryPage">Prompt library</button>
     <button id="showCmeiPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cmeiPage">Framework</button>
@@ -5031,6 +5044,54 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
     </div>
 
     <div class="assessment-note">Assessment tools produce scores or ratings. Engineering utilities such as the Logging Pattern Advisor remain accessible from their relevant workflow pages.</div>
+  </section>
+
+
+  <section id="sizingCalculatorPage" class="page-view reference-page" role="tabpanel" aria-labelledby="showSizingPage" hidden>
+    <div class="reference-hero">
+      <div class="eyebrow">Capacity planning</div>
+      <h2>Splunk Index Sizing Calculator</h2>
+      <p>Estimate index storage and, for on-premises deployments, indexer count from a daily ingest volume and retention period. Formulas follow Splunk's published guidance that indexed data compresses to roughly 50% of raw size (15% raw journal + 35% <code>tsidx</code> metadata) and the standard indexer-clustering storage multiplier for Replication Factor and Search Factor. Treat results as a planning estimate to sanity-check a design, not a vendor quote.</p>
+    </div>
+
+    <section class="reference-section">
+      <div class="reference-section-heading"><div><h3>Deployment type</h3><p>Index tier terminology and available inputs change depending on whether Splunk manages the indexing tier for you.</p></div></div>
+      <div class="sizing-deployment-toggle" role="radiogroup" aria-label="Deployment type">
+        <button type="button" id="sizingDeployOnPrem" class="sizing-toggle-btn active" role="radio" aria-checked="true">On-Premises (Splunk Enterprise)</button>
+        <button type="button" id="sizingDeployCloud" class="sizing-toggle-btn" role="radio" aria-checked="false">Splunk Cloud Platform</button>
+      </div>
+      <div id="sizingOnPremNote" class="eccs-note" style="margin-top:14px"><strong>On-Premises index tiers: Hot &rarr; Warm &rarr; Cold &rarr; Frozen &rarr; Thawed.</strong> You configure and pay for storage across all of these yourself via <code>indexes.conf</code> (see the Retention Policy reference). Replication Factor and Search Factor determine how many copies of each bucket exist across your indexer cluster.</div>
+      <div id="sizingCloudNote" class="eccs-note" style="margin-top:14px" hidden><strong>Splunk Cloud index tiers: Dynamic Data Active (searchable) &rarr; Dynamic Data Self Storage (archive).</strong> Splunk manages replication, search availability and the underlying indexer fleet for you -- there is no customer-configurable Replication Factor, Search Factor or indexer count. Self Storage exports aged-out data to your own S3-compatible bucket; it is not directly searchable without restoration.</div>
+    </section>
+
+    <section class="reference-section">
+      <div class="reference-section-heading"><div><h3>Ingest &amp; retention</h3></div></div>
+      <div class="sizing-grid">
+        <label>Daily ingest volume (GB/day)<input id="sizingDailyIngest" type="number" value="100" min="0" step="1"></label>
+      </div>
+      <div id="sizingOnPremRetention" class="sizing-grid" style="margin-top:12px">
+        <label>Hot + Warm + Cold retention, i.e. searchable (days)<input id="sizingSearchableDaysOnPrem" type="number" value="90" min="0" step="1"></label>
+        <label class="sizing-checkbox-label"><input id="sizingArchiveEnabledOnPrem" type="checkbox"> Archive to Frozen (<code>coldToFrozenDir</code>/<code>coldToFrozenScript</code> configured)</label>
+        <label>Frozen archive retention beyond searchable (days)<input id="sizingFrozenDaysOnPrem" type="number" value="365" min="0" step="1" disabled></label>
+      </div>
+      <div id="sizingCloudRetention" class="sizing-grid" style="margin-top:12px" hidden>
+        <label>Dynamic Data Active retention, i.e. searchable (days)<input id="sizingSearchableDaysCloud" type="number" value="90" min="0" step="1"></label>
+        <label class="sizing-checkbox-label"><input id="sizingArchiveEnabledCloud" type="checkbox"> Enable Dynamic Data Self Storage</label>
+        <label>Self Storage retention beyond searchable (days)<input id="sizingFrozenDaysCloud" type="number" value="365" min="0" step="1" disabled></label>
+      </div>
+    </section>
+
+    <section id="sizingClusterSection" class="reference-section">
+      <div class="reference-section-heading"><div><h3>Indexer clustering</h3><p>On-premises only.</p></div></div>
+      <div class="sizing-grid">
+        <label>Replication Factor (RF)<input id="sizingRF" type="number" value="1" min="1" step="1"></label>
+        <label>Search Factor (SF)<input id="sizingSF" type="number" value="1" min="1" step="1"></label>
+        <label>Ingest capacity per indexer (GB/day)<input id="sizingIngestPerIndexer" type="number" value="300" min="1" step="1"></label>
+      </div>
+    </section>
+
+    <div class="method-actions"><button id="calculateIndexSizing" type="button">Calculate</button></div>
+    <div id="sizingCalculatorResult" class="sizing-result" aria-live="polite"></div>
   </section>
 
 
@@ -12850,6 +12911,7 @@ const pageTabs = {
   onboarding: document.getElementById("showOnboardingPage"),
   taxonomy: document.getElementById("showTaxonomyPage"),
   assessments: document.getElementById("showAssessmentsPage"),
+  sizing: document.getElementById("showSizingPage"),
   reference: document.getElementById("showReferencePage"),
   prompts: document.getElementById("showPromptLibraryPage"),
   cmei: document.getElementById("showCmeiPage"),
@@ -12862,6 +12924,7 @@ const pageViews = {
   onboarding: document.getElementById("onboardingPage"),
   taxonomy: document.getElementById("taxonomyPage"),
   assessments: document.getElementById("assessmentsPage"),
+  sizing: document.getElementById("sizingCalculatorPage"),
   reference: document.getElementById("referencePage"),
   prompts: document.getElementById("promptLibraryPage"),
   cmei: document.getElementById("cmeiPage"),
@@ -14376,7 +14439,7 @@ function exportViabilityCalculator(event) {
 }
 
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "onboarding", "taxonomy", "assessments", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "onboarding", "taxonomy", "assessments", "sizing", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : "");
   
@@ -14399,6 +14462,8 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
         ? "#onboarding-flow"
       : selected === "assessments"
         ? "#assessments"
+        : selected === "sizing"
+          ? "#sizing-calculator"
         : selected === "reference"
           ? "#reference"
         : selected === "prompts"
@@ -15509,6 +15574,91 @@ document.getElementById("resetValueAssessment").addEventListener("click",()=>{do
 document.getElementById("exportValueAssessment").addEventListener("click",()=>{renderValueAssessment();const rows=[["Field","Value"],...valueInputs.map(id=>[id,document.getElementById(id).value]),["gate",document.getElementById("valueGate").textContent],["value_score",document.getElementById("valueTotal").textContent],["cyber_value_density",document.getElementById("valueDensity").textContent],["verdict",document.getElementById("valueVerdict").textContent],["confirmed_use_per_90d",document.getElementById("reviewUse").textContent],["review_action",document.getElementById("reviewAction").textContent]];const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='log-source-cyber-value-assessment.csv';a.click();URL.revokeObjectURL(a.href);});
 
 (function(){const b=document.getElementById("calculateLineLengthScore");if(!b)return;const v=id=>Number(document.getElementById(id)?.value||0);const r=s=>s>=90?"Exceptional":s>=75?"Good":s>=60?"Fair":s>=40?"Poor":"Fail";b.addEventListener("click",()=>{const t=Math.max(1,v("llTotalEvents")),o=Math.max(0,v("llOverTruncate")),m=Math.max(1,v("llMedian")),p=v("llP95"),x=v("llMax"),q=o/t*100;let a=o===0?35:q<.1?30:q<=1?22:q<=5?12:0;const ratio=p/m,c=ratio<=3?15:ratio<=6?12:ratio<=10?8:ratio<=20?4:0,s=x<=10000?15:x<=50000?12:x<=250000?8:x<=1000000?4:0,total=a+v("llBoundary")+c+s+v("llConfig"),rec=x<=10000?10000:Math.ceil(x*1.25/5000)*5000;document.getElementById("lineLengthCalculatorResult").innerHTML="<strong>"+total+"/100 — "+r(total)+"</strong><br>Events above TRUNCATE: "+q.toFixed(3)+"%<br>P95-to-median ratio: "+ratio.toFixed(2)+"<br>Indicative bounded TRUNCATE: "+rec.toLocaleString()+" bytes";});})();
+
+(function(){
+  const onPremBtn = document.getElementById("sizingDeployOnPrem");
+  const cloudBtn = document.getElementById("sizingDeployCloud");
+  if (!onPremBtn || !cloudBtn) return;
+  const onPremRetention = document.getElementById("sizingOnPremRetention");
+  const cloudRetention = document.getElementById("sizingCloudRetention");
+  const onPremNote = document.getElementById("sizingOnPremNote");
+  const cloudNote = document.getElementById("sizingCloudNote");
+  const clusterSection = document.getElementById("sizingClusterSection");
+  const calcBtn = document.getElementById("calculateIndexSizing");
+  const resultEl = document.getElementById("sizingCalculatorResult");
+
+  let isCloud = false;
+
+  function setSizingDeployment(cloud) {
+    isCloud = cloud;
+    onPremBtn.classList.toggle("active", !cloud);
+    onPremBtn.setAttribute("aria-checked", String(!cloud));
+    cloudBtn.classList.toggle("active", cloud);
+    cloudBtn.setAttribute("aria-checked", String(cloud));
+    onPremRetention.hidden = cloud;
+    cloudRetention.hidden = !cloud;
+    onPremNote.hidden = cloud;
+    cloudNote.hidden = !cloud;
+    clusterSection.hidden = cloud;
+    resultEl.innerHTML = "";
+  }
+  onPremBtn.addEventListener("click", () => setSizingDeployment(false));
+  cloudBtn.addEventListener("click", () => setSizingDeployment(true));
+
+  const archiveOnPrem = document.getElementById("sizingArchiveEnabledOnPrem");
+  const frozenDaysOnPrem = document.getElementById("sizingFrozenDaysOnPrem");
+  archiveOnPrem.addEventListener("change", () => { frozenDaysOnPrem.disabled = !archiveOnPrem.checked; });
+
+  const archiveCloud = document.getElementById("sizingArchiveEnabledCloud");
+  const frozenDaysCloud = document.getElementById("sizingFrozenDaysCloud");
+  archiveCloud.addEventListener("change", () => { frozenDaysCloud.disabled = !archiveCloud.checked; });
+
+  const sv = id => Number(document.getElementById(id)?.value || 0);
+  const fmtGB = n => n >= 1024 ? (n / 1024).toFixed(2) + " TB" : n.toFixed(1) + " GB";
+
+  calcBtn.addEventListener("click", () => {
+    const dailyIngest = Math.max(0, sv("sizingDailyIngest"));
+    if (!isCloud) {
+      const searchableDays = Math.max(0, sv("sizingSearchableDaysOnPrem"));
+      const archiveOn = archiveOnPrem.checked;
+      const frozenDays = archiveOn ? Math.max(0, sv("sizingFrozenDaysOnPrem")) : 0;
+      const rf = Math.max(1, sv("sizingRF"));
+      const sf = Math.max(1, Math.min(rf, sv("sizingSF")));
+      const ingestPerIndexer = Math.max(1, sv("sizingIngestPerIndexer"));
+
+      const perCopyRatio = rf * 0.15 + sf * 0.35;
+      const searchableStorage = dailyIngest * searchableDays * perCopyRatio;
+      const frozenStorage = dailyIngest * frozenDays * 0.15;
+      const totalStorage = searchableStorage + frozenStorage;
+      const indexerCount = Math.max(1, Math.ceil(dailyIngest / ingestPerIndexer));
+      const perIndexerStorage = searchableStorage / indexerCount;
+
+      resultEl.innerHTML = '<div class="eccs-table-wrap" role="region" aria-label="Sizing results" tabindex="0"><table class="eccs-table"><thead><tr><th>Tier</th><th>Retention</th><th>Storage</th></tr></thead><tbody>'
+        + '<tr><td>Hot + Warm + Cold (searchable)</td><td>' + searchableDays + ' days</td><td>' + fmtGB(searchableStorage) + '</td></tr>'
+        + '<tr><td>Frozen (archive)</td><td>' + (archiveOn ? frozenDays + ' days' : 'Not archived (deleted on freeze)') + '</td><td>' + fmtGB(frozenStorage) + '</td></tr>'
+        + '<tr><td><strong>Total</strong></td><td>' + (searchableDays + frozenDays) + ' days</td><td><strong>' + fmtGB(totalStorage) + '</strong></td></tr>'
+        + '</tbody></table></div>'
+        + '<div class="eccs-note" style="margin-top:14px"><strong>Recommended indexer count: ' + indexerCount + '</strong> at ' + ingestPerIndexer + ' GB/day ingest capacity each -- roughly ' + fmtGB(perIndexerStorage) + ' of searchable-tier storage per indexer, before host-level headroom. Replication Factor ' + rf + ' / Search Factor ' + sf + ' means each bucket is stored as ' + rf + ' raw ' + (rf === 1 ? 'copy' : 'copies') + ' (~15% of raw each) with ' + sf + ' of those also searchable (~35% extra each) -- non-clustered (RF=SF=1) is the standard ~50% compression baseline.</div>'
+        + '<div class="eccs-note" style="margin-top:12px"><strong>Planning estimate only.</strong> Actual compression varies by data structure and field cardinality; actual indexer throughput depends on hardware, parsing complexity and search load. Validate against Splunk\'s official capacity-planning documentation and, ideally, a representative pilot before committing to a design.</div>';
+    } else {
+      const searchableDays = Math.max(0, sv("sizingSearchableDaysCloud"));
+      const archiveOn = archiveCloud.checked;
+      const archiveDays = archiveOn ? Math.max(0, sv("sizingFrozenDaysCloud")) : 0;
+
+      const searchableStorage = dailyIngest * searchableDays * 0.5;
+      const archiveStorage = dailyIngest * archiveDays * 0.15;
+      const totalStorage = searchableStorage + archiveStorage;
+
+      resultEl.innerHTML = '<div class="eccs-table-wrap" role="region" aria-label="Sizing results" tabindex="0"><table class="eccs-table"><thead><tr><th>Tier</th><th>Retention</th><th>Storage</th></tr></thead><tbody>'
+        + '<tr><td>Dynamic Data Active (searchable)</td><td>' + searchableDays + ' days</td><td>' + fmtGB(searchableStorage) + '</td></tr>'
+        + '<tr><td>Dynamic Data Self Storage (archive)</td><td>' + (archiveOn ? archiveDays + ' days' : 'Not enabled') + '</td><td>' + fmtGB(archiveStorage) + '</td></tr>'
+        + '<tr><td><strong>Total</strong></td><td>' + (searchableDays + archiveDays) + ' days</td><td><strong>' + fmtGB(totalStorage) + '</strong></td></tr>'
+        + '</tbody></table></div>'
+        + '<div class="eccs-note" style="margin-top:14px"><strong>Daily ingest to licence: ' + fmtGB(dailyIngest) + '/day.</strong> Splunk Cloud manages replication, search availability and the indexer fleet for this ingest volume -- there is no customer-configurable Replication Factor, Search Factor or indexer count to plan. Self Storage data is exported to your own S3-compatible bucket and is not directly searchable without restoration.</div>'
+        + '<div class="eccs-note" style="margin-top:12px"><strong>Planning estimate only.</strong> This is a technical footprint estimate, not an official Splunk Cloud quote or licence recommendation -- confirm actual licensed capacity and Self Storage terms with Splunk.</div>';
+    }
+  });
+})();
 </script>
 </body>
 </html>

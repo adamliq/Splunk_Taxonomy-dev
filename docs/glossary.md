@@ -996,6 +996,20 @@ Combined Implementation Effort Rating (from Technical Readiness's complexity fac
 
 Terminal output: **Viability Gate Decision** — Viable / Viable with Conditions / Further Investigation Required / Not Currently Viable / Not Justified.
 
+## Splunk Index Sizing Calculator
+**Category:** Capacity planning tool (not in glossary — standalone interactive page, no `frameworkConcepts` entry, not tied to a single taxonomy node)
+
+An interactive calculator (its own top-level tab, not a Reference article) that estimates index storage footprint and, for on-premises deployments, indexer count from a daily ingest volume and retention period. Relates most closely to Retention Policy (TAX-02.06.05).
+
+**Sub-terms / dimensions / components:**
+
+- **Deployment toggle** — On-Premises (Splunk Enterprise) vs. Splunk Cloud Platform; switching changes both the available inputs and the index tier terminology used in results.
+- **On-Premises tiers**: Hot → Warm → Cold → Frozen → Thawed (matching Retention Policy's bucket lifecycle). Inputs: daily ingest, searchable (Hot+Warm+Cold) retention days, optional Frozen archive retention days, Replication Factor, Search Factor, ingest capacity per indexer.
+- **Cloud tiers**: Dynamic Data Active (searchable) → Dynamic Data Self Storage (archive). Inputs: daily ingest, Dynamic Data Active retention days, optional Self Storage retention days. No Replication Factor, Search Factor or indexer count — Splunk Cloud manages the indexing tier and its redundancy.
+- **Formula**: storage = daily ingest × retention days × per-copy ratio, where per-copy ratio is `(Replication Factor × 0.15) + (Search Factor × 0.35)` for on-premises (RF=SF=1 gives the standard ~50% compression baseline: 15% raw journal + 35% `tsidx` metadata), or a flat 0.5 for Cloud's searchable tier (no customer-facing RF/SF). Frozen/Self Storage archive uses 0.15 (a single, non-replicated, non-searchable raw copy).
+- **Indexer count** (on-premises only) = `ceil(daily ingest / ingest capacity per indexer)`.
+- Explicitly labelled a planning estimate, not a vendor quote — actual compression varies by data structure and field cardinality, and actual throughput depends on hardware, parsing complexity and search load.
+
 ---
 
 ## Roll-up chain (how the composites nest)

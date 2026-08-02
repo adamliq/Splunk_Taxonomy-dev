@@ -16,6 +16,7 @@ const TABS = [
   { name: 'Onboarding flow', buttonId: 'showOnboardingPage' },
   { name: 'Taxonomy explorer', buttonId: 'showTaxonomyPage' },
   { name: 'Assessments', buttonId: 'showAssessmentsPage' },
+  { name: 'Sizing calculator', buttonId: 'showSizingPage' },
   { name: 'Reference', buttonId: 'showReferencePage' },
   { name: 'Prompt library', buttonId: 'showPromptLibraryPage' },
   { name: 'Framework', buttonId: 'showCmeiPage' },
@@ -70,6 +71,47 @@ test('Reference tab: a handful of real entry-point buttons open their article wi
       await page.click('article.eccs-reference:not([hidden]) [data-back-to-references]');
       await page.waitForTimeout(150);
     }
+
+    assert.deepEqual(pageErrors, []);
+  });
+});
+
+test('Sizing calculator: on-prem and cloud toggle, calculate, produce correct results with no errors', async () => {
+  await withServerAndPage(async ({ page, baseUrl, pageErrors }) => {
+    await page.goto(`${baseUrl}/index.html`, { waitUntil: 'load' });
+    await page.waitForTimeout(300);
+    await page.click('#showSizingPage');
+    await page.waitForTimeout(200);
+
+    // Default on-prem inputs: 100 GB/day, 90 days searchable, RF=1, SF=1
+    // -> 100 * 90 * 0.5 = 4500 GB = 4.39 TB (the standard 50% compression baseline).
+    await page.click('#calculateIndexSizing');
+    await page.waitForTimeout(150);
+    const onPremText = await page.evaluate(() => document.getElementById('sizingCalculatorResult').textContent);
+    assert.match(onPremText, /4\.39 TB/, 'default on-prem searchable-tier storage should be 4.39 TB');
+    assert.match(onPremText, /Hot \+ Warm \+ Cold \(searchable\)/);
+    assert.match(onPremText, /Recommended indexer count: 1/);
+
+    // RF=3, SF=2 -> per-copy ratio 3*0.15 + 2*0.35 = 1.15 -> 100*90*1.15 = 10350 GB = 10.11 TB.
+    await page.fill('#sizingRF', '3');
+    await page.fill('#sizingSF', '2');
+    await page.click('#calculateIndexSizing');
+    await page.waitForTimeout(150);
+    const clusteredText = await page.evaluate(() => document.getElementById('sizingCalculatorResult').textContent);
+    assert.match(clusteredText, /10\.11 TB/, 'RF=3/SF=2 searchable-tier storage should be 10.11 TB');
+
+    // Switching to Cloud must hide the on-prem-only clustering section and
+    // relabel tiers to Splunk Cloud's Dynamic Data Active / Self Storage terms.
+    await page.click('#sizingDeployCloud');
+    await page.waitForTimeout(150);
+    const clusterHidden = await page.evaluate(() => document.getElementById('sizingClusterSection').hidden);
+    assert.equal(clusterHidden, true, 'indexer clustering section must be hidden in Cloud mode');
+    await page.click('#calculateIndexSizing');
+    await page.waitForTimeout(150);
+    const cloudText = await page.evaluate(() => document.getElementById('sizingCalculatorResult').textContent);
+    assert.match(cloudText, /Dynamic Data Active \(searchable\)/);
+    assert.match(cloudText, /Dynamic Data Self Storage \(archive\)/);
+    assert.doesNotMatch(cloudText, /Hot \+ Warm \+ Cold/, 'on-prem tier terminology must not leak into Cloud mode results');
 
     assert.deepEqual(pageErrors, []);
   });
