@@ -3,13 +3,14 @@
 All 59 terms from the app's glossary (`frameworkConcepts` in `index.html`), in
 glossary order, each with its category, definition and worked example. Composite
 terms list the full breakdown of the named dimensions, components or categories
-that make them up, each with **its own definition** pulled from the app's
-reference articles (not just a bare name) — except where the app itself only
-names the category without further elaboration (Entity Coverage, Event Type
-Coverage, Data Source Assurance), which is stated explicitly rather than invented.
-Terms with no further breakdown say so explicitly. A closing section covers
-terms that appear in the app's reference articles but are not in the 59-entry
-glossary array itself.
+that make them up, each with **its own definition**. Most are pulled verbatim
+from the app's reference articles; for three terms where the app itself only
+names the category without further elaboration (Entity Coverage's 9 classes,
+Event Type Coverage's 14 categories, Data Source Assurance's 15 controls), the
+definitions are inferred from context and worked examples rather than quoted
+from a reference article, and are marked as such inline. Terms with no further
+breakdown say so explicitly. A closing section covers terms that appear in the
+app's reference articles but are not in the 59-entry glossary array itself.
 
 ---
 
@@ -303,17 +304,17 @@ The proportion of the relevant environment population represented by the source.
 
 **Sub-terms / dimensions / components:**
 
-Nine entity classes, each scored 0–4. The app lists these as category names only (no further per-class elaboration beyond the name itself); a class counts only when at least one value is populated *and* usable:
+Nine entity classes, each scored 0–4. A class counts only when at least one value is populated *and* usable. The app itself names these categories without further elaboration; the definitions below are inferred from context and worked examples, not pulled verbatim from a reference article:
 
-1. Human and non-human identities
-2. Hosts, endpoints and devices
-3. Source and destination network entities
-4. Applications, services and workloads
-5. Cloud resources, accounts, subscriptions, projects and tenants
-6. Processes, files, certificates and software objects
-7. Data, business or protected objects
-8. Sessions, requests, transactions and traces
-9. Security controls, policies, roles and groups
+1. **Human and non-human identities** — people, service accounts, and non-human actors (bots, applications) that can perform or be attributed with activity.
+2. **Hosts, endpoints and devices** — physical or virtual machines, workstations, servers and devices where activity occurs.
+3. **Source and destination network entities** — network-layer identifiers (IP addresses, network zones) describing where traffic originates and terminates.
+4. **Applications, services and workloads** — software applications, services or workloads that generate, receive or are acted upon by an event.
+5. **Cloud resources, accounts, subscriptions, projects and tenants** — cloud-provider scoping entities and the resources within them.
+6. **Processes, files, certificates and software objects** — executables, processes, files and certificates involved in an event.
+7. **Data, business or protected objects** — business records, protected data objects or other application-level objects an event acts on.
+8. **Sessions, requests, transactions and traces** — session, request, transaction or trace identifiers that scope related activity.
+9. **Security controls, policies, roles and groups** — security policies, controls, roles or group memberships referenced by an event.
 
 ## 23. Cyber Value Density
 **Category:** Cyber value
@@ -533,23 +534,23 @@ Operational confidence that a source is healthy, complete, governed, supportable
 
 **Sub-terms / dimensions / components:**
 
-`weighted achieved / weighted possible × 100` — 15 operational controls, scored 0–4 each, /60, equal weight by default. The app lists these as control names only (no further per-control elaboration beyond the name itself); each is scored 0 (absent) to 4 (measured, automated, regularly assured):
+`weighted achieved / weighted possible × 100` — 15 operational controls, scored 0–4 each, /60, equal weight by default (0 = absent, 4 = measured, automated, regularly assured). The app itself names these controls without further elaboration; the definitions below are inferred from context and worked examples, not pulled verbatim from a reference article:
 
-1. Source ownership & accountability
-2. Collection-path documentation
-3. Authentication & secret management
-4. Transport security
-5. Availability & freshness monitoring
-6. Volume/EPS baselines & anomaly detection
-7. Parsing & schema monitoring
-8. Completeness & gap detection
-9. Retry, checkpoint & recovery behaviour
-10. Duplicate prevention
-11. Change management & version control
-12. Access control & segregation of duties
-13. Retention & legal obligations
-14. Operational runbooks, alerting & escalation
-15. Periodic validation & evidence retention
+1. **Source ownership & accountability** — a named, contactable owner is accountable for the source.
+2. **Collection-path documentation** — the collection path (source to index) is documented.
+3. **Authentication & secret management** — credentials and secrets used for collection are managed and rotated securely.
+4. **Transport security** — data in transit is protected (e.g. TLS).
+5. **Availability & freshness monitoring** — automated checks confirm the source is up and data is current.
+6. **Volume/EPS baselines & anomaly detection** — expected volume/EPS is baselined and deviations are detected.
+7. **Parsing & schema monitoring** — parsing success and schema conformance are actively monitored, not just implied by a one-off check.
+8. **Completeness & gap detection** — missing or dropped events are detected.
+9. **Retry, checkpoint & recovery behaviour** — the collection mechanism can resume cleanly after an interruption.
+10. **Duplicate prevention** — mechanisms exist to prevent or detect duplicate event ingestion.
+11. **Change management & version control** — changes to collection configuration are tracked and version-controlled.
+12. **Access control & segregation of duties** — access to the source and its configuration is controlled and appropriately segregated.
+13. **Retention & legal obligations** — retention meets defined operational and legal/compliance requirements.
+14. **Operational runbooks, alerting & escalation** — documented runbooks and alerting exist for collection failures.
+15. **Periodic validation & evidence retention** — the source is periodically re-validated and evidence of that validation is retained.
 
 ## 47. Response Readiness Index (RRI)
 **Category:** Assurance
@@ -706,22 +707,22 @@ The percentage of required security-relevant event-type categories actually repr
 
 **Sub-terms / dimensions / components:**
 
-14 required event-type categories (generic default; use a governed source-family catalogue, e.g. TAX-03.01.01.01, when one exists). The app lists these as category names only (no further per-category elaboration beyond the name itself):
+14 required event-type categories (generic default; use a governed source-family catalogue, e.g. TAX-03.01.01.01, when one exists). The app itself names these categories without further elaboration; the definitions below are inferred from context, not pulled verbatim from a reference article:
 
-1. Authentication
-2. Identity & Account Management
-3. Authorization & Access
-4. Configuration Changes
-5. Administrative Activity
-6. Process Execution
-7. Network Activity
-8. Data Access
-9. Security Events
-10. System Events
-11. Availability
-12. Cloud Activity
-13. Detection Events
-14. Technology-specific event types
+1. **Authentication** — login, logout, MFA challenge and authentication-decision events.
+2. **Identity & Account Management** — account creation, deletion, modification and lifecycle events.
+3. **Authorization & Access** — access grants, denials, permission and entitlement changes.
+4. **Configuration Changes** — changes to system, application or policy configuration.
+5. **Administrative Activity** — privileged or administrative actions performed by operators.
+6. **Process Execution** — process creation, execution and termination events.
+7. **Network Activity** — network connections, traffic flows and network-layer events.
+8. **Data Access** — access to, or modification of, data objects and records.
+9. **Security Events** — security-specific alerts, detections or control events.
+10. **System Events** — operating-system or platform-level events (startup, shutdown, service state).
+11. **Availability** — health, uptime and service-availability events.
+12. **Cloud Activity** — cloud-provider control-plane and management events.
+13. **Detection Events** — events generated by detection or monitoring tooling.
+14. **Technology-specific event types** — event types unique to a particular vendor/technology, not covered by the generic categories above.
 
 ## 56. Required Field Coverage (RFC)
 **Category:** Cyber value
