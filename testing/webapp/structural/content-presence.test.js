@@ -97,3 +97,35 @@ describe('Key-value pair styles section (6 styles)', () => {
     assert.match(section, /Semicolon-separated/);
   });
 });
+
+describe('Encoding & character set detection section (5 BOM signatures / 8 non-UTF-8 encodings)', () => {
+  test('section exists inside Log Format Detection & Parsing', () => {
+    assert.match(text, /id="log-format-parse-encoding"/);
+  });
+  test('nav link to the section is present in the article hero', () => {
+    const hero = text.match(/<h2 id="logFormatParseReferenceTitle">[\s\S]*?<\/nav>/)[0];
+    assert.match(hero, /href="#log-format-parse-encoding"/);
+  });
+  test('exactly 5 BOM signature rows and 8 non-UTF-8 encoding rows', () => {
+    const section = text.match(/<section id="log-format-parse-encoding"[\s\S]*?<\/section>/)[0];
+    const tables = section.match(/<table class="eccs-table">[\s\S]*?<\/table>/g) || [];
+    assert.equal(tables.length, 2, 'expected exactly 2 tables in the encoding section');
+    const rowCounts = tables.map(t => (t.match(/<tr>/g) || []).length - 1); // subtract header row
+    assert.deepEqual(rowCounts, [5, 8]);
+  });
+  test('all five BOM byte-order marks and the UTF-32LE/UTF-16LE ambiguity note are present', () => {
+    const section = text.match(/<section id="log-format-parse-encoding"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /EF BB BF/);
+    assert.match(section, /FE FF/);
+    assert.match(section, /FF FE/);
+    assert.match(section, /00 00 FE FF/);
+    assert.match(section, /FF FE 00 00/);
+    assert.match(section, /misdetected/);
+  });
+  test('Splunk CHARSET scoping and PREAMBLE_REGEX guidance are present', () => {
+    const section = text.match(/<section id="log-format-parse-encoding"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /CHARSET/);
+    assert.match(section, /PREAMBLE_REGEX/);
+    assert.match(section, /AUTO/);
+  });
+});

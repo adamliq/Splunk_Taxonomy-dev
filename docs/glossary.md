@@ -94,6 +94,8 @@ Five required detail attributes:
 4. **Timezone expression** — UTC marker, numeric offset, named zone, abbreviation or no timezone present.
 5. **Splunk pattern** — the corresponding `strptime` pattern used in `TIME_FORMAT`.
 
+The Reference tab's Datetime Format article also includes a **format catalogue**: 78 named formats across 15 categories (ISO 8601/RFC 3339, internet-message/RFC, web server & proxy, syslog & system, Unix epoch, database, language/framework, human-readable/locale, compact/sortable, non-standard ISO 8601-style, plus several single-entry platform-specific categories), each with a raw example, the equivalent Splunk `TIME_FORMAT` pattern, and usage notes — a lookup table, not part of the five required attributes above.
+
 ## 9. Datetime Parse
 **Category:** Data quality
 
@@ -863,6 +865,19 @@ Format matrix — 8 structural format categories, each with its typical Splunk e
 6. **Semi-structured** — `REPORT-*` or `EXTRACT-*`; check schema drift, optional labels, inconsistent syntax.
 7. **Unstructured** — targeted regex only; watch false positives and maintenance cost.
 8. **Mixed** — separate sourcetypes or preprocess; check conflicting schemas and unsafe universal parsing.
+
+Key-value pair styles — 6 styles spanning two independent axes (separator: `key=value` vs `key: value`; delimiter between pairs: space/logfmt-style, comma, or semicolon). `KV_MODE = auto` only extracts `key=value` pairs by default; `key: value` style pairs need an explicit `EXTRACT` statement instead. Colon-style pairs require 2 or more pairs on the first line before being classified as key-value, so a single `"Error: message"` free-text line isn't misread as key-value. Pipe-separated `key=value` pairs are intentionally not offered as a distinct style, since the value regex is shared with CEF extension-field parsing.
+
+Encoding & character set detection — byte encoding is detected ahead of line breaking, timestamp parsing and field extraction. Documents 5 byte order mark (BOM) signatures (UTF-8, UTF-16BE, UTF-16LE, UTF-32BE, UTF-32LE, with the UTF-32LE/UTF-16LE byte-prefix ambiguity flagged) and 8 common non-UTF-8 encodings seen without a BOM (Windows-1252, ISO-8859-1, ISO-8859-15, ISO-8859-7, Shift-JIS, GB18030, KOI8-R, EBCDIC), each mapped to its Splunk `props.conf` `CHARSET` value. `CHARSET` is scoped per `[<sourcetype>]`/`[source::<spec>]` stanza (not `[host::<spec>]`); default is `AUTO` on Windows and `UTF-8` elsewhere. Known limitation: BOM-prefixed UTF-16LE sources can leak BOM bytes into the first field under `AUTO` — prefer an explicit `CHARSET` plus `PREAMBLE_REGEX` when the encoding is already known.
+
+## Username / Principal Format
+**Category:** Standards & references (not in glossary — standalone reference article, no `frameworkConcepts` entry)
+
+Documents how a user or service identity is represented in raw event data — the login/principal name format, independent of the entity coverage or identity diversity scoring that consumes it.
+
+**Sub-terms / dimensions / components:**
+
+A 37-entry format catalogue across 13 categories (SAML, AWS, internet/email-style, phone, Windows, Entra ID, GCP, database, LDAP, Kerberos, social/OAuth, network auth, generic), each with an example, a template, a matching regex and notes — plus a separate 37-row **detector precedence table** giving the order formats are checked in when auto-classifying a raw principal string, numbered 1 to 37.
 
 ## Line Break
 **Category:** Splunk sourcetype definition (not in glossary)
