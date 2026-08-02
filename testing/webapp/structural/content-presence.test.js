@@ -382,3 +382,21 @@ describe('New AI prompts for the six reference articles added this session', () 
     }
   });
 });
+
+describe('Punct Field Calculation prompt', () => {
+  test('exists as a prompt-card with a working copy button and submenu entry', () => {
+    assert.match(text, /<article id="promptPunctField" class="prompt-card" data-prompt-panel hidden>/);
+    assert.match(text, /data-copy-prompt="punctFieldPrompt"/);
+    assert.match(text, /<pre id="punctFieldPrompt" class="prompt-body">/);
+    assert.match(text, /<button type="button" class="prompt-submenu-button" data-prompt-target="promptPunctField"/);
+  });
+  test('grounds the algorithm in the documented "first thirty punctuation characters in the first line" rule', () => {
+    const section = text.match(/<pre id="punctFieldPrompt" class="prompt-body">[\s\S]*?<\/pre>/)[0];
+    assert.match(section, /first thirty punctuation characters in the first line/);
+    assert.match(section, /truncat/i);
+    assert.match(section, /space \(converted to _\)/);
+    assert.match(section, /tab \(converted to t\)/);
+    assert.match(section, /dash-after-alphanumeric/);
+    assert.match(section, /community-observed, not part of Splunk's formal field reference/);
+  });
+});

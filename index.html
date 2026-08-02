@@ -5152,6 +5152,7 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptMarginalNovelty" aria-selected="false">Marginal Novelty</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptOperationalAssurance" aria-selected="false">Operational Assurance Index</button>
           <button type="button" class="prompt-submenu-button active" data-prompt-target="promptPivotDensityBreadth" aria-selected="true">Pivot Density and Pivot Breadth</button>
+          <button type="button" class="prompt-submenu-button" data-prompt-target="promptPunctField" aria-selected="false">Punct Field Calculation</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptRequiredFieldCoverage" aria-selected="false">Required Field Coverage</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptResponseReadiness" aria-selected="false">Response Readiness Index</button>
           <button type="button" class="prompt-submenu-button" data-prompt-target="promptRetentionPolicy" aria-selected="false">Retention Policy</button>
@@ -8889,12 +8890,59 @@ Required CIM fields with no source mapping.
 F. Assumptions and unresolved inputs</pre>
         </article>
 
+        <article id="promptPunctField" class="prompt-card" data-prompt-panel hidden>
+          <div class="prompt-card-header">
+            <div><h4>Punct Field Calculation</h4><p>AI prompt for computing the Splunk <code>punct</code> field value for each sample event's first line, character by character.</p><div id="punctFieldPromptStatus" class="prompt-status" aria-live="polite"></div></div>
+            <button type="button" class="prompt-copy-button" data-copy-prompt="punctFieldPrompt" data-copy-status="punctFieldPromptStatus">Copy prompt</button>
+          </div>
+          <pre id="punctFieldPrompt" class="prompt-body">Copilot Prompt — Compute the Splunk punct Field for Sample Events
+
+You are a senior Splunk parsing engineer.
+
+Given the supplied representative raw sample events, compute the Splunk punct field value for each event's first line, showing your character-by-character reasoning, then group events that would share an identical punct value.
+
+Evidence rules
+- Use only the supplied raw sample events.
+- Apply punct to the FIRST LINE of each event only, not the whole event -- Splunk documents punct as "the pattern of the first thirty punctuation characters in the first line of the event," computed once per event from its first physical line.
+- Punct is capped at the first 30 punctuation characters found on that first line; if the line has more than 30, truncate at 30 and say so explicitly.
+- Strip every letter (a-z, A-Z) and every digit (0-9) entirely -- they contribute nothing to punct.
+- Represent whitespace explicitly: a literal space becomes an underscore (_); a tab becomes a literal "t" character.
+- Keep every other punctuation or symbol character (period, colon, comma, parentheses, brackets, quotes, question mark, exclamation mark, equals sign, ampersand, pipe, slash, backslash, hyphen, underscore, asterisk, plus, percent, hash, at-sign, caret, tilde, semicolon) as-is, in original order, subject to the exception below.
+- Known implementation nuance (community-observed, not part of Splunk's formal field reference): a hyphen immediately following an alphanumeric character is commonly dropped rather than kept, similar to how a negative-number-looking or hyphenated token is not treated as standalone punctuation. Apply this rule, but flag every case where you applied it so it can be spot-checked, since it is reverse-engineered behaviour, not documented Splunk specification.
+- Do not fabricate a punct value for an event whose first line has no punctuation at all -- state plainly that punct would be empty.
+- Punct is computed at index time from the literal indexed text. If the supplied sample is a formatted or pretty-printed representation of the event rather than the literal raw bytes, note that the real indexed punct could differ.
+
+Tasks
+
+1. For each supplied event, isolate the first physical line -- this is the only part punct is computed from.
+2. Walk the line character by character, classifying each one: letter/digit (dropped), space (converted to _), tab (converted to t), the dash-after-alphanumeric exception (dropped), or other punctuation/symbol (kept as-is).
+3. Concatenate the kept/converted characters in original order, truncated to the first 30 punctuation characters.
+4. Produce the resulting punct value for each event.
+5. Group events by identical punct value to show which raw samples Splunk's punct-based grouping would treat as "the same shape," and separately flag any samples whose punct values are identical only because of the 30-character truncation (their first 30 characters match, but they would diverge further into the line).
+
+Required output
+
+A. Executive conclusion
+Number of distinct punct values found across the supplied samples, with confidence.
+
+B. Per-event working table
+Columns: Event (first line only) | Character-by-character derivation notes | Computed punct value | Truncated? (Y/N)
+
+C. Grouping
+Events sharing an identical punct value, and what that implies for search-time grouping (a "| stats count by punct"-style analysis).
+
+D. Flags
+Every application of the dash-after-alphanumeric exception, and every case affected by 30-character truncation, called out explicitly for manual verification against a real Splunk instance.
+
+E. Assumptions and unresolved inputs</pre>
+        </article>
+
         </div>
       </div>
     </section>
   </section>
 
-  
+
 
   <section id="cmeiPage" class="page-view cmei-page" role="tabpanel" aria-labelledby="showCmeiPage" hidden>
     <div class="cmei-hero">
