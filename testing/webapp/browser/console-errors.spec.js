@@ -100,8 +100,34 @@ test('Sizing calculator: on-prem and cloud toggle, calculate, produce correct re
     const clusteredText = await page.evaluate(() => document.getElementById('sizingCalculatorResult').textContent);
     assert.match(clusteredText, /10\.11 TB/, 'RF=3/SF=2 searchable-tier storage should be 10.11 TB');
 
-    // Switching to Cloud must hide the on-prem-only clustering section and
-    // relabel tiers to Splunk Cloud's Dynamic Data Active / Self Storage terms.
+    // Compression preset dropdown populates the raw/tsidx percentage fields,
+    // and those fields drive the formula (not a hardcoded 15/35 split).
+    // Endpoint/EDR preset is 18% raw + 38% tsidx = 56% total; back to RF=1/SF=1
+    // -> 100 * 90 * 0.56 = 5040 GB = 4.92 TB.
+    await page.fill('#sizingRF', '1');
+    await page.fill('#sizingSF', '1');
+    await page.selectOption('#sizingSourcetypePreset', '18,38');
+    const rawAfterPreset = await page.inputValue('#sizingRawPct');
+    const tsidxAfterPreset = await page.inputValue('#sizingTsidxPct');
+    assert.equal(rawAfterPreset, '18', 'Endpoint/EDR preset should set raw % to 18');
+    assert.equal(tsidxAfterPreset, '38', 'Endpoint/EDR preset should set tsidx % to 38');
+    await page.click('#calculateIndexSizing');
+    await page.waitForTimeout(150);
+    const presetText = await page.evaluate(() => document.getElementById('sizingCalculatorResult').textContent);
+    assert.match(presetText, /4\.92 TB/, 'Endpoint/EDR preset (18%+38%) searchable-tier storage should be 4.92 TB');
+
+    // Manually overriding raw/tsidx directly (not via the preset) also works:
+    // 10% + 30% = 40% total -> 100*90*0.4 = 3600 GB = 3.52 TB.
+    await page.fill('#sizingRawPct', '10');
+    await page.fill('#sizingTsidxPct', '30');
+    await page.click('#calculateIndexSizing');
+    await page.waitForTimeout(150);
+    const manualText = await page.evaluate(() => document.getElementById('sizingCalculatorResult').textContent);
+    assert.match(manualText, /3\.52 TB/, 'manually-overridden 10%+30% compression should compute 3.52 TB');
+
+    // Switching to Cloud must hide the on-prem-only clustering section,
+    // relabel tiers to Splunk Cloud's Dynamic Data Active / Self Storage
+    // terms, and still respect the currently-configured 10%/30% compression.
     await page.click('#sizingDeployCloud');
     await page.waitForTimeout(150);
     const clusterHidden = await page.evaluate(() => document.getElementById('sizingClusterSection').hidden);
@@ -112,6 +138,7 @@ test('Sizing calculator: on-prem and cloud toggle, calculate, produce correct re
     assert.match(cloudText, /Dynamic Data Active \(searchable\)/);
     assert.match(cloudText, /Dynamic Data Self Storage \(archive\)/);
     assert.doesNotMatch(cloudText, /Hot \+ Warm \+ Cold/, 'on-prem tier terminology must not leak into Cloud mode results');
+    assert.match(cloudText, /3\.52 TB/, 'Cloud mode should also use the configured 10%+30% compression');
 
     assert.deepEqual(pageErrors, []);
   });

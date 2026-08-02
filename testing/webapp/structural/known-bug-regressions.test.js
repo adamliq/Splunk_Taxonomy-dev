@@ -97,4 +97,21 @@ describe('Splunk Index Sizing Calculator page', () => {
     assert.match(text, /<section id="sizingClusterSection" class="reference-section">/);
     assert.match(text, /clusterSection\.hidden = cloud;/);
   });
+  test('compression is adjustable directly and via a sourcetype preset dropdown, applied in both deployment modes', () => {
+    assert.match(text, /id="sizingRawPct" type="number" value="15"/);
+    assert.match(text, /id="sizingTsidxPct" type="number" value="35"/);
+    assert.match(text, /id="sizingSourcetypePreset"/);
+    const presetSection = text.match(/<select id="sizingSourcetypePreset">[\s\S]*?<\/select>/)[0];
+    const presetCount = (presetSection.match(/<option value=/g) || []).length;
+    assert.ok(presetCount >= 6, `expected several sourcetype presets, found ${presetCount}`);
+    assert.match(text, /rawPctInput\.value = rawPct;/);
+    assert.match(text, /tsidxPctInput\.value = tsidxPct;/);
+    // Both deployment branches must read the adjustable fractions, not a hardcoded 0.15/0.35/0.5.
+    assert.match(text, /const rawFraction = Math\.max\(0, sv\("sizingRawPct"\)\) \/ 100;/);
+    assert.match(text, /const tsidxFraction = Math\.max\(0, sv\("sizingTsidxPct"\)\) \/ 100;/);
+    assert.match(text, /perCopyRatio = rf \* rawFraction \+ sf \* tsidxFraction;/);
+    assert.match(text, /frozenStorage = dailyIngest \* frozenDays \* rawFraction;/);
+    assert.match(text, /searchableStorage = dailyIngest \* searchableDays \* \(rawFraction \+ tsidxFraction\);/);
+    assert.match(text, /archiveStorage = dailyIngest \* archiveDays \* rawFraction;/);
+  });
 });

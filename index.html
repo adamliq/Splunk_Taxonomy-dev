@@ -5065,6 +5065,26 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
     </section>
 
     <section class="reference-section">
+      <div class="reference-section-heading"><div><h3>Compression assumptions</h3><p>Splunk's published guidance -- 15% raw journal + 35% <code>tsidx</code> metadata, ~50% total -- is an average across all data. Real compression depends heavily on how repetitive and structured the source is; adjust the two percentages directly, or start from a typical-sourcetype preset and refine from your own sample data.</p></div></div>
+      <div class="sizing-grid">
+        <label>Typical sourcetype (optional preset)<select id="sizingSourcetypePreset">
+          <option value="15,35" selected>Custom / Splunk average (15% raw + 35% tsidx)</option>
+          <option value="10,30">Windows Event Log (verbose XML, highly repetitive)</option>
+          <option value="12,33">JSON / structured API logs</option>
+          <option value="12,30">CSV / TSV (structured tabular)</option>
+          <option value="12,32">Database audit logs (verbose, repetitive SQL text)</option>
+          <option value="15,35">Syslog / firewall &amp; network flow (semi-structured text)</option>
+          <option value="18,38">Endpoint / EDR telemetry (high field cardinality, less repetitive)</option>
+        </select></label>
+      </div>
+      <div class="sizing-grid" style="margin-top:12px">
+        <label>Raw journal compression (% of raw ingest)<input id="sizingRawPct" type="number" value="15" min="1" max="100" step="1"></label>
+        <label>tsidx metadata overhead (% of raw ingest)<input id="sizingTsidxPct" type="number" value="35" min="0" max="200" step="1"></label>
+      </div>
+      <div class="eccs-note" style="margin-top:14px"><strong>These are illustrative starting points, not published Splunk figures for any specific sourcetype.</strong> Splunk does not publish per-sourcetype compression ratios -- actual compression depends on field cardinality, value repetition and event structure in your real data. Measure against a representative sample where the estimate materially affects a purchasing or capacity decision.</div>
+    </section>
+
+    <section class="reference-section">
       <div class="reference-section-heading"><div><h3>Ingest &amp; retention</h3></div></div>
       <div class="sizing-grid">
         <label>Daily ingest volume (GB/day)<input id="sizingDailyIngest" type="number" value="100" min="0" step="1"></label>
@@ -15613,11 +15633,22 @@ document.getElementById("exportValueAssessment").addEventListener("click",()=>{r
   const frozenDaysCloud = document.getElementById("sizingFrozenDaysCloud");
   archiveCloud.addEventListener("change", () => { frozenDaysCloud.disabled = !archiveCloud.checked; });
 
+  const sourcetypePreset = document.getElementById("sizingSourcetypePreset");
+  const rawPctInput = document.getElementById("sizingRawPct");
+  const tsidxPctInput = document.getElementById("sizingTsidxPct");
+  sourcetypePreset.addEventListener("change", () => {
+    const [rawPct, tsidxPct] = sourcetypePreset.value.split(",");
+    rawPctInput.value = rawPct;
+    tsidxPctInput.value = tsidxPct;
+  });
+
   const sv = id => Number(document.getElementById(id)?.value || 0);
   const fmtGB = n => n >= 1024 ? (n / 1024).toFixed(2) + " TB" : n.toFixed(1) + " GB";
 
   calcBtn.addEventListener("click", () => {
     const dailyIngest = Math.max(0, sv("sizingDailyIngest"));
+    const rawFraction = Math.max(0, sv("sizingRawPct")) / 100;
+    const tsidxFraction = Math.max(0, sv("sizingTsidxPct")) / 100;
     if (!isCloud) {
       const searchableDays = Math.max(0, sv("sizingSearchableDaysOnPrem"));
       const archiveOn = archiveOnPrem.checked;
@@ -15626,9 +15657,9 @@ document.getElementById("exportValueAssessment").addEventListener("click",()=>{r
       const sf = Math.max(1, Math.min(rf, sv("sizingSF")));
       const ingestPerIndexer = Math.max(1, sv("sizingIngestPerIndexer"));
 
-      const perCopyRatio = rf * 0.15 + sf * 0.35;
+      const perCopyRatio = rf * rawFraction + sf * tsidxFraction;
       const searchableStorage = dailyIngest * searchableDays * perCopyRatio;
-      const frozenStorage = dailyIngest * frozenDays * 0.15;
+      const frozenStorage = dailyIngest * frozenDays * rawFraction;
       const totalStorage = searchableStorage + frozenStorage;
       const indexerCount = Math.max(1, Math.ceil(dailyIngest / ingestPerIndexer));
       const perIndexerStorage = searchableStorage / indexerCount;
@@ -15638,15 +15669,15 @@ document.getElementById("exportValueAssessment").addEventListener("click",()=>{r
         + '<tr><td>Frozen (archive)</td><td>' + (archiveOn ? frozenDays + ' days' : 'Not archived (deleted on freeze)') + '</td><td>' + fmtGB(frozenStorage) + '</td></tr>'
         + '<tr><td><strong>Total</strong></td><td>' + (searchableDays + frozenDays) + ' days</td><td><strong>' + fmtGB(totalStorage) + '</strong></td></tr>'
         + '</tbody></table></div>'
-        + '<div class="eccs-note" style="margin-top:14px"><strong>Recommended indexer count: ' + indexerCount + '</strong> at ' + ingestPerIndexer + ' GB/day ingest capacity each -- roughly ' + fmtGB(perIndexerStorage) + ' of searchable-tier storage per indexer, before host-level headroom. Replication Factor ' + rf + ' / Search Factor ' + sf + ' means each bucket is stored as ' + rf + ' raw ' + (rf === 1 ? 'copy' : 'copies') + ' (~15% of raw each) with ' + sf + ' of those also searchable (~35% extra each) -- non-clustered (RF=SF=1) is the standard ~50% compression baseline.</div>'
+        + '<div class="eccs-note" style="margin-top:14px"><strong>Recommended indexer count: ' + indexerCount + '</strong> at ' + ingestPerIndexer + ' GB/day ingest capacity each -- roughly ' + fmtGB(perIndexerStorage) + ' of searchable-tier storage per indexer, before host-level headroom. Replication Factor ' + rf + ' / Search Factor ' + sf + ' means each bucket is stored as ' + rf + ' raw ' + (rf === 1 ? 'copy' : 'copies') + ' (' + (rawFraction * 100).toFixed(0) + '% of raw each) with ' + sf + ' of those also searchable (' + (tsidxFraction * 100).toFixed(0) + '% extra each) -- non-clustered (RF=SF=1) gives ' + ((rawFraction + tsidxFraction) * 100).toFixed(0) + '% total compression at the configured percentages.</div>'
         + '<div class="eccs-note" style="margin-top:12px"><strong>Planning estimate only.</strong> Actual compression varies by data structure and field cardinality; actual indexer throughput depends on hardware, parsing complexity and search load. Validate against Splunk\'s official capacity-planning documentation and, ideally, a representative pilot before committing to a design.</div>';
     } else {
       const searchableDays = Math.max(0, sv("sizingSearchableDaysCloud"));
       const archiveOn = archiveCloud.checked;
       const archiveDays = archiveOn ? Math.max(0, sv("sizingFrozenDaysCloud")) : 0;
 
-      const searchableStorage = dailyIngest * searchableDays * 0.5;
-      const archiveStorage = dailyIngest * archiveDays * 0.15;
+      const searchableStorage = dailyIngest * searchableDays * (rawFraction + tsidxFraction);
+      const archiveStorage = dailyIngest * archiveDays * rawFraction;
       const totalStorage = searchableStorage + archiveStorage;
 
       resultEl.innerHTML = '<div class="eccs-table-wrap" role="region" aria-label="Sizing results" tabindex="0"><table class="eccs-table"><thead><tr><th>Tier</th><th>Retention</th><th>Storage</th></tr></thead><tbody>'
