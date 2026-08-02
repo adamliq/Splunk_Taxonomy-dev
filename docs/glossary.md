@@ -848,6 +848,8 @@ Five weighted scoring dimensions, summing to a 0–100 score:
 | Maximum Event Suitability | 15 | Operational reasonableness of the largest valid event |
 | Configuration Safety | 10 | Whether `TRUNCATE` is measured, justified and bounded |
 
+`TRUNCATE = 0` disables truncation entirely and needs documented justification; `TRUNCATE = 999999` is a safer middle ground with the same intent (effectively unbounded, but still finite, so Splunk won't hang indefinitely if the line breaker is lost on a corrupted or malicious file). Recommended `TRUNCATE` value is found by running `index=<test> sourcetype=<name> | eval event_size=len(_raw) | stats max(event_size) as max_event_size | eval "Recommended TRUNCATE Value"=(max_event_size * 1.10)` against a representative sample and applying a 10% margin — `len(_raw)` measures characters, not UTF-8 bytes, so multi-byte charsets need a byte-accurate measurement instead.
+
 ## Log Format Detection & Parsing
 **Category:** Splunk sourcetype definition (not in glossary)
 

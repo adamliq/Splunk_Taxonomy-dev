@@ -4473,7 +4473,11 @@ TRUNCATE = 25000</pre></section>
       <section id="line-length-props" class="eccs-detail-section"><h3>TRUNCATE guidance</h3><pre class="prompt-body">[example:large_json]
 SHOULD_LINEMERGE = false
 LINE_BREAKER = ([\r\n]+)
-TRUNCATE = 50000</pre><p><code>TRUNCATE = 0</code> disables truncation and should only be used with documented justification and testing.</p><ul class="method-list"><li>Check incorrect event merging before increasing the limit.</li><li>Measure UTF-8 bytes, not only characters.</li><li>Use a bounded value where practical.</li><li>Record the safety margin and test representative large events.</li></ul></section>
+TRUNCATE = 50000</pre><p><code>TRUNCATE = 0</code> disables truncation and should only be used with documented justification and testing. <code>TRUNCATE = 999999</code> is a safer middle ground for the same intent: effectively unbounded for any realistic event, but still a finite limit, so Splunk won't hang indefinitely waiting for an event that never ends if the line breaker is lost on a corrupted or malicious file.</p><ul class="method-list"><li>Check incorrect event merging before increasing the limit.</li><li>Measure UTF-8 bytes, not only characters.</li><li>Use a bounded value where practical.</li><li>Record the safety margin and test representative large events.</li></ul><h4>Finding your TRUNCATE value</h4><p>Run this against a representative sample (two days' worth is often enough) to find the largest real event size, then apply a margin before setting <code>TRUNCATE</code>:</p><pre class="prompt-body">index="test" sourcetype="&lt;your new sourcetype name&gt;"
+| eval event_size=len(_raw)
+| stats max(event_size) as max_event_size
+| eval "Recommended TRUNCATE Value"=(max_event_size * 1.10)
+| fields - max_event_size</pre><p>This measures characters via <code>len(_raw)</code>, not UTF-8 bytes -- for multi-byte character sets, prefer a byte-accurate measurement (see Encoding &amp; character set detection) before finalising the value.</p></section>
     </article>
 
     <article id="logFormatParseReferenceView" class="eccs-reference" aria-labelledby="logFormatParseReferenceTitle" hidden>

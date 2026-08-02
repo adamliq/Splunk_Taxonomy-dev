@@ -297,3 +297,18 @@ describe('Line Break: EVENT_BREAKER / EVENT_BREAKER_ENABLE (Universal Forwarder 
     assert.match(section, /EVENT_BREAKER.*matches.*LINE_BREAKER/);
   });
 });
+
+describe('Line Length: TRUNCATE = 999999 alternative and recommended-value SPL search', () => {
+  test('TRUNCATE = 999999 is documented as an alternative to TRUNCATE = 0', () => {
+    const section = text.match(/<section id="line-length-props"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /<code>TRUNCATE = 999999<\/code>/);
+    assert.match(section, /safer middle ground/);
+  });
+  test('the recommended-TRUNCATE-value SPL search is present with its 10% margin', () => {
+    const section = text.match(/<section id="line-length-props"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /Finding your TRUNCATE value/);
+    assert.match(section, /eval event_size=len\(_raw\)/);
+    assert.match(section, /stats max\(event_size\) as max_event_size/);
+    assert.match(section, /max_event_size \* 1\.10/);
+  });
+});
