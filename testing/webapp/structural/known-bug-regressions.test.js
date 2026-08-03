@@ -115,3 +115,20 @@ describe('Splunk Index Sizing Calculator page', () => {
     assert.match(text, /archiveStorage = dailyIngest \* archiveDays \* rawFraction;/);
   });
 });
+
+describe('My Tools external links page', () => {
+  test('tab, page section and navigation wiring all exist', () => {
+    assert.match(text, /<button id="showExternalToolsPage" class="page-tab"/);
+    assert.match(text, /<section id="externalToolsPage" class="page-view reference-page" role="tabpanel" aria-labelledby="showExternalToolsPage" hidden>/);
+    assert.match(text, /externalTools: document\.getElementById\("showExternalToolsPage"\)/);
+    assert.match(text, /externalTools: document\.getElementById\("externalToolsPage"\)/);
+    assert.match(text, /"info", "onboarding", "taxonomy", "assessments", "sizing", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "externalTools"/);
+  });
+  test('Splunk SPL Library link is present, opens in a new tab, and is safely rel-attributed', () => {
+    const section = text.match(/<section id="externalToolsPage"[\s\S]*?<\/section>\s*<\/section>/)[0];
+    assert.match(section, /href="https:\/\/adamliq\.github\.io\/Splunk-spl-library\/"/);
+    assert.match(section, /target="_blank"/);
+    assert.match(section, /rel="noopener noreferrer"/);
+    assert.match(section, /<strong>Splunk SPL Library<\/strong>/);
+  });
+});

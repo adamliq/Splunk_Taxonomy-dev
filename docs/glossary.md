@@ -1011,6 +1011,11 @@ An interactive calculator (its own top-level tab, not a Reference article) that 
 - **Indexer count** (on-premises only) = `ceil(daily ingest / ingest capacity per indexer)`.
 - Explicitly labelled a planning estimate, not a vendor quote — actual compression varies by data structure and field cardinality, and actual throughput depends on hardware, parsing complexity and search load.
 
+## My Tools (external links page)
+**Category:** External resources (not in glossary — standalone page, no `frameworkConcepts` entry, not tied to any taxonomy node)
+
+A top-level tab ("My tools") holding a curated list of external links to other tools and reference sites, opening in a new tab. Not part of, or governed by, the LATCH taxonomy. First entry: Splunk SPL Library (`https://adamliq.github.io/Splunk-spl-library/`), a reference library of Splunk Search Processing Language (SPL) commands and examples.
+
 ---
 
 ## Roll-up chain (how the composites nest)
