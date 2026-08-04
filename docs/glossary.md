@@ -1041,6 +1041,21 @@ A reusable, source-agnostic, phase-based procedure for onboarding and investigat
 - **Phase 12 — Blind Correlation** — value-space techniques for when field names are broken, cryptic or inconsistent: find-which-field-holds-a-known-value, `TERM()`/`tstats` indexed-term pivot, `walklex` lexicon inventory, wide→long transformation, cross-sourcetype join-key discovery ("the Rosetta Stone"), value-shape field profiling, raw-token intersection, time-proximity correlation.
 - **Appendices** — a condensed Quick Reference (8 categories), a fill-in Onboarding Documentation Template, and a 14-item Detection-Readiness Checklist tied to the taxonomy's Pre-ingest cyber-value gate (TAX-06.05.02).
 
+## Health Checks Table expansion (Splunk platform security + operational checks)
+**Category:** Data Engineering & Parsing / TAX-04.10.01 (Event Health Check) — 171 new `instance` nodes added to the existing 390-row catalogue, all under the same `CUR::TAX-04.10.01` current-entries group; no new taxonomy nodes
+
+Extended the Health Checks Table from 390 to **561** reusable health-check templates by grounding two new categories in real Splunk apps, alongside the existing per-input-type pipeline checks (Universal Forwarder, HEC, AWS Lambda, osquery, etc.):
+
+- **Splunk Platform Security / Upgrade Readiness** (26 checks, `TC-SEC-001`–`026`) — sourced from Splunk's own **Health Assistant Add-on** `checklist.conf` (its real upgrade-readiness checklist for Splunk Enterprise 10.0/10.2/10.4). Covers TLS protocol version and cipher checks, certificate lifecycle (invalid/unknown-CA/mismatched/mTLS failures), app compatibility (end-of-life, outdated, FIPS-incompatible, Python 3.13-incompatible apps), KV Store/MongoDB version requirements, Python runtime version, deprecated REST v1 API and Hadoop Data Roll, and deprecated SHA-1 SAML / Duo Traditional Prompt authentication settings.
+- **Splunk platform operational health** (145 checks) — curated from the **Alerts for Splunk Admins** app's `savedsearches.conf` (276 stanzas, filtered to the 145 genuinely alert-shaped searches via their own "Chance the alert requires action?" marker, excluding report-only/inventory/macro-duplicate searches), grouped into 8 new Input Types by the source app's own tier prefix:
+  - **Search Head** (43, `TC-SHL-*`) — scheduled-search failures/misconfiguration, KVStore/conf replication, SHCluster captain switchover, search/disk quota, orphaned LDAP roles.
+  - **Indexer / Indexer Cluster** (34, `TC-IDX-*`) — bucket corruption/rolling failures, replication/search factor not met, disk space, uneven data spread, truncated/broken events, SmartStore cache errors.
+  - **Forwarder Platform** (20, `TC-FWP-*`) — forwarder down, restart loops, ulimit issues, bandwidth throttling, HEC errors, disk space exhaustion.
+  - **Splunk Platform (All Roles)** (35, `TC-PLT-*`) — crash logs, core dumps, KVStore termination, TCP/SSL configuration, resource starvation, replication failures.
+  - **Deployment Server** (5, `TC-DS-*`), **License Master** (1, `TC-LIC-001`), **Cluster Master** (2, `TC-CLM-*`), **Monitoring Console** (5, `TC-MC-*`).
+
+**Field derivation notes** (for provenance, not shown in the UI): Priority maps each source app's own severity vocabulary onto the table's existing Critical/High/Medium scale (Health Assistant's Critical/Warning/Information; Alerts for Splunk Admins' own "Chance the alert requires action? High/Moderate/Low"). Failure Action follows the table's existing Alert P1/P2/P3-by-priority convention. Frequency and Lookback Window are derived from each check's actual `cron_schedule` and `earliest=` search modifier where present. SPL Query (truncated) is the real `search` value from the source `.conf` file. This is a distinct, non-overlapping category from the existing 390 checks: those score per-input-type **data-collection pipeline** health, these score **Splunk platform component** security and operational health.
+
 ---
 
 ## Roll-up chain (how the composites nest)

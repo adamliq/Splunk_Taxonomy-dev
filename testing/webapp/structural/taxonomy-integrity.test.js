@@ -17,12 +17,12 @@ const instanceNodes = nodes.filter(n => n.nodeType === 'instance');
 
 describe('taxonomy node counts', () => {
   test('total node count is stable (update this if nodes were intentionally added/removed)', () => {
-    assert.equal(nodes.length, 2522);
+    assert.equal(nodes.length, 2693);
   });
   test('taxonomy/group/instance split is stable', () => {
     assert.equal(taxNodes.length, 468);
     assert.equal(groupNodes.length, 44);
-    assert.equal(instanceNodes.length, 2010);
+    assert.equal(instanceNodes.length, 2181);
   });
 });
 

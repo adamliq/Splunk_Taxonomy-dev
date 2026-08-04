@@ -6,7 +6,7 @@
 
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
-const { readIndexHtml, parseFrameworkConcepts } = require('../lib/parse-index');
+const { readIndexHtml, parseFrameworkConcepts, parseTaxonomyNodes } = require('../lib/parse-index');
 
 const text = readIndexHtml();
 
@@ -557,5 +557,93 @@ describe('Exploratory Data Analysis & Field Correlation Playbook reference artic
     for (const key of ['field-extraction', 'field-normalisation', 'log-assessment-framework', 'data-quality-score', 'access-control', 'retention-policy']) {
       assert.match(section, new RegExp(`data-open-reference-detail="${key}"`));
     }
+  });
+});
+
+describe('Health Checks Table: Splunk platform security/upgrade-readiness + operational checks (Health Assistant + Alerts for Splunk Admins)', () => {
+  const nodes = parseTaxonomyNodes(text);
+  const health = nodes.filter(n => n.nodeType === 'instance' && n.parentCode === 'CUR::TAX-04.10.01');
+
+  test('561 total health-check instance nodes under CUR::TAX-04.10.01 (390 original + 171 new)', () => {
+    assert.equal(health.length, 561);
+  });
+
+  test('entryCount on both the taxonomy node and its current-entries group matches 561', () => {
+    const taxNode = nodes.find(n => n.code === 'TAX-04.10.01');
+    const groupNode = nodes.find(n => n.code === 'CUR::TAX-04.10.01');
+    assert.equal(taxNode.entryCount, 561);
+    assert.equal(groupNode.entryCount, 561);
+    assert.equal(groupNode.fields['Record count'], 561);
+    assert.match(groupNode.term, /Current entries \(561\)/);
+  });
+
+  test('every health-check Test ID is unique across all 561 rows', () => {
+    const ids = health.map(n => n.fields['Test ID']);
+    const seen = new Set();
+    const dupes = ids.filter(id => (seen.has(id) ? true : (seen.add(id), false)));
+    assert.deepEqual(dupes, []);
+  });
+
+  test('9 new Input Types are present with the expected row counts', () => {
+    const counts = {};
+    for (const n of health) {
+      const it = n.fields['Input Type'];
+      counts[it] = (counts[it] || 0) + 1;
+    }
+    const expected = {
+      'Splunk Platform Security / Upgrade Readiness': 26,
+      'Search Head': 43,
+      'Indexer / Indexer Cluster': 34,
+      'Forwarder Platform': 20,
+      'Splunk Platform (All Roles)': 35,
+      'Deployment Server': 5,
+      'License Master': 1,
+      'Cluster Master': 2,
+      'Monitoring Console': 5,
+    };
+    for (const [inputType, count] of Object.entries(expected)) {
+      assert.equal(counts[inputType], count, `expected ${count} rows for "${inputType}", found ${counts[inputType]}`);
+    }
+  });
+
+  test('Priority values roll up to 299 Critical / 215 High / 47 Medium across all 561 rows', () => {
+    const counts = { Critical: 0, High: 0, Medium: 0 };
+    for (const n of health) {
+      const p = n.fields['Priority'];
+      assert.ok(p in counts, `unexpected Priority value "${p}" on ${n.fields['Test ID']}`);
+      counts[p]++;
+    }
+    assert.deepEqual(counts, { Critical: 299, High: 215, Medium: 47 });
+  });
+
+  test('every new health-check row has a non-empty Test Description, Pass Criteria and SPL preview', () => {
+    const newRows = health.filter(n => [
+      'Splunk Platform Security / Upgrade Readiness', 'Search Head', 'Indexer / Indexer Cluster',
+      'Forwarder Platform', 'Splunk Platform (All Roles)', 'Deployment Server', 'License Master',
+      'Cluster Master', 'Monitoring Console',
+    ].includes(n.fields['Input Type']));
+    assert.equal(newRows.length, 171);
+    for (const n of newRows) {
+      assert.ok(n.fields['Test Description'], `${n.fields['Test ID']} missing Test Description`);
+      assert.ok(n.fields['Pass Criteria'], `${n.fields['Test ID']} missing Pass Criteria`);
+      assert.ok(n.fields['Definition: SPL Query (truncated)'], `${n.fields['Test ID']} missing SPL preview`);
+    }
+  });
+
+  test('a few specific real checks exist, grounded in the source apps', () => {
+    const byId = Object.fromEntries(health.map(n => [n.fields['Test ID'], n.fields]));
+    assert.equal(byId['TC-SEC-002']['Test Name'], 'Deprecated TLS Protocol Versions in Splunk Configuration');
+    assert.equal(byId['TC-SEC-002']['Priority'], 'Critical');
+    assert.equal(byId['TC-SHL-001']['Test Name'], 'Accelerated DataModels with All Time Searching Enabled');
+    assert.equal(byId['TC-IDX-001'] === undefined ? undefined : byId['TC-IDX-001']['Input Type'], 'Indexer / Indexer Cluster');
+    assert.equal(byId['TC-LIC-001']['Test Name'], 'Duplicated License Situation');
+  });
+
+  test('hero text and stat badges reflect the new totals', () => {
+    assert.match(text, /Review all 561 reusable health-check templates/);
+    assert.match(text, /<strong id="healthVisibleCount">561<\/strong>/);
+    assert.match(text, /<strong id="healthCriticalCount">299<\/strong>/);
+    assert.match(text, /<strong id="healthAutomatedCount">561<\/strong>/);
+    assert.match(text, /<strong id="healthInputTypeCount">55<\/strong>/);
   });
 });
