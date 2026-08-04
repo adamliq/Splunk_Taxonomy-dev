@@ -1019,6 +1019,28 @@ A top-level tab ("My tools") holding a curated list of external links to other t
 - **Splunk tools**: Splunk SPL Library (`https://adamliq.github.io/Splunk-spl-library/`, a reference library of SPL commands and examples), LENS (`https://adamliq.github.io/lens/`, companion log-format/timestamp/identity reference tool).
 - **Knowledge graphs**: Knowledge Graph — Splunk (`https://adamliq.github.io/knowledgegraph-splunk/`), Knowledge Graph — Log Collection (`https://adamliq.github.io/knowledgegraph-logcollection/`).
 
+## Exploratory Data Analysis & Field Correlation Playbook
+**Category:** Data quality / field investigation (not in glossary — standalone Reference article, reusable cross-cutting procedure like Log Assessment Framework, no `frameworkConcepts` entry)
+
+A reusable, source-agnostic procedure for correlating fields and entities across sources when names, extractions or even shared values can't be trusted, plus a CIM data-model readiness assessment. Currently covers two of a larger source document's fourteen phases — **Blind Correlation** and **CIM Assessment** — with the remaining twelve phases and appendices flagged as a candidate future addition.
+
+**Sub-terms / dimensions / components:**
+
+- **Blind Correlation** — value-space techniques for when field names are broken, cryptic or inconsistent across sources:
+  - *Find which field holds a known value* — `foreach *` pins a known entity to its holder field(s) without naming any field.
+  - *Indexed-term pivot* — `| tstats count where index=* TERM(<value>) by index sourcetype` finds every index/sourcetype containing a value as an indexed token.
+  - *Read the lexicon directly* — `walklex` lists indexed fields/terms straight from an index's lexicon files (admin capability required).
+  - *Wide → long transformation* — explodes every event into `(field, value)` rows via `foreach *` + `mvexpand`, the foundation every other technique builds on.
+  - *Cross-sourcetype join-key discovery* ("the Rosetta Stone") — automatically derives which field in sourcetype A shares values with which field in sourcetype B.
+  - *Value-shape field profiling* — classifies fields by value shape (length, digit density, charset) rather than name to find alias candidates.
+  - *Raw-token intersection* — tokenizes `_raw` itself and intersects token sets across sources when extraction is completely broken.
+  - *Time-proximity correlation* — falls back to co-occurrence rate and lag-distribution profiling when sources share no extractable values at all.
+- **CIM Assessment** — scores a source's readiness for a target CIM data model (example uses Authentication):
+  - CIM Compliance Assessment, Required CIM Fields, Optional CIM Fields, Missing CIM Fields (fill-rate and presence checks).
+  - Data Model Mapping — documents the native → CIM field mapping that drives `props.conf`/`transforms.conf` via `FIELDALIAS-*`/`EVAL-*`.
+  - CIM Coverage Score — a single weighted percentage (required fields full weight, recommended fields half weight) for tracking onboarding progress over time.
+- Cross-references Field Extraction, Field Normalisation and Log Assessment Framework rather than duplicating their content.
+
 ---
 
 ## Roll-up chain (how the composites nest)

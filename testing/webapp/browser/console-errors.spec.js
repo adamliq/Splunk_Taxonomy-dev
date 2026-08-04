@@ -5,7 +5,7 @@
 // a null-ref in a rarely-hit render path) rather than to assert specific
 // behaviour. Full per-article error coverage for the Reference tab lives in
 // reference-navigation.spec.js, which already asserts pageErrors is empty
-// while exercising all 29 detail articles.
+// while exercising all 34 detail articles.
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
@@ -65,7 +65,7 @@ test('Reference tab: a handful of real entry-point buttons open their article wi
         return el ? !el.hidden : false;
       }, key);
       assert.equal(opened, true, `clicking the entry-point button for "${key}" did not open its article`);
-      // 29 back-links exist (one per article); only the currently-open
+      // 34 back-links exist (one per article); only the currently-open
       // article's is visible, so scope the click to it explicitly rather
       // than clicking whichever one Playwright's plain selector resolves
       // first (which is often a different, hidden article's link).

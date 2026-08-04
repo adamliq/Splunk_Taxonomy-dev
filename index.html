@@ -3300,6 +3300,7 @@
 <article class="method-card"><h4>Line Length</h4><p>Measures whether event sizes are safe, consistent and suitable for Splunk ingestion without truncation or accidental merging.</p><ul class="method-list"><li><code>TRUNCATE</code> sizing</li><li>UTF-8 byte length analysis</li><li>Boundary-integrity checks</li><li>Line Length Quality Score</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="line-length">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLineLength">Open AI prompt</button></div></article>
 <article class="method-card"><h4>Log Format Detection & Parsing</h4><p>Defines how Splunk interprets CSV, TSV, JSON, XML, structured, semi-structured and unstructured events after line breaking and timestamp recognition.</p><ul class="method-list"><li>Format detection</li><li>Index-time versus search-time extraction</li><li><code>props.conf</code></li><li>Optional <code>transforms.conf</code></li></ul><div class="method-actions"><button type="button" data-open-reference-detail="log-format-parse">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLogFormatParse">Open AI prompt</button></div></article>
 <article class="method-card"><h4>Log Assessment Framework</h4><p>Reusable line-by-line and event-level procedure for deriving structural conformance from a raw log file using a self-calibrating majority baseline, feeding Timestamp Quality, Log Format Quality and the pre-ingest schema-stability gate.</p><ul class="method-list"><li>Physical line vs logical event</li><li>Per-line dimension extraction</li><li>Majority baseline &amp; conformance scoring, reported by percentage, bytes and event count</li><li>Structural fingerprinting -- count distinct record types</li><li>Common pitfalls checklist</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="log-assessment-framework">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLogAssessmentFramework">Open AI prompt</button></div></article>
+        <article class="method-card"><h4>Exploratory Data Analysis &amp; Field Correlation Playbook</h4><p>Value-space techniques for correlating fields and entities across sources when names, extractions or shared values can't be trusted, plus a CIM data-model readiness assessment. Currently covers two phases of a larger EDA procedure.</p><ul class="method-list"><li>Blind correlation: foreach needle search, TERM()/tstats, walklex</li><li>Wide&rarr;long transform &amp; cross-sourcetype join-key discovery</li><li>Value-shape profiling, raw-token intersection, time-proximity correlation</li><li>CIM compliance, required/optional/missing fields, coverage score</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="eda-playbook">Open detailed reference</button></div></article>
         <article class="method-card"><h4>Security and logging obligations</h4><p>Map applicable organisational policy, ACSC guidance, ISM controls, incident-response requirements and retention obligations to TAX-02 and TAX-05 records.</p></article>
         <article class="method-card"><h4>Local scoring rubrics</h4><p>Assessment thresholds and weights must carry a rubric version, owner, approval status, calibration date and evidence source. Locally defined scoring should not be presented as an external standard.</p></article>
       </div>
@@ -4943,6 +4944,216 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
         <div class="method-actions"><button type="button" data-open-reference-detail="timestamp-quality">Open Timestamp Quality reference</button><button type="button" data-open-reference-detail="log-format-quality">Open Log Format Quality reference</button><button type="button" data-open-reference-detail="data-quality-score">Open Data Quality Score reference</button></div>
         <div class="eccs-note">This framework also operationalises the onboarding <strong>Pre-ingest cyber-value gate (TAX-06.05.02)</strong> -- "minimum parse rate, timestamp &amp; timezone, and schema stability" -- whose pass criteria are exactly the all-axes conformance rate and majority-baseline schema check produced by this procedure.</div>
         <p>Structural conformance answers "is this record well-formed and consistent?" It is orthogonal to "how important is this event?" -- severity or risk scoring is a separate concern, layered on top for detection and triage rather than data-quality purposes, and is out of scope for this framework.</p>
+      </section>
+    </article>
+
+    <article id="edaPlaybookReferenceView" class="eccs-reference" aria-labelledby="edaPlaybookReferenceTitle" hidden>
+      <a class="eccs-back" href="#reference" data-back-to-references>&larr; Back to References</a>
+      <div class="eccs-reference-hero">
+        <div class="eyebrow">References / Detailed reference</div>
+        <h2 id="edaPlaybookReferenceTitle">Exploratory Data Analysis &amp; Field Correlation Playbook</h2>
+        <p>A reusable, source-agnostic procedure for correlating fields and entities across sources when names, extractions or even shared values can't be trusted, and for scoring a source's readiness against a Common Information Model (CIM) data model. This article currently covers two phases of a larger EDA procedure: <strong>Blind Correlation</strong>, for working purely in value space when field names are broken or unknown, and <strong>CIM Assessment</strong>, for producing the gap list needed to finish CIM onboarding.</p>
+        <nav class="eccs-anchor-nav" aria-label="Exploratory Data Analysis &amp; Field Correlation Playbook reference sections"><a href="#eda-definition">Definition</a><a href="#eda-phase12">Blind correlation</a><a href="#eda-phase9">CIM assessment</a><a href="#eda-relationship">Relationship to other references</a></nav>
+      </div>
+      <section id="eda-definition" class="eccs-detail-section">
+        <h3>Definition</h3>
+        <p>Standard field investigation assumes you can trust field names -- search on <code>user=</code>, pivot on <code>src_ip</code>. That assumption breaks down with new or badly-onboarded sources: extractions are broken, names are cryptic (<code>f1</code>, <code>cs23</code>, <code>data.attr.0</code>), or two sources name the same entity completely differently. This playbook's Blind Correlation phase works in <strong>value space</strong> instead of name space -- pivoting on values, transforming events from wide to long, intersecting token sets, and falling back to time itself -- to derive field mappings and relationships directly from the data. Its CIM Assessment phase then scores how ready a source is for a target CIM data model and produces the concrete gap list (missing fields, low fill rates) that onboarding needs to close.</p>
+        <p>Every search below uses generic placeholders that must be substituted for the source under review. <code>&lt;&lt;FIELD&gt;&gt;</code> is the one exception -- it is not a placeholder, it is Splunk's own <code>foreach *</code> iteration syntax and should be left exactly as written.</p>
+        <div class="eccs-table-wrap" role="region" aria-label="Placeholder conventions" tabindex="0"><table class="eccs-table"><thead><tr><th>Placeholder</th><th>Substitute with</th></tr></thead><tbody>
+          <tr><td><code>&lt;index&gt;</code></td><td>The Splunk index name being assessed.</td></tr>
+          <tr><td><code>&lt;sourcetype&gt;</code></td><td>The sourcetype being assessed.</td></tr>
+          <tr><td><code>&lt;sourcetype_a&gt;</code> / <code>&lt;sourcetype_b&gt;</code></td><td>The two sourcetypes being cross-correlated against each other.</td></tr>
+          <tr><td><code>&lt;known_value&gt;</code></td><td>A value you already know exists somewhere in the data -- a username, IP or hostname -- whose holder field you are trying to find.</td></tr>
+          <tr><td><code>&lt;value_prefix&gt;</code></td><td>A partial value used to filter <code>walklex</code> term output down to a manageable range.</td></tr>
+          <tr><td><code>&lt;host_field&gt;</code> / <code>&lt;user_field&gt;</code></td><td>A specific field name on the source holding a hostname or username, once known.</td></tr>
+          <tr><td><code>&lt;asset_lookup&gt;</code> / <code>&lt;asset_key_field&gt;</code></td><td>An asset lookup table and its key field, as inventoried in the Enrichment &amp; Context Validation phase.</td></tr>
+          <tr><td><code>&lt;identity_lookup&gt;</code> / <code>&lt;identity_key_field&gt;</code></td><td>An identity lookup table and its key field, as inventoried in the Enrichment &amp; Context Validation phase.</td></tr>
+          <tr><td><code>&lt;&lt;FIELD&gt;&gt;</code> <em>(not a placeholder)</em></td><td>Splunk's own <code>foreach *</code> wildcard iteration syntax. <code>foreach *</code> binds every field on the event in turn; <code>'&lt;&lt;FIELD&gt;&gt;'</code> in single quotes reads that field's <em>value</em>, while <code>"&lt;&lt;FIELD&gt;&gt;"</code> in double quotes reads its <em>name</em> as a string. Leave it exactly as written.</td></tr>
+        </tbody></table></div>
+      </section>
+      <section id="eda-phase12" class="eccs-detail-section">
+        <h3>Blind correlation: field-name-agnostic techniques</h3>
+        <p>Everything in standard field investigation assumes you can at least see field names. Sometimes you can't trust them -- extractions are broken, names are cryptic, or two sources name the same thing completely differently. The fix is to stop thinking in field names and work in value space: pivot on values, transform events from wide to long, intersect token sets, and fall back to time itself.</p>
+        <h4>Find which field holds a known value</h4>
+        <p>You know an entity exists (a username, an IP, a hostname) but not where it lives. <code>foreach *</code> iterates over every field without naming any:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; "&lt;known_value&gt;"
+| head 1000
+| foreach * [eval holders=if('&lt;&lt;FIELD&gt;&gt;'=="&lt;known_value&gt;", mvappend(holders,"&lt;&lt;FIELD&gt;&gt;"), holders)]
+| stats count by holders
+| sort -count</pre>
+        <div class="eccs-note">Swap <code>==</code> for <code>match('&lt;&lt;FIELD&gt;&gt;',"&lt;known_value&gt;")</code> to catch the value embedded inside longer strings (escape regex metacharacters first). <code>'&lt;&lt;FIELD&gt;&gt;'</code> in single quotes reads the field's value; <code>"&lt;&lt;FIELD&gt;&gt;"</code> in double quotes is the field's name as a string.</div>
+        <h4>Indexed-term pivot (TERM + tstats)</h4>
+        <p>Find every index and sourcetype that contains a value as an indexed token -- no fields involved, and fast across the whole estate:</p>
+        <pre class="prompt-body">| tstats count where index=* TERM(&lt;known_value&gt;) by index sourcetype
+| sort -count</pre>
+        <div class="eccs-note"><code>TERM()</code> is case-sensitive, cannot contain major breakers (spaces), and works best for values whose internal punctuation consists of minor breakers -- IPs, FQDNs, GUIDs, emails. This is the fastest possible answer to "where else does this entity appear?"</div>
+        <h4>Read the lexicon directly (walklex)</h4>
+        <p><code>walklex</code> lists the indexed fields and terms straight from the index's lexicon files -- the ultimate blind inventory of what a source contains:</p>
+        <pre class="prompt-body">| walklex index=&lt;index&gt; type=field
+| stats sum(count) as occurrences by field
+| sort -occurrences</pre>
+        <pre class="prompt-body">| walklex index=&lt;index&gt; prefix=&lt;value_prefix&gt; type=term
+| stats sum(count) as occurrences by term
+| sort -occurrences
+| head 100</pre>
+        <div class="eccs-note">Requires an elevated capability (admin roles by default). Results reflect <strong>indexed</strong> tokens and fields only -- search-time extractions won't appear, which itself tells you which fields are index-time vs. search-time.</div>
+        <h4>Wide &rarr; long transformation (the foundation)</h4>
+        <p>Explode every event into <code>(field, value)</code> rows. Once data is in long format, every comparison becomes value-space analysis, independent of names:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 5000
+| foreach * [eval fv=mvappend(fv, "&lt;&lt;FIELD&gt;&gt;=" . mvjoin(mvdedup('&lt;&lt;FIELD&gt;&gt;'),"|"))]
+| fields _time sourcetype fv
+| mvexpand fv
+| rex field=fv "^(?&lt;f&gt;[^=]+)=(?&lt;v&gt;.+)$"
+| where isnotnull(v) AND NOT match(f,"^(date_|punct|linecount|timestamp|splunk_server|eventtype|tag)")</pre>
+        <div class="eccs-note"><strong>Performance.</strong> <code>foreach *</code> + <code>mvexpand</code> is O(events &times; fields) -- keep <code>head</code> at 5-10k. <code>mvjoin</code> flattens multivalue fields so they don't break the transform. Every technique below builds on this pattern.</div>
+        <h4>Cross-sourcetype join-key discovery (the Rosetta Stone)</h4>
+        <p>The headline technique: automatically find which field in sourcetype A shares values with which field in sourcetype B -- your field mapping, derived from the data itself:</p>
+        <pre class="prompt-body">index=&lt;index&gt; (sourcetype=&lt;sourcetype_a&gt; OR sourcetype=&lt;sourcetype_b&gt;)
+| head 10000
+| foreach * [eval fv=mvappend(fv, "&lt;&lt;FIELD&gt;&gt;=" . mvjoin(mvdedup('&lt;&lt;FIELD&gt;&gt;'),"|"))]
+| fields sourcetype fv
+| mvexpand fv
+| rex field=fv "^(?&lt;f&gt;[^=]+)=(?&lt;v&gt;.+)$"
+| where len(v)&gt;=4 AND NOT match(f,"^(date_|punct|linecount|timestamp|splunk_server|eventtype|tag)")
+| eval loc=sourcetype . "::" . f
+| stats values(loc) as locations dc(sourcetype) as st_count by v
+| where st_count&gt;1
+| eval field_pair=mvjoin(mvsort(locations)," &lt;-&gt; ")
+| stats count as shared_values values(v) as sample_values by field_pair
+| eval sample_values=mvindex(sample_values,0,4)
+| sort -shared_values</pre>
+        <div class="eccs-note">Output reads like <code>proxy::src &lt;-&gt; edr::local_ip | shared_values=4812</code> -- a ranked list of join-key candidates between the two sources. Discard pairs whose sample values are enums ("success", "tcp") shared trivially; the real keys are high-cardinality identifiers. Feed confirmed pairs into the Field Extraction and Field Normalisation references and the CIM Data Model Mapping below.</div>
+        <h4>Value-shape field profiling</h4>
+        <p>Classify every field by what its values look like -- length, digit density, charset -- instead of by name. Fields with near-identical shape profiles and cardinality are alias candidates even across sourcetypes:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 5000
+| foreach * [eval fv=mvappend(fv, "&lt;&lt;FIELD&gt;&gt;=" . mvjoin(mvdedup('&lt;&lt;FIELD&gt;&gt;'),"|"))]
+| fields fv
+| mvexpand fv
+| rex field=fv "^(?&lt;f&gt;[^=]+)=(?&lt;v&gt;.+)$"
+| eval vlen=len(v),
+       digit_ratio=round((vlen-len(replace(v,"\d","")))/vlen,2),
+       shape=case(
+         match(v,"(?i)^[0-9a-f]+$") AND vlen&gt;=32,"hex_hash_like",
+         match(v,"^\d+$"),"numeric",
+         match(v,"^[\d\.\:]+$"),"ip_like",
+         match(v,"\\\\|/"),"path_like",
+         match(v,"@"),"email_like",
+         1=1,"mixed")
+| stats count dc(v) as cardinality avg(vlen) as avg_len avg(digit_ratio) as avg_digit_ratio
+        values(shape) as shapes by f
+| sort -cardinality</pre>
+        <h4>Raw-token intersection (nothing extracts at all)</h4>
+        <p>When field extraction is completely broken, tokenize <code>_raw</code> itself and intersect token sets across sources. Tokens containing digits filter out log keywords (ERROR, session) and keep entity-shaped values (IDs, hostnames, IPs, GUIDs):</p>
+        <pre class="prompt-body">index=&lt;index&gt; (sourcetype=&lt;sourcetype_a&gt; OR sourcetype=&lt;sourcetype_b&gt;)
+| head 10000
+| rex max_match=100 field=_raw "(?&lt;tok&gt;\b[A-Za-z0-9][A-Za-z0-9._:-]{5,}\b)"
+| stats dc(sourcetype) as st_count count values(sourcetype) as seen_in by tok
+| where st_count&gt;1 AND match(tok,"\d")
+| sort -count
+| head 100</pre>
+        <div class="eccs-note">Very high-count shared tokens are format boilerplate; the interesting join keys sit in the mid-frequency band. Drop the <code>match(tok,"\d")</code> filter if you need to catch all-alpha usernames.</div>
+        <h4>Time-proximity correlation (no shared values at all)</h4>
+        <p>If two sources share nothing extractable, correlate on time itself. First, co-occurrence rate per second:</p>
+        <pre class="prompt-body">index=&lt;index&gt; (sourcetype=&lt;sourcetype_a&gt; OR sourcetype=&lt;sourcetype_b&gt;)
+| bin _time span=1s
+| stats dc(sourcetype) as st by _time
+| stats count(eval(st&gt;1)) as co_occurring count as total_buckets
+| eval co_rate_pct=round(co_occurring/total_buckets*100,1)</pre>
+        <p>Then profile the lag from every A event to the next B event -- a tight, consistent lag distribution implies a causal pipeline between the sources even with zero shared fields:</p>
+        <pre class="prompt-body">index=&lt;index&gt; (sourcetype=&lt;sourcetype_a&gt; OR sourcetype=&lt;sourcetype_b&gt;)
+| sort 0 + _time
+| eval a_time=if(sourcetype="&lt;sourcetype_a&gt;",_time,null())
+| filldown a_time
+| where sourcetype="&lt;sourcetype_b&gt;" AND isnotnull(a_time)
+| eval lag_sec=_time-a_time
+| stats count avg(lag_sec) as avg_lag median(lag_sec) as median_lag perc95(lag_sec) as p95_lag</pre>
+        <div class="eccs-note"><code>sort 0</code> removes the 10k result cap -- restrict the time window before running this on busy sources. A flat/wide lag distribution means the sources are unrelated; a spike at a fixed small lag (B fires 0-2s after A) is a relationship you can build a <code>transaction</code>-style correlation on.</div>
+        <h4>Blind-source workflow</h4>
+        <ol class="method-list">
+          <li><code>walklex</code> / <code>TERM()</code> pivot -- learn what tokens the index holds and where known entities live.</li>
+          <li><code>foreach</code> needle search -- pin each known value to its holder field(s).</li>
+          <li>Wide &rarr; long transform -- make the whole source name-independent.</li>
+          <li>Join-key discovery + shape profiling -- derive the cross-source field mapping from data.</li>
+          <li>Token intersection / time-lag -- fall back when extraction or shared values fail entirely.</li>
+          <li>Promote findings into Field Extraction aliases and the CIM Assessment mappings below -- then re-validate with real field names.</li>
+        </ol>
+      </section>
+      <section id="eda-phase9" class="eccs-detail-section">
+        <h3>CIM assessment</h3>
+        <p>Score how ready the source is for a CIM data model and produce the gap list needed to finish onboarding. Pick the target data model first (Authentication, Network Traffic, Web, Endpoint/Processes, Email, Malware, etc.) and adjust field lists accordingly.</p>
+        <h4>CIM compliance assessment</h4>
+        <p>High-level pass: which expected CIM fields for the target model are present at all. Example uses the <strong>Authentication</strong> model -- swap the list for your model:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 50000
+| fieldsummary
+| eval cim_model="Authentication"
+| eval is_required=if(field IN ("action","app","src","dest","user"),1,0)
+| eval is_recommended=if(field IN ("src_user","user_id","signature","status","reason","authentication_method"),1,0)
+| where is_required=1 OR is_recommended=1
+| table field is_required is_recommended count distinct_count</pre>
+        <h4>Required CIM fields</h4>
+        <p>Confirm presence and fill rate of the <strong>required</strong> fields for the model (Authentication example):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count as total
+    count(action) as action count(app) as app
+    count(src) as src count(dest) as dest count(user) as user
+| eval action=round(action/total*100,1), app=round(app/total*100,1),
+       src=round(src/total*100,1), dest=round(dest/total*100,1), user=round(user/total*100,1)
+| transpose
+| rename column as cim_field "row 1" as fill_pct
+| where cim_field!="total"</pre>
+        <h4>Optional CIM fields</h4>
+        <p>Same check for recommended/optional fields that improve detection coverage:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count as total
+    count(src_user) as src_user count(user_id) as user_id
+    count(signature) as signature count(status) as status
+    count(reason) as reason count(authentication_method) as auth_method
+| transpose
+| rename column as cim_field "row 1" as populated_events</pre>
+        <h4>Missing CIM fields</h4>
+        <p>Explicitly list required fields that do <strong>not</strong> exist or are effectively empty so they become onboarding action items:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 50000
+| fieldsummary
+| eval present_fields=field
+| stats values(present_fields) as present
+| eval required=split("action,app,src,dest,user",",")
+| eval missing=mvmap(required, if(isnull(mvfind(present,"^".required."$")), required, null()))
+| table missing</pre>
+        <h4>Data model mapping</h4>
+        <p>Document the native &rarr; CIM field mapping you will implement (this is the deliverable that drives <code>props.conf</code>/<code>transforms.conf</code>). Build it from the Cross-Sourcetype Join-Key Discovery results above; the search below renders your decided mapping for review:</p>
+        <pre class="prompt-body">| makeresults
+| eval mappings=split("clientip=src_ip,usr=user,computer=dest,verb=http_method,requesturl=url,md5=file_hash","|")
+| makemv delim="," mappings
+| mvexpand mappings
+| rex field=mappings "(?&lt;native_field&gt;[^=]+)=(?&lt;cim_field&gt;.+)"
+| table native_field cim_field</pre>
+        <div class="eccs-note">Apply renames via <code>FIELDALIAS-&lt;name&gt; = &lt;native&gt; AS &lt;cim&gt;</code> (preserves the original) or <code>EVAL-&lt;cim&gt; = &lt;expression&gt;</code> for derived/normalised values -- see the Field Normalisation reference for both mechanisms in full. Validate with the CIM data model's "Pivot" or <code>| datamodel &lt;Model&gt; &lt;Object&gt; search</code>.</div>
+        <h4>CIM coverage score</h4>
+        <p>A single percentage covering required-field presence and fill -- useful for tracking onboarding progress across many sources. Weights required fields fully and recommended fields at half:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count as total
+    count(action) as action count(app) as app count(src) as src
+    count(dest) as dest count(user) as user
+    count(src_user) as src_user count(status) as status count(signature) as signature
+| eval req_score=((if(action&gt;0,1,0)+if(app&gt;0,1,0)+if(src&gt;0,1,0)+if(dest&gt;0,1,0)+if(user&gt;0,1,0))/5)
+| eval rec_score=((if(src_user&gt;0,1,0)+if(status&gt;0,1,0)+if(signature&gt;0,1,0))/3)
+| eval cim_coverage_pct=round(((req_score*0.7)+(rec_score*0.3))*100,1)
+| table cim_coverage_pct req_score rec_score</pre>
+        <p>Validate the source actually populates the model after mapping (returns events only if they match the accelerated/defined data model):</p>
+        <pre class="prompt-body">| datamodel Authentication Authentication search
+| search index=&lt;index&gt;
+| stats count by sourcetype</pre>
+        <div class="eccs-note"><strong>Interpretation.</strong> Treat required-field coverage as a gate -- a source with &lt;100% required coverage will silently underperform in any out-of-the-box CIM-based detection. Use the coverage score over time to show onboarding is converging, and re-run this assessment and the blind-correlation techniques above whenever the upstream log format changes.</div>
+      </section>
+      <section id="eda-relationship" class="eccs-detail-section">
+        <h3>Relationship to other references</h3>
+        <p>Blind Correlation's join-key and shape-profiling output is the evidence base for Field Extraction and Field Normalisation decisions; its output feeds directly into the CIM Assessment's Data Model Mapping search above. Structural conformance issues surfaced along the way (broken extractions, inconsistent formats) are the Log Assessment Framework's concern, not this playbook's -- run that framework first if the source's basic structure isn't yet trusted.</p>
+        <div class="method-actions"><button type="button" data-open-reference-detail="field-extraction">Open Field Extraction reference</button><button type="button" data-open-reference-detail="field-normalisation">Open Field Normalisation reference</button><button type="button" data-open-reference-detail="log-assessment-framework">Open Log Assessment Framework reference</button></div>
+        <div class="eccs-note">This article is a partial pass over a larger source playbook covering twelve additional phases (source discovery through enrichment &amp; context validation) plus quick-reference and documentation-template appendices. Those remain a candidate future addition to this article.</div>
       </section>
     </article>
   </section>
@@ -14534,7 +14745,7 @@ function exportViabilityCalculator(event) {
 function setActivePage(pageName, updateHash = true) {
   const selected = ["info", "onboarding", "taxonomy", "assessments", "sizing", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "externalTools"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
-  if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : "");
+  if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : /^#eda-/.test(location.hash) ? "eda-playbook" : "");
   
 Object.entries(pageTabs).forEach(([name, tab]) => {
     if (!tab) return;
@@ -14701,6 +14912,7 @@ function setReferenceDetailVisibility(detailName){
   const requiredFieldCoverage=document.getElementById("requiredFieldCoverageReferenceView");
   const dataQualityScore=document.getElementById("dataQualityScoreReferenceView");
   const logAssessmentFramework=document.getElementById("logAssessmentFrameworkReferenceView");
+  const edaPlaybook=document.getElementById("edaPlaybookReferenceView");
   if(index) index.hidden=Boolean(detailName);
   if(eccs) eccs.hidden=detailName!=="eccs";
   if(novelty) novelty.hidden=detailName!=="marginal-novelty";
@@ -14735,11 +14947,12 @@ function setReferenceDetailVisibility(detailName){
   if(requiredFieldCoverage) requiredFieldCoverage.hidden=detailName!=="required-field-coverage";
   if(dataQualityScore) dataQualityScore.hidden=detailName!=="data-quality-score";
   if(logAssessmentFramework) logAssessmentFramework.hidden=detailName!=="log-assessment-framework";
+  if(edaPlaybook) edaPlaybook.hidden=detailName!=="eda-playbook";
 }
 function showReferenceDetail(detailName){
   setActivePage("reference");
   setReferenceDetailVisibility(detailName);
-  const detailConfig={eccs:{hash:"#eccs-definition",view:"eccsReferenceView"},"marginal-novelty":{hash:"#novelty-definition",view:"marginalNoveltyReferenceView"},icd:{hash:"#icd-definition",view:"icdReferenceView"},pivot:{hash:"#pivot-definition",view:"pivotReferenceView"},"timestamp-quality":{hash:"#timestamp-definition",view:"timestampQualityReferenceView"},"log-format-quality":{hash:"#format-definition",view:"logFormatQualityReferenceView"},"datetime-format":{hash:"#datetime-format-definition",view:"datetimeFormatReferenceView"},"datetime-parse":{hash:"#datetime-parse-definition",view:"datetimeParseReferenceView"},"username-format":{hash:"#username-format-definition",view:"usernameFormatReferenceView"},"line-break":{hash:"#line-break-definition",view:"lineBreakReferenceView"},"field-extraction":{hash:"#field-extraction-definition",view:"fieldExtractionReferenceView"},"retention-policy":{hash:"#retention-policy-definition",view:"retentionPolicyReferenceView"},"access-control":{hash:"#access-control-definition",view:"accessControlReferenceView"},"field-normalisation":{hash:"#field-norm-definition",view:"fieldNormalisationReferenceView"},"log-format-parse":{hash:"#log-format-parse-definition",view:"logFormatParseReferenceView"},"line-length":{hash:"#line-length-definition",view:"lineLengthReferenceView"},"semantic-value":{hash:"#semantic-value-definition",view:"semanticValueReferenceView"},"response-readiness":{hash:"#rri-definition",view:"responseReadinessReferenceView"},"operational-assurance":{hash:"#oai-definition",view:"operationalAssuranceReferenceView"},"threat-detection":{hash:"#tdi-definition",view:"threatDetectionReferenceView"},"business-impact-level":{hash:"#bil-definition",view:"businessImpactLevelReferenceView"},"cyber-value-index":{hash:"#cvi-definition",view:"cyberValueIndexReferenceView"},"log-source-cyber-value":{hash:"#lscv-definition",view:"logSourceCyberValueReferenceView"},"entity-coverage":{hash:"#entity-definition",view:"entityCoverageReferenceView"},"identity-diversity":{hash:"#identity-definition",view:"identityDiversityReferenceView"},"investigation-breadth":{hash:"#ibs-definition",view:"investigationBreadthReferenceView"},"context-dimension-coverage":{hash:"#cdc-definition",view:"contextDimensionCoverageReferenceView"},"investigative-noise-percentage":{hash:"#inp-definition",view:"investigativeNoisePercentageReferenceView"},"data-source-assurance":{hash:"#dsa-definition",view:"dataSourceAssuranceReferenceView"},"event-type-coverage":{hash:"#etc-definition",view:"eventTypeCoverageReferenceView"},"required-field-coverage":{hash:"#rfc-definition",view:"requiredFieldCoverageReferenceView"},"data-quality-score":{hash:"#dqs-definition",view:"dataQualityScoreReferenceView"},"log-assessment-framework":{hash:"#log-af-definition",view:"logAssessmentFrameworkReferenceView"}};
+  const detailConfig={eccs:{hash:"#eccs-definition",view:"eccsReferenceView"},"marginal-novelty":{hash:"#novelty-definition",view:"marginalNoveltyReferenceView"},icd:{hash:"#icd-definition",view:"icdReferenceView"},pivot:{hash:"#pivot-definition",view:"pivotReferenceView"},"timestamp-quality":{hash:"#timestamp-definition",view:"timestampQualityReferenceView"},"log-format-quality":{hash:"#format-definition",view:"logFormatQualityReferenceView"},"datetime-format":{hash:"#datetime-format-definition",view:"datetimeFormatReferenceView"},"datetime-parse":{hash:"#datetime-parse-definition",view:"datetimeParseReferenceView"},"username-format":{hash:"#username-format-definition",view:"usernameFormatReferenceView"},"line-break":{hash:"#line-break-definition",view:"lineBreakReferenceView"},"field-extraction":{hash:"#field-extraction-definition",view:"fieldExtractionReferenceView"},"retention-policy":{hash:"#retention-policy-definition",view:"retentionPolicyReferenceView"},"access-control":{hash:"#access-control-definition",view:"accessControlReferenceView"},"field-normalisation":{hash:"#field-norm-definition",view:"fieldNormalisationReferenceView"},"log-format-parse":{hash:"#log-format-parse-definition",view:"logFormatParseReferenceView"},"line-length":{hash:"#line-length-definition",view:"lineLengthReferenceView"},"semantic-value":{hash:"#semantic-value-definition",view:"semanticValueReferenceView"},"response-readiness":{hash:"#rri-definition",view:"responseReadinessReferenceView"},"operational-assurance":{hash:"#oai-definition",view:"operationalAssuranceReferenceView"},"threat-detection":{hash:"#tdi-definition",view:"threatDetectionReferenceView"},"business-impact-level":{hash:"#bil-definition",view:"businessImpactLevelReferenceView"},"cyber-value-index":{hash:"#cvi-definition",view:"cyberValueIndexReferenceView"},"log-source-cyber-value":{hash:"#lscv-definition",view:"logSourceCyberValueReferenceView"},"entity-coverage":{hash:"#entity-definition",view:"entityCoverageReferenceView"},"identity-diversity":{hash:"#identity-definition",view:"identityDiversityReferenceView"},"investigation-breadth":{hash:"#ibs-definition",view:"investigationBreadthReferenceView"},"context-dimension-coverage":{hash:"#cdc-definition",view:"contextDimensionCoverageReferenceView"},"investigative-noise-percentage":{hash:"#inp-definition",view:"investigativeNoisePercentageReferenceView"},"data-source-assurance":{hash:"#dsa-definition",view:"dataSourceAssuranceReferenceView"},"event-type-coverage":{hash:"#etc-definition",view:"eventTypeCoverageReferenceView"},"required-field-coverage":{hash:"#rfc-definition",view:"requiredFieldCoverageReferenceView"},"data-quality-score":{hash:"#dqs-definition",view:"dataQualityScoreReferenceView"},"log-assessment-framework":{hash:"#log-af-definition",view:"logAssessmentFrameworkReferenceView"},"eda-playbook":{hash:"#eda-definition",view:"edaPlaybookReferenceView"}};
   const config=detailConfig[detailName]||detailConfig.eccs;
   if(history.replaceState) history.replaceState(null,"",config.hash);
   requestAnimationFrame(()=>document.getElementById(config.view)?.scrollIntoView({behavior:"smooth",block:"start"}));

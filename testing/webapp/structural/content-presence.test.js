@@ -400,3 +400,57 @@ describe('Punct Field Calculation prompt', () => {
     assert.match(section, /community-observed, not part of Splunk's formal field reference/);
   });
 });
+
+describe('Exploratory Data Analysis & Field Correlation Playbook reference article (Blind Correlation + CIM Assessment phases)', () => {
+  test('article exists and is wired into detailConfig / setReferenceDetailVisibility / method-card', () => {
+    assert.match(text, /id="edaPlaybookReferenceView"/);
+    assert.match(text, /"eda-playbook":\{hash:"#eda-definition",view:"edaPlaybookReferenceView"\}/);
+    assert.match(text, /if\(edaPlaybook\) edaPlaybook\.hidden=detailName!=="eda-playbook"/);
+    assert.match(text, /data-open-reference-detail="eda-playbook"/);
+    assert.match(text, /\/\^#eda-\/\.test\(location\.hash\) \? "eda-playbook"/);
+  });
+  test('placeholder-conventions table documents the literal <<FIELD>> foreach token as distinct from substitutable placeholders', () => {
+    const section = text.match(/<section id="eda-definition"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /&lt;index&gt;/);
+    assert.match(section, /&lt;known_value&gt;/);
+    assert.match(section, /&lt;&lt;FIELD&gt;&gt;/);
+    assert.match(section, /not a placeholder/);
+  });
+  test('Blind Correlation phase covers all 8 techniques plus the workflow summary', () => {
+    const section = text.match(/<section id="eda-phase12"[\s\S]*?<\/section>/)[0];
+    for (const heading of [
+      'Find which field holds a known value',
+      'Indexed-term pivot',
+      'Read the lexicon directly',
+      'Wide &rarr; long transformation',
+      'Cross-sourcetype join-key discovery',
+      'Value-shape field profiling',
+      'Raw-token intersection',
+      'Time-proximity correlation',
+      'Blind-source workflow',
+    ]) {
+      assert.match(section, new RegExp(heading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), `missing "${heading}"`);
+    }
+    assert.match(section, /TERM\(&lt;known_value&gt;\)/);
+    assert.match(section, /walklex index=&lt;index&gt; type=field/);
+    assert.match(section, /field_pair=mvjoin\(mvsort\(locations\)/);
+  });
+  test('CIM Assessment phase covers all 6 checks', () => {
+    const section = text.match(/<section id="eda-phase9"[\s\S]*?<\/section>/)[0];
+    for (const heading of [
+      'CIM compliance assessment', 'Required CIM fields', 'Optional CIM fields',
+      'Missing CIM fields', 'Data model mapping', 'CIM coverage score',
+    ]) {
+      assert.match(section, new RegExp(heading), `missing "${heading}"`);
+    }
+    assert.match(section, /cim_coverage_pct=round\(\(\(req_score\*0\.7\)\+\(rec_score\*0\.3\)\)\*100,1\)/);
+    assert.match(section, /\| datamodel Authentication Authentication search/);
+  });
+  test('relationship section cross-references Field Extraction, Field Normalisation and Log Assessment Framework, and flags remaining phases as future work', () => {
+    const section = text.match(/<section id="eda-relationship"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /data-open-reference-detail="field-extraction"/);
+    assert.match(section, /data-open-reference-detail="field-normalisation"/);
+    assert.match(section, /data-open-reference-detail="log-assessment-framework"/);
+    assert.match(section, /twelve additional phases/);
+  });
+});

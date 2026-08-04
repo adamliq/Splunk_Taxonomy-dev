@@ -23,7 +23,7 @@ const DETAIL_KEYS = [
   'threat-detection', 'business-impact-level', 'cyber-value-index', 'log-source-cyber-value',
   'entity-coverage', 'identity-diversity', 'investigation-breadth', 'context-dimension-coverage',
   'investigative-noise-percentage', 'data-source-assurance', 'event-type-coverage',
-  'required-field-coverage', 'data-quality-score', 'log-assessment-framework',
+  'required-field-coverage', 'data-quality-score', 'log-assessment-framework', 'eda-playbook',
 ];
 
 test('every anchor-nav link in every reference article scrolls to a visible target', { timeout: 300000 }, async () => {
