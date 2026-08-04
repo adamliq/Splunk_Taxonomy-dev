@@ -116,19 +116,20 @@ describe('Splunk Index Sizing Calculator page', () => {
   });
 });
 
-describe('My Tools external links page', () => {
+describe('Companion Tools external links page', () => {
   test('tab, page section and navigation wiring all exist', () => {
-    assert.match(text, /<button id="showExternalToolsPage" class="page-tab"/);
+    assert.match(text, /<button id="showExternalToolsPage" class="page-tab"[^>]*>Companion tools<\/button>/);
     assert.match(text, /<section id="externalToolsPage" class="page-view reference-page" role="tabpanel" aria-labelledby="showExternalToolsPage" hidden>/);
     assert.match(text, /externalTools: document\.getElementById\("showExternalToolsPage"\)/);
     assert.match(text, /externalTools: document\.getElementById\("externalToolsPage"\)/);
     assert.match(text, /"info", "onboarding", "taxonomy", "assessments", "sizing", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "externalTools"/);
   });
-  test('all 4 external links are present, open in a new tab, and are safely rel-attributed', () => {
+  test('all 5 external links are present, open in a new tab, and are safely rel-attributed', () => {
     const section = text.match(/<section id="externalToolsPage"[\s\S]*<\/main>/)[0];
     const links = [
       ['https://adamliq.github.io/Splunk-spl-library/', 'Splunk SPL Library'],
       ['https://adamliq.github.io/lens/', 'LENS'],
+      ['https://adamliq.github.io/Winevent-catalogue/', 'Windows Event Catalogue'],
       ['https://adamliq.github.io/knowledgegraph-splunk/', 'Knowledge Graph -- Splunk'],
       ['https://adamliq.github.io/knowledgegraph-logcollection/', 'Knowledge Graph -- Log Collection'],
     ];

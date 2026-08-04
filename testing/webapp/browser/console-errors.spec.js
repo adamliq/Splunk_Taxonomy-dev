@@ -23,7 +23,7 @@ const TABS = [
   { name: 'Data source catalogue', buttonId: 'showCataloguePage' },
   { name: 'Logging patterns table', buttonId: 'showPatternsPage' },
   { name: 'Health checks table', buttonId: 'showHealthChecksPage' },
-  { name: 'My tools', buttonId: 'showExternalToolsPage' },
+  { name: 'Companion tools', buttonId: 'showExternalToolsPage' },
 ];
 
 test('every primary tab loads without a page error', { timeout: 60000 }, async () => {
