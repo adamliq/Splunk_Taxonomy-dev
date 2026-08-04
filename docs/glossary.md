@@ -1011,12 +1011,12 @@ An interactive calculator (its own top-level tab, not a Reference article) that 
 - **Indexer count** (on-premises only) = `ceil(daily ingest / ingest capacity per indexer)`.
 - Explicitly labelled a planning estimate, not a vendor quote — actual compression varies by data structure and field cardinality, and actual throughput depends on hardware, parsing complexity and search load.
 
-## My Tools (external links page)
+## Companion Tools (external links page)
 **Category:** External resources (not in glossary — standalone page, no `frameworkConcepts` entry, not tied to any taxonomy node)
 
-A top-level tab ("My tools") holding a curated list of external links to other tools and reference sites, opening in a new tab. Not part of, or governed by, the LATCH taxonomy. Two sections:
+A top-level tab ("Companion tools", formerly "My tools") holding a curated list of external links to other tools and reference sites, opening in a new tab. Not part of, or governed by, the LATCH taxonomy. Two sections:
 
-- **Splunk tools**: Splunk SPL Library (`https://adamliq.github.io/Splunk-spl-library/`, a reference library of SPL commands and examples), LENS (`https://adamliq.github.io/lens/`, companion log-format/timestamp/identity reference tool).
+- **Splunk tools**: Splunk SPL Library (`https://adamliq.github.io/Splunk-spl-library/`, a reference library of SPL commands and examples), LENS (`https://adamliq.github.io/lens/`, companion log-format/timestamp/identity reference tool), Windows Event Catalogue (`https://adamliq.github.io/Winevent-catalogue/`, reference catalogue of Windows Event IDs, their sources and security relevance).
 - **Knowledge graphs**: Knowledge Graph — Splunk (`https://adamliq.github.io/knowledgegraph-splunk/`), Knowledge Graph — Log Collection (`https://adamliq.github.io/knowledgegraph-logcollection/`).
 
 ## Exploratory Data Analysis & Field Correlation Playbook
