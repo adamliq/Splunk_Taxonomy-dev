@@ -1014,7 +1014,10 @@ An interactive calculator (its own top-level tab, not a Reference article) that 
 ## My Tools (external links page)
 **Category:** External resources (not in glossary — standalone page, no `frameworkConcepts` entry, not tied to any taxonomy node)
 
-A top-level tab ("My tools") holding a curated list of external links to other tools and reference sites, opening in a new tab. Not part of, or governed by, the LATCH taxonomy. First entry: Splunk SPL Library (`https://adamliq.github.io/Splunk-spl-library/`), a reference library of Splunk Search Processing Language (SPL) commands and examples.
+A top-level tab ("My tools") holding a curated list of external links to other tools and reference sites, opening in a new tab. Not part of, or governed by, the LATCH taxonomy. Two sections:
+
+- **Splunk tools**: Splunk SPL Library (`https://adamliq.github.io/Splunk-spl-library/`, a reference library of SPL commands and examples), LENS (`https://adamliq.github.io/lens/`, companion log-format/timestamp/identity reference tool).
+- **Knowledge graphs**: Knowledge Graph — Splunk (`https://adamliq.github.io/knowledgegraph-splunk/`), Knowledge Graph — Log Collection (`https://adamliq.github.io/knowledgegraph-logcollection/`).
 
 ---
 

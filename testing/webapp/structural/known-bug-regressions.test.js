@@ -124,11 +124,18 @@ describe('My Tools external links page', () => {
     assert.match(text, /externalTools: document\.getElementById\("externalToolsPage"\)/);
     assert.match(text, /"info", "onboarding", "taxonomy", "assessments", "sizing", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "externalTools"/);
   });
-  test('Splunk SPL Library link is present, opens in a new tab, and is safely rel-attributed', () => {
-    const section = text.match(/<section id="externalToolsPage"[\s\S]*?<\/section>\s*<\/section>/)[0];
-    assert.match(section, /href="https:\/\/adamliq\.github\.io\/Splunk-spl-library\/"/);
-    assert.match(section, /target="_blank"/);
-    assert.match(section, /rel="noopener noreferrer"/);
-    assert.match(section, /<strong>Splunk SPL Library<\/strong>/);
+  test('all 4 external links are present, open in a new tab, and are safely rel-attributed', () => {
+    const section = text.match(/<section id="externalToolsPage"[\s\S]*<\/main>/)[0];
+    const links = [
+      ['https://adamliq.github.io/Splunk-spl-library/', 'Splunk SPL Library'],
+      ['https://adamliq.github.io/lens/', 'LENS'],
+      ['https://adamliq.github.io/knowledgegraph-splunk/', 'Knowledge Graph -- Splunk'],
+      ['https://adamliq.github.io/knowledgegraph-logcollection/', 'Knowledge Graph -- Log Collection'],
+    ];
+    for (const [href, title] of links) {
+      const escapedHref = href.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
+      const cardRe = new RegExp(`<a class="info-action-card" href="${escapedHref}" target="_blank" rel="noopener noreferrer"><strong>${title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</strong>`);
+      assert.match(section, cardRe, `missing or malformed card for ${title}`);
+    }
   });
 });
