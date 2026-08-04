@@ -1,0 +1,72 @@
+{
+  "total_physical_lines": 905,
+  "total_logical_events": 863,
+  "format_majority": "app_json",
+  "timestamp_format_majority": "iso8601_offset_ms",
+  "formats": {
+    "app_json": {
+      "lines": 800,
+      "events": 800
+    },
+    "legacy_syslog": {
+      "lines": 40,
+      "events": 40
+    },
+    "proprietary_pipe_unnamed": {
+      "lines": 8,
+      "events": 8
+    },
+    "csv_audit": {
+      "lines": 12,
+      "events": 12
+    },
+    "FREE_TEXT": {
+      "lines": 3,
+      "events": 3
+    }
+  },
+  "timestamp_formats": {
+    "iso8601_offset_ms": {
+      "events": 800
+    },
+    "syslog_no_year": {
+      "events": 40
+    },
+    "yyyy_mm_dd_space_hms": {
+      "events": 8
+    },
+    "ambiguous_slash_date": {
+      "events": 12
+    }
+  },
+  "line_endings": {
+    "LF": 893,
+    "CRLF": 12
+  },
+  "has_bom": true,
+  "multiline_records": 15,
+  "free_text_lines": 3,
+  "pitfalls_injected": [
+    {
+      "pitfall": "Prefix before the timestamp",
+      "detail": "40 legacy_syslog lines carry a <13> priority prefix before the timestamp, pushing it off offset 0."
+    },
+    {
+      "pitfall": "Unnamed structured format",
+      "detail": "8 lines are a proprietary pipe-delimited format with no standard name; expected shape token = pipe/5 (5 fields)."
+    },
+    {
+      "pitfall": "Mixed date ordering",
+      "detail": "csv_audit rows use DD/MM/YYYY throughout, but 6 of 12 rows (day=04, month=03) are ambiguous with MM/DD/YYYY since day<=12."
+    },
+    {
+      "pitfall": "Delimiter collision",
+      "detail": "One csv_audit row has a quoted field containing an embedded comma ('Login from Sydney, AU'), which naive comma-splitting would miscount as 5 fields instead of 4."
+    }
+  ],
+  "expected_min_distinct_fingerprints": 4,
+  "fingerprint_notes": [
+    "Distinct (format, timestamp_format) pairs excluding FREE_TEXT: [('app_json', 'iso8601_offset_ms'), ('csv_audit', 'ambiguous_slash_date'), ('legacy_syslog', 'syslog_no_year'), ('proprietary_pipe_unnamed', 'yyyy_mm_dd_space_hms')]",
+    "FREE_TEXT lines should bucket separately and not inflate the structural fingerprint count."
+  ]
+}
