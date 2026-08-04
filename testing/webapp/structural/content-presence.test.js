@@ -401,13 +401,20 @@ describe('Punct Field Calculation prompt', () => {
   });
 });
 
-describe('Exploratory Data Analysis & Field Correlation Playbook reference article (Blind Correlation + CIM Assessment phases)', () => {
+describe('Exploratory Data Analysis & Field Correlation Playbook reference article (all 14 phases + 3 appendices)', () => {
   test('article exists and is wired into detailConfig / setReferenceDetailVisibility / method-card', () => {
     assert.match(text, /id="edaPlaybookReferenceView"/);
     assert.match(text, /"eda-playbook":\{hash:"#eda-definition",view:"edaPlaybookReferenceView"\}/);
     assert.match(text, /if\(edaPlaybook\) edaPlaybook\.hidden=detailName!=="eda-playbook"/);
     assert.match(text, /data-open-reference-detail="eda-playbook"/);
     assert.match(text, /\/\^#eda-\/\.test\(location\.hash\) \? "eda-playbook"/);
+  });
+  test('anchor-nav has all 18 sections: definition, 13 phases (0-12), 3 appendices, relationship', () => {
+    const hero = text.match(/<h2 id="edaPlaybookReferenceTitle">[\s\S]*?<\/nav>/)[0];
+    const hrefs = [...hero.matchAll(/href="#([a-z0-9-]+)"/g)].map(m => m[1]);
+    const expected = ['eda-definition', ...Array.from({ length: 13 }, (_, i) => `eda-phase${i}`),
+      'eda-quickref', 'eda-template', 'eda-checklist', 'eda-relationship'];
+    assert.deepEqual(hrefs, expected);
   });
   test('placeholder-conventions table documents the literal <<FIELD>> foreach token as distinct from substitutable placeholders', () => {
     const section = text.match(/<section id="eda-definition"[\s\S]*?<\/section>/)[0];
@@ -416,7 +423,71 @@ describe('Exploratory Data Analysis & Field Correlation Playbook reference artic
     assert.match(section, /&lt;&lt;FIELD&gt;&gt;/);
     assert.match(section, /not a placeholder/);
   });
-  test('Blind Correlation phase covers all 8 techniques plus the workflow summary', () => {
+  test('Phase 0 (Parse-Time Health) covers structure fingerprinting, event clustering, format detection, timestamp lag and truncation, and cross-references Log Assessment Framework/Line Length/Timestamp Quality', () => {
+    const section = text.match(/<section id="eda-phase0"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /stats count by punct/);
+    assert.match(section, /cluster showcount=true t=0\.8/);
+    assert.match(section, /lag_sec=_indextime-_time/);
+    assert.match(section, /near_truncate_events/);
+    assert.match(section, /data-open-reference-detail="log-assessment-framework"/);
+    assert.match(section, /data-open-reference-detail="line-length"/);
+    assert.match(section, /data-open-reference-detail="timestamp-quality"/);
+  });
+  test('Phase 1 (Data Source Profiling) covers volume trends, event diversity and field discovery', () => {
+    const section = text.match(/<section id="eda-phase1"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /tstats count where index=&lt;index&gt; by _time span=1h/);
+    assert.match(section, /metadata type=sourcetypes index=&lt;index&gt;/);
+    assert.match(section, /fieldsummary/);
+  });
+  test('Phase 2 (Data Quality Analysis) covers all 14 checks and cross-references Data Quality Score', () => {
+    const section = text.match(/<section id="eda-phase2"[\s\S]*?<\/section>/)[0];
+    for (const heading of [
+      'Critical field population', 'Null analysis', 'CIM alignment', 'Data type identification',
+      'Field completeness assessment', 'Placeholder &amp; junk value detection', 'Format validity checks',
+      'Value consistency checks', 'Duplicate event detection', 'Cross-field logical consistency',
+      'Multivalue field anomalies', 'Numeric sanity checks', 'Quality drift over time', 'Data quality scorecard',
+    ]) {
+      assert.match(section, new RegExp(`<h4>${heading}</h4>`), `missing "${heading}"`);
+    }
+    assert.match(section, /dq_score=round\(\(completeness\*0\.4\)\+\(validity\*0\.2\)\+\(uniqueness\*0\.2\)\+\(timeliness\*0\.2\),1\)/);
+    assert.match(section, /data-open-reference-detail="data-quality-score"/);
+  });
+  test('Phase 3 (Temporal Analysis) covers hourly/day-of-week activity, frequency, gaps and seasonality', () => {
+    const section = text.match(/<section id="eda-phase3"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /chart count over hour by day/);
+    assert.match(section, /timewrap 1w/);
+  });
+  test('Phase 4 (Correlation Analysis) gives the full dc\\(\\)\\/values\\(\\) template plus a table of other entity pairs', () => {
+    const section = text.match(/<section id="eda-phase4"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /dc\(&lt;host_field&gt;\) as host_count dc\(&lt;ip_field&gt;\) as ip_count/);
+    assert.match(section, /Host &harr; IP relationships/);
+    assert.match(section, /events_per_user=round\(count\/users,1\)/);
+  });
+  test('Phase 5 (Outlier Analysis) covers rare/high-volume/statistical anomaly detection', () => {
+    const section = text.match(/<section id="eda-phase5"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /rare limit=25 &lt;field&gt;/);
+    assert.match(section, /Rare-entity variants/);
+    assert.match(section, /anomalydetection action=annotate/);
+  });
+  test('Phase 6 (Field Correlation & Entity Discovery) covers candidate fields, classification and discovery, and cross-references Field Extraction', () => {
+    const section = text.match(/<section id="eda-phase6"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /entity_hint=case/);
+    assert.match(section, /Entity value signatures/);
+    assert.match(section, /found_user/);
+    assert.match(section, /data-open-reference-detail="field-extraction"/);
+  });
+  test('Phase 7 (Field Relationship Analysis) covers comparison, similarity, alias detection and CIM mapping candidates, and cross-references Field Normalisation', () => {
+    const section = text.match(/<section id="eda-phase7"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /similarity_pct=round\(matches\/both_present\*100,2\)/);
+    assert.match(section, /cim_candidate=case/);
+    assert.match(section, /data-open-reference-detail="field-normalisation"/);
+  });
+  test('Phase 8 (Field Value Correlation Matrix) gives the user matrix in full plus a table of other matrices', () => {
+    const section = text.match(/<section id="eda-phase8"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /contingency maxcols=25 maxrows=25 &lt;user_field&gt; &lt;host_field&gt;/);
+    assert.match(section, /Other correlation matrices/);
+  });
+  test('Blind Correlation phase (12) covers all 8 techniques plus the workflow summary', () => {
     const section = text.match(/<section id="eda-phase12"[\s\S]*?<\/section>/)[0];
     for (const heading of [
       'Find which field holds a known value',
@@ -435,7 +506,7 @@ describe('Exploratory Data Analysis & Field Correlation Playbook reference artic
     assert.match(section, /walklex index=&lt;index&gt; type=field/);
     assert.match(section, /field_pair=mvjoin\(mvsort\(locations\)/);
   });
-  test('CIM Assessment phase covers all 6 checks', () => {
+  test('CIM Assessment phase (9) covers all 6 checks', () => {
     const section = text.match(/<section id="eda-phase9"[\s\S]*?<\/section>/)[0];
     for (const heading of [
       'CIM compliance assessment', 'Required CIM fields', 'Optional CIM fields',
@@ -446,11 +517,45 @@ describe('Exploratory Data Analysis & Field Correlation Playbook reference artic
     assert.match(section, /cim_coverage_pct=round\(\(\(req_score\*0\.7\)\+\(rec_score\*0\.3\)\)\*100,1\)/);
     assert.match(section, /\| datamodel Authentication Authentication search/);
   });
-  test('relationship section cross-references Field Extraction, Field Normalisation and Log Assessment Framework, and flags remaining phases as future work', () => {
+  test('Phase 10 (Sensitive Data & Secrets Discovery) counts/locates secrets and cross-references Access Control/Retention Policy', () => {
+    const section = text.match(/<section id="eda-phase10"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /aws_access_key=if\(match\(_raw,"\\bAKIA\[0-9A-Z\]\{16\}\\b"\)/);
+    assert.match(section, /never table the matched values themselves/);
+    assert.match(section, /data-open-reference-detail="access-control"/);
+    assert.match(section, /data-open-reference-detail="retention-policy"/);
+  });
+  test('Phase 11 (Enrichment & Context Validation) covers lookup inventory and asset/identity match rate, and cross-references Access Control', () => {
+    const section = text.match(/<section id="eda-phase11"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /rest \/services\/data\/transforms\/lookups splunk_server=local/);
+    assert.match(section, /known_asset","unknown_asset"/);
+    assert.match(section, /data-open-reference-detail="access-control"/);
+  });
+  test('Quick Reference appendix has all 8 categories', () => {
+    const section = text.match(/<section id="eda-quickref"[\s\S]*?<\/section>/)[0];
+    for (const heading of [
+      'Parse health &amp; exposure', 'Profiling &amp; inventory', 'Quality', 'Temporal',
+      'Correlation &amp; outliers', 'Entity discovery', 'Relationships &amp; CIM',
+      'Blind correlation \\(no trusted field names\\)',
+    ]) {
+      assert.match(section, new RegExp(`<h4>${heading}</h4>`), `missing "${heading}"`);
+    }
+  });
+  test('Onboarding Documentation Template appendix is a fill-in skeleton covering all phases', () => {
+    const section = text.match(/<section id="eda-template"[\s\S]*?<\/section>/)[0];
+    assert.match(section, /# Source Onboarding: &lt;index&gt; \/ &lt;sourcetype&gt;/);
+    assert.match(section, /## Sign-off/);
+  });
+  test('Detection-Readiness Checklist appendix has all 14 gate items and ties to the pre-ingest cyber-value gate', () => {
+    const section = text.match(/<section id="eda-checklist"[\s\S]*?<\/section>/)[0];
+    const items = (section.match(/<li>/g) || []).length;
+    assert.equal(items, 14);
+    assert.match(section, /Pre-ingest cyber-value gate \(TAX-06\.05\.02\)/);
+  });
+  test('relationship section is a full-pass summary cross-referencing 6 other reference articles', () => {
     const section = text.match(/<section id="eda-relationship"[\s\S]*?<\/section>/)[0];
-    assert.match(section, /data-open-reference-detail="field-extraction"/);
-    assert.match(section, /data-open-reference-detail="field-normalisation"/);
-    assert.match(section, /data-open-reference-detail="log-assessment-framework"/);
-    assert.match(section, /twelve additional phases/);
+    assert.match(section, /full pass over its source document/);
+    for (const key of ['field-extraction', 'field-normalisation', 'log-assessment-framework', 'data-quality-score', 'access-control', 'retention-policy']) {
+      assert.match(section, new RegExp(`data-open-reference-detail="${key}"`));
+    }
   });
 });

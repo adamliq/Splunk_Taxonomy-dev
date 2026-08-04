@@ -1022,24 +1022,24 @@ A top-level tab ("My tools") holding a curated list of external links to other t
 ## Exploratory Data Analysis & Field Correlation Playbook
 **Category:** Data quality / field investigation (not in glossary — standalone Reference article, reusable cross-cutting procedure like Log Assessment Framework, no `frameworkConcepts` entry)
 
-A reusable, source-agnostic procedure for correlating fields and entities across sources when names, extractions or even shared values can't be trusted, plus a CIM data-model readiness assessment. Currently covers two of a larger source document's fourteen phases — **Blind Correlation** and **CIM Assessment** — with the remaining twelve phases and appendices flagged as a candidate future addition.
+A reusable, source-agnostic, phase-based procedure for onboarding and investigating an undocumented Splunk source end to end. Full pass over its fourteen-phase source document (Phases 0–12 plus a value-space Blind Correlation phase) and all three appendices — nothing deferred.
 
-**Sub-terms / dimensions / components:**
+**Sub-terms / dimensions / components (in playbook order):**
 
-- **Blind Correlation** — value-space techniques for when field names are broken, cryptic or inconsistent across sources:
-  - *Find which field holds a known value* — `foreach *` pins a known entity to its holder field(s) without naming any field.
-  - *Indexed-term pivot* — `| tstats count where index=* TERM(<value>) by index sourcetype` finds every index/sourcetype containing a value as an indexed token.
-  - *Read the lexicon directly* — `walklex` lists indexed fields/terms straight from an index's lexicon files (admin capability required).
-  - *Wide → long transformation* — explodes every event into `(field, value)` rows via `foreach *` + `mvexpand`, the foundation every other technique builds on.
-  - *Cross-sourcetype join-key discovery* ("the Rosetta Stone") — automatically derives which field in sourcetype A shares values with which field in sourcetype B.
-  - *Value-shape field profiling* — classifies fields by value shape (length, digit density, charset) rather than name to find alias candidates.
-  - *Raw-token intersection* — tokenizes `_raw` itself and intersects token sets across sources when extraction is completely broken.
-  - *Time-proximity correlation* — falls back to co-occurrence rate and lag-distribution profiling when sources share no extractable values at all.
-- **CIM Assessment** — scores a source's readiness for a target CIM data model (example uses Authentication):
-  - CIM Compliance Assessment, Required CIM Fields, Optional CIM Fields, Missing CIM Fields (fill-rate and presence checks).
-  - Data Model Mapping — documents the native → CIM field mapping that drives `props.conf`/`transforms.conf` via `FIELDALIAS-*`/`EVAL-*`.
-  - CIM Coverage Score — a single weighted percentage (required fields full weight, recommended fields half weight) for tracking onboarding progress over time.
-- Cross-references Field Extraction, Field Normalisation and Log Assessment Framework rather than duplicating their content.
+- **Phase 0 — Parse-Time Health & Structure Fingerprinting** — `punct`-based fingerprinting, event clustering, format detection, timestamp lag/timezone/impossible-timestamp checks, truncation and line-breaking checks. Cross-references Log Assessment Framework, Line Length and Timestamp Quality rather than duplicating them.
+- **Phase 1 — Data Source Profiling** — volume/ingestion trends via `tstats`, sourcetype/source/host inventory via `metadata`, field discovery via `fieldsummary`.
+- **Phase 2 — Data Quality Analysis** — 14 checks: critical field population, null analysis, CIM alignment, data type identification, field completeness, placeholder/junk detection, format validity (IP/port/hash), value consistency (case/whitespace/encoding/mixed-representation), duplicate event detection, cross-field logical consistency, multivalue anomalies, numeric sanity, quality drift over time, and a composite Data Quality Scorecard (completeness/validity/uniqueness/timeliness, weighted). Cross-references the taxonomy's own Data Quality Score.
+- **Phase 3 — Temporal Analysis** — hourly/day-of-week activity, event frequency and inter-arrival spacing, ingestion gap detection, seasonality (`timewrap`).
+- **Phase 4 — Correlation Analysis** — the `stats dc() values() by <entity>` fan-out template applied across user/host/IP/process/asset entity pairs, shared/service-account flagging, multi-entity correlation rollups.
+- **Phase 5 — Outlier Analysis** — rare events/users/hosts/processes/IPs, high-volume (z-score) outliers, statistical anomaly detection (3-sigma band, `anomalydetection`).
+- **Phase 6 — Field Correlation & Entity Discovery** — candidate entity fields from `fieldsummary` field names, a value-signature classification framework, and `rex`-based discovery of users/hosts/IPs/URLs/emails/processes/files/hashes/MAC addresses straight from `_raw`. Cross-references Field Extraction.
+- **Phase 7 — Field Relationship Analysis** — duplicate/alias field detection, distinct-count and value-set comparison, similarity scoring, normalization and CIM-mapping candidate identification. Cross-references Field Normalisation.
+- **Phase 8 — Field Value Correlation Matrix** — `chart ... over ... by ...` and `contingency` co-occurrence matrices across user/host/IP/process/asset/email entity pairs.
+- **Phase 9 — CIM Assessment** — CIM Compliance Assessment, Required/Optional/Missing CIM Fields, Data Model Mapping (`FIELDALIAS-*`/`EVAL-*`), CIM Coverage Score (weighted required + recommended fields).
+- **Phase 10 — Sensitive Data & Secrets Discovery** — counts and locates (never displays) cleartext passwords, AWS keys, bearer tokens, private key blocks, SSN-like and card-like patterns. Cross-references Access Control and Retention Policy.
+- **Phase 11 — Enrichment & Context Validation** — lookup inventory, asset/identity match-rate measurement, top-unmatched-entity discovery. Cross-references Access Control.
+- **Phase 12 — Blind Correlation** — value-space techniques for when field names are broken, cryptic or inconsistent: find-which-field-holds-a-known-value, `TERM()`/`tstats` indexed-term pivot, `walklex` lexicon inventory, wide→long transformation, cross-sourcetype join-key discovery ("the Rosetta Stone"), value-shape field profiling, raw-token intersection, time-proximity correlation.
+- **Appendices** — a condensed Quick Reference (8 categories), a fill-in Onboarding Documentation Template, and a 14-item Detection-Readiness Checklist tied to the taxonomy's Pre-ingest cyber-value gate (TAX-06.05.02).
 
 ---
 

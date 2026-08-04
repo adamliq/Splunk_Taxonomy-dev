@@ -3300,7 +3300,7 @@
 <article class="method-card"><h4>Line Length</h4><p>Measures whether event sizes are safe, consistent and suitable for Splunk ingestion without truncation or accidental merging.</p><ul class="method-list"><li><code>TRUNCATE</code> sizing</li><li>UTF-8 byte length analysis</li><li>Boundary-integrity checks</li><li>Line Length Quality Score</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="line-length">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLineLength">Open AI prompt</button></div></article>
 <article class="method-card"><h4>Log Format Detection & Parsing</h4><p>Defines how Splunk interprets CSV, TSV, JSON, XML, structured, semi-structured and unstructured events after line breaking and timestamp recognition.</p><ul class="method-list"><li>Format detection</li><li>Index-time versus search-time extraction</li><li><code>props.conf</code></li><li>Optional <code>transforms.conf</code></li></ul><div class="method-actions"><button type="button" data-open-reference-detail="log-format-parse">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLogFormatParse">Open AI prompt</button></div></article>
 <article class="method-card"><h4>Log Assessment Framework</h4><p>Reusable line-by-line and event-level procedure for deriving structural conformance from a raw log file using a self-calibrating majority baseline, feeding Timestamp Quality, Log Format Quality and the pre-ingest schema-stability gate.</p><ul class="method-list"><li>Physical line vs logical event</li><li>Per-line dimension extraction</li><li>Majority baseline &amp; conformance scoring, reported by percentage, bytes and event count</li><li>Structural fingerprinting -- count distinct record types</li><li>Common pitfalls checklist</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="log-assessment-framework">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLogAssessmentFramework">Open AI prompt</button></div></article>
-        <article class="method-card"><h4>Exploratory Data Analysis &amp; Field Correlation Playbook</h4><p>Value-space techniques for correlating fields and entities across sources when names, extractions or shared values can't be trusted, plus a CIM data-model readiness assessment. Currently covers two phases of a larger EDA procedure.</p><ul class="method-list"><li>Blind correlation: foreach needle search, TERM()/tstats, walklex</li><li>Wide&rarr;long transform &amp; cross-sourcetype join-key discovery</li><li>Value-shape profiling, raw-token intersection, time-proximity correlation</li><li>CIM compliance, required/optional/missing fields, coverage score</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="eda-playbook">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Exploratory Data Analysis &amp; Field Correlation Playbook</h4><p>A full fourteen-phase, source-agnostic procedure for onboarding and investigating an undocumented source -- parse health, profiling, data quality, temporal rhythm, correlation, outliers, entity discovery, field relationships, CIM readiness, sensitive-data exposure, enrichment validation, and value-space blind correlation for when field names can't be trusted at all.</p><ul class="method-list"><li>Parse health, source profiling &amp; data quality scorecards</li><li>Temporal, correlation &amp; outlier analysis</li><li>Entity discovery, field relationships &amp; CIM readiness</li><li>Sensitive-data discovery, enrichment validation &amp; blind correlation</li><li>Quick reference, onboarding template &amp; detection-readiness checklist</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="eda-playbook">Open detailed reference</button></div></article>
         <article class="method-card"><h4>Security and logging obligations</h4><p>Map applicable organisational policy, ACSC guidance, ISM controls, incident-response requirements and retention obligations to TAX-02 and TAX-05 records.</p></article>
         <article class="method-card"><h4>Local scoring rubrics</h4><p>Assessment thresholds and weights must carry a rubric version, owner, approval status, calibration date and evidence source. Locally defined scoring should not be presented as an external standard.</p></article>
       </div>
@@ -4952,12 +4952,12 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
       <div class="eccs-reference-hero">
         <div class="eyebrow">References / Detailed reference</div>
         <h2 id="edaPlaybookReferenceTitle">Exploratory Data Analysis &amp; Field Correlation Playbook</h2>
-        <p>A reusable, source-agnostic procedure for correlating fields and entities across sources when names, extractions or even shared values can't be trusted, and for scoring a source's readiness against a Common Information Model (CIM) data model. This article currently covers two phases of a larger EDA procedure: <strong>Blind Correlation</strong>, for working purely in value space when field names are broken or unknown, and <strong>CIM Assessment</strong>, for producing the gap list needed to finish CIM onboarding.</p>
-        <nav class="eccs-anchor-nav" aria-label="Exploratory Data Analysis &amp; Field Correlation Playbook reference sections"><a href="#eda-definition">Definition</a><a href="#eda-phase12">Blind correlation</a><a href="#eda-phase9">CIM assessment</a><a href="#eda-relationship">Relationship to other references</a></nav>
+        <p>A reusable, source-agnostic, phase-based procedure for onboarding and investigating an undocumented Splunk source end to end -- from parse-time sanity checks through data quality, temporal, correlation and outlier analysis, entity discovery, field relationship and CIM readiness assessment, sensitive-data exposure, enrichment validation, and finally value-space blind correlation for when field names can't be trusted at all. Run the phases roughly in order; several explicitly build on an earlier phase's output.</p>
+        <nav class="eccs-anchor-nav" aria-label="Exploratory Data Analysis &amp; Field Correlation Playbook reference sections"><a href="#eda-definition">Definition</a><a href="#eda-phase0">Parse health</a><a href="#eda-phase1">Source profiling</a><a href="#eda-phase2">Data quality</a><a href="#eda-phase3">Temporal</a><a href="#eda-phase4">Correlation</a><a href="#eda-phase5">Outliers</a><a href="#eda-phase6">Entity discovery</a><a href="#eda-phase7">Field relationships</a><a href="#eda-phase8">Correlation matrix</a><a href="#eda-phase9">CIM assessment</a><a href="#eda-phase10">Secrets discovery</a><a href="#eda-phase11">Enrichment validation</a><a href="#eda-phase12">Blind correlation</a><a href="#eda-quickref">Quick reference</a><a href="#eda-template">Documentation template</a><a href="#eda-checklist">Readiness checklist</a><a href="#eda-relationship">Relationship to other references</a></nav>
       </div>
       <section id="eda-definition" class="eccs-detail-section">
         <h3>Definition</h3>
-        <p>Standard field investigation assumes you can trust field names -- search on <code>user=</code>, pivot on <code>src_ip</code>. That assumption breaks down with new or badly-onboarded sources: extractions are broken, names are cryptic (<code>f1</code>, <code>cs23</code>, <code>data.attr.0</code>), or two sources name the same entity completely differently. This playbook's Blind Correlation phase works in <strong>value space</strong> instead of name space -- pivoting on values, transforming events from wide to long, intersecting token sets, and falling back to time itself -- to derive field mappings and relationships directly from the data. Its CIM Assessment phase then scores how ready a source is for a target CIM data model and produces the concrete gap list (missing fields, low fill rates) that onboarding needs to close.</p>
+        <p>Standard field investigation assumes you can trust field names -- search on <code>user=</code>, pivot on <code>src_ip</code>. That assumption breaks down with new or badly-onboarded sources: extractions are broken, names are cryptic (<code>f1</code>, <code>cs23</code>, <code>data.attr.0</code>), or two sources name the same entity completely differently. This playbook works phase by phase from parse-time sanity checks through profiling, data quality, temporal rhythm, entity correlation, outliers, entity discovery, field-relationship analysis, CIM readiness, sensitive-data exposure and enrichment validation, closing with a value-space <strong>Blind Correlation</strong> toolkit for when field names still can't be trusted after all of that. Later phases explicitly build on earlier ones -- expect to re-run an earlier phase after a parsing fix or a new field promotion.</p>
         <p>Every search below uses generic placeholders that must be substituted for the source under review. <code>&lt;&lt;FIELD&gt;&gt;</code> is the one exception -- it is not a placeholder, it is Splunk's own <code>foreach *</code> iteration syntax and should be left exactly as written.</p>
         <div class="eccs-table-wrap" role="region" aria-label="Placeholder conventions" tabindex="0"><table class="eccs-table"><thead><tr><th>Placeholder</th><th>Substitute with</th></tr></thead><tbody>
           <tr><td><code>&lt;index&gt;</code></td><td>The Splunk index name being assessed.</td></tr>
@@ -4965,15 +4965,805 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
           <tr><td><code>&lt;sourcetype_a&gt;</code> / <code>&lt;sourcetype_b&gt;</code></td><td>The two sourcetypes being cross-correlated against each other.</td></tr>
           <tr><td><code>&lt;known_value&gt;</code></td><td>A value you already know exists somewhere in the data -- a username, IP or hostname -- whose holder field you are trying to find.</td></tr>
           <tr><td><code>&lt;value_prefix&gt;</code></td><td>A partial value used to filter <code>walklex</code> term output down to a manageable range.</td></tr>
-          <tr><td><code>&lt;host_field&gt;</code> / <code>&lt;user_field&gt;</code></td><td>A specific field name on the source holding a hostname or username, once known.</td></tr>
+          <tr><td><code>&lt;field&gt;</code>, <code>&lt;field_a&gt;</code> / <code>&lt;field_b&gt;</code></td><td>A specific field on the source under review, once identified. Every other <code>&lt;..._field&gt;</code> placeholder below (<code>&lt;user_field&gt;</code>, <code>&lt;host_field&gt;</code>, <code>&lt;ip_field&gt;</code>, <code>&lt;process_field&gt;</code>, <code>&lt;asset_field&gt;</code>, <code>&lt;hash_field&gt;</code>, <code>&lt;port_field&gt;</code>, <code>&lt;numeric_field&gt;</code>, <code>&lt;enum_field&gt;</code>, <code>&lt;action_field&gt;</code>, <code>&lt;status_field&gt;</code>, <code>&lt;src_ip_field&gt;</code>/<code>&lt;dest_ip_field&gt;</code>, <code>&lt;parent_process_field&gt;</code>, <code>&lt;sender_field&gt;</code>/<code>&lt;recipient_field&gt;</code>, <code>&lt;entity_field&gt;</code>) follows the same convention -- substitute the actual field name that holds that entity type on the source, typically identified via the Entity Discovery phase.</td></tr>
           <tr><td><code>&lt;asset_lookup&gt;</code> / <code>&lt;asset_key_field&gt;</code></td><td>An asset lookup table and its key field, as inventoried in the Enrichment &amp; Context Validation phase.</td></tr>
           <tr><td><code>&lt;identity_lookup&gt;</code> / <code>&lt;identity_key_field&gt;</code></td><td>An identity lookup table and its key field, as inventoried in the Enrichment &amp; Context Validation phase.</td></tr>
           <tr><td><code>&lt;&lt;FIELD&gt;&gt;</code> <em>(not a placeholder)</em></td><td>Splunk's own <code>foreach *</code> wildcard iteration syntax. <code>foreach *</code> binds every field on the event in turn; <code>'&lt;&lt;FIELD&gt;&gt;'</code> in single quotes reads that field's <em>value</em>, while <code>"&lt;&lt;FIELD&gt;&gt;"</code> in double quotes reads its <em>name</em> as a string. Leave it exactly as written.</td></tr>
         </tbody></table></div>
       </section>
+      <section id="eda-phase0" class="eccs-detail-section">
+        <h3>Parse-time health &amp; structure fingerprinting</h3>
+        <p>Run this before everything else. If line breaking, timestamping or truncation is wrong, every downstream phase inherits corrupted data. These checks confirm the source is parsed correctly, or point at the specific <code>props.conf</code> setting to fix first. Much of this ground is already covered in depth by the Log Assessment Framework, Line Length and Timestamp Quality references below -- treat this phase as the fast, source-agnostic sanity pass, not a replacement for those.</p>
+        <h4>Structure fingerprinting (punct)</h4>
+        <p>The indexed <code>punct</code> field reduces each event to its punctuation skeleton -- a free structural fingerprint:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count by punct
+| sort -count
+| head 20</pre>
+        <div class="eccs-note">A clean single-format source concentrates into a handful of dominant <code>punct</code> patterns. Dozens of low-count patterns mean mixed event formats in one sourcetype, multiline bleed, or a feed that should be split into separate sourcetypes.</div>
+        <h4>Event clustering</h4>
+        <p>Group structurally similar events and keep one representative per cluster -- the fastest way to enumerate the "event types" in an unstructured source:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| cluster showcount=true t=0.8
+| table cluster_count _raw
+| sort -cluster_count
+| head 20</pre>
+        <div class="eccs-note">Lower <code>t</code> toward 0.1 for looser grouping on highly variable logs; raise it toward 1.0 for near-exact grouping.</div>
+        <h4>Format detection</h4>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval format=case(
+    match(_raw,"^\s*\{.*\}\s*$"),"json",
+    match(_raw,"^\s*&lt;\w"),"xml",
+    match(_raw,"\w+=\S+\s+\w+=\S+"),"key_value",
+    match(_raw,"^[^,\s]+,[^,]+,[^,]+,"),"csv_like",
+    1=1,"unstructured")
+| stats count by format
+| sort -count</pre>
+        <p>If JSON is detected, test automatic extraction and inventory the resulting fields:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 1000
+| spath
+| fieldsummary
+| table field count distinct_count</pre>
+        <div class="eccs-note">If <code>spath</code> yields useful fields, set <code>KV_MODE=json</code> (or <code>INDEXED_EXTRACTIONS=json</code>) on the sourcetype so they extract automatically.</div>
+        <h4>Timestamp lag, timezone and impossible timestamps</h4>
+        <p>Lag between event time and index time:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval lag_sec=_indextime-_time
+| stats avg(lag_sec) as avg_lag median(lag_sec) as median_lag perc95(lag_sec) as p95_lag
+        min(lag_sec) as min_lag max(lag_sec) as max_lag</pre>
+        <p>Timezone misconfiguration -- look for a dominant bucket at exactly &plusmn;N whole hours:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval lag_hr=round((_indextime-_time)/3600,0)
+| stats count by lag_hr
+| sort -count</pre>
+        <p>Impossible timestamps -- run this over <strong>All time</strong>, since misdated events fall outside normal search windows:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| where _time&gt;now()+300 OR _time&lt;relative_time(now(),"-2y")
+| stats count earliest(_time) as earliest latest(_time) as latest
+| eval earliest=strftime(earliest,"%F %T"), latest=strftime(latest,"%F %T")</pre>
+        <div class="eccs-note">A constant whole-hour offset almost always means <code>TZ</code> or <code>TIME_FORMAT</code> is wrong in props.conf -- fix it before baselining anything temporal in Temporal Analysis.</div>
+        <h4>Truncation &amp; line-breaking</h4>
+        <p>Event size vs. the default 10,000-character <code>TRUNCATE</code>:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval raw_len=len(_raw)
+| stats count avg(raw_len) as avg_len perc95(raw_len) as p95_len max(raw_len) as max_len
+        count(eval(raw_len&gt;=9990)) as near_truncate_events</pre>
+        <p>Merged events -- more than one timestamp inside a single event signals broken line breaking:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| rex max_match=10 "(?&lt;ts_hit&gt;\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2})"
+| eval ts_per_event=mvcount(ts_hit)
+| where ts_per_event&gt;1
+| stats count by ts_per_event</pre>
+        <p>Line-count distribution (multiline should be deliberate, not accidental):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count by linecount
+| sort -count</pre>
+        <div class="eccs-note">Fixes live in <code>props.conf</code>: <code>LINE_BREAKER</code>, <code>SHOULD_LINEMERGE</code>, <code>TIME_PREFIX</code>, <code>TIME_FORMAT</code>, <code>MAX_TIMESTAMP_LOOKAHEAD</code>, <code>TRUNCATE</code>. Re-run Data Source Profiling and Data Quality Analysis after any parsing change -- earlier numbers are invalid.</div>
+        <div class="method-actions"><button type="button" data-open-reference-detail="log-assessment-framework">Open Log Assessment Framework reference</button><button type="button" data-open-reference-detail="line-length">Open Line Length reference</button><button type="button" data-open-reference-detail="timestamp-quality">Open Timestamp Quality reference</button></div>
+      </section>
+      <section id="eda-phase1" class="eccs-detail-section">
+        <h3>Data source profiling</h3>
+        <p>Establish the shape and scale of the source before looking at content.</p>
+        <h4>Volume and ingestion trends</h4>
+        <p>Total event volume over time, bucketed hourly. Use <code>tstats</code> for speed across large indexes:</p>
+        <pre class="prompt-body">| tstats count where index=&lt;index&gt; by _time span=1h
+| timechart span=1h sum(count) as events</pre>
+        <p>Per-sourcetype volume to see which sourcetypes dominate the index:</p>
+        <pre class="prompt-body">| tstats count where index=&lt;index&gt; by sourcetype _time span=1d
+| timechart span=1d sum(count) by sourcetype</pre>
+        <p>Average daily volume and license-relevant byte size (helps capacity planning -- see the Splunk Index Sizing Calculator):</p>
+        <pre class="prompt-body">| tstats count where index=&lt;index&gt; by _time span=1d
+| stats avg(count) as avg_daily_events min(count) as min_day max(count) as max_day</pre>
+        <pre class="prompt-body">index=&lt;index&gt;
+| eval bytes=len(_raw)
+| timechart span=1d sum(bytes) as ingest_bytes
+| eval ingest_MB=round(ingest_bytes/1024/1024,2)</pre>
+        <h4>Event diversity</h4>
+        <p>Inventory of sourcetypes, sources and hosts feeding the index, with first/last seen:</p>
+        <pre class="prompt-body">| metadata type=sourcetypes index=&lt;index&gt;
+| eval firstTime=strftime(firstTime,"%F %T"), lastTime=strftime(lastTime,"%F %T"), recentTime=strftime(recentTime,"%F %T")
+| table sourcetype totalCount firstTime lastTime recentTime
+| sort -totalCount</pre>
+        <pre class="prompt-body">| metadata type=hosts index=&lt;index&gt; | sort -totalCount
+| metadata type=sources index=&lt;index&gt; | sort -totalCount</pre>
+        <p>Cardinality snapshot -- how many distinct sourcetypes/sources/hosts in one view:</p>
+        <pre class="prompt-body">| tstats dc(sourcetype) as sourcetypes dc(source) as sources dc(host) as hosts count as events where index=&lt;index&gt;</pre>
+        <h4>Field discovery</h4>
+        <p>The fastest way to see every field, its fill count, distinct count and sample values:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 50000
+| fieldsummary
+| table field count distinct_count is_exact max min mean stdev numeric_count values
+| sort -count</pre>
+        <p>List just the field names extracted at search time:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 10000
+| fieldsummary
+| fields field</pre>
+        <p>Check whether the source is structured (key=value, JSON, CSV) by inspecting raw events directly:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; | head 20 | table _raw</pre>
+        <div class="eccs-note">A high <code>distinct_count</code> relative to event count suggests an identifier or high-entropy field. A <code>distinct_count</code> of 1-10 suggests an enum/category (status, action, severity). <code>numeric_count</code> near <code>count</code> indicates a numeric field.</div>
+      </section>
+      <section id="eda-phase2" class="eccs-detail-section">
+        <h3>Data quality analysis</h3>
+        <p>Decide whether fields are trustworthy enough to build detections on. The checks below cover the classic quality dimensions: <strong>completeness</strong> (fill and null rates), <strong>validity</strong> (values match their expected format), <strong>consistency</strong> (one canonical form per value), <strong>uniqueness</strong> (no duplicated events) and <strong>drift</strong> (quality holding steady over time) -- timeliness is covered by the lag checks in Parse-Time Health above. A composite scorecard closes the phase.</p>
+        <h4>Critical field population</h4>
+        <p>Define the fields a detection would depend on (e.g. user, src, dest, action) and measure how often they are populated:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count as total
+    count(&lt;user_field&gt;) as user_pop
+    count(&lt;host_field&gt;) as host_pop
+    count(&lt;ip_field&gt;) as ip_pop
+| eval user_fill=round(user_pop/total*100,2),
+       host_fill=round(host_pop/total*100,2),
+       ip_fill=round(ip_pop/total*100,2)
+| table total user_fill host_fill ip_fill</pre>
+        <h4>Null analysis</h4>
+        <p>Per-field null vs. populated breakdown for a single field (treats empty string and "null"/"-" as missing):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval status=if(isnull(&lt;field&gt;) OR &lt;field&gt;="" OR &lt;field&gt; IN ("null","-","N/A","unknown"),"missing","populated")
+| stats count by status
+| eventstats sum(count) as total
+| eval pct=round(count/total*100,2)</pre>
+        <p>Rank all fields by missing rate (uses <code>fieldsummary</code> count against total event count):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 50000
+| eventstats count as total_events
+| fieldsummary
+| eval fill_rate=round(count/(mvindex(split(total_events,""),0)),2)
+| eval null_rate=round((1-(count/50000))*100,2)
+| table field count distinct_count null_rate
+| sort -null_rate</pre>
+        <div class="eccs-note">Simpler and exact for one field: <code>index=&lt;index&gt; | stats count(eval(isnull(&lt;field&gt;))) as nulls count as total | eval null_pct=round(nulls/total*100,2)</code>.</div>
+        <h4>CIM alignment</h4>
+        <p>Quick check of which CIM-standard field names already exist in the source. Adjust the field list to the data model you're targeting:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 50000
+| fieldsummary
+| eval is_cim_field=if(field IN (
+    "action","app","dest","dest_ip","dest_port","src","src_ip","src_port",
+    "user","user_id","src_user","dvc","signature","severity","status",
+    "bytes","bytes_in","bytes_out","duration","transport","protocol",
+    "process","process_name","process_id","parent_process","file_name",
+    "file_hash","url","http_method","http_user_agent","vendor_product"
+  ),"yes","no")
+| table field count distinct_count is_cim_field
+| sort - is_cim_field count</pre>
+        <h4>Data type identification</h4>
+        <p>Classify each field as numeric, IP, timestamp-like or string using <code>fieldsummary</code> plus pattern checks:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 50000
+| fieldsummary
+| eval type=case(
+    numeric_count=count AND count&gt;0,"numeric",
+    match(values,"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"),"ip_like",
+    match(values,"^\d{10,13}$"),"epoch_like",
+    distinct_count&lt;=20,"categorical/enum",
+    distinct_count=count,"identifier/high-cardinality",
+    1=1,"string")
+| table field type count distinct_count numeric_count</pre>
+        <h4>Field completeness assessment</h4>
+        <p>Combine fill rate, cardinality and stability into a single review table you can hand off:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 50000
+| eventstats count as sample_size
+| fieldsummary
+| eval fill_pct=round(count/sample_size*100,1)
+| eval assessment=case(
+    fill_pct&gt;=95,"reliable",
+    fill_pct&gt;=60,"partial - validate before use",
+    1=1,"sparse - not detection-ready")
+| table field fill_pct distinct_count assessment
+| sort -fill_pct</pre>
+        <div class="eccs-note">Fields below ~60% fill are risky for primary detection logic. They can still enrich, but alerts should not silently miss events because the field is null.</div>
+        <h4>Placeholder &amp; junk value detection</h4>
+        <p>A field can be 100% "populated" and still useless -- <code>-</code>, <code>N/A</code>, <code>unknown</code> and <code>0</code> all count as values. Quantify junk for one field:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval quality=case(
+    isnull(&lt;field&gt;) OR &lt;field&gt;="","missing",
+    &lt;field&gt; IN ("-","--","N/A","n/a","NA","null","NULL","(null)","none","unknown","UNKNOWN","undefined","(empty)","TBD","test"),"placeholder",
+    match(&lt;field&gt;,"^\s+$"),"whitespace_only",
+    1=1,"real_value")
+| stats count by quality
+| eventstats sum(count) as total
+| eval pct=round(count/total*100,2)</pre>
+        <p>Scan every field for junk rates at once (reuses the Blind Correlation wide-to-long pattern):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 5000
+| foreach * [eval fv=mvappend(fv, "&lt;&lt;FIELD&gt;&gt;=" . mvjoin(mvdedup('&lt;&lt;FIELD&gt;&gt;'),"|"))]
+| fields fv
+| mvexpand fv
+| rex field=fv "^(?&lt;f&gt;[^=]+)=(?&lt;v&gt;.+)$"
+| eval is_junk=if(v IN ("-","N/A","null","NULL","none","unknown","undefined","0","(empty)"),1,0)
+| stats count sum(is_junk) as junk by f
+| eval junk_pct=round(junk/count*100,1)
+| where junk_pct&gt;0
+| sort -junk_pct</pre>
+        <div class="eccs-note">Extend the sentinel list with vendor-specific placeholders found while sampling in Data Source Profiling. "Effective fill rate" = populated minus junk -- use that number, not raw fill, when judging detection readiness.</div>
+        <h4>Format validity checks</h4>
+        <p>Populated and non-junk can still be malformed. Validate entity fields against their expected shapes.</p>
+        <p>IP validity (special placeholders checked first):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; &lt;ip_field&gt;=*
+| eval ip_check=case(
+    &lt;ip_field&gt; IN ("0.0.0.0","255.255.255.255"),"special_placeholder",
+    cidrmatch("127.0.0.0/8",&lt;ip_field&gt;),"loopback",
+    match(&lt;ip_field&gt;,"^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$"),"valid_ipv4",
+    match(&lt;ip_field&gt;,"^([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}$"),"ipv6_like",
+    1=1,"invalid_format")
+| stats count by ip_check
+| sort -count</pre>
+        <p>Port validity:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; &lt;port_field&gt;=*
+| eval port_check=case(
+    NOT match(&lt;port_field&gt;,"^\d+$"),"non_numeric",
+    tonumber(&lt;port_field&gt;)&gt;65535,"out_of_range",
+    tonumber(&lt;port_field&gt;)=0,"zero",
+    1=1,"valid")
+| stats count by port_check</pre>
+        <p>Hash validity (zero-filled placeholders first, since they also match the length regexes):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; &lt;hash_field&gt;=*
+| eval hash_check=case(
+    match(&lt;hash_field&gt;,"^0+$"),"all_zeros_placeholder",
+    match(&lt;hash_field&gt;,"(?i)^[a-f0-9]{32}$"),"md5",
+    match(&lt;hash_field&gt;,"(?i)^[a-f0-9]{40}$"),"sha1",
+    match(&lt;hash_field&gt;,"(?i)^[a-f0-9]{64}$"),"sha256",
+    1=1,"malformed")
+| stats count by hash_check</pre>
+        <div class="eccs-note">Pull samples from any <code>invalid_format</code>/<code>malformed</code> bucket with <code>| where ip_check="invalid_format" | head 20 | table &lt;ip_field&gt; _raw</code> -- malformed entity values usually trace back to a broken extraction, not the device.</div>
+        <h4>Value consistency checks</h4>
+        <p>Case-variant collisions -- values that differ only by case split your stats, baselines and lookup joins:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count by &lt;field&gt;
+| eval canon=lower(&lt;field&gt;)
+| stats dc(&lt;field&gt;) as variants values(&lt;field&gt;) as forms sum(count) as events by canon
+| where variants&gt;1
+| sort -events</pre>
+        <p>Whitespace and control characters:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; &lt;field&gt;=*
+| eval ws_issue=case(
+    match(&lt;field&gt;,"^\s|\s$"),"leading_or_trailing_space",
+    match(&lt;field&gt;,"\s{2,}"),"internal_double_space",
+    match(&lt;field&gt;,"[\x00-\x1F]"),"control_characters",
+    1=1,"clean")
+| stats count by ws_issue</pre>
+        <p>Encoding artifacts (URL-encoding, HTML entities, mojibake):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; &lt;field&gt;=*
+| eval enc_issue=case(
+    match(&lt;field&gt;,"%[0-9A-Fa-f]{2}"),"url_encoded",
+    match(&lt;field&gt;,"&amp;(amp|lt|gt|quot|#\d+);"),"html_entities",
+    match(&lt;field&gt;,"â€|Ã©|Ã¼"),"mojibake_suspect",
+    1=1,"clean")
+| stats count by enc_issue</pre>
+        <p>Mixed representation inside one field (the classic: a host field holding shortnames, FQDNs and IPs):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; &lt;host_field&gt;=*
+| eval form=case(
+    match(&lt;host_field&gt;,"^(\d{1,3}\.){3}\d{1,3}$"),"ip",
+    match(&lt;host_field&gt;,"\."),"fqdn",
+    1=1,"shortname")
+| stats count dc(&lt;host_field&gt;) as distinct by form</pre>
+        <div class="eccs-note">Every issue found here becomes a normalization rule in Field Relationship Analysis (<code>EVAL-</code> with <code>lower()</code>, <code>trim()</code>, <code>urldecode()</code>). The mojibake patterns are heuristics -- review samples before acting.</div>
+        <h4>Duplicate event detection</h4>
+        <p>Double-forwarding, overlapping inputs and API backfill re-runs create exact duplicates that inflate every count downstream:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval raw_hash=md5(_raw)
+| stats count as copies by raw_hash
+| stats sum(eval(copies-1)) as surplus_events sum(copies) as total_events count(eval(copies&gt;1)) as duplicated_groups
+| eval dup_rate_pct=round(surplus_events/total_events*100,2)</pre>
+        <p>Locate where duplicates come from:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval raw_hash=md5(_raw)
+| stats count as copies dc(source) as sources dc(host) as hosts by raw_hash
+| where copies&gt;1
+| sort -copies
+| head 20</pre>
+        <div class="eccs-note"><code>sources&gt;1</code> for the same hash means two inputs are reading the same data (overlapping monitor stanzas, UF + HF double pipeline). Same-source duplicates point at the feed re-sending.</div>
+        <h4>Cross-field logical consistency</h4>
+        <p>Fields can be individually valid yet contradict each other. Adapt the rules to the source:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval issue=case(
+    isnotnull(src) AND src==dest,"src_equals_dest",
+    isnotnull(duration) AND tonumber(duration)&lt;0,"negative_duration",
+    isnotnull(bytes) AND tonumber(bytes)&lt;0,"negative_bytes",
+    isnotnull(bytes_in) AND isnotnull(bytes_out) AND isnotnull(bytes)
+        AND abs((tonumber(bytes_in)+tonumber(bytes_out))-tonumber(bytes))&gt;0,"bytes_sum_mismatch",
+    1=1,null())
+| where isnotnull(issue)
+| stats count by issue</pre>
+        <p>Contradiction matrix between an action field and a status field -- scan for impossible pairs (e.g. <code>action=allowed</code> with <code>status=failure</code>):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count by &lt;action_field&gt; &lt;status_field&gt;
+| sort -count</pre>
+        <div class="eccs-note">Some "violations" are legitimate vendor semantics (e.g. <code>bytes</code> excluding headers). Confirm with samples before declaring the data wrong -- but document the semantics either way.</div>
+        <h4>Multivalue field anomalies</h4>
+        <p>A field that is unexpectedly multivalued usually means two extractions write to the same name, or the raw event repeats a key:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; &lt;field&gt;=*
+| eval mv_n=mvcount(&lt;field&gt;)
+| stats count by mv_n
+| sort -mv_n</pre>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| where mvcount(&lt;field&gt;)&gt;1
+| head 20
+| table &lt;field&gt; _raw</pre>
+        <h4>Numeric sanity checks</h4>
+        <p>For each numeric field, confirm type purity and plausible range:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; &lt;numeric_field&gt;=*
+| eval n=tonumber(&lt;numeric_field&gt;)
+| stats count count(eval(isnull(n))) as non_numeric count(eval(n&lt;0)) as negative
+        min(n) as min max(n) as max avg(n) as avg median(n) as median perc99(n) as p99</pre>
+        <div class="eccs-note"><code>non_numeric&gt;0</code> means mixed types in a "numeric" field. A <code>max</code> orders of magnitude above <code>p99</code> is either a true outlier (interesting) or a parsing artifact like concatenated digits (a bug) -- sample it before deciding which.</div>
+        <h4>Quality drift over time</h4>
+        <p>Quality at onboarding is a snapshot; sources degrade silently. Fill-rate trend for a critical field:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| timechart span=1d count as total count(&lt;field&gt;) as populated
+| eval fill_pct=round(populated/total*100,1)</pre>
+        <p>Fields that appeared or disappeared vs. a baseline window:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; earliest=-7d latest=now
+| head 5000 | fieldsummary | eval window="current" | fields field window
+| append
+    [search index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; earliest=-37d latest=-30d
+     | head 5000 | fieldsummary | eval window="baseline" | fields field window]
+| stats values(window) as windows by field
+| eval status=case(mvcount(windows)=2,"stable", windows="current","new_field", windows="baseline","disappeared")
+| where status!="stable"</pre>
+        <p>New values appearing in a low-cardinality (enum) field:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; earliest=-24h
+| stats count by &lt;enum_field&gt;
+| search NOT
+    [search index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; earliest=-30d latest=-24h
+     | stats count by &lt;enum_field&gt; | fields &lt;enum_field&gt;]</pre>
+        <div class="eccs-note">Schedule the fill-rate and field-drift searches as weekly health alerts per onboarded source -- quality regressions are far cheaper to catch than to backfill. Subsearches cap around 10k results: fine for enum fields, not for identifiers.</div>
+        <h4>Data quality scorecard</h4>
+        <p>One composite number per source, mirroring the CIM Assessment coverage score below -- completeness, validity, uniqueness and timeliness, weighted:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval raw_hash=md5(_raw),
+       lag=_indextime-_time,
+       junk=if(&lt;user_field&gt; IN ("-","N/A","unknown","null") OR &lt;host_field&gt; IN ("-","N/A","unknown","null"),1,0)
+| stats count as total
+        count(&lt;user_field&gt;) as user_pop count(&lt;host_field&gt;) as host_pop count(&lt;ip_field&gt;) as ip_pop
+        sum(junk) as junk_events
+        dc(raw_hash) as unique_events
+        perc95(lag) as p95_lag
+| eval completeness=round((user_pop+host_pop+ip_pop)/(total*3)*100,1),
+       validity=round((1-junk_events/total)*100,1),
+       uniqueness=round(unique_events/total*100,1),
+       timeliness=case(p95_lag&lt;300,100, p95_lag&lt;3600,75, 1=1,50),
+       dq_score=round((completeness*0.4)+(validity*0.2)+(uniqueness*0.2)+(timeliness*0.2),1)
+| table dq_score completeness validity uniqueness timeliness total p95_lag</pre>
+        <div class="eccs-note">Tune the field list, junk sentinels and weights to the source. Track the score per sourcetype over time -- it is the single number that tells you whether a feed is still detection-grade. It's the same composite-score idea as the taxonomy's own Data Quality Score reference, which scores by rubric rather than raw SPL.</div>
+        <div class="method-actions"><button type="button" data-open-reference-detail="data-quality-score">Open Data Quality Score reference</button></div>
+      </section>
+      <section id="eda-phase3" class="eccs-detail-section">
+        <h3>Temporal analysis</h3>
+        <p>Understand the rhythm of the source so you can baseline normal and spot gaps.</p>
+        <h4>Hourly &amp; day-of-week activity</h4>
+        <p>Event distribution by hour of day (aggregated across the window):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval hour=strftime(_time,"%H")
+| stats count by hour
+| sort hour</pre>
+        <p>Day-of-week activity:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval dow_num=strftime(_time,"%w"), day=strftime(_time,"%A")
+| stats count by dow_num day
+| sort dow_num</pre>
+        <p>Combined hour &times; day heatmap (great for spotting business-hours patterns):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval hour=strftime(_time,"%H"), day=strftime(_time,"%A")
+| chart count over hour by day</pre>
+        <h4>Event frequency analysis</h4>
+        <p>Events-per-minute distribution to learn the source's natural rate:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| timechart span=1m count
+| stats avg(count) as avg_per_min median(count) as median_per_min
+        max(count) as peak_per_min stdev(count) as stdev_per_min</pre>
+        <p>Inter-arrival spacing between consecutive events:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| sort 0 _time
+| streamstats current=f window=1 last(_time) as prev_time
+| eval gap_seconds=_time-prev_time
+| stats avg(gap_seconds) as avg_gap median(gap_seconds) as median_gap max(gap_seconds) as max_gap</pre>
+        <h4>Ingestion gap detection</h4>
+        <p><code>timechart</code> fills empty buckets, so zero-count buckets reveal collection outages:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| timechart span=1h count
+| where count=0</pre>
+        <p>For sub-hour sources, detect any gap larger than an expected threshold (here 30 min):</p>
+        <pre class="prompt-body">| tstats count where index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; by _time span=5m
+| streamstats current=f window=1 last(_time) as prev_time
+| eval gap_min=round((_time-prev_time)/60,1)
+| where gap_min&gt;30
+| eval gap_start=strftime(prev_time,"%F %T"), gap_end=strftime(_time,"%F %T")
+| table gap_start gap_end gap_min</pre>
+        <div class="eccs-note">Also compare event <code>_time</code> to index time with <code>| eval lag=_indextime-_time</code> to catch sources that are arriving but heavily delayed rather than missing.</div>
+        <h4>Seasonality analysis</h4>
+        <p>Average load per hour-of-day to expose recurring daily cycles:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| bin _time span=1h
+| stats count by _time
+| eval hour=strftime(_time,"%H")
+| stats avg(count) as avg_count stdev(count) as stdev_count by hour
+| sort hour</pre>
+        <p>Week-over-week comparison to confirm the pattern repeats:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| timechart span=1d count
+| timewrap 1w</pre>
+      </section>
+      <section id="eda-phase4" class="eccs-detail-section">
+        <h3>Correlation analysis</h3>
+        <p>Measure how strongly entities co-occur. The <code>dc()</code> + <code>values()</code> pattern is the workhorse here: a high distinct count of B per single A signals fan-out worth investigating.</p>
+        <h4>The dc()/values() correlation template</h4>
+        <p>User correlation, in full -- every other entity pair below applies the same shape against different fields:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count dc(&lt;host_field&gt;) as host_count dc(&lt;ip_field&gt;) as ip_count
+        values(&lt;host_field&gt;) as hosts by &lt;user_field&gt;
+| sort -count</pre>
+        <div class="eccs-table-wrap" role="region" aria-label="Other entity-pair correlations" tabindex="0"><table class="eccs-table"><thead><tr><th>Relationship</th><th><code>by</code> field(s)</th><th>Additional stats / notes</th></tr></thead><tbody>
+          <tr><td>Host correlation</td><td><code>&lt;host_field&gt;</code></td><td><code>dc(&lt;user_field&gt;)</code>, <code>dc(&lt;ip_field&gt;)</code>, <code>values(&lt;user_field&gt;)</code>; sort <code>-user_count</code></td></tr>
+          <tr><td>IP correlation</td><td><code>&lt;ip_field&gt;</code></td><td><code>dc(&lt;user_field&gt;)</code>, <code>dc(&lt;host_field&gt;)</code>, <code>values(&lt;user_field&gt;)</code>; sort <code>-user_count</code></td></tr>
+          <tr><td>User &harr; host relationships</td><td><code>&lt;user_field&gt; &lt;host_field&gt;</code></td><td><code>count</code>, <code>earliest(_time)</code>, <code>latest(_time)</code>; sort <code>-count</code></td></tr>
+          <tr><td>User &harr; IP relationships</td><td><code>&lt;user_field&gt;</code></td><td><code>dc(&lt;ip_field&gt;)</code>, <code>values(&lt;ip_field&gt;)</code>; sort <code>-ip_count</code></td></tr>
+          <tr><td>Host &harr; IP relationships</td><td><code>&lt;host_field&gt;</code> (and the inverse, by <code>&lt;ip_field&gt;</code>)</td><td><code>dc(&lt;ip_field&gt;)</code> per host and <code>dc(&lt;host_field&gt;)</code> per IP -- confirms 1:1 (good asset hygiene) vs. many:many (DHCP churn, NAT)</td></tr>
+          <tr><td>Process &harr; user relationships</td><td><code>&lt;process_field&gt;</code> (filter <code>&lt;process_field&gt;=*</code>)</td><td><code>count</code>, <code>dc(&lt;user_field&gt;)</code>, <code>values(&lt;user_field&gt;)</code>; sort <code>-count</code></td></tr>
+          <tr><td>Process &harr; host relationships</td><td><code>&lt;process_field&gt;</code> (filter <code>&lt;process_field&gt;=*</code>)</td><td><code>count</code>, <code>dc(&lt;host_field&gt;)</code>, <code>values(&lt;host_field&gt;)</code>; sort <code>-host_count</code></td></tr>
+          <tr><td>Asset &harr; user relationships</td><td><code>&lt;asset_field&gt;</code></td><td><code>count</code>, <code>dc(&lt;user_field&gt;)</code>, <code>values(&lt;user_field&gt;)</code>, <code>earliest(_time)</code>/<code>latest(_time)</code>; sort <code>-user_count</code></td></tr>
+        </tbody></table></div>
+        <h4>Flagging shared or service accounts</h4>
+        <p>Users on an unusually large number of hosts are worth a second look -- potential shared/service accounts or lateral movement:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats dc(&lt;host_field&gt;) as host_count values(&lt;host_field&gt;) as hosts by &lt;user_field&gt;
+| where host_count&gt;5
+| sort -host_count</pre>
+        <h4>Multi-entity correlation</h4>
+        <p>A single view of how the major entity types span each other -- useful as a one-shot relationship profile:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count
+    dc(&lt;user_field&gt;) as users
+    dc(&lt;host_field&gt;) as hosts
+    dc(&lt;ip_field&gt;) as ips
+    dc(&lt;process_field&gt;) as processes
+| eval events_per_user=round(count/users,1)</pre>
+        <p>Per-session/per-user rollup tying everything together:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats values(&lt;host_field&gt;) as hosts values(&lt;ip_field&gt;) as ips
+        values(&lt;process_field&gt;) as processes count by &lt;user_field&gt;
+| eval host_n=mvcount(hosts), ip_n=mvcount(ips), proc_n=mvcount(processes)
+| table &lt;user_field&gt; host_n ip_n proc_n count hosts ips
+| sort -count</pre>
+        <div class="eccs-note">Strong correlation = one value of A almost always maps to a small, stable set of B. Weak/diffuse correlation (one A &rarr; many B) either indicates churn (DHCP, NAT) or is itself the signal (one account hitting many hosts).</div>
+      </section>
+      <section id="eda-phase5" class="eccs-detail-section">
+        <h3>Outlier analysis</h3>
+        <p>Find what is unusual by frequency or volume. Pair this with Correlation Analysis once you know which fields are entities.</p>
+        <h4>Rare events &amp; entities</h4>
+        <p>Least common event types/signatures:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| rare limit=25 &lt;field&gt;</pre>
+        <p>Long-tail view (everything seen 5 times or fewer):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count by &lt;field&gt;
+| where count&lt;=5
+| sort count</pre>
+        <p>The same shape applied to specific entity types -- <code>stats count [extra fields] by &lt;entity_field&gt; | where &lt;threshold&gt; | sort count</code>:</p>
+        <div class="eccs-table-wrap" role="region" aria-label="Rare-entity variants" tabindex="0"><table class="eccs-table"><thead><tr><th>Entity</th><th>Threshold</th><th>Additional fields</th></tr></thead><tbody>
+          <tr><td>Rare users</td><td><code>count&lt;5</code></td><td><code>dc(_time) as active_seconds</code>, <code>earliest(_time) as first</code></td></tr>
+          <tr><td>Rare hosts</td><td><code>count&lt;10</code></td><td><code>earliest(_time) as first_seen</code></td></tr>
+          <tr><td>Rare processes</td><td><code>count&lt;5 OR host_count=1</code></td><td><code>dc(&lt;host_field&gt;) as host_count</code> (filter <code>&lt;process_field&gt;=*</code>)</td></tr>
+          <tr><td>Rare IP addresses</td><td><code>count&lt;5</code></td><td><code>earliest(_time) as first</code></td></tr>
+        </tbody></table></div>
+        <h4>High-volume outliers</h4>
+        <p>The opposite tail -- entities responsible for disproportionate volume:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count by &lt;entity_field&gt;
+| eventstats avg(count) as avg stdev(count) as stdev
+| eval z=round((count-avg)/stdev,2)
+| where z&gt;3
+| sort -count</pre>
+        <h4>Statistical anomaly detection</h4>
+        <p>Time-series spikes/drops using a 3-sigma band over hourly counts:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| timechart span=1h count as events
+| eventstats avg(events) as avg stdev(events) as stdev
+| eval upper=avg+(3*stdev), lower=avg-(3*stdev)
+| eval anomaly=if(events&gt;upper OR events&lt;lower,1,0)
+| where anomaly=1</pre>
+        <p>Splunk's built-in multivariate outlier finder:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| timechart span=1h count avg(&lt;numeric_field&gt;) as avg_val
+| anomalydetection action=annotate</pre>
+        <div class="eccs-note">3-sigma assumes roughly normal data. For spiky/bursty machine data, also try <code>| streamstats window=24 avg(events) as ma stdev(events) as sd | eval z=(events-ma)/sd</code> for a rolling baseline that adapts to trend.</div>
+      </section>
+      <section id="eda-phase6" class="eccs-detail-section">
+        <h3>Field correlation &amp; entity discovery</h3>
+        <p>Identify which raw fields actually represent entities, then classify and extract them. This is the heart of onboarding an undocumented source.</p>
+        <h4>Candidate entity fields</h4>
+        <p>Surface fields whose names or values hint at entities. Start from <code>fieldsummary</code>, then inspect promising names:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 50000
+| fieldsummary
+| eval entity_hint=case(
+    match(field,"(?i)user|account|uid|logon|principal|upn|sam"),"user",
+    match(field,"(?i)host|computer|device|machine|node|dvc|asset|serial"),"host/asset",
+    match(field,"(?i)ip|addr|src|dst|dest"),"ip",
+    match(field,"(?i)proc|image|exe|command|cmdline"),"process",
+    match(field,"(?i)file|path|object"),"file",
+    match(field,"(?i)hash|md5|sha|imphash"),"hash",
+    match(field,"(?i)url|uri|domain|referer|fqdn"),"url/domain",
+    match(field,"(?i)mail|email|sender|recipient|from|to"),"email",
+    1=1,"unclassified")
+| where entity_hint!="unclassified"
+| table field entity_hint count distinct_count
+| sort entity_hint -count</pre>
+        <h4>Entity classification framework</h4>
+        <p>Use value patterns (not just names) to confirm what a field holds:</p>
+        <div class="eccs-table-wrap" role="region" aria-label="Entity value signatures" tabindex="0"><table class="eccs-table"><thead><tr><th>Entity</th><th>Typical value signature</th></tr></thead><tbody>
+          <tr><td>User</td><td><code>DOMAIN\user</code>, <code>user@domain</code>, short alphanumeric SAM names, numeric UID</td></tr>
+          <tr><td>Host</td><td>hostname tokens, FQDNs, <code>*-LAPTOP</code>, NetBIOS names</td></tr>
+          <tr><td>IPv4</td><td><code>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}</code></td></tr>
+          <tr><td>IPv6</td><td>colon-separated hex groups</td></tr>
+          <tr><td>URL/Domain</td><td><code>https?://...</code>, dotted FQDN</td></tr>
+          <tr><td>Email</td><td><code>local@domain.tld</code></td></tr>
+          <tr><td>Process</td><td><code>*.exe</code>, full image paths, command lines</td></tr>
+          <tr><td>File</td><td>path with separators, file extension</td></tr>
+          <tr><td>Hash</td><td>32 (MD5) / 40 (SHA1) / 64 (SHA256) hex chars</td></tr>
+        </tbody></table></div>
+        <p>The logic below tags a single field; loop it over candidates surfaced above:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval classified=case(
+    match(&lt;field&gt;,"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$"),"ipv4",
+    match(&lt;field&gt;,"^[0-9a-fA-F:]+:[0-9a-fA-F:]+$"),"ipv6",
+    match(&lt;field&gt;,"^[^@\s]+@[^@\s]+\.[a-zA-Z]{2,}$"),"email",
+    match(&lt;field&gt;,"^https?://"),"url",
+    match(&lt;field&gt;,"(?i)^[a-f0-9]{64}$"),"sha256",
+    match(&lt;field&gt;,"(?i)^[a-f0-9]{40}$"),"sha1",
+    match(&lt;field&gt;,"(?i)^[a-f0-9]{32}$"),"md5",
+    match(&lt;field&gt;,"(?i)\.exe$|\\\\"),"process/file_path",
+    match(&lt;field&gt;,"(?i)^[^\\@]+\\[^\\@]+$|@"),"user",
+    1=1,"other")
+| stats count by classified
+| sort -count</pre>
+        <h4>Discovering entities from raw text</h4>
+        <p>When no clean field exists yet, pull entity-like tokens straight out of <code>_raw</code> with <code>rex</code>. All of the searches below share the same shape -- <code>rex max_match=0 "&lt;pattern&gt;" | stats count [extras] by &lt;found_field&gt; | sort -count</code> -- only the regex, extracted field name and extra stats vary. User discovery in full:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| rex max_match=0 "(?i)(?:user|account|logon|upn)[\"'=:\s]+(?&lt;found_user&gt;[A-Za-z0-9._\\\\@-]{2,64})"
+| stats count by found_user
+| sort -count</pre>
+        <div class="eccs-table-wrap" role="region" aria-label="Other entity discovery patterns" tabindex="0"><table class="eccs-table"><thead><tr><th>Entity</th><th>Extracted field</th><th>Regex pattern</th><th>Extra stats / notes</th></tr></thead><tbody>
+          <tr><td>Domain-qualified accounts</td><td><code>dom_user</code></td><td><code>(?&lt;dom_user&gt;[A-Za-z0-9.-]+\\\\[A-Za-z0-9._-]+)</code></td><td>--</td></tr>
+          <tr><td>Host</td><td><code>found_host</code></td><td><code>(?i)(?:host|computer|device|machine)name?["'=:\s]+(?&lt;found_host&gt;[A-Za-z0-9._-]{2,64})</code></td><td>--</td></tr>
+          <tr><td>IP address</td><td><code>found_ip</code></td><td><code>(?&lt;found_ip&gt;\b(?:\d{1,3}\.){3}\d{1,3}\b)</code></td><td><code>dc(host) as seen_on_hosts</code>; split internal/external with <code>cidrmatch("10.0.0.0/8",found_ip) OR cidrmatch("172.16.0.0/12",found_ip) OR cidrmatch("192.168.0.0/16",found_ip)</code></td></tr>
+          <tr><td>URL</td><td><code>found_url</code></td><td><code>(?&lt;found_url&gt;https?://[^\s"'&lt;&gt;]+)</code></td><td>reduce to registered domain with <code>https?://(?&lt;found_domain&gt;[A-Za-z0-9.-]+)</code>, <code>dc(host)</code></td></tr>
+          <tr><td>Email</td><td><code>found_email</code></td><td><code>(?&lt;found_email&gt;[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})</code></td><td>--</td></tr>
+          <tr><td>Process</td><td><code>found_proc</code></td><td><code>(?&lt;found_proc&gt;[A-Za-z0-9_\-.]+\.(?:exe|dll|sys|ps1|sh|bin|py))</code></td><td><code>dc(host) as hosts</code>; full command lines via <code>(?&lt;found_path&gt;(?:[A-Za-z]:\\\\|/)[^\s"']+\.(?:exe|dll|sh|bin))</code></td></tr>
+          <tr><td>File</td><td><code>found_file</code></td><td><code>(?&lt;found_file&gt;[\w\-.]+\.(?:doc|docx|xls|xlsx|pdf|zip|rar|7z|txt|csv|conf|key|pem))</code></td><td>--</td></tr>
+          <tr><td>Hash</td><td><code>found_hash</code></td><td><code>(?&lt;found_hash&gt;\b[a-fA-F0-9]{32,64}\b)</code></td><td>label <code>hash_type</code> by length: 32=MD5, 40=SHA1, 64=SHA256</td></tr>
+          <tr><td>MAC address</td><td><code>found_mac</code></td><td><code>(?&lt;found_mac&gt;\b(?:[0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}\b)</code></td><td><code>dc(host) as hosts</code></td></tr>
+          <tr><td>Asset tag / serial</td><td><code>found_asset</code></td><td><code>(?i)(?:serial|asset[_-]?tag|sn)["'=:\s]+(?&lt;found_asset&gt;[A-Za-z0-9-]{4,32})</code></td><td>--</td></tr>
+        </tbody></table></div>
+        <div class="eccs-note">Once discovery shows a token type appears with high coverage, promote it to a real field with a field extraction (<code>props.conf</code>/<code>transforms.conf</code> or <code>EXTRACT-</code>) so later phases and detections can rely on it natively.</div>
+        <div class="method-actions"><button type="button" data-open-reference-detail="field-extraction">Open Field Extraction reference</button></div>
+      </section>
+      <section id="eda-phase7" class="eccs-detail-section">
+        <h3>Field relationship analysis</h3>
+        <p>Determine whether two fields are duplicates, aliases, or candidates for normalization/CIM mapping. This is how you collapse redundant fields and pick canonical names.</p>
+        <h4>Compare two fields for matching values</h4>
+        <p>Row-level agreement between two fields:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; &lt;field_a&gt;=* &lt;field_b&gt;=*
+| eval match=if(&lt;field_a&gt;==&lt;field_b&gt;,"equal","different")
+| stats count by match
+| eventstats sum(count) as total
+| eval pct=round(count/total*100,2)</pre>
+        <h4>Distinct count &amp; value set comparison</h4>
+        <p>Compare cardinality and overlap of the value sets:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats dc(&lt;field_a&gt;) as distinct_a dc(&lt;field_b&gt;) as distinct_b
+        dc(eval(if(&lt;field_a&gt;==&lt;field_b&gt;,&lt;field_a&gt;,null()))) as overlap_values
+        count as events</pre>
+        <p>List values present in A but not in B (and vice versa) to spot partial aliases:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval a_val=&lt;field_a&gt;, b_val=&lt;field_b&gt;
+| stats values(a_val) as set_a values(b_val) as set_b
+| eval only_in_a=mvmap(set_a, if(isnull(mvfind(set_b, "^".set_a."$")), set_a, null()))
+| eval only_in_b=mvmap(set_b, if(isnull(mvfind(set_a, "^".set_b."$")), set_b, null()))
+| table only_in_a only_in_b</pre>
+        <div class="eccs-note">Simpler alternative for large sets: run <code>| stats count by &lt;field_a&gt;</code> and <code>| stats count by &lt;field_b&gt;</code> separately and diff the value lists, or use <code>set diff</code> across two subsearches.</div>
+        <h4>Similarity &amp; duplicate field detection</h4>
+        <p>Quantify how often the two fields carry the same value when both are present -- a high score means they are likely the same logical field:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; &lt;field_a&gt;=* &lt;field_b&gt;=*
+| eval same=if(lower(&lt;field_a&gt;)==lower(&lt;field_b&gt;),1,0)
+| stats sum(same) as matches count as both_present
+| eval similarity_pct=round(matches/both_present*100,2)</pre>
+        <p>Scan all fields for pairs that are effectively identical. Run pairwise similarity (above) on the candidate pairs surfaced by comparing <code>fieldsummary</code> distinct counts and sample values:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 50000
+| fieldsummary
+| table field count distinct_count values
+| sort distinct_count</pre>
+        <div class="eccs-note">Fields with identical <code>distinct_count</code> <strong>and</strong> overlapping sample <code>values</code> are prime duplicate candidates -- confirm with the similarity search above.</div>
+        <h4>Alias field detection</h4>
+        <p>Aliases are fields that always hold the same value but differ in name (e.g. <code>usr</code> vs. <code>user</code>, <code>clientip</code> vs. <code>src_ip</code>). Confirm a suspected alias pair:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval a=coalesce(&lt;field_a&gt;,"&#8709;"), b=coalesce(&lt;field_b&gt;,"&#8709;")
+| stats count by a b
+| where a!=b
+| sort -count</pre>
+        <div class="eccs-note">If this returns (near) zero rows, the two fields never disagree -- treat one as an alias of the other (<code>FIELDALIAS-</code> in props.conf).</div>
+        <h4>Normalization &amp; CIM mapping candidates</h4>
+        <p>Find fields whose values need cleanup before they can be compared or correlated (mixed case, domain prefixes, trailing whitespace, <code>$</code> machine-account suffix):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval needs_norm=case(
+    &lt;field&gt;!=lower(&lt;field&gt;),"mixed_case",
+    match(&lt;field&gt;,"\\\\"),"contains_domain_prefix",
+    match(&lt;field&gt;,"\$$"),"machine_account_suffix",
+    match(&lt;field&gt;,"^\s|\s$"),"whitespace",
+    1=1,"clean")
+| stats count by needs_norm
+| sort -count</pre>
+        <p>For each non-CIM field, suggest the CIM field it most likely maps to (extend the mapping table to your target data model):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 50000
+| fieldsummary
+| eval cim_candidate=case(
+    match(field,"(?i)^(usr|username|account|logon|samaccountname)$"),"user",
+    match(field,"(?i)^(clientip|client_ip|sourceip|srcip|c_ip)$"),"src_ip",
+    match(field,"(?i)^(destinationip|dstip|targetip|s_ip)$"),"dest_ip",
+    match(field,"(?i)^(computer|hostname|machine|nodename)$"),"dest",
+    match(field,"(?i)^(image|process_path|exe)$"),"process",
+    match(field,"(?i)^(md5|sha1|sha256|filehash)$"),"file_hash",
+    match(field,"(?i)^(method|httpmethod|verb)$"),"http_method",
+    match(field,"(?i)^(uri|request_url|requesturl)$"),"url",
+    1=1,null())
+| where isnotnull(cim_candidate)
+| table field cim_candidate count distinct_count</pre>
+        <div class="eccs-note">The output of this phase becomes your field-rename/alias plan: a mapping of native fields to canonical (CIM) names, plus a list of fields to normalize at search or index time -- feed it into Field Normalisation and the CIM Assessment's Data Model Mapping below.</div>
+        <div class="method-actions"><button type="button" data-open-reference-detail="field-normalisation">Open Field Normalisation reference</button></div>
+      </section>
+      <section id="eda-phase8" class="eccs-detail-section">
+        <h3>Field value correlation matrix</h3>
+        <p>Build co-occurrence matrices between two fields. <code>contingency</code> produces a value-vs-value count matrix; the <code>chart ... over ... by ...</code> pattern gives a readable, sortable equivalent. These reveal which specific entity values stick together.</p>
+        <div class="eccs-note"><code>contingency</code> can explode on high-cardinality fields. Pre-filter to top values (e.g. <code>| top limit=20 &lt;field&gt;</code>) or use <code>maxcols</code>/<code>maxrows</code> options. The <code>chart</code> form below is usually safer for exploration.</div>
+        <h4>User field correlation matrix</h4>
+        <p>User &times; host occurrence counts:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval u=&lt;user_field&gt;, h=&lt;host_field&gt;
+| where isnotnull(u) AND isnotnull(h)
+| chart limit=20 count over u by h</pre>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| contingency maxcols=25 maxrows=25 &lt;user_field&gt; &lt;host_field&gt;</pre>
+        <div class="eccs-table-wrap" role="region" aria-label="Other correlation matrices" tabindex="0"><table class="eccs-table"><thead><tr><th>Matrix</th><th>Pattern</th></tr></thead><tbody>
+          <tr><td>Host &times; IP</td><td><code>chart limit=20 count over &lt;host_field&gt; by &lt;ip_field&gt;</code></td></tr>
+          <tr><td>Source IP &times; destination IP (flow pairs)</td><td><code>chart limit=20 count over &lt;src_ip_field&gt; by &lt;dest_ip_field&gt;</code></td></tr>
+          <tr><td>Process &times; host (filter <code>&lt;process_field&gt;=*</code>)</td><td><code>chart limit=20 count over &lt;process_field&gt; by &lt;host_field&gt;</code></td></tr>
+          <tr><td>Parent/child process pairing</td><td><code>contingency maxcols=25 maxrows=25 &lt;parent_process_field&gt; &lt;process_field&gt;</code></td></tr>
+          <tr><td>Asset &times; user</td><td><code>chart limit=20 count over &lt;asset_field&gt; by &lt;user_field&gt;</code></td></tr>
+          <tr><td>Sender &times; recipient (email)</td><td><code>chart limit=20 count over &lt;sender_field&gt; by &lt;recipient_field&gt;</code></td></tr>
+        </tbody></table></div>
+        <div class="eccs-note">Dense rows (one value correlating with many columns) mark hubs -- shared accounts, jump hosts, mail relays, gateways. Sparse one-to-one cells indicate tightly bound pairs (a user and their single workstation) that make clean baselines.</div>
+      </section>
+      <section id="eda-phase9" class="eccs-detail-section">
+        <h3>CIM assessment</h3>
+        <p>Score how ready the source is for a CIM data model and produce the gap list needed to finish onboarding. Pick the target data model first (Authentication, Network Traffic, Web, Endpoint/Processes, Email, Malware, etc.) and adjust field lists accordingly.</p>
+        <h4>CIM compliance assessment</h4>
+        <p>High-level pass: which expected CIM fields for the target model are present at all. Example uses the <strong>Authentication</strong> model -- swap the list for your model:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 50000
+| fieldsummary
+| eval cim_model="Authentication"
+| eval is_required=if(field IN ("action","app","src","dest","user"),1,0)
+| eval is_recommended=if(field IN ("src_user","user_id","signature","status","reason","authentication_method"),1,0)
+| where is_required=1 OR is_recommended=1
+| table field is_required is_recommended count distinct_count</pre>
+        <h4>Required CIM fields</h4>
+        <p>Confirm presence and fill rate of the <strong>required</strong> fields for the model (Authentication example):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count as total
+    count(action) as action count(app) as app
+    count(src) as src count(dest) as dest count(user) as user
+| eval action=round(action/total*100,1), app=round(app/total*100,1),
+       src=round(src/total*100,1), dest=round(dest/total*100,1), user=round(user/total*100,1)
+| transpose
+| rename column as cim_field "row 1" as fill_pct
+| where cim_field!="total"</pre>
+        <h4>Optional CIM fields</h4>
+        <p>Same check for recommended/optional fields that improve detection coverage:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count as total
+    count(src_user) as src_user count(user_id) as user_id
+    count(signature) as signature count(status) as status
+    count(reason) as reason count(authentication_method) as auth_method
+| transpose
+| rename column as cim_field "row 1" as populated_events</pre>
+        <h4>Missing CIM fields</h4>
+        <p>Explicitly list required fields that do <strong>not</strong> exist or are effectively empty so they become onboarding action items:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| head 50000
+| fieldsummary
+| eval present_fields=field
+| stats values(present_fields) as present
+| eval required=split("action,app,src,dest,user",",")
+| eval missing=mvmap(required, if(isnull(mvfind(present,"^".required."$")), required, null()))
+| table missing</pre>
+        <h4>Data model mapping</h4>
+        <p>Document the native &rarr; CIM field mapping you will implement (this is the deliverable that drives <code>props.conf</code>/<code>transforms.conf</code>). Build it from the CIM Mapping Candidate Identification and Cross-Sourcetype Join-Key Discovery results above; the search below renders your decided mapping for review:</p>
+        <pre class="prompt-body">| makeresults
+| eval mappings=split("clientip=src_ip,usr=user,computer=dest,verb=http_method,requesturl=url,md5=file_hash","|")
+| makemv delim="," mappings
+| mvexpand mappings
+| rex field=mappings "(?&lt;native_field&gt;[^=]+)=(?&lt;cim_field&gt;.+)"
+| table native_field cim_field</pre>
+        <div class="eccs-note">Apply renames via <code>FIELDALIAS-&lt;name&gt; = &lt;native&gt; AS &lt;cim&gt;</code> (preserves the original) or <code>EVAL-&lt;cim&gt; = &lt;expression&gt;</code> for derived/normalised values -- see the Field Normalisation reference for both mechanisms in full. Validate with the CIM data model's "Pivot" or <code>| datamodel &lt;Model&gt; &lt;Object&gt; search</code>.</div>
+        <h4>CIM coverage score</h4>
+        <p>A single percentage covering required-field presence and fill -- useful for tracking onboarding progress across many sources. Weights required fields fully and recommended fields at half:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count as total
+    count(action) as action count(app) as app count(src) as src
+    count(dest) as dest count(user) as user
+    count(src_user) as src_user count(status) as status count(signature) as signature
+| eval req_score=((if(action&gt;0,1,0)+if(app&gt;0,1,0)+if(src&gt;0,1,0)+if(dest&gt;0,1,0)+if(user&gt;0,1,0))/5)
+| eval rec_score=((if(src_user&gt;0,1,0)+if(status&gt;0,1,0)+if(signature&gt;0,1,0))/3)
+| eval cim_coverage_pct=round(((req_score*0.7)+(rec_score*0.3))*100,1)
+| table cim_coverage_pct req_score rec_score</pre>
+        <p>Validate the source actually populates the model after mapping (returns events only if they match the accelerated/defined data model):</p>
+        <pre class="prompt-body">| datamodel Authentication Authentication search
+| search index=&lt;index&gt;
+| stats count by sourcetype</pre>
+        <div class="eccs-note"><strong>Interpretation.</strong> Treat required-field coverage as a gate -- a source with &lt;100% required coverage will silently underperform in any out-of-the-box CIM-based detection. Use the coverage score over time to show onboarding is converging, and re-run this assessment and the blind-correlation techniques below whenever the upstream log format changes.</div>
+      </section>
+      <section id="eda-phase10" class="eccs-detail-section">
+        <h3>Sensitive data &amp; secrets discovery</h3>
+        <p>New, undocumented sources are the most likely place to find credentials, tokens and PII accidentally written to logs. Quantify exposure <strong>before</strong> widening index access. Count and locate -- never table the matched values themselves.</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| eval cleartext_password=if(match(_raw,"(?i)\b(password|passwd|pwd)\b\s*[=:]\s*\S+"),1,0),
+       aws_access_key=if(match(_raw,"\bAKIA[0-9A-Z]{16}\b"),1,0),
+       bearer_token=if(match(_raw,"(?i)\bbearer\s+[A-Za-z0-9._~+/=-]{20,}"),1,0),
+       private_key_block=if(match(_raw,"BEGIN (RSA |EC |OPENSSH |PGP )?PRIVATE KEY"),1,0),
+       ssn_like=if(match(_raw,"\b\d{3}-\d{2}-\d{4}\b"),1,0),
+       card_like=if(match(_raw,"\b\d{4}[ -]?\d{4}[ -]?\d{4}[ -]?\d{4}\b"),1,0)
+| stats count as total_events sum(cleartext_password) as password_hits
+        sum(aws_access_key) as aws_key_hits sum(bearer_token) as bearer_hits
+        sum(private_key_block) as private_key_hits sum(ssn_like) as ssn_like_hits
+        sum(card_like) as card_like_hits</pre>
+        <p>Locate the offending emitters without displaying the secrets:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| where match(_raw,"(?i)\b(password|passwd|pwd)\b\s*[=:]\s*\S+") OR match(_raw,"\bAKIA[0-9A-Z]{16}\b")
+| stats count earliest(_time) as first latest(_time) as last by source host
+| eval first=strftime(first,"%F %T"), last=strftime(last,"%F %T")
+| sort -count</pre>
+        <div class="eccs-note">Remediation: mask at ingest with <code>SEDCMD-</code> in props.conf or Ingest Actions, restrict index access while exposed data remains searchable, and file a fix against the upstream application. <code>ssn_like</code>/<code>card_like</code> are pattern matches only -- order numbers and internal IDs will false-positive, so validate a sample before escalating. Findings here directly inform Access Control's scope decisions and Retention Policy's secure-deletion requirement.</div>
+        <div class="method-actions"><button type="button" data-open-reference-detail="access-control">Open Access Control reference</button><button type="button" data-open-reference-detail="retention-policy">Open Retention Policy reference</button></div>
+      </section>
+      <section id="eda-phase11" class="eccs-detail-section">
+        <h3>Enrichment &amp; context validation</h3>
+        <p>Detection value multiplies when entities in the new source resolve against your asset and identity inventory. Measure the match rate; a low rate is itself a finding.</p>
+        <p>Inventory available lookups first:</p>
+        <pre class="prompt-body">| rest /services/data/transforms/lookups splunk_server=local
+| table title filename
+| sort title</pre>
+        <p>Host/asset match rate (in Enterprise Security use <code>asset_lookup_by_str</code> / <code>asset_lookup_by_cidr</code>):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count by &lt;host_field&gt;
+| lookup &lt;asset_lookup&gt; &lt;asset_key_field&gt; as &lt;host_field&gt; OUTPUT &lt;asset_key_field&gt; as matched
+| eval status=if(isnotnull(matched),"known_asset","unknown_asset")
+| stats sum(count) as events dc(&lt;host_field&gt;) as distinct_entities by status</pre>
+        <p>User/identity match rate (in ES, <code>identity_lookup_expanded</code>):</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count by &lt;user_field&gt;
+| lookup &lt;identity_lookup&gt; &lt;identity_key_field&gt; as &lt;user_field&gt; OUTPUT &lt;identity_key_field&gt; as matched
+| eval status=if(isnotnull(matched),"known_identity","unknown_identity")
+| stats sum(count) as events dc(&lt;user_field&gt;) as distinct_entities by status</pre>
+        <p>Top unmatched entities -- naming-convention mismatches or genuine inventory gaps:</p>
+        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
+| stats count by &lt;host_field&gt;
+| lookup &lt;asset_lookup&gt; &lt;asset_key_field&gt; as &lt;host_field&gt; OUTPUT &lt;asset_key_field&gt; as matched
+| where isnull(matched)
+| sort -count
+| head 50</pre>
+        <div class="eccs-note">Low match rates usually trace to normalization issues (case, FQDN vs. shortname, <code>DOMAIN\</code> prefixes -- fix with Field Relationship Analysis outputs) or to assets/identities genuinely missing from your inventory. Both belong in the onboarding findings either way. This also ties into Access Control's authentication integration -- an LDAP/SAML mapping change upstream can silently degrade identity match rates.</div>
+        <div class="method-actions"><button type="button" data-open-reference-detail="access-control">Open Access Control reference</button></div>
+      </section>
       <section id="eda-phase12" class="eccs-detail-section">
         <h3>Blind correlation: field-name-agnostic techniques</h3>
-        <p>Everything in standard field investigation assumes you can at least see field names. Sometimes you can't trust them -- extractions are broken, names are cryptic, or two sources name the same thing completely differently. The fix is to stop thinking in field names and work in value space: pivot on values, transform events from wide to long, intersect token sets, and fall back to time itself.</p>
+        <p>Everything in standard field investigation up to this point still assumes you can at least see field names. Sometimes you can't trust them -- extractions are broken, names are cryptic, or two sources name the same thing completely differently. The fix is to stop thinking in field names and work in value space: pivot on values, transform events from wide to long, intersect token sets, and fall back to time itself.</p>
         <h4>Find which field holds a known value</h4>
         <p>You know an entity exists (a username, an IP, a hostname) but not where it lives. <code>foreach *</code> iterates over every field without naming any:</p>
         <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt; "&lt;known_value&gt;"
@@ -5023,7 +5813,7 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
 | stats count as shared_values values(v) as sample_values by field_pair
 | eval sample_values=mvindex(sample_values,0,4)
 | sort -shared_values</pre>
-        <div class="eccs-note">Output reads like <code>proxy::src &lt;-&gt; edr::local_ip | shared_values=4812</code> -- a ranked list of join-key candidates between the two sources. Discard pairs whose sample values are enums ("success", "tcp") shared trivially; the real keys are high-cardinality identifiers. Feed confirmed pairs into the Field Extraction and Field Normalisation references and the CIM Data Model Mapping below.</div>
+        <div class="eccs-note">Output reads like <code>proxy::src &lt;-&gt; edr::local_ip | shared_values=4812</code> -- a ranked list of join-key candidates between the two sources. Discard pairs whose sample values are enums ("success", "tcp") shared trivially; the real keys are high-cardinality identifiers. Feed confirmed pairs into the Field Extraction and Field Normalisation references and the CIM Data Model Mapping above.</div>
         <h4>Value-shape field profiling</h4>
         <p>Classify every field by what its values look like -- length, digit density, charset -- instead of by name. Fields with near-identical shape profiles and cardinality are alias candidates even across sourcetypes:</p>
         <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
@@ -5077,83 +5867,141 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
           <li>Wide &rarr; long transform -- make the whole source name-independent.</li>
           <li>Join-key discovery + shape profiling -- derive the cross-source field mapping from data.</li>
           <li>Token intersection / time-lag -- fall back when extraction or shared values fail entirely.</li>
-          <li>Promote findings into Field Extraction aliases and the CIM Assessment mappings below -- then re-validate with real field names.</li>
+          <li>Promote findings into Field Extraction aliases and the CIM Assessment mappings above -- then re-validate with real field names.</li>
         </ol>
       </section>
-      <section id="eda-phase9" class="eccs-detail-section">
-        <h3>CIM assessment</h3>
-        <p>Score how ready the source is for a CIM data model and produce the gap list needed to finish onboarding. Pick the target data model first (Authentication, Network Traffic, Web, Endpoint/Processes, Email, Malware, etc.) and adjust field lists accordingly.</p>
-        <h4>CIM compliance assessment</h4>
-        <p>High-level pass: which expected CIM fields for the target model are present at all. Example uses the <strong>Authentication</strong> model -- swap the list for your model:</p>
-        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
-| head 50000
-| fieldsummary
-| eval cim_model="Authentication"
-| eval is_required=if(field IN ("action","app","src","dest","user"),1,0)
-| eval is_recommended=if(field IN ("src_user","user_id","signature","status","reason","authentication_method"),1,0)
-| where is_required=1 OR is_recommended=1
-| table field is_required is_recommended count distinct_count</pre>
-        <h4>Required CIM fields</h4>
-        <p>Confirm presence and fill rate of the <strong>required</strong> fields for the model (Authentication example):</p>
-        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
-| stats count as total
-    count(action) as action count(app) as app
-    count(src) as src count(dest) as dest count(user) as user
-| eval action=round(action/total*100,1), app=round(app/total*100,1),
-       src=round(src/total*100,1), dest=round(dest/total*100,1), user=round(user/total*100,1)
-| transpose
-| rename column as cim_field "row 1" as fill_pct
-| where cim_field!="total"</pre>
-        <h4>Optional CIM fields</h4>
-        <p>Same check for recommended/optional fields that improve detection coverage:</p>
-        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
-| stats count as total
-    count(src_user) as src_user count(user_id) as user_id
-    count(signature) as signature count(status) as status
-    count(reason) as reason count(authentication_method) as auth_method
-| transpose
-| rename column as cim_field "row 1" as populated_events</pre>
-        <h4>Missing CIM fields</h4>
-        <p>Explicitly list required fields that do <strong>not</strong> exist or are effectively empty so they become onboarding action items:</p>
-        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
-| head 50000
-| fieldsummary
-| eval present_fields=field
-| stats values(present_fields) as present
-| eval required=split("action,app,src,dest,user",",")
-| eval missing=mvmap(required, if(isnull(mvfind(present,"^".required."$")), required, null()))
-| table missing</pre>
-        <h4>Data model mapping</h4>
-        <p>Document the native &rarr; CIM field mapping you will implement (this is the deliverable that drives <code>props.conf</code>/<code>transforms.conf</code>). Build it from the Cross-Sourcetype Join-Key Discovery results above; the search below renders your decided mapping for review:</p>
-        <pre class="prompt-body">| makeresults
-| eval mappings=split("clientip=src_ip,usr=user,computer=dest,verb=http_method,requesturl=url,md5=file_hash","|")
-| makemv delim="," mappings
-| mvexpand mappings
-| rex field=mappings "(?&lt;native_field&gt;[^=]+)=(?&lt;cim_field&gt;.+)"
-| table native_field cim_field</pre>
-        <div class="eccs-note">Apply renames via <code>FIELDALIAS-&lt;name&gt; = &lt;native&gt; AS &lt;cim&gt;</code> (preserves the original) or <code>EVAL-&lt;cim&gt; = &lt;expression&gt;</code> for derived/normalised values -- see the Field Normalisation reference for both mechanisms in full. Validate with the CIM data model's "Pivot" or <code>| datamodel &lt;Model&gt; &lt;Object&gt; search</code>.</div>
-        <h4>CIM coverage score</h4>
-        <p>A single percentage covering required-field presence and fill -- useful for tracking onboarding progress across many sources. Weights required fields fully and recommended fields at half:</p>
-        <pre class="prompt-body">index=&lt;index&gt; sourcetype=&lt;sourcetype&gt;
-| stats count as total
-    count(action) as action count(app) as app count(src) as src
-    count(dest) as dest count(user) as user
-    count(src_user) as src_user count(status) as status count(signature) as signature
-| eval req_score=((if(action&gt;0,1,0)+if(app&gt;0,1,0)+if(src&gt;0,1,0)+if(dest&gt;0,1,0)+if(user&gt;0,1,0))/5)
-| eval rec_score=((if(src_user&gt;0,1,0)+if(status&gt;0,1,0)+if(signature&gt;0,1,0))/3)
-| eval cim_coverage_pct=round(((req_score*0.7)+(rec_score*0.3))*100,1)
-| table cim_coverage_pct req_score rec_score</pre>
-        <p>Validate the source actually populates the model after mapping (returns events only if they match the accelerated/defined data model):</p>
-        <pre class="prompt-body">| datamodel Authentication Authentication search
-| search index=&lt;index&gt;
-| stats count by sourcetype</pre>
-        <div class="eccs-note"><strong>Interpretation.</strong> Treat required-field coverage as a gate -- a source with &lt;100% required coverage will silently underperform in any out-of-the-box CIM-based detection. Use the coverage score over time to show onboarding is converging, and re-run this assessment and the blind-correlation techniques above whenever the upstream log format changes.</div>
+      <section id="eda-quickref" class="eccs-detail-section">
+        <h3>Quick reference</h3>
+        <p>A condensed index of the highest-value technique from each phase above, grouped by concern.</p>
+        <h4>Parse health &amp; exposure</h4>
+        <ul class="method-list">
+          <li><code>stats count by punct</code> -- structural fingerprint of event formats</li>
+          <li><code>cluster showcount=true t=0.8</code> -- one representative per event "type"</li>
+          <li><code>eval lag=_indextime-_time</code> -- timestamp lag and timezone-offset check</li>
+          <li><code>len(_raw)</code> approaching 10,000 -- TRUNCATE risk</li>
+          <li><code>match(_raw,"AKIA[0-9A-Z]{16}")</code> and friends -- count secrets/PII without displaying them</li>
+          <li><code>lookup &lt;asset_lookup&gt; ...</code> + match-rate stats -- enrichment coverage</li>
+        </ul>
+        <h4>Profiling &amp; inventory</h4>
+        <ul class="method-list">
+          <li><code>| metadata type=sourcetypes index=&lt;index&gt;</code> -- sourcetype inventory with first/last seen</li>
+          <li><code>| tstats count where index=&lt;index&gt; by sourcetype _time span=1h</code> -- fast volume</li>
+          <li><code>| fieldsummary</code> -- per-field count, distinct_count, numeric_count, sample values</li>
+        </ul>
+        <h4>Quality</h4>
+        <ul class="method-list">
+          <li><code>count(&lt;field&gt;)</code> vs. <code>count</code> -- fill rate</li>
+          <li><code>isnull(&lt;field&gt;)</code>, <code>&lt;field&gt;=""</code>, value-in-list checks -- null/placeholder/junk detection</li>
+          <li><code>lower()</code> canon + <code>dc()</code> variants -- case-collision detection</li>
+          <li><code>md5(_raw)</code> group counts -- duplicate-event rate and origin</li>
+          <li><code>case(match(...))</code> shape rules -- IP/port/hash format validity</li>
+          <li><code>timechart count(&lt;field&gt;)/count</code>, <code>fieldsummary</code> append-diff -- quality drift</li>
+          <li>weighted completeness/validity/uniqueness/timeliness -- DQ scorecard</li>
+        </ul>
+        <h4>Temporal</h4>
+        <ul class="method-list">
+          <li><code>timechart span=1h count</code> then <code>where count=0</code> -- ingestion gaps</li>
+          <li><code>timewrap 1w</code>, <code>bin _time span=1h</code> + per-hour stats -- seasonality</li>
+        </ul>
+        <h4>Correlation &amp; outliers</h4>
+        <ul class="method-list">
+          <li><code>stats dc(B) values(B) count by A</code> -- fan-out / relationships</li>
+          <li><code>rare</code> / <code>top</code>, <code>stats count by X | where count&lt;=N</code> -- rarity</li>
+          <li><code>eventstats avg stdev</code> + z-score, <code>anomalydetection</code>, <code>streamstats</code> rolling baseline -- anomalies</li>
+        </ul>
+        <h4>Entity discovery</h4>
+        <ul class="method-list">
+          <li><code>rex max_match=0 "&lt;pattern&gt;"</code> -- extract repeated tokens from <code>_raw</code></li>
+          <li><code>cidrmatch()</code> -- internal vs. external IP</li>
+          <li><code>case(... match(...) ...)</code> -- value-pattern classification</li>
+        </ul>
+        <h4>Relationships &amp; CIM</h4>
+        <ul class="method-list">
+          <li><code>contingency A B</code>, <code>chart count over A by B</code> -- co-occurrence matrix</li>
+          <li><code>FIELDALIAS-</code>, <code>EVAL-</code>, <code>EXTRACT-</code> (props/transforms) -- promote &amp; map fields</li>
+          <li><code>| datamodel &lt;Model&gt; &lt;Object&gt; search</code> -- verify CIM population</li>
+        </ul>
+        <h4>Blind correlation (no trusted field names)</h4>
+        <ul class="method-list">
+          <li><code>| tstats count where index=* TERM(&lt;value&gt;) by index sourcetype</code> -- value pivot across the estate</li>
+          <li><code>| walklex index=&lt;index&gt; type=field|term</code> -- read the index lexicon directly</li>
+          <li><code>foreach * [eval ...mvappend(holders,"&lt;&lt;FIELD&gt;&gt;")...]</code> -- find which field holds a known value</li>
+          <li><code>foreach *</code> + <code>mvexpand</code> wide&rarr;long explode -- name-independent (field,value) analysis</li>
+          <li>shared-value <code>field_pair</code> discovery -- auto-derived cross-sourcetype field mapping</li>
+          <li><code>rex</code> token intersection on <code>_raw</code>; <code>filldown</code> time-lag profiling -- correlate with zero extractions</li>
+        </ul>
+      </section>
+      <section id="eda-template" class="eccs-detail-section">
+        <h3>Onboarding documentation template</h3>
+        <p>Copy this skeleton into your knowledge base and fill it from the phase outputs above -- it is the deliverable that proves the source is understood.</p>
+        <pre class="prompt-body"># Source Onboarding: &lt;index&gt; / &lt;sourcetype&gt;
+## Overview
+- Technology / vendor / version:
+- Collection path (UF / HF / HEC / API / syslog):
+- Business owner &amp; escalation contact:
+- Date profiled / engineer:
+## Parse Health (Parse-Time Health)
+- Format: json | kv | csv | xml | unstructured
+- Dominant punct patterns:            Event clusters:
+- Timestamp lag (p95):                TZ verified: yes/no
+- Truncation risk: yes/no             Line breaking verified: yes/no
+## Volume Profile (Data Source Profiling, Temporal Analysis)
+- Avg daily events / MB:
+- Peak hours / quiet hours / weekend pattern:
+- Known ingestion gaps &amp; cause:
+## Field Dictionary (Data Quality, Entity Discovery, Field Relationships)
+| Native field | Type | Fill % | Distinct | Entity class | CIM mapping | Notes |
+|---|---|---|---|---|---|---|
+|  |  |  |  |  |  |  |
+## Data Quality (Data Quality Analysis)
+- DQ score:                           Duplicate-event rate:
+- Junk/placeholder rate (key fields):
+- Validity / consistency issues &amp; fixes:
+## Entity Relationships (Correlation Analysis, Correlation Matrix)
+- user &harr; host cardinality &amp; hubs:
+- host &harr; ip stability (DHCP / NAT?):
+- Shared / service accounts identified:
+## Outliers &amp; Baseline (Outlier Analysis)
+- Baseline window captured:
+- Known-benign high-volume entities:
+## CIM Assessment (CIM Assessment)
+- Target data model:
+- Required-field coverage:            Coverage score:
+- Missing fields &amp; remediation plan:
+## Sensitive Data Review (Sensitive Data &amp; Secrets Discovery)
+- Findings:                           Masking applied:
+## Enrichment (Enrichment &amp; Context Validation)
+- Asset match rate:                   Identity match rate:
+## Quirks &amp; Normalizations
+-
+## Sign-off
+- Detection-ready: yes/no             Date:</pre>
+      </section>
+      <section id="eda-checklist" class="eccs-detail-section">
+        <h3>Detection-readiness checklist</h3>
+        <p>The gate before this source feeds correlation searches. Tip: package the recurring searches from this playbook as macros (e.g. <code>eda_fill_rate(2)</code>, <code>eda_entity_matrix(3)</code>) so every onboarding runs the same way.</p>
+        <ul class="method-list">
+          <li>Parse health verified: stable <code>punct</code>, single timestamp per event, no truncation</li>
+          <li><code>_time</code> trustworthy: acceptable lag, no whole-hour TZ offset, no future-dated events</li>
+          <li>No unexplained ingestion gaps across the baseline window</li>
+          <li>Detection-critical fields &ge;95% fill (or gaps documented and accepted)</li>
+          <li>Junk/placeholder rate quantified; effective fill (populated minus junk) meets the bar</li>
+          <li>Entity formats validated (IP/port/hash); case collisions and encoding artifacts normalized</li>
+          <li>Duplicate-event rate measured and explained; DQ scorecard baselined with drift alerts scheduled</li>
+          <li>Entity fields discovered, classified, and promoted to real extractions</li>
+          <li>Duplicate/alias fields collapsed to one canonical name each</li>
+          <li>Values normalized (case, domain prefixes, FQDN vs. shortname, machine <code>$</code> suffix)</li>
+          <li>CIM required-field coverage 100% for the target model; <code>| datamodel</code> search returns events</li>
+          <li>Asset/identity enrichment match rate measured and acceptable</li>
+          <li>Sensitive-data scan complete; masking applied where required</li>
+          <li>Baseline captured: per-entity volumes, rare lists, hourly/weekly profile</li>
+        </ul>
+        <div class="eccs-note">This checklist operationalises the same onboarding <strong>Pre-ingest cyber-value gate (TAX-06.05.02)</strong> that the Log Assessment Framework's all-axes conformance rate feeds -- that gate covers structural parse health; this checklist covers the full detection-readiness bar built on top of it.</div>
       </section>
       <section id="eda-relationship" class="eccs-detail-section">
         <h3>Relationship to other references</h3>
-        <p>Blind Correlation's join-key and shape-profiling output is the evidence base for Field Extraction and Field Normalisation decisions; its output feeds directly into the CIM Assessment's Data Model Mapping search above. Structural conformance issues surfaced along the way (broken extractions, inconsistent formats) are the Log Assessment Framework's concern, not this playbook's -- run that framework first if the source's basic structure isn't yet trusted.</p>
-        <div class="method-actions"><button type="button" data-open-reference-detail="field-extraction">Open Field Extraction reference</button><button type="button" data-open-reference-detail="field-normalisation">Open Field Normalisation reference</button><button type="button" data-open-reference-detail="log-assessment-framework">Open Log Assessment Framework reference</button></div>
-        <div class="eccs-note">This article is a partial pass over a larger source playbook covering twelve additional phases (source discovery through enrichment &amp; context validation) plus quick-reference and documentation-template appendices. Those remain a candidate future addition to this article.</div>
+        <p>This playbook is a full pass over its source document: all fourteen phases and all three appendices are covered above. It is deliberately a reusable, cross-cutting procedure rather than a scored taxonomy leaf -- like Log Assessment Framework, it produces the evidence and mappings that other reference articles and calculators score or consume. Parse-Time Health leans on Log Assessment Framework, Line Length and Timestamp Quality for the structural detail it only sanity-checks; Data Quality Analysis's scorecard mirrors Data Quality Score; Entity Discovery and Field Relationship Analysis feed Field Extraction and Field Normalisation directly; Sensitive Data Discovery and Enrichment Validation tie into Access Control and Retention Policy; and CIM Assessment's Data Model Mapping is the same deliverable Field Normalisation's CIM compliance workflow describes.</p>
+        <div class="method-actions"><button type="button" data-open-reference-detail="field-extraction">Open Field Extraction reference</button><button type="button" data-open-reference-detail="field-normalisation">Open Field Normalisation reference</button><button type="button" data-open-reference-detail="log-assessment-framework">Open Log Assessment Framework reference</button><button type="button" data-open-reference-detail="data-quality-score">Open Data Quality Score reference</button><button type="button" data-open-reference-detail="access-control">Open Access Control reference</button><button type="button" data-open-reference-detail="retention-policy">Open Retention Policy reference</button></div>
       </section>
     </article>
   </section>
