@@ -99,6 +99,13 @@ datamodel=` path works and saves you from re-deriving field names per vendor:
 
 If a model returns real counts, prefer searching through it (`action`,
 `src`, `dest`, `user`, etc.) over guessing vendor-specific raw field names.
+The same check works for any other model — swap the name for a fast look at
+web and network-traffic coverage:
+
+```spl
+| tstats summariesonly=false count from datamodel=Web by sourcetype
+| append [| tstats summariesonly=false count from datamodel=Network_Traffic by sourcetype]
+```
 
 ### 1.7 Inventory saved knowledge objects (macros, lookups, eventtypes)
 
@@ -440,6 +447,90 @@ index=* source="WinEventLog:Security" <suspicious_account>
 | table _time, EventCode, Group_Name, Account_Name
 ```
 
+### 5.12 Scheduled-task creation (another persistence technique)
+
+Alongside new-account creation (§5.11), attacker-created scheduled tasks are
+a recurring second persistence mechanism:
+
+```spl
+index=* source="WinEventLog:Security" EventCode=4698
+| table _time, host, Subject_Account_Name, Task_Name, Command
+| sort 0 _time
+```
+
+`schtasks.exe`/`at.exe` invocations from a process-creation log (Sysmon
+EventCode=1) catch the same technique from the execution side rather than
+the audit-log side:
+
+```spl
+index=* sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+    (Image="*schtasks.exe" OR Image="*at.exe")
+| table _time, host, User, CommandLine
+```
+
+### 5.13 Decoding Base64/obfuscated payloads
+
+PowerShell's `-enc`/`-EncodedCommand` flag, and email/web payloads
+generally, are frequently Base64-encoded — decode inline rather than
+copy-pasting into an external tool for every hit:
+
+```spl
+index=* sourcetype="WinEventLog:Microsoft-Windows-PowerShell/Operational"
+    (Message="*-enc*" OR Message="*-EncodedCommand*")
+| rex field=Message "(?i)-enc(?:odedcommand)?\s+(?<b64>[A-Za-z0-9+/=]{20,})"
+| eval decoded=base64decode(b64)
+| table _time, host, decoded
+```
+
+`base64decode()`/`base64encode()` are native `eval` functions from Splunk
+9.0 onward; on older versions, decode the extracted `b64` field externally
+(e.g. `echo '<value>' | base64 -d`) once you've isolated it with `rex`.
+
+### 5.14 Geolocating an IP address
+
+A recurring BOTS question shape ("what country did this traffic originate
+from?") is a one-line lookup once you have the IP:
+
+```spl
+index=* sourcetype=<sourcetype> <ip_field>=<known_ip>
+| iplocation <ip_field>
+| table _time, <ip_field>, City, Country, Region
+```
+
+### 5.15 Finding tools/processes unique to one host (baseline deviation)
+
+Attacker tooling frequently shows up on exactly one host, while legitimate
+software runs fleet-wide — a cheap way to surface it without knowing the
+tool's name in advance:
+
+```spl
+index=* sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+| stats count by Image, host
+| eventstats dc(host) as host_count by Image
+| where host_count=1
+| sort count
+```
+
+### 5.16 Sweeping raw text for embedded IOCs
+
+When a sourcetype's field extractions don't cover what you need (or none
+exist at all), pull IP addresses, domains, hashes and email addresses
+straight out of `_raw`:
+
+```spl
+index=<index> sourcetype=<sourcetype>
+| rex max_match=0 field=_raw "(?<ioc_ip>\b(?:\d{1,3}\.){3}\d{1,3}\b)"
+| rex max_match=0 field=_raw "(?<ioc_hash>\b[a-fA-F0-9]{32,64}\b)"
+| rex max_match=0 field=_raw "(?<ioc_domain>\b[a-zA-Z0-9][a-zA-Z0-9-]{0,62}\.[a-zA-Z]{2,}\b)"
+| stats values(ioc_ip) as ips, values(ioc_hash) as hashes, values(ioc_domain) as domains by sourcetype
+```
+
+Run each `rex` separately (rather than one combined pattern) so a miss on
+one IOC type doesn't suppress the others — see the Exploratory Data
+Analysis & Field Correlation Playbook's Entity Discovery phase for the full
+version of this technique, including per-entity-type regex for processes,
+files, MACs and asset tags.
+
 ---
 
 ## 6. Efficiency tips specific to BOTS
@@ -468,6 +559,15 @@ index=* source="WinEventLog:Security" <suspicious_account>
   questions are answered by data you haven't looked at yet — re-run the
   sourcetype/field inventory scoped to the specific host or time window in
   question rather than assuming you've seen everything relevant.
+- **Watch the timezone on timestamp answers.** `_time` is stored as a UTC
+  epoch, but every rendering of it (`strftime`, the results table, the
+  timeline) displays in *your account's* configured timezone — which is
+  frequently not the timezone the question wants. Check your Splunk
+  account's Time Zone setting before answering any question with a
+  timestamp in it, and if in doubt, set it to UTC and note that explicitly
+  in your answer. `| eval tz_offset=strftime(_time,"%z")` on a result will
+  at least show you the offset currently being applied, so a wrong-timezone
+  answer doesn't look plausible and get submitted unnoticed.
 
 ---
 
@@ -485,6 +585,9 @@ index=* source="WinEventLog:Security" <suspicious_account>
 | `stats dc(X) by Y` | Anomaly-by-distinct-count — which Y has an unusually broad/narrow spread of X |
 | `rare` / `stats count \| where count<=N` | Long-tail/rare-value discovery |
 | `bin`/`timechart`/`streamstats` | Time-bucketed volume and beacon/regularity analysis |
+| `eventstats dc(host) by X` | Baseline-deviation hunting — flag values seen on only one host |
+| `iplocation` | Geolocate an IP (City/Country/Region) |
+| `base64decode()` / `base64encode()` | Decode/encode Base64 payloads inline (`eval` function, Splunk 9.0+) |
 | `\| rest` | Inventory saved macros, lookups, eventtypes via the REST API |
 
 ---
