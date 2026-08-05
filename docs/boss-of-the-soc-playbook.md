@@ -146,6 +146,16 @@ shape first, then reach for the matching technique:
    search — BOTS answers are graded on exact string match, and it's easy to
    answer with a truncated/reformatted value.
 
+**A structural fact worth knowing up front:** BOTS questions are numbered in
+series (100s, 200s, 300s...), and within a series, question *N*'s answer is
+almost always question *N+1*'s search filter — the src IP found in an early
+question becomes the filter that finds the uploaded file, which becomes the
+filter that finds its hash, and so on. Series numbers roughly track
+kill-chain phase within one scenario (recon → delivery/initial access →
+execution/lateral movement → impact/persistence). If you're stuck on a
+question, the fix is very often to re-read the *previous* question's answer
+rather than to search harder on the current one.
+
 ---
 
 ## 3. Sourcetype cheat sheet (typical BOTS data sources)
@@ -155,16 +165,18 @@ this table is a starting-point map, not a guarantee of exact naming.
 
 | Category | Typical sourcetype(s) | What it tells you |
 |---|---|---|
-| Windows Security/System logs | `WinEventLog:Security`, `WinEventLog:System`, `XmlWinEventLog:*` | Logons (4624/4625), process creation (4688), account/group changes, service installs |
+| Windows Security/System logs | `WinEventLog:Security`, `WinEventLog:System`, `XmlWinEventLog:*` | Logons (4624/4625), process creation (4688), account/group changes (4720 + `Group_Name` — a recurring backdoor-account/persistence signature, §5.11), service installs |
 | Sysmon | `XmlWinEventLog:Microsoft-Windows-Sysmon/Operational` | Process create (EventCode=1) with full command line + hashes, network connections (EventCode=3), file creation, registry changes |
+| PowerShell logging | `WinEventLog:Microsoft-Windows-PowerShell/Operational` | Script-block logging — often the only place a C2 URL or an obfuscated payload shows up in cleartext |
 | DNS | `stream:dns`, `suricata` (dns event_type) | Domain resolution — a primary pivot for C2/beaconing and exfil |
 | Web proxy / HTTP | `stream:http`, `access_combined`, vendor proxy sourcetypes | URLs, user-agents, referrers, upload/download sizes |
+| Email / file transfer | `stream:smtp`, `stream:ftp`, `stream:smb`, vendor mail-gateway sourcetypes | Sender/recipient, subject, attachment name/hash; SMB for lateral file movement; FTP for exfil |
 | Firewall / network flow | `pan:traffic`, `cisco:asa`, `stream:tcp` | Allow/deny decisions, bytes transferred, src/dest port and IP |
 | IDS/IPS | `suricata`, `snort` | Signature name, category, severity — good for jumping straight to "what happened" |
-| Email | vendor mail-gateway sourcetypes | Sender/recipient, subject, attachment name/hash |
+| Endpoint state / inventory | `osquery:results`, `winhostmon`, `Perfmon:Process` | Point-in-time host facts (users, open ports, running processes, OS version) and resource-usage anomalies — the way to catch things with no dedicated log line (e.g. a cryptominer pegging CPU) |
+| Endpoint/EDR & AV alerts | vendor-specific (`symantec:ep:security:file`, `carbonblack`, `crowdstrike`, etc.) | Signature-based detections with a ready-made severity/threat-name field — often the fastest path to "what is this called" |
 | Cloud/AWS | `aws:cloudtrail`, `aws:s3:accesslogs`, `aws:vpcflow` | API calls, IAM identity, source IP, bucket access |
-| O365 / Azure AD | `o365:management:activity`, `azure:aad` | Sign-ins, mailbox rules, admin actions |
-| Endpoint/EDR | vendor-specific (`carbonblack`, `crowdstrike`, etc.) | Process lineage, file/registry/network activity |
+| O365 / Azure AD | `o365:management:activity`, `ms:o365:management`, `azure:aad` | Sign-ins, mailbox rules, admin actions, file upload/share events |
 | Splunk internal | `_internal`, `_audit` | Search activity, ingestion health — occasionally the scenario itself is "who searched what" |
 
 ---
@@ -248,6 +260,24 @@ index=* (sourcetype=<sourcetype_a> OR sourcetype=<sourcetype_b>)
 | stats count as shared_values by locations
 | sort -shared_values
 ```
+
+### 4.6 External enrichment (when SPL alone won't finish the answer)
+
+Not every answer lives in the data. A meaningful share of BOTS questions ask
+for a *fact about* an IOC that SPL can only get you the IOC for — first-seen
+date, related infrastructure, attribution, or a name/description assigned by
+a scanner. Once a search produces a hash, domain or IP that looks like the
+*input* to the answer rather than the answer itself, pivot out:
+
+- **Hash reputation / first-seen / related domains** — paste the MD5/SHA256
+  into VirusTotal (or whatever local TI tool the exercise provides).
+- **Leaked credentials/keys** — search GitHub (or the provided sandbox) for
+  the exact string; leaked AWS keys and similar secrets are a recurring
+  theme.
+- **Domain/IP attribution** — WHOIS and passive-DNS lookups.
+
+Treat "find the IOC in Splunk, then enrich outside Splunk" as a normal
+two-step pattern, not a sign you've gone off track.
 
 ---
 
@@ -367,6 +397,49 @@ index=* sourcetype=aws:cloudtrail
 | table _time, eventName, userIdentity.arn, sourceIPAddress, requestParameters.*
 ```
 
+### 5.9 Extracting a value buried in a composite field
+
+Form data, cookies and command lines often arrive as one long string rather
+than a pre-extracted field — `rex` pulls the specific piece out:
+
+```spl
+index=* sourcetype=stream:http http_method=POST
+| rex field=form_data "passwd=(?<submitted_password>[^&]+)"
+| stats count by submitted_password
+| sort -count
+```
+
+The same pattern works on `cookie`, `CommandLine`, `Message`, or any other
+single-string field, once you know the delimiter around the value you need.
+
+### 5.10 Anomaly by distinct-count ("which X has the most distinct Y")
+
+A recurring BOTS shape: find the one entity behaving unusually broadly (an
+access key generating unusually many distinct errors, a host contacted by
+unusually many distinct sources):
+
+```spl
+index=* sourcetype=<sourcetype>
+| stats dc(<outcome_field>) as distinct_outcomes by <entity_field>
+| sort -distinct_outcomes
+```
+
+### 5.11 Backdoor account creation (persistence)
+
+```spl
+index=* source="WinEventLog:Security" EventCode=4720
+| table _time, host, user, Account_Name
+| sort 0 _time
+```
+
+Once a suspicious account is found, check what it was added to — the group
+membership is usually the actual point of the question:
+
+```spl
+index=* source="WinEventLog:Security" <suspicious_account>
+| table _time, EventCode, Group_Name, Account_Name
+```
+
 ---
 
 ## 6. Efficiency tips specific to BOTS
@@ -408,6 +481,8 @@ index=* sourcetype=aws:cloudtrail
 | `fieldsummary` | Field names, fill rate, distinct count, sample values for a sourcetype |
 | `foreach *` | Field-name-agnostic search across every field on an event |
 | `TERM()` | Fast indexed-token search (used with `tstats`) |
+| `rex field=X "pattern"` | Extract a value buried in a composite field (form data, cookies, command lines) |
+| `stats dc(X) by Y` | Anomaly-by-distinct-count — which Y has an unusually broad/narrow spread of X |
 | `rare` / `stats count \| where count<=N` | Long-tail/rare-value discovery |
 | `bin`/`timechart`/`streamstats` | Time-bucketed volume and beacon/regularity analysis |
 | `\| rest` | Inventory saved macros, lookups, eventtypes via the REST API |
