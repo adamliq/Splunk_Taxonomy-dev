@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="A browsable taxonomy of Splunk's own objects -- knowledge objects and platform/admin objects -- with config file, scope and definition for each." />
+<meta name="theme-color" content="#1f4e78" />
+<meta name="color-scheme" content="light" />
+<title>Splunk Object Taxonomy</title>
+<style>
+:root {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --muted: #64748b;
+  --primary: #1f4e78;
+  --primary-light: #eaf1f8;
+  --accent: #0e7490;
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+header {
+  background: #0f2034;
+  color: #fff;
+  padding: 28px 24px;
+}
+header .inner { max-width: 1280px; margin: 0 auto; }
+header .eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  color: #93c5fd;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+header h1 { margin: 0 0 8px; font-size: 26px; }
+header p { margin: 0; color: #cbd5e1; font-size: 14px; max-width: 860px; line-height: 1.6; }
+
+main { max-width: 1280px; margin: 0 auto; padding: 24px; }
+
+.stats-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--muted);
+  box-shadow: var(--shadow);
+}
+.stat strong { color: var(--primary); font-size: 16px; display: block; }
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+  align-items: center;
+}
+.toolbar input[type="search"],
+.toolbar select {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 14px;
+  color: var(--text);
+}
+.toolbar input[type="search"] { flex: 1 1 260px; min-width: 220px; }
+.toolbar select { min-width: 200px; }
+.toolbar button {
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+}
+.toolbar button.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  font-weight: 600;
+}
+.toolbar button:hover { filter: brightness(0.97); }
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.9fr);
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+.table-shell {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow: auto;
+  max-height: 76vh;
+}
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+thead th {
+  position: sticky;
+  top: 0;
+  background: #f1f5f9;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: var(--primary-light); }
+tbody tr.selected { background: #dbeafe; }
+.obj-name { font-weight: 600; color: var(--text); }
+.pill {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.pill-knowledge { background: #dcfce7; color: #166534; }
+.pill-platform { background: #fef3c7; color: #92400e; }
+.pill-hybrid { background: #e0e7ff; color: #3730a3; }
+.config-file { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+.empty-row td { text-align: center; color: var(--muted); padding: 30px; }
+
+.detail-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 20px;
+  position: sticky;
+  top: 20px;
+  max-height: 76vh;
+  overflow: auto;
+}
+.detail-panel .placeholder { color: var(--muted); font-size: 14px; line-height: 1.6; }
+.detail-panel h2 { margin: 0 0 4px; font-size: 19px; }
+.detail-panel .domain-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px; }
+.detail-row { margin-bottom: 14px; }
+.detail-row .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); font-weight: 700; margin-bottom: 4px; }
+.detail-row .value { font-size: 14px; line-height: 1.6; }
+.detail-row .value.mono { font-family: var(--mono); font-size: 13px; background: #0f172a; color: #e2e8f0; padding: 10px 12px; border-radius: 8px; overflow-x: auto; }
+
+.domain-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+.domain-nav button {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.domain-nav button.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+footer {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px 24px 40px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+footer a { color: var(--accent); }
+
+.scroll-hint { font-size: 12px; color: var(--muted); margin: 0 0 8px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <p class="eyebrow">Reference / Splunk platform</p>
+    <h1>Splunk Object Taxonomy</h1>
+    <p>Every kind of object that exists inside a Splunk deployment — knowledge objects created inside apps (reports, alerts, macros, field extractions, lookups...) and platform/admin objects that define the deployment itself (indexes, roles, clusters, forwarders...) — organised into 9 domains with config file, permission scope and definition for each.</p>
+  </div>
+</header>
+
+<main>
+  <div class="stats-bar" id="statsBar" aria-live="polite"></div>
+
+  <div class="domain-nav" id="domainNav"></div>
+
+  <div class="toolbar">
+    <input id="searchBox" type="search" placeholder="Search objects, config files, definitions…" aria-label="Search Splunk objects" />
+    <select id="typeFilter" aria-label="Filter by object type">
+      <option value="">All object types</option>
+    </select>
+    <select id="scopeFilter" aria-label="Filter by scope">
+      <option value="">All scopes</option>
+    </select>
+    <button id="resetBtn" type="button">Reset</button>
+    <button id="exportBtn" class="primary" type="button">Export visible CSV</button>
+  </div>
+
+  <div class="layout">
+    <div>
+      <p class="scroll-hint">Click a row to open its full definition and notes.</p>
+      <div class="table-shell" tabindex="0" aria-label="Scrollable Splunk object taxonomy table">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Object</th>
+              <th scope="col">Domain</th>
+              <th scope="col">Type</th>
+              <th scope="col">Scope</th>
+              <th scope="col">Config file / location</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <aside class="detail-panel" id="detailPanel">
+      <p class="placeholder">Select an object from the table to see its full definition, notes and config-file details.</p>
+    </aside>
+  </div>
+</main>
+
+<footer>
+  Standalone reference, independent of the LATCH taxonomy app (<code>index.html</code>) in this repository — nothing here is wired into TAX-XX codes. Object names, config files and scopes reflect Splunk Enterprise/Cloud platform conventions as of Splunk 9.x/10.x; verify against your specific version's documentation before relying on an exact setting name.
+</footer>
+
+<script>
+const DOMAINS = [
+  "Search, Reporting &amp; Analysis",
+  "Data Interpretation &amp; Field Objects",
+  "Alerting &amp; Automation",
+  "Visualization &amp; UI",
+  "Data Ingestion &amp; Parsing",
+  "Access Control &amp; Identity",
+  "Distributed Deployment &amp; Infrastructure",
+  "Storage &amp; Retention",
+  "Apps &amp; Packaging",
+];
+
+const OBJECTS = [
+  // ---------- Search, Reporting & Analysis ----------
+  { name: "Report", domain: "Search, Reporting &amp; Analysis", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "savedsearches.conf",
+    def: "A saved search without a trigger condition or alert action -- a named, reusable SPL query that can be run on demand, scheduled, or embedded in a dashboard panel.",
+    notes: "Every Alert (below) is also stored in savedsearches.conf; the distinction is whether alert.* / trigger-condition settings are present on the stanza." },
+  { name: "Alert", domain: "Search, Reporting &amp; Analysis", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "savedsearches.conf, alert_actions.conf",
+    def: "A scheduled or real-time saved search with a trigger condition (per-result, number of results, custom) and one or more alert actions fired when it triggers.",
+    notes: "alert.suppress settings on the stanza control throttling so the same condition doesn't re-fire repeatedly." },
+  { name: "Data Model", domain: "Search, Reporting &amp; Analysis", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "datamodels.conf",
+    def: "A hierarchical dataset definition (objects, constraints, calculated/inherited fields) used by Pivot and by the Common Information Model (CIM) to give differently-formatted sourcetypes a shared vocabulary.",
+    notes: "Backs tstats-accelerated searches across the whole CIM add-on catalogue (Authentication, Web, Network Traffic, etc.)." },
+  { name: "Data Model Acceleration", domain: "Search, Reporting &amp; Analysis", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "datamodels.conf (acceleration stanza)",
+    def: "Pre-built tsidx summaries of a data model's data over a configured time range, making tstats ... from datamodel= searches dramatically faster than an equivalent raw search.",
+    notes: "Consumes indexer storage and CPU on a schedule -- treat as a capacity-planning decision, not a free toggle." },
+  { name: "Pivot", domain: "Search, Reporting &amp; Analysis", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "(built on datamodels.conf; saved as a Report)",
+    def: "A drag-and-drop report builder that runs directly against a Data Model without requiring the author to write SPL by hand.",
+    notes: "Once saved, a Pivot is stored as an ordinary Report in savedsearches.conf." },
+  { name: "Search Macro", domain: "Search, Reporting &amp; Analysis", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "macros.conf",
+    def: "A reusable, named snippet of SPL, optionally parameterised with arguments, invoked in a search with backtick syntax (`my_macro(arg1)`).",
+    notes: "A macro can itself contain a full pipeline, not just a fragment -- useful for standardising a whole investigation pattern." },
+  { name: "Time Range Preset", domain: "Search, Reporting &amp; Analysis", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "times.conf",
+    def: "A named, reusable custom time range (beyond the built-in presets) that appears in the time-range picker.",
+    notes: "" },
+  { name: "View State", domain: "Search, Reporting &amp; Analysis", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "viewstates.conf",
+    def: "The saved state of an interactive view -- Pivot selections, drilldown filters -- so a user's configuration of a dashboard/report persists between visits.",
+    notes: "" },
+
+  // ---------- Data Interpretation & Field Objects ----------
+  { name: "Source Type", domain: "Data Interpretation &amp; Field Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global",
+    config: "props.conf",
+    def: "The classification assigned to an event at index time that determines its parsing rules (line breaking, timestamp extraction, default field extractions) and, at search time, its field-extraction/normalisation stanzas.",
+    notes: "Straddles both categories: sourcetype selection is a platform/ingest decision, but its behaviour is entirely defined by knowledge-object-style props.conf/transforms.conf stanzas." },
+  { name: "Event Type", domain: "Data Interpretation &amp; Field Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "eventtypes.conf",
+    def: "A saved search expression that, when it matches an event, adds an eventtype field/value to that event at search time -- a way to classify events across sourcetypes without a stored physical field.",
+    notes: "Unlike other saved searches, eventtypes are matched against every event in a search's results, not run independently." },
+  { name: "Tag", domain: "Data Interpretation &amp; Field Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "tags.conf",
+    def: "A label attached to a specific field=value pair (or an eventtype), letting you search tag=<name> across every differently-named field/value that shares the same real-world meaning.",
+    notes: "The mechanism the CIM Add-on uses to mark events as belonging to a given CIM dataset, e.g. authentication=enabled." },
+  { name: "Field Extraction (search-time)", domain: "Data Interpretation &amp; Field Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "props.conf (EXTRACT-<class>), transforms.conf (REPORT-<class>)",
+    def: "A regex rule that pulls a field out of raw event text at search time -- computed fresh on every search, cheap to add or fix retroactively.",
+    notes: "EXTRACT-* is inline in props.conf; REPORT-* references a named transforms.conf stanza, useful when the same regex is reused across sourcetypes." },
+  { name: "Field Alias", domain: "Data Interpretation &amp; Field Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "props.conf (FIELDALIAS-<class>)",
+    def: "Maps an already-extracted field to an additional name at search time (e.g. clientip AS src), the primary mechanism for CIM field normalisation.",
+    notes: "Runs after field extraction and before calculated fields; one alias maps to exactly one source field." },
+  { name: "Calculated Field", domain: "Data Interpretation &amp; Field Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "props.conf (EVAL-<fieldname>)",
+    def: "Derives a new field from an eval expression evaluated at search time, run after field aliasing so it can reference an already-aliased field.",
+    notes: "" },
+  { name: "Automatic Lookup", domain: "Data Interpretation &amp; Field Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "props.conf (LOOKUP-<class>)",
+    def: "Enriches matching events at search time from a lookup table without requiring an explicit | lookup command in every search.",
+    notes: "" },
+  { name: "Lookup Definition", domain: "Data Interpretation &amp; Field Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "transforms.conf",
+    def: "A named reference to a lookup table file (CSV or KV Store collection) or an external lookup script, invoked with the | lookup command or an Automatic Lookup.",
+    notes: "" },
+  { name: "Lookup Table File", domain: "Data Interpretation &amp; Field Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "lookups/<file>.csv",
+    def: "The actual CSV data file backing a static lookup -- e.g. an asset inventory, an IP-to-location table, a severity mapping.",
+    notes: "" },
+  { name: "KV Store Collection", domain: "Data Interpretation &amp; Field Objects", type: "Hybrid (Knowledge + Platform)", scope: "App-scoped",
+    config: "collections.conf",
+    def: "A document-oriented, schema-flexible collection backed by Splunk's embedded key-value store, usable as a dynamic (read/write) lookup or for arbitrary app-managed state.",
+    notes: "Unlike a CSV lookup, apps and REST endpoints can write to it at runtime, not just read from it." },
+  { name: "Field Transform", domain: "Data Interpretation &amp; Field Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "transforms.conf",
+    def: "A regex-based transform stanza referenced by REPORT-*, TRANSFORMS-* or LOOKUP-* in props.conf, defining the actual extraction, routing or masking logic.",
+    notes: "" },
+  { name: "Indexed Field (WRITE_META)", domain: "Data Interpretation &amp; Field Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global",
+    config: "transforms.conf (WRITE_META=true), props.conf (TRANSFORMS-*)",
+    def: "Writes a regex-derived field::value pair directly into an event's indexed metadata at ingest, making it available before any search runs -- at the cost of permanently increasing indexed volume.",
+    notes: "" },
+  { name: "Indexed Extractions", domain: "Data Interpretation &amp; Field Objects", type: "Platform Object", scope: "Instance-level (props.conf)",
+    config: "props.conf (INDEXED_EXTRACTIONS)",
+    def: "Parses an entire structured event format (JSON, CSV, TSV, W3C) at index time, writing every resulting field into the index rather than extracting a single custom field.",
+    notes: "" },
+  { name: "Workflow Action", domain: "Data Interpretation &amp; Field Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "workflow_actions.conf",
+    def: "A clickable action attached to a field value in search results -- a link to an external tool, a follow-up search, or a custom GET/POST request.",
+    notes: "" },
+
+  // ---------- Alerting & Automation ----------
+  { name: "Alert Action", domain: "Alerting &amp; Automation", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "alert_actions.conf",
+    def: "The response an Alert fires when it triggers -- send email, run a script, post a webhook, log an event, or a custom action shipped by an add-on.",
+    notes: "" },
+  { name: "Adaptive Response Action", domain: "Alerting &amp; Automation", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "alert_actions.conf (Splunk Enterprise Security)",
+    def: "An extended alert-action framework used by correlation searches in Enterprise Security to trigger investigative or remediation actions (asset lookup, ticket creation, SOAR playbook) from a notable event.",
+    notes: "Requires Splunk Enterprise Security; not present in a base Splunk Enterprise/Cloud deployment." },
+  { name: "Correlation Search", domain: "Alerting &amp; Automation", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
+    config: "savedsearches.conf (Splunk Enterprise Security)",
+    def: "A specialised Alert in Enterprise Security that generates Notable Events -- the primary detection-authoring mechanism in an ES deployment.",
+    notes: "" },
+  { name: "Summary Index", domain: "Alerting &amp; Automation", type: "Hybrid (Knowledge + Platform)", scope: "Deployment-level (index) + Private/App/Global (populating search)",
+    config: "indexes.conf (the index itself), savedsearches.conf (the collect/sistats search)",
+    def: "An ordinary index populated on a schedule by a saved search using the collect or sistats commands, storing pre-aggregated results for fast retrieval later instead of re-running an expensive search over raw data.",
+    notes: "" },
+
+  // ---------- Visualization & UI ----------
+  { name: "Dashboard (Classic SimpleXML)", domain: "Visualization &amp; UI", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "data/ui/views/<name>.xml",
+    def: "A saved page of panels (visualizations, tables, inputs) defined in Splunk's original SimpleXML dialect.",
+    notes: "" },
+  { name: "Dashboard Studio", domain: "Visualization &amp; UI", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "data/ui/views/<name>.xml (JSON payload, version=\"2\")",
+    def: "The newer, JSON-defined dashboard format with pixel-precise layout, more visualization types and a visual editor, stored in the same views location as classic dashboards but in a different internal format.",
+    notes: "" },
+  { name: "Panel", domain: "Visualization &amp; UI", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "data/ui/panels/<name>.xml",
+    def: "A reusable visualization block that can be referenced from multiple dashboards instead of being redefined inline in each one.",
+    notes: "" },
+  { name: "Navigation Menu", domain: "Visualization &amp; UI", type: "Knowledge Object", scope: "App-scoped",
+    config: "data/ui/nav/default.xml",
+    def: "Defines an app's left-hand navigation structure -- which views/dashboards appear, in what order, and under which menu groupings.",
+    notes: "" },
+  { name: "Form Input", domain: "Visualization &amp; UI", type: "Knowledge Object", scope: "Embedded in a Dashboard",
+    config: "(part of the dashboard's XML/JSON, not a standalone .conf object)",
+    def: "A dropdown, time-range, text or radio input on a dashboard bound to a token, letting a search adapt to a user's selection.",
+    notes: "" },
+  { name: "UI Preference", domain: "Visualization &amp; UI", type: "Knowledge Object", scope: "Per-user",
+    config: "ui-prefs.conf",
+    def: "Per-user, per-view preferences -- such as the last-selected option on a dashboard input -- persisted between sessions.",
+    notes: "" },
+
+  // ---------- Data Ingestion & Parsing ----------
+  { name: "Index", domain: "Data Ingestion &amp; Parsing", type: "Platform Object", scope: "Deployment-level",
+    config: "indexes.conf",
+    def: "A named, physically separate repository of indexed event data with its own retention, storage-path and access-control settings.",
+    notes: "" },
+  { name: "Data Input", domain: "Data Ingestion &amp; Parsing", type: "Platform Object", scope: "Instance-level",
+    config: "inputs.conf",
+    def: "A configured source of raw data for Splunk to collect -- file/directory monitor, network (TCP/UDP), scripted, Windows-specific, or HTTP Event Collector.",
+    notes: "" },
+  { name: "HTTP Event Collector (HEC) Token", domain: "Data Ingestion &amp; Parsing", type: "Platform Object", scope: "Instance-level",
+    config: "inputs.conf ([http://<token name>] stanza)",
+    def: "An authenticated token/endpoint pair letting applications push data directly to Splunk over HTTP(S) without a forwarder.",
+    notes: "" },
+  { name: "Modular Input", domain: "Data Ingestion &amp; Parsing", type: "Platform Object", scope: "Instance-level (defined by an app)",
+    config: "inputs.conf.spec (schema) + inputs.conf (instances)",
+    def: "A custom input type, implemented as a script following Splunk's modular input contract and shipped inside an app/add-on, extending what inputs.conf can represent beyond the built-in types.",
+    notes: "" },
+  { name: "Props Stanza", domain: "Data Ingestion &amp; Parsing", type: "Platform Object", scope: "Instance-level",
+    config: "props.conf",
+    def: "Per-sourcetype/source/host parsing configuration governing line breaking (LINE_BREAKER, SHOULD_LINEMERGE), timestamp recognition (TIME_FORMAT, MAX_TIMESTAMP_LOOKAHEAD), truncation (TRUNCATE), and character encoding (CHARSET).",
+    notes: "" },
+  { name: "Transforms Stanza", domain: "Data Ingestion &amp; Parsing", type: "Platform Object", scope: "Instance-level",
+    config: "transforms.conf",
+    def: "Regex-driven rules referenced from props.conf for field extraction, event/index routing, and index-time field writes.",
+    notes: "" },
+  { name: "Ingest-Time Eval", domain: "Data Ingestion &amp; Parsing", type: "Platform Object", scope: "Instance-level",
+    config: "props.conf / transforms.conf (INGEST_EVAL-*)",
+    def: "An eval expression run at the Ingest Processor or indexer layer before an event is written to disk -- the modern alternative to a hand-rolled WRITE_META regex for computed or conditional index-time fields.",
+    notes: "" },
+  { name: "Ingest Actions Rule", domain: "Data Ingestion &amp; Parsing", type: "Platform Object", scope: "Instance-level",
+    config: "GUI-managed (built on props.conf/transforms.conf underneath)",
+    def: "A point-and-click rule for masking, filtering or routing data before it's indexed, presented as a guided UI over the same props/transforms mechanisms.",
+    notes: "" },
+  { name: "SEDCMD", domain: "Data Ingestion &amp; Parsing", type: "Platform Object", scope: "Instance-level",
+    config: "props.conf (SEDCMD-<class>)",
+    def: "A sed-style find/replace applied to raw event text at index time -- most commonly used to mask sensitive data before it's ever written to disk.",
+    notes: "" },
+  { name: "Event Breaker", domain: "Data Ingestion &amp; Parsing", type: "Platform Object", scope: "Instance-level (Universal Forwarder only)",
+    config: "props.conf (EVENT_BREAKER, EVENT_BREAKER_ENABLE)",
+    def: "Universal Forwarder-only line-breaking rule used by the ChunkedLBProcessor to split a stream into events before sending it onward.",
+    notes: "" },
+
+  // ---------- Access Control & Identity ----------
+  { name: "Role", domain: "Access Control &amp; Identity", type: "Platform Object", scope: "Deployment-level",
+    config: "authorize.conf",
+    def: "A named bundle of capabilities, index access (srchIndexesAllowed/Default) and search limits, assigned to one or more users.",
+    notes: "Splunk ships four predefined roles (admin, power, user, can_delete-capable); custom roles should importRoles from one of them rather than being built from scratch." },
+  { name: "Capability", domain: "Access Control &amp; Identity", type: "Platform Object", scope: "Deployment-level",
+    config: "authorize.conf (granted per role), default.meta (declared by an app)",
+    def: "An individual, additive-only permission bit (e.g. edit_user, admin_all_objects, rtsearch) granted to a role -- there is no explicit deny, so a user's effective permissions are the union of every role they hold.",
+    notes: "" },
+  { name: "User", domain: "Access Control &amp; Identity", type: "Platform Object", scope: "Deployment-level",
+    config: "Internal user store, or externally via authentication.conf",
+    def: "An individual account assigned one or more roles, authenticated natively, via LDAP, or via SAML single sign-on.",
+    notes: "" },
+  { name: "Authentication Strategy", domain: "Access Control &amp; Identity", type: "Platform Object", scope: "Deployment-level",
+    config: "authentication.conf",
+    def: "Configuration for how users prove identity and receive roles -- native Splunk auth, an LDAP strategy with group-to-role mapping, or a SAML identity-provider integration.",
+    notes: "" },
+  { name: "Object Permissions (ACL)", domain: "Access Control &amp; Identity", type: "Platform Object", scope: "Per-object (private / app / global)",
+    config: "local.meta, default.meta",
+    def: "Read/write access-control metadata for a specific knowledge object, plus its sharing level (private to the owner, shared within an app, or global across the whole instance).",
+    notes: "" },
+  { name: "Stored Credential", domain: "Access Control &amp; Identity", type: "Platform Object", scope: "Instance-level",
+    config: "passwords.conf",
+    def: "An encrypted secret (e.g. a scripted-input password, an alert-action API key) stored via Splunk's credential-storage endpoint; the file is auto-managed and not meant to be hand-edited in cleartext.",
+    notes: "" },
+
+  // ---------- Distributed Deployment & Infrastructure ----------
+  { name: "Splunk Instance", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Instance-level",
+    config: "server.conf",
+    def: "A single running splunkd process -- the base unit every other platform role (indexer, search head, forwarder) is layered on top of.",
+    notes: "" },
+  { name: "Indexer", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Instance-level (role)",
+    config: "server.conf, indexes.conf",
+    def: "An instance responsible for parsing, indexing and storing event data, and for executing the data-local portion of a distributed search.",
+    notes: "" },
+  { name: "Search Head", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Instance-level (role)",
+    config: "server.conf, distsearch.conf",
+    def: "An instance responsible for running searches (fanning them out to indexers), rendering results, and hosting most knowledge objects users interact with directly.",
+    notes: "" },
+  { name: "Search Head Cluster (SHC)", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level",
+    config: "server.conf ([shclustering])",
+    def: "A set of search heads sharing configuration, scheduler load and search artifacts, presenting a single logical search tier with high availability.",
+    notes: "" },
+  { name: "SHC Deployer", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level",
+    config: "server.conf, shcluster/apps bundle",
+    def: "A dedicated instance that pushes app/configuration bundles out to every member of a Search Head Cluster, keeping them in sync.",
+    notes: "" },
+  { name: "Indexer Cluster", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level",
+    config: "server.conf ([clustering])",
+    def: "A set of indexers providing replicated, highly available storage -- data is copied across peers per the configured Replication Factor and made searchable per the Search Factor.",
+    notes: "" },
+  { name: "Cluster Manager (Master)", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level (role)",
+    config: "server.conf ([clustering] mode=master/manager)",
+    def: "The instance that coordinates an indexer cluster -- tracking bucket replication status, enforcing replication/search factors, and managing peer membership.",
+    notes: "" },
+  { name: "Universal Forwarder (UF)", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Instance-level (role)",
+    config: "inputs.conf, outputs.conf",
+    def: "A lightweight, forwarding-only Splunk agent installed on source systems to collect and forward data onward, without full indexing/search capability.",
+    notes: "" },
+  { name: "Heavy Forwarder (HF)", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Instance-level (role)",
+    config: "inputs.conf, outputs.conf, props.conf, transforms.conf",
+    def: "A full Splunk instance used as an intermediary to parse, filter or route data before it reaches an indexer -- unlike a UF, it can apply props/transforms logic and index-time extractions.",
+    notes: "" },
+  { name: "Deployment Server", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level",
+    config: "serverclass.conf",
+    def: "Pushes configuration bundles (\"deployment apps\") out to a fleet of forwarders/deployment clients based on Server Class membership.",
+    notes: "" },
+  { name: "Server Class", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level",
+    config: "serverclass.conf",
+    def: "A named group of deployment clients (matched by hostname, IP, or a client-set app) that receives a specific set of deployment apps.",
+    notes: "" },
+  { name: "Deployment App", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level",
+    config: "$SPLUNK_HOME/etc/deployment-apps/<app>/",
+    def: "An app bundle managed by a deployment server and pushed to the forwarders in a matching Server Class -- typically inputs.conf plus a Technology Add-on's parsing configuration.",
+    notes: "" },
+  { name: "License Manager (Master)", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level",
+    config: "server.conf ([license])",
+    def: "Tracks daily license-volume usage across every indexer in a license group and enforces the configured license pools.",
+    notes: "" },
+  { name: "License Pool / Stack", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level",
+    config: "Managed via the License Manager",
+    def: "A named allocation of license volume assigned to a specific set of indexers, letting one license be subdivided across environments or business units.",
+    notes: "" },
+  { name: "Distributed Search Peer", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level",
+    config: "distsearch.conf",
+    def: "A search-time-only relationship where a search head registers an indexer (or another search head) as a peer to fan searches out to.",
+    notes: "" },
+  { name: "Monitoring Console", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level (built-in app)",
+    config: "Built-in app; distsearch.conf for peer topology",
+    def: "Splunk's built-in health-monitoring app for a distributed deployment -- indexing performance, resource usage, search-scheduler activity, and per-role dashboards.",
+    notes: "" },
+  { name: "Ingest / Edge Processor", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level (Splunk Cloud construct)",
+    config: "Managed via Splunk Cloud/federated pipeline configuration, not classic props.conf/transforms.conf",
+    def: "A newer, pipeline-based construct for transforming, filtering or routing data before it reaches Splunk Cloud indexing -- a cloud-native alternative to Heavy Forwarder-based pre-processing.",
+    notes: "" },
+
+  // ---------- Storage & Retention ----------
+  { name: "Bucket", domain: "Storage &amp; Retention", type: "Platform Object", scope: "Instance-level",
+    config: "Filesystem, governed by indexes.conf",
+    def: "The physical on-disk unit of indexed data at a given lifecycle stage -- hot (writable), warm, cold, frozen, or thawed.",
+    notes: "" },
+  { name: "Bucket Lifecycle Settings", domain: "Storage &amp; Retention", type: "Platform Object", scope: "Deployment-level",
+    config: "indexes.conf (maxHotSpanSecs, maxDataSize, maxWarmDBCount, frozenTimePeriodInSecs, maxTotalDataSizeMB)",
+    def: "The settings that mechanically enforce an index's retention policy by governing when a bucket ages from one stage to the next.",
+    notes: "" },
+  { name: "Volume", domain: "Storage &amp; Retention", type: "Platform Object", scope: "Deployment-level",
+    config: "indexes.conf ([volume:<name>])",
+    def: "A named storage-path allocation shared across multiple indexes, letting several indexes draw from (and be capped by) one pool of disk space.",
+    notes: "" },
+  { name: "SmartStore Remote Storage", domain: "Storage &amp; Retention", type: "Platform Object", scope: "Deployment-level",
+    config: "indexes.conf ([volume:<name>] with a remote path/storageType)",
+    def: "S3-compatible remote object storage backing an index's searchable buckets, with only a local cache kept on indexer disk -- decouples storage capacity from indexer compute.",
+    notes: "" },
+  { name: "Archive Location", domain: "Storage &amp; Retention", type: "Platform Object", scope: "Deployment-level",
+    config: "indexes.conf (coldToFrozenDir, coldToFrozenScript)",
+    def: "A configured destination bucket data is moved to when it freezes, instead of being permanently deleted -- absent this setting, freezing means deletion.",
+    notes: "" },
+
+  // ---------- Apps & Packaging ----------
+  { name: "App", domain: "Apps &amp; Packaging", type: "Hybrid (Knowledge + Platform)", scope: "N/A (the namespace itself)",
+    config: "app.conf",
+    def: "The top-level packaging and namespace unit that bundles knowledge objects, configuration files and UI assets, and defines their default visibility and metadata.",
+    notes: "" },
+  { name: "Add-on (TA)", domain: "Apps &amp; Packaging", type: "Hybrid (Knowledge + Platform)", scope: "N/A",
+    config: "app.conf (Splunkbase naming/packaging convention, not a distinct mechanism)",
+    def: "An app focused on data collection and normalisation (inputs, props/transforms, CIM mapping) rather than end-user UI -- a Splunkbase packaging convention layered on the same App object.",
+    notes: "" },
+  { name: "App Configuration", domain: "Apps &amp; Packaging", type: "Platform Object", scope: "App-scoped",
+    config: "app.conf",
+    def: "Controls an app's metadata (label, version, author), visibility (is_visible), and launcher behaviour.",
+    notes: "" },
+  { name: "Default/Local Metadata", domain: "Apps &amp; Packaging", type: "Platform Object", scope: "App-scoped",
+    config: "default.meta, local.meta",
+    def: "Per-app files declaring default sharing and permissions for every knowledge object inside that app, and which capabilities/roles the app itself exposes.",
+    notes: "" },
+];
+
+let selectedId = null;
+
+function initFilters() {
+  const domainNav = document.getElementById("domainNav");
+  domainNav.innerHTML = ['<button data-domain="" class="active">All domains</button>']
+    .concat(DOMAINS.map(d => `<button data-domain="${d}">${d}</button>`)).join("");
+  domainNav.addEventListener("click", e => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    domainNav.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentDomain = btn.getAttribute("data-domain");
+    render();
+  });
+
+  const typeSel = document.getElementById("typeFilter");
+  const types = [...new Set(OBJECTS.map(o => o.type))].sort();
+  types.forEach(t => {
+    const opt = document.createElement("option");
+    opt.value = t; opt.textContent = t;
+    typeSel.appendChild(opt);
+  });
+
+  const scopeSel = document.getElementById("scopeFilter");
+  const scopes = [...new Set(OBJECTS.map(o => o.scope))].sort();
+  scopes.forEach(s => {
+    const opt = document.createElement("option");
+    opt.value = s; opt.textContent = s;
+    scopeSel.appendChild(opt);
+  });
+}
+
+let currentDomain = "";
+
+function pillClass(type) {
+  if (type === "Knowledge Object") return "pill-knowledge";
+  if (type === "Platform Object") return "pill-platform";
+  return "pill-hybrid";
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function getVisible() {
+  const q = document.getElementById("searchBox").value.trim().toLowerCase();
+  const typeFilter = document.getElementById("typeFilter").value;
+  const scopeFilter = document.getElementById("scopeFilter").value;
+  return OBJECTS.filter(o => {
+    if (currentDomain && o.domain !== currentDomain) return false;
+    if (typeFilter && o.type !== typeFilter) return false;
+    if (scopeFilter && o.scope !== scopeFilter) return false;
+    if (!q) return true;
+    const haystack = `${o.name} ${o.domain} ${o.type} ${o.scope} ${o.config} ${o.def} ${o.notes}`.toLowerCase();
+    return haystack.includes(q);
+  });
+}
+
+function renderStats(visible) {
+  const statsBar = document.getElementById("statsBar");
+  const knowledgeCount = OBJECTS.filter(o => o.type === "Knowledge Object").length;
+  const platformCount = OBJECTS.filter(o => o.type === "Platform Object").length;
+  const hybridCount = OBJECTS.filter(o => o.type === "Hybrid (Knowledge + Platform)").length;
+  statsBar.innerHTML = `
+    <div class="stat"><strong>${OBJECTS.length}</strong>total objects</div>
+    <div class="stat"><strong>${visible.length}</strong>visible</div>
+    <div class="stat"><strong>${DOMAINS.length}</strong>domains</div>
+    <div class="stat"><strong>${knowledgeCount}</strong>knowledge objects</div>
+    <div class="stat"><strong>${platformCount}</strong>platform objects</div>
+    <div class="stat"><strong>${hybridCount}</strong>hybrid</div>
+  `;
+}
+
+function render() {
+  const visible = getVisible();
+  renderStats(visible);
+  const tbody = document.getElementById("tableBody");
+  if (!visible.length) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="5">No objects match the current filters.</td></tr>`;
+  } else {
+    tbody.innerHTML = visible.map(o => `
+      <tr data-id="${escapeHtml(o.name)}" class="${selectedId === o.name ? 'selected' : ''}">
+        <td class="obj-name">${escapeHtml(o.name)}</td>
+        <td>${o.domain}</td>
+        <td><span class="pill ${pillClass(o.type)}">${escapeHtml(o.type)}</span></td>
+        <td>${escapeHtml(o.scope)}</td>
+        <td class="config-file">${escapeHtml(o.config)}</td>
+      </tr>
+    `).join("");
+  }
+  tbody.querySelectorAll("tr[data-id]").forEach(tr => {
+    tr.addEventListener("click", () => {
+      selectedId = tr.getAttribute("data-id");
+      render();
+      renderDetail(OBJECTS.find(o => o.name === selectedId));
+    });
+  });
+}
+
+function renderDetail(obj) {
+  const panel = document.getElementById("detailPanel");
+  if (!obj) {
+    panel.innerHTML = `<p class="placeholder">Select an object from the table to see its full definition, notes and config-file details.</p>`;
+    return;
+  }
+  panel.innerHTML = `
+    <div class="domain-label">${obj.domain}</div>
+    <h2>${escapeHtml(obj.name)}</h2>
+    <div style="margin-bottom:16px;"><span class="pill ${pillClass(obj.type)}">${escapeHtml(obj.type)}</span></div>
+    <div class="detail-row"><div class="label">Scope</div><div class="value">${escapeHtml(obj.scope)}</div></div>
+    <div class="detail-row"><div class="label">Config file / location</div><div class="value mono">${escapeHtml(obj.config)}</div></div>
+    <div class="detail-row"><div class="label">Definition</div><div class="value">${escapeHtml(obj.def)}</div></div>
+    ${obj.notes ? `<div class="detail-row"><div class="label">Notes</div><div class="value">${escapeHtml(obj.notes)}</div></div>` : ""}
+  `;
+}
+
+function exportCsv() {
+  const visible = getVisible();
+  const cols = ["name", "domain", "type", "scope", "config", "def", "notes"];
+  const csvValue = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
+  const rows = [cols.join(",")].concat(visible.map(o => cols.map(c => csvValue(o[c])).join(",")));
+  const blob = new Blob([rows.join("\n")], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "splunk-object-taxonomy.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById("searchBox").addEventListener("input", render);
+document.getElementById("typeFilter").addEventListener("change", render);
+document.getElementById("scopeFilter").addEventListener("change", render);
+document.getElementById("resetBtn").addEventListener("click", () => {
+  document.getElementById("searchBox").value = "";
+  document.getElementById("typeFilter").value = "";
+  document.getElementById("scopeFilter").value = "";
+  currentDomain = "";
+  document.querySelectorAll(".domain-nav button").forEach(b => b.classList.remove("active"));
+  document.querySelector('.domain-nav button[data-domain=""]').classList.add("active");
+  render();
+});
+document.getElementById("exportBtn").addEventListener("click", exportCsv);
+
+initFilters();
+render();
+</script>
+</body>
+</html>
