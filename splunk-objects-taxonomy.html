@@ -151,6 +151,7 @@ tbody tr.selected { background: #dbeafe; }
 .pill-knowledge { background: #dcfce7; color: #166534; }
 .pill-platform { background: #fef3c7; color: #92400e; }
 .pill-hybrid { background: #e0e7ff; color: #3730a3; }
+.pill-external { background: #fee2e2; color: #991b1b; }
 .config-file { font-family: var(--mono); font-size: 12px; color: var(--accent); }
 .empty-row td { text-align: center; color: var(--muted); padding: 30px; }
 
@@ -214,7 +215,7 @@ footer a { color: var(--accent); }
   <div class="inner">
     <p class="eyebrow">Reference / Splunk platform</p>
     <h1>Splunk Object Taxonomy</h1>
-    <p>Every kind of object that exists inside a Splunk deployment — knowledge objects created inside apps (reports, alerts, macros, field extractions, lookups...) and platform/admin objects that define the deployment itself (indexes, roles, clusters, forwarders...) — organised into 9 domains with config file, permission scope and definition for each.</p>
+    <p>Every kind of object that exists inside a Splunk deployment — knowledge objects created inside apps (reports, alerts, macros, field extractions, lookups...) and platform/admin objects that define the deployment itself (indexes, roles, clusters, forwarders...) — plus SOAR and UEBA, adjacent products that integrate with Splunk rather than living inside its own config-file architecture. Organised into 10 domains with config file, permission scope and definition for each.</p>
   </div>
 </header>
 
@@ -274,6 +275,7 @@ const DOMAINS = [
   "Distributed Deployment &amp; Infrastructure",
   "Storage &amp; Retention",
   "Apps &amp; Packaging",
+  "Splunk Security Suite (Adjacent Products)",
 ];
 
 const OBJECTS = [
@@ -386,6 +388,14 @@ const OBJECTS = [
     config: "indexes.conf (the index itself), savedsearches.conf (the collect/sistats search)",
     def: "An ordinary index populated on a schedule by a saved search using the collect or sistats commands, storing pre-aggregated results for fast retrieval later instead of re-running an expensive search over raw data.",
     notes: "" },
+  { name: "Notable Event", domain: "Alerting &amp; Automation", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
+    config: "Splunk Enterprise Security (notable summary index + KV Store-backed status/urgency)",
+    def: "The record created when a Correlation Search fires in Enterprise Security, tracked through a status/disposition workflow (New -> In Progress -> Resolved/Closed) in the Incident Review dashboard.",
+    notes: "Distinct from the Correlation Search that created it -- one search definition can generate many notable events over time." },
+  { name: "Risk Object / Risk Rule", domain: "Alerting &amp; Automation", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
+    config: "savedsearches.conf + alert_actions.conf (Risk Analysis adaptive response action)",
+    def: "A correlation search configured with the Risk Analysis adaptive response action, which adds a weighted Risk Event to a risk index against a specific object (user, system) instead of -- or alongside -- firing a notable event directly.",
+    notes: "Risk-Based Alerting sums these events into a per-object Risk Score over time and can auto-generate a Risk Notable once a threshold is crossed -- catching slow, multi-signal attack patterns a single correlation search would miss." },
 
   // ---------- Visualization & UI ----------
   { name: "Dashboard (Classic SimpleXML)", domain: "Visualization &amp; UI", type: "Knowledge Object", scope: "Private / App / Global",
@@ -411,6 +421,14 @@ const OBJECTS = [
   { name: "UI Preference", domain: "Visualization &amp; UI", type: "Knowledge Object", scope: "Per-user",
     config: "ui-prefs.conf",
     def: "Per-user, per-view preferences -- such as the last-selected option on a dashboard input -- persisted between sessions.",
+    notes: "" },
+  { name: "Investigation", domain: "Visualization &amp; UI", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
+    config: "Splunk Enterprise Security (Investigation Workbench)",
+    def: "A case-management workspace in Enterprise Security's Investigation Workbench for collecting notable events, evidence, notes and a timeline under one working case.",
+    notes: "" },
+  { name: "Glass Table", domain: "Visualization &amp; UI", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
+    config: "Splunk Enterprise Security (custom dashboard-like object)",
+    def: "A free-form, drag-and-drop visual board in Enterprise Security combining static topology/architecture diagrams with live single-value and trend visualizations wired to specific searches.",
     notes: "" },
 
   // ---------- Data Ingestion & Parsing ----------
@@ -454,6 +472,10 @@ const OBJECTS = [
     config: "props.conf (EVENT_BREAKER, EVENT_BREAKER_ENABLE)",
     def: "Universal Forwarder-only line-breaking rule used by the ChunkedLBProcessor to split a stream into events before sending it onward.",
     notes: "" },
+  { name: "Ingest / Edge Processor", domain: "Data Ingestion &amp; Parsing", type: "Platform Object", scope: "Deployment-level (Splunk Cloud construct)",
+    config: "Managed via Splunk Cloud/federated pipeline configuration, not classic props.conf/transforms.conf",
+    def: "A newer, pipeline-based construct for transforming, filtering or routing data before it reaches Splunk Cloud indexing -- functionally the same job as Heavy Forwarder pre-processing or an INGEST_EVAL stanza, done via SPL2 pipelines configured in the Cloud UI/API instead of classic .conf files.",
+    notes: "" },
 
   // ---------- Access Control & Identity ----------
   { name: "Role", domain: "Access Control &amp; Identity", type: "Platform Object", scope: "Deployment-level",
@@ -479,6 +501,10 @@ const OBJECTS = [
   { name: "Stored Credential", domain: "Access Control &amp; Identity", type: "Platform Object", scope: "Instance-level",
     config: "passwords.conf",
     def: "An encrypted secret (e.g. a scripted-input password, an alert-action API key) stored via Splunk's credential-storage endpoint; the file is auto-managed and not meant to be hand-edited in cleartext.",
+    notes: "" },
+  { name: "Asset &amp; Identity Framework", domain: "Access Control &amp; Identity", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global (Splunk ES)",
+    config: "transforms.conf-backed lookups (e.g. asset_lookup_by_str, identity_lookup_expanded)",
+    def: "Enterprise Security's mechanism for enriching events with asset (device/system) and identity (user) context from CMDB/HR/inventory sources, powering asset- and identity-aware correlation searches and risk scoring.",
     notes: "" },
 
   // ---------- Distributed Deployment & Infrastructure ----------
@@ -521,7 +547,7 @@ const OBJECTS = [
   { name: "Deployment Server", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level",
     config: "serverclass.conf",
     def: "Pushes configuration bundles (\"deployment apps\") out to a fleet of forwarders/deployment clients based on Server Class membership.",
-    notes: "" },
+    notes: "An on-prem-centric concept: Splunk Cloud Platform customers generally don't run/manage their own Deployment Server the same way, since forwarder-facing endpoints and app distribution are handled differently in the cloud-managed control plane." },
   { name: "Server Class", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level",
     config: "serverclass.conf",
     def: "A named group of deployment clients (matched by hostname, IP, or a client-set app) that receives a specific set of deployment apps.",
@@ -545,10 +571,6 @@ const OBJECTS = [
   { name: "Monitoring Console", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level (built-in app)",
     config: "Built-in app; distsearch.conf for peer topology",
     def: "Splunk's built-in health-monitoring app for a distributed deployment -- indexing performance, resource usage, search-scheduler activity, and per-role dashboards.",
-    notes: "" },
-  { name: "Ingest / Edge Processor", domain: "Distributed Deployment &amp; Infrastructure", type: "Platform Object", scope: "Deployment-level (Splunk Cloud construct)",
-    config: "Managed via Splunk Cloud/federated pipeline configuration, not classic props.conf/transforms.conf",
-    def: "A newer, pipeline-based construct for transforming, filtering or routing data before it reaches Splunk Cloud indexing -- a cloud-native alternative to Heavy Forwarder-based pre-processing.",
     notes: "" },
 
   // ---------- Storage & Retention ----------
@@ -590,6 +612,44 @@ const OBJECTS = [
     config: "default.meta, local.meta",
     def: "Per-app files declaring default sharing and permissions for every knowledge object inside that app, and which capabilities/roles the app itself exposes.",
     notes: "" },
+
+  // ---------- Splunk Security Suite (Adjacent Products) ----------
+  // SOAR and UEBA are separate platforms with their own tech stack (SOAR: its
+  // own REST API and Postgres-backed data model; UEBA: its own analytics
+  // engine) -- they integrate WITH Splunk via a connector rather than being
+  // configured through Splunk's own .conf files, unlike every object above.
+  { name: "SOAR Playbook", domain: "Splunk Security Suite (Adjacent Products)", type: "External Platform Object", scope: "External platform -- integrates via connector",
+    config: "SOAR's own playbook editor (not a Splunk .conf file)",
+    def: "An automated, visually-editable workflow of actions in Splunk SOAR that orchestrates response steps (block an IP, disable a user, open a ticket) across integrated security tools.",
+    notes: "Triggered manually, on a schedule, or automatically from an Adaptive Response Action in Enterprise Security sending a notable/risk event to SOAR." },
+  { name: "SOAR Action", domain: "Splunk Security Suite (Adjacent Products)", type: "External Platform Object", scope: "External platform -- integrates via connector",
+    config: "SOAR App (connector) manifest",
+    def: "A single, atomic operation a SOAR App exposes (e.g. \"block IP\", \"get file reputation\", \"disable user\") that a playbook can call against an integrated security tool.",
+    notes: "" },
+  { name: "SOAR Artifact", domain: "Splunk Security Suite (Adjacent Products)", type: "External Platform Object", scope: "External platform -- integrates via connector",
+    config: "SOAR's internal data model",
+    def: "A discrete piece of evidence (an IP, hash, URL, email) attached to a Container, the unit SOAR playbooks actually operate on.",
+    notes: "" },
+  { name: "SOAR Container (Case/Event)", domain: "Splunk Security Suite (Adjacent Products)", type: "External Platform Object", scope: "External platform -- integrates via connector",
+    config: "SOAR's internal data model",
+    def: "SOAR's case/incident record -- the working unit that groups artifacts, playbook runs and analyst notes for one investigation, roughly analogous to an ES Investigation but native to SOAR.",
+    notes: "" },
+  { name: "SOAR App (Connector)", domain: "Splunk Security Suite (Adjacent Products)", type: "External Platform Object", scope: "External platform -- integrates via connector",
+    config: "Installed SOAR app package",
+    def: "An integration package (distinct from a Splunk app) that gives SOAR playbooks actions against a specific external tool -- firewall, EDR, ticketing system, identity provider, or Splunk itself.",
+    notes: "" },
+  { name: "UEBA Anomaly", domain: "Splunk Security Suite (Adjacent Products)", type: "External Platform Object", scope: "External platform -- integrates via connector",
+    config: "UEBA's own analytics engine (not a Splunk .conf file)",
+    def: "A single unexpected behaviour UEBA's machine-learning models detect for a user or entity -- e.g. an unusual login time, an atypical data-transfer volume -- scored individually rather than matched against a fixed rule.",
+    notes: "" },
+  { name: "UEBA Threat", domain: "Splunk Security Suite (Adjacent Products)", type: "External Platform Object", scope: "External platform -- integrates via connector",
+    config: "UEBA's own analytics engine",
+    def: "A correlated chain of multiple related Anomalies that UEBA groups into a single higher-confidence threat, the unit typically surfaced back into Splunk/ES for analyst review.",
+    notes: "" },
+  { name: "UEBA Entity Model", domain: "Splunk Security Suite (Adjacent Products)", type: "External Platform Object", scope: "External platform -- integrates via connector",
+    config: "UEBA's own analytics engine",
+    def: "The learned behavioural baseline UEBA builds per user/device/entity from historical activity, against which new activity is scored for anomalousness.",
+    notes: "" },
 ];
 
 let selectedId = null;
@@ -629,6 +689,7 @@ let currentDomain = "";
 function pillClass(type) {
   if (type === "Knowledge Object") return "pill-knowledge";
   if (type === "Platform Object") return "pill-platform";
+  if (type === "External Platform Object") return "pill-external";
   return "pill-hybrid";
 }
 
@@ -655,6 +716,7 @@ function renderStats(visible) {
   const knowledgeCount = OBJECTS.filter(o => o.type === "Knowledge Object").length;
   const platformCount = OBJECTS.filter(o => o.type === "Platform Object").length;
   const hybridCount = OBJECTS.filter(o => o.type === "Hybrid (Knowledge + Platform)").length;
+  const externalCount = OBJECTS.filter(o => o.type === "External Platform Object").length;
   statsBar.innerHTML = `
     <div class="stat"><strong>${OBJECTS.length}</strong>total objects</div>
     <div class="stat"><strong>${visible.length}</strong>visible</div>
@@ -662,6 +724,7 @@ function renderStats(visible) {
     <div class="stat"><strong>${knowledgeCount}</strong>knowledge objects</div>
     <div class="stat"><strong>${platformCount}</strong>platform objects</div>
     <div class="stat"><strong>${hybridCount}</strong>hybrid</div>
+    <div class="stat"><strong>${externalCount}</strong>external (SOAR/UEBA)</div>
   `;
 }
 
