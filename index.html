@@ -18365,6 +18365,21 @@ const SOT_OBJECTS = [
     def: "The set of trust relationships a node participates in -- HTTP Event Collector inputs, Splunk-to-Splunk input/output connections, and search peer relationships -- surfaced by the Topology sidecar for identity and trust introspection.",
     notes: "Available on all node types except universal forwarders; querying a remote node's trusted connections (via the {guid} variant) requires a License Manager node, which proxies the request.",
     deps: ["Splunk Instance"], feeds: [], sotCode: "SOT-08.07.02", instanceId: "TRUC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/stack-explainer/v1/trusted-connections" },
+{ name: "Workload Pool", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
+    config: "workload_pools.conf",
+    def: "A named CPU/memory resource group, backed by a Linux cgroup, that scheduled or ad-hoc searches, or ingest processes, can be assigned to for resource governance.",
+    notes: "Requires Linux cgroups; workloads/config/preflight-checks validates host support before workload management can be enabled.",
+    deps: [], feeds: ["Workload Rule"], sotCode: "SOT-11.03.02", instanceId: "WPOOL-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/workloads/pools" },
+{ name: "Workload Rule", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
+    config: "workload_rules.conf",
+    def: "A rule that grants a search or ingest process access to a workload pool and sets its scheduling priority, or an admission rule that gates whether a search is allowed to run at all.",
+    notes: "Covers both workload rules (pool assignment/priority) and admission rules (pre-execution gating) via the same endpoint.",
+    deps: ["Workload Pool"], feeds: [], sotCode: "SOT-11.03.03", instanceId: "WRULE-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/workloads/rules" },
+{ name: "Workload Category", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "Predefined; edited but not created or deleted via workloads/categories",
+    def: "One of the three fixed workload categories -- search, ingest, or misc -- used to classify which kind of process a workload rule or pool applies to.",
+    notes: "Categories themselves cannot be created or deleted, only edited (e.g. default pool assignment) and listed.",
+    deps: [], feeds: [], sotCode: "SOT-11.03.04", instanceId: "WCAT-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/workloads/categories" },
 ];
 
 const SOT_TREE = {
@@ -18673,6 +18688,9 @@ const SOT_TREE = {
     } },
     "SOT-11.03": { label: "Workload Management", desc: "Resource governance across concurrent work.", subclasses: {
       "SOT-11.03.01": "Search Concurrency Settings",
+      "SOT-11.03.02": "Workload Pool",
+      "SOT-11.03.03": "Workload Rule",
+      "SOT-11.03.04": "Workload Category",
     } },
     "SOT-11.04": { label: "Health & Monitoring", desc: "Built-in operational health surfaces.", subclasses: {
       "SOT-11.04.01": "System Message",
