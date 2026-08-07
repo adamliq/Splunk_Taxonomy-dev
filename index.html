@@ -10385,8 +10385,33 @@ E. Assumptions and unresolved inputs</pre>
     <span class="stat"><strong id="statHealthChecks">&ndash;</strong> reusable health checks</span>
     <span class="stat">Taxonomy explorer opens fully collapsed</span>
   </div>
+  <div class="view-tabs" role="tablist">
+    <button type="button" id="taxShowTreeView" class="active" role="tab" aria-selected="true" aria-controls="taxTreeViewPanel">Tree Explorer</button>
+    <button type="button" id="taxShowTableView" role="tab" aria-selected="false" aria-controls="taxTableViewPanel">Table View</button>
+  </div>
   <div class="layout">
-    <section id="tree"></section>
+    <div>
+      <section id="taxTreeViewPanel" class="view-panel active" role="tabpanel" aria-labelledby="taxShowTreeView">
+        <section id="tree"></section>
+      </section>
+      <section id="taxTableViewPanel" class="view-panel" role="tabpanel" aria-labelledby="taxShowTableView">
+        <p class="scroll-hint">Click a row to open its full definition and notes in the panel on the right.</p>
+        <div class="table-shell" tabindex="0" aria-label="Scrollable taxonomy table">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Term</th>
+                <th scope="col">Domain</th>
+                <th scope="col">Entity type</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody id="taxTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
     <aside id="detail" class="detail-panel"></aside>
   </div>
   </section>
@@ -12093,10 +12118,12 @@ searchElement.addEventListener("input", event => {
   state.query = event.target.value;
   if (state.query) nodes.forEach(item => state.expanded.add(item.code));
   renderTree();
+  renderTaxTable();
 });
 domainElement.addEventListener("change", event => {
   state.domain = event.target.value;
   renderTree();
+  renderTaxTable();
 });
 document.getElementById("expandAll").addEventListener("click", () => {
   state.expanded = new Set(nodes.map(item => item.code));
@@ -12107,6 +12134,78 @@ document.getElementById("collapseAll").addEventListener("click", () => {
   renderTree();
 });
 document.getElementById("exportTaxonomy").addEventListener("click", exportVisibleTaxonomy);
+
+/* ---------------------------------------------------------------------- *
+ * Taxonomy explorer -- Table View (flat list of taxonomy terms, mirrors
+ * the Tree Explorer / Table View pattern used on the Splunk Taxonomy
+ * (SOT) tab). Shares the same #detail panel and selection state as the
+ * tree, so a row click keeps both views in sync.
+ * ---------------------------------------------------------------------- */
+let taxActiveView = "tree";
+
+function getVisibleTaxonomyRows() {
+  const query = state.query.trim().toLowerCase();
+  return nodes.filter(node => {
+    if (node.nodeType !== "taxonomy") return false;
+    if (state.domain && node.domain !== state.domain) return false;
+    if (query && !searchableText(node).includes(query)) return false;
+    return true;
+  }).sort((a, b) => {
+    const aKey = a.displayCode || a.code;
+    const bKey = b.displayCode || b.code;
+    return aKey.localeCompare(bKey, undefined, { numeric: true });
+  });
+}
+
+function selectTaxNodeFromTable(code) {
+  const target = nodeIndex.get(code);
+  if (!target) return;
+  state.selectedCode = code;
+  let current = target;
+  const seen = new Set();
+  while (current && current.parentCode && !seen.has(current.code)) {
+    seen.add(current.code);
+    state.expanded.add(current.parentCode);
+    current = nodeIndex.get(current.parentCode);
+  }
+  renderDetail();
+  renderTree();
+  renderTaxTable();
+}
+
+function renderTaxTable() {
+  const visible = getVisibleTaxonomyRows();
+  const tbody = document.getElementById("taxTableBody");
+  if (!visible.length) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="5">No taxonomy terms match the current filters.</td></tr>`;
+  } else {
+    tbody.innerHTML = visible.map(node => `
+      <tr data-code="${escapeHtml(node.code)}" class="${state.selectedCode === node.code ? 'selected' : ''}">
+        <td class="config-file">${escapeHtml(node.code)}</td>
+        <td class="obj-name">${escapeHtml(node.term)}</td>
+        <td>${escapeHtml(node.domain)}</td>
+        <td>${escapeHtml(node.entityType)}</td>
+        <td>${escapeHtml(node.status)}</td>
+      </tr>
+    `).join("");
+  }
+  tbody.querySelectorAll("tr[data-code]").forEach(tr => {
+    tr.addEventListener("click", () => selectTaxNodeFromTable(tr.getAttribute("data-code")));
+  });
+}
+
+function setActiveTaxView(view) {
+  taxActiveView = view;
+  document.getElementById("taxShowTreeView").classList.toggle("active", view === "tree");
+  document.getElementById("taxShowTreeView").setAttribute("aria-selected", view === "tree" ? "true" : "false");
+  document.getElementById("taxShowTableView").classList.toggle("active", view === "table");
+  document.getElementById("taxShowTableView").setAttribute("aria-selected", view === "table" ? "true" : "false");
+  document.getElementById("taxTreeViewPanel").classList.toggle("active", view === "tree");
+  document.getElementById("taxTableViewPanel").classList.toggle("active", view === "table");
+  if (view === "table") renderTaxTable();
+}
+document.getElementById("taxShowTreeView").addEventListener("click", () => setActiveTaxView("tree"));
+document.getElementById("taxShowTableView").addEventListener("click", () => setActiveTaxView("table"));
 
 
 const namingPatterns = {
@@ -13701,6 +13800,7 @@ function openAssuranceTaxonomyRecord(displayCode, parentCode, ancestors) {
   renderTree();
   renderDetail();
   setActivePage("taxonomy");
+  setActiveTaxView("tree");
   setTimeout(() => document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
 }
 
@@ -14196,6 +14296,7 @@ function openCatalogueTaxonomyRecord(sourceId) {
   renderTree();
   renderDetail();
   setActivePage("taxonomy");
+  setActiveTaxView("tree");
   setTimeout(() => document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
 }
 
@@ -14690,6 +14791,7 @@ function openViabilityTaxonomyRecord(id) {
   renderTree();
   renderDetail();
   setActivePage("taxonomy");
+  setActiveTaxView("tree");
   setTimeout(() => document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
 }
 function exportVisibleViability(event) {
@@ -16407,6 +16509,7 @@ function openHealthCheckInTaxonomy(testId) {
   renderTree();
   renderDetail();
   setActivePage("taxonomy");
+  setActiveTaxView("tree");
   setTimeout(() => document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
 }
 
@@ -16439,6 +16542,7 @@ function openLoggingPatternInTaxonomy(patternId) {
   renderTree();
   renderDetail();
   setActivePage("taxonomy");
+  setActiveTaxView("tree");
   setTimeout(() => document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
 }
 
@@ -16609,6 +16713,7 @@ document.querySelectorAll("[data-assessment-taxonomy]").forEach(button => {
       renderDetail();
     }
     setActivePage("taxonomy");
+    setActiveTaxView("tree");
     setTimeout(() => {
       const selectedCard = document.querySelector(".node-card.selected");
       if (selectedCard) selectedCard.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -16793,6 +16898,7 @@ document.querySelectorAll("[data-taxonomy-target]").forEach(button => button.add
     current = nodes.find(item => item.code === current.parentCode);
   }
   setActivePage("taxonomy");
+  setActiveTaxView("tree");
   renderTree();
   renderDetail();
   requestAnimationFrame(() => {
@@ -17250,39 +17356,39 @@ const SOT_OBJECTS = [
     config: "savedsearches.conf; REST endpoint saved/searches/{name}",
     def: "A saved search without a trigger condition or alert action -- a named, reusable SPL query that can be run on demand, scheduled, or embedded in a dashboard panel.",
     notes: "Every Alert (below) is also stored in savedsearches.conf; the distinction is whether alert.* / trigger-condition settings are present on the stanza.",
-    deps: ["Federated Index", "Field Extraction (search-time)", "Index", "Lookup Definition", "Search Head", "Search Macro"], feeds: ["Alert", "Dashboard Datasource"], sotCode: "SOT-01.02.01", instanceId: "REPO-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: ["Federated Index", "Field Extraction (search-time)", "Index", "Lookup Definition", "Search Head", "Search Macro"], feeds: ["Alert", "Dashboard Datasource"], sotCode: "SOT-01.02.01", instanceId: "REPO-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/servicesNS/-/-/saved/searches/{name}" },
   // ---------- SOT-03 — Detection, Alerting & Response Objects ----------
 { name: "Alert", domain: "SOT-03 — Detection, Alerting & Response Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "savedsearches.conf, alert_actions.conf; REST endpoint saved/searches/{name} (fired alerts: alerts/fired_alerts)",
     def: "A scheduled or real-time saved search with a trigger condition (per-result, number of results, custom) and one or more alert actions fired when it triggers.",
     notes: "alert.suppress settings on the stanza control throttling so the same condition doesn't re-fire repeatedly.",
-    deps: ["Search Head"], feeds: [], sotCode: "SOT-03.01.01", instanceId: "ALER-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: ["Search Head"], feeds: [], sotCode: "SOT-03.01.01", instanceId: "ALER-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/servicesNS/-/-/saved/searches/{name}" },
   // ---------- SOT-01 — Search & Analytical Objects ----------
 { name: "Data Model", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "datamodels.conf; REST endpoint datamodel/model/{name}",
     def: "A hierarchical dataset definition (objects, constraints, calculated/inherited fields) used by Pivot and by the Common Information Model (CIM) to give differently-formatted sourcetypes a shared vocabulary.",
     notes: "Backs tstats-accelerated searches across the whole CIM add-on catalogue (Authentication, Web, Network Traffic, etc.).",
-    deps: ["CIM (Common Information Model)", "Event Type", "Field Extraction (search-time)", "Lookup Definition", "Search Head"], feeds: ["Dashboard (Classic SimpleXML)", "Dashboard Datasource"], sotCode: "SOT-01.04.01", instanceId: "DM-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: ["CIM (Common Information Model)", "Event Type", "Field Extraction (search-time)", "Lookup Definition", "Search Head"], feeds: ["Dashboard (Classic SimpleXML)", "Dashboard Datasource"], sotCode: "SOT-01.04.01", instanceId: "DM-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/datamodel/model/{name}" },
 { name: "Data Model Acceleration", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "datamodels.conf (acceleration stanza); set via the acceleration.* params on the same REST endpoint as Data Model (datamodel/model/{name})",
     def: "Pre-built tsidx summaries of a data model's data over a configured time range, making tstats ... from datamodel= searches dramatically faster than an equivalent raw search.",
     notes: "Consumes indexer storage and CPU on a schedule -- treat as a capacity-planning decision, not a free toggle.",
-    deps: [], feeds: [], sotCode: "SOT-01.04.03", instanceId: "DMA-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-01.04.03", instanceId: "DMA-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/admin/summarization/tstats:DM_{app}_{data_model_id}" },
 { name: "Pivot", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "(built on datamodels.conf; saved as a Report)",
     def: "A drag-and-drop report builder that runs directly against a Data Model without requiring the author to write SPL by hand.",
     notes: "Once saved, a Pivot is stored as an ordinary Report in savedsearches.conf.",
-    deps: [], feeds: [], sotCode: "SOT-01.05.01", instanceId: "PIVO-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-01.05.01", instanceId: "PIVO-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/datamodel/pivot/{name}" },
 { name: "Search Macro", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "macros.conf; no dedicated REST handler -- managed via the generic config-file endpoint configs/conf-macros/{name}",
     def: "A reusable, named snippet of SPL, optionally parameterised with arguments, invoked in a search with backtick syntax (`my_macro(arg1)`).",
     notes: "A macro can itself contain a full pipeline, not just a fragment -- useful for standardising a whole investigation pattern.",
-    deps: [], feeds: ["Alert", "Report"], sotCode: "SOT-01.03.01", instanceId: "SM-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: [], feeds: ["Alert", "Report"], sotCode: "SOT-01.03.01", instanceId: "SM-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/servicesNS/-/-/admin/macros/{name}" },
 { name: "Time Range Preset", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "times.conf; no dedicated REST handler -- managed via the generic config-file endpoint configs/conf-times/{name}",
     def: "A named, reusable custom time range (beyond the built-in presets) that appears in the time-range picker.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-01.03.03", instanceId: "TRP-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-01.03.03", instanceId: "TRP-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/servicesNS/-/-/data/ui/times/{name}" },
 { name: "View State", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "viewstates.conf",
     def: "The saved state of an interactive view -- Pivot selections, drilldown filters -- so a user's configuration of a dashboard/report persists between visits.",
@@ -17292,7 +17398,7 @@ const SOT_OBJECTS = [
     config: "commands.conf; no dedicated REST handler -- managed via the generic config-file endpoint configs/conf-commands/{name}",
     def: "A custom SPL command implemented as a script (typically Python, via the Splunk SDK) and registered in commands.conf, extending SPL beyond its built-in command set.",
     notes: "Streaming, generating, reporting and event-generating command types each declare different execution-model constraints in the same stanza.",
-    deps: [], feeds: [], sotCode: "SOT-01.05.02", instanceId: "CSC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-01.05.02", instanceId: "CSC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/data/commands/{name}" },
 { name: "Transaction", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "N/A (ad hoc SPL command, not a saved knowledge object)",
     config: "N/A -- ad hoc via the transaction SPL command (grouping key + maxspan/maxpause); a saved Transaction Type (transactiontypes.conf) can predefine those same parameters under a name, managed via the generic config-file endpoint configs/conf-transactiontypes/{name}",
     def: "Groups related raw events into a single multi-line result based on a shared field value and a time constraint (maxspan/maxpause) -- e.g. every event in one user session or one order lifecycle.",
@@ -17303,57 +17409,57 @@ const SOT_OBJECTS = [
     config: "props.conf",
     def: "The classification assigned to an event at index time that determines its parsing rules (line breaking, timestamp extraction, default field extractions) and, at search time, its field-extraction/normalisation stanzas.",
     notes: "Straddles both categories: sourcetype selection is a platform/ingest decision, but its behaviour is entirely defined by knowledge-object-style props.conf/transforms.conf stanzas.",
-    deps: ["Indexer", "Search Head"], feeds: ["Field Extraction (search-time)"], sotCode: "SOT-02.01.01", instanceId: "SOUR-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["Indexer", "Search Head"], feeds: ["Field Extraction (search-time)"], sotCode: "SOT-02.01.01", instanceId: "SOUR-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/-/-/configs/conf-props/{name}" },
 { name: "Event Type", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "eventtypes.conf; REST endpoint saved/eventtypes/{name}",
     def: "A saved search expression that, when it matches an event, adds an eventtype field/value to that event at search time -- a way to classify events across sourcetypes without a stored physical field.",
     notes: "Unlike other saved searches, eventtypes are matched against every event in a search's results, not run independently.",
-    deps: ["Field Extraction (search-time)", "Lookup Definition"], feeds: ["Data Model", "Report", "Tag"], sotCode: "SOT-02.04.01", instanceId: "ET-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: ["Field Extraction (search-time)", "Lookup Definition"], feeds: ["Data Model", "Report", "Tag"], sotCode: "SOT-02.04.01", instanceId: "ET-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/saved/eventtypes/{name}" },
 { name: "Tag", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "tags.conf; REST endpoint search/tags/{tag} (also search/fields/{field}/tags)",
     def: "A label attached to a specific field=value pair (or an eventtype), letting you search tag=<name> across every differently-named field/value that shares the same real-world meaning.",
     notes: "The mechanism the CIM Add-on uses to mark events as belonging to a given CIM dataset, e.g. authentication=enabled.",
-    deps: ["Event Type", "Field Extraction (search-time)"], feeds: ["Data Model", "Report"], sotCode: "SOT-02.04.02", instanceId: "TAG-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: ["Event Type", "Field Extraction (search-time)"], feeds: ["Data Model", "Report"], sotCode: "SOT-02.04.02", instanceId: "TAG-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/search/tags/{tag_name}" },
 { name: "Field Extraction (search-time)", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "props.conf (EXTRACT-<class>), transforms.conf (REPORT-<class>); REST endpoint data/props/extractions/{name} (search-time) or data/transforms/extractions",
     def: "A regex rule that pulls a field out of raw event text at search time -- computed fresh on every search, cheap to add or fix retroactively.",
     notes: "EXTRACT-* is inline in props.conf; REPORT-* references a named transforms.conf stanza, useful when the same regex is reused across sourcetypes.",
-    deps: ["Search Head", "Source Type"], feeds: ["Calculated Field", "Field Alias", "Lookup Definition"], sotCode: "SOT-02.02.01", instanceId: "STFE-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: ["Search Head", "Source Type"], feeds: ["Calculated Field", "Field Alias", "Lookup Definition"], sotCode: "SOT-02.02.01", instanceId: "STFE-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/data/props/extractions/{name}" },
 { name: "Field Alias", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "props.conf (FIELDALIAS-<class>); REST endpoint data/props/fieldaliases/{name}",
     def: "Maps an already-extracted field to an additional name at search time (e.g. clientip AS src), the primary mechanism for CIM field normalisation.",
     notes: "Runs after field extraction and before calculated fields; one alias maps to exactly one source field.",
-    deps: ["Field Extraction (search-time)"], feeds: ["Calculated Field", "Lookup Definition"], sotCode: "SOT-02.03.01", instanceId: "FA-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: ["Field Extraction (search-time)"], feeds: ["Calculated Field", "Lookup Definition"], sotCode: "SOT-02.03.01", instanceId: "FA-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/data/props/fieldaliases/{name}" },
 { name: "Calculated Field", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "props.conf (EVAL-<fieldname>); REST endpoint data/props/calcfields/{name}",
     def: "Derives a new field from an eval expression evaluated at search time, run after field aliasing so it can reference an already-aliased field.",
     notes: "",
-    deps: ["Field Alias", "Field Extraction (search-time)"], feeds: ["Data Model", "Lookup Definition", "Report"], sotCode: "SOT-02.03.02", instanceId: "CF-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: ["Field Alias", "Field Extraction (search-time)"], feeds: ["Data Model", "Lookup Definition", "Report"], sotCode: "SOT-02.03.02", instanceId: "CF-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/data/props/calcfields/{name}" },
 { name: "Automatic Lookup", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "props.conf (LOOKUP-<class>); REST endpoint data/props/lookups/{name}",
     def: "Enriches matching events at search time from a lookup table without requiring an explicit | lookup command in every search.",
     notes: "",
-    deps: ["Lookup Definition"], feeds: ["Event Type", "Report"], sotCode: "SOT-02.05.03", instanceId: "AL-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: ["Lookup Definition"], feeds: ["Event Type", "Report"], sotCode: "SOT-02.05.03", instanceId: "AL-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/data/props/lookups/{name}" },
 { name: "Lookup Definition", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "transforms.conf; REST endpoint data/transforms/lookups/{name}",
     def: "A named reference to a lookup table file (CSV or KV Store collection) or an external lookup script, invoked with the | lookup command or an Automatic Lookup.",
     notes: "",
-    deps: ["Asset & Identity Framework", "KV Store Collection", "Lookup Table File", "TI Lookup"], feeds: ["Automatic Lookup", "Report"], sotCode: "SOT-02.05.01", instanceId: "LD-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: ["Asset & Identity Framework", "KV Store Collection", "Lookup Table File", "TI Lookup"], feeds: ["Automatic Lookup", "Report"], sotCode: "SOT-02.05.01", instanceId: "LD-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/data/transforms/lookups/{name}" },
 { name: "Lookup Table File", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "lookups/<file>.csv; REST endpoint data/lookup-table-files/{name}",
     def: "The actual CSV data file backing a static lookup -- e.g. an asset inventory, an IP-to-location table, a severity mapping.",
     notes: "",
-    deps: [], feeds: ["Asset & Identity Framework", "Lookup Definition"], sotCode: "SOT-02.05.02", instanceId: "LTF-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: [], feeds: ["Asset & Identity Framework", "Lookup Definition"], sotCode: "SOT-02.05.02", instanceId: "LTF-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/data/lookup-table-files/{name}" },
 { name: "KV Store Collection", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Hybrid (Knowledge + Platform)", scope: "App-scoped",
     config: "collections.conf",
     def: "A document-oriented, schema-flexible collection backed by Splunk's embedded key-value store, usable as a dynamic (read/write) lookup or for arbitrary app-managed state.",
     notes: "Unlike a CSV lookup, apps and REST endpoints can write to it at runtime, not just read from it.",
-    deps: [], feeds: ["Asset & Identity Framework", "Lookup Definition"], sotCode: "SOT-02.05.04", instanceId: "KSL-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: ["Asset & Identity Framework", "Lookup Definition"], sotCode: "SOT-02.05.04", instanceId: "KSL-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/-/-/storage/collections/config/{name}" },
 { name: "Field Transform", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "transforms.conf",
     def: "A regex-based transform stanza referenced by REPORT-*, TRANSFORMS-* or LOOKUP-* in props.conf, defining the actual extraction, routing or masking logic.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-02.02.04", instanceId: "FT-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-02.02.04", instanceId: "FT-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/transforms/extractions/{name}" },
 { name: "Indexed Field (WRITE_META)", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global",
     config: "transforms.conf (WRITE_META=true), props.conf (TRANSFORMS-*)",
     def: "Writes a regex-derived field::value pair directly into an event's indexed metadata at ingest, making it available before any search runs -- at the cost of permanently increasing indexed volume.",
@@ -17363,12 +17469,12 @@ const SOT_OBJECTS = [
     config: "props.conf (INDEXED_EXTRACTIONS)",
     def: "Parses an entire structured event format (JSON, CSV, TSV, W3C) at index time, writing every resulting field into the index rather than extracting a single custom field.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-02.02.03", instanceId: "IE-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-02.02.03", instanceId: "IE-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/-/-/configs/conf-props/{name}" },
 { name: "Workflow Action", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "workflow_actions.conf; REST endpoint data/ui/workflow-actions/{name}",
     def: "A clickable action attached to a field value in search results -- a link to an external tool, a follow-up search, or a custom GET/POST request.",
     notes: "",
-    deps: ["Event-based Detection", "Field Extraction (search-time)", "Finding-based Detection"], feeds: ["Dashboard (Classic SimpleXML)"], sotCode: "SOT-02.07.01", instanceId: "WA-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: ["Event-based Detection", "Field Extraction (search-time)", "Finding-based Detection"], feeds: ["Dashboard (Classic SimpleXML)"], sotCode: "SOT-02.07.01", instanceId: "WA-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/servicesNS/-/-/data/ui/workflow-actions/{name}" },
 { name: "CIM (Common Information Model)", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global",
     config: "Splunk_SA_CIM app (datamodels.conf, tags.conf, eventtypes.conf)",
     def: "A standardised taxonomy of field names and data models that normalises events from differently-formatted sources into a consistent schema (Authentication, Network Traffic, Web, Endpoint, etc.), enabling cross-source correlation and vendor-agnostic detections.",
@@ -17384,7 +17490,7 @@ const SOT_OBJECTS = [
     config: "alert_actions.conf; REST endpoint data/alert_actions/{name}",
     def: "The response an Alert fires when it triggers -- send email, run a script, post a webhook, log an event, or a custom action shipped by an add-on.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-03.01.02", instanceId: "AA-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-03.01.02", instanceId: "AA-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/alerts/alert_actions" },
   // ---------- SOT-10 — Splunk Solution & Premium Product Objects ----------
 { name: "Adaptive Response Action", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "alert_actions.conf (Splunk Enterprise Security)",
@@ -17395,13 +17501,13 @@ const SOT_OBJECTS = [
     config: "savedsearches.conf (Splunk Enterprise Security)",
     def: "A specialised Alert in Enterprise Security that generates Notable Events -- the primary detection-authoring mechanism in an ES deployment.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-10.01.01", instanceId: "CS-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-10.01.01", instanceId: "CS-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/-/-/saved/searches/{name}" },
   // ---------- SOT-06 — Storage, Indexing & Data Management Objects ----------
 { name: "Summary Index", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Hybrid (Knowledge + Platform)", scope: "Deployment-level (index) + Private/App/Global (populating search)",
     config: "indexes.conf (the index itself), savedsearches.conf (the collect/sistats search)",
     def: "An ordinary index populated on a schedule by a saved search using the collect or sistats commands, storing pre-aggregated results for fast retrieval later instead of re-running an expensive search over raw data.",
     notes: "",
-    deps: [], feeds: ["Dashboard (Classic SimpleXML)", "Data Model", "Index"], sotCode: "SOT-06.01.03", instanceId: "SI-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: ["Dashboard (Classic SimpleXML)", "Data Model", "Index"], sotCode: "SOT-06.01.03", instanceId: "SI-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/indexes/{name}" },
   // ---------- SOT-10 — Splunk Solution & Premium Product Objects ----------
 { name: "Notable Event", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
     config: "Splunk Enterprise Security (notable summary index + KV Store-backed status/urgency)",
@@ -17412,7 +17518,7 @@ const SOT_OBJECTS = [
     config: "savedsearches.conf + alert_actions.conf (Risk Analysis adaptive response action)",
     def: "A correlation search configured with the Risk Analysis adaptive response action, which adds a weighted Risk Event to a risk index against a specific object (user, system) instead of -- or alongside -- firing a notable event directly.",
     notes: "Risk-Based Alerting sums these events into a per-object Risk Score over time and can auto-generate a Risk Notable once a threshold is crossed -- catching slow, multi-signal attack patterns a single correlation search would miss.",
-    deps: ["Asset & Identity Framework", "ESCU (Enterprise Security Content Update)", "Event-based Detection", "Field Extraction (search-time)", "Finding-based Detection", "Index"], feeds: ["Risk Index"], sotCode: "SOT-10.01.03", instanceId: "RR-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["Asset & Identity Framework", "ESCU (Enterprise Security Content Update)", "Event-based Detection", "Field Extraction (search-time)", "Finding-based Detection", "Index"], feeds: ["Risk Index"], sotCode: "SOT-10.01.03", instanceId: "RR-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/-/-/saved/searches/{name}" },
 { name: "ESCU (Enterprise Security Content Update)", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global (Splunk ES)",
     config: "DA-ESS-ContentUpdate app (savedsearches.conf, macros.conf, lookups/)",
     def: "A continuously updated library of vetted detection searches, analytic stories, macros and lookups published by Splunk Threat Research and delivered as a Splunk app, each mapped to a MITRE ATT&CK tactic/technique.",
@@ -17433,7 +17539,7 @@ const SOT_OBJECTS = [
     config: "indexes.conf (dedicated risk index)",
     def: "A dedicated Splunk index that stores every risk event contributed by a Risk Rule -- one event per risk contribution, not a final score.",
     notes: "Queried by the Risk Score aggregation search to compute per-entity scores over time.",
-    deps: ["Risk Object / Risk Rule"], feeds: ["Risk Score"], sotCode: "SOT-06.01.05", instanceId: "RI-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["Risk Object / Risk Rule"], feeds: ["Risk Score"], sotCode: "SOT-06.01.05", instanceId: "RI-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/indexes/{name}" },
   // ---------- SOT-10 — Splunk Solution & Premium Product Objects ----------
 { name: "Risk Score", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
     config: "correlationsearches.conf (risk notable rule)",
@@ -17459,7 +17565,7 @@ const SOT_OBJECTS = [
     config: "transforms.conf (TI lookup definitions, KV Store-backed)",
     def: "A KV Store-backed lookup table of active indicators generated by the Threat Intelligence Framework, automatically joined against events at search time to flag IOC matches.",
     notes: "Powers threat-intel correlation searches in both Event-based and Finding-based Detections.",
-    deps: ["Threat Intelligence Framework"], feeds: ["Event-based Detection", "Finding-based Detection", "Lookup Definition"], sotCode: "SOT-10.01.10", instanceId: "TIL-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["Threat Intelligence Framework"], feeds: ["Event-based Detection", "Finding-based Detection", "Lookup Definition"], sotCode: "SOT-10.01.10", instanceId: "TIL-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/-/-/configs/conf-transforms/{name}" },
 { name: "Automation Rules", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
     config: "Splunk Enterprise Security (rule engine)",
     def: "ES-side rules that route a Finding into a SOAR Playbook or the Analyst Queue based on its conditions -- the bridge between detection and orchestrated response.",
@@ -17476,22 +17582,22 @@ const SOT_OBJECTS = [
     config: "data/ui/views/<name>.xml; REST endpoint data/ui/views/{name}",
     def: "A saved page of panels (visualizations, tables, inputs) defined in Splunk's original SimpleXML dialect.",
     notes: "",
-    deps: ["Panel", "Search Head", "Summary Index"], feeds: [], sotCode: "SOT-04.01.01", instanceId: "CSD-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: ["Panel", "Search Head", "Summary Index"], feeds: [], sotCode: "SOT-04.01.01", instanceId: "CSD-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/servicesNS/-/-/data/ui/views/{name}" },
 { name: "Dashboard Studio", domain: "SOT-04 — Visualization & User Experience Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "data/ui/views/<name>.xml (JSON payload, version=\"2\"); REST endpoint data/ui/views/{name}, same handler as classic SimpleXML",
     def: "The newer, JSON-defined dashboard format with pixel-precise sot-layout, more visualization types and a visual editor, stored in the same views location as classic dashboards but in a different internal format.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-04.01.02", instanceId: "DSD-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-04.01.02", instanceId: "DSD-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/servicesNS/-/-/data/ui/views/{name}" },
 { name: "Panel", domain: "SOT-04 — Visualization & User Experience Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "data/ui/panels/<name>.xml; REST endpoint data/ui/panels",
     def: "A reusable visualization block that can be referenced from multiple dashboards instead of being redefined inline in each one.",
     notes: "",
-    deps: ["Dashboard Datasource"], feeds: ["Dashboard (Classic SimpleXML)"], sotCode: "SOT-04.02.02", instanceId: "VISU-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: ["Dashboard Datasource"], feeds: ["Dashboard (Classic SimpleXML)"], sotCode: "SOT-04.02.02", instanceId: "VISU-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/servicesNS/-/-/data/ui/panels/{name}" },
 { name: "Navigation Menu", domain: "SOT-04 — Visualization & User Experience Objects", type: "Knowledge Object", scope: "App-scoped",
     config: "data/ui/nav/default.xml",
     def: "Defines an app's left-hand navigation structure -- which views/dashboards appear, in what order, and under which menu groupings.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-04.03.01", instanceId: "NV-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-04.03.01", instanceId: "NV-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "/servicesNS/-/-/data/ui/nav/{name}" },
 { name: "Form Input", domain: "SOT-04 — Visualization & User Experience Objects", type: "Knowledge Object", scope: "Embedded in a Dashboard",
     config: "(part of the dashboard's XML/JSON, not a standalone .conf object)",
     def: "A dropdown, time-range, text or radio input on a dashboard bound to a token, letting a search adapt to a user's selection.",
@@ -17534,23 +17640,23 @@ const SOT_OBJECTS = [
     config: "indexes.conf",
     def: "A named, physically separate repository of indexed event data with its own retention, storage-path and access-control settings.",
     notes: "",
-    deps: ["Indexer"], feeds: ["Dashboard Datasource", "Data Input", "Dynamic Data Active Storage (DDAS)", "Search Head"], sotCode: "SOT-06.01.01", instanceId: "EI-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["Indexer"], feeds: ["Dashboard Datasource", "Data Input", "Dynamic Data Active Storage (DDAS)", "Search Head"], sotCode: "SOT-06.01.01", instanceId: "EI-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/indexes/{name}" },
   // ---------- SOT-05 — Data Collection, Ingestion & Processing Objects ----------
 { name: "Data Input", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level",
     config: "inputs.conf",
     def: "A configured source of raw data for Splunk to collect -- file/directory monitor, network (TCP/UDP), scripted, Windows-specific, or HTTP Event Collector.",
     notes: "",
-    deps: ["Index", "Source Type", "Splunk Stream Forwarder"], feeds: ["Heavy Forwarder (HF)", "Universal Forwarder (UF)"], sotCode: "SOT-05.01.01", instanceId: "DIG-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed", relatedTax: ["TAX-03.06.03.01", "TAX-03.03.01"] },
+    deps: ["Index", "Source Type", "Splunk Stream Forwarder"], feeds: ["Heavy Forwarder (HF)", "Universal Forwarder (UF)"], sotCode: "SOT-05.01.01", instanceId: "DIG-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/inputs/all/{name}", relatedTax: ["TAX-03.06.03.01", "TAX-03.03.01"] },
 { name: "HTTP Event Collector (HEC) Token", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level",
     config: "inputs.conf ([http://<token name>] stanza)",
     def: "An authenticated token/endpoint pair letting applications push data directly to Splunk over HTTP(S) without a forwarder.",
     notes: "",
-    deps: ["Index", "Source Type"], feeds: ["Heavy Forwarder (HF)", "Indexer", "Edge Processor", "Ingest Processor"], sotCode: "SOT-05.02.02", instanceId: "HT-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["Index", "Source Type"], feeds: ["Heavy Forwarder (HF)", "Indexer", "Edge Processor", "Ingest Processor"], sotCode: "SOT-05.02.02", instanceId: "HT-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/inputs/http/{name}" },
 { name: "Modular Input", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level (defined by an app)",
     config: "inputs.conf.spec (schema) + inputs.conf (instances)",
     def: "A custom input type, implemented as a script following Splunk's modular input contract and shipped inside an app/add-on, extending what inputs.conf can represent beyond the built-in types.",
     notes: "",
-    deps: ["App", "Index", "Source Type"], feeds: ["Heavy Forwarder (HF)", "Indexer"], sotCode: "SOT-05.01.06", instanceId: "MI-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed", relatedTax: ["TAX-03.06.03.01"] },
+    deps: ["App", "Index", "Source Type"], feeds: ["Heavy Forwarder (HF)", "Indexer"], sotCode: "SOT-05.01.06", instanceId: "MI-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/modular-inputs/{name}", relatedTax: ["TAX-03.06.03.01"] },
 { name: "Splunk Stream Server", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Deployment-level (role)",
     config: "streamfwd.conf, streams.conf (Splunk App for Stream)",
     def: "The management component of Splunk Stream that defines which network protocols, ports and fields to capture and distributes that configuration to Stream Forwarders across the environment, then receives their parsed wire-data metadata (stream:http, stream:dns, stream:tcp, etc.) for indexing.",
@@ -17565,12 +17671,12 @@ const SOT_OBJECTS = [
     config: "props.conf",
     def: "Per-sourcetype/source/host parsing configuration governing line breaking (LINE_BREAKER, SHOULD_LINEMERGE), timestamp recognition (TIME_FORMAT, MAX_TIMESTAMP_LOOKAHEAD), truncation (TRUNCATE), and character encoding (CHARSET).",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-05.04.01", instanceId: "PS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-05.04.01", instanceId: "PS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/-/-/configs/conf-props/{name}" },
 { name: "Transforms Stanza", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level",
     config: "transforms.conf",
     def: "Regex-driven rules referenced from props.conf for field extraction, event/index routing, and index-time field writes.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-05.04.02", instanceId: "TS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-05.04.02", instanceId: "TS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/-/-/configs/conf-transforms/{name}" },
 { name: "Ingest-Time Eval", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level",
     config: "props.conf / transforms.conf (INGEST_EVAL-*)",
     def: "An eval expression run at the Ingest Processor or indexer layer before an event is written to disk -- the modern alternative to a hand-rolled WRITE_META regex for computed or conditional index-time fields.",
@@ -17580,17 +17686,17 @@ const SOT_OBJECTS = [
     config: "GUI-managed (built on props.conf/transforms.conf underneath)",
     def: "A point-and-click rule for masking, filtering or routing data before it's indexed, presented as a guided UI over the same props/transforms mechanisms.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-05.05.05", instanceId: "IAR-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-05.05.05", instanceId: "IAR-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/ingest/rulesets/{name}" },
 { name: "SEDCMD", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level",
     config: "props.conf (SEDCMD-<class>)",
     def: "A sed-style find/replace applied to raw event text at index time -- most commonly used to mask sensitive data before it's ever written to disk.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-05.04.08", instanceId: "MASK-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-05.04.08", instanceId: "MASK-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/-/-/configs/conf-props/{name}" },
 { name: "Event Breaker", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level (Universal Forwarder only)",
     config: "props.conf (EVENT_BREAKER, EVENT_BREAKER_ENABLE)",
     def: "Universal Forwarder-only line-breaking rule used by the ChunkedLBProcessor to split a stream into events before sending it onward.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-05.04.03", instanceId: "LEB-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-05.04.03", instanceId: "LEB-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/-/-/configs/conf-props/{name}" },
 { name: "Edge Processor", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level (customer-managed compute)",
     config: "SPL2 pipeline definition (managed via the Edge Processor UI/API; runs on customer-managed infrastructure, not classic props.conf/transforms.conf)",
     def: "Customer-managed compute that filters, masks, transforms and routes data at the edge -- closer to the data source than a Heavy Forwarder -- using SPL2 pipelines, before any of it reaches Splunk.",
@@ -17606,11 +17712,26 @@ const SOT_OBJECTS = [
     def: "The actual SPL2-defined processing pipeline running inside an Ingest Processor, routing transformed data to the Splunk Indexer, an external destination such as AWS S3, or both.",
     notes: "Each pipeline is an ordered set of SPL2 commands using the into command to fan output to multiple destinations at once, e.g. filtered/aggregated data to Splunk and raw data to S3 simultaneously.",
     deps: ["Ingest Processor"], feeds: ["Indexer"], sotCode: "SOT-05.06.02", instanceId: "IPP-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
-{ name: "Forwarder Outputs", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level",
-    config: "outputs.conf ([tcpout], [indexer_discovery])",
-    def: "Configuration on a Universal or Heavy Forwarder defining where collected data is sent -- target indexers, load-balanced indexer groups, or an Ingest Processor endpoint.",
-    notes: "Supports indexer discovery via the Cluster Manager, SSL/TLS mutual auth and compression; a single forwarder can fan out to multiple target groups simultaneously.",
-    deps: ["Heavy Forwarder (HF)", "Universal Forwarder (UF)"], feeds: ["Indexer", "Edge Processor", "Ingest Processor"], sotCode: "SOT-05.03.01", instanceId: "FO-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+{ name: "Default Forwarding Config", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level",
+    config: "outputs.conf ([tcpout] global stanza)",
+    def: "Global default properties for TCP forwarding on a Universal or Heavy Forwarder -- applies to every forwarding group unless overridden at the group or server level.",
+    notes: "Set via the [tcpout] stanza without a named group suffix; controls defaults such as compression, SSL and indexer acknowledgement that every target group inherits.",
+    deps: ["Heavy Forwarder (HF)", "Universal Forwarder (UF)"], feeds: ["Forwarding Group"], sotCode: "SOT-05.03.01", instanceId: "FO-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/outputs/tcp/default/{name}" },
+{ name: "Forwarding Group", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level",
+    config: "outputs.conf ([tcpout:<group_name>] stanza)",
+    def: "A named group of one or more target indexers that a forwarder load-balances or fails over across -- the standard way outputs.conf routes data to a destination.",
+    notes: "A single forwarder can define multiple groups and fan out to more than one simultaneously; supports indexer discovery via the Cluster Manager.",
+    deps: ["Default Forwarding Config", "Forwarded Server"], feeds: ["Indexer", "Edge Processor", "Ingest Processor"], sotCode: "SOT-05.03.02", instanceId: "FG-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/outputs/tcp/group/{name}" },
+{ name: "Forwarded Server", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level",
+    config: "outputs.conf (server= list within a [tcpout:<group_name>] stanza)",
+    def: "An individual target destination (host:port) within a forwarding group -- the specific indexer or receiver a forwarder connects to.",
+    notes: "Supports SSL/TLS mutual auth and compression per server; multiple servers under one group are load-balanced or used for failover.",
+    deps: ["Forwarding Group"], feeds: ["Indexer"], sotCode: "SOT-05.03.03", instanceId: "FSVR-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/outputs/tcp/server/{name}" },
+{ name: "Syslog Output", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level",
+    config: "outputs.conf ([syslog:<name>] stanza)",
+    def: "A forwarder configuration that sends data onward in standard syslog format (RFC 3164/5424) rather than Splunk's native cooked TCP protocol -- typically used to feed a non-Splunk syslog receiver or SIEM.",
+    notes: "Distinct from the standard [tcpout] destinations; does not carry Splunk-specific metadata such as host/source/sourcetype the way cooked forwarding does.",
+    deps: ["Heavy Forwarder (HF)", "Universal Forwarder (UF)"], feeds: [], sotCode: "SOT-05.03.04", instanceId: "SYSO-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/outputs/tcp/syslog/{name}" },
 { name: "Splunk Stream Forwarder", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level (role)",
     config: "streamfwd.conf",
     def: "The lightweight agent (or appliance) that captures and decodes network packets from a SPAN/TAP and generates structured protocol events, distinct from the Stream Server that configures it.",
@@ -17621,22 +17742,47 @@ const SOT_OBJECTS = [
     config: "authorize.conf",
     def: "A named bundle of capabilities, index access (srchIndexesAllowed/Default) and search limits, assigned to one or more users.",
     notes: "Splunk ships four predefined roles (admin, power, user, can_delete-capable); custom roles should importRoles from one of them rather than being built from scratch.",
-    deps: [], feeds: [], sotCode: "SOT-07.02.01", instanceId: "ROLE-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-07.02.01", instanceId: "ROLE-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/authorization/roles/{name}" },
 { name: "Capability", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level",
     config: "authorize.conf (granted per role), default.meta (declared by an app)",
     def: "An individual, additive-only permission bit (e.g. edit_user, admin_all_objects, rtsearch) granted to a role -- there is no explicit deny, so a user's effective permissions are the union of every role they hold.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-07.02.02", instanceId: "CAPA-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-07.02.02", instanceId: "CAPA-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/authorization/capabilities" },
 { name: "User", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level",
     config: "Internal user store, or externally via authentication.conf",
     def: "An individual account assigned one or more roles, authenticated natively, via LDAP, or via SAML single sign-on.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-07.01.01", instanceId: "USER-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
-{ name: "Authentication Strategy", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level",
-    config: "authentication.conf",
-    def: "Configuration for how users prove identity and receive roles -- native Splunk auth, an LDAP strategy with group-to-role mapping, or a SAML identity-provider integration.",
-    notes: "",
-    deps: [], feeds: [], sotCode: "SOT-07.03.05", instanceId: "ASG-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-07.01.01", instanceId: "USER-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/authentication/users/{name}" },
+{ name: "LDAP Strategy", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "authentication.conf ([authentication], [ldap] strategy stanzas)",
+    def: "An LDAP authentication strategy mapping external directory users and groups to internal Splunk roles.",
+    notes: "Group-to-role mappings are managed separately via admin/LDAP-groups; a strategy can be enabled or disabled independently of being deleted.",
+    deps: [], feeds: ["Role"], sotCode: "SOT-07.03.05", instanceId: "ASG-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/authentication/providers/LDAP/{name}" },
+{ name: "SAML Strategy", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "authentication.conf ([saml] stanza)",
+    def: "A SAML identity-provider integration for single sign-on, mapping external IdP groups or attributes to internal Splunk roles.",
+    notes: "IdP certificates can be replicated across a search head cluster via admin/replicate-SAML-certs; group-to-role mappings are managed via admin/SAML-groups.",
+    deps: [], feeds: ["Role"], sotCode: "SOT-07.03.06", instanceId: "SAML-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/authentication/providers/SAML/{name}" },
+{ name: "OAuth2 Provider", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "authentication.conf (OAuth2 provider stanza)",
+    def: "An OAuth2/OIDC identity-provider configuration used to authenticate application clients via the Client Credentials Grant flow.",
+    notes: "Group-to-role mappings for OAuth2 clients are managed via admin/oauth2-groups; a provider configuration must exist before mappings can be created.",
+    deps: [], feeds: ["Role"], sotCode: "SOT-07.03.07", instanceId: "OAUTH-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/authentication/providers/oauth2/{name}" },
+{ name: "Duo MFA Config", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "authentication.conf (Duo Multifactor stanza)",
+    def: "Duo-based multifactor authentication configuration layered on top of local Splunk authentication.",
+    notes: "Requires local auth; any SSO configuration such as SAML must be disabled before enabling Duo for the first time.",
+    deps: [], feeds: [], sotCode: "SOT-07.03.08", instanceId: "DUO-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/admin/Duo-MFA/{name}" },
+{ name: "RSA MFA Config", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "authentication.conf (RSA Authentication Manager stanza)",
+    def: "RSA SecurID-based multifactor authentication configuration integrating with an RSA Authentication Manager.",
+    notes: "Verified via a dedicated config-verify endpoint after configuration; enableMfaAuthRest additionally applies MFA to the CLI and management port.",
+    deps: [], feeds: [], sotCode: "SOT-07.03.09", instanceId: "RSA-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/admin/Rsa-MFA" },
+{ name: "ProxySSO Config", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "web.conf ([settings] SSOMode/trustedIP/remoteUser/remoteGroups), authentication.conf",
+    def: "A reverse-proxy-based SSO integration where a trusted proxy asserts the authenticated username and group via HTTP headers.",
+    notes: "Requires SSOMode = strict in web.conf before the REST configuration takes effect; role mappings are managed via admin/ProxySSO-groups and admin/ProxySSO-user-role-map.",
+    deps: [], feeds: ["Role"], sotCode: "SOT-07.03.10", instanceId: "PSSO-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/admin/ProxySSO-auth/{name}" },
 { name: "Object Permissions (ACL)", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Per-object (private / app / global)",
     config: "local.meta, default.meta",
     def: "Read/write access-control metadata for a specific knowledge object, plus its sharing level (private to the owner, shared within an app, or global across the whole instance).",
@@ -17646,13 +17792,13 @@ const SOT_OBJECTS = [
     config: "passwords.conf",
     def: "An encrypted secret (e.g. a scripted-input password, an alert-action API key) stored via Splunk's credential-storage endpoint; the file is auto-managed and not meant to be hand-edited in cleartext.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-07.04.01", instanceId: "SC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-07.04.01", instanceId: "SC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/storage/passwords/{name}" },
   // ---------- SOT-10 — Splunk Solution & Premium Product Objects ----------
 { name: "Asset & Identity Framework", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global (Splunk ES)",
     config: "transforms.conf-backed lookups (e.g. asset_lookup_by_str, identity_lookup_expanded)",
     def: "Enterprise Security's mechanism for enriching events with asset (device/system) and identity (user) context from CMDB/HR/inventory sources, powering asset- and identity-aware correlation searches and risk scoring.",
     notes: "",
-    deps: ["KV Store Collection", "Lookup Table File", "Modular Input", "Search Head"], feeds: ["Automatic Lookup", "Event-based Detection", "Finding", "Risk Object / Risk Rule", "Risk Score"], sotCode: "SOT-10.01.13", instanceId: "AIF-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["KV Store Collection", "Lookup Table File", "Modular Input", "Search Head"], feeds: ["Automatic Lookup", "Event-based Detection", "Finding", "Risk Object / Risk Rule", "Risk Score"], sotCode: "SOT-10.01.13", instanceId: "AIF-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/-/-/configs/conf-transforms/{name}" },
   // ---------- SOT-08 — Platform & Distributed Architecture Objects ----------
 { name: "Splunk Instance", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Instance-level",
     config: "server.conf",
@@ -17663,72 +17809,87 @@ const SOT_OBJECTS = [
     config: "server.conf, indexes.conf",
     def: "An instance responsible for parsing, indexing and storing event data, and for executing the data-local portion of a distributed search.",
     notes: "",
-    deps: ["Deployment App", "Forwarder Outputs", "HTTP Event Collector (HEC) Token", "Heavy Forwarder (HF)", "Ingest Processor Pipeline", "Modular Input", "Universal Forwarder (UF)"], feeds: ["Index", "Search Head", "Source Type"], sotCode: "SOT-08.02.01", instanceId: "INDE-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["Deployment App", "Default Forwarding Config", "Forwarding Group", "Forwarded Server", "HTTP Event Collector (HEC) Token", "Heavy Forwarder (HF)", "Ingest Processor Pipeline", "Modular Input", "Universal Forwarder (UF)"], feeds: ["Index", "Search Head", "Source Type"], sotCode: "SOT-08.02.01", instanceId: "INDE-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/cluster/peer/info" },
 { name: "Search Head", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Instance-level (role)",
     config: "server.conf, distsearch.conf",
     def: "An instance responsible for running searches (fanning them out to indexers), rendering results, and hosting most knowledge objects users interact with directly.",
     notes: "",
-    deps: ["Deployment App", "Deployment Server", "Federated Index", "Index", "Indexer"], feeds: ["Alert", "App", "Dashboard (Classic SimpleXML)", "Data Model", "Event-based Detection", "Field Extraction (search-time)", "Report", "Source Type", "Splunk Stream Server"], sotCode: "SOT-08.01.01", instanceId: "SH-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["Deployment App", "Deployment Server", "Federated Index", "Index", "Indexer"], feeds: ["Alert", "App", "Dashboard (Classic SimpleXML)", "Data Model", "Event-based Detection", "Field Extraction (search-time)", "Report", "Source Type", "Splunk Stream Server"], sotCode: "SOT-08.01.01", instanceId: "SH-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/server/info" },
 { name: "Search Head Cluster (SHC)", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level",
     config: "server.conf ([shclustering])",
     def: "A set of search heads sharing configuration, scheduler load and search artifacts, presenting a single logical search tier with high availability.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-08.01.02", instanceId: "SHC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-08.01.02", instanceId: "SHC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/shcluster/config" },
 { name: "SHC Deployer", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level",
     config: "server.conf, shcluster/apps bundle",
     def: "A dedicated instance that pushes app/configuration bundles out to every member of a Search Head Cluster, keeping them in sync.",
     notes: "",
     deps: [], feeds: [], sotCode: "SOT-08.01.03", instanceId: "SD-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+{ name: "Knowledge Bundle Replication", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "distsearch.conf ([replicationSettings], [replicationBlacklist], [replicationWhitelist])",
+    def: "The mechanism by which a search head packages and pushes its knowledge objects (apps, lookups, field extractions, etc.) out to search peers, so distributed searches execute with consistent knowledge on every peer.",
+    notes: "Tracked via replication cycles exposed through the REST API; oversized bundles (large lookup files, many apps) are a common cause of slow search dispatch, tunable via replicationBlacklist/replicationWhitelist.",
+    deps: ["Search Head"], feeds: ["Distributed Search Peer"], sotCode: "SOT-08.01.04", instanceId: "KBR-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/search/distributed/bundle/replication/config" },
 { name: "Indexer Cluster", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level",
     config: "server.conf ([clustering])",
     def: "A set of indexers providing replicated, highly available storage -- data is copied across peers per the configured Replication Factor and made searchable per the Search Factor.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-08.02.02", instanceId: "IC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-08.02.02", instanceId: "IC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/cluster/config" },
 { name: "Cluster Manager (Master)", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level (role)",
     config: "server.conf ([clustering] mode=master/manager)",
     def: "The instance that coordinates an indexer cluster -- tracking bucket replication status, enforcing replication/search factors, and managing peer membership.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-08.02.03", instanceId: "CM-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-08.02.03", instanceId: "CM-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/cluster/manager/info" },
 { name: "Universal Forwarder (UF)", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Instance-level (role)",
     config: "inputs.conf, outputs.conf",
     def: "A lightweight, forwarding-only Splunk agent installed on source systems to collect and forward data onward, without full indexing/search capability.",
     notes: "",
-    deps: ["Data Input", "Deployment Server"], feeds: ["Deployment Server", "Forwarder Outputs"], sotCode: "SOT-08.03.01", instanceId: "UF-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["Data Input", "Deployment Server"], feeds: ["Deployment Server", "Default Forwarding Config", "Forwarding Group", "Forwarded Server", "Syslog Output"], sotCode: "SOT-08.03.01", instanceId: "UF-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
 { name: "Heavy Forwarder (HF)", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Instance-level (role)",
     config: "inputs.conf, outputs.conf, props.conf, transforms.conf",
     def: "A full Splunk instance used as an intermediary to parse, filter or route data before it reaches an indexer -- unlike a UF, it can apply props/transforms logic and index-time extractions.",
     notes: "",
-    deps: ["DB Connect", "Data Input", "Deployment Server", "HTTP Event Collector (HEC) Token", "Modular Input"], feeds: ["Forwarder Outputs"], sotCode: "SOT-08.03.02", instanceId: "HF-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["DB Connect", "Data Input", "Deployment Server", "HTTP Event Collector (HEC) Token", "Modular Input"], feeds: ["Default Forwarding Config", "Forwarding Group", "Forwarded Server", "Syslog Output"], sotCode: "SOT-08.03.02", instanceId: "HF-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
 { name: "Deployment Server", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level",
     config: "serverclass.conf",
     def: "Pushes configuration bundles (\"deployment apps\") out to a fleet of forwarders/deployment clients based on Server Class membership.",
     notes: "An on-prem-centric concept: Splunk Cloud Platform customers generally don't run/manage their own Deployment Server the same way, since forwarder-facing endpoints and app distribution are handled differently in the cloud-managed control plane.",
-    deps: [], feeds: ["Deployment App", "Heavy Forwarder (HF)", "Search Head", "Universal Forwarder (UF)"], sotCode: "SOT-08.04.01", instanceId: "DS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: ["Deployment App", "Heavy Forwarder (HF)", "Search Head", "Universal Forwarder (UF)"], sotCode: "SOT-08.04.01", instanceId: "DS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/deployment/server/config/{name}" },
+{ name: "Deployment Client", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Instance-level",
+    config: "deploymentclient.conf",
+    def: "The client-side configuration on a forwarder or other Splunk instance that points it at a Deployment Server and controls how often it phones home to check for new or updated deployment apps.",
+    notes: "Configured via the [deployment-client] and [target-broker:deploymentServer] stanzas; the client polls the server on the phoneHomeIntervalInSecs interval rather than the server pushing to it unprompted.",
+    deps: ["Deployment Server"], feeds: ["Heavy Forwarder (HF)", "Universal Forwarder (UF)"], sotCode: "SOT-08.04.02", instanceId: "DEPC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/deployment/client/config" },
 { name: "Server Class", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level",
     config: "serverclass.conf",
     def: "A named group of deployment clients (matched by hostname, IP, or a client-set app) that receives a specific set of deployment apps.",
     notes: "",
-    deps: ["Deployment Server"], feeds: ["Deployment App"], sotCode: "SOT-08.04.03", instanceId: "SVCL-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["Deployment Server"], feeds: ["Deployment App"], sotCode: "SOT-08.04.03", instanceId: "SVCL-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/deployment/server/serverclasses/{name}" },
 { name: "Deployment App", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level",
     config: "$SPLUNK_HOME/etc/deployment-apps/<app>/",
     def: "An app bundle managed by a deployment server and pushed to the forwarders in a matching Server Class -- typically inputs.conf plus a Technology Add-on's parsing configuration.",
     notes: "",
-    deps: ["App"], feeds: ["App", "Indexer", "Search Head", "Splunk Stream Server", "Universal Forwarder (UF)"], sotCode: "SOT-08.04.04", instanceId: "DA-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    deps: ["App"], feeds: ["App", "Indexer", "Search Head", "Splunk Stream Server", "Universal Forwarder (UF)"], sotCode: "SOT-08.04.04", instanceId: "DA-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "/services/deployment/server/applications/{name}" },
 { name: "License Manager (Master)", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level",
     config: "server.conf ([license])",
     def: "Tracks daily license-volume usage across every indexer in a license group and enforces the configured license pools.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-08.05.03", instanceId: "LM-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
-{ name: "License Pool / Stack", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level",
-    config: "Managed via the License Manager",
-    def: "A named allocation of license volume assigned to a specific set of indexers, letting one license be subdivided across environments or business units.",
+    deps: [], feeds: [], sotCode: "SOT-08.05.03", instanceId: "LM-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/licenser/localpeer" },
+{ name: "License Stack", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "Managed via the License Manager (licenser/stacks)",
+    def: "A collection of one or more licenses of the same type; a stack's daily indexing quota is the additive total of its member licenses' entitlements.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-08.05.04", instanceId: "LPS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    deps: [], feeds: ["License Pool"], sotCode: "SOT-08.05.04", instanceId: "LPS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/licenser/stacks/{name}" },
+{ name: "License Pool", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "Managed via the License Manager (licenser/pools)",
+    def: "A logical partition of a license stack's daily volume entitlement, letting one stack be subdivided across specific indexers, environments or business units.",
+    notes: "",
+    deps: ["License Stack"], feeds: [], sotCode: "SOT-08.05.05", instanceId: "LPOOL-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/licenser/pools/{name}" },
 { name: "Distributed Search Peer", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level",
     config: "distsearch.conf",
     def: "A search-time-only relationship where a search head registers an indexer (or another search head) as a peer to fan searches out to.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-08.02.04", instanceId: "DSP-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-08.02.04", instanceId: "DSP-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/search/distributed/peers/{name}" },
 { name: "Monitoring Console", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level (built-in app)",
     config: "Built-in app; distsearch.conf for peer topology",
     def: "Splunk's built-in health-monitoring app for a distributed deployment -- indexing performance, resource usage, search-scheduler activity, and per-role dashboards.",
@@ -17738,18 +17899,18 @@ const SOT_OBJECTS = [
     config: "server.conf ([kvstore]), collections.conf (per-collection definitions)",
     def: "The document-oriented storage engine embedded in every Search Head, providing the backing store for KV Store Collections, app configuration state, and several premium apps' internal data (ES, ITSI).",
     notes: "Distinct from a KV Store Collection: this is the underlying service/engine itself, configured once per search head (or per member of a Search Head Cluster).",
-    deps: [], feeds: [], sotCode: "SOT-08.05.01", instanceId: "KSS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-08.05.01", instanceId: "KSS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/kvstore/status" },
   // ---------- SOT-06 — Storage, Indexing & Data Management Objects ----------
 { name: "Federated Search Provider", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level",
     config: "federated-providers.conf (Splunk Cloud / ES)",
     def: "Registers an external, queryable data source -- a remote Splunk Enterprise/Cloud deployment, an S3-compatible bucket, or an AWS Glue Data Catalog -- letting the Search Head issue SPL against data that was never indexed locally.",
     notes: "Credentials managed via IAM role, access key, or (for a remote-Splunk provider) an auth token; multiple providers can be registered; status visible under Splunk Web Settings -> Federated Search.",
-    deps: [], feeds: ["Federated Index", "Federated Search for Amazon S3 (FS-S3)", "Federated Analytics"], sotCode: "SOT-06.05.01", instanceId: "FSP-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: ["Federated Index", "Federated Search for Amazon S3 (FS-S3)", "Federated Analytics"], sotCode: "SOT-06.05.01", instanceId: "FSP-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/federated/provider/{federated_provider_name}" },
 { name: "Federated Index", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level",
     config: "federated-indexes.conf",
     def: "A virtual Splunk index that maps SPL syntax (index=<name>) to a Federated Search Provider, letting analysts query a remote Splunk deployment or archived S3 data exactly as they would a local index, with no re-ingestion required.",
     notes: "Transparent to the analyst -- stats, eval, where, rex, lookup all work normally; the search is pushed down to the remote provider and results streamed back to the Search Head.",
-    deps: ["Federated Search Provider"], feeds: ["Dashboard Datasource", "Report", "Search Head"], sotCode: "SOT-06.05.02", instanceId: "FI-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["Federated Search Provider"], feeds: ["Dashboard Datasource", "Report", "Search Head"], sotCode: "SOT-06.05.02", instanceId: "FI-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/federated/index/{federated_index_name}" },
 { name: "Federated Search for Amazon S3 (FS-S3)", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud Platform, AWS-region deployments only)",
     config: "Data Management app; federated-providers.conf (S3-type provider) + AWS Glue Data Catalog table registration",
     def: "A Splunk Cloud Platform capability, surfaced in the Data Management app, for querying data sitting in Amazon S3 buckets directly -- without ingesting or indexing it -- using AWS Glue Data Catalog tables for schema and the SPL2 sdselect (SQL-like) command rather than ordinary SPL against a Federated Index.",
@@ -17764,7 +17925,7 @@ const SOT_OBJECTS = [
     config: "Filesystem, governed by indexes.conf",
     def: "The physical on-disk unit of indexed data at a given lifecycle stage -- hot (writable), warm, cold, frozen, or thawed.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-06.02.06", instanceId: "BAS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-06.02.06", instanceId: "BAS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/cluster/manager/buckets/{name}" },
 { name: "Bucket Lifecycle Settings", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level",
     config: "indexes.conf (maxHotSpanSecs, maxDataSize, maxWarmDBCount, frozenTimePeriodInSecs, maxTotalDataSizeMB)",
     def: "The settings that mechanically enforce an index's retention policy by governing when a bucket ages from one stage to the next.",
@@ -17774,7 +17935,7 @@ const SOT_OBJECTS = [
     config: "indexes.conf ([volume:<name>])",
     def: "A named storage-path allocation shared across multiple indexes, letting several indexes draw from (and be capped by) one pool of disk space.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-06.04.01", instanceId: "VOLU-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-06.04.01", instanceId: "VOLU-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/index-volumes/{name}" },
 { name: "SmartStore Remote Storage", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level",
     config: "indexes.conf ([volume:<name>] with a remote path/storageType)",
     def: "S3-compatible remote object storage backing an index's searchable buckets, with only a local cache kept on indexer disk -- decouples storage capacity from indexer compute.",
@@ -17799,13 +17960,13 @@ const SOT_OBJECTS = [
     config: "indexes.conf (datatype = metric)",
     def: "An index type optimised for high-volume numeric time-series data (metric_name, dimensions, value) rather than full-text events, queried with mstats/mcatalog instead of stats/tstats.",
     notes: "Its purpose-built storage format gives much higher ingestion and query throughput than an equivalent event index carrying the same metric volume.",
-    deps: [], feeds: [], sotCode: "SOT-06.01.02", instanceId: "METI-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-06.01.02", instanceId: "METI-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/indexes/{name}" },
   // ---------- SOT-09 — Application, Packaging & Content Objects ----------
 { name: "App", domain: "SOT-09 — Application, Packaging & Content Objects", type: "Hybrid (Knowledge + Platform)", scope: "N/A (the namespace itself)",
     config: "app.conf",
     def: "The top-level packaging and namespace unit that bundles knowledge objects, configuration files and UI assets, and defines their default visibility and metadata.",
     notes: "",
-    deps: ["Deployment App", "Search Head", "Splunkbase"], feeds: ["Dashboard (Classic SimpleXML)", "Data Model", "Deployment App", "Field Extraction (search-time)", "Modular Input", "Source Type"], sotCode: "SOT-09.01.01", instanceId: "APP-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["Deployment App", "Search Head", "Splunkbase"], feeds: ["Dashboard (Classic SimpleXML)", "Data Model", "Deployment App", "Field Extraction (search-time)", "Modular Input", "Source Type"], sotCode: "SOT-09.01.01", instanceId: "APP-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/apps/local/{name}" },
 { name: "Add-on (TA)", domain: "SOT-09 — Application, Packaging & Content Objects", type: "Hybrid (Knowledge + Platform)", scope: "N/A",
     config: "app.conf (Splunkbase naming/packaging convention, not a distinct mechanism)",
     def: "An app focused on data collection and normalisation (inputs, props/transforms, CIM mapping) rather than end-user UI -- a Splunkbase packaging convention layered on the same App object.",
@@ -17815,7 +17976,7 @@ const SOT_OBJECTS = [
     config: "app.conf",
     def: "Controls an app's metadata (label, version, author), visibility (is_visible), and launcher behaviour.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-09.02.01", instanceId: "ACAC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-09.02.01", instanceId: "ACAC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/apps/local/{name}" },
 { name: "Default/Local Metadata", domain: "SOT-09 — Application, Packaging & Content Objects", type: "Platform Object", scope: "App-scoped",
     config: "default.meta, local.meta",
     def: "Per-app files declaring default sharing and permissions for every knowledge object inside that app, and which capabilities/roles the app itself exposes.",
@@ -18124,6 +18285,76 @@ const SOT_OBJECTS = [
     def: "Splunk's formal training and certification program (instructor-led and self-paced courses, certification exams).",
     notes: "",
     deps: [], feeds: [], sotCode: "SOT-12.04.05", instanceId: "SE-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
+{ name: "System Message", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
+    config: "Ephemeral/persistent messages created by splunkd (license quotas, license expirations, misconfigured indexes, disk space) or created via POST",
+    def: "A systemwide notification surfaced as a Splunk Web bulletin-board message, either generated automatically by splunkd or created via the REST API.",
+    notes: "Distinct from a health check result -- a message is a discrete, dismissible notice rather than a continuously-evaluated status.",
+    deps: [], feeds: [], sotCode: "SOT-11.04.01", instanceId: "SYSMSG-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/messages/{name}" },
+{ name: "Server Role", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
+    config: "Derived from server.conf role configuration ([general], [clustering], [shclustering] stanzas) and instance topology",
+    def: "The set of roles this Splunk instance is currently performing in the deployment -- e.g. indexer, search head, cluster manager, license manager, deployment server -- surfaced as a read-only introspection value.",
+    notes: "See also the server-roles attribute returned by server/info.",
+    deps: [], feeds: [], sotCode: "SOT-11.04.02", instanceId: "SVROLE-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/server/roles" },
+{ name: "Server Settings", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
+    config: "server.conf ([general], [httpServer] and related stanzas)",
+    def: "General server configuration for a Splunk platform instance -- server name, default hostname, management/web ports, SSL and related instance-wide settings.",
+    notes: "",
+    deps: [], feeds: [], sotCode: "SOT-11.05.01", instanceId: "SVRSET-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/server/settings" },
+{ name: "HTTP Proxy Settings", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
+    config: "server.conf ([proxyConfig] stanza: http_proxy, https_proxy, no_proxy)",
+    def: "Outbound HTTP/HTTPS proxy configuration used by splunkd for its own outbound connections -- e.g. to Splunkbase, license servers, or external APIs.",
+    notes: "",
+    deps: [], feeds: [], sotCode: "SOT-11.05.02", instanceId: "HPROXY-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/server/httpsettings/proxysettings/proxyConfig" },
+{ name: "Logging Category", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
+    config: "log.cfg / log-cmdline.cfg (or in-code default), overridable at runtime",
+    def: "A named splunkd internal logging category (e.g. TcpInputProc, DatabaseDirectoryManager) and its configured log level, controlling the verbosity of splunkd.log for that subsystem.",
+    notes: "Changes made via POST are runtime-only unless also persisted to log.cfg / log-cmdline.cfg.",
+    deps: [], feeds: [], sotCode: "SOT-11.06.01", instanceId: "LOGCAT-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/server/logger/{name}" },
+{ name: "License", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "License file (.lic) added to the License Manager",
+    def: "An individual license entitlement file added to the deployment, granting indexing quota and feature access.",
+    notes: "Identified by a content hash rather than a chosen name; adding a license adds its entitlement to the stack it belongs to.",
+    deps: [], feeds: [], sotCode: "SOT-11.01.01", instanceId: "LIC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/licenser/licenses/{name}" },
+{ name: "Licenser Group", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "Managed via the License Manager (licenser/groups)",
+    def: "A container of one or more license stacks that can operate concurrently; only one licenser group is active on a deployment at any given time.",
+    notes: "",
+    deps: ["License Stack"], feeds: [], sotCode: "SOT-11.01.02", instanceId: "LGRP-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/licenser/groups/{name}" },
+{ name: "Licenser Message", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "Generated by the License Manager; not directly editable",
+    def: "A warning or alert generated by the License Manager about licensing state -- approaching a violation, an expiring license, or an overage exceeding the warning window.",
+    notes: "Read-only; distinct from the generic System Message object, scoped specifically to licensing state.",
+    deps: ["License Manager (Master)"], feeds: [], sotCode: "SOT-11.01.03", instanceId: "LMSG-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/licenser/messages/{name}" },
+{ name: "Licenser Peer", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "Registered automatically when a peer reports in to a License Manager",
+    def: "An indexer/peer instance registered to and drawing entitlement from a License Manager, identified by its GUID.",
+    notes: "",
+    deps: ["License Manager (Master)"], feeds: [], sotCode: "SOT-11.01.04", instanceId: "LPEER-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/licenser/peers/{name}" },
+{ name: "Search Job", domain: "SOT-01 — Search & Analytical Objects", type: "Platform Object", scope: "Instance-level",
+    config: "N/A -- created dynamically via REST/SPL dispatch, not backed by a persistent .conf stanza",
+    def: "A dispatched search execution -- ad-hoc, scheduled, or triggered by dispatching a saved search -- identified by a search ID (sid), with a bounded lifetime and a dispatch directory of results/artifacts on disk.",
+    notes: "Distinct from a Report or Alert (the saved definition); a Search Job is the ephemeral runtime instance produced when that definition, or an ad-hoc query, is executed.",
+    deps: ["Search Head"], feeds: [], sotCode: "SOT-01.01.05", instanceId: "SJOB-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/search/jobs/{search_id}" },
+{ name: "Fired Alert", domain: "SOT-03 — Detection, Alerting & Response Objects", type: "Platform Object", scope: "Instance-level",
+    config: "N/A -- generated at runtime when an Alert's trigger condition fires; not backed by a persistent .conf stanza",
+    def: "A record of a single triggering instance of an Alert, created each time the alert's trigger condition is met and its actions fire.",
+    notes: "Distinct from the Alert definition itself; has a bounded expiration and can be individually acknowledged or deleted.",
+    deps: ["Alert"], feeds: [], sotCode: "SOT-03.01.03", instanceId: "FALERT-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/alerts/fired_alerts/{name}" },
+{ name: "Metric Alert", domain: "SOT-03 — Detection, Alerting & Response Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "Managed via REST (alerts/metric_alerts); not backed by a classic .conf stanza the way savedsearches.conf-based Alerts are",
+    def: "A streaming metric alert -- a continuously-evaluated threshold condition against metric data, triggering actions in near real time rather than on a search schedule.",
+    notes: "Distinct execution model from a savedsearches.conf-based Alert: evaluated as metrics stream in, not dispatched on a cron schedule.",
+    deps: [], feeds: [], sotCode: "SOT-03.01.04", instanceId: "MALERT-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/alerts/metric_alerts/{alert_name}" },
+{ name: "Scheduled View", domain: "SOT-04 — Visualization & User Experience Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "Backed by a dummy noop scheduled saved search plus PDF delivery settings",
+    def: "A dashboard scheduled for recurring PDF delivery, implemented as a noop scheduled saved search paired with view-rendering and email-delivery configuration.",
+    notes: "Distinct from a Report/Alert schedule; the underlying saved search does nothing but trigger a PDF render and delivery of the associated dashboard.",
+    deps: [], feeds: [], sotCode: "SOT-04.01.03", instanceId: "SVIEW-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/scheduled/views/{name}" },
+{ name: "Search Concurrency Settings", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "limits.conf ([search] max_searches_per_cpu and related concurrency settings)",
+    def: "Deployment-wide tuning for the maximum number of concurrent scheduled and ad-hoc searches the instance will run simultaneously.",
+    notes: "Scheduler-specific vs. overall search concurrency limits can be tuned independently.",
+    deps: [], feeds: [], sotCode: "SOT-11.03.01", instanceId: "SCONC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/search/concurrency-settings" },
 ];
 
 const SOT_TREE = {
@@ -18133,6 +18364,7 @@ const SOT_TREE = {
       "SOT-01.01.02": "Saved Search",
       "SOT-01.01.03": "Scheduled Search",
       "SOT-01.01.04": "Real-time Search",
+      "SOT-01.01.05": "Search Job",
     } },
     "SOT-01.02": { label: "Reports", desc: "Saved searches surfaced as reusable, on-demand or scheduled reports.", subclasses: {
       "SOT-01.02.01": "Report",
@@ -18191,15 +18423,18 @@ const SOT_TREE = {
     "SOT-03.01": { label: "Alerting", desc: "Core, product-independent alert mechanics.", subclasses: {
       "SOT-03.01.01": "Alert",
       "SOT-03.01.02": "Alert Action",
+      "SOT-03.01.03": "Fired Alert",
+      "SOT-03.01.04": "Metric Alert",
     } },
     "SOT-03.02": { label: "Detection Content", desc: "Packaged, reusable detection content.", subclasses: {
       "SOT-03.02.01": "Detection Content Package (Community)",
     } },
   } },
   "SOT-04": { label: "Visualization & User Experience Objects", desc: "Dashboards, panels, navigation and UI-level constructs.", classes: {
-    "SOT-04.01": { label: "Dashboards", desc: "The two dashboard authoring formats.", subclasses: {
+    "SOT-04.01": { label: "Dashboards", desc: "The two dashboard authoring formats, plus scheduled PDF delivery of a dashboard.", subclasses: {
       "SOT-04.01.01": "Classic SimpleXML Dashboard",
       "SOT-04.01.02": "Dashboard Studio Dashboard",
+      "SOT-04.01.03": "Scheduled View",
     } },
     "SOT-04.02": { label: "Dashboard Components", desc: "The building blocks a dashboard is assembled from.", subclasses: {
       "SOT-04.02.01": "Dashboard Datasource",
@@ -18222,7 +18457,10 @@ const SOT_TREE = {
       "SOT-05.02.02": "HEC Token",
     } },
     "SOT-05.03": { label: "Forwarding", desc: "Where collected data is sent onward.", subclasses: {
-      "SOT-05.03.01": "Forwarder Output",
+      "SOT-05.03.01": "Default Forwarding Config",
+      "SOT-05.03.02": "Forwarding Group",
+      "SOT-05.03.03": "Forwarded Server",
+      "SOT-05.03.04": "Syslog Output",
     } },
     "SOT-05.04": { label: "Parsing", desc: "Per-sourcetype rules governing how raw text becomes an event.", subclasses: {
       "SOT-05.04.01": "Props Stanza",
@@ -18286,7 +18524,12 @@ const SOT_TREE = {
       "SOT-07.02.03": "Object Permission (ACL)",
     } },
     "SOT-07.03": { label: "Authentication", desc: "How identity is proven.", subclasses: {
-      "SOT-07.03.05": "Authentication Strategy (General)",
+      "SOT-07.03.05": "LDAP Strategy",
+      "SOT-07.03.06": "SAML Strategy",
+      "SOT-07.03.07": "OAuth2 Provider",
+      "SOT-07.03.08": "Duo MFA Config",
+      "SOT-07.03.09": "RSA MFA Config",
+      "SOT-07.03.10": "ProxySSO Config",
     } },
     "SOT-07.04": { label: "Secrets & Trust", desc: "Encrypted credentials and trust material.", subclasses: {
       "SOT-07.04.01": "Stored Credential",
@@ -18297,6 +18540,7 @@ const SOT_TREE = {
       "SOT-08.01.01": "Search Head",
       "SOT-08.01.02": "Search Head Cluster",
       "SOT-08.01.03": "SHC Deployer",
+      "SOT-08.01.04": "Knowledge Bundle Replication",
     } },
     "SOT-08.02": { label: "Indexing Tier", desc: "Instances responsible for storing and searching data locally.", subclasses: {
       "SOT-08.02.01": "Indexer",
@@ -18310,6 +18554,7 @@ const SOT_TREE = {
     } },
     "SOT-08.04": { label: "Deployment Management", desc: "Pushing configuration out to a fleet of instances.", subclasses: {
       "SOT-08.04.01": "Deployment Server",
+      "SOT-08.04.02": "Deployment Client",
       "SOT-08.04.03": "Server Class",
       "SOT-08.04.04": "Deployment App",
     } },
@@ -18317,7 +18562,8 @@ const SOT_TREE = {
       "SOT-08.05.01": "KV Store Service",
       "SOT-08.05.02": "Monitoring Console",
       "SOT-08.05.03": "License Manager",
-      "SOT-08.05.04": "License Pool / Stack",
+      "SOT-08.05.04": "License Stack",
+      "SOT-08.05.05": "License Pool",
     } },
     "SOT-08.06": { label: "Foundational Instance", desc: "The base running process every other role layers on top of.", subclasses: {
       "SOT-08.06.01": "Splunk Instance",
@@ -18402,18 +18648,28 @@ const SOT_TREE = {
       "SOT-10.06.06": "Splunk AR",
     } },
   } },
-  "SOT-11": { label: "Platform Administration & Operational Objects", desc: "Licensing, scheduling, workload and operational-health management. A classification placeholder for future admin/ops object types not yet catalogued as discrete objects here.", classes: {
+  "SOT-11": { label: "Platform Administration & Operational Objects", desc: "Licensing, scheduling, workload and operational-health management. Licensing, Health & Monitoring, Configuration Management, Workload Management and Audit & Internal Logging are now populated; Search Scheduling and Upgrade & Compatibility remain classification placeholders for admin/ops object types not yet catalogued as discrete objects here.", classes: {
     "SOT-11.01": { label: "Licensing", desc: "License volume tracking and allocation.", subclasses: {
+      "SOT-11.01.01": "License",
+      "SOT-11.01.02": "Licenser Group",
+      "SOT-11.01.03": "Licenser Message",
+      "SOT-11.01.04": "Licenser Peer",
     } },
     "SOT-11.02": { label: "Search Scheduling", desc: "How and when scheduled work runs.", subclasses: {
     } },
     "SOT-11.03": { label: "Workload Management", desc: "Resource governance across concurrent work.", subclasses: {
+      "SOT-11.03.01": "Search Concurrency Settings",
     } },
     "SOT-11.04": { label: "Health & Monitoring", desc: "Built-in operational health surfaces.", subclasses: {
+      "SOT-11.04.01": "System Message",
+      "SOT-11.04.02": "Server Role",
     } },
     "SOT-11.05": { label: "Configuration Management", desc: "Managing config across a deployment.", subclasses: {
+      "SOT-11.05.01": "Server Settings",
+      "SOT-11.05.02": "HTTP Proxy Settings",
     } },
     "SOT-11.06": { label: "Audit & Internal Logging", desc: "Splunk's own operational telemetry about itself.", subclasses: {
+      "SOT-11.06.01": "Logging Category",
     } },
     "SOT-11.07": { label: "Upgrade & Compatibility", desc: "Version and upgrade-readiness concerns.", subclasses: {
     } },
@@ -18560,7 +18816,25 @@ function attrRow(label, value, mono) {
   return `<tr><td class="attr-label">${escapeHtml(label)}</td><td class="${cls}">${escapeHtml(value)}</td></tr>`;
 }
 
+function isKnowledgeObjectType(obj) {
+  return obj.type === "Knowledge Object" || obj.type === "Hybrid (Knowledge + Platform)";
+}
+
 function renderObjectAttributesTable(obj) {
+  const knowledgeObject = isKnowledgeObjectType(obj);
+  const sharingRows = knowledgeObject ? `
+    ${attrRow("Description", SOT_TBC)}
+    ${attrRow("Sharing", SOT_TBC)}
+    ${attrRow("Read roles", SOT_TBC)}
+    ${attrRow("Write roles", SOT_TBC)}
+    ${attrRow("Disabled", SOT_TBC)}
+    ${attrRow("Updated", SOT_TBC)}
+  ` : "";
+  const governanceRows = knowledgeObject ? `
+    ${attrRow("Fingerprint / hash", SOT_TBC)}
+    ${attrRow("Environment", SOT_TBC)}
+    ${attrRow("Deployment status", SOT_TBC)}
+  ` : "";
   return `<table class="attr-table">
     ${attrRow("SOT code", obj.sotCode, true)}
     ${attrRow("Instance ID", obj.instanceId, true)}
@@ -18580,6 +18854,8 @@ function renderObjectAttributesTable(obj) {
     ${attrRow("Exportable", SOT_TBC)}
     ${attrRow("Security relevance", SOT_TBC)}
     ${attrRow("Configuration layer", SOT_TBC)}
+    ${sharingRows}
+    ${governanceRows}
     ${attrRow("Validation method", obj.validationMethod)}
     ${attrRow("Primary key", "Object name (unique within this taxonomy)")}
   </table>`;
@@ -18609,6 +18885,7 @@ function jumpToTaxNode(code) {
   renderTree();
   renderDetail();
   setActivePage("taxonomy");
+  setActiveTaxView("tree");
   setTimeout(() => document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
 }
 
