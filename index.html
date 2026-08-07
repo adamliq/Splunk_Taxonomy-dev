@@ -18280,6 +18280,31 @@ const SOT_OBJECTS = [
     def: "Splunk's formal training and certification program (instructor-led and self-paced courses, certification exams).",
     notes: "",
     deps: [], feeds: [], sotCode: "SOT-12.04.05", instanceId: "SE-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
+{ name: "System Message", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
+    config: "Ephemeral/persistent messages created by splunkd (license quotas, license expirations, misconfigured indexes, disk space) or created via POST",
+    def: "A systemwide notification surfaced as a Splunk Web bulletin-board message, either generated automatically by splunkd or created via the REST API.",
+    notes: "Distinct from a health check result -- a message is a discrete, dismissible notice rather than a continuously-evaluated status.",
+    deps: [], feeds: [], sotCode: "SOT-11.04.01", instanceId: "SYSMSG-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/messages/{name}" },
+{ name: "Server Role", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
+    config: "Derived from server.conf role configuration ([general], [clustering], [shclustering] stanzas) and instance topology",
+    def: "The set of roles this Splunk instance is currently performing in the deployment -- e.g. indexer, search head, cluster manager, license manager, deployment server -- surfaced as a read-only introspection value.",
+    notes: "See also the server-roles attribute returned by server/info.",
+    deps: [], feeds: [], sotCode: "SOT-11.04.02", instanceId: "SVROLE-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/server/roles" },
+{ name: "Server Settings", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
+    config: "server.conf ([general], [httpServer] and related stanzas)",
+    def: "General server configuration for a Splunk platform instance -- server name, default hostname, management/web ports, SSL and related instance-wide settings.",
+    notes: "",
+    deps: [], feeds: [], sotCode: "SOT-11.05.01", instanceId: "SVRSET-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/server/settings" },
+{ name: "HTTP Proxy Settings", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
+    config: "server.conf ([proxyConfig] stanza: http_proxy, https_proxy, no_proxy)",
+    def: "Outbound HTTP/HTTPS proxy configuration used by splunkd for its own outbound connections -- e.g. to Splunkbase, license servers, or external APIs.",
+    notes: "",
+    deps: [], feeds: [], sotCode: "SOT-11.05.02", instanceId: "HPROXY-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/server/httpsettings/proxysettings/proxyConfig" },
+{ name: "Logging Category", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
+    config: "log.cfg / log-cmdline.cfg (or in-code default), overridable at runtime",
+    def: "A named splunkd internal logging category (e.g. TcpInputProc, DatabaseDirectoryManager) and its configured log level, controlling the verbosity of splunkd.log for that subsystem.",
+    notes: "Changes made via POST are runtime-only unless also persisted to log.cfg / log-cmdline.cfg.",
+    deps: [], feeds: [], sotCode: "SOT-11.06.01", instanceId: "LOGCAT-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/server/logger/{name}" },
 ];
 
 const SOT_TREE = {
@@ -18568,7 +18593,7 @@ const SOT_TREE = {
       "SOT-10.06.06": "Splunk AR",
     } },
   } },
-  "SOT-11": { label: "Platform Administration & Operational Objects", desc: "Licensing, scheduling, workload and operational-health management. A classification placeholder for future admin/ops object types not yet catalogued as discrete objects here.", classes: {
+  "SOT-11": { label: "Platform Administration & Operational Objects", desc: "Licensing, scheduling, workload and operational-health management. Health & Monitoring, Configuration Management and Audit & Internal Logging are now populated; Licensing, Search Scheduling, Workload Management and Upgrade & Compatibility remain classification placeholders for admin/ops object types not yet catalogued as discrete objects here.", classes: {
     "SOT-11.01": { label: "Licensing", desc: "License volume tracking and allocation.", subclasses: {
     } },
     "SOT-11.02": { label: "Search Scheduling", desc: "How and when scheduled work runs.", subclasses: {
@@ -18576,10 +18601,15 @@ const SOT_TREE = {
     "SOT-11.03": { label: "Workload Management", desc: "Resource governance across concurrent work.", subclasses: {
     } },
     "SOT-11.04": { label: "Health & Monitoring", desc: "Built-in operational health surfaces.", subclasses: {
+      "SOT-11.04.01": "System Message",
+      "SOT-11.04.02": "Server Role",
     } },
     "SOT-11.05": { label: "Configuration Management", desc: "Managing config across a deployment.", subclasses: {
+      "SOT-11.05.01": "Server Settings",
+      "SOT-11.05.02": "HTTP Proxy Settings",
     } },
     "SOT-11.06": { label: "Audit & Internal Logging", desc: "Splunk's own operational telemetry about itself.", subclasses: {
+      "SOT-11.06.01": "Logging Category",
     } },
     "SOT-11.07": { label: "Upgrade & Compatibility", desc: "Version and upgrade-readiness concerns.", subclasses: {
     } },
