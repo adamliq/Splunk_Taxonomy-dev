@@ -18420,6 +18420,46 @@ const SOT_OBJECTS = [
     def: "The Python interpreter version (2.7 vs. 3.x) used by scripted inputs, custom search commands and other Python-based extensions on a Splunk Cloud Platform stack.",
     notes: "Managed via ACS on Splunk Cloud Platform; on Splunk Enterprise this is controlled locally via server.conf / python.version settings instead.",
     deps: [], feeds: [], sotCode: "SOT-11.07.02", instanceId: "PYRT-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API (ACS)", restEndpoint: "To be confirmed", restEndpointCloud: "https://admin.splunk.com/{stack}/adminconfig/v2/python-runtime" },
+{ name: "Agent Management Fleet", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "agent_management.conf",
+    def: "Fleet management configuration for OpenTelemetry Collector agents deployed and monitored from a Splunk platform instance, extending deployment-server-style fleet control to OTel-based data collection agents.",
+    notes: "A newer addition tied to Splunk's OpenTelemetry Collector integration; distinct from the classic Deployment Server / Deployment Client mechanism used for Splunk forwarders.",
+    deps: [], feeds: [], sotCode: "SOT-08.04.05", instanceId: "AGTM-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+{ name: "Audit Trail Signing", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
+    config: "audit.conf",
+    def: "Configuration for signing and validating the integrity of Splunk's internal audit trail events (the audittrail sourcetype in the _audit index), including signing key rotation.",
+    notes: "",
+    deps: [], feeds: [], sotCode: "SOT-11.06.02", instanceId: "AUDC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/-/-/configs/conf-audit/{name}" },
+{ name: "Monitoring Console Bookmark", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Instance-level",
+    config: "bookmarks.conf",
+    def: "A saved URL linking to the Monitoring Console of another, separate Splunk deployment -- lets an admin overseeing multiple independent deployments jump between their monitoring consoles.",
+    notes: "Distinct from the local Monitoring Console object itself; this is a cross-deployment navigation aid.",
+    deps: ["Monitoring Console"], feeds: [], sotCode: "SOT-08.05.06", instanceId: "MCBM-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/saved/bookmarks/monitoring_console" },
+{ name: "Health Check Checklist Item", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
+    config: "checklist.conf",
+    def: "A definition of a single Monitoring Console platform health-check item -- the query, thresholds and remediation guidance shown under Monitoring Console > Health Check.",
+    notes: "Distinct from the generic taxonomy Health Check register; this is Splunk's own built-in DMC health-check content.",
+    deps: ["Monitoring Console"], feeds: [], sotCode: "SOT-11.04.03", instanceId: "CHKL-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+{ name: "Field Type Grammar", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Platform Object", scope: "Instance-level",
+    config: "datatypesbnf.conf",
+    def: "A BNF grammar defining how to recognize standard data types -- IPv4 address, email, URL, MAC address, and so on -- in raw event text, used by field discovery and typeahead to suggest and validate field types.",
+    notes: "",
+    deps: [], feeds: [], sotCode: "SOT-02.02.05", instanceId: "DTBNF-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+{ name: "Default View Mode", domain: "SOT-04 — Visualization & User Experience Objects", type: "Platform Object", scope: "Instance-level",
+    config: "default-mode.conf",
+    def: "Configuration for the default view/dashboard mode Splunk Web falls back to for a given view type when no other mode is specified.",
+    notes: "",
+    deps: [], feeds: [], sotCode: "SOT-04.04.02", instanceId: "DVM-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+{ name: "Event Renderer", domain: "SOT-04 — Visualization & User Experience Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "event_renderers.conf",
+    def: "A custom HTML/JS renderer that replaces the default raw-text display of a search-result event, selected by matching the event's eventtype and/or host.",
+    notes: "",
+    deps: ["Event Type"], feeds: [], sotCode: "SOT-04.04.03", instanceId: "EVREN-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+{ name: "Interesting Field Discovery", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Platform Object", scope: "Instance-level",
+    config: "eventdiscoverer.conf",
+    def: "Heuristics controlling which extracted fields are surfaced as \"interesting fields\" in the search results sidebar, and which are excluded as noise.",
+    notes: "",
+    deps: [], feeds: [], sotCode: "SOT-02.02.06", instanceId: "EVDISC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
 ];
 
 const SOT_TREE = {
@@ -18460,6 +18500,8 @@ const SOT_TREE = {
       "SOT-02.02.02": "Indexed Field",
       "SOT-02.02.03": "Indexed Extractions",
       "SOT-02.02.04": "Field Transform",
+      "SOT-02.02.05": "Field Type Grammar",
+      "SOT-02.02.06": "Interesting Field Discovery",
     } },
     "SOT-02.03": { label: "Field Normalisation", desc: "Renaming, deriving and constraining fields after extraction.", subclasses: {
       "SOT-02.03.01": "Field Alias",
@@ -18511,6 +18553,8 @@ const SOT_TREE = {
     } },
     "SOT-04.04": { label: "UI Extensions & Preferences", desc: "User- and view-level UI state and extensions.", subclasses: {
       "SOT-04.04.01": "UI Preference",
+      "SOT-04.04.02": "Default View Mode",
+      "SOT-04.04.03": "Event Renderer",
     } },
   } },
   "SOT-05": { label: "Data Collection, Ingestion & Processing Objects", desc: "Everything between a raw data source and an indexed, searchable event.", classes: {
@@ -18630,6 +18674,7 @@ const SOT_TREE = {
       "SOT-08.04.02": "Deployment Client",
       "SOT-08.04.03": "Server Class",
       "SOT-08.04.04": "Deployment App",
+      "SOT-08.04.05": "Agent Management Fleet",
     } },
     "SOT-08.05": { label: "Platform Services", desc: "Shared services embedded in or alongside a Splunk instance.", subclasses: {
       "SOT-08.05.01": "KV Store Service",
@@ -18637,6 +18682,7 @@ const SOT_TREE = {
       "SOT-08.05.03": "License Manager",
       "SOT-08.05.04": "License Stack",
       "SOT-08.05.05": "License Pool",
+      "SOT-08.05.06": "Monitoring Console Bookmark",
     } },
     "SOT-08.06": { label: "Foundational Instance", desc: "The base running process every other role layers on top of.", subclasses: {
       "SOT-08.06.01": "Splunk Instance",
@@ -18743,6 +18789,7 @@ const SOT_TREE = {
     "SOT-11.04": { label: "Health & Monitoring", desc: "Built-in operational health surfaces.", subclasses: {
       "SOT-11.04.01": "System Message",
       "SOT-11.04.02": "Server Role",
+      "SOT-11.04.03": "Health Check Checklist Item",
     } },
     "SOT-11.05": { label: "Configuration Management", desc: "Managing config across a deployment.", subclasses: {
       "SOT-11.05.01": "Server Settings",
@@ -18750,6 +18797,7 @@ const SOT_TREE = {
     } },
     "SOT-11.06": { label: "Audit & Internal Logging", desc: "Splunk's own operational telemetry about itself.", subclasses: {
       "SOT-11.06.01": "Logging Category",
+      "SOT-11.06.02": "Audit Trail Signing",
     } },
     "SOT-11.07": { label: "Upgrade & Compatibility", desc: "Version and upgrade-readiness concerns.", subclasses: {
       "SOT-11.07.01": "Maintenance Window",
