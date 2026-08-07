@@ -17640,7 +17640,7 @@ const SOT_OBJECTS = [
     config: "indexes.conf",
     def: "A named, physically separate repository of indexed event data with its own retention, storage-path and access-control settings.",
     notes: "",
-    deps: ["Indexer"], feeds: ["Dashboard Datasource", "Data Input", "Dynamic Data Active Storage (DDAS)", "Search Head"], sotCode: "SOT-06.01.01", instanceId: "EI-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/indexes/{name}" },
+    deps: ["Indexer"], feeds: ["Dashboard Datasource", "Data Input", "Dynamic Data Active Storage (DDAS)", "Search Head"], sotCode: "SOT-06.01.01", instanceId: "EI-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/indexes/{name}", restEndpointCloud: "https://admin.splunk.com/{stack}/adminconfig/v2/indexes/{name}" },
   // ---------- SOT-05 — Data Collection, Ingestion & Processing Objects ----------
 { name: "Data Input", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level",
     config: "inputs.conf",
@@ -17651,7 +17651,7 @@ const SOT_OBJECTS = [
     config: "inputs.conf ([http://<token name>] stanza)",
     def: "An authenticated token/endpoint pair letting applications push data directly to Splunk over HTTP(S) without a forwarder.",
     notes: "",
-    deps: ["Index", "Source Type"], feeds: ["Heavy Forwarder (HF)", "Indexer", "Edge Processor", "Ingest Processor"], sotCode: "SOT-05.02.02", instanceId: "HT-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/inputs/http/{name}" },
+    deps: ["Index", "Source Type"], feeds: ["Heavy Forwarder (HF)", "Indexer", "Edge Processor", "Ingest Processor"], sotCode: "SOT-05.02.02", instanceId: "HT-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/inputs/http/{name}", restEndpointCloud: "https://admin.splunk.com/{stack}/adminconfig/v2/inputs/http-event-collectors/{hec-token-name}" },
 { name: "Modular Input", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "Instance-level (defined by an app)",
     config: "inputs.conf.spec (schema) + inputs.conf (instances)",
     def: "A custom input type, implemented as a script following Splunk's modular input contract and shipped inside an app/add-on, extending what inputs.conf can represent beyond the built-in types.",
@@ -17966,7 +17966,7 @@ const SOT_OBJECTS = [
     config: "app.conf",
     def: "The top-level packaging and namespace unit that bundles knowledge objects, configuration files and UI assets, and defines their default visibility and metadata.",
     notes: "",
-    deps: ["Deployment App", "Search Head", "Splunkbase"], feeds: ["Dashboard (Classic SimpleXML)", "Data Model", "Deployment App", "Field Extraction (search-time)", "Modular Input", "Source Type"], sotCode: "SOT-09.01.01", instanceId: "APP-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/apps/local/{name}" },
+    deps: ["Deployment App", "Search Head", "Splunkbase"], feeds: ["Dashboard (Classic SimpleXML)", "Data Model", "Deployment App", "Field Extraction (search-time)", "Modular Input", "Source Type"], sotCode: "SOT-09.01.01", instanceId: "APP-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/apps/local/{name}", restEndpointCloud: "https://admin.splunk.com/{stack}/adminconfig/v2/apps/victoria/{app_name}" },
 { name: "Add-on (TA)", domain: "SOT-09 — Application, Packaging & Content Objects", type: "Hybrid (Knowledge + Platform)", scope: "N/A",
     config: "app.conf (Splunkbase naming/packaging convention, not a distinct mechanism)",
     def: "An app focused on data collection and normalisation (inputs, props/transforms, CIM mapping) rather than end-user UI -- a Splunkbase packaging convention layered on the same App object.",
@@ -18380,6 +18380,46 @@ const SOT_OBJECTS = [
     def: "One of the three fixed workload categories -- search, ingest, or misc -- used to classify which kind of process a workload rule or pool applies to.",
     notes: "Categories themselves cannot be created or deleted, only edited (e.g. default pool assignment) and listed.",
     deps: [], feeds: [], sotCode: "SOT-11.03.04", instanceId: "WCAT-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/workloads/categories" },
+{ name: "IP Allow List", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud Platform only)",
+    config: "Managed via the ACS API only -- not backed by a classic .conf file",
+    def: "A per-feature list of allowed IPv4/IPv6 subnets controlling which networks may reach a specific Splunk Cloud Platform feature, such as Splunk Web, HEC, or S2S.",
+    notes: "Configured per {feature}; separate ACS endpoints exist for IPv4 (ipallowlists) and IPv6 (ipallowlists-v6) subnets.",
+    deps: [], feeds: [], sotCode: "SOT-07.05.01", instanceId: "IPAL-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API (ACS)", restEndpoint: "To be confirmed", restEndpointCloud: "https://admin.splunk.com/{stack}/adminconfig/v2/access/{feature}/ipallowlists" },
+{ name: "Outbound Port", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud Platform only)",
+    config: "Managed via the ACS API only -- not backed by a classic .conf file",
+    def: "An allowed outbound network port for a Splunk Cloud Platform stack's egress traffic, such as to a Heavy Forwarder or an external system.",
+    notes: "Separate ACS endpoints exist for IPv4 (outbound-ports) and IPv6 (outbound-ports-v6).",
+    deps: [], feeds: [], sotCode: "SOT-07.05.02", instanceId: "OPORT-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API (ACS)", restEndpoint: "To be confirmed", restEndpointCloud: "https://admin.splunk.com/{stack}/adminconfig/v2/access/outbound-ports/{port}" },
+{ name: "EMEK Key", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud Platform only)",
+    config: "Managed via the ACS API only -- not backed by a classic .conf file",
+    def: "A customer-managed AWS KMS key uploaded to Splunk Cloud Platform under Enterprise Managed Encryption Keys (EMEK), used to encrypt indexed data at rest with a key the customer controls.",
+    notes: "Requires accepting a legal disclaimer (EMEK-Legal-Ack header) before a key policy can be generated or a key uploaded.",
+    deps: [], feeds: [], sotCode: "SOT-07.04.02", instanceId: "EMEK-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API (ACS)", restEndpoint: "To be confirmed", restEndpointCloud: "https://admin.splunk.com/{stack}/adminconfig/v2/emek/key" },
+{ name: "ACS Auth Token", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud Platform only)",
+    config: "Managed via the ACS API only -- not backed by a classic .conf file",
+    def: "A JWT authentication token used to authorize calls to the ACS (Admin Config Service) API itself, distinct from a Splunk platform HEC token or a stored credential used by a search.",
+    notes: "Required for most ACS API GET/POST/PATCH/DELETE operations across every other ACS endpoint category.",
+    deps: [], feeds: [], sotCode: "SOT-07.04.03", instanceId: "ACSTOK-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API (ACS)", restEndpoint: "To be confirmed", restEndpointCloud: "https://admin.splunk.com/{stack}/adminconfig/v2/tokens" },
+{ name: "App Permission", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud Platform only)",
+    config: "Managed via the ACS API only -- not backed by a classic .conf file",
+    def: "Read and write permissions assigned to roles for an individual Splunk Cloud Platform app, managed via the ACS API rather than the classic per-object ACL mechanism.",
+    notes: "Distinct from the general Object Permission (ACL) construct -- scoped specifically to app-level read/write role assignment.",
+    deps: ["App"], feeds: [], sotCode: "SOT-07.02.04", instanceId: "APPERM-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API (ACS)", restEndpoint: "To be confirmed", restEndpointCloud: "https://admin.splunk.com/{stack}/adminconfig/v2/permissions/apps/{app-name}" },
+{ name: "Dynamic Data Self Storage (DDSS)", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud Platform only)",
+    config: "Managed via the ACS API only (AWS S3 or GCP GCS bucket registration)",
+    def: "A customer-owned AWS S3 or GCP GCS bucket registered as a self-storage location, letting an index archive data directly into storage the customer controls and pays for outside Splunk Cloud's managed storage tiers.",
+    notes: "Distinct from DDAS/DDAA, which use Splunk-managed storage; DDSS requires the customer to configure the bucket's IAM policy or service-account permissions themselves.",
+    deps: [], feeds: ["Index"], sotCode: "SOT-06.04.05", instanceId: "DDSS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API (ACS)", restEndpoint: "To be confirmed", restEndpointCloud: "https://admin.splunk.com/{stack}/adminconfig/v2/cloud-resources/self-storage-locations/buckets/{bucketPath}" },
+{ name: "Maintenance Window", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud Platform only)",
+    config: "Managed via the ACS API only -- not backed by a classic .conf file",
+    def: "A scheduled window during which Splunk-initiated changes (upgrades, maintenance) to a Splunk Cloud Platform stack are applied, or a change-freeze period during which they are deferred.",
+    notes: "An audit trail is available per scheduled window via maintenance-windows/schedules/{scheduleId}/audits.",
+    deps: [], feeds: [], sotCode: "SOT-11.07.01", instanceId: "MWIN-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API (ACS)", restEndpoint: "To be confirmed", restEndpointCloud: "https://admin.splunk.com/{stack}/adminconfig/v2/maintenance-windows/schedules" },
+{ name: "Python Runtime", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud Platform only)",
+    config: "Managed via the ACS API only -- not backed by a classic .conf file",
+    def: "The Python interpreter version (2.7 vs. 3.x) used by scripted inputs, custom search commands and other Python-based extensions on a Splunk Cloud Platform stack.",
+    notes: "Managed via ACS on Splunk Cloud Platform; on Splunk Enterprise this is controlled locally via server.conf / python.version settings instead.",
+    deps: [], feeds: [], sotCode: "SOT-11.07.02", instanceId: "PYRT-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API (ACS)", restEndpoint: "To be confirmed", restEndpointCloud: "https://admin.splunk.com/{stack}/adminconfig/v2/python-runtime" },
 ];
 
 const SOT_TREE = {
@@ -18531,6 +18571,7 @@ const SOT_TREE = {
       "SOT-06.04.02": "SmartStore",
       "SOT-06.04.03": "DDAS",
       "SOT-06.04.04": "DDAA",
+      "SOT-06.04.05": "DDSS",
     } },
     "SOT-06.05": { label: "Federated Data", desc: "Querying data that was never indexed locally.", subclasses: {
       "SOT-06.05.01": "Federated Search Provider",
@@ -18547,6 +18588,7 @@ const SOT_TREE = {
       "SOT-07.02.01": "Role",
       "SOT-07.02.02": "Capability",
       "SOT-07.02.03": "Object Permission (ACL)",
+      "SOT-07.02.04": "App Permission",
     } },
     "SOT-07.03": { label: "Authentication", desc: "How identity is proven.", subclasses: {
       "SOT-07.03.05": "LDAP Strategy",
@@ -18558,6 +18600,12 @@ const SOT_TREE = {
     } },
     "SOT-07.04": { label: "Secrets & Trust", desc: "Encrypted credentials and trust material.", subclasses: {
       "SOT-07.04.01": "Stored Credential",
+      "SOT-07.04.02": "EMEK Key",
+      "SOT-07.04.03": "ACS Auth Token",
+    } },
+    "SOT-07.05": { label: "Network Access Control", desc: "Perimeter-level network access controls (Splunk Cloud Platform, managed via ACS).", subclasses: {
+      "SOT-07.05.01": "IP Allow List",
+      "SOT-07.05.02": "Outbound Port",
     } },
   } },
   "SOT-08": { label: "Platform & Distributed Architecture Objects", desc: "The instance roles a Splunk deployment is built from.", classes: {
@@ -18677,7 +18725,7 @@ const SOT_TREE = {
       "SOT-10.06.06": "Splunk AR",
     } },
   } },
-  "SOT-11": { label: "Platform Administration & Operational Objects", desc: "Licensing, scheduling, workload and operational-health management. Licensing, Health & Monitoring, Configuration Management, Workload Management and Audit & Internal Logging are now populated; Search Scheduling and Upgrade & Compatibility remain classification placeholders for admin/ops object types not yet catalogued as discrete objects here.", classes: {
+  "SOT-11": { label: "Platform Administration & Operational Objects", desc: "Licensing, scheduling, workload and operational-health management. Licensing, Health & Monitoring, Configuration Management, Workload Management, Audit & Internal Logging and Upgrade & Compatibility are now populated; Search Scheduling remains a classification placeholder for admin/ops object types not yet catalogued as discrete objects here.", classes: {
     "SOT-11.01": { label: "Licensing", desc: "License volume tracking and allocation.", subclasses: {
       "SOT-11.01.01": "License",
       "SOT-11.01.02": "Licenser Group",
@@ -18704,6 +18752,8 @@ const SOT_TREE = {
       "SOT-11.06.01": "Logging Category",
     } },
     "SOT-11.07": { label: "Upgrade & Compatibility", desc: "Version and upgrade-readiness concerns.", subclasses: {
+      "SOT-11.07.01": "Maintenance Window",
+      "SOT-11.07.02": "Python Runtime",
     } },
   } },
   "SOT-12": { label: "Integration & Ecosystem Objects", desc: "APIs, external destinations and the wider Splunk ecosystem.", classes: {
@@ -18875,6 +18925,7 @@ function renderObjectAttributesTable(obj) {
     ${attrRow("Platform", SOT_TBC)}
     ${attrRow("Configuration artifact", obj.config, true)}
     ${attrRow("REST endpoint", obj.restEndpoint, true)}
+    ${obj.restEndpointCloud ? attrRow("REST endpoint (Splunk Cloud / ACS)", obj.restEndpointCloud, true) : ""}
     ${attrRow("Scope", obj.scope)}
     ${attrRow("Namespace / App", SOT_TBC)}
     ${attrRow("Owner", SOT_TBC)}
