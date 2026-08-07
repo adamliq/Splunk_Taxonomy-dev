@@ -17398,7 +17398,7 @@ const SOT_OBJECTS = [
     config: "commands.conf; no dedicated REST handler -- managed via the generic config-file endpoint configs/conf-commands/{name}",
     def: "A custom SPL command implemented as a script (typically Python, via the Splunk SDK) and registered in commands.conf, extending SPL beyond its built-in command set.",
     notes: "Streaming, generating, reporting and event-generating command types each declare different execution-model constraints in the same stanza.",
-    deps: [], feeds: [], sotCode: "SOT-01.05.02", instanceId: "CSC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/servicesNS/-/-/admin/commands/{name}" },
+    deps: [], feeds: [], sotCode: "SOT-01.05.02", instanceId: "CSC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/data/commands/{name}" },
 { name: "Transaction", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "N/A (ad hoc SPL command, not a saved knowledge object)",
     config: "N/A -- ad hoc via the transaction SPL command (grouping key + maxspan/maxpause); a saved Transaction Type (transactiontypes.conf) can predefine those same parameters under a name, managed via the generic config-file endpoint configs/conf-transactiontypes/{name}",
     def: "Groups related raw events into a single multi-line result based on a shared field value and a time constraint (maxspan/maxpause) -- e.g. every event in one user session or one order lifecycle.",
@@ -17490,7 +17490,7 @@ const SOT_OBJECTS = [
     config: "alert_actions.conf; REST endpoint data/alert_actions/{name}",
     def: "The response an Alert fires when it triggers -- send email, run a script, post a webhook, log an event, or a custom action shipped by an add-on.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-03.01.02", instanceId: "AA-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-03.01.02", instanceId: "AA-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/alerts/alert_actions" },
   // ---------- SOT-10 — Splunk Solution & Premium Product Objects ----------
 { name: "Adaptive Response Action", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "alert_actions.conf (Splunk Enterprise Security)",
@@ -18330,6 +18330,31 @@ const SOT_OBJECTS = [
     def: "An indexer/peer instance registered to and drawing entitlement from a License Manager, identified by its GUID.",
     notes: "",
     deps: ["License Manager (Master)"], feeds: [], sotCode: "SOT-11.01.04", instanceId: "LPEER-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/licenser/peers/{name}" },
+{ name: "Search Job", domain: "SOT-01 — Search & Analytical Objects", type: "Platform Object", scope: "Instance-level",
+    config: "N/A -- created dynamically via REST/SPL dispatch, not backed by a persistent .conf stanza",
+    def: "A dispatched search execution -- ad-hoc, scheduled, or triggered by dispatching a saved search -- identified by a search ID (sid), with a bounded lifetime and a dispatch directory of results/artifacts on disk.",
+    notes: "Distinct from a Report or Alert (the saved definition); a Search Job is the ephemeral runtime instance produced when that definition, or an ad-hoc query, is executed.",
+    deps: ["Search Head"], feeds: [], sotCode: "SOT-01.01.05", instanceId: "SJOB-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/search/jobs/{search_id}" },
+{ name: "Fired Alert", domain: "SOT-03 — Detection, Alerting & Response Objects", type: "Platform Object", scope: "Instance-level",
+    config: "N/A -- generated at runtime when an Alert's trigger condition fires; not backed by a persistent .conf stanza",
+    def: "A record of a single triggering instance of an Alert, created each time the alert's trigger condition is met and its actions fire.",
+    notes: "Distinct from the Alert definition itself; has a bounded expiration and can be individually acknowledged or deleted.",
+    deps: ["Alert"], feeds: [], sotCode: "SOT-03.01.03", instanceId: "FALERT-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/alerts/fired_alerts/{name}" },
+{ name: "Metric Alert", domain: "SOT-03 — Detection, Alerting & Response Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "Managed via REST (alerts/metric_alerts); not backed by a classic .conf stanza the way savedsearches.conf-based Alerts are",
+    def: "A streaming metric alert -- a continuously-evaluated threshold condition against metric data, triggering actions in near real time rather than on a search schedule.",
+    notes: "Distinct execution model from a savedsearches.conf-based Alert: evaluated as metrics stream in, not dispatched on a cron schedule.",
+    deps: [], feeds: [], sotCode: "SOT-03.01.04", instanceId: "MALERT-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/alerts/metric_alerts/{alert_name}" },
+{ name: "Scheduled View", domain: "SOT-04 — Visualization & User Experience Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "Backed by a dummy noop scheduled saved search plus PDF delivery settings",
+    def: "A dashboard scheduled for recurring PDF delivery, implemented as a noop scheduled saved search paired with view-rendering and email-delivery configuration.",
+    notes: "Distinct from a Report/Alert schedule; the underlying saved search does nothing but trigger a PDF render and delivery of the associated dashboard.",
+    deps: [], feeds: [], sotCode: "SOT-04.01.03", instanceId: "SVIEW-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/scheduled/views/{name}" },
+{ name: "Search Concurrency Settings", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "limits.conf ([search] max_searches_per_cpu and related concurrency settings)",
+    def: "Deployment-wide tuning for the maximum number of concurrent scheduled and ad-hoc searches the instance will run simultaneously.",
+    notes: "Scheduler-specific vs. overall search concurrency limits can be tuned independently.",
+    deps: [], feeds: [], sotCode: "SOT-11.03.01", instanceId: "SCONC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/search/concurrency-settings" },
 ];
 
 const SOT_TREE = {
@@ -18339,6 +18364,7 @@ const SOT_TREE = {
       "SOT-01.01.02": "Saved Search",
       "SOT-01.01.03": "Scheduled Search",
       "SOT-01.01.04": "Real-time Search",
+      "SOT-01.01.05": "Search Job",
     } },
     "SOT-01.02": { label: "Reports", desc: "Saved searches surfaced as reusable, on-demand or scheduled reports.", subclasses: {
       "SOT-01.02.01": "Report",
@@ -18397,15 +18423,18 @@ const SOT_TREE = {
     "SOT-03.01": { label: "Alerting", desc: "Core, product-independent alert mechanics.", subclasses: {
       "SOT-03.01.01": "Alert",
       "SOT-03.01.02": "Alert Action",
+      "SOT-03.01.03": "Fired Alert",
+      "SOT-03.01.04": "Metric Alert",
     } },
     "SOT-03.02": { label: "Detection Content", desc: "Packaged, reusable detection content.", subclasses: {
       "SOT-03.02.01": "Detection Content Package (Community)",
     } },
   } },
   "SOT-04": { label: "Visualization & User Experience Objects", desc: "Dashboards, panels, navigation and UI-level constructs.", classes: {
-    "SOT-04.01": { label: "Dashboards", desc: "The two dashboard authoring formats.", subclasses: {
+    "SOT-04.01": { label: "Dashboards", desc: "The two dashboard authoring formats, plus scheduled PDF delivery of a dashboard.", subclasses: {
       "SOT-04.01.01": "Classic SimpleXML Dashboard",
       "SOT-04.01.02": "Dashboard Studio Dashboard",
+      "SOT-04.01.03": "Scheduled View",
     } },
     "SOT-04.02": { label: "Dashboard Components", desc: "The building blocks a dashboard is assembled from.", subclasses: {
       "SOT-04.02.01": "Dashboard Datasource",
@@ -18619,7 +18648,7 @@ const SOT_TREE = {
       "SOT-10.06.06": "Splunk AR",
     } },
   } },
-  "SOT-11": { label: "Platform Administration & Operational Objects", desc: "Licensing, scheduling, workload and operational-health management. Licensing, Health & Monitoring, Configuration Management and Audit & Internal Logging are now populated; Search Scheduling, Workload Management and Upgrade & Compatibility remain classification placeholders for admin/ops object types not yet catalogued as discrete objects here.", classes: {
+  "SOT-11": { label: "Platform Administration & Operational Objects", desc: "Licensing, scheduling, workload and operational-health management. Licensing, Health & Monitoring, Configuration Management, Workload Management and Audit & Internal Logging are now populated; Search Scheduling and Upgrade & Compatibility remain classification placeholders for admin/ops object types not yet catalogued as discrete objects here.", classes: {
     "SOT-11.01": { label: "Licensing", desc: "License volume tracking and allocation.", subclasses: {
       "SOT-11.01.01": "License",
       "SOT-11.01.02": "Licenser Group",
@@ -18629,6 +18658,7 @@ const SOT_TREE = {
     "SOT-11.02": { label: "Search Scheduling", desc: "How and when scheduled work runs.", subclasses: {
     } },
     "SOT-11.03": { label: "Workload Management", desc: "Resource governance across concurrent work.", subclasses: {
+      "SOT-11.03.01": "Search Concurrency Settings",
     } },
     "SOT-11.04": { label: "Health & Monitoring", desc: "Built-in operational health surfaces.", subclasses: {
       "SOT-11.04.01": "System Message",
