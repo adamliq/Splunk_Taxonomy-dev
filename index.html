@@ -17747,7 +17747,7 @@ const SOT_OBJECTS = [
     config: "authorize.conf (granted per role), default.meta (declared by an app)",
     def: "An individual, additive-only permission bit (e.g. edit_user, admin_all_objects, rtsearch) granted to a role -- there is no explicit deny, so a user's effective permissions are the union of every role they hold.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-07.02.02", instanceId: "CAPA-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-07.02.02", instanceId: "CAPA-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/authorization/capabilities" },
 { name: "User", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level",
     config: "Internal user store, or externally via authentication.conf",
     def: "An individual account assigned one or more roles, authenticated natively, via LDAP, or via SAML single sign-on.",
@@ -17767,7 +17767,7 @@ const SOT_OBJECTS = [
     config: "passwords.conf",
     def: "An encrypted secret (e.g. a scripted-input password, an alert-action API key) stored via Splunk's credential-storage endpoint; the file is auto-managed and not meant to be hand-edited in cleartext.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-07.04.01", instanceId: "SC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-07.04.01", instanceId: "SC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/storage/passwords/{name}" },
   // ---------- SOT-10 — Splunk Solution & Premium Product Objects ----------
 { name: "Asset & Identity Framework", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global (Splunk ES)",
     config: "transforms.conf-backed lookups (e.g. asset_lookup_by_str, identity_lookup_expanded)",
