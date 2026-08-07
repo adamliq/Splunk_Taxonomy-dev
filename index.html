@@ -17971,7 +17971,7 @@ const SOT_OBJECTS = [
     config: "app.conf",
     def: "Controls an app's metadata (label, version, author), visibility (is_visible), and launcher behaviour.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-09.02.01", instanceId: "ACAC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-09.02.01", instanceId: "ACAC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/apps/local/{name}" },
 { name: "Default/Local Metadata", domain: "SOT-09 — Application, Packaging & Content Objects", type: "Platform Object", scope: "App-scoped",
     config: "default.meta, local.meta",
     def: "Per-app files declaring default sharing and permissions for every knowledge object inside that app, and which capabilities/roles the app itself exposes.",
