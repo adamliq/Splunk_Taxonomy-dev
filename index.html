@@ -17894,7 +17894,7 @@ const SOT_OBJECTS = [
     config: "server.conf ([kvstore]), collections.conf (per-collection definitions)",
     def: "The document-oriented storage engine embedded in every Search Head, providing the backing store for KV Store Collections, app configuration state, and several premium apps' internal data (ES, ITSI).",
     notes: "Distinct from a KV Store Collection: this is the underlying service/engine itself, configured once per search head (or per member of a Search Head Cluster).",
-    deps: [], feeds: [], sotCode: "SOT-08.05.01", instanceId: "KSS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/server/introspection/kvstore" },
+    deps: [], feeds: [], sotCode: "SOT-08.05.01", instanceId: "KSS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/kvstore/status" },
   // ---------- SOT-06 — Storage, Indexing & Data Management Objects ----------
 { name: "Federated Search Provider", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level",
     config: "federated-providers.conf (Splunk Cloud / ES)",
