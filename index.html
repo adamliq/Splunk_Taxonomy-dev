@@ -18666,7 +18666,25 @@ function attrRow(label, value, mono) {
   return `<tr><td class="attr-label">${escapeHtml(label)}</td><td class="${cls}">${escapeHtml(value)}</td></tr>`;
 }
 
+function isKnowledgeObjectType(obj) {
+  return obj.type === "Knowledge Object" || obj.type === "Hybrid (Knowledge + Platform)";
+}
+
 function renderObjectAttributesTable(obj) {
+  const knowledgeObject = isKnowledgeObjectType(obj);
+  const sharingRows = knowledgeObject ? `
+    ${attrRow("Description", SOT_TBC)}
+    ${attrRow("Sharing", SOT_TBC)}
+    ${attrRow("Read roles", SOT_TBC)}
+    ${attrRow("Write roles", SOT_TBC)}
+    ${attrRow("Disabled", SOT_TBC)}
+    ${attrRow("Updated", SOT_TBC)}
+  ` : "";
+  const governanceRows = knowledgeObject ? `
+    ${attrRow("Fingerprint / hash", SOT_TBC)}
+    ${attrRow("Environment", SOT_TBC)}
+    ${attrRow("Deployment status", SOT_TBC)}
+  ` : "";
   return `<table class="attr-table">
     ${attrRow("SOT code", obj.sotCode, true)}
     ${attrRow("Instance ID", obj.instanceId, true)}
@@ -18686,6 +18704,8 @@ function renderObjectAttributesTable(obj) {
     ${attrRow("Exportable", SOT_TBC)}
     ${attrRow("Security relevance", SOT_TBC)}
     ${attrRow("Configuration layer", SOT_TBC)}
+    ${sharingRows}
+    ${governanceRows}
     ${attrRow("Validation method", obj.validationMethod)}
     ${attrRow("Primary key", "Object name (unique within this taxonomy)")}
   </table>`;
