@@ -17804,7 +17804,7 @@ const SOT_OBJECTS = [
     config: "server.conf",
     def: "A single running splunkd process -- the base unit every other platform role (indexer, search head, forwarder) is layered on top of.",
     notes: "",
-    deps: [], feeds: [], sotCode: "SOT-08.06.01", instanceId: "INST-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: [], feeds: [], sotCode: "SOT-08.06.01", instanceId: "INST-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/stack-explainer/v1/node-identity" },
 { name: "Indexer", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Instance-level (role)",
     config: "server.conf, indexes.conf",
     def: "An instance responsible for parsing, indexing and storing event data, and for executing the data-local portion of a distributed search.",
@@ -18355,6 +18355,16 @@ const SOT_OBJECTS = [
     def: "Deployment-wide tuning for the maximum number of concurrent scheduled and ad-hoc searches the instance will run simultaneously.",
     notes: "Scheduler-specific vs. overall search concurrency limits can be tuned independently.",
     deps: [], feeds: [], sotCode: "SOT-11.03.01", instanceId: "SCONC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/search/concurrency-settings" },
+{ name: "Deployment Topology", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "N/A -- retrieved live from every managed node via the Splunk Topology sidecar, not backed by a persistent .conf stanza",
+    def: "A complete, deployment-wide view of every managed node and its role -- search heads, indexers, forwarders, license manager, deployment server -- assembled by the Splunk Topology sidecar for visualizing and analyzing the overall deployment structure.",
+    notes: "Available only on License Manager nodes; requires exactly one License Manager in the deployment to be accurate (topology behind a load-balanced multi-License-Manager configuration may not be correct). The Topology sidecar does not support FIPS mode.",
+    deps: ["License Manager (Master)"], feeds: [], sotCode: "SOT-08.07.01", instanceId: "DTOP-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/stack-explainer/v1/topology" },
+{ name: "Trusted Connection", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Instance-level",
+    config: "N/A -- derived live from a node's HEC, S2S (Splunk-to-Splunk) input/output and search peer configuration, not its own persistent .conf stanza",
+    def: "The set of trust relationships a node participates in -- HTTP Event Collector inputs, Splunk-to-Splunk input/output connections, and search peer relationships -- surfaced by the Topology sidecar for identity and trust introspection.",
+    notes: "Available on all node types except universal forwarders; querying a remote node's trusted connections (via the {guid} variant) requires a License Manager node, which proxies the request.",
+    deps: ["Splunk Instance"], feeds: [], sotCode: "SOT-08.07.02", instanceId: "TRUC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/stack-explainer/v1/trusted-connections" },
 ];
 
 const SOT_TREE = {
@@ -18567,6 +18577,10 @@ const SOT_TREE = {
     } },
     "SOT-08.06": { label: "Foundational Instance", desc: "The base running process every other role layers on top of.", subclasses: {
       "SOT-08.06.01": "Splunk Instance",
+    } },
+    "SOT-08.07": { label: "Topology & Trust", desc: "Deployment-wide node/role introspection and inter-node trust relationships, surfaced by the Splunk Topology sidecar.", subclasses: {
+      "SOT-08.07.01": "Deployment Topology",
+      "SOT-08.07.02": "Trusted Connection",
     } },
   } },
   "SOT-09": { label: "Application, Packaging & Content Objects", desc: "How functionality is bundled, distributed and configured as a unit.", classes: {
