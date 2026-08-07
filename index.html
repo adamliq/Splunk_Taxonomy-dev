@@ -10385,8 +10385,33 @@ E. Assumptions and unresolved inputs</pre>
     <span class="stat"><strong id="statHealthChecks">&ndash;</strong> reusable health checks</span>
     <span class="stat">Taxonomy explorer opens fully collapsed</span>
   </div>
+  <div class="view-tabs" role="tablist">
+    <button type="button" id="taxShowTreeView" class="active" role="tab" aria-selected="true" aria-controls="taxTreeViewPanel">Tree Explorer</button>
+    <button type="button" id="taxShowTableView" role="tab" aria-selected="false" aria-controls="taxTableViewPanel">Table View</button>
+  </div>
   <div class="layout">
-    <section id="tree"></section>
+    <div>
+      <section id="taxTreeViewPanel" class="view-panel active" role="tabpanel" aria-labelledby="taxShowTreeView">
+        <section id="tree"></section>
+      </section>
+      <section id="taxTableViewPanel" class="view-panel" role="tabpanel" aria-labelledby="taxShowTableView">
+        <p class="scroll-hint">Click a row to open its full definition and notes in the panel on the right.</p>
+        <div class="table-shell" tabindex="0" aria-label="Scrollable taxonomy table">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Term</th>
+                <th scope="col">Domain</th>
+                <th scope="col">Entity type</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody id="taxTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
     <aside id="detail" class="detail-panel"></aside>
   </div>
   </section>
@@ -12093,10 +12118,12 @@ searchElement.addEventListener("input", event => {
   state.query = event.target.value;
   if (state.query) nodes.forEach(item => state.expanded.add(item.code));
   renderTree();
+  renderTaxTable();
 });
 domainElement.addEventListener("change", event => {
   state.domain = event.target.value;
   renderTree();
+  renderTaxTable();
 });
 document.getElementById("expandAll").addEventListener("click", () => {
   state.expanded = new Set(nodes.map(item => item.code));
@@ -12107,6 +12134,78 @@ document.getElementById("collapseAll").addEventListener("click", () => {
   renderTree();
 });
 document.getElementById("exportTaxonomy").addEventListener("click", exportVisibleTaxonomy);
+
+/* ---------------------------------------------------------------------- *
+ * Taxonomy explorer -- Table View (flat list of taxonomy terms, mirrors
+ * the Tree Explorer / Table View pattern used on the Splunk Taxonomy
+ * (SOT) tab). Shares the same #detail panel and selection state as the
+ * tree, so a row click keeps both views in sync.
+ * ---------------------------------------------------------------------- */
+let taxActiveView = "tree";
+
+function getVisibleTaxonomyRows() {
+  const query = state.query.trim().toLowerCase();
+  return nodes.filter(node => {
+    if (node.nodeType !== "taxonomy") return false;
+    if (state.domain && node.domain !== state.domain) return false;
+    if (query && !searchableText(node).includes(query)) return false;
+    return true;
+  }).sort((a, b) => {
+    const aKey = a.displayCode || a.code;
+    const bKey = b.displayCode || b.code;
+    return aKey.localeCompare(bKey, undefined, { numeric: true });
+  });
+}
+
+function selectTaxNodeFromTable(code) {
+  const target = nodeIndex.get(code);
+  if (!target) return;
+  state.selectedCode = code;
+  let current = target;
+  const seen = new Set();
+  while (current && current.parentCode && !seen.has(current.code)) {
+    seen.add(current.code);
+    state.expanded.add(current.parentCode);
+    current = nodeIndex.get(current.parentCode);
+  }
+  renderDetail();
+  renderTree();
+  renderTaxTable();
+}
+
+function renderTaxTable() {
+  const visible = getVisibleTaxonomyRows();
+  const tbody = document.getElementById("taxTableBody");
+  if (!visible.length) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="5">No taxonomy terms match the current filters.</td></tr>`;
+  } else {
+    tbody.innerHTML = visible.map(node => `
+      <tr data-code="${escapeHtml(node.code)}" class="${state.selectedCode === node.code ? 'selected' : ''}">
+        <td class="config-file">${escapeHtml(node.code)}</td>
+        <td class="obj-name">${escapeHtml(node.term)}</td>
+        <td>${escapeHtml(node.domain)}</td>
+        <td>${escapeHtml(node.entityType)}</td>
+        <td>${escapeHtml(node.status)}</td>
+      </tr>
+    `).join("");
+  }
+  tbody.querySelectorAll("tr[data-code]").forEach(tr => {
+    tr.addEventListener("click", () => selectTaxNodeFromTable(tr.getAttribute("data-code")));
+  });
+}
+
+function setActiveTaxView(view) {
+  taxActiveView = view;
+  document.getElementById("taxShowTreeView").classList.toggle("active", view === "tree");
+  document.getElementById("taxShowTreeView").setAttribute("aria-selected", view === "tree" ? "true" : "false");
+  document.getElementById("taxShowTableView").classList.toggle("active", view === "table");
+  document.getElementById("taxShowTableView").setAttribute("aria-selected", view === "table" ? "true" : "false");
+  document.getElementById("taxTreeViewPanel").classList.toggle("active", view === "tree");
+  document.getElementById("taxTableViewPanel").classList.toggle("active", view === "table");
+  if (view === "table") renderTaxTable();
+}
+document.getElementById("taxShowTreeView").addEventListener("click", () => setActiveTaxView("tree"));
+document.getElementById("taxShowTableView").addEventListener("click", () => setActiveTaxView("table"));
 
 
 const namingPatterns = {
@@ -13701,6 +13800,7 @@ function openAssuranceTaxonomyRecord(displayCode, parentCode, ancestors) {
   renderTree();
   renderDetail();
   setActivePage("taxonomy");
+  setActiveTaxView("tree");
   setTimeout(() => document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
 }
 
@@ -14196,6 +14296,7 @@ function openCatalogueTaxonomyRecord(sourceId) {
   renderTree();
   renderDetail();
   setActivePage("taxonomy");
+  setActiveTaxView("tree");
   setTimeout(() => document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
 }
 
@@ -14690,6 +14791,7 @@ function openViabilityTaxonomyRecord(id) {
   renderTree();
   renderDetail();
   setActivePage("taxonomy");
+  setActiveTaxView("tree");
   setTimeout(() => document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
 }
 function exportVisibleViability(event) {
@@ -16407,6 +16509,7 @@ function openHealthCheckInTaxonomy(testId) {
   renderTree();
   renderDetail();
   setActivePage("taxonomy");
+  setActiveTaxView("tree");
   setTimeout(() => document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
 }
 
@@ -16439,6 +16542,7 @@ function openLoggingPatternInTaxonomy(patternId) {
   renderTree();
   renderDetail();
   setActivePage("taxonomy");
+  setActiveTaxView("tree");
   setTimeout(() => document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
 }
 
@@ -16609,6 +16713,7 @@ document.querySelectorAll("[data-assessment-taxonomy]").forEach(button => {
       renderDetail();
     }
     setActivePage("taxonomy");
+    setActiveTaxView("tree");
     setTimeout(() => {
       const selectedCard = document.querySelector(".node-card.selected");
       if (selectedCard) selectedCard.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -16793,6 +16898,7 @@ document.querySelectorAll("[data-taxonomy-target]").forEach(button => button.add
     current = nodes.find(item => item.code === current.parentCode);
   }
   setActivePage("taxonomy");
+  setActiveTaxView("tree");
   renderTree();
   renderDetail();
   requestAnimationFrame(() => {
@@ -18609,6 +18715,7 @@ function jumpToTaxNode(code) {
   renderTree();
   renderDetail();
   setActivePage("taxonomy");
+  setActiveTaxView("tree");
   setTimeout(() => document.getElementById("detail").scrollIntoView({ behavior: "smooth", block: "start" }), 0);
 }
 
