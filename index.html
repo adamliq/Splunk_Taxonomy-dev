@@ -12391,7 +12391,7 @@ E. Assumptions and unresolved inputs</pre>
     </div>
 
     <div class="patterns-stats" aria-live="polite">
-      <span class="patterns-stat"><strong id="splunkPortsVisibleCount">44</strong> visible ports</span>
+      <span class="patterns-stat"><strong id="splunkPortsVisibleCount">45</strong> visible ports</span>
       <span class="patterns-stat"><strong id="splunkPortsProductCount">4</strong> Splunk products</span>
     </div>
 
@@ -14409,7 +14409,8 @@ const splunkPortsTableData = [
   {"Port(s)":"8089","Product":"Splunk Enterprise","Component":"Indexers","Type":"Default","Description":"REST API Access."},
   {"Port(s)":"8089","Product":"Splunk Enterprise","Component":"Deployment Server","Type":"Default","Description":"Management port for Splunk deployment server."},
   {"Port(s)":"8089","Product":"Splunk Enterprise","Component":"Search Heads","Type":"Default","Description":"Management port for Splunk search heads."},
-  {"Port(s)":"8191","Product":"Splunk Enterprise","Component":"KVStore","Type":"Default","Description":"Internal and Replication."},
+  {"Port(s)":"8065, 8191","Product":"Splunk Enterprise","Component":"KVStore","Type":"Default","Description":"Internal and Replication."},
+  {"Port(s)":"5433, 5434, 2379, 2380, 8008, 5432, 6432","Product":"Splunk Enterprise","Component":"Search Heads","Type":"Default","Description":"Storage sidecar."},
   {"Port(s)":"9997","Product":"Splunk Enterprise","Component":"Forwarders","Type":"Convention","Description":"Default forwarding port for sending data to indexers."},
   {"Port(s)":"9998","Product":"Splunk Enterprise","Component":"Universal Forwarders and Indexers","Type":"Default","Description":"SSL communication between forwarders and indexers."},
   {"Port(s)":"443","Product":"Splunk Cloud","Component":"Client connectivity (SSL)","Type":"Default - Immutable","Description":"Web Connection. Mandatory SSL."},
