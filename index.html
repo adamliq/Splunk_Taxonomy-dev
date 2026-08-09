@@ -3191,7 +3191,6 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
     <button id="showPatternsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="patternsPage">Logging patterns table</button>
     <button id="showHealthChecksPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="healthChecksPage">Health checks table</button>
     <button id="showExternalToolsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="externalToolsPage">Companion tools</button>
-    <button id="showRolesPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="rolesPage">Roles</button>
   </nav>
 
 
@@ -3521,6 +3520,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
         <button type="button" data-reference-jump="standardsReferences">Standards &amp; references</button>
         <button type="button" data-reference-jump="configFileReferences">Configuration file reference</button>
         <button type="button" data-reference-jump="networkReferenceSection">Network reference</button>
+        <button type="button" data-reference-jump="rolesSection">Roles</button>
       </div>
     </div>
 
@@ -3799,6 +3799,45 @@ INGEST PROCESSOR
  +----> AWS S3</pre></div></details>
     </div>
   </section>
+  </section>
+
+    <section id="rolesSection" class="reference-section">
+    <div class="patterns-hero">
+      <div>
+        <div class="eyebrow">Access &amp; Capability reference</div>
+        <h2>Roles &amp; Assigned Capabilities</h2>
+        <p>Every Splunk role and the individual capabilities assigned to it, derived from the uploaded role/capability matrix. Click a role below, or use search and the filters, to see exactly which capabilities a role carries, what each capability lets you do, whether it is flagged as a privileged capability, and where the mapping came from.</p>
+        <p><strong>Note:</strong> the source file also lists three roles with no capabilities assigned in this matrix -- <code>mc_analyst</code>, <code>mc_analyst_reader</code>, <code>mc_soar_automation</code> -- shown below in the role chips (with a count of 0) for completeness, since they carry nothing to list in the table.</p>
+      </div>
+    </div>
+
+    <div class="domain-nav" id="rolesChipRow" role="group" aria-label="Filter by role"></div>
+
+    <div class="patterns-toolbar">
+      <input id="rolesTableSearch" type="search" placeholder="Search role, capability or description…" aria-label="Search roles and capabilities" />
+      <select id="rolesRoleFilter" aria-label="Filter by role">
+        <option value="">All roles</option>
+      </select>
+      <select id="rolesPrivFilter" aria-label="Filter by privileged capability">
+        <option value="">All</option>
+      </select>
+      <div class="button-group">
+        <button id="resetRolesTable" type="button">Reset</button>
+        <button id="exportRolesTable" class="primary-button" type="button">Export visible CSV</button>
+      </div>
+    </div>
+
+    <div class="patterns-stats" aria-live="polite">
+      <span class="patterns-stat"><strong id="rolesVisibleCount">580</strong> visible assignments</span>
+      <span class="patterns-stat"><strong id="rolesRoleCount">21</strong> roles with capabilities</span>
+    </div>
+
+    <div class="eccs-table-wrap" role="region" aria-label="Scrollable roles and capabilities table" tabindex="0">
+      <table class="eccs-matrix">
+        <thead><tr><th scope="col">Role</th><th scope="col">Capability</th><th scope="col">What it lets you do</th><th scope="col">Priv</th><th scope="col">Source / Notes</th></tr></thead>
+        <tbody id="rolesTableBody"></tbody>
+      </table>
+    </div>
   </section>
 
     </div>
@@ -12540,45 +12579,6 @@ E. Assumptions and unresolved inputs</pre>
     </section>
   </section>
 
-  <section id="rolesPage" class="page-view patterns-page" role="tabpanel" aria-labelledby="showRolesPage" hidden>
-    <div class="patterns-hero">
-      <div>
-        <div class="eyebrow">Access &amp; Capability reference</div>
-        <h2>Roles &amp; Assigned Capabilities</h2>
-        <p>Every Splunk role and the individual capabilities assigned to it, derived from the uploaded role/capability matrix. Click a role below, or use search and the filters, to see exactly which capabilities a role carries, what each capability lets you do, whether it is flagged as a privileged capability, and where the mapping came from.</p>
-        <p><strong>Note:</strong> the source file also lists three roles with no capabilities assigned in this matrix -- <code>mc_analyst</code>, <code>mc_analyst_reader</code>, <code>mc_soar_automation</code> -- shown below in the role chips (with a count of 0) for completeness, since they carry nothing to list in the table.</p>
-      </div>
-    </div>
-
-    <div class="domain-nav" id="rolesChipRow" role="group" aria-label="Filter by role"></div>
-
-    <div class="patterns-toolbar">
-      <input id="rolesTableSearch" type="search" placeholder="Search role, capability or description…" aria-label="Search roles and capabilities" />
-      <select id="rolesRoleFilter" aria-label="Filter by role">
-        <option value="">All roles</option>
-      </select>
-      <select id="rolesPrivFilter" aria-label="Filter by privileged capability">
-        <option value="">All</option>
-      </select>
-      <div class="button-group">
-        <button id="resetRolesTable" type="button">Reset</button>
-        <button id="exportRolesTable" class="primary-button" type="button">Export visible CSV</button>
-      </div>
-    </div>
-
-    <div class="patterns-stats" aria-live="polite">
-      <span class="patterns-stat"><strong id="rolesVisibleCount">580</strong> visible assignments</span>
-      <span class="patterns-stat"><strong id="rolesRoleCount">21</strong> roles with capabilities</span>
-    </div>
-
-    <div class="eccs-table-wrap" role="region" aria-label="Scrollable roles and capabilities table" tabindex="0">
-      <table class="eccs-matrix">
-        <thead><tr><th scope="col">Role</th><th scope="col">Capability</th><th scope="col">What it lets you do</th><th scope="col">Priv</th><th scope="col">Source / Notes</th></tr></thead>
-        <tbody id="rolesTableBody"></tbody>
-      </table>
-    </div>
-  </section>
-
 </main>
 
 
@@ -16663,8 +16663,7 @@ const pageTabs = {
   catalogue: document.getElementById("showCataloguePage"),
   patterns: document.getElementById("showPatternsPage"),
   health: document.getElementById("showHealthChecksPage"),
-  externalTools: document.getElementById("showExternalToolsPage"),
-  roles: document.getElementById("showRolesPage")
+  externalTools: document.getElementById("showExternalToolsPage")
 };
 const pageViews = {
   info: document.getElementById("infoPage"),
@@ -16681,8 +16680,7 @@ const pageViews = {
   catalogue: document.getElementById("cataloguePage"),
   patterns: document.getElementById("patternsPage"),
   health: document.getElementById("healthChecksPage"),
-  externalTools: document.getElementById("externalToolsPage"),
-  roles: document.getElementById("rolesPage")
+  externalTools: document.getElementById("externalToolsPage")
 };
 const patternTableBody = document.getElementById("patternTableBody");
 const patternTableSearch = document.getElementById("patternTableSearch");
@@ -18206,7 +18204,7 @@ function exportViabilityCalculator(event) {
 }
 
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "externalTools", "roles"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "externalTools"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : /^#eda-/.test(location.hash) ? "eda-playbook" : "");
   
@@ -18226,7 +18224,6 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
     if (location.hash === "#network-flows") setActiveNetRefView("flows");
     else if (location.hash === "#splunk-ports" || location.hash === "#network-reference") setActiveNetRefView("ports");
   }
-  if (selected === "roles") renderRolesTable();
   if (updateHash && history.replaceState) {
     const hash = selected === "info"
       ? "#info"
@@ -18254,8 +18251,6 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
                 ? "#health-checks"
                 : selected === "externalTools"
                   ? "#my-tools"
-                  : selected === "roles"
-                    ? "#roles"
                   : selected === "objectTaxonomy"
                     ? "#object-taxonomy"
                     : "#taxonomy";
@@ -18591,7 +18586,7 @@ function pageNameFromHash() {
   if (location.hash === "#network-reference") return "reference";
   if (location.hash === "#splunk-ports") return "reference";
   if (location.hash === "#network-flows") return "reference";
-  if (location.hash === "#roles") return "roles";
+  if (location.hash === "#roles") return "reference";
   return "info";
 }
 
@@ -19104,6 +19099,7 @@ rolesColumnOrder.forEach(role => {
     rolesPrivFilter.appendChild(option);
   });
 renderRolesChips();
+renderRolesTable();
 renderSplunkPortsTable();
 renderNetworkFlowsTable();
 
