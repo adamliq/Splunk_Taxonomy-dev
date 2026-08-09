@@ -3191,7 +3191,6 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
     <button id="showPatternsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="patternsPage">Logging patterns table</button>
     <button id="showHealthChecksPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="healthChecksPage">Health checks table</button>
     <button id="showExternalToolsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="externalToolsPage">Companion tools</button>
-    <button id="showNetworkReferencePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="networkReferencePage">Network reference</button>
     <button id="showRolesPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="rolesPage">Roles</button>
   </nav>
 
@@ -3521,6 +3520,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
         <button type="button" data-reference-jump="assessmentMethods">Assessment methodologies</button>
         <button type="button" data-reference-jump="standardsReferences">Standards &amp; references</button>
         <button type="button" data-reference-jump="configFileReferences">Configuration file reference</button>
+        <button type="button" data-reference-jump="networkReferenceSection">Network reference</button>
       </div>
     </div>
 
@@ -3627,6 +3627,180 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div id="configFileReferencesEmpty" class="reference-empty" hidden>No configuration file references match the current search.</div>
     </section>
+
+    <section id="networkReferenceSection" class="reference-section">
+  <div class="view-tabs" role="tablist">
+    <button type="button" id="netRefShowPortsView" class="active" role="tab" aria-selected="true" aria-controls="netRefPortsPanel">Ports</button>
+    <button type="button" id="netRefShowFlowsView" role="tab" aria-selected="false" aria-controls="netRefFlowsPanel">Flow Matrix</button>
+  </div>
+  <section id="netRefPortsPanel" class="view-panel active" role="tabpanel" aria-labelledby="netRefShowPortsView">
+    <div class="patterns-hero">
+      <div>
+        <div class="eyebrow">Network reference</div>
+        <h2>Splunk Ports</h2>
+        <p><strong>What is a Default Port?</strong> A port is considered to be default when the software sets it automatically, when the community uses it as a default, and when admins cannot change the port. Essentially, these are all the possible ways to define a default port, even though they are all very different. Three labels are used in the Type column below: <strong>Default</strong> -- the port is set without the user specifying it (e.g. Splunk Web on-prem runs on port 8000 by default -- the user does not choose it, but can change it if they wish). <strong>Convention</strong> -- ports used so often that they feel like default ports; the admin sets the port and can select any other one (e.g. the Splunk forwarding port of 9997 is not a default for Splunk Enterprise, yet almost every environment uses it). <strong>Default -- Immutable</strong> -- a default port the user cannot modify, found mostly in managed services such as Splunk Cloud.</p>
+        <p><strong>What is a Port in Splunk?</strong> In Splunk, ports are communication endpoints. When processes or applications exchange information over a network, they use a port to segment the data. Unless a row below states otherwise, ports refer specifically to the Transmission Control Protocol (TCP) communications standard.</p>
+      </div>
+    </div>
+
+    <div class="patterns-toolbar">
+      <input id="splunkPortsTableSearch" type="search" placeholder="Search all port fields…" aria-label="Search Splunk ports" />
+      <select id="splunkPortsProductFilter" aria-label="Filter by Splunk product">
+        <option value="">All products</option>
+      </select>
+      <select id="splunkPortsTypeFilter" aria-label="Filter by port type">
+        <option value="">All types</option>
+      </select>
+      <div class="button-group">
+        <button id="resetSplunkPortsTable" type="button">Reset</button>
+        <button id="exportSplunkPortsTable" class="primary-button" type="button">Export visible CSV</button>
+      </div>
+    </div>
+
+    <div class="patterns-stats" aria-live="polite">
+      <span class="patterns-stat"><strong id="splunkPortsVisibleCount">45</strong> visible ports</span>
+      <span class="patterns-stat"><strong id="splunkPortsProductCount">4</strong> Splunk products</span>
+    </div>
+
+    <div class="eccs-table-wrap" role="region" aria-label="Scrollable Splunk ports table" tabindex="0">
+      <table class="eccs-matrix">
+        <thead><tr><th scope="col">Port(s)</th><th scope="col">Product</th><th scope="col">Component</th><th scope="col">Type</th><th scope="col">Description</th></tr></thead>
+        <tbody id="splunkPortsTableBody"></tbody>
+      </table>
+    </div>
+    <p class="eccs-note" style="margin-top:14px">Disclaimer: The ports above are current as of May 2024. Most of these ports have been static through the years but may change to support new services and offerings. It is essential to regularly review the Splunk documentation and consult with your organization's Splunk Administrator for the most up-to-date information on network ports and their usage in your environment.</p>
+  </section>
+
+  <section id="netRefFlowsPanel" class="view-panel" role="tabpanel" aria-labelledby="netRefShowFlowsView">
+    <div class="patterns-hero">
+      <div>
+        <div class="eyebrow">Network reference</div>
+        <h2>Network Flow Matrix</h2>
+        <p>A Splunk network source-to-destination matrix suitable as the basis for firewall rules, architecture documentation, or a Splunk network taxonomy -- who initiates a connection to whom, over which protocol and port, and why. Complements the Splunk ports table: ports lists what each component listens on; this matrix lists the actual flows between components.</p>
+        <p><strong>Important:</strong> ports such as 9997, 8088, 8089, 8000 and 9887 are common/default Splunk ports, but most can be changed. Treat this as a reference architecture and validate the configured ports on each Splunk environment.</p>
+      </div>
+    </div>
+
+    <div class="patterns-toolbar">
+      <input id="networkFlowsTableSearch" type="search" placeholder="Search all flow fields…" aria-label="Search network flows" />
+      <select id="networkFlowsSectionFilter" aria-label="Filter by architecture section">
+        <option value="">All sections</option>
+      </select>
+      <select id="networkFlowsProtocolFilter" aria-label="Filter by protocol">
+        <option value="">All protocols</option>
+      </select>
+      <div class="button-group">
+        <button id="resetNetworkFlowsTable" type="button">Reset</button>
+        <button id="exportNetworkFlowsTable" class="primary-button" type="button">Export visible CSV</button>
+      </div>
+    </div>
+
+    <div class="patterns-stats" aria-live="polite">
+      <span class="patterns-stat"><strong id="networkFlowsVisibleCount">91</strong> visible flows</span>
+      <span class="patterns-stat"><strong id="networkFlowsSectionCount">11</strong> architecture sections</span>
+    </div>
+
+    <div class="eccs-table-wrap" role="region" aria-label="Scrollable network flow matrix" tabindex="0">
+      <table class="eccs-matrix">
+        <thead><tr><th scope="col">Section</th><th scope="col">Source</th><th scope="col">Destination</th><th scope="col">Protocol</th><th scope="col">Port</th><th scope="col">Purpose</th></tr></thead>
+        <tbody id="networkFlowsTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="eccs-note" style="margin-top:14px">
+      <strong>Operational notes</strong>
+      <ul class="method-list">
+        <li>The Indexer cluster peer-to-peer bucket-replication port and the Search Head Cluster artifact-replication port are both selected/configured per environment -- 9887 is a common convention, not a guaranteed default; confirm the configured value before writing a firewall rule.</li>
+        <li>A stateful firewall for Deployment Server normally only needs the deployment client &rarr; Deployment Server connection initiated on TCP 8089; the return traffic does not need its own rule.</li>
+        <li>For Splunk Cloud, use the stack-specific allowlist/endpoints Splunk provides rather than building firewall rules solely from generic port numbers.</li>
+        <li>Splunk Enterprise Security does not require its own network tier -- it runs on the search head / search head cluster; the ES rows above are its external integrations (SOAR, threat intelligence, TAXII, enrichment APIs).</li>
+        <li>Ingest Processor / Edge ingestion is a modern, largely Splunk Cloud-managed architecture whose exact data-plane connections vary considerably by the specific ingestion product in use.</li>
+      </ul>
+    </div>
+
+    <div class="eccs-examples" style="margin-top:14px">
+      <details><summary>Consolidated flow overview (ASCII diagram)</summary><div class="eccs-example-body"><pre class="eccs-event-example">ENDPOINT / SERVER
+     |
+     | TCP/TLS 9997
+     v
+UNIVERSAL FORWARDER
+     |
+     +------------------ TCP/TLS 9997 ------------------+
+     |                                                   |
+     v                                                   v
+HEAVY FORWARDER                                      INDEXER
+     |                                                   ^
+     | TCP/TLS 9997                                      |
+     +----------------------------------------------------+
+UF / HF
+ |
+ | HTTPS 8089
+ v
+DEPLOYMENT SERVER
+
+APPLICATION / API / FUNCTION
+ |
+ | HTTPS 8088 / 443
+ v
+HEC
+ |
+ v
+INDEXER
+
+SEARCH HEAD
+ |
+ | HTTPS 8089
+ v
+INDEXERS
+
+CLUSTER MANAGER
+ |
+ | HTTPS 8089
+ v
+INDEXER PEERS
+
+INDEXER PEER
+ |
+ | TCP/TLS replication port (commonly 9887)
+ v
+INDEXER PEER
+
+SEARCH HEAD CLUSTER MEMBER
+ |
+ | 8089 + configured replication port
+ v
+SEARCH HEAD CLUSTER MEMBER
+
+USER
+ |
+ | HTTPS 443
+ v
+LOAD BALANCER
+ |
+ | HTTPS / configured Splunk Web port
+ v
+SEARCH HEAD
+
+SPLUNK ES
+ |
+ +---- HTTPS 443 ----> SOAR
+ +---- HTTPS 443 ----> TAXII
+ +---- HTTPS 443 ----> Threat Intelligence
+ +---- HTTPS 443 ----> Enrichment APIs
+
+SOURCE SYSTEM
+ |
+ | HTTPS 443
+ v
+INGEST PROCESSOR
+ |
+ +----> SPLUNK CLOUD
+ |
+ +----> AWS S3</pre></div></details>
+    </div>
+  </section>
+  </section>
+
     </div>
 
     <article id="eccsReferenceView" class="eccs-reference" aria-labelledby="eccsReferenceTitle" hidden>
@@ -12366,181 +12540,6 @@ E. Assumptions and unresolved inputs</pre>
     </section>
   </section>
 
-
-  <section id="networkReferencePage" class="page-view patterns-page" role="tabpanel" aria-labelledby="showNetworkReferencePage" hidden>
-  <div class="view-tabs" role="tablist">
-    <button type="button" id="netRefShowPortsView" class="active" role="tab" aria-selected="true" aria-controls="netRefPortsPanel">Ports</button>
-    <button type="button" id="netRefShowFlowsView" role="tab" aria-selected="false" aria-controls="netRefFlowsPanel">Flow Matrix</button>
-  </div>
-  <section id="netRefPortsPanel" class="view-panel active" role="tabpanel" aria-labelledby="netRefShowPortsView">
-    <div class="patterns-hero">
-      <div>
-        <div class="eyebrow">Network reference</div>
-        <h2>Splunk Ports</h2>
-        <p><strong>What is a Default Port?</strong> A port is considered to be default when the software sets it automatically, when the community uses it as a default, and when admins cannot change the port. Essentially, these are all the possible ways to define a default port, even though they are all very different. Three labels are used in the Type column below: <strong>Default</strong> -- the port is set without the user specifying it (e.g. Splunk Web on-prem runs on port 8000 by default -- the user does not choose it, but can change it if they wish). <strong>Convention</strong> -- ports used so often that they feel like default ports; the admin sets the port and can select any other one (e.g. the Splunk forwarding port of 9997 is not a default for Splunk Enterprise, yet almost every environment uses it). <strong>Default -- Immutable</strong> -- a default port the user cannot modify, found mostly in managed services such as Splunk Cloud.</p>
-        <p><strong>What is a Port in Splunk?</strong> In Splunk, ports are communication endpoints. When processes or applications exchange information over a network, they use a port to segment the data. Unless a row below states otherwise, ports refer specifically to the Transmission Control Protocol (TCP) communications standard.</p>
-      </div>
-    </div>
-
-    <div class="patterns-toolbar">
-      <input id="splunkPortsTableSearch" type="search" placeholder="Search all port fields…" aria-label="Search Splunk ports" />
-      <select id="splunkPortsProductFilter" aria-label="Filter by Splunk product">
-        <option value="">All products</option>
-      </select>
-      <select id="splunkPortsTypeFilter" aria-label="Filter by port type">
-        <option value="">All types</option>
-      </select>
-      <div class="button-group">
-        <button id="resetSplunkPortsTable" type="button">Reset</button>
-        <button id="exportSplunkPortsTable" class="primary-button" type="button">Export visible CSV</button>
-      </div>
-    </div>
-
-    <div class="patterns-stats" aria-live="polite">
-      <span class="patterns-stat"><strong id="splunkPortsVisibleCount">45</strong> visible ports</span>
-      <span class="patterns-stat"><strong id="splunkPortsProductCount">4</strong> Splunk products</span>
-    </div>
-
-    <div class="eccs-table-wrap" role="region" aria-label="Scrollable Splunk ports table" tabindex="0">
-      <table class="eccs-matrix">
-        <thead><tr><th scope="col">Port(s)</th><th scope="col">Product</th><th scope="col">Component</th><th scope="col">Type</th><th scope="col">Description</th></tr></thead>
-        <tbody id="splunkPortsTableBody"></tbody>
-      </table>
-    </div>
-    <p class="eccs-note" style="margin-top:14px">Disclaimer: The ports above are current as of May 2024. Most of these ports have been static through the years but may change to support new services and offerings. It is essential to regularly review the Splunk documentation and consult with your organization's Splunk Administrator for the most up-to-date information on network ports and their usage in your environment.</p>
-  </section>
-
-  <section id="netRefFlowsPanel" class="view-panel" role="tabpanel" aria-labelledby="netRefShowFlowsView">
-    <div class="patterns-hero">
-      <div>
-        <div class="eyebrow">Network reference</div>
-        <h2>Network Flow Matrix</h2>
-        <p>A Splunk network source-to-destination matrix suitable as the basis for firewall rules, architecture documentation, or a Splunk network taxonomy -- who initiates a connection to whom, over which protocol and port, and why. Complements the Splunk ports table: ports lists what each component listens on; this matrix lists the actual flows between components.</p>
-        <p><strong>Important:</strong> ports such as 9997, 8088, 8089, 8000 and 9887 are common/default Splunk ports, but most can be changed. Treat this as a reference architecture and validate the configured ports on each Splunk environment.</p>
-      </div>
-    </div>
-
-    <div class="patterns-toolbar">
-      <input id="networkFlowsTableSearch" type="search" placeholder="Search all flow fields…" aria-label="Search network flows" />
-      <select id="networkFlowsSectionFilter" aria-label="Filter by architecture section">
-        <option value="">All sections</option>
-      </select>
-      <select id="networkFlowsProtocolFilter" aria-label="Filter by protocol">
-        <option value="">All protocols</option>
-      </select>
-      <div class="button-group">
-        <button id="resetNetworkFlowsTable" type="button">Reset</button>
-        <button id="exportNetworkFlowsTable" class="primary-button" type="button">Export visible CSV</button>
-      </div>
-    </div>
-
-    <div class="patterns-stats" aria-live="polite">
-      <span class="patterns-stat"><strong id="networkFlowsVisibleCount">91</strong> visible flows</span>
-      <span class="patterns-stat"><strong id="networkFlowsSectionCount">11</strong> architecture sections</span>
-    </div>
-
-    <div class="eccs-table-wrap" role="region" aria-label="Scrollable network flow matrix" tabindex="0">
-      <table class="eccs-matrix">
-        <thead><tr><th scope="col">Section</th><th scope="col">Source</th><th scope="col">Destination</th><th scope="col">Protocol</th><th scope="col">Port</th><th scope="col">Purpose</th></tr></thead>
-        <tbody id="networkFlowsTableBody"></tbody>
-      </table>
-    </div>
-
-    <div class="eccs-note" style="margin-top:14px">
-      <strong>Operational notes</strong>
-      <ul class="method-list">
-        <li>The Indexer cluster peer-to-peer bucket-replication port and the Search Head Cluster artifact-replication port are both selected/configured per environment -- 9887 is a common convention, not a guaranteed default; confirm the configured value before writing a firewall rule.</li>
-        <li>A stateful firewall for Deployment Server normally only needs the deployment client &rarr; Deployment Server connection initiated on TCP 8089; the return traffic does not need its own rule.</li>
-        <li>For Splunk Cloud, use the stack-specific allowlist/endpoints Splunk provides rather than building firewall rules solely from generic port numbers.</li>
-        <li>Splunk Enterprise Security does not require its own network tier -- it runs on the search head / search head cluster; the ES rows above are its external integrations (SOAR, threat intelligence, TAXII, enrichment APIs).</li>
-        <li>Ingest Processor / Edge ingestion is a modern, largely Splunk Cloud-managed architecture whose exact data-plane connections vary considerably by the specific ingestion product in use.</li>
-      </ul>
-    </div>
-
-    <div class="eccs-examples" style="margin-top:14px">
-      <details><summary>Consolidated flow overview (ASCII diagram)</summary><div class="eccs-example-body"><pre class="eccs-event-example">ENDPOINT / SERVER
-     |
-     | TCP/TLS 9997
-     v
-UNIVERSAL FORWARDER
-     |
-     +------------------ TCP/TLS 9997 ------------------+
-     |                                                   |
-     v                                                   v
-HEAVY FORWARDER                                      INDEXER
-     |                                                   ^
-     | TCP/TLS 9997                                      |
-     +----------------------------------------------------+
-UF / HF
- |
- | HTTPS 8089
- v
-DEPLOYMENT SERVER
-
-APPLICATION / API / FUNCTION
- |
- | HTTPS 8088 / 443
- v
-HEC
- |
- v
-INDEXER
-
-SEARCH HEAD
- |
- | HTTPS 8089
- v
-INDEXERS
-
-CLUSTER MANAGER
- |
- | HTTPS 8089
- v
-INDEXER PEERS
-
-INDEXER PEER
- |
- | TCP/TLS replication port (commonly 9887)
- v
-INDEXER PEER
-
-SEARCH HEAD CLUSTER MEMBER
- |
- | 8089 + configured replication port
- v
-SEARCH HEAD CLUSTER MEMBER
-
-USER
- |
- | HTTPS 443
- v
-LOAD BALANCER
- |
- | HTTPS / configured Splunk Web port
- v
-SEARCH HEAD
-
-SPLUNK ES
- |
- +---- HTTPS 443 ----> SOAR
- +---- HTTPS 443 ----> TAXII
- +---- HTTPS 443 ----> Threat Intelligence
- +---- HTTPS 443 ----> Enrichment APIs
-
-SOURCE SYSTEM
- |
- | HTTPS 443
- v
-INGEST PROCESSOR
- |
- +----> SPLUNK CLOUD
- |
- +----> AWS S3</pre></div></details>
-    </div>
-  </section>
-  </section>
-
-
   <section id="rolesPage" class="page-view patterns-page" role="tabpanel" aria-labelledby="showRolesPage" hidden>
     <div class="patterns-hero">
       <div>
@@ -16665,7 +16664,6 @@ const pageTabs = {
   patterns: document.getElementById("showPatternsPage"),
   health: document.getElementById("showHealthChecksPage"),
   externalTools: document.getElementById("showExternalToolsPage"),
-  networkReference: document.getElementById("showNetworkReferencePage"),
   roles: document.getElementById("showRolesPage")
 };
 const pageViews = {
@@ -16684,7 +16682,6 @@ const pageViews = {
   patterns: document.getElementById("patternsPage"),
   health: document.getElementById("healthChecksPage"),
   externalTools: document.getElementById("externalToolsPage"),
-  networkReference: document.getElementById("networkReferencePage"),
   roles: document.getElementById("rolesPage")
 };
 const patternTableBody = document.getElementById("patternTableBody");
@@ -18209,7 +18206,7 @@ function exportViabilityCalculator(event) {
 }
 
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "externalTools", "networkReference", "roles"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "externalTools", "roles"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : /^#eda-/.test(location.hash) ? "eda-playbook" : "");
   
@@ -18225,8 +18222,9 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
   if (selected === "catalogue") renderSourceCataloguePage();
   if (selected === "patterns") renderLoggingPatternTable();
   if (selected === "health") renderHealthCheckTable();
-  if (selected === "networkReference") {
-    setActiveNetRefView(location.hash === "#network-flows" ? "flows" : "ports");
+  if (selected === "reference") {
+    if (location.hash === "#network-flows") setActiveNetRefView("flows");
+    else if (location.hash === "#splunk-ports" || location.hash === "#network-reference") setActiveNetRefView("ports");
   }
   if (selected === "roles") renderRolesTable();
   if (updateHash && history.replaceState) {
@@ -18256,8 +18254,6 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
                 ? "#health-checks"
                 : selected === "externalTools"
                   ? "#my-tools"
-                  : selected === "networkReference"
-                    ? "#network-reference"
                   : selected === "roles"
                     ? "#roles"
                   : selected === "objectTaxonomy"
@@ -18592,9 +18588,9 @@ function pageNameFromHash() {
   if (location.hash === "#logging-patterns") return "patterns";
   if (location.hash === "#health-checks") return "health";
   if (location.hash === "#my-tools") return "externalTools";
-  if (location.hash === "#network-reference") return "networkReference";
-  if (location.hash === "#splunk-ports") return "networkReference";
-  if (location.hash === "#network-flows") return "networkReference";
+  if (location.hash === "#network-reference") return "reference";
+  if (location.hash === "#splunk-ports") return "reference";
+  if (location.hash === "#network-flows") return "reference";
   if (location.hash === "#roles") return "roles";
   return "info";
 }
@@ -19108,6 +19104,8 @@ rolesColumnOrder.forEach(role => {
     rolesPrivFilter.appendChild(option);
   });
 renderRolesChips();
+renderSplunkPortsTable();
+renderNetworkFlowsTable();
 
 Object.entries(pageTabs).forEach(([name, tab]) => {
   if (tab) tab.addEventListener("click", () => setActivePage(name));
