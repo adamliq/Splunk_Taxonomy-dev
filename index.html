@@ -2560,6 +2560,13 @@
     .reference-jump button { border-color: rgba(255,255,255,.34); background: rgba(255,255,255,.1); color: #fff; }
     .reference-jump button:hover { background: rgba(255,255,255,.2); }
     .reference-section { margin-top: 24px; scroll-margin-top: 18px; }
+    .reference-section-toggle { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; text-align:left; font:inherit; cursor:pointer; background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:15px 18px; }
+    .reference-section-toggle:hover { background:#f8fafc; border-color:#cbd5e1; }
+    .reference-section-toggle-title { font-weight:700; font-size:17px; color:#0f172a; }
+    .reference-section-chevron { font-size:15px; color:#64748b; transition: transform .2s ease; }
+    .reference-section.collapsed .reference-section-chevron { transform: rotate(-90deg); }
+    .reference-section-body { margin-top:14px; }
+    .reference-section.collapsed .reference-section-body { display:none; }
     .reference-section-heading { display:flex; justify-content:space-between; gap:14px; align-items:end; margin-bottom: 12px; }
     .reference-section-heading h3 { margin:0; font-size: 21px; }
     .reference-section-heading p { margin:4px 0 0; color:#64748b; font-size:13px; line-height:1.45; }
@@ -18227,8 +18234,9 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
   if (selected === "patterns") renderLoggingPatternTable();
   if (selected === "health") renderHealthCheckTable();
   if (selected === "reference") {
-    if (location.hash === "#network-flows") setActiveNetRefView("flows");
-    else if (location.hash === "#splunk-ports" || location.hash === "#network-reference") setActiveNetRefView("ports");
+    if (location.hash === "#network-flows") { expandReferenceSection("networkReferenceSection"); setActiveNetRefView("flows"); }
+    else if (location.hash === "#splunk-ports" || location.hash === "#network-reference") { expandReferenceSection("networkReferenceSection"); setActiveNetRefView("ports"); }
+    else if (location.hash === "#roles") expandReferenceSection("rolesSection");
   }
   if (updateHash && history.replaceState) {
     const hash = selected === "info"
@@ -18514,7 +18522,50 @@ function openReferenceConcept(term){
 }
 document.getElementById("conceptSearch")?.addEventListener("input",renderFrameworkConcepts);
 document.getElementById("conceptCategoryFilter")?.addEventListener("change",renderFrameworkConcepts);
-document.querySelectorAll("[data-reference-jump]").forEach(button=>button.addEventListener("click",()=>document.getElementById(button.dataset.referenceJump)?.scrollIntoView({behavior:"smooth",block:"start"})));
+const REFERENCE_COLLAPSIBLE_SECTIONS = [
+  { id: "frameworkOverview", title: "Framework overview" },
+  { id: "conceptDefinitions", title: "Concepts & definitions" },
+  { id: "assessmentMethods", title: "Assessment methodologies" },
+  { id: "standardsReferences", title: "Standards & references" },
+  { id: "configFileReferences", title: "Configuration file reference" },
+  { id: "networkReferenceSection", title: "Network reference" },
+  { id: "rolesSection", title: "Roles" },
+];
+function initCollapsibleReferenceSections() {
+  REFERENCE_COLLAPSIBLE_SECTIONS.forEach(({ id, title }) => {
+    const section = document.getElementById(id);
+    if (!section || section.dataset.collapsibleInit) return;
+    section.dataset.collapsibleInit = "true";
+    const body = document.createElement("div");
+    body.className = "reference-section-body";
+    while (section.firstChild) body.appendChild(section.firstChild);
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "reference-section-toggle";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-controls", id);
+    toggle.innerHTML = `<span class="reference-section-toggle-title">${title}</span><span class="reference-section-chevron" aria-hidden="true">&#8964;</span>`;
+    toggle.addEventListener("click", () => {
+      const nowCollapsed = section.classList.toggle("collapsed");
+      toggle.setAttribute("aria-expanded", String(!nowCollapsed));
+    });
+    section.appendChild(toggle);
+    section.appendChild(body);
+    section.classList.add("collapsed");
+  });
+}
+function expandReferenceSection(id) {
+  const section = document.getElementById(id);
+  if (!section) return;
+  section.classList.remove("collapsed");
+  const toggle = section.querySelector(".reference-section-toggle");
+  if (toggle) toggle.setAttribute("aria-expanded", "true");
+}
+document.querySelectorAll("[data-reference-jump]").forEach(button=>button.addEventListener("click",()=>{
+  const id = button.dataset.referenceJump;
+  expandReferenceSection(id);
+  document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});
+}));
 document.querySelectorAll("[data-open-reference-detail]").forEach(button=>button.addEventListener("click",()=>showReferenceDetail(button.dataset.openReferenceDetail)));
 document.querySelectorAll("[data-open-prompt-panel]").forEach(button=>button.addEventListener("click",()=>{
   setActivePage("prompts");
@@ -19645,6 +19696,7 @@ renderSourceCataloguePage();
 renderViabilityPage();
 renderLoggingPatternTable();
 renderHealthCheckTable();
+initCollapsibleReferenceSections();
 setActivePage(pageNameFromHash(), false);
 
 
