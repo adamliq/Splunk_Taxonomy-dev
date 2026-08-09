@@ -2629,11 +2629,12 @@
     .eccs-rating { padding:14px; border:1px solid var(--border); border-radius:12px; background:#fff; text-align:center; }
     .eccs-rating strong { display:block; color:#1f4e78; font-size:17px; }
     .eccs-rating span { display:block; margin-top:4px; color:#475569; font-size:12px; font-weight:800; }
-    .eccs-table-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:14px; background:#fff; box-shadow:0 5px 15px rgba(15,23,42,.04); }
+    .eccs-table-wrap { overflow-x:auto; overflow-y:auto; max-height:600px; border:1px solid var(--border); border-radius:14px; background:#fff; box-shadow:0 5px 15px rgba(15,23,42,.04); }
     .eccs-matrix { width:100%; min-width:980px; border-collapse:collapse; font-size:12px; line-height:1.45; }
     .eccs-matrix th,.eccs-matrix td { padding:12px; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; text-align:left; vertical-align:top; }
-    .eccs-matrix th { background:#f1f5f9; color:#0f172a; font-size:11px; text-transform:uppercase; letter-spacing:.03em; }
+    .eccs-matrix th { background:#f1f5f9; color:#0f172a; font-size:11px; text-transform:uppercase; letter-spacing:.03em; position:sticky; top:0; z-index:2; }
     .eccs-matrix th:first-child,.eccs-matrix td:first-child { position:sticky; left:0; z-index:1; min-width:110px; background:#f8fafc; color:#1f4e78; font-weight:900; }
+    .eccs-matrix th:first-child { z-index:3; }
     .eccs-matrix tr:last-child td { border-bottom:0; }
     .eccs-matrix th:last-child,.eccs-matrix td:last-child { border-right:0; }
     .eccs-examples { display:grid; gap:10px; }
