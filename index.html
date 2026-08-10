@@ -3345,8 +3345,8 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <div class="onboarding-arrow">↓</div>
 
       <div class="onboarding-stage">
-        <h4>Select logging pattern &amp; topology</h4>
-        <p>Choose the governed collection pattern and record transport, authentication and firewall prerequisites.</p>
+        <h4>Select logging pattern &amp; topology <span class="assessment-tag">TAX-03.02 / TAX-03.05</span></h4>
+        <p>Choose the governed collection pattern and record transport, Data Collection Authentication and firewall prerequisites.</p>
       </div>
 
       <div class="onboarding-feed">
@@ -3371,11 +3371,19 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
           <span>Index and sourcetype names, and the logging configuration itself, must comply with the approved Naming Convention and Logging Standard <span class="assessment-tag">TAX-02.06.01 / TAX-02.06.03</span> before the build is considered complete.</span>
         </div>
       </div>
+
+      <div class="onboarding-feed">
+        <span class="flow-badge feed">FEEDS IN</span>
+        <div>
+          <strong>Capacity &amp; licensing check</strong>
+          <span>The forecasted Event Volume Profile from this build is checked against License Entitlement and Daily License Consumption <span class="assessment-tag">TAX-01.06</span> before the source proceeds -- onboarding should not be the thing that pushes the deployment over its licensed daily volume.</span>
+        </div>
+      </div>
       <div class="onboarding-arrow">↓</div>
 
       <div class="onboarding-stage">
-        <h4>Data quality assessment <span class="assessment-tag">TAX-07.05&ndash;07.10</span></h4>
-        <p>Timestamp quality, log format quality, line length quality, event type coverage, required field coverage, event context completeness.</p>
+        <h4>Data quality assessment <span class="assessment-tag">TAX-07.05&ndash;07.12 / 07.15 / 07.22&ndash;07.23</span></h4>
+        <p>Timestamp quality, log format quality, line length quality, event type coverage, required field coverage, event context completeness, data quality score, investigative context density, context dimension coverage, investigative noise percentage, and volume predictability.</p>
         <div class="method-actions" style="margin-top:8px"><button type="button" data-open-reference-detail="log-assessment-framework">Log Assessment Framework: the line-by-line procedure behind Timestamp &amp; Log Format Quality</button></div>
       </div>
       <div class="onboarding-arrow">↓</div>
@@ -3406,8 +3414,8 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <div class="onboarding-arrow">↓</div>
 
       <div class="onboarding-stage">
-        <h4>Cyber value scoring <span class="assessment-tag">TAX-06.05.03&ndash;10</span></h4>
-        <p>Marginal novelty, pivot density &amp; breadth (TAX-07.13/14), semantic value, entity coverage &rarr; log source value score &rarr; cyber value density &rarr; candidate rank.</p>
+        <h4>Cyber value scoring <span class="assessment-tag">TAX-06.05.03&ndash;10 / TAX-07.16</span></h4>
+        <p>Marginal novelty, pivot density &amp; breadth (TAX-07.13/14), semantic value, entity coverage &rarr; log source value score &rarr; cyber value density &rarr; candidate rank. These roll up into the Cyber Value Index (CVI), one of the four indices behind the Cyber Monitoring Effectiveness Index.</p>
       </div>
       <div class="onboarding-arrow">↓</div>
 
@@ -3438,7 +3446,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
 
       <div class="onboarding-stage">
         <h4>Governance approval <span class="assessment-tag">TAX-02.03</span></h4>
-        <p>System Approval / Accreditation: a named approval authority records a decision, scope and expiry/review date before the source is allowed into production.</p>
+        <p>System Approval / Accreditation: a named approval authority records a decision, scope and expiry/review date before the source is allowed into production. Before that decision is recorded, this is also where Data Classification <span class="assessment-tag">TAX-02.02.06</span>, the Access Control model and authorised roles <span class="assessment-tag">TAX-02.08</span>, the Retention Policy <span class="assessment-tag">TAX-02.06.05</span>, and any Risk Assessment or Exception &amp; Risk Acceptance <span class="assessment-tag">TAX-02.04</span> are confirmed for the source -- an "Approved with conditions" outcome below is usually one or more of these still outstanding.</p>
       </div>
       <div class="onboarding-arrow">↓</div>
 
@@ -3459,8 +3467,8 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <div class="onboarding-arrow">↓</div>
 
       <div class="onboarding-stage">
-        <h4>Log Sustainment <span class="assessment-tag">TAX-07.04</span></h4>
-        <p>Operational maturity, health &amp; monitoring coverage, and review/improvement actions &mdash; backed by reusable health checks (TAX-04.10) and assurance roll-ups (TAX-06.03). A failing health check or assurance roll-up moves the lifecycle state to <span class="flow-badge state">DEGRADED</span> until remediated.</p>
+        <h4>Log Sustainment <span class="assessment-tag">TAX-07.04 / TAX-07.19</span></h4>
+        <p>Operational maturity, health &amp; monitoring coverage, and review/improvement actions &mdash; backed by reusable health checks (TAX-04.10) and assurance roll-ups (TAX-06.03). This is what the Operational Assurance Index (OAI) scores. A failing health check or assurance roll-up moves the lifecycle state to <span class="flow-badge state">DEGRADED</span> until remediated.</p>
       </div>
 
       <div class="onboarding-loopback">
@@ -3488,8 +3496,16 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <div class="onboarding-arrow">↓</div>
 
       <div class="onboarding-stage">
-        <h4>Response readiness <span class="assessment-tag">TAX-05.04 / TAX-02.07</span></h4>
-        <p>A validated detection isn't production-ready until someone knows what to do when it fires: attach its Response Action, Incident Response Plan, Runbook and Escalation Matrix references.</p>
+        <h4>Response readiness <span class="assessment-tag">TAX-05.04 / TAX-02.07 / TAX-07.18</span></h4>
+        <p>A validated detection isn't production-ready until someone knows what to do when it fires: attach its Response Action, Incident Response Plan, Runbook and Escalation Matrix references. This is what the Response Readiness Index (RRI) scores.</p>
+      </div>
+
+      <div class="onboarding-feed">
+        <span class="flow-badge feed">FEEDS IN</span>
+        <div>
+          <strong>Cyber Monitoring Effectiveness Index</strong>
+          <span>By this point all four component indices exist for the source: Cyber Value Index <span class="assessment-tag">TAX-07.16</span>, Threat Detection Index <span class="assessment-tag">TAX-07.17</span>, Response Readiness Index <span class="assessment-tag">TAX-07.18</span> and Operational Assurance Index <span class="assessment-tag">TAX-07.19</span> &mdash; the four inputs that roll up into the overarching Cyber Monitoring Effectiveness Index <span class="assessment-tag">TAX-07.20</span>.</span>
+        </div>
       </div>
       <div class="onboarding-arrow">↓</div>
 
