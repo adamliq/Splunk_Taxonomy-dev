@@ -3359,6 +3359,21 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <div class="onboarding-arrow">↓</div>
 
       <div class="onboarding-stage">
+        <h4>Connectivity validation <span class="assessment-tag">TAX-03.02.05</span></h4>
+        <p>End-to-end transport is tested and confirmed secure &mdash; network path, TLS/certificate trust, and authentication all succeed &mdash; before parsing configuration begins.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; Connectivity Succeeded?</h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Firewall, TLS, authentication or routing failure &rarr; back to topology/collection component configuration</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Transport succeeds securely &rarr; continue to engineering build</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
         <h4>Engineering build <span class="assessment-tag">TAX-04.01&ndash;04.09</span></h4>
         <p>Datetime standards &amp; parsing, line breaking, line length, log format detection &amp; parsing, field extraction, field normalisation (CIM/ECS mapping), event volume profile, parsing performance &mdash; plus collection components (TAX-03) and sourcetype identity (TAX-04.11). A structural fingerprint count from the sample (distinct format/timestamp-format combinations) is the concrete signal for whether the source needs one sourcetype or several.</p>
         <div class="method-actions" style="margin-top:8px"><button type="button" data-open-reference-detail="log-assessment-framework">Log Assessment Framework: structural fingerprinting informs this sourcetype/parsing split</button></div>
@@ -3382,8 +3397,23 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <div class="onboarding-arrow">↓</div>
 
       <div class="onboarding-stage">
-        <h4>Data quality assessment <span class="assessment-tag">TAX-07.05&ndash;07.12 / 07.15 / 07.22&ndash;07.23</span></h4>
-        <p>Timestamp quality, log format quality, line length quality, event type coverage, required field coverage, event context completeness, data quality score, investigative context density, context dimension coverage, investigative noise percentage, and volume predictability.</p>
+        <h4>Ingestion check <span class="assessment-tag">TAX-04.10.02 / TAX-04.10.03</span></h4>
+        <p>Events are confirmed consistently searchable in the intended index, with the correct sourcetype &mdash; the same Presence &amp; Timeliness and Volume/Gap/Duplicate checks that later back ongoing health monitoring, run here for the first time before deeper quality work begins.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; Ingestion Confirmed?</h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Missing events, wrong index or sourcetype &rarr; back to engineering build</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Consistently searchable in the intended index &rarr; continue to data quality assessment</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
+        <h4>Data quality assessment <span class="assessment-tag">TAX-07.05&ndash;07.12 / 07.15 / 07.22&ndash;07.23 / TAX-04.07.07</span></h4>
+        <p>Timestamp quality, log format quality, line length quality, event type coverage, required field coverage, event context completeness, data quality score, investigative context density, context dimension coverage, investigative noise percentage, volume predictability, and field normalisation / CIM mapping compliance.</p>
         <div class="method-actions" style="margin-top:8px"><button type="button" data-open-reference-detail="log-assessment-framework">Log Assessment Framework: the line-by-line procedure behind Timestamp &amp; Log Format Quality</button></div>
       </div>
       <div class="onboarding-arrow">↓</div>
@@ -3455,7 +3485,37 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
         <div class="onboarding-branches">
           <div class="onboarding-branch"><span class="flow-badge stop">STOP</span>Rejected &rarr; does not proceed to production</div>
           <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Approved with conditions &rarr; resolve conditions, then re-submit</div>
-          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Approved &rarr; go live</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Approved &rarr; operational readiness</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
+        <h4>Operational readiness <span class="assessment-tag">TAX-07.04.03 / TAX-07.04.04</span></h4>
+        <p>Health monitoring, ownership, capacity and support are confirmed established before go-live &mdash; the same Operational Maturity and Health &amp; Monitoring Coverage fields that Log Sustainment tracks going forward, checked here as a precondition rather than an ongoing state.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; Operational Readiness Confirmed?</h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>No monitoring, runbook or owner &rarr; back to implementation</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Established &rarr; SOC readiness</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage">
+        <h4>SOC readiness</h4>
+        <p>Searches and the investigation workflow are tested against this source before go-live &mdash; confirming an analyst can actually find and use the data, distinct from the response documentation attached later in Response Readiness.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; SOC Ready?</h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Detection/investigation cannot reliably use the data &rarr; back to engineering build</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Investigation workflow succeeds &rarr; go live</div>
         </div>
       </div>
       <div class="onboarding-arrow">↓</div>
