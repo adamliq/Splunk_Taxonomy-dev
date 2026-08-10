@@ -18978,12 +18978,12 @@ const ONBOARDING_MAP_BRANCH = [
   { id: "ob-response", label: "Response readiness" },
 ];
 const ONBOARDING_MAP_PHASES = [
-  { label: "A · Intake & Viability", color: "#eef2ff", tab: "#4338ca", from: "ob-candidate", to: "ob-viability" },
-  { label: "B · Worthiness & Design", color: "#ecfdf5", tab: "#047857", from: "ob-worthiness", to: "ob-connectivity" },
-  { label: "C · Build & Technical Validation", color: "#fff7ed", tab: "#c2410c", from: "ob-build", to: "ob-cybervalue" },
-  { label: "D · Implementation & Governance", color: "#eff6ff", tab: "#1d4ed8", from: "ob-implementation", to: "ob-governance" },
-  { label: "E · Production Readiness", color: "#f0fdf4", tab: "#15803d", from: "ob-opsready", to: "ob-golive" },
-  { label: "F · Sustainment & Value Realisation", color: "#faf5ff", tab: "#7030a0", from: "ob-sustainment", to: "ob-review90" },
+  { letter: "A", short: "Intake & Viability", label: "A · Intake & Viability", color: "#eef2ff", tab: "#4338ca", from: "ob-candidate", to: "ob-viability" },
+  { letter: "B", short: "Worthiness & Design", label: "B · Worthiness & Design", color: "#ecfdf5", tab: "#047857", from: "ob-worthiness", to: "ob-connectivity" },
+  { letter: "C", short: "Build & Validation", label: "C · Build & Technical Validation", color: "#fff7ed", tab: "#c2410c", from: "ob-build", to: "ob-cybervalue" },
+  { letter: "D", short: "Implementation", label: "D · Implementation & Governance", color: "#eff6ff", tab: "#1d4ed8", from: "ob-implementation", to: "ob-governance" },
+  { letter: "E", short: "Production Ready", label: "E · Production Readiness", color: "#f0fdf4", tab: "#15803d", from: "ob-opsready", to: "ob-golive" },
+  { letter: "F", short: "Sustainment & Value", label: "F · Sustainment & Value Realisation", color: "#faf5ff", tab: "#7030a0", from: "ob-sustainment", to: "ob-review90" },
 ];
 
 function renderOnboardingFlowMap() {
@@ -19005,14 +19005,27 @@ function renderOnboardingFlowMap() {
   const totalHeight = Math.max(mainColumnHeight, branchColumnHeight);
   const totalWidth = branchX + branchW + 16;
 
+  const PX_PER_CHAR_PER_PT = 0.564; // measured from rendered 800-weight SVG label text
   const phaseBands = ONBOARDING_MAP_PHASES.map((p, pi) => {
     const isLast = pi === ONBOARDING_MAP_PHASES.length - 1;
     const top = yOf(idxOf[p.from]) - (pi === 0 ? 10 : 5);
     const bottom = isLast ? totalHeight - 6 : yOf(idxOf[p.to]) + rowH + 5;
-    const width = isLast ? totalWidth - 8 : totalWidth - 8;
-    return `<rect x="4" y="${top}" width="${width}" height="${bottom - top}" rx="8" fill="${p.color}" />
-      <rect x="4" y="${top}" width="4" height="${bottom - top}" fill="${p.tab}" />
-      <text x="12" y="${top + 13}" font-size="9.5" font-weight="800" fill="${p.tab}">${escapeHtml(p.label)}</text>`;
+    const height = bottom - top;
+    const width = totalWidth - 8;
+    const midY = (top + bottom) / 2;
+    // size the vertical label to fit the band's own height, clamped to a legible range
+    const textBudget = height - 14;
+    const renderedCharCount = p.letter.length + 3 + p.short.length; // "X · " prefix included
+    const fitSize = textBudget / (renderedCharCount * PX_PER_CHAR_PER_PT);
+    const fontSize = Math.max(6.5, Math.min(9.5, fitSize));
+    return `<g>
+      <title>${escapeHtml(p.label)}</title>
+      <rect x="4" y="${top}" width="${width}" height="${height}" rx="8" fill="${p.color}" />
+      <rect x="4" y="${top}" width="4" height="${height}" fill="${p.tab}" />
+      <g transform="rotate(-90 13 ${midY})">
+        <text x="13" y="${midY}" text-anchor="middle" font-size="${fontSize.toFixed(1)}" font-weight="800" fill="${p.tab}" letter-spacing="0.2">${p.letter} &middot; ${escapeHtml(p.short)}</text>
+      </g>
+    </g>`;
   }).join("");
 
   const nodesSvg = rows.map((r, i) => {
