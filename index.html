@@ -18977,6 +18977,14 @@ const ONBOARDING_MAP_BRANCH = [
   { id: "ob-detection", label: "Detection Engineering" },
   { id: "ob-response", label: "Response readiness" },
 ];
+const ONBOARDING_MAP_PHASES = [
+  { label: "A · Intake & Viability", color: "#eef2ff", tab: "#4338ca", from: "ob-candidate", to: "ob-viability" },
+  { label: "B · Worthiness & Design", color: "#ecfdf5", tab: "#047857", from: "ob-worthiness", to: "ob-connectivity" },
+  { label: "C · Build & Technical Validation", color: "#fff7ed", tab: "#c2410c", from: "ob-build", to: "ob-cybervalue" },
+  { label: "D · Implementation & Governance", color: "#eff6ff", tab: "#1d4ed8", from: "ob-implementation", to: "ob-governance" },
+  { label: "E · Production Readiness", color: "#f0fdf4", tab: "#15803d", from: "ob-opsready", to: "ob-golive" },
+  { label: "F · Sustainment & Value Realisation", color: "#faf5ff", tab: "#7030a0", from: "ob-sustainment", to: "ob-review90" },
+];
 
 function renderOnboardingFlowMap() {
   const rows = ONBOARDING_MAP_ROWS;
@@ -18996,6 +19004,16 @@ function renderOnboardingFlowMap() {
   const branchColumnHeight = branchYs.length ? branchYs[branchYs.length - 1] + rowH + 24 : 0;
   const totalHeight = Math.max(mainColumnHeight, branchColumnHeight);
   const totalWidth = branchX + branchW + 16;
+
+  const phaseBands = ONBOARDING_MAP_PHASES.map((p, pi) => {
+    const isLast = pi === ONBOARDING_MAP_PHASES.length - 1;
+    const top = yOf(idxOf[p.from]) - (pi === 0 ? 10 : 5);
+    const bottom = isLast ? totalHeight - 6 : yOf(idxOf[p.to]) + rowH + 5;
+    const width = isLast ? totalWidth - 8 : totalWidth - 8;
+    return `<rect x="4" y="${top}" width="${width}" height="${bottom - top}" rx="8" fill="${p.color}" />
+      <rect x="4" y="${top}" width="4" height="${bottom - top}" fill="${p.tab}" />
+      <text x="12" y="${top + 13}" font-size="9.5" font-weight="800" fill="${p.tab}">${escapeHtml(p.label)}</text>`;
+  }).join("");
 
   const nodesSvg = rows.map((r, i) => {
     const y = yOf(i);
@@ -19054,6 +19072,7 @@ function renderOnboardingFlowMap() {
       <marker id="obArrowOrange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/></marker>
       <marker id="obArrowPurple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7030a0"/></marker>
     </defs>
+    ${phaseBands}
     ${crossLoops}
     ${selfLoops}
     ${mainArrows}
