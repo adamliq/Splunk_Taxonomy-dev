@@ -12615,6 +12615,30 @@ E. Assumptions and unresolved inputs</pre>
       </div>
     </div>
 
+    <div class="eccs-examples" style="margin-bottom:16px">
+      <details>
+        <summary>Taxonomy alignment (per column)</summary>
+        <div class="eccs-example-body">
+          <p>Every pattern below is itself an instance of <strong>TAX-03.02.01 Logging Pattern</strong> (its Pattern ID is the instance's own primary key, browsable in Tree Explorer). The other twelve columns each describe an attribute governed by a more specific taxonomy code -- this mapping holds for every row, so it's shown once rather than repeated per pattern.</p>
+          <div class="eccs-table-wrap" role="region" aria-label="Logging pattern column to taxonomy code mapping" tabindex="0"><table class="eccs-matrix"><thead><tr><th>Table column</th><th>Governing taxonomy code</th></tr></thead><tbody>
+            <tr><td>Pattern ID</td><td>TAX-03.02.01 Logging Pattern &mdash; the instance's own primary key</td></tr>
+            <tr><td>Pattern</td><td>TAX-03.02.01 Logging Pattern &mdash; the instance's own name</td></tr>
+            <tr><td>Source data</td><td>TAX-03.01.01 Data Source</td></tr>
+            <tr><td>Category</td><td>TAX-03.03.01 Input Component &mdash; generic, no dedicated category field</td></tr>
+            <tr><td>Direction</td><td>Not modeled &mdash; closest is TAX-03.02.06.04 Initiating Direction / TAX-03.04.03 Polling Interval (pull-based collectors)</td></tr>
+            <tr><td>Source mechanism</td><td>TAX-03.03.01 Input Component</td></tr>
+            <tr><td>Collection tier / runtime</td><td>TAX-03.03.02 Collector</td></tr>
+            <tr><td>Transport</td><td>TAX-03.02.02 Transport; TAX-03.02.02.01 Transport Reliability Requirement</td></tr>
+            <tr><td>Destination</td><td>TAX-03.01.03 Index Destination</td></tr>
+            <tr><td>Required app / add-on</td><td>TAX-03.03.03 App &amp; Technology Add-on</td></tr>
+            <tr><td>Port / firewall requirements</td><td>TAX-03.02.06 Firewall Rule (+ Source/Destination Network Zone, Initiating Direction, Stateful Return Traffic)</td></tr>
+            <tr><td>Authentication requirements</td><td>TAX-03.05 Data Collection Authentication</td></tr>
+            <tr><td>Source platform requirements</td><td>TAX-03.04 Collection Configuration (Input Stanza, Input Parameters, Source-side Logging Configuration)</td></tr>
+          </tbody></table></div>
+        </div>
+      </details>
+    </div>
+
     <div class="patterns-toolbar">
       <input id="patternTableSearch" type="search" placeholder="Search all logging-pattern fields…" aria-label="Search logging patterns" />
       <select id="patternCategoryFilter" aria-label="Filter by pattern category">
