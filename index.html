@@ -2604,6 +2604,7 @@
     .method-card p { margin:7px 0 0; color:#64748b; font-size:12px; line-height:1.5; }
     .method-list { margin:11px 0 0; padding-left:18px; color:#334155; font-size:12px; line-height:1.55; }
     .method-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:13px; }
+    .method-actions button { white-space:normal; text-align:left; }
     .reference-link { padding:0; border:0; background:transparent; color:#1d4ed8; text-decoration:underline; text-underline-offset:3px; font-weight:800; white-space:normal; }
     .reference-link:hover { background:transparent; color:#1e3a8a; }
     .reference-empty { padding:24px; border:1px dashed #cbd5e1; border-radius:12px; background:#fff; color:#64748b; text-align:center; }
@@ -2682,6 +2683,16 @@
     .flow-badge.gate { background:#e0e7ff; color:#3730a3; }
     .onboarding-legend { display:flex; flex-wrap:wrap; gap:8px 18px; margin:0 0 26px; font-size:12.5px; color:#64748b; align-items:center; }
     .onboarding-legend span.flow-badge { margin-right:6px; }
+    .onboarding-flow-map { border:1px solid var(--border); border-radius:16px; background:#fff; box-shadow:0 6px 18px rgba(15,23,42,.05); padding:16px 18px 8px; margin-bottom:26px; }
+    .onboarding-flow-map-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 12px; margin-bottom:10px; }
+    .onboarding-flow-map-head strong { font-size:13px; color:#0f172a; }
+    .onboarding-flow-map-head span { font-size:11.5px; color:#64748b; line-height:1.5; }
+    .onboarding-flow-map-canvas { overflow-x:auto; }
+    .onboarding-flow-map-svg { display:block; min-width:640px; }
+    .ob-map-node { cursor:pointer; }
+    .ob-map-node rect { transition:filter .12s ease; }
+    .ob-map-node:hover rect, .ob-map-node:focus-visible rect { filter:brightness(1.2); }
+    .ob-map-node:focus-visible { outline:2px solid #0e7490; outline-offset:2px; }
     .onboarding-flow { display:flex; flex-direction:column; align-items:center; gap:0; }
     .onboarding-stage, .onboarding-gate { width:100%; max-width:660px; border-radius:14px; padding:16px 20px; }
     .onboarding-stage { border:1px solid var(--border); background:#fff; box-shadow:0 6px 18px rgba(15,23,42,.05); }
@@ -3288,9 +3299,17 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <span><span class="flow-badge state">STATE</span>Lifecycle state, TAX-06.04.01</span>
     </div>
 
+    <div class="onboarding-flow-map" aria-label="Compact onboarding flow map">
+      <div class="onboarding-flow-map-head">
+        <strong>Flow map</strong>
+        <span>Click any stage to jump to its detail below. Orange lines are HOLD loop-backs; purple lines are the post-go-live Detection Engineering branch; red marks are STOP/reject points.</span>
+      </div>
+      <div id="onboardingFlowMapWrap" class="onboarding-flow-map-canvas"></div>
+    </div>
+
     <div class="onboarding-flow">
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-candidate">
         <h4>Candidate log source identified <span class="flow-badge state">PLANNED</span></h4>
         <p>A platform, application or data source is proposed for onboarding.</p>
       </div>
@@ -3305,7 +3324,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-viability">
         <h4>Phase 1 &mdash; Viability Assessment <span class="assessment-tag">TAX-06.01.02 / TAX-07.01</span> <span class="flow-badge state">ONBOARDING</span></h4>
         <p>Scores security value, technical readiness and operational assurance. Custom-solution, reverse-engineering and discovery-gap modifiers adjust the result before a decision is reached.</p>
       </div>
@@ -3321,7 +3340,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-worthiness">
         <h4>Log Worthiness <span class="assessment-tag">TAX-07.02</span></h4>
         <p>Is the security or operational value proportionate to the cost and volume of onboarding &mdash; independent of pure technical feasibility?</p>
       </div>
@@ -3344,7 +3363,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-topology">
         <h4>Select logging pattern &amp; topology <span class="assessment-tag">TAX-03.02 / TAX-03.05</span></h4>
         <p>Choose the governed collection pattern and record transport, Data Collection Authentication and firewall prerequisites.</p>
       </div>
@@ -3358,7 +3377,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-connectivity">
         <h4>Connectivity validation <span class="assessment-tag">TAX-03.02.05</span></h4>
         <p>End-to-end transport is tested and confirmed secure &mdash; network path, TLS/certificate trust, and authentication all succeed &mdash; before parsing configuration begins.</p>
       </div>
@@ -3373,7 +3392,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-build">
         <h4>Engineering build <span class="assessment-tag">TAX-04.01&ndash;04.09</span></h4>
         <p>Datetime standards &amp; parsing, line breaking, line length, log format detection &amp; parsing, field extraction, field normalisation (CIM/ECS mapping), event volume profile, parsing performance &mdash; plus collection components (TAX-03) and sourcetype identity (TAX-04.11). A structural fingerprint count from the sample (distinct format/timestamp-format combinations) is the concrete signal for whether the source needs one sourcetype or several.</p>
         <div class="method-actions" style="margin-top:8px"><button type="button" data-open-reference-detail="log-assessment-framework">Log Assessment Framework: structural fingerprinting informs this sourcetype/parsing split</button></div>
@@ -3396,7 +3415,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-ingestion">
         <h4>Ingestion check <span class="assessment-tag">TAX-04.10.02 / TAX-04.10.03</span></h4>
         <p>Events are confirmed consistently searchable in the intended index, with the correct sourcetype &mdash; the same Presence &amp; Timeliness and Volume/Gap/Duplicate checks that later back ongoing health monitoring, run here for the first time before deeper quality work begins.</p>
       </div>
@@ -3411,7 +3430,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-quality">
         <h4>Data quality assessment <span class="assessment-tag">TAX-07.05&ndash;07.12 / 07.15 / 07.22&ndash;07.23 / TAX-04.07.07</span></h4>
         <p>Timestamp quality, log format quality, line length quality, event type coverage, required field coverage, event context completeness, data quality score, investigative context density, context dimension coverage, investigative noise percentage, volume predictability, and field normalisation / CIM mapping compliance.</p>
         <div class="method-actions" style="margin-top:8px"><button type="button" data-open-reference-detail="log-assessment-framework">Log Assessment Framework: the line-by-line procedure behind Timestamp &amp; Log Format Quality</button></div>
@@ -3427,7 +3446,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-preingest">
         <h4>Pre-ingest cyber-value gates <span class="assessment-tag">TAX-06.05.02</span></h4>
         <p>Minimum parse rate, timestamp &amp; timezone, and schema stability must all pass before any value scoring runs.</p>
         <div class="method-actions" style="margin-top:8px"><button type="button" data-open-reference-detail="log-assessment-framework">Log Assessment Framework: computes this gate's all-axes conformance rate</button></div>
@@ -3443,7 +3462,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-cybervalue">
         <h4>Cyber value scoring <span class="assessment-tag">TAX-06.05.03&ndash;10 / TAX-07.16</span></h4>
         <p>Marginal novelty, pivot density &amp; breadth (TAX-07.13/14), semantic value, entity coverage &rarr; log source value score &rarr; cyber value density &rarr; candidate rank. These roll up into the Cyber Value Index (CVI), one of the four indices behind the Cyber Monitoring Effectiveness Index.</p>
       </div>
@@ -3459,7 +3478,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-implementation">
         <h4>Log Implementation <span class="assessment-tag">TAX-07.03</span></h4>
         <p>Tracks build &amp; integration status through to a validation and acceptance result.</p>
       </div>
@@ -3474,7 +3493,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-governance">
         <h4>Governance approval <span class="assessment-tag">TAX-02.03</span></h4>
         <p>System Approval / Accreditation: a named approval authority records a decision, scope and expiry/review date before the source is allowed into production. Before that decision is recorded, this is also where Data Classification <span class="assessment-tag">TAX-02.02.06</span>, the Access Control model and authorised roles <span class="assessment-tag">TAX-02.08</span>, the Retention Policy <span class="assessment-tag">TAX-02.06.05</span>, and any Risk Assessment or Exception &amp; Risk Acceptance <span class="assessment-tag">TAX-02.04</span> are confirmed for the source -- an "Approved with conditions" outcome below is usually one or more of these still outstanding.</p>
       </div>
@@ -3490,7 +3509,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-opsready">
         <h4>Operational readiness <span class="assessment-tag">TAX-07.04.03 / TAX-07.04.04</span></h4>
         <p>Health monitoring, ownership, capacity and support are confirmed established before go-live &mdash; the same Operational Maturity and Health &amp; Monitoring Coverage fields that Log Sustainment tracks going forward, checked here as a precondition rather than an ongoing state.</p>
       </div>
@@ -3505,7 +3524,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-socready">
         <h4>SOC readiness</h4>
         <p>Searches and the investigation workflow are tested against this source before go-live &mdash; confirming an analyst can actually find and use the data, distinct from the response documentation attached later in Response Readiness.</p>
       </div>
@@ -3520,13 +3539,13 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-golive">
         <h4><span class="flow-badge proceed">GO-LIVE</span>&nbsp; Onboarding Record <span class="assessment-tag">TAX-06.01.01</span> <span class="flow-badge state">ACTIVE</span></h4>
         <p>Owner, phase, status and go-live date for the source, from request through to production.</p>
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-sustainment">
         <h4>Log Sustainment <span class="assessment-tag">TAX-07.04 / TAX-07.19</span></h4>
         <p>Operational maturity, health &amp; monitoring coverage, and review/improvement actions &mdash; backed by reusable health checks (TAX-04.10) and assurance roll-ups (TAX-06.03). This is what the Operational Assurance Index (OAI) scores. A failing health check or assurance roll-up moves the lifecycle state to <span class="flow-badge state">DEGRADED</span> until remediated.</p>
       </div>
@@ -3541,7 +3560,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
 
       <div class="onboarding-branch-arrow"><span class="glyph">⤷</span> Detection Engineering <em>(parallel branch, once the source is live)</em></div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-detection">
         <h4>Detection Engineering <span class="assessment-tag">TAX-05.03&ndash;05.05</span></h4>
         <p>Build the Detection Analytic &amp; Rule against the now-live source, then run Detection Validation and record Detection Coverage &mdash; confirming the use case this source was meant to enable actually works in production.</p>
       </div>
@@ -3555,7 +3574,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-response">
         <h4>Response readiness <span class="assessment-tag">TAX-05.04 / TAX-02.07 / TAX-07.18</span></h4>
         <p>A validated detection isn't production-ready until someone knows what to do when it fires: attach its Response Action, Incident Response Plan, Runbook and Escalation Matrix references. This is what the Response Readiness Index (RRI) scores.</p>
       </div>
@@ -3569,7 +3588,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-review90">
         <h4>90-day value review <span class="assessment-tag">TAX-06.05.14</span></h4>
         <p>Investigations, detections, alerts and true positives against the source feed a realised-value rank, compared against the rank predicted at onboarding.</p>
       </div>
@@ -18922,6 +18941,144 @@ function expandReferenceSection(id) {
   const toggle = section.querySelector(".reference-section-toggle");
   if (toggle) toggle.setAttribute("aria-expanded", "true");
 }
+
+const ONBOARDING_MAP_ROWS = [
+  { id: "ob-candidate", label: "Candidate log source identified", badge: "PLANNED" },
+  { id: "ob-viability", label: "Phase 1: Viability Assessment", stop: "Not viable" },
+  { id: "ob-worthiness", label: "Log Worthiness", stop: "Not worth building" },
+  { id: "ob-topology", label: "Select pattern & topology" },
+  { id: "ob-connectivity", label: "Connectivity validation" },
+  { id: "ob-build", label: "Engineering build" },
+  { id: "ob-ingestion", label: "Ingestion check" },
+  { id: "ob-quality", label: "Data quality assessment" },
+  { id: "ob-preingest", label: "Pre-ingest cyber-value gates" },
+  { id: "ob-cybervalue", label: "Cyber value scoring", stop: "Reject" },
+  { id: "ob-implementation", label: "Log Implementation" },
+  { id: "ob-governance", label: "Governance approval", stop: "Rejected" },
+  { id: "ob-opsready", label: "Operational readiness" },
+  { id: "ob-socready", label: "SOC readiness" },
+  { id: "ob-golive", label: "GO-LIVE", badge: "ACTIVE" },
+  { id: "ob-sustainment", label: "Log Sustainment" },
+  { id: "ob-review90", label: "90-day value review" },
+];
+const ONBOARDING_MAP_SELFLOOPS = ["ob-viability", "ob-implementation", "ob-governance"];
+const ONBOARDING_MAP_LOOPS = [
+  { from: "ob-connectivity", to: "ob-topology", label: "HOLD", lane: 4 },
+  { from: "ob-ingestion", to: "ob-build", label: "HOLD", lane: 1 },
+  { from: "ob-quality", to: "ob-build", label: "HOLD", lane: 2 },
+  { from: "ob-preingest", to: "ob-build", label: "HOLD", lane: 3 },
+  { from: "ob-opsready", to: "ob-implementation", label: "HOLD", lane: 4 },
+  { from: "ob-socready", to: "ob-build", label: "HOLD", lane: 5 },
+  { from: "ob-sustainment", to: "ob-governance", label: "EXPIRED", lane: 6 },
+  { from: "ob-review90", to: "ob-sustainment", label: "RETAIN", lane: 4 },
+  { from: "ob-review90", to: "ob-preingest", label: "FILTER", lane: 7 },
+];
+const ONBOARDING_MAP_BRANCH = [
+  { id: "ob-detection", label: "Detection Engineering" },
+  { id: "ob-response", label: "Response readiness" },
+];
+
+function renderOnboardingFlowMap() {
+  const rows = ONBOARDING_MAP_ROWS;
+  const rowH = 30, pitch = 54, topPad = 20;
+  const laneSpacing = 16, gutterMargin = 22, gutterLanes = 7;
+  const gutterWidth = gutterMargin + gutterLanes * laneSpacing;
+  const nodeX = gutterWidth + 8, nodeW = 232;
+  const idxOf = {};
+  rows.forEach((r, i) => { idxOf[r.id] = i; });
+  const yOf = i => topPad + i * pitch;
+
+  const branchX = nodeX + nodeW + 76, branchW = 196;
+  const sustIdx = idxOf["ob-sustainment"];
+  const branchYs = ONBOARDING_MAP_BRANCH.map((b, i) => topPad + sustIdx * pitch + (i + 1) * pitch);
+
+  const mainColumnHeight = yOf(rows.length - 1) + rowH + 24;
+  const branchColumnHeight = branchYs.length ? branchYs[branchYs.length - 1] + rowH + 24 : 0;
+  const totalHeight = Math.max(mainColumnHeight, branchColumnHeight);
+  const totalWidth = branchX + branchW + 16;
+
+  const nodesSvg = rows.map((r, i) => {
+    const y = yOf(i);
+    const fill = r.id === "ob-golive" ? "#166534" : "#1f4e78";
+    return `<g class="ob-map-node" data-jump="${r.id}" tabindex="0" role="button" aria-label="Jump to ${escapeHtml(r.label)}">
+      <rect x="${nodeX}" y="${y}" width="${nodeW}" height="${rowH}" rx="7" fill="${fill}" />
+      <text x="${nodeX + nodeW / 2}" y="${y + rowH / 2 + 4}" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">${escapeHtml(r.label)}</text>
+      ${r.badge ? `<text x="${nodeX + nodeW - 8}" y="${y - 4}" text-anchor="end" font-size="9" fill="#166534" font-weight="700">${escapeHtml(r.badge)}</text>` : ""}
+    </g>`;
+  }).join("");
+
+  let mainArrows = "";
+  for (let i = 0; i < rows.length - 1; i++) {
+    const x = nodeX + nodeW / 2;
+    mainArrows += `<line x1="${x}" y1="${yOf(i) + rowH}" x2="${x}" y2="${yOf(i + 1)}" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#obArrow)" />`;
+  }
+
+  const stopMarks = rows.map((r, i) => {
+    if (!r.stop) return "";
+    const y = yOf(i) + rowH / 2, x = nodeX + nodeW + 14;
+    return `<circle cx="${x}" cy="${y}" r="7" fill="#fff" stroke="#b91c1c" stroke-width="1.5"/><text x="${x}" y="${y + 3}" text-anchor="middle" font-size="9" fill="#b91c1c" font-weight="800">&#215;</text><text x="${x + 12}" y="${y + 3}" font-size="8.5" fill="#b91c1c">${escapeHtml(r.stop)}</text>`;
+  }).join("");
+
+  const selfLoops = ONBOARDING_MAP_SELFLOOPS.map(id => {
+    const y = yOf(idxOf[id]), x = nodeX;
+    return `<path d="M ${x} ${y + 8} C ${x - 22} ${y + 8}, ${x - 22} ${y + rowH - 8}, ${x} ${y + rowH - 8}" fill="none" stroke="#c2410c" stroke-width="1.3" marker-end="url(#obArrowOrange)" />`;
+  }).join("");
+
+  const crossLoops = ONBOARDING_MAP_LOOPS.map(l => {
+    const laneX = gutterMargin + (l.lane - 1) * laneSpacing;
+    const yFrom = yOf(idxOf[l.from]) + rowH / 2, yTo = yOf(idxOf[l.to]) + rowH / 2;
+    const midY = (yFrom + yTo) / 2;
+    return `<path d="M ${nodeX} ${yFrom} L ${laneX} ${yFrom} L ${laneX} ${yTo} L ${nodeX} ${yTo}" fill="none" stroke="#c2410c" stroke-width="1.3" marker-end="url(#obArrowOrange)" />
+      <text x="${laneX - 4}" y="${midY}" font-size="7.5" fill="#c2410c" text-anchor="middle" transform="rotate(-90 ${laneX - 4} ${midY})">${escapeHtml(l.label)}</text>`;
+  }).join("");
+
+  let branchPaths = "";
+  let branchNodes = "";
+  let prevX = nodeX + nodeW, prevY = yOf(sustIdx) + rowH / 2;
+  ONBOARDING_MAP_BRANCH.forEach((b, i) => {
+    const y = branchYs[i];
+    branchPaths += `<path d="M ${prevX} ${prevY} L ${branchX - 14} ${prevY} L ${branchX - 14} ${y + rowH / 2} L ${branchX} ${y + rowH / 2}" fill="none" stroke="#7030a0" stroke-width="1.3" marker-end="url(#obArrowPurple)" />`;
+    branchNodes += `<g class="ob-map-node" data-jump="${b.id}" tabindex="0" role="button" aria-label="Jump to ${escapeHtml(b.label)}">
+        <rect x="${branchX}" y="${y}" width="${branchW}" height="${rowH}" rx="7" fill="#7030a0" />
+        <text x="${branchX + branchW / 2}" y="${y + rowH / 2 + 4}" text-anchor="middle" fill="#fff" font-size="10.5" font-weight="600">${escapeHtml(b.label)}</text>
+      </g>`;
+    prevX = branchX + branchW; prevY = y + rowH / 2;
+  });
+  const reviewY = yOf(idxOf["ob-review90"]) + rowH / 2;
+  branchPaths += `<path d="M ${prevX} ${prevY} L ${branchX + branchW + 14} ${prevY} L ${branchX + branchW + 14} ${reviewY} L ${nodeX + nodeW} ${reviewY}" fill="none" stroke="#7030a0" stroke-width="1.3" marker-end="url(#obArrowPurple)" />`;
+  const branchSvg = branchPaths + branchNodes;
+
+  return `<svg class="onboarding-flow-map-svg" viewBox="0 0 ${totalWidth} ${totalHeight}" width="${totalWidth}" height="${totalHeight}" role="img" aria-label="Onboarding flow map: click a stage to jump to its detail">
+    <defs>
+      <marker id="obArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+      <marker id="obArrowOrange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/></marker>
+      <marker id="obArrowPurple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7030a0"/></marker>
+    </defs>
+    ${crossLoops}
+    ${selfLoops}
+    ${mainArrows}
+    ${branchSvg}
+    ${nodesSvg}
+    ${stopMarks}
+  </svg>`;
+}
+function initOnboardingFlowMap() {
+  const wrap = document.getElementById("onboardingFlowMapWrap");
+  if (!wrap) return;
+  wrap.innerHTML = renderOnboardingFlowMap();
+  const jumpTo = id => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  wrap.addEventListener("click", event => {
+    const node = event.target.closest("[data-jump]");
+    if (node) jumpTo(node.dataset.jump);
+  });
+  wrap.addEventListener("keydown", event => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const node = event.target.closest("[data-jump]");
+    if (!node) return;
+    event.preventDefault();
+    jumpTo(node.dataset.jump);
+  });
+}
 document.querySelectorAll("[data-reference-jump]").forEach(button=>button.addEventListener("click",()=>{
   const id = button.dataset.referenceJump;
   expandReferenceSection(id);
@@ -20123,6 +20280,7 @@ renderViabilityPage();
 renderLoggingPatternTable();
 renderHealthCheckTable();
 initCollapsibleReferenceSections();
+initOnboardingFlowMap();
 setActivePage(pageNameFromHash(), false);
 
 
