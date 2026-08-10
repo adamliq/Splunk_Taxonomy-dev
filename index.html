@@ -18944,24 +18944,38 @@ function expandReferenceSection(id) {
 
 const ONBOARDING_MAP_ROWS = [
   { id: "ob-candidate", label: "Candidate log source identified", badge: "PLANNED" },
-  { id: "ob-viability", label: "Phase 1: Viability Assessment", stop: "Not viable" },
-  { id: "ob-worthiness", label: "Log Worthiness", stop: "Not worth building" },
+  { id: "ob-viability", label: "Phase 1: Viability Assessment" },
+  { id: "ob-worthiness", label: "Log Worthiness" },
   { id: "ob-topology", label: "Select pattern & topology" },
   { id: "ob-connectivity", label: "Connectivity validation" },
   { id: "ob-build", label: "Engineering build" },
   { id: "ob-ingestion", label: "Ingestion check" },
   { id: "ob-quality", label: "Data quality assessment" },
   { id: "ob-preingest", label: "Pre-ingest cyber-value gates" },
-  { id: "ob-cybervalue", label: "Cyber value scoring", stop: "Reject" },
+  { id: "ob-cybervalue", label: "Cyber value scoring" },
   { id: "ob-implementation", label: "Log Implementation" },
-  { id: "ob-governance", label: "Governance approval", stop: "Rejected" },
+  { id: "ob-governance", label: "Governance approval" },
   { id: "ob-opsready", label: "Operational readiness" },
   { id: "ob-socready", label: "SOC readiness" },
   { id: "ob-golive", label: "GO-LIVE", badge: "ACTIVE" },
   { id: "ob-sustainment", label: "Log Sustainment" },
   { id: "ob-review90", label: "90-day value review" },
 ];
-const ONBOARDING_MAP_SELFLOOPS = ["ob-viability", "ob-implementation", "ob-governance"];
+const ONBOARDING_MAP_GATES = [
+  { after: "ob-candidate", label: "Platform Registered?" },
+  { after: "ob-viability", label: "Viability Decision", stop: "Not viable", selfLoop: true },
+  { after: "ob-worthiness", label: "Worthiness Decision", stop: "Not worth building" },
+  { after: "ob-connectivity", label: "Connectivity Succeeded?" },
+  { after: "ob-ingestion", label: "Ingestion Confirmed?" },
+  { after: "ob-quality", label: "Quality Gates Pass?" },
+  { after: "ob-preingest", label: "Overall Gate Result" },
+  { after: "ob-cybervalue", label: "Ingestion Decision", stop: "Reject" },
+  { after: "ob-implementation", label: "Build & Acceptance Result", selfLoop: true },
+  { after: "ob-governance", label: "Approval Decision", stop: "Rejected", selfLoop: true },
+  { after: "ob-opsready", label: "Operational Readiness Confirmed?" },
+  { after: "ob-socready", label: "SOC Ready?" },
+  { after: "ob-review90", label: "Retain / Filter / Retire Decision" },
+];
 const ONBOARDING_MAP_LOOPS = [
   { from: "ob-connectivity", to: "ob-topology", label: "HOLD", lane: 4 },
   { from: "ob-ingestion", to: "ob-build", label: "HOLD", lane: 1 },
@@ -18969,7 +18983,7 @@ const ONBOARDING_MAP_LOOPS = [
   { from: "ob-preingest", to: "ob-build", label: "HOLD", lane: 3 },
   { from: "ob-opsready", to: "ob-implementation", label: "HOLD", lane: 4 },
   { from: "ob-socready", to: "ob-build", label: "HOLD", lane: 5 },
-  { from: "ob-sustainment", to: "ob-governance", label: "EXPIRED", lane: 6 },
+  { from: "ob-sustainment", to: "ob-governance", label: "EXPIRED", lane: 6, stageAnchor: true },
   { from: "ob-review90", to: "ob-sustainment", label: "RETAIN", lane: 4 },
   { from: "ob-review90", to: "ob-preingest", label: "FILTER", lane: 7 },
 ];
@@ -18988,19 +19002,24 @@ const ONBOARDING_MAP_PHASES = [
 
 function renderOnboardingFlowMap() {
   const rows = ONBOARDING_MAP_ROWS;
-  const rowH = 30, pitch = 54, topPad = 20;
+  const rowH = 30, pitch = 72, topPad = 20;
   const laneSpacing = 16, gutterMargin = 22, gutterLanes = 7;
   const gutterWidth = gutterMargin + gutterLanes * laneSpacing;
   const nodeX = gutterWidth + 8, nodeW = 232;
   const idxOf = {};
   rows.forEach((r, i) => { idxOf[r.id] = i; });
   const yOf = i => topPad + i * pitch;
+  const halfGap = (pitch - rowH) / 2;
+  const gateByAfter = {};
+  ONBOARDING_MAP_GATES.forEach(g => { gateByAfter[g.after] = g; });
+  // a gate sits in the gap after its stage; the terminal gate (after the last row) sits just below it
+  const gateYOf = afterId => yOf(idxOf[afterId]) + rowH + halfGap;
 
   const branchX = nodeX + nodeW + 76, branchW = 196;
   const sustIdx = idxOf["ob-sustainment"];
   const branchYs = ONBOARDING_MAP_BRANCH.map((b, i) => topPad + sustIdx * pitch + (i + 1) * pitch);
 
-  const mainColumnHeight = yOf(rows.length - 1) + rowH + 24;
+  const mainColumnHeight = gateYOf(rows[rows.length - 1].id) + 30;
   const branchColumnHeight = branchYs.length ? branchYs[branchYs.length - 1] + rowH + 24 : 0;
   const totalHeight = Math.max(mainColumnHeight, branchColumnHeight);
   const totalWidth = branchX + branchW + 16;
@@ -19043,21 +19062,32 @@ function renderOnboardingFlowMap() {
     const x = nodeX + nodeW / 2;
     mainArrows += `<line x1="${x}" y1="${yOf(i) + rowH}" x2="${x}" y2="${yOf(i + 1)}" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#obArrow)" />`;
   }
+  // the terminal gate (after the last row) has no next stage below it -- draw its short stub arrow down into the diamond
+  const lastGateY = gateYOf(rows[rows.length - 1].id);
+  mainArrows += `<line x1="${nodeX + nodeW / 2}" y1="${yOf(rows.length - 1) + rowH}" x2="${nodeX + nodeW / 2}" y2="${lastGateY - 7}" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#obArrow)" />`;
 
-  const stopMarks = rows.map((r, i) => {
-    if (!r.stop) return "";
-    const y = yOf(i) + rowH / 2, x = nodeX + nodeW + 14;
-    return `<circle cx="${x}" cy="${y}" r="7" fill="#fff" stroke="#b91c1c" stroke-width="1.5"/><text x="${x}" y="${y + 3}" text-anchor="middle" font-size="9" fill="#b91c1c" font-weight="800">&#215;</text><text x="${x + 12}" y="${y + 3}" font-size="8.5" fill="#b91c1c">${escapeHtml(r.stop)}</text>`;
+  const gateSize = 9;
+  const gatesSvg = ONBOARDING_MAP_GATES.map(g => {
+    const cx = nodeX + nodeW / 2, cy = gateYOf(g.after);
+    const pts = `${cx},${cy - gateSize} ${cx + gateSize},${cy} ${cx},${cy + gateSize} ${cx - gateSize},${cy}`;
+    return `<g><title>Gate &middot; ${escapeHtml(g.label)}</title><polygon points="${pts}" fill="#fffbeb" stroke="#b45309" stroke-width="1.4" /></g>`;
   }).join("");
 
-  const selfLoops = ONBOARDING_MAP_SELFLOOPS.map(id => {
-    const y = yOf(idxOf[id]), x = nodeX;
-    return `<path d="M ${x} ${y + 8} C ${x - 22} ${y + 8}, ${x - 22} ${y + rowH - 8}, ${x} ${y + rowH - 8}" fill="none" stroke="#c2410c" stroke-width="1.3" marker-end="url(#obArrowOrange)" />`;
+  const stopMarks = ONBOARDING_MAP_GATES.map(g => {
+    if (!g.stop) return "";
+    const y = gateYOf(g.after), x = nodeX + nodeW / 2 + gateSize + 16;
+    return `<circle cx="${x}" cy="${y}" r="7" fill="#fff" stroke="#b91c1c" stroke-width="1.5"/><text x="${x}" y="${y + 3}" text-anchor="middle" font-size="9" fill="#b91c1c" font-weight="800">&#215;</text><text x="${x + 12}" y="${y + 3}" font-size="8.5" fill="#b91c1c">${escapeHtml(g.stop)}</text>`;
+  }).join("");
+
+  const selfLoops = ONBOARDING_MAP_GATES.filter(g => g.selfLoop).map(g => {
+    const cy = gateYOf(g.after), x = nodeX + nodeW / 2 - gateSize;
+    return `<path d="M ${x} ${cy - 5} C ${x - 20} ${cy - 12}, ${x - 20} ${cy + 12}, ${x} ${cy + 5}" fill="none" stroke="#c2410c" stroke-width="1.3" marker-end="url(#obArrowOrange)" />`;
   }).join("");
 
   const crossLoops = ONBOARDING_MAP_LOOPS.map(l => {
     const laneX = gutterMargin + (l.lane - 1) * laneSpacing;
-    const yFrom = yOf(idxOf[l.from]) + rowH / 2, yTo = yOf(idxOf[l.to]) + rowH / 2;
+    const yFrom = l.stageAnchor ? (yOf(idxOf[l.from]) + rowH / 2) : gateYOf(l.from);
+    const yTo = yOf(idxOf[l.to]) + rowH / 2;
     const midY = (yFrom + yTo) / 2;
     return `<path d="M ${nodeX} ${yFrom} L ${laneX} ${yFrom} L ${laneX} ${yTo} L ${nodeX} ${yTo}" fill="none" stroke="#c2410c" stroke-width="1.3" marker-end="url(#obArrowOrange)" />
       <text x="${laneX - 4}" y="${midY}" font-size="7.5" fill="#c2410c" text-anchor="middle" transform="rotate(-90 ${laneX - 4} ${midY})">${escapeHtml(l.label)}</text>`;
@@ -19089,6 +19119,7 @@ function renderOnboardingFlowMap() {
     ${crossLoops}
     ${selfLoops}
     ${mainArrows}
+    ${gatesSvg}
     ${branchSvg}
     ${nodesSvg}
     ${stopMarks}
