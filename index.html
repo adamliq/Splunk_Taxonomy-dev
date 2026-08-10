@@ -3878,8 +3878,8 @@ INGEST PROCESSOR
     </div>
 
     <div class="patterns-stats" aria-live="polite">
-      <span class="patterns-stat"><strong id="splunkBinVisibleCount">22</strong> visible commands</span>
-      <span class="patterns-stat"><strong id="splunkBinCategoryCount">9</strong> categories</span>
+      <span class="patterns-stat"><strong id="splunkBinVisibleCount">34</strong> visible commands</span>
+      <span class="patterns-stat"><strong id="splunkBinCategoryCount">11</strong> categories</span>
     </div>
 
     <div class="eccs-table-wrap" role="region" aria-label="Scrollable Splunk bin commands table" tabindex="0">
@@ -15529,14 +15529,26 @@ const splunkBinTableData = [
   {"Command": "splunk list licenser-localslave", "Category": "Licensing", "Purpose": "List the configured license manager this instance points to"},
   {"Command": "splunk install app <path-to-appfile>", "Category": "Apps", "Purpose": "Splunk install app"},
   {"Command": "splunk remove app <path-to-appfile>", "Category": "Apps", "Purpose": "Splunk remove app"},
-  {"Command": "splunk btool inputs list", "Category": "Inputs / btool", "Purpose": "Splunk list inputs"},
-  {"Command": "splunk btool inputs list monitor:///var/log", "Category": "Inputs / btool", "Purpose": "Splunk disk configuration for input"},
-  {"Command": "splunk btool inputs list monitor:///var/log -debug", "Category": "Inputs / btool", "Purpose": "Splunk disk configuration for input, with exact conf location"},
+  {"Command": "splunk btool inputs list", "Category": "btool", "Purpose": "Splunk list inputs"},
+  {"Command": "splunk btool inputs list monitor:///var/log", "Category": "btool", "Purpose": "Splunk disk configuration for input"},
+  {"Command": "splunk btool inputs list monitor:///var/log -debug", "Category": "btool", "Purpose": "Splunk disk configuration for input, with exact conf location"},
+  {"Command": "splunk btool --debug server list | grep shcluster", "Category": "btool", "Purpose": "Show server.conf settings with source file per setting, filtered to shcluster stanzas"},
+  {"Command": "splunk btool alert_actions list email --debug", "Category": "btool", "Purpose": "Show effective alert_actions.conf settings for the email stanza, with source file per setting"},
+  {"Command": "splunk btool indexes list --debug | findstr [", "Category": "btool", "Purpose": "List indexes.conf stanza names (Windows findstr filtered to lines starting with '[')"},
+  {"Command": "splunk btool outputs list --debug | grep discovery", "Category": "btool", "Purpose": "Show outputs.conf settings related to indexer discovery, with source file per setting"},
+  {"Command": "splunk btool macros list host_eventcount --debug", "Category": "btool", "Purpose": "Show effective macros.conf settings for the host_eventcount macro, with source file per setting"},
+  {"Command": "splunk btool inputs list --debug | findstr splunktcp", "Category": "btool", "Purpose": "Show inputs.conf settings for splunktcp stanzas, with source file per setting (Windows findstr filter)"},
+  {"Command": "splunk cmd btool props list --debug", "Category": "btool", "Purpose": "Show effective props.conf settings for all stanzas, with source file per setting"},
+  {"Command": "splunk cmd btool savedsearches list --debug", "Category": "btool", "Purpose": "Show effective savedsearches.conf settings for all stanzas, with source file per setting"},
+  {"Command": "splunk cmd btool inputs list --debug", "Category": "btool", "Purpose": "Show effective inputs.conf settings for all stanzas, with source file per setting"},
+  {"Command": "splunk cmd btool outputs list --debug", "Category": "btool", "Purpose": "Show effective outputs.conf settings for all stanzas, with source file per setting"},
   {"Command": "splunk set deploy-poll ds1.mycompany.com:8089", "Category": "Deployment", "Purpose": "Splunk point to deployment server"},
   {"Command": "splunk reload deploy-server", "Category": "Deployment", "Purpose": "Reload the deployment server's serverclass.conf configuration"},
   {"Command": "splunk backup kvstore [-archiveName <archive>] [-collectionName <collection>] [-appName <app>]", "Category": "KV Store", "Purpose": "Back up KV Store data, optionally scoped to an archive name, collection or app"},
   {"Command": "splunk clean kvstore --cluster", "Category": "KV Store", "Purpose": "Clear KV Store data across a KV Store cluster"},
-  {"Command": "splunk show kvstore-status", "Category": "KV Store", "Purpose": "Show KV Store cluster and member status"}
+  {"Command": "splunk show kvstore-status", "Category": "KV Store", "Purpose": "Show KV Store cluster and member status"},
+  {"Command": "splunk add search-server <scheme>://<host>:<port> -auth <user>:<password> -remoteUsername <user> -remotePassword <passremote>", "Category": "Distributed Search", "Purpose": "Add a distributed search peer for federated/distributed search"},
+  {"Command": "splunk apply cluster-bundle", "Category": "Clustering", "Purpose": "Push the configuration bundle from the Cluster Manager to indexer cluster peers"}
 ];
 
 
