@@ -3878,7 +3878,7 @@ INGEST PROCESSOR
     </div>
 
     <div class="patterns-stats" aria-live="polite">
-      <span class="patterns-stat"><strong id="splunkBinVisibleCount">34</strong> visible commands</span>
+      <span class="patterns-stat"><strong id="splunkBinVisibleCount">36</strong> visible commands</span>
       <span class="patterns-stat"><strong id="splunkBinCategoryCount">11</strong> categories</span>
     </div>
 
@@ -15544,6 +15544,8 @@ const splunkBinTableData = [
   {"Command": "splunk cmd btool outputs list --debug", "Category": "btool", "Purpose": "Show effective outputs.conf settings for all stanzas, with source file per setting"},
   {"Command": "splunk set deploy-poll ds1.mycompany.com:8089", "Category": "Deployment", "Purpose": "Splunk point to deployment server"},
   {"Command": "splunk reload deploy-server", "Category": "Deployment", "Purpose": "Reload the deployment server's serverclass.conf configuration"},
+  {"Command": "splunk enable deploy-server", "Category": "Deployment", "Purpose": "Enable this instance's deployment server role"},
+  {"Command": "splunk disable deploy-server", "Category": "Deployment", "Purpose": "Disable this instance's deployment server role"},
   {"Command": "splunk backup kvstore [-archiveName <archive>] [-collectionName <collection>] [-appName <app>]", "Category": "KV Store", "Purpose": "Back up KV Store data, optionally scoped to an archive name, collection or app"},
   {"Command": "splunk clean kvstore --cluster", "Category": "KV Store", "Purpose": "Clear KV Store data across a KV Store cluster"},
   {"Command": "splunk show kvstore-status", "Category": "KV Store", "Purpose": "Show KV Store cluster and member status"},
