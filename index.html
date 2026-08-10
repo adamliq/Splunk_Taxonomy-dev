@@ -3878,8 +3878,8 @@ INGEST PROCESSOR
     </div>
 
     <div class="patterns-stats" aria-live="polite">
-      <span class="patterns-stat"><strong id="splunkBinVisibleCount">16</strong> visible commands</span>
-      <span class="patterns-stat"><strong id="splunkBinCategoryCount">8</strong> categories</span>
+      <span class="patterns-stat"><strong id="splunkBinVisibleCount">22</strong> visible commands</span>
+      <span class="patterns-stat"><strong id="splunkBinCategoryCount">9</strong> categories</span>
     </div>
 
     <div class="eccs-table-wrap" role="region" aria-label="Scrollable Splunk bin commands table" tabindex="0">
@@ -15521,16 +15521,22 @@ const splunkBinTableData = [
   {"Command": "splunk list forward-server", "Category": "Forwarding", "Purpose": "Test Splunk forwarder connection"},
   {"Command": "splunk add forward-server hostname.domain:9997", "Category": "Forwarding", "Purpose": "Add Forward server"},
   {"Command": "splunk enable listen 9997", "Category": "Forwarding", "Purpose": "Indexer add 9997 receiver"},
+  {"Command": "splunk disable listen -port <port> -auth <username>:<password>", "Category": "Forwarding", "Purpose": "Disable a receiving port (stop listening for forwarded data on that port)"},
   {"Command": "splunk enable boot-start", "Category": "Startup", "Purpose": "Enable boot start"},
   {"Command": "splunk add index <name>", "Category": "Indexing", "Purpose": "Splunk index add"},
   {"Command": "splunk add licenses <filepath>", "Category": "Licensing", "Purpose": "Splunk license add"},
   {"Command": "splunk edit licenser-localslave -master_uri https://192.168.86.56:8089", "Category": "Licensing", "Purpose": "Splunk point to license server"},
+  {"Command": "splunk list licenser-localslave", "Category": "Licensing", "Purpose": "List the configured license manager this instance points to"},
   {"Command": "splunk install app <path-to-appfile>", "Category": "Apps", "Purpose": "Splunk install app"},
   {"Command": "splunk remove app <path-to-appfile>", "Category": "Apps", "Purpose": "Splunk remove app"},
   {"Command": "splunk btool inputs list", "Category": "Inputs / btool", "Purpose": "Splunk list inputs"},
   {"Command": "splunk btool inputs list monitor:///var/log", "Category": "Inputs / btool", "Purpose": "Splunk disk configuration for input"},
   {"Command": "splunk btool inputs list monitor:///var/log -debug", "Category": "Inputs / btool", "Purpose": "Splunk disk configuration for input, with exact conf location"},
-  {"Command": "splunk set deploy-poll ds1.mycompany.com:8089", "Category": "Deployment", "Purpose": "Splunk point to deployment server"}
+  {"Command": "splunk set deploy-poll ds1.mycompany.com:8089", "Category": "Deployment", "Purpose": "Splunk point to deployment server"},
+  {"Command": "splunk reload deploy-server", "Category": "Deployment", "Purpose": "Reload the deployment server's serverclass.conf configuration"},
+  {"Command": "splunk backup kvstore [-archiveName <archive>] [-collectionName <collection>] [-appName <app>]", "Category": "KV Store", "Purpose": "Back up KV Store data, optionally scoped to an archive name, collection or app"},
+  {"Command": "splunk clean kvstore --cluster", "Category": "KV Store", "Purpose": "Clear KV Store data across a KV Store cluster"},
+  {"Command": "splunk show kvstore-status", "Category": "KV Store", "Purpose": "Show KV Store cluster and member status"}
 ];
 
 
