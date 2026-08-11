@@ -3624,6 +3624,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
         <button type="button" data-reference-jump="configFileReferences">Configuration file reference</button>
         <button type="button" data-reference-jump="networkReferenceSection">Network reference</button>
         <button type="button" data-reference-jump="rolesSection">Roles</button>
+        <button type="button" data-reference-jump="splunkBinSection">Splunk bin</button>
       </div>
     </div>
 
@@ -3947,6 +3948,67 @@ INGEST PROCESSOR
         <thead><tr><th scope="col">Role</th><th scope="col">Platform</th><th scope="col">Capability</th><th scope="col">What it lets you do</th><th scope="col">Priv</th><th scope="col">Source / Notes</th></tr></thead>
         <tbody id="rolesTableBody"></tbody>
       </table>
+    </div>
+  </section>
+
+    <section id="splunkBinSection" class="reference-section">
+    <div class="patterns-hero">
+      <div>
+        <div class="eyebrow">Operational reference</div>
+        <h2>Splunk bin CLI Commands</h2>
+        <p>The full <code>splunk</code> command-line verb catalogue, run from the platform's <code>bin/</code> directory.</p>
+        <p><strong>Note:</strong> commands shown with a placeholder in angle brackets (for example <code>&lt;name&gt;</code>) require a real value substituted in; run with <code>-auth &lt;user&gt;:&lt;password&gt;</code> or an active login session as appropriate for the instance.</p>
+      </div>
+    </div>
+
+    <div class="eccs-examples" style="margin-top:16px">
+      <details>
+        <summary>Complete CLI command reference (all verbs &amp; objects)</summary>
+        <div class="eccs-example-body">
+          <p>The full <code>splunk</code> command-line verb catalogue -- every top-level command, the objects it operates on, and worked examples.</p>
+          <div class="eccs-table-wrap" role="region" aria-label="Complete Splunk CLI command reference" tabindex="0"><table class="eccs-matrix" style="min-width:1100px"><thead><tr><th style="width:14%">Command</th><th style="width:28%">Objects</th><th>Examples</th></tr></thead><tbody>
+            <tr><td><code>add</code></td><td>exec, forward-server, index, licenser-pools, licenses, manager, monitor, oneshot, saved-search, search-server, tcp, udp, user</td><td>1. Adds monitor directory and file inputs to source /var/log.<br><code>./splunk add monitor /var/log/</code><br>2. Adds another indexer cluster manager node to the list of instances the search head searches across.<br><code>./splunk add cluster-manager https://127.0.0.1:8089 -secret testsecret -multisite false</code></td></tr>
+            <tr><td><code>anonymize</code></td><td>source</td><td>1. Replaces identifying data, such as usernames and IP addresses, in the file located at /tmp/messages.<br><code>./splunk anonymize file -source /tmp/messages</code><br>2. Anonymizes Mynames.txt using name-terms, a file containing a list of common English personal names.<br><code>./splunk anonymize file -source /tmp/messages -name_terms $SPLUNK_HOME/bin/Mynames.txt</code></td></tr>
+            <tr><td><code>apply</code></td><td>cluster-bundle, shcluster-bundle</td><td>1. Makes validated bundle active on peers.<br><code>./splunk apply cluster-bundle</code><br>2. Skip-validation is an optional argument to skip bundle validation on the indexer cluster manager and peers.<br><code>./splunk apply cluster-bundle --skip-validation</code><br>3. For shcluster-bundle examples, see Deploy a configuration bundle in the Distributed Search manual.</td></tr>
+            <tr><td><code>check-integrity</code></td><td>NONE</td><td>1. Verifies the integrity of an index with the optional parameter verbose.<br><code>./splunk check-integrity -index $SPLUNK_HOME/var/lib/splunk/defaultdb/ [-&lt;verbose&gt;]</code><br>2. Verifies the integrity of a bucket with the optional parameter verbose.<br><code>./splunk check-integrity -bucketPath $SPLUNK_HOME/var/lib/splunk/defaultdb/db/ [-&lt;verbose&gt;]</code></td></tr>
+            <tr><td><code>clean</code></td><td>all, eventdata, globaldata, inputdata, userdata, kvstore</td><td>1. Removes data from Splunk installation. eventdata refers to exported events indexed as raw log files.<br><code>./splunk clean eventdata</code><br>2. globaldata refers to host tags and source type aliases.<br><code>./splunk clean globaldata</code></td></tr>
+            <tr><td><code>cluster-manager-redundancy</code></td><td>NONE</td><td>1. Shows status of all the cluster managers in redundancy mode.<br><code>./splunk cluster-manager-redundancy -show-status</code><br>2. Switches HA mode of a cluster manager from standby to active.<br><code>./splunk cluster-manager-redundancy -switch-mode active</code><br>3. Switches HA mode of a cluster manager from active to standby. Consequently, another, currently standby cluster manager gets switched to active automatically.<br><code>./splunk cluster-manager-redundancy -switch-mode standby</code></td></tr>
+            <tr><td><code>cmd</code></td><td>btprobe, classify, locktest, locktool, pcregextest, searchtest, signtool, toCsv, toSrs, tsidxprobe, walklex</td><td>1. Displays the contents in the $SPLUNK_HOME/bin directory.<br><code>./splunk cmd /bin/ls</code><br>2. Runs the chosen command from the $SPLUNK_HOME/bin directory with the environment variables set. Run <code>splunk envvars</code> to see which environment variables are set.<br><code>./splunk cmd locktest</code></td></tr>
+            <tr><td><code>create</code></td><td>app</td><td>1. Builds myNewApp from a template.<br><code>./splunk create app myNewApp -template sample_app</code></td></tr>
+            <tr><td><code>createssl</code></td><td>NONE</td><td>&mdash;</td></tr>
+            <tr><td><code>diag</code></td><td>NONE</td><td>&mdash;</td></tr>
+            <tr><td><code>disable</code></td><td>app, boot-start, deploy-client, deploy-server, dist-search, index, listen, local-index, maintenance-mode, perfmon, webserver, web-ssl, wmi</td><td>1. Disables the maintenance mode on peers in indexer clustering. Must be invoked on the manager node.<br><code>./splunk disable maintenance-mode</code><br>2. Disables the logs1 collection.<br><code>./splunk disable eventlog logs1</code></td></tr>
+            <tr><td><code>display</code></td><td>app, boot-start, deploy-client, deploy-server, dist-search, jobs, listen, local-index</td><td>1. Displays status information, such as enabled/disabled, for all apps.<br><code>./splunk display app</code><br>2. Displays status information for the unix app.<br><code>./splunk display app unix</code></td></tr>
+            <tr><td><code>edit</code></td><td>app, cluster-config, shcluster-config, exec, index, licenser-localpeer, licenser-groups, monitor, saved-search, search-server, tcp, udp, user</td><td>1. Edits the current clustering configuration.<br><code>./splunk edit cluster-config -mode peer -site site2</code><br>2. Edits monitored directory inputs in /var/log and only reads from the end of this file.<br><code>./splunk edit monitor /var/log -follow-only true</code></td></tr>
+            <tr><td><code>enable</code></td><td>app, boot-start, deploy-client, deploy-server, dist-search, index, listen, local-index, maintenance-mode, perfmon, webserver, web-ssl, wmi</td><td>1. Sets the maintenance mode on peers in indexer clustering. Must be invoked on the manager node.<br><code>./splunk enable maintenance-mode</code><br>2. Enables the col1 collection.<br><code>./splunk enable perfmon col1</code></td></tr>
+            <tr><td><code>export</code></td><td>eventdata, user data</td><td>1. Exports data out of your Splunk server into /tmp/apache_raw_404_logs.<br><code>./splunk export eventdata -index my_apache_data -dir /tmp/apache_raw_404_logs -host localhost -terms "404 html"</code></td></tr>
+            <tr><td><code>fsck</code></td><td>repair, scan, clear-bloomfilter</td><td>&mdash;</td></tr>
+            <tr><td><code>help</code></td><td>NONE</td><td>&mdash;</td></tr>
+            <tr><td><code>import</code></td><td>userdata</td><td>1. Imports user accounts data from directory /tmp/export.dat.<br><code>./splunk import userdata -dir /tmp/export.dat</code></td></tr>
+            <tr><td><code>install</code></td><td>app</td><td>1. Installs the app from foo.tar to the local Splunk server.<br><code>./splunk install app foo.tar</code><br>2. Installs the app from foo.tgz to the local Splunk server.<br><code>./splunk install app foo.tgz</code></td></tr>
+            <tr><td><code>list</code></td><td>cluster-buckets, cluster-config, cluster-generation, cluster-peers, deploy-clients, excess-buckets, exec, forward-server, index, inputstatus, licenser-groups, licenser-localpeer, licenser-messages, licenser-pools, licenser-peers, licenser-stacks, licenses, jobs, manager-info, monitor, peer-info, peer-buckets, perfmon, saved-search, search-server, tcp, udp, user, wmi</td><td>1. Lists all active monitored directory and file inputs. This displays files and directories currently or recently monitored by splunkd for change.<br><code>./splunk list monitor</code><br>2. Lists all licenses across all stacks.<br><code>./splunk list licenses</code></td></tr>
+            <tr><td><code>login</code>, <code>logout</code></td><td>NONE</td><td>&mdash;</td></tr>
+            <tr><td><code>migrate</code></td><td>kvstore-storage-engine</td><td>1. Migrates the KV store to the target storage engine.<br><code>./splunk migrate kvstore-storage-engine --target-engine wiredTiger</code></td></tr>
+            <tr><td><code>offline</code></td><td>NONE</td><td>1. Used to shut down the peer in a way that does not affect existing searches. The manager node rearranges the primary peers for buckets, and fixes up the cluster state in case the enforce-counts flag is set.<br><code>./splunk offline</code><br>2. Because the --enforce-counts flag is used, the cluster is completely fixed up before this peer is taken down.<br><code>./splunk offline --enforce-counts</code></td></tr>
+            <tr><td><code>package</code></td><td>app</td><td>1. Packages the app "stubby" and returns the package location.<br><code>./splunk package app stubby</code><br><em>The package command includes local.meta by default. If your app package already contains local.meta, this fails AppInspect app validation -- use -merge-local-meta or -exclude-local-meta to avoid it.</em><br>2. When packaging the app, merges local.meta to default.meta and packages the resulting default.meta.<br><code>./splunk package app stubby -merge-local-meta true</code><br>3. When packaging the app, excludes local.meta from the app package.<br><code>./splunk package app stubby -exclude-local-meta true</code></td></tr>
+            <tr><td><code>rebalance</code></td><td>cluster-data</td><td>1. Rebalances data for all indexes.<br><code>./splunk rebalance cluster-data -action start</code><br>2. Rebalances data for a single index using the optional -index parameter.<br><code>./splunk rebalance cluster-data -action start -index _internal</code><br>3. Rebalances data using the optional -max_runtime parameter to limit the rebalancing activity to 5 minutes.<br><code>./splunk rebalance cluster-data -action start -max_runtime 5</code></td></tr>
+            <tr><td><code>rebuild</code></td><td>NONE</td><td>&mdash;</td></tr>
+            <tr><td><code>reload</code></td><td>ad, auth, deploy-server, exec, index, listen, monitor, registry, tcp, udp, perfmon, wmi</td><td>1. Reloads your deployment server, in entirety or by server class.<br><code>./splunk reload deploy-server</code><br>2. Reloads my_serverclass.<br><code>./splunk reload deploy-server -class my_serverclass</code><br>3. Reloads a specific index configuration. To reload all indexes, do not include an index name.<br><code>./splunk reload index [index_name]</code></td></tr>
+            <tr><td><code>remove</code></td><td>app, cluster-peers, cluster-manager, excess-buckets, exec, forward-server, index, jobs, licenser-pools, licenses, monitor, saved-search, search-server, tcp, udp, user</td><td>1. Removes the cluster manager node from the list of instances the search head searches across. Uses testsecret as the secret/pass4SymmKey.<br><code>./splunk remove cluster-manager https://127.0.0.1:8089 -secret testsecret</code><br>2. Removes the Unix app.<br><code>./splunk remove app unix</code></td></tr>
+            <tr><td><code>rollback</code></td><td>cluster-bundle</td><td>Rolls back your Splunk Web configuration bundle to your previous version. Run from the manager node:<br><code>./splunk rollback cluster-bundle</code></td></tr>
+            <tr><td><code>rolling-restart</code></td><td>cluster-peers, shcluster-members</td><td>&mdash;</td></tr>
+            <tr><td><code>rtsearch</code></td><td>app, batch, detach, earliest_time, header, id, index_earliest, index_latest, max_time, maxout, output, preview, rt_id, timeout, uri, wrap</td><td>1. Runs a real-time search that does not line-wrap for individual lines.<br><code>./splunk rtsearch 'error' -wrap false</code><br>2. Runs a real-time search. Use rtsearch exactly as you use the traditional search command.<br><code>./splunk rtsearch 'eventtype=webaccess error | top clientip'</code></td></tr>
+            <tr><td><code>search</code></td><td>app, batch, detach, earliest_time, header, id, index_earliest, index_latest, latest_time, max_time, maxout, output, preview, timeout, uri, wrap</td><td>1. Uses the wildcard as the search object. Triggers an asynchronous search and displays the job id and ttl for the search.<br><code>./splunk search '*' -detach true</code><br>2. Uses eventtype=webaccess error as the search object. Does not line wrap for individual lines longer than the terminal width.<br><code>./splunk search 'eventtype=webaccess error' -wrap 0</code></td></tr>
+            <tr><td><code>set</code></td><td>datastore-dir, deploy-poll, default-hostname, default-index, indexing-ready, minfreemb, servername, server-type, splunkd-port, web-port, kvstore-port</td><td>1. Sets the force indexing ready bit.<br><code>./splunk set indexing-ready</code><br>2. Sets bologna:1234 as the deployment server to poll updates from.<br><code>./splunk set deploy-poll bologna:1234</code></td></tr>
+            <tr><td><code>show</code></td><td>config, cluster-bundle-status, datastore-dir, deploy-poll, default-hostname, default-index, jobs, minfreemb, servername, splunkd-port, web-port, kvstore-port, kvstore-status, shcluster-kvmigration-status</td><td>1. Shows current logging levels.<br><code>./splunk show log-level</code><br>2. Shows which deployment server Splunk Enterprise is configured to poll from.<br><code>./splunk show deploy-poll</code></td></tr>
+            <tr><td><code>spool</code></td><td>NONE</td><td>&mdash;</td></tr>
+            <tr><td><code>start-shcluster-migration</code></td><td>kvstore</td><td>1. Migrate the KV store to the target storage engine in a clustered environment.<br><code>./splunk start-shcluster-migration kvstore -storageEngine wiredTiger</code><br>2. Check to see if the KV store is ready to migrate to the target storage engine.<br><code>./splunk start-shcluster-migration kvstore -storageEngine wiredTiger -isDryRun</code></td></tr>
+            <tr><td><code>start</code>, <code>stop</code>, <code>restart</code></td><td>splunkd, splunkweb</td><td>&mdash;</td></tr>
+            <tr><td><code>status</code></td><td>splunkd, splunkweb</td><td>Checks if splunkd is running and shows the PID.</td></tr>
+            <tr><td><code>validate</code></td><td>index, files, cluster-bundle</td><td>1. Validates the main index and verifies the index paths specified in indexes.conf.<br><code>./splunk validate index main</code><br>2. For files examples, see Check the integrity of your Splunk software files.<br>3. For cluster-bundle examples, see Update common peer configurations and apps in the Managing Indexers and Clusters of Indexers manual.</td></tr>
+          </tbody></table></div>
+        </div>
+      </details>
     </div>
   </section>
 
@@ -18486,6 +18548,7 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
     if (location.hash === "#network-flows") { expandReferenceSection("networkReferenceSection"); setActiveNetRefView("flows"); }
     else if (location.hash === "#splunk-ports" || location.hash === "#network-reference") { expandReferenceSection("networkReferenceSection"); setActiveNetRefView("ports"); }
     else if (location.hash === "#roles") expandReferenceSection("rolesSection");
+    else if (location.hash === "#splunk-bin") expandReferenceSection("splunkBinSection");
   }
   if (updateHash && history.replaceState) {
     const hash = selected === "info"
@@ -18783,6 +18846,7 @@ const REFERENCE_COLLAPSIBLE_SECTIONS = [
   { id: "configFileReferences", title: "Configuration file reference" },
   { id: "networkReferenceSection", title: "Network reference" },
   { id: "rolesSection", title: "Roles" },
+  { id: "splunkBinSection", title: "Splunk bin" },
 ];
 function initCollapsibleReferenceSections() {
   REFERENCE_COLLAPSIBLE_SECTIONS.forEach(({ id, title }) => {
@@ -19104,6 +19168,7 @@ function pageNameFromHash() {
   if (location.hash === "#splunk-ports") return "reference";
   if (location.hash === "#network-flows") return "reference";
   if (location.hash === "#roles") return "reference";
+  if (location.hash === "#splunk-bin") return "reference";
   return "info";
 }
 
