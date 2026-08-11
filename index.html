@@ -20534,6 +20534,11 @@ const SOT_OBJECTS = [
     def: "Pre-built tsidx summaries of a data model's data over a configured time range, making tstats ... from datamodel= searches dramatically faster than an equivalent raw search.",
     notes: "Consumes indexer storage and CPU on a schedule -- treat as a capacity-planning decision, not a free toggle.",
     deps: [], feeds: [], sotCode: "SOT-01.04.03", instanceId: "DMA-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/admin/summarization/tstats:DM_{app}_{data_model_id}", referenceDetail: "datamodels-conf" },
+{ name: "Report Acceleration", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "savedsearches.conf (auto_summarize and auto_summarize.* settings on a Report)",
+    def: "Scheduler-managed automatic summarization of a Report's own search, building pre-computed summaries at configured time granularities so future runs over the same data read the summary instead of re-executing the full search.",
+    notes: "Distinct from Data Model Acceleration, which pre-builds tsidx summaries for tstats searches over an entire data model; Report Acceleration works directly on one report's own SPL, is periodically judged for 'helpfulness' (summary size/ratio thresholds) and auto-suspended if it isn't paying off.",
+    deps: ["Report"], feeds: [], sotCode: "SOT-01.02.03", instanceId: "RACC-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed", referenceDetail: "savedsearches-conf" },
 { name: "Pivot", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "(built on datamodels.conf; saved as a Report)",
     def: "A drag-and-drop report builder that runs directly against a Data Model without requiring the author to write SPL by hand.",
@@ -21884,6 +21889,7 @@ const SOT_TREE = {
     "SOT-01.02": { label: "Reports", desc: "Saved searches surfaced as reusable, on-demand or scheduled reports.", subclasses: {
       "SOT-01.02.01": "Report",
       "SOT-01.02.02": "Scheduled Report",
+      "SOT-01.02.03": "Report Acceleration",
     } },
     "SOT-01.03": { label: "Search Reuse", desc: "Reusable fragments and named constructs invoked from other searches.", subclasses: {
       "SOT-01.03.01": "Search Macro",
