@@ -2604,6 +2604,7 @@
     .method-card p { margin:7px 0 0; color:#64748b; font-size:12px; line-height:1.5; }
     .method-list { margin:11px 0 0; padding-left:18px; color:#334155; font-size:12px; line-height:1.55; }
     .method-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:13px; }
+    .method-actions button { white-space:normal; text-align:left; }
     .reference-link { padding:0; border:0; background:transparent; color:#1d4ed8; text-decoration:underline; text-underline-offset:3px; font-weight:800; white-space:normal; }
     .reference-link:hover { background:transparent; color:#1e3a8a; }
     .reference-empty { padding:24px; border:1px dashed #cbd5e1; border-radius:12px; background:#fff; color:#64748b; text-align:center; }
@@ -2682,6 +2683,16 @@
     .flow-badge.gate { background:#e0e7ff; color:#3730a3; }
     .onboarding-legend { display:flex; flex-wrap:wrap; gap:8px 18px; margin:0 0 26px; font-size:12.5px; color:#64748b; align-items:center; }
     .onboarding-legend span.flow-badge { margin-right:6px; }
+    .onboarding-flow-map { border:1px solid var(--border); border-radius:16px; background:#fff; box-shadow:0 6px 18px rgba(15,23,42,.05); padding:16px 18px 8px; margin-bottom:26px; }
+    .onboarding-flow-map-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 12px; margin-bottom:10px; }
+    .onboarding-flow-map-head strong { font-size:13px; color:#0f172a; }
+    .onboarding-flow-map-head span { font-size:11.5px; color:#64748b; line-height:1.5; }
+    .onboarding-flow-map-canvas { overflow-x:auto; }
+    .onboarding-flow-map-svg { display:block; min-width:640px; }
+    .ob-map-node { cursor:pointer; }
+    .ob-map-node rect { transition:filter .12s ease; }
+    .ob-map-node:hover rect, .ob-map-node:focus-visible rect { filter:brightness(1.2); }
+    .ob-map-node:focus-visible { outline:2px solid #0e7490; outline-offset:2px; }
     .onboarding-flow { display:flex; flex-direction:column; align-items:center; gap:0; }
     .onboarding-stage, .onboarding-gate { width:100%; max-width:660px; border-radius:14px; padding:16px 20px; }
     .onboarding-stage { border:1px solid var(--border); background:#fff; box-shadow:0 6px 18px rgba(15,23,42,.05); }
@@ -3288,9 +3299,17 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <span><span class="flow-badge state">STATE</span>Lifecycle state, TAX-06.04.01</span>
     </div>
 
+    <div class="onboarding-flow-map" aria-label="Compact onboarding flow map">
+      <div class="onboarding-flow-map-head">
+        <strong>Flow map</strong>
+        <span>Click any stage to jump to its detail below. Orange lines are HOLD loop-backs; purple lines are the post-go-live Detection Engineering branch; red marks are STOP/reject points.</span>
+      </div>
+      <div id="onboardingFlowMapWrap" class="onboarding-flow-map-canvas"></div>
+    </div>
+
     <div class="onboarding-flow">
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-candidate">
         <h4>Candidate log source identified <span class="flow-badge state">PLANNED</span></h4>
         <p>A platform, application or data source is proposed for onboarding.</p>
       </div>
@@ -3305,7 +3324,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-viability">
         <h4>Phase 1 &mdash; Viability Assessment <span class="assessment-tag">TAX-06.01.02 / TAX-07.01</span> <span class="flow-badge state">ONBOARDING</span></h4>
         <p>Scores security value, technical readiness and operational assurance. Custom-solution, reverse-engineering and discovery-gap modifiers adjust the result before a decision is reached.</p>
       </div>
@@ -3321,7 +3340,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-worthiness">
         <h4>Log Worthiness <span class="assessment-tag">TAX-07.02</span></h4>
         <p>Is the security or operational value proportionate to the cost and volume of onboarding &mdash; independent of pure technical feasibility?</p>
       </div>
@@ -3344,9 +3363,9 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
-        <h4>Select logging pattern &amp; topology</h4>
-        <p>Choose the governed collection pattern and record transport, authentication and firewall prerequisites.</p>
+      <div class="onboarding-stage" id="ob-topology">
+        <h4>Select logging pattern &amp; topology <span class="assessment-tag">TAX-03.02 / TAX-03.05</span></h4>
+        <p>Choose the governed collection pattern and record transport, Data Collection Authentication and firewall prerequisites.</p>
       </div>
 
       <div class="onboarding-feed">
@@ -3358,7 +3377,22 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-connectivity">
+        <h4>Connectivity validation <span class="assessment-tag">TAX-03.02.05</span></h4>
+        <p>End-to-end transport is tested and confirmed secure &mdash; network path, TLS/certificate trust, and authentication all succeed &mdash; before parsing configuration begins.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; Connectivity Succeeded?</h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Firewall, TLS, authentication or routing failure &rarr; back to topology/collection component configuration</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Transport succeeds securely &rarr; continue to engineering build</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage" id="ob-build">
         <h4>Engineering build <span class="assessment-tag">TAX-04.01&ndash;04.09</span></h4>
         <p>Datetime standards &amp; parsing, line breaking, line length, log format detection &amp; parsing, field extraction, field normalisation (CIM/ECS mapping), event volume profile, parsing performance &mdash; plus collection components (TAX-03) and sourcetype identity (TAX-04.11). A structural fingerprint count from the sample (distinct format/timestamp-format combinations) is the concrete signal for whether the source needs one sourcetype or several.</p>
         <div class="method-actions" style="margin-top:8px"><button type="button" data-open-reference-detail="log-assessment-framework">Log Assessment Framework: structural fingerprinting informs this sourcetype/parsing split</button></div>
@@ -3371,11 +3405,34 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
           <span>Index and sourcetype names, and the logging configuration itself, must comply with the approved Naming Convention and Logging Standard <span class="assessment-tag">TAX-02.06.01 / TAX-02.06.03</span> before the build is considered complete.</span>
         </div>
       </div>
+
+      <div class="onboarding-feed">
+        <span class="flow-badge feed">FEEDS IN</span>
+        <div>
+          <strong>Capacity &amp; licensing check</strong>
+          <span>The forecasted Event Volume Profile from this build is checked against License Entitlement and Daily License Consumption <span class="assessment-tag">TAX-01.06</span> before the source proceeds -- onboarding should not be the thing that pushes the deployment over its licensed daily volume.</span>
+        </div>
+      </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
-        <h4>Data quality assessment <span class="assessment-tag">TAX-07.05&ndash;07.10</span></h4>
-        <p>Timestamp quality, log format quality, line length quality, event type coverage, required field coverage, event context completeness.</p>
+      <div class="onboarding-stage" id="ob-ingestion">
+        <h4>Ingestion check <span class="assessment-tag">TAX-04.10.02 / TAX-04.10.03</span></h4>
+        <p>Events are confirmed consistently searchable in the intended index, with the correct sourcetype &mdash; the same Presence &amp; Timeliness and Volume/Gap/Duplicate checks that later back ongoing health monitoring, run here for the first time before deeper quality work begins.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; Ingestion Confirmed?</h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Missing events, wrong index or sourcetype &rarr; back to engineering build</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Consistently searchable in the intended index &rarr; continue to data quality assessment</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage" id="ob-quality">
+        <h4>Data quality assessment <span class="assessment-tag">TAX-07.05&ndash;07.12 / 07.15 / 07.22&ndash;07.23 / TAX-04.07.07</span></h4>
+        <p>Timestamp quality, log format quality, line length quality, event type coverage, required field coverage, event context completeness, data quality score, investigative context density, context dimension coverage, investigative noise percentage, volume predictability, and field normalisation / CIM mapping compliance.</p>
         <div class="method-actions" style="margin-top:8px"><button type="button" data-open-reference-detail="log-assessment-framework">Log Assessment Framework: the line-by-line procedure behind Timestamp &amp; Log Format Quality</button></div>
       </div>
       <div class="onboarding-arrow">↓</div>
@@ -3389,7 +3446,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-preingest">
         <h4>Pre-ingest cyber-value gates <span class="assessment-tag">TAX-06.05.02</span></h4>
         <p>Minimum parse rate, timestamp &amp; timezone, and schema stability must all pass before any value scoring runs.</p>
         <div class="method-actions" style="margin-top:8px"><button type="button" data-open-reference-detail="log-assessment-framework">Log Assessment Framework: computes this gate's all-axes conformance rate</button></div>
@@ -3405,9 +3462,9 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
-        <h4>Cyber value scoring <span class="assessment-tag">TAX-06.05.03&ndash;10</span></h4>
-        <p>Marginal novelty, pivot density &amp; breadth (TAX-07.13/14), semantic value, entity coverage &rarr; log source value score &rarr; cyber value density &rarr; candidate rank.</p>
+      <div class="onboarding-stage" id="ob-cybervalue">
+        <h4>Cyber value scoring <span class="assessment-tag">TAX-06.05.03&ndash;10 / TAX-07.16</span></h4>
+        <p>Marginal novelty, pivot density &amp; breadth (TAX-07.13/14), semantic value, entity coverage &rarr; log source value score &rarr; cyber value density &rarr; candidate rank. These roll up into the Cyber Value Index (CVI), one of the four indices behind the Cyber Monitoring Effectiveness Index.</p>
       </div>
       <div class="onboarding-arrow">↓</div>
 
@@ -3421,7 +3478,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-implementation">
         <h4>Log Implementation <span class="assessment-tag">TAX-07.03</span></h4>
         <p>Tracks build &amp; integration status through to a validation and acceptance result.</p>
       </div>
@@ -3436,9 +3493,9 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-governance">
         <h4>Governance approval <span class="assessment-tag">TAX-02.03</span></h4>
-        <p>System Approval / Accreditation: a named approval authority records a decision, scope and expiry/review date before the source is allowed into production.</p>
+        <p>System Approval / Accreditation: a named approval authority records a decision, scope and expiry/review date before the source is allowed into production. Before that decision is recorded, this is also where Data Classification <span class="assessment-tag">TAX-02.02.06</span>, the Access Control model and authorised roles <span class="assessment-tag">TAX-02.08</span>, the Retention Policy <span class="assessment-tag">TAX-02.06.05</span>, and any Risk Assessment or Exception &amp; Risk Acceptance <span class="assessment-tag">TAX-02.04</span> are confirmed for the source -- an "Approved with conditions" outcome below is usually one or more of these still outstanding.</p>
       </div>
       <div class="onboarding-arrow">↓</div>
 
@@ -3447,20 +3504,50 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
         <div class="onboarding-branches">
           <div class="onboarding-branch"><span class="flow-badge stop">STOP</span>Rejected &rarr; does not proceed to production</div>
           <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Approved with conditions &rarr; resolve conditions, then re-submit</div>
-          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Approved &rarr; go live</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Approved &rarr; operational readiness</div>
         </div>
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-opsready">
+        <h4>Operational readiness <span class="assessment-tag">TAX-07.04.03 / TAX-07.04.04</span></h4>
+        <p>Health monitoring, ownership, capacity and support are confirmed established before go-live &mdash; the same Operational Maturity and Health &amp; Monitoring Coverage fields that Log Sustainment tracks going forward, checked here as a precondition rather than an ongoing state.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; Operational Readiness Confirmed?</h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>No monitoring, runbook or owner &rarr; back to implementation</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Established &rarr; SOC readiness</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage" id="ob-socready">
+        <h4>SOC readiness</h4>
+        <p>Searches and the investigation workflow are tested against this source before go-live &mdash; confirming an analyst can actually find and use the data, distinct from the response documentation attached later in Response Readiness.</p>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-gate">
+        <h5>Gate &middot; SOC Ready?</h5>
+        <div class="onboarding-branches">
+          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Detection/investigation cannot reliably use the data &rarr; back to engineering build</div>
+          <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Investigation workflow succeeds &rarr; go live</div>
+        </div>
+      </div>
+      <div class="onboarding-arrow">↓</div>
+
+      <div class="onboarding-stage" id="ob-golive">
         <h4><span class="flow-badge proceed">GO-LIVE</span>&nbsp; Onboarding Record <span class="assessment-tag">TAX-06.01.01</span> <span class="flow-badge state">ACTIVE</span></h4>
         <p>Owner, phase, status and go-live date for the source, from request through to production.</p>
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
-        <h4>Log Sustainment <span class="assessment-tag">TAX-07.04</span></h4>
-        <p>Operational maturity, health &amp; monitoring coverage, and review/improvement actions &mdash; backed by reusable health checks (TAX-04.10) and assurance roll-ups (TAX-06.03). A failing health check or assurance roll-up moves the lifecycle state to <span class="flow-badge state">DEGRADED</span> until remediated.</p>
+      <div class="onboarding-stage" id="ob-sustainment">
+        <h4>Log Sustainment <span class="assessment-tag">TAX-07.04 / TAX-07.19</span></h4>
+        <p>Operational maturity, health &amp; monitoring coverage, and review/improvement actions &mdash; backed by reusable health checks (TAX-04.10) and assurance roll-ups (TAX-06.03). This is what the Operational Assurance Index (OAI) scores. A failing health check or assurance roll-up moves the lifecycle state to <span class="flow-badge state">DEGRADED</span> until remediated.</p>
       </div>
 
       <div class="onboarding-loopback">
@@ -3473,7 +3560,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
 
       <div class="onboarding-branch-arrow"><span class="glyph">⤷</span> Detection Engineering <em>(parallel branch, once the source is live)</em></div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-detection">
         <h4>Detection Engineering <span class="assessment-tag">TAX-05.03&ndash;05.05</span></h4>
         <p>Build the Detection Analytic &amp; Rule against the now-live source, then run Detection Validation and record Detection Coverage &mdash; confirming the use case this source was meant to enable actually works in production.</p>
       </div>
@@ -3487,13 +3574,21 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
-        <h4>Response readiness <span class="assessment-tag">TAX-05.04 / TAX-02.07</span></h4>
-        <p>A validated detection isn't production-ready until someone knows what to do when it fires: attach its Response Action, Incident Response Plan, Runbook and Escalation Matrix references.</p>
+      <div class="onboarding-stage" id="ob-response">
+        <h4>Response readiness <span class="assessment-tag">TAX-05.04 / TAX-02.07 / TAX-07.18</span></h4>
+        <p>A validated detection isn't production-ready until someone knows what to do when it fires: attach its Response Action, Incident Response Plan, Runbook and Escalation Matrix references. This is what the Response Readiness Index (RRI) scores.</p>
+      </div>
+
+      <div class="onboarding-feed">
+        <span class="flow-badge feed">FEEDS IN</span>
+        <div>
+          <strong>Cyber Monitoring Effectiveness Index</strong>
+          <span>By this point all four component indices exist for the source: Cyber Value Index <span class="assessment-tag">TAX-07.16</span>, Threat Detection Index <span class="assessment-tag">TAX-07.17</span>, Response Readiness Index <span class="assessment-tag">TAX-07.18</span> and Operational Assurance Index <span class="assessment-tag">TAX-07.19</span> &mdash; the four inputs that roll up into the overarching Cyber Monitoring Effectiveness Index <span class="assessment-tag">TAX-07.20</span>.</span>
+        </div>
       </div>
       <div class="onboarding-arrow">↓</div>
 
-      <div class="onboarding-stage">
+      <div class="onboarding-stage" id="ob-review90">
         <h4>90-day value review <span class="assessment-tag">TAX-06.05.14</span></h4>
         <p>Investigations, detections, alerts and true positives against the source feed a realised-value rank, compared against the rank predicted at onboarding.</p>
       </div>
@@ -3861,38 +3956,16 @@ INGEST PROCESSOR
       <div>
         <div class="eyebrow">Operational reference</div>
         <h2>Splunk bin CLI Commands</h2>
-        <p>Common <code>splunk</code> CLI commands run from the platform's <code>bin/</code> directory -- forwarding, licensing, apps, inputs/<code>btool</code>, user administration and deployment. Search or filter by category, or export the visible commands.</p>
+        <p>The full <code>splunk</code> command-line verb catalogue, run from the platform's <code>bin/</code> directory.</p>
         <p><strong>Note:</strong> commands shown with a placeholder in angle brackets (for example <code>&lt;name&gt;</code>) require a real value substituted in; run with <code>-auth &lt;user&gt;:&lt;password&gt;</code> or an active login session as appropriate for the instance.</p>
       </div>
     </div>
 
-    <div class="patterns-toolbar">
-      <input id="splunkBinTableSearch" type="search" placeholder="Search command or purpose…" aria-label="Search Splunk bin commands" />
-      <select id="splunkBinCategoryFilter" aria-label="Filter by category">
-        <option value="">All categories</option>
-      </select>
-      <div class="button-group">
-        <button id="resetSplunkBinTable" type="button">Reset</button>
-        <button id="exportSplunkBinTable" class="primary-button" type="button">Export visible CSV</button>
-      </div>
-    </div>
-
-    <div class="patterns-stats" aria-live="polite">
-      <span class="patterns-stat"><strong id="splunkBinVisibleCount">36</strong> visible commands</span>
-      <span class="patterns-stat"><strong id="splunkBinCategoryCount">11</strong> categories</span>
-    </div>
-
-    <div class="eccs-table-wrap" role="region" aria-label="Scrollable Splunk bin commands table" tabindex="0">
-      <table class="eccs-matrix">
-        <thead><tr><th scope="col">Command</th><th scope="col">Category</th><th scope="col">Purpose</th></tr></thead>
-        <tbody id="splunkBinTableBody"></tbody>
-      </table>
-    </div>
     <div class="eccs-examples" style="margin-top:16px">
       <details>
         <summary>Complete CLI command reference (all verbs &amp; objects)</summary>
         <div class="eccs-example-body">
-          <p>The full <code>splunk</code> command-line verb catalogue -- every top-level command, the objects it operates on, and worked examples. The searchable table above covers a curated day-to-day subset; this is the complete reference for less common verbs and objects.</p>
+          <p>The full <code>splunk</code> command-line verb catalogue -- every top-level command, the objects it operates on, and worked examples.</p>
           <div class="eccs-table-wrap" role="region" aria-label="Complete Splunk CLI command reference" tabindex="0"><table class="eccs-matrix" style="min-width:1100px"><thead><tr><th style="width:14%">Command</th><th style="width:28%">Objects</th><th>Examples</th></tr></thead><tbody>
             <tr><td><code>add</code></td><td>exec, forward-server, index, licenser-pools, licenses, manager, monitor, oneshot, saved-search, search-server, tcp, udp, user</td><td>1. Adds monitor directory and file inputs to source /var/log.<br><code>./splunk add monitor /var/log/</code><br>2. Adds another indexer cluster manager node to the list of instances the search head searches across.<br><code>./splunk add cluster-manager https://127.0.0.1:8089 -secret testsecret -multisite false</code></td></tr>
             <tr><td><code>anonymize</code></td><td>source</td><td>1. Replaces identifying data, such as usernames and IP addresses, in the file located at /tmp/messages.<br><code>./splunk anonymize file -source /tmp/messages</code><br>2. Anonymizes Mynames.txt using name-terms, a file containing a list of common English personal names.<br><code>./splunk anonymize file -source /tmp/messages -name_terms $SPLUNK_HOME/bin/Mynames.txt</code></td></tr>
@@ -15562,45 +15635,8 @@ const rolesTableData = [
   {"Role": "mc_soar_proxy", "Platform": "Splunk SOAR", "Capability": "mc_delete_soar_assets", "What it lets you do": "Allows deletion of Splunk SOAR assets through Splunk Mission Control.", "Priv": "Y", "Source / Notes": "Added from supplied Splunk Mission Control role mapping"}
 ];
 
-const splunkBinTableColumns = ["Command", "Category", "Purpose"];
-const splunkBinTableData = [
-  {"Command": "splunk edit user test_user -force-change-pass true -auth admin:changeme", "Category": "User & Auth", "Purpose": "Force a user to change their password at next login"},
-  {"Command": "splunk show-decrypted --value \"Encrypted string\"", "Category": "User & Auth", "Purpose": "Decrypt a value encrypted with the instance's local secret (splunk.secret)"},
-  {"Command": "splunk edit user <locked user> -locked-out false -auth <admin:password>", "Category": "User & Auth", "Purpose": "Splunk unlock local user"},
-  {"Command": "splunk list forward-server", "Category": "Forwarding", "Purpose": "Test Splunk forwarder connection"},
-  {"Command": "splunk add forward-server hostname.domain:9997", "Category": "Forwarding", "Purpose": "Add Forward server"},
-  {"Command": "splunk enable listen 9997", "Category": "Forwarding", "Purpose": "Indexer add 9997 receiver"},
-  {"Command": "splunk disable listen -port <port> -auth <username>:<password>", "Category": "Forwarding", "Purpose": "Disable a receiving port (stop listening for forwarded data on that port)"},
-  {"Command": "splunk enable boot-start", "Category": "Startup", "Purpose": "Enable boot start"},
-  {"Command": "splunk add index <name>", "Category": "Indexing", "Purpose": "Splunk index add"},
-  {"Command": "splunk add licenses <filepath>", "Category": "Licensing", "Purpose": "Splunk license add"},
-  {"Command": "splunk edit licenser-localslave -master_uri https://192.168.86.56:8089", "Category": "Licensing", "Purpose": "Splunk point to license server"},
-  {"Command": "splunk list licenser-localslave", "Category": "Licensing", "Purpose": "List the configured license manager this instance points to"},
-  {"Command": "splunk install app <path-to-appfile>", "Category": "Apps", "Purpose": "Splunk install app"},
-  {"Command": "splunk remove app <path-to-appfile>", "Category": "Apps", "Purpose": "Splunk remove app"},
-  {"Command": "splunk btool inputs list", "Category": "btool", "Purpose": "Splunk list inputs"},
-  {"Command": "splunk btool inputs list monitor:///var/log", "Category": "btool", "Purpose": "Splunk disk configuration for input"},
-  {"Command": "splunk btool inputs list monitor:///var/log -debug", "Category": "btool", "Purpose": "Splunk disk configuration for input, with exact conf location"},
-  {"Command": "splunk btool --debug server list | grep shcluster", "Category": "btool", "Purpose": "Show server.conf settings with source file per setting, filtered to shcluster stanzas"},
-  {"Command": "splunk btool alert_actions list email --debug", "Category": "btool", "Purpose": "Show effective alert_actions.conf settings for the email stanza, with source file per setting"},
-  {"Command": "splunk btool indexes list --debug | findstr [", "Category": "btool", "Purpose": "List indexes.conf stanza names (Windows findstr filtered to lines starting with '[')"},
-  {"Command": "splunk btool outputs list --debug | grep discovery", "Category": "btool", "Purpose": "Show outputs.conf settings related to indexer discovery, with source file per setting"},
-  {"Command": "splunk btool macros list host_eventcount --debug", "Category": "btool", "Purpose": "Show effective macros.conf settings for the host_eventcount macro, with source file per setting"},
-  {"Command": "splunk btool inputs list --debug | findstr splunktcp", "Category": "btool", "Purpose": "Show inputs.conf settings for splunktcp stanzas, with source file per setting (Windows findstr filter)"},
-  {"Command": "splunk cmd btool props list --debug", "Category": "btool", "Purpose": "Show effective props.conf settings for all stanzas, with source file per setting"},
-  {"Command": "splunk cmd btool savedsearches list --debug", "Category": "btool", "Purpose": "Show effective savedsearches.conf settings for all stanzas, with source file per setting"},
-  {"Command": "splunk cmd btool inputs list --debug", "Category": "btool", "Purpose": "Show effective inputs.conf settings for all stanzas, with source file per setting"},
-  {"Command": "splunk cmd btool outputs list --debug", "Category": "btool", "Purpose": "Show effective outputs.conf settings for all stanzas, with source file per setting"},
-  {"Command": "splunk set deploy-poll ds1.mycompany.com:8089", "Category": "Deployment", "Purpose": "Splunk point to deployment server"},
-  {"Command": "splunk reload deploy-server", "Category": "Deployment", "Purpose": "Reload the deployment server's serverclass.conf configuration"},
-  {"Command": "splunk enable deploy-server", "Category": "Deployment", "Purpose": "Enable this instance's deployment server role"},
-  {"Command": "splunk disable deploy-server", "Category": "Deployment", "Purpose": "Disable this instance's deployment server role"},
-  {"Command": "splunk backup kvstore [-archiveName <archive>] [-collectionName <collection>] [-appName <app>]", "Category": "KV Store", "Purpose": "Back up KV Store data, optionally scoped to an archive name, collection or app"},
-  {"Command": "splunk clean kvstore --cluster", "Category": "KV Store", "Purpose": "Clear KV Store data across a KV Store cluster"},
-  {"Command": "splunk show kvstore-status", "Category": "KV Store", "Purpose": "Show KV Store cluster and member status"},
-  {"Command": "splunk add search-server <scheme>://<host>:<port> -auth <user>:<password> -remoteUsername <user> -remotePassword <passremote>", "Category": "Distributed Search", "Purpose": "Add a distributed search peer for federated/distributed search"},
-  {"Command": "splunk apply cluster-bundle", "Category": "Clustering", "Purpose": "Push the configuration bundle from the Cluster Manager to indexer cluster peers"}
-];
+
+
 
 
 const loggingPatternTableData = [{"Pattern ID":"LP-001-SC","Pattern":"Universal Forwarder file monitoring — Splunk Cloud","Source data":"Host operating-system, application, security, audit and custom file-based logs, including Windows Event Logs and Linux/Unix logs.","Category":"Agent","Direction":"Push (agent forward)","Source mechanism":"Local files / directories","Collection tier / runtime":"Universal Forwarder","Transport":"Splunk-to-Splunk","Destination":"Splunk Cloud","Required app / add-on":"Splunk Add-on for Unix and Linux or vendor TA","Port / firewall requirements":"Allow outbound TCP 9997 to <stack>.splunkcloud.com; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. Permit DNS resolution and TLS certificate validation paths.","Authentication requirements":"The forwarder service account requires read access to the selected files or Windows channels. Splunk forwarding uses the configured TLS certificate or mutual-TLS trust; no source API key is required.","Source platform requirements":"Define monitored file paths or Windows channels, file ownership and permissions, log rotation behaviour, hostname handling, index, sourcetype and expected event volume. Record the deployment server and receiving target."},{"Pattern ID":"LP-001-OP","Pattern":"Universal Forwarder file monitoring — Splunk on-premises","Source data":"Host operating-system, application, security, audit and custom file-based logs, including Windows Event Logs and Linux/Unix logs.","Category":"Agent","Direction":"Push (agent forward)","Source mechanism":"Local files / directories","Collection tier / runtime":"Universal Forwarder","Transport":"Splunk-to-Splunk","Destination":"Splunk on-premises","Required app / add-on":"Splunk Add-on for Unix and Linux or vendor TA","Port / firewall requirements":"Allow TCP 9997 to the receiving indexer cluster or approved Heavy Forwarder; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. Permit DNS resolution and TLS certificate validation paths.","Authentication requirements":"The forwarder service account requires read access to the selected files or Windows channels. Splunk forwarding uses the configured TLS certificate or mutual-TLS trust; no source API key is required.","Source platform requirements":"Define monitored file paths or Windows channels, file ownership and permissions, log rotation behaviour, hostname handling, index, sourcetype and expected event volume. Record the deployment server and receiving target."},{"Pattern ID":"LP-002-SC","Pattern":"Syslog via SC4S — Splunk Cloud","Source data":"Network and security appliance syslog, such as firewall, router, switch, VPN, proxy, load balancer and infrastructure events.","Category":"Syslog","Direction":"Push","Source mechanism":"Network device syslog","Collection tier / runtime":"SC4S","Transport":"TCP / TLS / UDP","Destination":"Splunk Cloud","Required app / add-on":"Splunk Connect for Syslog","Port / firewall requirements":"Allow source devices to SC4S on UDP/TCP 514 or TCP 6514 for TLS, as selected; allow TCP 443 from SC4S to Splunk Cloud HEC. Restrict listeners to approved source networks.","Authentication requirements":"UDP/TCP syslog normally has no application credential. For TLS syslog, configure server certificates and optionally mutual TLS. SC4S requires a dedicated Splunk HEC token for onward delivery.","Source platform requirements":"Record each device or platform hostname/IP, vendor and product, destination SC4S address, protocol and port, facility/severity, message template, timezone and expected EPS. Configure the matching SC4S vendor source and metadata rules."},{"Pattern ID":"LP-002-OP","Pattern":"Syslog via SC4S — Splunk on-premises","Source data":"Network and security appliance syslog, such as firewall, router, switch, VPN, proxy, load balancer and infrastructure events.","Category":"Syslog","Direction":"Push","Source mechanism":"Network device syslog","Collection tier / runtime":"SC4S","Transport":"TCP / TLS / UDP","Destination":"Splunk on-premises","Required app / add-on":"Splunk Connect for Syslog","Port / firewall requirements":"Allow source devices to SC4S on UDP/TCP 514 or TCP 6514 for TLS, as selected; allow TCP 8088 or 443 from SC4S to the approved on-premises HEC endpoint. Restrict listeners to approved source networks.","Authentication requirements":"UDP/TCP syslog normally has no application credential. For TLS syslog, configure server certificates and optionally mutual TLS. SC4S requires a dedicated Splunk HEC token for onward delivery.","Source platform requirements":"Record each device or platform hostname/IP, vendor and product, destination SC4S address, protocol and port, facility/severity, message template, timezone and expected EPS. Configure the matching SC4S vendor source and metadata rules."},{"Pattern ID":"LP-003-SC","Pattern":"Syslog via Heavy Forwarder — Splunk Cloud","Source data":"Network and security appliance syslog, such as firewall, router, switch, VPN, proxy, load balancer and infrastructure events.","Category":"Syslog","Direction":"Push","Source mechanism":"Network device syslog","Collection tier / runtime":"Syslog server / Heavy Forwarder","Transport":"TCP / TLS / UDP","Destination":"Splunk Cloud","Required app / add-on":"Vendor TA","Port / firewall requirements":"Allow source devices to the Heavy Forwarder or syslog receiver on UDP/TCP 514 or TCP 6514 for TLS; allow outbound TCP 9997 to <stack>.splunkcloud.com; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed.","Authentication requirements":"UDP/TCP syslog normally has no application credential. Use server certificates and optional mutual TLS for TLS syslog. Splunk forwarding uses the configured TLS certificate or mutual-TLS trust.","Source platform requirements":"Record source hostname/IP, vendor and product, destination listener, protocol and port, facility/severity, message format, timezone, expected EPS, target index and sourcetype. Install and configure the applicable vendor TA on the parsing tier."},{"Pattern ID":"LP-003-OP","Pattern":"Syslog via Heavy Forwarder — Splunk on-premises","Source data":"Network and security appliance syslog, such as firewall, router, switch, VPN, proxy, load balancer and infrastructure events.","Category":"Syslog","Direction":"Push","Source mechanism":"Network device syslog","Collection tier / runtime":"Syslog server / Heavy Forwarder","Transport":"TCP / TLS / UDP","Destination":"Splunk on-premises","Required app / add-on":"Vendor TA","Port / firewall requirements":"Allow source devices to the Heavy Forwarder or syslog receiver on UDP/TCP 514 or TCP 6514 for TLS; allow TCP 9997 to the receiving indexer cluster or approved Heavy Forwarder; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed.","Authentication requirements":"UDP/TCP syslog normally has no application credential. Use server certificates and optional mutual TLS for TLS syslog. Splunk forwarding uses the configured TLS certificate or mutual-TLS trust.","Source platform requirements":"Record source hostname/IP, vendor and product, destination listener, protocol and port, facility/severity, message format, timezone, expected EPS, target index and sourcetype. Install and configure the applicable vendor TA on the parsing tier."},{"Pattern ID":"LP-004-SC","Pattern":"HTTP Event Collector — Splunk Cloud","Source data":"Application, service and integration events or metrics formatted as HEC event or raw payloads.","Category":"Push API","Direction":"Push","Source mechanism":"Application or integration push","Collection tier / runtime":"HEC endpoint","Transport":"HTTPS","Destination":"Splunk Cloud","Required app / add-on":"Vendor TA or custom app","Port / firewall requirements":"Allow source systems to TCP 443 to the Splunk Cloud HEC endpoint. Permit DNS resolution and TLS certificate validation; restrict access to approved source networks or egress addresses.","Authentication requirements":"Use a dedicated HTTP Event Collector token with least-privilege index access. Validate the server certificate; use client certificates or mutual TLS only where the published endpoint requires it.","Source platform requirements":"Provide the HEC endpoint, token reference, event or raw endpoint, target index, sourcetype, source and host values, payload schema, timestamp format, batching limits and whether indexer acknowledgement is required."},{"Pattern ID":"LP-004-OP","Pattern":"HTTP Event Collector — Splunk on-premises","Source data":"Application, service and integration events or metrics formatted as HEC event or raw payloads.","Category":"Push API","Direction":"Push","Source mechanism":"Application or integration push","Collection tier / runtime":"HEC endpoint","Transport":"HTTPS","Destination":"Splunk on-premises","Required app / add-on":"Vendor TA or custom app","Port / firewall requirements":"Allow source systems to TCP 8088 to the Splunk Enterprise HEC endpoint, or TCP 443 when published through an approved load balancer or reverse proxy. Permit DNS resolution and TLS certificate validation; restrict access to approved source networks or egress addresses.","Authentication requirements":"Use a dedicated HTTP Event Collector token with least-privilege index access. Validate the server certificate; use client certificates or mutual TLS only where the published endpoint requires it.","Source platform requirements":"Provide the HEC endpoint, token reference, event or raw endpoint, target index, sourcetype, source and host values, payload schema, timestamp format, batching limits and whether indexer acknowledgement is required."},{"Pattern ID":"LP-005-SC","Pattern":"REST API or modular input — Splunk Cloud","Source data":"Vendor platform or SaaS audit, activity, alert, inventory, configuration and operational records exposed by REST API.","Category":"Pull API","Direction":"Pull","Source mechanism":"Vendor REST API","Collection tier / runtime":"Heavy Forwarder or IDM","Transport":"HTTPS","Destination":"Splunk Cloud","Required app / add-on":"Vendor add-on","Port / firewall requirements":"Allow outbound TCP 443 from the Heavy Forwarder or IDM to the vendor API; allow outbound TCP 9997 to <stack>.splunkcloud.com; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. Add proxy or private-endpoint rules where required.","Authentication requirements":"Configure the vendor-supported credential, such as OAuth 2.0 client credentials, API key, bearer token, certificate or service username/password. Store secrets in the add-on credential store and grant only the API scopes required for the selected datasets.","Source platform requirements":"Provide the API base URL and region, tenant/account/organisation identifier where applicable, enabled API datasets, endpoint paths, polling interval, lookback window, pagination or cursor method, rate limits, checkpoint location and expected volume."},{"Pattern ID":"LP-005-OP","Pattern":"REST API or modular input — Splunk on-premises","Source data":"Vendor platform or SaaS audit, activity, alert, inventory, configuration and operational records exposed by REST API.","Category":"Pull API","Direction":"Pull","Source mechanism":"Vendor REST API","Collection tier / runtime":"Heavy Forwarder or IDM","Transport":"HTTPS","Destination":"Splunk on-premises","Required app / add-on":"Vendor add-on","Port / firewall requirements":"Allow outbound TCP 443 from the Heavy Forwarder or IDM to the vendor API; allow TCP 9997 to the receiving indexer cluster or approved Heavy Forwarder; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. Add proxy or private-endpoint rules where required.","Authentication requirements":"Configure the vendor-supported credential, such as OAuth 2.0 client credentials, API key, bearer token, certificate or service username/password. Store secrets in the add-on credential store and grant only the API scopes required for the selected datasets.","Source platform requirements":"Provide the API base URL and region, tenant/account/organisation identifier where applicable, enabled API datasets, endpoint paths, polling interval, lookback window, pagination or cursor method, rate limits, checkpoint location and expected volume."},{"Pattern ID":"LP-006-SC","Pattern":"Azure Event Hub — Splunk Cloud","Source data":"Azure activity, Entra ID, resource diagnostic, security, platform and application logs or metrics streamed through Event Hub.","Category":"Cloud streaming","Direction":"Push / stream","Source mechanism":"Azure diagnostic settings","Collection tier / runtime":"Event Hub input","Transport":"AMQP over TLS","Destination":"Splunk Cloud","Required app / add-on":"Splunk Add-on for Microsoft Cloud Services","Port / firewall requirements":"Allow outbound TCP 5671 for AMQP over TLS and/or TCP 443 for HTTPS or AMQP-over-WebSockets to <eventhub-namespace>.servicebus.windows.net. If the input runs on an IDM or Heavy Forwarder, also allow outbound TCP 9997 to <stack>.splunkcloud.com. Allow Azure identity endpoints over TCP 443 when using Microsoft Entra authentication.","Authentication requirements":"Use either a least-privilege Event Hubs shared access policy/connection string with Listen permission, or a Microsoft Entra application or managed identity with the required Event Hubs data receiver role. Record tenant ID, client ID and secret/certificate reference when service-principal authentication is used.","Source platform requirements":"Provide Azure tenant ID, subscription ID, resource group, Event Hub namespace, Event Hub name, consumer group, authentication entity or policy name, diagnostic setting name, enabled log categories, partition count and retention. Ensure only one active consumer uses the designated consumer group unless the design supports sharing."},{"Pattern ID":"LP-006-OP","Pattern":"Azure Event Hub — Splunk on-premises","Source data":"Azure activity, Entra ID, resource diagnostic, security, platform and application logs or metrics streamed through Event Hub.","Category":"Cloud streaming","Direction":"Push / stream","Source mechanism":"Azure diagnostic settings","Collection tier / runtime":"Event Hub input","Transport":"AMQP over TLS","Destination":"Splunk on-premises","Required app / add-on":"Splunk Add-on for Microsoft Cloud Services","Port / firewall requirements":"Allow outbound TCP 5671 for AMQP over TLS and/or TCP 443 for HTTPS or AMQP-over-WebSockets to <eventhub-namespace>.servicebus.windows.net. If the input runs on an IDM or Heavy Forwarder, also allow TCP 9997 to the receiving indexer cluster or approved Heavy Forwarder. Allow Azure identity endpoints over TCP 443 when using Microsoft Entra authentication.","Authentication requirements":"Use either a least-privilege Event Hubs shared access policy/connection string with Listen permission, or a Microsoft Entra application or managed identity with the required Event Hubs data receiver role. Record tenant ID, client ID and secret/certificate reference when service-principal authentication is used.","Source platform requirements":"Provide Azure tenant ID, subscription ID, resource group, Event Hub namespace, Event Hub name, consumer group, authentication entity or policy name, diagnostic setting name, enabled log categories, partition count and retention. Ensure only one active consumer uses the designated consumer group unless the design supports sharing."},{"Pattern ID":"LP-007-SC","Pattern":"AWS S3 and SQS — Splunk Cloud","Source data":"AWS service logs stored in S3, such as CloudTrail, VPC Flow, ELB/ALB, CloudFront, WAF and access logs.","Category":"Cloud object storage","Direction":"Notification + pull","Source mechanism":"AWS service logs","Collection tier / runtime":"S3 input with SQS notifications","Transport":"HTTPS","Destination":"Splunk Cloud","Required app / add-on":"Splunk Add-on for AWS","Port / firewall requirements":"Allow outbound TCP 443 to the required AWS regional endpoints for S3, SQS, STS and KMS where encryption is used. If collection runs on a Heavy Forwarder, also allow outbound TCP 9997 to <stack>.splunkcloud.com and outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. PrivateLink endpoints may replace internet egress where approved.","Authentication requirements":"Prefer an IAM role or STS AssumeRole trust. Where access keys are unavoidable, store the access key ID and secret securely and rotate them. Grant only required S3 Get/List, SQS Receive/Delete/GetQueueAttributes and KMS Decrypt permissions.","Source platform requirements":"Provide AWS account ID, region, S3 bucket and prefix, SQS queue URL/ARN, notification configuration, role ARN and external ID where used, KMS key ARN for SSE-KMS, log file format/compression and expected delivery delay and volume."},{"Pattern ID":"LP-007-OP","Pattern":"AWS S3 and SQS — Splunk on-premises","Source data":"AWS service logs stored in S3, such as CloudTrail, VPC Flow, ELB/ALB, CloudFront, WAF and access logs.","Category":"Cloud object storage","Direction":"Notification + pull","Source mechanism":"AWS service logs","Collection tier / runtime":"S3 input with SQS notifications","Transport":"HTTPS","Destination":"Splunk on-premises","Required app / add-on":"Splunk Add-on for AWS","Port / firewall requirements":"Allow outbound TCP 443 to the required AWS regional endpoints for S3, SQS, STS and KMS where encryption is used. If collection runs on a Heavy Forwarder, also allow TCP 9997 to the receiving indexer cluster or approved Heavy Forwarder and outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. PrivateLink endpoints may replace internet egress where approved.","Authentication requirements":"Prefer an IAM role or STS AssumeRole trust. Where access keys are unavoidable, store the access key ID and secret securely and rotate them. Grant only required S3 Get/List, SQS Receive/Delete/GetQueueAttributes and KMS Decrypt permissions.","Source platform requirements":"Provide AWS account ID, region, S3 bucket and prefix, SQS queue URL/ARN, notification configuration, role ARN and external ID where used, KMS key ARN for SSE-KMS, log file format/compression and expected delivery delay and volume."},{"Pattern ID":"LP-008-SC","Pattern":"DB Connect — Splunk Cloud","Source data":"Relational database records returned by SQL queries, including audit, transaction, reference and operational tables.","Category":"Database","Direction":"Pull","Source mechanism":"Database tables or queries","Collection tier / runtime":"Splunk DB Connect","Transport":"JDBC / TLS","Destination":"Splunk Cloud","Required app / add-on":"Splunk DB Connect","Port / firewall requirements":"Allow the DB Connect host to the database listener on the database-specific port, such as TCP 1433 for SQL Server, 1521 for Oracle, 5432 for PostgreSQL or 3306 for MySQL; allow outbound TCP 9997 to <stack>.splunkcloud.com where DB Connect is on a separate collection tier; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed.","Authentication requirements":"Use a dedicated least-privilege database account, integrated/Kerberos identity, wallet or client certificate as supported. Grant read/execute rights only to the required schemas, views, tables or stored procedures and protect the credential in DB Connect.","Source platform requirements":"Provide database host/FQDN, listener port, database or service name, JDBC driver and URL, schema, table/query or stored procedure, rising/checkpoint column, timestamp and timezone handling, batch size, polling schedule and expected row volume."},{"Pattern ID":"LP-008-OP","Pattern":"DB Connect — Splunk on-premises","Source data":"Relational database records returned by SQL queries, including audit, transaction, reference and operational tables.","Category":"Database","Direction":"Pull","Source mechanism":"Database tables or queries","Collection tier / runtime":"Splunk DB Connect","Transport":"JDBC / TLS","Destination":"Splunk on-premises","Required app / add-on":"Splunk DB Connect","Port / firewall requirements":"Allow the DB Connect host to the database listener on the database-specific port, such as TCP 1433 for SQL Server, 1521 for Oracle, 5432 for PostgreSQL or 3306 for MySQL; allow TCP 9997 to the receiving indexer cluster or approved Heavy Forwarder where DB Connect is on a separate collection tier; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed.","Authentication requirements":"Use a dedicated least-privilege database account, integrated/Kerberos identity, wallet or client certificate as supported. Grant read/execute rights only to the required schemas, views, tables or stored procedures and protect the credential in DB Connect.","Source platform requirements":"Provide database host/FQDN, listener port, database or service name, JDBC driver and URL, schema, table/query or stored procedure, rising/checkpoint column, timestamp and timezone handling, batch size, polling schedule and expected row volume."},{"Pattern ID":"LP-009-SC","Pattern":"Federated Search to S3 — Splunk Cloud","Source data":"Archived or historical structured datasets in Amazon S3, catalogued for search-time access.","Category":"Federated","Direction":"Search-time","Source mechanism":"Archived or external datasets","Collection tier / runtime":"Federated Search","Transport":"HTTPS","Destination":"Splunk Cloud","Required app / add-on":"Federated Search for Amazon S3","Port / firewall requirements":"Allow outbound TCP 443 from the federated search or search tier to the required AWS S3, STS, Glue Data Catalog and KMS regional endpoints. Use approved proxy or private endpoints where required.","Authentication requirements":"Use a least-privilege IAM role or STS AssumeRole configuration. Grant the required S3 read/list, Glue catalog read and KMS decrypt permissions; use an external ID for cross-account trust where applicable.","Source platform requirements":"Provide AWS account ID, region, S3 bucket and prefix, file format and compression, partition layout, Glue Data Catalog database and table, role ARN, external ID, KMS key ARN, data retention and expected search concurrency."},{"Pattern ID":"LP-009-OP","Pattern":"Federated Search to S3 — Splunk on-premises","Source data":"Archived or historical structured datasets in Amazon S3, catalogued for search-time access.","Category":"Federated","Direction":"Search-time","Source mechanism":"Archived or external datasets","Collection tier / runtime":"Federated Search","Transport":"HTTPS","Destination":"Splunk on-premises","Required app / add-on":"Federated Search for Amazon S3","Port / firewall requirements":"Allow outbound TCP 443 from the federated search or search tier to the required AWS S3, STS, Glue Data Catalog and KMS regional endpoints. Use approved proxy or private endpoints where required.","Authentication requirements":"Use a least-privilege IAM role or STS AssumeRole configuration. Grant the required S3 read/list, Glue catalog read and KMS decrypt permissions; use an external ID for cross-account trust where applicable.","Source platform requirements":"Provide AWS account ID, region, S3 bucket and prefix, file format and compression, partition layout, Glue Data Catalog database and table, role ARN, external ID, KMS key ARN, data retention and expected search concurrency."},{"Pattern ID":"LP-010-SC","Pattern":"Edge or Ingest Processor routing — Splunk Cloud","Source data":"Any upstream structured or unstructured telemetry requiring filtering, masking, enrichment, sourcetype assignment or destination routing.","Category":"Processing","Direction":"Process / route","Source mechanism":"Upstream stream or HEC","Collection tier / runtime":"Edge / Ingest Processor","Transport":"HTTPS / streaming","Destination":"Splunk Cloud","Required app / add-on":"Pipeline configuration","Port / firewall requirements":"Allow the source-specific inbound or outbound collection protocol and allow TCP 443 to the Splunk Cloud ingest or HEC endpoint. Allow TCP 443 to the processor management plane and certificate/identity endpoints where required.","Authentication requirements":"Authentication depends on the selected input. Use HEC tokens, OAuth credentials, API keys, certificates or mutual TLS as required by the source, and a dedicated destination token or output credential for the Splunk destination.","Source platform requirements":"Provide input endpoint and protocol, processor or tenant identifier, pipeline name/version, source schema, routing and masking rules, target index and sourcetype, output destination, certificate trust, failure route and expected throughput."},{"Pattern ID":"LP-010-OP","Pattern":"Edge or Ingest Processor routing — Splunk on-premises","Source data":"Any upstream structured or unstructured telemetry requiring filtering, masking, enrichment, sourcetype assignment or destination routing.","Category":"Processing","Direction":"Process / route","Source mechanism":"Upstream stream or HEC","Collection tier / runtime":"Edge / Ingest Processor","Transport":"HTTPS / streaming","Destination":"Splunk on-premises","Required app / add-on":"Pipeline configuration","Port / firewall requirements":"Allow the source-specific inbound or outbound collection protocol and allow TCP 8088/443 to HEC or TCP 9997 to the approved Splunk Enterprise receiving tier. Allow TCP 443 to the processor management plane and certificate/identity endpoints where required.","Authentication requirements":"Authentication depends on the selected input. Use HEC tokens, OAuth credentials, API keys, certificates or mutual TLS as required by the source, and a dedicated destination token or output credential for the Splunk destination.","Source platform requirements":"Provide input endpoint and protocol, processor or tenant identifier, pipeline name/version, source schema, routing and masking rules, target index and sourcetype, output destination, certificate trust, failure route and expected throughput."},{"Pattern ID":"LP-011-SC","Pattern":"Splunk Cloud supported app/add-on — Splunk Cloud","Source data":"Vendor cloud-service datasets supported by a Splunk Cloud-compatible app or add-on, including audit, activity, alert and inventory records.","Category":"Cloud-native app / add-on","Direction":"Pull (cloud input)","Source mechanism":"Vendor cloud service API or supported cloud input","Collection tier / runtime":"Splunk Cloud","Transport":"HTTPS / vendor API","Destination":"Splunk Cloud","Required app / add-on":"Splunk Cloud-supported app or add-on","Port / firewall requirements":"Allow TCP 443 between the Splunk Cloud input service and the vendor API or supported cloud endpoint. Where the vendor enforces network restrictions, configure approved IP allowlisting, private connectivity or service-specific firewall rules.","Authentication requirements":"Use the authentication supported by the cloud app/add-on, commonly OAuth 2.0 client credentials, API key/token, certificate or service account. Grant only the scopes required for the configured inputs and store secrets in the Splunk Cloud credential store.","Source platform requirements":"Provide vendor tenant/account/organisation ID, API region or base URL, application/client ID, enabled audit or activity APIs, licences/features required to expose the data, selected datasets, input scope, polling interval and checkpoint settings."},{"Pattern ID":"LP-011-OP","Pattern":"Splunk Cloud supported app/add-on — Splunk on-premises","Source data":"Vendor cloud-service datasets supported by a Splunk Cloud-compatible app or add-on, including audit, activity, alert and inventory records.","Category":"Cloud-native app / add-on","Direction":"Pull (cloud input)","Source mechanism":"Vendor cloud service API or supported cloud input","Collection tier / runtime":"Splunk Cloud","Transport":"HTTPS / vendor API","Destination":"Splunk on-premises","Required app / add-on":"Splunk Cloud-supported app or add-on","Port / firewall requirements":"Allow TCP 443 between the Splunk Cloud input service and the vendor API or supported cloud endpoint. Where the vendor enforces network restrictions, configure approved IP allowlisting, private connectivity or service-specific firewall rules.","Authentication requirements":"Use the authentication supported by the cloud app/add-on, commonly OAuth 2.0 client credentials, API key/token, certificate or service account. Grant only the scopes required for the configured inputs and store secrets in the Splunk Cloud credential store.","Source platform requirements":"Provide vendor tenant/account/organisation ID, API region or base URL, application/client ID, enabled audit or activity APIs, licences/features required to expose the data, selected datasets, input scope, polling interval and checkpoint settings."},{"Pattern ID":"LP-012-SC","Pattern":"On-premises app/add-on forwarding to Splunk Cloud — Splunk Cloud","Source data":"Vendor API, database, file, queue or platform records collected by an on-premises-supported Splunk app or add-on.","Category":"On-premises modular input / app","Direction":"Pull / receive","Source mechanism":"Vendor API, database, file, queue or supported modular input","Collection tier / runtime":"On-premises Splunk Heavy Forwarder or IDM","Transport":"Vendor-supported protocol, commonly HTTPS; Splunk-to-Splunk over TLS","Destination":"Splunk Cloud","Required app / add-on":"On-premises-supported Splunk app or add-on","Port / firewall requirements":"Allow outbound TCP 443 or the vendor-specific protocol from the Heavy Forwarder/IDM to the source platform; allow outbound TCP 9997 to <stack>.splunkcloud.com; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. Add proxy, private endpoint or security-zone rules as needed.","Authentication requirements":"Use the credential supported by the on-premises add-on, such as OAuth client credentials, API key/token, certificate or service username/password. Store secrets on the approved Heavy Forwarder/IDM and use Splunk TLS trust for onward forwarding.","Source platform requirements":"Provide source tenant/account/organisation ID where applicable, API base URL or listener address, enabled datasets, required app/add-on version, input stanza details, polling or checkpoint settings, expected volume, index and sourcetype. Confirm the add-on is supported on the selected Heavy Forwarder/IDM operating system."},{"Pattern ID":"LP-012-OP","Pattern":"On-premises app/add-on forwarding to Splunk Cloud — Splunk on-premises","Source data":"Vendor API, database, file, queue or platform records collected by an on-premises-supported Splunk app or add-on.","Category":"On-premises modular input / app","Direction":"Pull / receive","Source mechanism":"Vendor API, database, file, queue or supported modular input","Collection tier / runtime":"On-premises Splunk Heavy Forwarder or IDM","Transport":"Vendor-supported protocol, commonly HTTPS; Splunk-to-Splunk over TLS","Destination":"Splunk on-premises","Required app / add-on":"On-premises-supported Splunk app or add-on","Port / firewall requirements":"Allow outbound TCP 443 or the vendor-specific protocol from the Heavy Forwarder/IDM to the source platform; allow TCP 9997 to the receiving indexer cluster or approved Heavy Forwarder; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. Add proxy, private endpoint or security-zone rules as needed.","Authentication requirements":"Use the credential supported by the on-premises add-on, such as OAuth client credentials, API key/token, certificate or service username/password. Store secrets on the approved Heavy Forwarder/IDM and use Splunk TLS trust for onward forwarding.","Source platform requirements":"Provide source tenant/account/organisation ID where applicable, API base URL or listener address, enabled datasets, required app/add-on version, input stanza details, polling or checkpoint settings, expected volume, index and sourcetype. Confirm the add-on is supported on the selected Heavy Forwarder/IDM operating system."},{"Pattern ID":"LP-013-SC","Pattern":"Splunk Stream network traffic collection — Splunk Cloud","Source data":"Network packets, flows, protocol metadata, transactions and application-layer session data such as DNS, HTTP, TLS, TCP and UDP.","Category":"Network traffic / wire data","Direction":"Capture / push","Source mechanism":"Packet capture, mirrored traffic, TAP, SPAN or supported capture interface","Collection tier / runtime":"Splunk Stream Forwarder or supported Stream capture component","Transport":"Splunk-to-Splunk over TLS or supported Splunk forwarding path","Destination":"Splunk Cloud","Required app / add-on":"Splunk App for Stream and associated Stream components","Port / firewall requirements":"No source application port is required for passive TAP/SPAN capture. Allow outbound TCP 9997 to <stack>.splunkcloud.com from the Stream forwarder or capture tier and allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. Permit any Stream management communications required by the deployed topology.","Authentication requirements":"Passive capture does not require a source API credential. The capture service requires operating-system packet-capture privileges, and Splunk forwarding/management uses the configured TLS certificates and platform credentials.","Source platform requirements":"Provide TAP/SPAN source and destination configuration, capture interface/NIC, VLANs and network segments, link speed, packet truncation policy, BPF or protocol filters, promiscuous-mode approval, time synchronisation, Stream configuration and expected packet rate."},{"Pattern ID":"LP-013-OP","Pattern":"Splunk Stream network traffic collection — Splunk on-premises","Source data":"Network packets, flows, protocol metadata, transactions and application-layer session data such as DNS, HTTP, TLS, TCP and UDP.","Category":"Network traffic / wire data","Direction":"Capture / push","Source mechanism":"Packet capture, mirrored traffic, TAP, SPAN or supported capture interface","Collection tier / runtime":"Splunk Stream Forwarder or supported Stream capture component","Transport":"Splunk-to-Splunk over TLS or supported Splunk forwarding path","Destination":"Splunk on-premises","Required app / add-on":"Splunk App for Stream and associated Stream components","Port / firewall requirements":"No source application port is required for passive TAP/SPAN capture. Allow TCP 9997 to the receiving indexer cluster or approved Heavy Forwarder from the Stream forwarder or capture tier and allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. Permit any Stream management communications required by the deployed topology.","Authentication requirements":"Passive capture does not require a source API credential. The capture service requires operating-system packet-capture privileges, and Splunk forwarding/management uses the configured TLS certificates and platform credentials.","Source platform requirements":"Provide TAP/SPAN source and destination configuration, capture interface/NIC, VLANs and network segments, link speed, packet truncation policy, BPF or protocol filters, promiscuous-mode approval, time synchronisation, Stream configuration and expected packet rate."},{"Pattern ID":"LP-014-SC","Pattern":"Heavy Forwarder intermediary — Splunk Cloud","Source data":"Any source telemetry that must traverse an approved intermediary, including syslog, API records, database rows, files, HEC payloads and forwarded events.","Category":"Intermediary forwarding tier","Direction":"Receive / forward","Source mechanism":"Syslog, API, database, file, HEC or other supported input","Collection tier / runtime":"On-premises Splunk Heavy Forwarder","Transport":"Vendor-supported protocol such as syslog, HTTPS, JDBC, file monitoring or HEC; Splunk-to-Splunk over TLS","Destination":"Splunk Cloud","Required app / add-on":"Install on the Heavy Forwarder when the app/add-on cannot run in Splunk Cloud","Port / firewall requirements":"Allow only the source-specific protocol from the source security zone to the approved Heavy Forwarder; allow outbound TCP 9997 to <stack>.splunkcloud.com from the Heavy Forwarder to the final destination; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. Document each firewall hop and asymmetric routing or proxy dependency.","Authentication requirements":"Use the source-supported credential on the Heavy Forwarder, such as OAuth, API key, service account, certificate, database account or HEC token. Use dedicated Splunk TLS certificates for onward forwarding and keep source secrets in the approved credential store.","Source platform requirements":"Provide the source endpoint and protocol, source and destination security zones, required app/add-on, input stanza, tenant/account IDs where applicable, parsing and routing rules, expected volume, target index/sourcetype, destination group and failover behaviour."},{"Pattern ID":"LP-014-OP","Pattern":"Heavy Forwarder intermediary — Splunk on-premises","Source data":"Any source telemetry that must traverse an approved intermediary, including syslog, API records, database rows, files, HEC payloads and forwarded events.","Category":"Intermediary forwarding tier","Direction":"Receive / forward","Source mechanism":"Syslog, API, database, file, HEC or other supported input","Collection tier / runtime":"Splunk Heavy Forwarder","Transport":"Vendor-supported protocol such as syslog, HTTPS, JDBC, file monitoring or HEC; Splunk-to-Splunk over TLS","Destination":"Splunk on-premises","Required app / add-on":"Install on the Heavy Forwarder when the app/add-on should not run on the indexer tier","Port / firewall requirements":"Allow only the source-specific protocol from the source security zone to the approved Heavy Forwarder; allow TCP 9997 to the receiving indexer cluster or approved Heavy Forwarder from the Heavy Forwarder to the final destination; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. Document each firewall hop and asymmetric routing or proxy dependency.","Authentication requirements":"Use the source-supported credential on the Heavy Forwarder, such as OAuth, API key, service account, certificate, database account or HEC token. Use dedicated Splunk TLS certificates for onward forwarding and keep source secrets in the approved credential store.","Source platform requirements":"Provide the source endpoint and protocol, source and destination security zones, required app/add-on, input stanza, tenant/account IDs where applicable, parsing and routing rules, expected volume, target index/sourcetype, destination group and failover behaviour."},{"Pattern ID":"LP-015-SC","Pattern":"No add-on: HEC collector via Heavy Forwarder — Splunk Cloud","Source data":"Application or integration events pushed as JSON, text, single-event or batched HEC payloads where no supported add-on exists.","Category":"Custom HEC integration without vendor app/add-on","Direction":"Push","Source mechanism":"Source-native HTTPS push to Splunk HEC","Collection tier / runtime":"Splunk Heavy Forwarder acting as HEC collector","Transport":"HTTPS to HEC; Splunk-to-Splunk over TLS","Destination":"Splunk Cloud","Required app / add-on":"None; use platform or custom parsing configuration where required","Port / firewall requirements":"Allow source systems to TCP 8088 or 443 on the Heavy Forwarder HEC listener; allow outbound TCP 9997 to <stack>.splunkcloud.com from the Heavy Forwarder; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. Restrict HEC ingress to approved source networks.","Authentication requirements":"Use a dedicated HEC token on the Heavy Forwarder with least-privilege index access. Validate TLS and use client certificates/mutual TLS where required. Splunk forwarding uses the configured TLS trust to the final destination.","Source platform requirements":"Provide the Heavy Forwarder HEC endpoint, token reference, event/raw endpoint, source IP allowlist, payload schema, timestamp, index, sourcetype, source and host metadata, batching limits, indexer acknowledgement setting and expected event volume."},{"Pattern ID":"LP-015-OP","Pattern":"No add-on: HEC collector via Heavy Forwarder — Splunk on-premises","Source data":"Application or integration events pushed as JSON, text, single-event or batched HEC payloads where no supported add-on exists.","Category":"Custom HEC integration without vendor app/add-on","Direction":"Push","Source mechanism":"Source-native HTTPS push to Splunk HEC","Collection tier / runtime":"Splunk Heavy Forwarder acting as HEC collector","Transport":"HTTPS to HEC; Splunk-to-Splunk over TLS","Destination":"Splunk on-premises","Required app / add-on":"None; use platform or custom parsing configuration where required","Port / firewall requirements":"Allow source systems to TCP 8088 or 443 on the Heavy Forwarder HEC listener; allow TCP 9997 to the receiving indexer cluster or approved Heavy Forwarder from the Heavy Forwarder; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. Restrict HEC ingress to approved source networks.","Authentication requirements":"Use a dedicated HEC token on the Heavy Forwarder with least-privilege index access. Validate TLS and use client certificates/mutual TLS where required. Splunk forwarding uses the configured TLS trust to the final destination.","Source platform requirements":"Provide the Heavy Forwarder HEC endpoint, token reference, event/raw endpoint, source IP allowlist, payload schema, timestamp, index, sourcetype, source and host metadata, batching limits, indexer acknowledgement setting and expected event volume."},{"Pattern ID":"LP-016-SC","Pattern":"Direct HEC to Splunk Cloud","Source data":"Application or integration events pushed directly as JSON, text, single-event or batched payloads to Splunk Cloud HEC.","Category":"Direct cloud HEC","Direction":"Push","Source mechanism":"Source-native HTTPS push to Splunk Cloud HEC","Collection tier / runtime":"Splunk Cloud HEC","Transport":"HTTPS","Destination":"Splunk Cloud","Required app / add-on":"None","Port / firewall requirements":"Allow source systems outbound TCP 443 to https://<stack>.splunkcloud.com:443/services/collector or the stack-specific HEC hostname. Permit DNS resolution and TLS certificate validation, and restrict egress to the approved Splunk Cloud endpoint.","Authentication requirements":"Use a dedicated Splunk Cloud HEC token with the minimum required index access. Validate the Splunk Cloud certificate; use a source-side secret store and rotate/revoke the token through the governed process.","Source platform requirements":"Provide the Splunk Cloud stack/HEC FQDN, token reference, event or raw endpoint, index, sourcetype, source and host metadata, payload schema, timestamp format, batching and retry behaviour, and indexer acknowledgement setting where supported."},{"Pattern ID":"LP-017-AZF-SC","Pattern":"REST API polling via Azure Function → Splunk Cloud HEC","Source data":"Vendor REST API records such as audit, alert, activity, inventory, configuration and operational telemetry collected by custom code.","Category":"Custom REST API polling script to HEC","Direction":"Pull then push","Source mechanism":"REST API available for polling","Collection tier / runtime":"Azure Function","Transport":"HTTPS to source REST API; HTTPS to HEC","Destination":"Splunk Cloud","Required app / add-on":"None; custom script and platform parsing configuration","Port / firewall requirements":"Allow outbound TCP 443 from the runtime to the source REST API and allow TCP 443 to the Splunk Cloud HEC endpoint. Permit DNS, TLS certificate validation and identity/secret-service endpoints. Where VNet integration is used, add the required NSG, route, NAT, proxy or private-endpoint rules for both the source API and HEC.","Authentication requirements":"Configure the source API credential required by the vendor, such as OAuth 2.0 client credentials, API key, bearer token, certificate or service username/password, plus a dedicated least-privilege HEC token for delivery. Use a managed identity or service principal for Azure resources, and store source and HEC secrets in Azure Key Vault or protected application settings.","Source platform requirements":"Provide source API base URL and region, tenant/account/organisation ID where applicable, endpoint paths and datasets, polling schedule, lookback window, pagination/cursor, checkpoint key, rate limits, retry rules, payload schema, event timestamp and target index/sourcetype. Also provide Azure subscription ID, resource group, Function App name, region, storage account, managed identity/service principal, Key Vault reference, VNet/subnet and timer-trigger schedule."},{"Pattern ID":"LP-017-AZF-OP","Pattern":"REST API polling via Azure Function → Splunk on-premises HEC","Source data":"Vendor REST API records such as audit, alert, activity, inventory, configuration and operational telemetry collected by custom code.","Category":"Custom REST API polling script to HEC","Direction":"Pull then push","Source mechanism":"REST API available for polling","Collection tier / runtime":"Azure Function","Transport":"HTTPS to source REST API; HTTPS to HEC","Destination":"Splunk on-premises","Required app / add-on":"None; custom script and platform parsing configuration","Port / firewall requirements":"Allow outbound TCP 443 from the runtime to the source REST API and allow TCP 8088 to the Splunk Enterprise HEC endpoint, or TCP 443 when published through an approved load balancer or reverse proxy. Permit DNS, TLS certificate validation and identity/secret-service endpoints. Where VNet integration is used, add the required NSG, route, NAT, proxy or private-endpoint rules for both the source API and HEC.","Authentication requirements":"Configure the source API credential required by the vendor, such as OAuth 2.0 client credentials, API key, bearer token, certificate or service username/password, plus a dedicated least-privilege HEC token for delivery. Use a managed identity or service principal for Azure resources, and store source and HEC secrets in Azure Key Vault or protected application settings.","Source platform requirements":"Provide source API base URL and region, tenant/account/organisation ID where applicable, endpoint paths and datasets, polling schedule, lookback window, pagination/cursor, checkpoint key, rate limits, retry rules, payload schema, event timestamp and target index/sourcetype. Also provide Azure subscription ID, resource group, Function App name, region, storage account, managed identity/service principal, Key Vault reference, VNet/subnet and timer-trigger schedule."},{"Pattern ID":"LP-017-LMB-SC","Pattern":"REST API polling via AWS Lambda → Splunk Cloud HEC","Source data":"Vendor REST API records such as audit, alert, activity, inventory, configuration and operational telemetry collected by custom code.","Category":"Custom REST API polling script to HEC","Direction":"Pull then push","Source mechanism":"REST API available for polling","Collection tier / runtime":"AWS Lambda","Transport":"HTTPS to source REST API; HTTPS to HEC","Destination":"Splunk Cloud","Required app / add-on":"None; custom script and platform parsing configuration","Port / firewall requirements":"Allow outbound TCP 443 from the runtime to the source REST API and allow TCP 443 to the Splunk Cloud HEC endpoint. Permit DNS, TLS certificate validation and identity/secret-service endpoints. If the function is VPC-attached, provide NAT gateway, proxy or VPC endpoint routing for the source API, HEC, STS and secret services.","Authentication requirements":"Configure the source API credential required by the vendor, such as OAuth 2.0 client credentials, API key, bearer token, certificate or service username/password, plus a dedicated least-privilege HEC token for delivery. Use a least-privilege Lambda execution role and store secrets in AWS Secrets Manager or Systems Manager Parameter Store.","Source platform requirements":"Provide source API base URL and region, tenant/account/organisation ID where applicable, endpoint paths and datasets, polling schedule, lookback window, pagination/cursor, checkpoint key, rate limits, retry rules, payload schema, event timestamp and target index/sourcetype. Also provide AWS account ID, region, Lambda function name, execution-role ARN, EventBridge schedule, Secrets Manager reference, VPC/subnet/security-group details and DynamoDB/S3 checkpoint store where used."},{"Pattern ID":"LP-017-LMB-OP","Pattern":"REST API polling via AWS Lambda → Splunk on-premises HEC","Source data":"Vendor REST API records such as audit, alert, activity, inventory, configuration and operational telemetry collected by custom code.","Category":"Custom REST API polling script to HEC","Direction":"Pull then push","Source mechanism":"REST API available for polling","Collection tier / runtime":"AWS Lambda","Transport":"HTTPS to source REST API; HTTPS to HEC","Destination":"Splunk on-premises","Required app / add-on":"None; custom script and platform parsing configuration","Port / firewall requirements":"Allow outbound TCP 443 from the runtime to the source REST API and allow TCP 8088 to the Splunk Enterprise HEC endpoint, or TCP 443 when published through an approved load balancer or reverse proxy. Permit DNS, TLS certificate validation and identity/secret-service endpoints. If the function is VPC-attached, provide NAT gateway, proxy or VPC endpoint routing for the source API, HEC, STS and secret services.","Authentication requirements":"Configure the source API credential required by the vendor, such as OAuth 2.0 client credentials, API key, bearer token, certificate or service username/password, plus a dedicated least-privilege HEC token for delivery. Use a least-privilege Lambda execution role and store secrets in AWS Secrets Manager or Systems Manager Parameter Store.","Source platform requirements":"Provide source API base URL and region, tenant/account/organisation ID where applicable, endpoint paths and datasets, polling schedule, lookback window, pagination/cursor, checkpoint key, rate limits, retry rules, payload schema, event timestamp and target index/sourcetype. Also provide AWS account ID, region, Lambda function name, execution-role ARN, EventBridge schedule, Secrets Manager reference, VPC/subnet/security-group details and DynamoDB/S3 checkpoint store where used."},{"Pattern ID":"LP-017-OPS-SC","Pattern":"REST API polling via On-premises Python/PowerShell → Splunk Cloud HEC","Source data":"Vendor REST API records such as audit, alert, activity, inventory, configuration and operational telemetry collected by custom code.","Category":"Custom REST API polling script to HEC","Direction":"Pull then push","Source mechanism":"REST API available for polling","Collection tier / runtime":"On-premises Python/PowerShell","Transport":"HTTPS to source REST API; HTTPS to HEC","Destination":"Splunk Cloud","Required app / add-on":"None; custom script and platform parsing configuration","Port / firewall requirements":"Allow outbound TCP 443 from the runtime to the source REST API and allow TCP 443 to the Splunk Cloud HEC endpoint. Permit DNS, TLS certificate validation and identity/secret-service endpoints. Apply approved outbound proxy and security-zone rules from the execution host.","Authentication requirements":"Configure the source API credential required by the vendor, such as OAuth 2.0 client credentials, API key, bearer token, certificate or service username/password, plus a dedicated least-privilege HEC token for delivery. Run under a dedicated operating-system service account and store secrets in the approved local or enterprise secret-management solution.","Source platform requirements":"Provide source API base URL and region, tenant/account/organisation ID where applicable, endpoint paths and datasets, polling schedule, lookback window, pagination/cursor, checkpoint key, rate limits, retry rules, payload schema, event timestamp and target index/sourcetype. Also provide execution host, operating system, Python/PowerShell version and modules, scheduler/service definition, service account, proxy settings, secret-store reference, checkpoint file/database and operational log location."},{"Pattern ID":"LP-017-OPS-OP","Pattern":"REST API polling via On-premises Python/PowerShell → Splunk on-premises HEC","Source data":"Vendor REST API records such as audit, alert, activity, inventory, configuration and operational telemetry collected by custom code.","Category":"Custom REST API polling script to HEC","Direction":"Pull then push","Source mechanism":"REST API available for polling","Collection tier / runtime":"On-premises Python/PowerShell","Transport":"HTTPS to source REST API; HTTPS to HEC","Destination":"Splunk on-premises","Required app / add-on":"None; custom script and platform parsing configuration","Port / firewall requirements":"Allow outbound TCP 443 from the runtime to the source REST API and allow TCP 8088 to the Splunk Enterprise HEC endpoint, or TCP 443 when published through an approved load balancer or reverse proxy. Permit DNS, TLS certificate validation and identity/secret-service endpoints. Apply approved outbound proxy and security-zone rules from the execution host.","Authentication requirements":"Configure the source API credential required by the vendor, such as OAuth 2.0 client credentials, API key, bearer token, certificate or service username/password, plus a dedicated least-privilege HEC token for delivery. Run under a dedicated operating-system service account and store secrets in the approved local or enterprise secret-management solution.","Source platform requirements":"Provide source API base URL and region, tenant/account/organisation ID where applicable, endpoint paths and datasets, polling schedule, lookback window, pagination/cursor, checkpoint key, rate limits, retry rules, payload schema, event timestamp and target index/sourcetype. Also provide execution host, operating system, Python/PowerShell version and modules, scheduler/service definition, service account, proxy settings, secret-store reference, checkpoint file/database and operational log location."},{"Pattern ID":"LP-018-SC","Pattern":"Syslog server with forwarder collection — Splunk Cloud","Source data":"Network and security appliance syslog written by rsyslog or syslog-ng to controlled files, including firewall, router, switch, VPN, proxy, load balancer and infrastructure events.","Category":"Syslog server with forwarder file collection","Direction":"Push to syslog server; forwarder monitors written files","Source mechanism":"Source sends syslog to a syslog server","Collection tier / runtime":"Syslog server plus Splunk Universal Forwarder or Heavy Forwarder","Transport":"UDP, TCP or TLS syslog; Splunk-to-Splunk over TLS","Destination":"Splunk Cloud","Required app / add-on":"Vendor TA or custom parsing where available; generic syslog otherwise","Port / firewall requirements":"Allow source devices to the syslog server on UDP/TCP 514 or TCP 6514 for TLS; allow outbound TCP 9997 to <stack>.splunkcloud.com from the Universal or Heavy Forwarder; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. Restrict listeners to approved source networks.","Authentication requirements":"UDP/TCP syslog normally has no application credential. Use server certificates and optional mutual TLS for TLS syslog. The forwarder service account requires read access to the written files, and Splunk forwarding uses the configured TLS certificate or mutual-TLS trust.","Source platform requirements":"Provide each source hostname/IP, vendor/product, target syslog server, protocol/port, facility/severity and message format. Define syslog listener rules, output file paths, ownership/permissions, rotation/retention/compression, forwarder monitor stanzas, host metadata, index, sourcetype and expected EPS."},{"Pattern ID":"LP-018-OP","Pattern":"Syslog server with forwarder collection — Splunk on-premises","Source data":"Network and security appliance syslog written by rsyslog or syslog-ng to controlled files, including firewall, router, switch, VPN, proxy, load balancer and infrastructure events.","Category":"Syslog server with forwarder file collection","Direction":"Push to syslog server; forwarder monitors written files","Source mechanism":"Source sends syslog to a syslog server","Collection tier / runtime":"Syslog server plus Splunk Universal Forwarder or Heavy Forwarder","Transport":"UDP, TCP or TLS syslog; Splunk-to-Splunk over TLS","Destination":"Splunk on-premises","Required app / add-on":"Vendor TA or custom parsing where available; generic syslog otherwise","Port / firewall requirements":"Allow source devices to the syslog server on UDP/TCP 514 or TCP 6514 for TLS; allow TCP 9997 to the receiving indexer cluster or approved Heavy Forwarder from the Universal or Heavy Forwarder; allow outbound TCP 8089 to the deployment server where the forwarder or Heavy Forwarder is centrally managed. Restrict listeners to approved source networks.","Authentication requirements":"UDP/TCP syslog normally has no application credential. Use server certificates and optional mutual TLS for TLS syslog. The forwarder service account requires read access to the written files, and Splunk forwarding uses the configured TLS certificate or mutual-TLS trust.","Source platform requirements":"Provide each source hostname/IP, vendor/product, target syslog server, protocol/port, facility/severity and message format. Define syslog listener rules, output file paths, ownership/permissions, rotation/retention/compression, forwarder monitor stanzas, host metadata, index, sourcetype and expected EPS."}];
@@ -16992,15 +17028,11 @@ const rolesRoleFilter = document.getElementById("rolesRoleFilter");
 const rolesPrivFilter = document.getElementById("rolesPrivFilter");
 const rolesPlatformFilter = document.getElementById("rolesPlatformFilter");
 const rolesCapabilityFilter = document.getElementById("rolesCapabilityFilter");
-const splunkBinTableBody = document.getElementById("splunkBinTableBody");
-const splunkBinTableSearch = document.getElementById("splunkBinTableSearch");
-const splunkBinCategoryFilter = document.getElementById("splunkBinCategoryFilter");
 let visibleLoggingPatternRows = [...loggingPatternTableData];
 let visibleHealthCheckRows = [...healthCheckTableData];
 let visibleSplunkPortsRows = [...splunkPortsTableData];
 let visibleNetworkFlowsRows = [...networkFlowsTableData];
 let visibleRolesRows = [...rolesTableData];
-let visibleSplunkBinRows = [...splunkBinTableData];
 
 
 const viabilityAssessmentData = [
@@ -18846,6 +18878,211 @@ function expandReferenceSection(id) {
   const toggle = section.querySelector(".reference-section-toggle");
   if (toggle) toggle.setAttribute("aria-expanded", "true");
 }
+
+const ONBOARDING_MAP_ROWS = [
+  { id: "ob-candidate", label: "Candidate log source identified", badge: "PLANNED" },
+  { id: "ob-viability", label: "Phase 1: Viability Assessment" },
+  { id: "ob-worthiness", label: "Log Worthiness" },
+  { id: "ob-topology", label: "Select pattern & topology" },
+  { id: "ob-connectivity", label: "Connectivity validation" },
+  { id: "ob-build", label: "Engineering build" },
+  { id: "ob-ingestion", label: "Ingestion check" },
+  { id: "ob-quality", label: "Data quality assessment" },
+  { id: "ob-preingest", label: "Pre-ingest cyber-value gates" },
+  { id: "ob-cybervalue", label: "Cyber value scoring" },
+  { id: "ob-implementation", label: "Log Implementation" },
+  { id: "ob-governance", label: "Governance approval" },
+  { id: "ob-opsready", label: "Operational readiness" },
+  { id: "ob-socready", label: "SOC readiness" },
+  { id: "ob-golive", label: "GO-LIVE", badge: "ACTIVE" },
+  { id: "ob-sustainment", label: "Log Sustainment", note: "Value expires → loops back to Governance approval for re-approval" },
+  { id: "ob-review90", label: "90-day value review" },
+];
+// Each gate is a decision point that sits in the gap right after its stage.
+// "outcomes" lists only the exceptional branches (a plain pass-through down to
+// the next stage is implied and not listed); tone "stop" ends the flow, tone
+// "loop" sends it back to an earlier stage for rework.
+const ONBOARDING_MAP_GATES = [
+  { after: "ob-candidate", label: "Platform Registered?" },
+  { after: "ob-viability", label: "Viability Decision", outcomes: [
+    { tone: "stop", text: "Fail → Stop: Not viable" },
+    { tone: "loop", text: "Rework → retry viability assessment" },
+  ] },
+  { after: "ob-worthiness", label: "Worthiness Decision", outcomes: [
+    { tone: "stop", text: "Fail → Stop: Not worth building" },
+  ] },
+  { after: "ob-connectivity", label: "Connectivity Succeeded?", outcomes: [
+    { tone: "loop", text: "Fail → Hold, return to Select pattern & topology" },
+  ] },
+  { after: "ob-ingestion", label: "Ingestion Confirmed?", outcomes: [
+    { tone: "loop", text: "Fail → Hold, return to Engineering build" },
+  ] },
+  { after: "ob-quality", label: "Quality Gates Pass?", outcomes: [
+    { tone: "loop", text: "Fail → Hold, return to Engineering build" },
+  ] },
+  { after: "ob-preingest", label: "Overall Gate Result", outcomes: [
+    { tone: "loop", text: "Fail → Hold, return to Engineering build" },
+  ] },
+  { after: "ob-cybervalue", label: "Ingestion Decision", outcomes: [
+    { tone: "stop", text: "Fail → Stop: Reject" },
+  ] },
+  { after: "ob-implementation", label: "Build & Acceptance Result", outcomes: [
+    { tone: "loop", text: "Fail → retry build & acceptance" },
+  ] },
+  { after: "ob-governance", label: "Approval Decision", outcomes: [
+    { tone: "stop", text: "Rejected → Stop" },
+    { tone: "loop", text: "Returned → retry approval" },
+  ] },
+  { after: "ob-opsready", label: "Operational Readiness Confirmed?", outcomes: [
+    { tone: "loop", text: "Fail → Hold, return to Log Implementation" },
+  ] },
+  { after: "ob-socready", label: "SOC Ready?", outcomes: [
+    { tone: "loop", text: "Fail → Hold, return to Engineering build" },
+  ] },
+  { after: "ob-review90", label: "Retain / Filter / Retire Decision", terminal: true, outcomes: [
+    { tone: "loop", text: "Retain → continue Log Sustainment" },
+    { tone: "loop", text: "Filter → return to Pre-ingest cyber-value gates" },
+    { tone: "stop", text: "Retire → Stop" },
+  ] },
+];
+const ONBOARDING_MAP_BRANCH = [
+  { id: "ob-detection", label: "Detection Engineering" },
+  { id: "ob-response", label: "Response readiness" },
+];
+const ONBOARDING_MAP_PHASES = [
+  { letter: "A", short: "Intake & Viability", label: "A · Intake & Viability", color: "#eef2ff", tab: "#4338ca", from: "ob-candidate", to: "ob-viability" },
+  { letter: "B", short: "Worthiness & Design", label: "B · Worthiness & Design", color: "#ecfdf5", tab: "#047857", from: "ob-worthiness", to: "ob-connectivity" },
+  { letter: "C", short: "Build & Validation", label: "C · Build & Technical Validation", color: "#fff7ed", tab: "#c2410c", from: "ob-build", to: "ob-cybervalue" },
+  { letter: "D", short: "Implementation", label: "D · Implementation & Governance", color: "#eff6ff", tab: "#1d4ed8", from: "ob-implementation", to: "ob-governance" },
+  { letter: "E", short: "Production Ready", label: "E · Production Readiness", color: "#f0fdf4", tab: "#15803d", from: "ob-opsready", to: "ob-golive" },
+  { letter: "F", short: "Sustainment & Value", label: "F · Sustainment & Value Realisation", color: "#faf5ff", tab: "#7030a0", from: "ob-sustainment", to: "ob-review90" },
+];
+
+function renderOnboardingFlowMap() {
+  const rows = ONBOARDING_MAP_ROWS;
+  const rowH = 30, pitch = 92, topPad = 26;
+  const nodeX = 30, nodeW = 232;
+  const idxOf = {};
+  rows.forEach((r, i) => { idxOf[r.id] = i; });
+  const yOf = i => topPad + i * pitch;
+  const halfGap = (pitch - rowH) / 2;
+  // a gate sits in the gap after its stage; the terminal gate (after the last row) sits just below it
+  const gateYOf = afterId => yOf(idxOf[afterId]) + rowH + halfGap;
+
+  const statusX = nodeX + nodeW + 16, statusWidth = 250;
+  const branchX = statusX + statusWidth + 40, branchW = 196;
+  const sustIdx = idxOf["ob-sustainment"];
+  const branchYs = ONBOARDING_MAP_BRANCH.map((b, i) => topPad + sustIdx * pitch + (i + 1) * pitch);
+
+  const mainColumnHeight = gateYOf(rows[rows.length - 1].id) + 30;
+  const branchColumnHeight = branchYs.length ? branchYs[branchYs.length - 1] + rowH + 24 : 0;
+  const totalHeight = Math.max(mainColumnHeight, branchColumnHeight);
+  const totalWidth = branchX + branchW + 16;
+
+  const phaseBands = ONBOARDING_MAP_PHASES.map((p, pi) => {
+    const isLast = pi === ONBOARDING_MAP_PHASES.length - 1;
+    const top = yOf(idxOf[p.from]) - 18;
+    const bottom = isLast ? totalHeight - 6 : yOf(idxOf[p.to]) + rowH + 5;
+    const height = bottom - top;
+    const width = totalWidth - 8;
+    // horizontal label sits over the node column only, clear of both the gate
+    // status text column (starts at statusX) and the row-badge text (right-
+    // aligned above the node) so none of the three ever collide
+    const labelX = nodeX + 4, labelY = top + 13;
+    return `<g>
+      <title>${escapeHtml(p.label)}</title>
+      <rect x="4" y="${top}" width="${width}" height="${height}" rx="8" fill="${p.color}" />
+      <rect x="4" y="${top}" width="4" height="${height}" fill="${p.tab}" />
+      <text x="${labelX}" y="${labelY}" text-anchor="start" font-size="11" font-weight="800" fill="${p.tab}" letter-spacing="0.2">${p.letter} &middot; ${escapeHtml(p.short)}</text>
+    </g>`;
+  }).join("");
+
+  const nodesSvg = rows.map((r, i) => {
+    const y = yOf(i);
+    const fill = r.id === "ob-golive" ? "#166534" : "#1f4e78";
+    return `<g class="ob-map-node" data-jump="${r.id}" tabindex="0" role="button" aria-label="Jump to ${escapeHtml(r.label)}">
+      <rect x="${nodeX}" y="${y}" width="${nodeW}" height="${rowH}" rx="7" fill="${fill}" />
+      <text x="${nodeX + nodeW / 2}" y="${y + rowH / 2 + 4}" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">${escapeHtml(r.label)}</text>
+      ${r.badge ? `<text x="${nodeX + nodeW - 8}" y="${y - 4}" text-anchor="end" font-size="9" fill="#166534" font-weight="700">${escapeHtml(r.badge)}</text>` : ""}
+    </g>
+    ${r.note ? `<text x="${nodeX + nodeW / 2}" y="${y + rowH + 13}" text-anchor="middle" font-size="7.6" fill="#c2410c" font-style="italic">${escapeHtml(r.note)}</text>` : ""}`;
+  }).join("");
+
+  let mainArrows = "";
+  for (let i = 0; i < rows.length - 1; i++) {
+    const x = nodeX + nodeW / 2;
+    mainArrows += `<line x1="${x}" y1="${yOf(i) + rowH}" x2="${x}" y2="${yOf(i + 1)}" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#obArrow)" />`;
+  }
+  // the terminal gate (after the last row) has no next stage below it -- draw its short stub arrow down into the diamond
+  const lastGateY = gateYOf(rows[rows.length - 1].id);
+  mainArrows += `<line x1="${nodeX + nodeW / 2}" y1="${yOf(rows.length - 1) + rowH}" x2="${nodeX + nodeW / 2}" y2="${lastGateY - 7}" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#obArrow)" />`;
+
+  // Each gate renders as a diamond plus a title + status text block placed just
+  // to its right -- title always shown, status lines cover every possible
+  // outcome of the decision (a plain pass-through is implied unless the gate
+  // is terminal, where every outcome is spelled out explicitly).
+  const gateSize = 9;
+  const TONE_COLOR = { pass: "#475569", stop: "#b91c1c", loop: "#c2410c" };
+  const gatesSvg = ONBOARDING_MAP_GATES.map(g => {
+    const cx = nodeX + nodeW / 2, cy = gateYOf(g.after);
+    const pts = `${cx},${cy - gateSize} ${cx + gateSize},${cy} ${cx},${cy + gateSize} ${cx - gateSize},${cy}`;
+    const lines = g.terminal ? [] : [{ tone: "pass", text: "Pass → continue" }];
+    (g.outcomes || []).forEach(o => lines.push(o));
+    const lineH = 10;
+    const totalLines = lines.length + 1; // +1 for the title line
+    const blockTop = cy - (totalLines * lineH) / 2 + lineH * 0.8;
+    const titleText = `<text x="${statusX}" y="${blockTop}" font-size="8.6" font-weight="700" fill="#1f2937">${escapeHtml(g.label)}</text>`;
+    const statusLines = lines.map((l, i) => `<text x="${statusX}" y="${blockTop + lineH * (i + 1)}" font-size="7.5" fill="${TONE_COLOR[l.tone]}">${escapeHtml(l.text)}</text>`).join("");
+    return `<g><title>Gate &middot; ${escapeHtml(g.label)}</title><polygon points="${pts}" fill="#fffbeb" stroke="#b45309" stroke-width="1.4" /></g>
+      ${titleText}
+      ${statusLines}`;
+  }).join("");
+
+  let branchPaths = "";
+  let branchNodes = "";
+  let prevX = nodeX + nodeW, prevY = yOf(sustIdx) + rowH / 2;
+  ONBOARDING_MAP_BRANCH.forEach((b, i) => {
+    const y = branchYs[i];
+    branchPaths += `<path d="M ${prevX} ${prevY} L ${branchX - 14} ${prevY} L ${branchX - 14} ${y + rowH / 2} L ${branchX} ${y + rowH / 2}" fill="none" stroke="#7030a0" stroke-width="1.3" marker-end="url(#obArrowPurple)" />`;
+    branchNodes += `<g class="ob-map-node" data-jump="${b.id}" tabindex="0" role="button" aria-label="Jump to ${escapeHtml(b.label)}">
+        <rect x="${branchX}" y="${y}" width="${branchW}" height="${rowH}" rx="7" fill="#7030a0" />
+        <text x="${branchX + branchW / 2}" y="${y + rowH / 2 + 4}" text-anchor="middle" fill="#fff" font-size="10.5" font-weight="600">${escapeHtml(b.label)}</text>
+      </g>`;
+    prevX = branchX + branchW; prevY = y + rowH / 2;
+  });
+  const reviewY = yOf(idxOf["ob-review90"]) + rowH / 2;
+  branchPaths += `<path d="M ${prevX} ${prevY} L ${branchX + branchW + 14} ${prevY} L ${branchX + branchW + 14} ${reviewY} L ${nodeX + nodeW} ${reviewY}" fill="none" stroke="#7030a0" stroke-width="1.3" marker-end="url(#obArrowPurple)" />`;
+  const branchSvg = branchPaths + branchNodes;
+
+  return `<svg class="onboarding-flow-map-svg" viewBox="0 0 ${totalWidth} ${totalHeight}" width="${totalWidth}" height="${totalHeight}" role="img" aria-label="Onboarding flow map: click a stage to jump to its detail">
+    <defs>
+      <marker id="obArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+      <marker id="obArrowPurple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7030a0"/></marker>
+    </defs>
+    ${phaseBands}
+    ${mainArrows}
+    ${gatesSvg}
+    ${branchSvg}
+    ${nodesSvg}
+  </svg>`;
+}
+function initOnboardingFlowMap() {
+  const wrap = document.getElementById("onboardingFlowMapWrap");
+  if (!wrap) return;
+  wrap.innerHTML = renderOnboardingFlowMap();
+  const jumpTo = id => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  wrap.addEventListener("click", event => {
+    const node = event.target.closest("[data-jump]");
+    if (node) jumpTo(node.dataset.jump);
+  });
+  wrap.addEventListener("keydown", event => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const node = event.target.closest("[data-jump]");
+    if (!node) return;
+    event.preventDefault();
+    jumpTo(node.dataset.jump);
+  });
+}
 document.querySelectorAll("[data-reference-jump]").forEach(button=>button.addEventListener("click",()=>{
   const id = button.dataset.referenceJump;
   expandReferenceSection(id);
@@ -19123,51 +19360,6 @@ function exportVisibleRoles(event) {
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = "Splunk-Roles-Capabilities-Visible.csv";
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(link.href);
-  event.currentTarget.textContent = "Exported";
-  setTimeout(() => { if (event.currentTarget) event.currentTarget.textContent = "Export visible CSV"; }, 1400);
-}
-
-function splunkBinSearchText(row) {
-  return splunkBinTableColumns.map(column => row[column] || "").join(" ").toLowerCase();
-}
-
-function filteredSplunkBinRows() {
-  const query = splunkBinTableSearch.value.trim().toLowerCase();
-  const category = splunkBinCategoryFilter.value;
-  return splunkBinTableData.filter(row => {
-    if (query && !splunkBinSearchText(row).includes(query)) return false;
-    if (category && row["Category"] !== category) return false;
-    return true;
-  });
-}
-
-function renderSplunkBinTable() {
-  visibleSplunkBinRows = filteredSplunkBinRows();
-  if (!visibleSplunkBinRows.length) {
-    splunkBinTableBody.innerHTML = `<tr><td class="patterns-empty" colspan="${splunkBinTableColumns.length}">No commands match the current filters.</td></tr>`;
-  } else {
-    splunkBinTableBody.innerHTML = visibleSplunkBinRows.map(row => {
-      const cells = splunkBinTableColumns.map(column => `<td>${column === "Command" ? `<code>${escapeHtml(row[column])}</code>` : escapeHtml(row[column])}</td>`).join("");
-      return `<tr>${cells}</tr>`;
-    }).join("");
-  }
-  document.getElementById("splunkBinVisibleCount").textContent = String(visibleSplunkBinRows.length);
-  document.getElementById("splunkBinCategoryCount").textContent = String(new Set(visibleSplunkBinRows.map(row => row["Category"])).size);
-}
-
-function exportVisibleSplunkBin(event) {
-  const lines = [
-    splunkBinTableColumns.map(csvValue).join(","),
-    ...visibleSplunkBinRows.map(row => splunkBinTableColumns.map(column => csvValue(row[column])).join(","))
-  ];
-  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "Splunk-Bin-Commands-Visible.csv";
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -19491,15 +19683,6 @@ rolesColumnOrder
     rolesPrivFilter.appendChild(option);
   });
 renderRolesTable();
-[...new Set(splunkBinTableData.map(row => row["Category"]).filter(Boolean))]
-  .sort((a, b) => a.localeCompare(b))
-  .forEach(category => {
-    const option = document.createElement("option");
-    option.value = category;
-    option.textContent = category;
-    splunkBinCategoryFilter.appendChild(option);
-  });
-renderSplunkBinTable();
 renderSplunkPortsTable();
 renderNetworkFlowsTable();
 
@@ -19655,14 +19838,6 @@ document.getElementById("resetRolesTable").addEventListener("click", () => {
   renderRolesTable();
 });
 document.getElementById("exportRolesTable").addEventListener("click", exportVisibleRoles);
-splunkBinTableSearch.addEventListener("input", renderSplunkBinTable);
-splunkBinCategoryFilter.addEventListener("change", renderSplunkBinTable);
-document.getElementById("resetSplunkBinTable").addEventListener("click", () => {
-  splunkBinTableSearch.value = "";
-  splunkBinCategoryFilter.value = "";
-  renderSplunkBinTable();
-});
-document.getElementById("exportSplunkBinTable").addEventListener("click", exportVisibleSplunkBin);
 window.addEventListener("hashchange", () => setActivePage(pageNameFromHash(), false));
 
 advisorForm.addEventListener("submit", event => {
@@ -20047,6 +20222,7 @@ renderViabilityPage();
 renderLoggingPatternTable();
 renderHealthCheckTable();
 initCollapsibleReferenceSections();
+initOnboardingFlowMap();
 setActivePage(pageNameFromHash(), false);
 
 
@@ -20233,6 +20409,11 @@ const SOT_OBJECTS = [
     def: "Pre-built tsidx summaries of a data model's data over a configured time range, making tstats ... from datamodel= searches dramatically faster than an equivalent raw search.",
     notes: "Consumes indexer storage and CPU on a schedule -- treat as a capacity-planning decision, not a free toggle.",
     deps: [], feeds: [], sotCode: "SOT-01.04.03", instanceId: "DMA-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/admin/summarization/tstats:DM_{app}_{data_model_id}", referenceDetail: "datamodels-conf" },
+{ name: "Report Acceleration", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "Private / App / Global",
+    config: "savedsearches.conf (auto_summarize and auto_summarize.* settings on a Report)",
+    def: "Scheduler-managed automatic summarization of a Report's own search, building pre-computed summaries at configured time granularities so future runs over the same data read the summary instead of re-executing the full search.",
+    notes: "Distinct from Data Model Acceleration, which pre-builds tsidx summaries for tstats searches over an entire data model; Report Acceleration works directly on one report's own SPL, is periodically judged for 'helpfulness' (summary size/ratio thresholds) and auto-suspended if it isn't paying off.",
+    deps: ["Report"], feeds: [], sotCode: "SOT-01.02.03", instanceId: "RACC-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed", referenceDetail: "savedsearches-conf" },
 { name: "Pivot", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "(built on datamodels.conf; saved as a Report)",
     def: "A drag-and-drop report builder that runs directly against a Data Model without requiring the author to write SPL by hand.",
@@ -20366,6 +20547,51 @@ const SOT_OBJECTS = [
     def: "A named grouping of Correlation Searches around a single threat scenario or use case, carrying a narrative description, external references, MITRE ATT&CK tactic/technique mappings, and the CIM data models/data sources its member detections require.",
     notes: "The primary content-packaging unit ESCU ships and the mechanism analysts browse via ES's Analytics Advisor / Content Management pages; corresponds to the Threat Detection Use Case concept in the Onboard Taxonomy (TAX-05.01/05.02), where Threat Mapping and Use Case-Data Source/Event Mapping separately track the same ATT&CK and data-source-requirement facets this object carries natively.",
     deps: ["Correlation Search", "ESCU (Enterprise Security Content Update)", "CIM (Common Information Model)"], feeds: ["Event-based Detection", "Finding-based Detection"], sotCode: "SOT-10.01.18", instanceId: "AS-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed", relatedTax: ["TAX-05.01.01", "TAX-05.01.02", "TAX-05.02.01", "TAX-05.02.02"] },
+{ name: "Notable Event Suppression", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
+    config: "Enterprise Security's Suppressions page (KV Store-backed, not a .conf stanza)",
+    def: "A rule that silences future notable events matching specific field values from a given correlation search for a bounded (or indefinite) duration, without disabling the search itself.",
+    notes: "Distinct from throttling (a savedsearches.conf alert.suppress.* setting on the underlying search, cross-platform and not ES-specific); a Suppression is a separately managed, analyst-created rule visible and editable from Incident Review.",
+    deps: ["Correlation Search"], feeds: ["Notable Event"], sotCode: "SOT-10.01.19", instanceId: "NESUP-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "ES Drilldown Search", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
+    config: "Enterprise Security's Drilldown Search Editor (KV Store-backed content, not a .conf stanza)",
+    def: "A named, reusable contextual search or link configured in Enterprise Security's Content Management, launched from a field on a notable or finding to pivot into related raw events, authentication activity, network traffic or endpoint data.",
+    notes: "Distinct from a generic Workflow Action, which is a platform-wide field-context mechanism available on any search result; a Drilldown Search is ES's own content type, purpose-built for Incident Review/Investigation pivoting and managed alongside detections in Content Management.",
+    deps: [], feeds: ["Investigation"], sotCode: "SOT-10.01.20", instanceId: "ESDD-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Investigation Action", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
+    config: "Enterprise Security's Investigation Workbench action menu (app-registered, not a .conf stanza)",
+    def: "An analyst-invoked action available from within the Investigation Workbench against a finding or entity -- e.g. enrich an IP, investigate a user or host, retrieve endpoint information -- distinct from an automated/scriptable Adaptive Response Action.",
+    notes: "Overlaps in mechanism with Adaptive Response Action (both can call the same underlying integration), but is scoped and surfaced specifically as an analyst-facing investigation-context menu item rather than a correlation-search-triggerable response.",
+    deps: [], feeds: ["Investigation"], sotCode: "SOT-10.01.21", instanceId: "INVA-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Investigation Annotation", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
+    config: "Enterprise Security's Investigation Workbench (KV Store-backed notes/comments, not a .conf stanza)",
+    def: "Analyst-generated contextual information attached to an investigation, finding or notable -- notes, comments, or evidence observations recorded during the course of working a case.",
+    notes: "",
+    deps: ["Investigation"], feeds: [], sotCode: "SOT-10.01.22", instanceId: "INVAN-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Urgency Configuration", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Platform Object", scope: "Private / App / Global (Splunk ES)",
+    config: "Enterprise Security's Incident Review Settings > Urgency page (lookup-table-backed severity x priority matrix)",
+    def: "The lookup-table-backed matrix Enterprise Security uses to compute a notable/finding's Urgency by combining its Severity with the Asset or Identity Priority of the entity involved.",
+    notes: "Distinct from Severity (set by the correlation search) and Priority (set on the Asset/Identity record); Urgency is the derived combination of the two, shown in Incident Review and used for triage sorting.",
+    deps: ["Asset & Identity Framework"], feeds: ["Notable Event"], sotCode: "SOT-10.01.23", instanceId: "URGCFG-001", objectClass: "Platform Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+{ name: "Risk Factor", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Platform Object", scope: "Private / App / Global (Splunk ES)",
+    config: "Asset & Identity Framework lookup fields (priority, category) and Risk Analysis adaptive response weighting",
+    def: "Static entity context -- e.g. privileged account, critical server, executive identity, internet-facing host -- that multiplies or weights the risk contribution of events involving that entity, sourced from Asset & Identity Framework priority/category fields.",
+    notes: "Referenced in Risk Score's own definition as 'asset/identity priority multipliers'; modeled here as its own object since it's a distinct configuration concern (what makes an entity risk-sensitive) from Risk Score (the resulting number) or Risk Rule (the detection logic that writes risk events).",
+    deps: ["Asset & Identity Framework"], feeds: ["Risk Score"], sotCode: "SOT-10.01.24", instanceId: "RFAC-001", objectClass: "Platform Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+{ name: "Risk Modifier", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Platform Object", scope: "Private / App / Global (Splunk ES)",
+    config: "savedsearches.conf (Risk Analysis adaptive response action parameters on a Risk Rule)",
+    def: "Detection- or search-side logic within a Risk Rule that adjusts the risk score, message or object attribution it writes -- e.g. scaling the score by a threat object's severity, or attributing risk to a secondary entity.",
+    notes: "A configuration facet of Risk Rule rather than a separately dispatched object; broken out here since it's referenced as a distinct concern in Enterprise Security's own risk documentation and is worth tracking independently for governance/inventory purposes.",
+    deps: ["Risk Object / Risk Rule"], feeds: ["Risk Score"], sotCode: "SOT-10.01.25", instanceId: "RMOD-001", objectClass: "Platform Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+{ name: "Security Domain", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Platform Object", scope: "Private / App / Global (Splunk ES)",
+    config: "Enterprise Security's security_domain field values (Access, Endpoint, Network, Threat, Identity, Audit), configured per correlation search",
+    def: "The fixed categorization Enterprise Security applies to every correlation search, notable, finding and dashboard -- Access, Endpoint, Network, Threat, Identity or Audit -- used to organize Incident Review, Security Posture dashboards and content filtering.",
+    notes: "",
+    deps: [], feeds: ["Correlation Search", "Notable Event"], sotCode: "SOT-10.01.26", instanceId: "SECDOM-001", objectClass: "Platform Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+{ name: "Incident Review Settings", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Platform Object", scope: "Deployment-level (Splunk ES)",
+    config: "Enterprise Security's Incident Review Settings page (KV Store-backed: status/disposition label editor, urgency matrix, notable event fields)",
+    def: "The deployment-wide configuration controlling how Incident Review behaves and is labeled -- which status/disposition values are available, the urgency matrix, and which fields display on the notable event list.",
+    notes: "The umbrella configuration surface Status, Disposition and Urgency Configuration all live under; those remain separately modeled where Enterprise Security exposes them as independently editable pieces.",
+    deps: [], feeds: ["Notable Event"], sotCode: "SOT-10.01.27", instanceId: "IRSET-001", objectClass: "Platform Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
   // ---------- SOT-06 — Storage, Indexing & Data Management Objects ----------
 { name: "Summary Index", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Hybrid (Knowledge + Platform)", scope: "Deployment-level (index) + Private/App/Global (populating search)",
     config: "indexes.conf (the index itself), savedsearches.conf (the collect/sistats search)",
@@ -20930,7 +21156,7 @@ const SOT_OBJECTS = [
 { name: "SOAR Playbook", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "External Platform Object", scope: "External platform -- integrates via connector",
     config: "SOAR's own playbook editor (not a Splunk .conf file)",
     def: "An automated, visually-editable workflow of actions in Splunk SOAR that orchestrates response steps (block an IP, disable a user, open a ticket) across integrated security tools.",
-    notes: "Triggered manually, on a schedule, or automatically from an Adaptive Response Action in Enterprise Security sending a notable/risk event to SOAR.",
+    notes: "Triggered manually, on a schedule, or automatically from an Adaptive Response Action in Enterprise Security sending a notable/risk event to SOAR. Built from block types in the Visual Playbook Editor, which are internal to a Playbook's own definition rather than independently managed objects: Playbook Actions blocks -- Action (calls a SOAR Action), Playbook (calls another SOAR Playbook), Code (inline custom Python scoped to this step), Utility (a built-in helper function) -- and Playbook Process Filters blocks -- Filter (conditionally branches on artifact field values), Decision (branches on a boolean/logical evaluation), Format (templates/combines field values for a later step).",
     deps: ["SOAR Cloud Server"], feeds: ["Investigation", "SOAR Automation Broker"], sotCode: "SOT-10.03.03", instanceId: "SP-001", objectClass: "External Platform Object", product: "SOAR", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed", relatedTax: ["TAX-05.04.01", "TAX-06.02.02"] },
 { name: "SOAR Action", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "External Platform Object", scope: "External platform -- integrates via connector",
     config: "SOAR App (connector) manifest",
@@ -20952,6 +21178,26 @@ const SOT_OBJECTS = [
     def: "An integration package (distinct from a Splunk app) that gives SOAR playbooks actions against a specific external tool -- firewall, EDR, ticketing system, identity provider, or Splunk itself.",
     notes: "",
     deps: ["SOAR Automation Broker"], feeds: ["SOAR Playbook"], sotCode: "SOT-10.03.07", instanceId: "SAC-001", objectClass: "External Platform Object", product: "SOAR", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", relatedTax: ["TAX-06.02.02"] },
+{ name: "SOAR Asset", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "External Platform Object", scope: "External platform -- integrates via connector",
+    config: "Configured per SOAR App (Connector), via the SOAR web UI",
+    def: "A configured, credentialed instance of a SOAR App pointed at one specific external system (e.g. a particular VirusTotal account or firewall) -- distinct from the App itself, which is just the installed integration package.",
+    notes: "A single App can have multiple Assets configured against it (e.g. prod and dev firewalls); a playbook's Action step targets a named Asset, not the App directly.",
+    deps: ["SOAR App (Connector)"], feeds: ["SOAR Action"], sotCode: "SOT-10.03.08", instanceId: "SAST-001", objectClass: "External Platform Object", product: "SOAR", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", relatedTax: ["TAX-06.02.02"] },
+{ name: "SOAR Custom Function", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "External Platform Object", scope: "External platform -- integrates via connector",
+    config: "SOAR's Custom Function editor (not a Splunk .conf file)",
+    def: "A reusable, independently-defined Python function that any Playbook's Code blocks can call, letting common logic (parsing, transforms, lookups) be written once instead of duplicated across playbooks.",
+    notes: "Distinct from a Playbook's inline Code block, which is scoped to that one step in that one playbook.",
+    deps: [], feeds: ["SOAR Playbook"], sotCode: "SOT-10.03.09", instanceId: "SCF-001", objectClass: "External Platform Object", product: "SOAR", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", relatedTax: ["TAX-06.02.02"] },
+{ name: "SOAR Custom List", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "External Platform Object", scope: "External platform -- integrates via connector",
+    config: "SOAR's Custom Lists editor (not a Splunk .conf file)",
+    def: "A native list/table data structure in SOAR (rows of values) that playbooks reference for enrichment, allow/deny checks or other reference data, without needing a Splunk lookup or external asset.",
+    notes: "",
+    deps: [], feeds: ["SOAR Playbook"], sotCode: "SOT-10.03.10", instanceId: "SCL-001", objectClass: "External Platform Object", product: "SOAR", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", relatedTax: ["TAX-06.02.02"] },
+{ name: "SOAR Source Control Repository", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "External Platform Object", scope: "External platform -- integrates via connector",
+    config: "Linked via SOAR's Source Control settings (git-backed)",
+    def: "A git repository linked to a SOAR Cloud Server for version-controlling Playbooks and promoting them between environments (e.g. dev to prod) outside SOAR's own UI history.",
+    notes: "",
+    deps: ["SOAR Cloud Server"], feeds: ["SOAR Playbook"], sotCode: "SOT-10.03.11", instanceId: "SSCR-001", objectClass: "External Platform Object", product: "SOAR", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", relatedTax: ["TAX-06.02.02"] },
 { name: "UEBA Anomaly", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "External Platform Object", scope: "External platform -- integrates via connector",
     config: "UEBA's own analytics engine (not a Splunk .conf file)",
     def: "A single unexpected behaviour UEBA's machine-learning models detect for a user or entity -- e.g. an unusual login time, an atypical data-transfer volume -- scored individually rather than matched against a fixed rule.",
@@ -21264,6 +21510,11 @@ const SOT_OBJECTS = [
     def: "A JWT authentication token used to authorize calls to the ACS (Admin Config Service) API itself, distinct from a Splunk platform HEC token or a stored credential used by a search.",
     notes: "Required for most ACS API GET/POST/PATCH/DELETE operations across every other ACS endpoint category.",
     deps: [], feeds: [], sotCode: "SOT-07.04.03", instanceId: "ACSTOK-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API (ACS)", restEndpoint: "To be confirmed", restEndpointCloud: "https://admin.splunk.com/{stack}/adminconfig/v2/tokens" },
+{ name: "Auth Token", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Instance-level",
+    config: "Managed via REST API / Settings > Tokens; feature enabled via authentication.conf ([tokenAuth] stanza)",
+    def: "A JWT bearer token issued to a Splunk user for authenticating REST API calls in place of a session cookie or basic auth, scoped to that user's roles and capabilities.",
+    notes: "The platform's general-purpose REST API bearer token -- distinct from an HTTP Event Collector (HEC) Token (data ingestion only) and from the Cloud-only ACS Auth Token (ACS admin API only).",
+    deps: ["User"], feeds: [], sotCode: "SOT-07.04.04", instanceId: "ATOK-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/authorization/tokens/{name}" },
 { name: "App Permission", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud Platform only)",
     config: "Managed via the ACS API only -- not backed by a classic .conf file",
     def: "Read and write permissions assigned to roles for an individual Splunk Cloud Platform app, managed via the ACS API rather than the classic per-object ACL mechanism.",
@@ -21379,6 +21630,36 @@ const SOT_OBJECTS = [
     def: "A filter controlling which Windows process-start/stop events the process-monitor input collects, reducing noise from routine process activity.",
     notes: "",
     deps: [], feeds: [], sotCode: "SOT-05.01.03", instanceId: "PMF-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+{ name: "Password Policy", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "authentication.conf ([splunk_auth] stanza)",
+    def: "Password complexity, expiration and lockout rules enforced for Splunk's native (non-SSO) authentication -- minimum length/complexity, password expiration, and failed-login lockout.",
+    notes: "Only takes effect when authType is set to Splunk (native auth); has no effect when LDAP, SAML, OAuth2 or another external strategy is the active authType, even though the stanza can coexist in the same file alongside those.",
+    deps: [], feeds: ["User"], sotCode: "SOT-07.03.11", instanceId: "PWDPOL-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/configs/conf-authentication/splunk_auth" },
+{ name: "TLS/SSL Certificate", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Instance-level",
+    config: "server.conf ([sslConfig] stanza) + web.conf (Splunk Web HTTPS) + per-input SSL settings in inputs.conf for network inputs",
+    def: "The server and/or client certificate, private key and CA bundle Splunk uses for inter-node TLS (indexer/search-head/forwarder communication) and for Splunk Web's HTTPS listener.",
+    notes: "Distinct from Trusted Connection, which is the resulting trust relationship between two nodes; this is the certificate material and configuration that makes that trust possible.",
+    deps: [], feeds: ["Trusted Connection"], sotCode: "SOT-07.04.05", instanceId: "TLSC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/configs/conf-server/sslConfig" },
+{ name: "AppInspect Validation", domain: "SOT-09 — Application, Packaging & Content Objects", type: "Platform Object", scope: "N/A (pre-submission / pre-install check)",
+    config: "Run via the splunk-appinspect CLI or the AppInspect API against an app package; not a .conf file",
+    def: "Splunk's automated static/dynamic validation of an app package (security, packaging conventions, API usage) that Splunkbase listing requires and that Splunk Cloud Platform runs during private app vetting.",
+    notes: "Referenced in passing by Splunkbase's own notes ('every listed app passes App Inspect vetting'); modeled separately here since it's a distinct, independently-invokable tool a developer runs against a package before submission, not a property of the marketplace itself.",
+    deps: ["App"], feeds: ["Splunkbase"], sotCode: "SOT-09.03.01", instanceId: "AINS-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
+{ name: "Search Scheduler", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level (Search Head / SHC)",
+    config: "limits.conf ([scheduler] stanza)",
+    def: "Splunk's internal service that dispatches saved searches according to their Cron Schedule, arbitrating priority and enforcing the maximum number of concurrently running scheduled searches.",
+    notes: "Distinct from Workload Management (SOT-11.03), which governs resource pools/policies generally; the scheduler specifically decides which scheduled searches run, and when, within those limits.",
+    deps: [], feeds: ["Search Job"], sotCode: "SOT-11.02.01", instanceId: "SCHED-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/configs/conf-limits/scheduler" },
+{ name: "Cron Schedule", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Per saved search",
+    config: "savedsearches.conf (cron_schedule, schedule_window fields on a Report or Alert stanza)",
+    def: "The cron expression -- and optional jitter window -- attached to a Report or Alert that tells the Search Scheduler when to dispatch it.",
+    notes: "schedule_window lets the scheduler shift the actual start time within a bounded window to reduce concurrent-search contention, rather than firing every scheduled search at the exact literal cron time.",
+    deps: [], feeds: ["Search Scheduler"], sotCode: "SOT-11.02.02", instanceId: "CRON-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "Property of /services/saved/searches/{name} (cron_schedule, schedule_window fields)" },
+{ name: "Skipped Search Execution", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
+    config: "Recorded internally by splunkd; visible via the Job Inspector, Monitoring Console Scheduler Activity views, or the _internal index -- not a .conf stanza",
+    def: "The record of a scheduled search execution that the Search Scheduler skipped for a given cron slot -- typically because too many searches were already running concurrently, or the prior run of the same search was still executing.",
+    notes: "Distinct from a Fired Alert; a skip means the search never ran at all for that scheduled slot, so no results and no alert evaluation happened.",
+    deps: ["Search Scheduler"], feeds: [], sotCode: "SOT-11.02.03", instanceId: "SKIP-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "To be confirmed" },
 { name: "Pub/Sub Bus", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Instance-level",
     config: "pubsub.conf",
     def: "Internal app-server publish/subscribe channel configuration used for broadcasting messages -- such as deployment server phone-home signals -- between splunkd components.",
@@ -21483,6 +21764,7 @@ const SOT_TREE = {
     "SOT-01.02": { label: "Reports", desc: "Saved searches surfaced as reusable, on-demand or scheduled reports.", subclasses: {
       "SOT-01.02.01": "Report",
       "SOT-01.02.02": "Scheduled Report",
+      "SOT-01.02.03": "Report Acceleration",
     } },
     "SOT-01.03": { label: "Search Reuse", desc: "Reusable fragments and named constructs invoked from other searches.", subclasses: {
       "SOT-01.03.01": "Search Macro",
@@ -21665,11 +21947,14 @@ const SOT_TREE = {
       "SOT-07.03.08": "Duo MFA Config",
       "SOT-07.03.09": "RSA MFA Config",
       "SOT-07.03.10": "ProxySSO Config",
+      "SOT-07.03.11": "Password Policy",
     } },
     "SOT-07.04": { label: "Secrets & Trust", desc: "Encrypted credentials and trust material.", subclasses: {
       "SOT-07.04.01": "Stored Credential",
       "SOT-07.04.02": "EMEK Key",
       "SOT-07.04.03": "ACS Auth Token",
+      "SOT-07.04.04": "Auth Token",
+      "SOT-07.04.05": "TLS/SSL Certificate",
     } },
     "SOT-07.05": { label: "Network Access Control", desc: "Perimeter-level network access controls (Splunk Cloud Platform, managed via ACS).", subclasses: {
       "SOT-07.05.01": "IP Allow List",
@@ -21731,6 +22016,9 @@ const SOT_TREE = {
       "SOT-09.02.02": "Default / Local Metadata",
       "SOT-09.02.03": "App Setup Page",
     } },
+    "SOT-09.03": { label: "App Certification & Validation", desc: "Automated checks an app must pass before Splunkbase listing or Splunk Cloud Platform installation.", subclasses: {
+      "SOT-09.03.01": "AppInspect Validation",
+    } },
     "SOT-09.04": { label: "Distribution", desc: "How an app package reaches a deployment.", subclasses: {
       "SOT-09.04.01": "Splunkbase Distribution",
     } },
@@ -21755,6 +22043,15 @@ const SOT_TREE = {
       "SOT-10.01.16": "Response Plan",
       "SOT-10.01.17": "Adaptive Response Action",
       "SOT-10.01.18": "Analytic Story",
+      "SOT-10.01.19": "Notable Event Suppression",
+      "SOT-10.01.20": "ES Drilldown Search",
+      "SOT-10.01.21": "Investigation Action",
+      "SOT-10.01.22": "Investigation Annotation",
+      "SOT-10.01.23": "Urgency Configuration",
+      "SOT-10.01.24": "Risk Factor",
+      "SOT-10.01.25": "Risk Modifier",
+      "SOT-10.01.26": "Security Domain",
+      "SOT-10.01.27": "Incident Review Settings",
     } },
     "SOT-10.02": { label: "IT Service Intelligence", desc: "AIOps/service-monitoring objects specific to ITSI.", subclasses: {
       "SOT-10.02.01": "Service",
@@ -21774,6 +22071,10 @@ const SOT_TREE = {
       "SOT-10.03.05": "SOAR Artifact",
       "SOT-10.03.06": "SOAR Container (Case/Event)",
       "SOT-10.03.07": "SOAR App (Connector)",
+      "SOT-10.03.08": "SOAR Asset",
+      "SOT-10.03.09": "SOAR Custom Function",
+      "SOT-10.03.10": "SOAR Custom List",
+      "SOT-10.03.11": "SOAR Source Control Repository",
     } },
     "SOT-10.04": { label: "Observability Cloud", desc: "The separate Observability Cloud SaaS product suite.", subclasses: {
       "SOT-10.04.01": "Infrastructure Monitoring (IM)",
@@ -21801,7 +22102,7 @@ const SOT_TREE = {
       "SOT-10.06.06": "Splunk AR",
     } },
   } },
-  "SOT-11": { label: "Platform Administration & Operational Objects", desc: "Licensing, scheduling, workload and operational-health management. Licensing, Health & Monitoring, Configuration Management, Workload Management, Audit & Internal Logging and Upgrade & Compatibility are now populated; Search Scheduling remains a classification placeholder for admin/ops object types not yet catalogued as discrete objects here.", classes: {
+  "SOT-11": { label: "Platform Administration & Operational Objects", desc: "Licensing, scheduling, workload and operational-health management. All seven classes -- Licensing, Search Scheduling, Workload Management, Health & Monitoring, Configuration Management, Audit & Internal Logging and Upgrade & Compatibility -- are now populated with discrete objects.", classes: {
     "SOT-11.01": { label: "Licensing", desc: "License volume tracking and allocation.", subclasses: {
       "SOT-11.01.01": "License",
       "SOT-11.01.02": "Licenser Group",
@@ -21809,6 +22110,9 @@ const SOT_TREE = {
       "SOT-11.01.04": "Licenser Peer",
     } },
     "SOT-11.02": { label: "Search Scheduling", desc: "How and when scheduled work runs.", subclasses: {
+      "SOT-11.02.01": "Search Scheduler",
+      "SOT-11.02.02": "Cron Schedule",
+      "SOT-11.02.03": "Skipped Search Execution",
     } },
     "SOT-11.03": { label: "Workload Management", desc: "Resource governance across concurrent work.", subclasses: {
       "SOT-11.03.01": "Search Concurrency Settings",
