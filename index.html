@@ -3624,7 +3624,6 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
         <button type="button" data-reference-jump="configFileReferences">Configuration file reference</button>
         <button type="button" data-reference-jump="networkReferenceSection">Network reference</button>
         <button type="button" data-reference-jump="rolesSection">Roles</button>
-        <button type="button" data-reference-jump="splunkBinSection">Splunk bin</button>
       </div>
     </div>
 
@@ -3948,89 +3947,6 @@ INGEST PROCESSOR
         <thead><tr><th scope="col">Role</th><th scope="col">Platform</th><th scope="col">Capability</th><th scope="col">What it lets you do</th><th scope="col">Priv</th><th scope="col">Source / Notes</th></tr></thead>
         <tbody id="rolesTableBody"></tbody>
       </table>
-    </div>
-  </section>
-
-    <section id="splunkBinSection" class="reference-section">
-    <div class="patterns-hero">
-      <div>
-        <div class="eyebrow">Operational reference</div>
-        <h2>Splunk bin CLI Commands</h2>
-        <p>Common <code>splunk</code> CLI commands run from the platform's <code>bin/</code> directory -- forwarding, licensing, apps, inputs/<code>btool</code>, user administration and deployment. Search or filter by category, or export the visible commands.</p>
-        <p><strong>Note:</strong> commands shown with a placeholder in angle brackets (for example <code>&lt;name&gt;</code>) require a real value substituted in; run with <code>-auth &lt;user&gt;:&lt;password&gt;</code> or an active login session as appropriate for the instance.</p>
-      </div>
-    </div>
-
-    <div class="patterns-toolbar">
-      <input id="splunkBinTableSearch" type="search" placeholder="Search command or purpose…" aria-label="Search Splunk bin commands" />
-      <select id="splunkBinCategoryFilter" aria-label="Filter by category">
-        <option value="">All categories</option>
-      </select>
-      <div class="button-group">
-        <button id="resetSplunkBinTable" type="button">Reset</button>
-        <button id="exportSplunkBinTable" class="primary-button" type="button">Export visible CSV</button>
-      </div>
-    </div>
-
-    <div class="patterns-stats" aria-live="polite">
-      <span class="patterns-stat"><strong id="splunkBinVisibleCount">36</strong> visible commands</span>
-      <span class="patterns-stat"><strong id="splunkBinCategoryCount">11</strong> categories</span>
-    </div>
-
-    <div class="eccs-table-wrap" role="region" aria-label="Scrollable Splunk bin commands table" tabindex="0">
-      <table class="eccs-matrix">
-        <thead><tr><th scope="col">Command</th><th scope="col">Category</th><th scope="col">Purpose</th></tr></thead>
-        <tbody id="splunkBinTableBody"></tbody>
-      </table>
-    </div>
-    <div class="eccs-examples" style="margin-top:16px">
-      <details>
-        <summary>Complete CLI command reference (all verbs &amp; objects)</summary>
-        <div class="eccs-example-body">
-          <p>The full <code>splunk</code> command-line verb catalogue -- every top-level command, the objects it operates on, and worked examples. The searchable table above covers a curated day-to-day subset; this is the complete reference for less common verbs and objects.</p>
-          <div class="eccs-table-wrap" role="region" aria-label="Complete Splunk CLI command reference" tabindex="0"><table class="eccs-matrix" style="min-width:1100px"><thead><tr><th style="width:14%">Command</th><th style="width:28%">Objects</th><th>Examples</th></tr></thead><tbody>
-            <tr><td><code>add</code></td><td>exec, forward-server, index, licenser-pools, licenses, manager, monitor, oneshot, saved-search, search-server, tcp, udp, user</td><td>1. Adds monitor directory and file inputs to source /var/log.<br><code>./splunk add monitor /var/log/</code><br>2. Adds another indexer cluster manager node to the list of instances the search head searches across.<br><code>./splunk add cluster-manager https://127.0.0.1:8089 -secret testsecret -multisite false</code></td></tr>
-            <tr><td><code>anonymize</code></td><td>source</td><td>1. Replaces identifying data, such as usernames and IP addresses, in the file located at /tmp/messages.<br><code>./splunk anonymize file -source /tmp/messages</code><br>2. Anonymizes Mynames.txt using name-terms, a file containing a list of common English personal names.<br><code>./splunk anonymize file -source /tmp/messages -name_terms $SPLUNK_HOME/bin/Mynames.txt</code></td></tr>
-            <tr><td><code>apply</code></td><td>cluster-bundle, shcluster-bundle</td><td>1. Makes validated bundle active on peers.<br><code>./splunk apply cluster-bundle</code><br>2. Skip-validation is an optional argument to skip bundle validation on the indexer cluster manager and peers.<br><code>./splunk apply cluster-bundle --skip-validation</code><br>3. For shcluster-bundle examples, see Deploy a configuration bundle in the Distributed Search manual.</td></tr>
-            <tr><td><code>check-integrity</code></td><td>NONE</td><td>1. Verifies the integrity of an index with the optional parameter verbose.<br><code>./splunk check-integrity -index $SPLUNK_HOME/var/lib/splunk/defaultdb/ [-&lt;verbose&gt;]</code><br>2. Verifies the integrity of a bucket with the optional parameter verbose.<br><code>./splunk check-integrity -bucketPath $SPLUNK_HOME/var/lib/splunk/defaultdb/db/ [-&lt;verbose&gt;]</code></td></tr>
-            <tr><td><code>clean</code></td><td>all, eventdata, globaldata, inputdata, userdata, kvstore</td><td>1. Removes data from Splunk installation. eventdata refers to exported events indexed as raw log files.<br><code>./splunk clean eventdata</code><br>2. globaldata refers to host tags and source type aliases.<br><code>./splunk clean globaldata</code></td></tr>
-            <tr><td><code>cluster-manager-redundancy</code></td><td>NONE</td><td>1. Shows status of all the cluster managers in redundancy mode.<br><code>./splunk cluster-manager-redundancy -show-status</code><br>2. Switches HA mode of a cluster manager from standby to active.<br><code>./splunk cluster-manager-redundancy -switch-mode active</code><br>3. Switches HA mode of a cluster manager from active to standby. Consequently, another, currently standby cluster manager gets switched to active automatically.<br><code>./splunk cluster-manager-redundancy -switch-mode standby</code></td></tr>
-            <tr><td><code>cmd</code></td><td>btprobe, classify, locktest, locktool, pcregextest, searchtest, signtool, toCsv, toSrs, tsidxprobe, walklex</td><td>1. Displays the contents in the $SPLUNK_HOME/bin directory.<br><code>./splunk cmd /bin/ls</code><br>2. Runs the chosen command from the $SPLUNK_HOME/bin directory with the environment variables set. Run <code>splunk envvars</code> to see which environment variables are set.<br><code>./splunk cmd locktest</code></td></tr>
-            <tr><td><code>create</code></td><td>app</td><td>1. Builds myNewApp from a template.<br><code>./splunk create app myNewApp -template sample_app</code></td></tr>
-            <tr><td><code>createssl</code></td><td>NONE</td><td>&mdash;</td></tr>
-            <tr><td><code>diag</code></td><td>NONE</td><td>&mdash;</td></tr>
-            <tr><td><code>disable</code></td><td>app, boot-start, deploy-client, deploy-server, dist-search, index, listen, local-index, maintenance-mode, perfmon, webserver, web-ssl, wmi</td><td>1. Disables the maintenance mode on peers in indexer clustering. Must be invoked on the manager node.<br><code>./splunk disable maintenance-mode</code><br>2. Disables the logs1 collection.<br><code>./splunk disable eventlog logs1</code></td></tr>
-            <tr><td><code>display</code></td><td>app, boot-start, deploy-client, deploy-server, dist-search, jobs, listen, local-index</td><td>1. Displays status information, such as enabled/disabled, for all apps.<br><code>./splunk display app</code><br>2. Displays status information for the unix app.<br><code>./splunk display app unix</code></td></tr>
-            <tr><td><code>edit</code></td><td>app, cluster-config, shcluster-config, exec, index, licenser-localpeer, licenser-groups, monitor, saved-search, search-server, tcp, udp, user</td><td>1. Edits the current clustering configuration.<br><code>./splunk edit cluster-config -mode peer -site site2</code><br>2. Edits monitored directory inputs in /var/log and only reads from the end of this file.<br><code>./splunk edit monitor /var/log -follow-only true</code></td></tr>
-            <tr><td><code>enable</code></td><td>app, boot-start, deploy-client, deploy-server, dist-search, index, listen, local-index, maintenance-mode, perfmon, webserver, web-ssl, wmi</td><td>1. Sets the maintenance mode on peers in indexer clustering. Must be invoked on the manager node.<br><code>./splunk enable maintenance-mode</code><br>2. Enables the col1 collection.<br><code>./splunk enable perfmon col1</code></td></tr>
-            <tr><td><code>export</code></td><td>eventdata, user data</td><td>1. Exports data out of your Splunk server into /tmp/apache_raw_404_logs.<br><code>./splunk export eventdata -index my_apache_data -dir /tmp/apache_raw_404_logs -host localhost -terms "404 html"</code></td></tr>
-            <tr><td><code>fsck</code></td><td>repair, scan, clear-bloomfilter</td><td>&mdash;</td></tr>
-            <tr><td><code>help</code></td><td>NONE</td><td>&mdash;</td></tr>
-            <tr><td><code>import</code></td><td>userdata</td><td>1. Imports user accounts data from directory /tmp/export.dat.<br><code>./splunk import userdata -dir /tmp/export.dat</code></td></tr>
-            <tr><td><code>install</code></td><td>app</td><td>1. Installs the app from foo.tar to the local Splunk server.<br><code>./splunk install app foo.tar</code><br>2. Installs the app from foo.tgz to the local Splunk server.<br><code>./splunk install app foo.tgz</code></td></tr>
-            <tr><td><code>list</code></td><td>cluster-buckets, cluster-config, cluster-generation, cluster-peers, deploy-clients, excess-buckets, exec, forward-server, index, inputstatus, licenser-groups, licenser-localpeer, licenser-messages, licenser-pools, licenser-peers, licenser-stacks, licenses, jobs, manager-info, monitor, peer-info, peer-buckets, perfmon, saved-search, search-server, tcp, udp, user, wmi</td><td>1. Lists all active monitored directory and file inputs. This displays files and directories currently or recently monitored by splunkd for change.<br><code>./splunk list monitor</code><br>2. Lists all licenses across all stacks.<br><code>./splunk list licenses</code></td></tr>
-            <tr><td><code>login</code>, <code>logout</code></td><td>NONE</td><td>&mdash;</td></tr>
-            <tr><td><code>migrate</code></td><td>kvstore-storage-engine</td><td>1. Migrates the KV store to the target storage engine.<br><code>./splunk migrate kvstore-storage-engine --target-engine wiredTiger</code></td></tr>
-            <tr><td><code>offline</code></td><td>NONE</td><td>1. Used to shut down the peer in a way that does not affect existing searches. The manager node rearranges the primary peers for buckets, and fixes up the cluster state in case the enforce-counts flag is set.<br><code>./splunk offline</code><br>2. Because the --enforce-counts flag is used, the cluster is completely fixed up before this peer is taken down.<br><code>./splunk offline --enforce-counts</code></td></tr>
-            <tr><td><code>package</code></td><td>app</td><td>1. Packages the app "stubby" and returns the package location.<br><code>./splunk package app stubby</code><br><em>The package command includes local.meta by default. If your app package already contains local.meta, this fails AppInspect app validation -- use -merge-local-meta or -exclude-local-meta to avoid it.</em><br>2. When packaging the app, merges local.meta to default.meta and packages the resulting default.meta.<br><code>./splunk package app stubby -merge-local-meta true</code><br>3. When packaging the app, excludes local.meta from the app package.<br><code>./splunk package app stubby -exclude-local-meta true</code></td></tr>
-            <tr><td><code>rebalance</code></td><td>cluster-data</td><td>1. Rebalances data for all indexes.<br><code>./splunk rebalance cluster-data -action start</code><br>2. Rebalances data for a single index using the optional -index parameter.<br><code>./splunk rebalance cluster-data -action start -index _internal</code><br>3. Rebalances data using the optional -max_runtime parameter to limit the rebalancing activity to 5 minutes.<br><code>./splunk rebalance cluster-data -action start -max_runtime 5</code></td></tr>
-            <tr><td><code>rebuild</code></td><td>NONE</td><td>&mdash;</td></tr>
-            <tr><td><code>reload</code></td><td>ad, auth, deploy-server, exec, index, listen, monitor, registry, tcp, udp, perfmon, wmi</td><td>1. Reloads your deployment server, in entirety or by server class.<br><code>./splunk reload deploy-server</code><br>2. Reloads my_serverclass.<br><code>./splunk reload deploy-server -class my_serverclass</code><br>3. Reloads a specific index configuration. To reload all indexes, do not include an index name.<br><code>./splunk reload index [index_name]</code></td></tr>
-            <tr><td><code>remove</code></td><td>app, cluster-peers, cluster-manager, excess-buckets, exec, forward-server, index, jobs, licenser-pools, licenses, monitor, saved-search, search-server, tcp, udp, user</td><td>1. Removes the cluster manager node from the list of instances the search head searches across. Uses testsecret as the secret/pass4SymmKey.<br><code>./splunk remove cluster-manager https://127.0.0.1:8089 -secret testsecret</code><br>2. Removes the Unix app.<br><code>./splunk remove app unix</code></td></tr>
-            <tr><td><code>rollback</code></td><td>cluster-bundle</td><td>Rolls back your Splunk Web configuration bundle to your previous version. Run from the manager node:<br><code>./splunk rollback cluster-bundle</code></td></tr>
-            <tr><td><code>rolling-restart</code></td><td>cluster-peers, shcluster-members</td><td>&mdash;</td></tr>
-            <tr><td><code>rtsearch</code></td><td>app, batch, detach, earliest_time, header, id, index_earliest, index_latest, max_time, maxout, output, preview, rt_id, timeout, uri, wrap</td><td>1. Runs a real-time search that does not line-wrap for individual lines.<br><code>./splunk rtsearch 'error' -wrap false</code><br>2. Runs a real-time search. Use rtsearch exactly as you use the traditional search command.<br><code>./splunk rtsearch 'eventtype=webaccess error | top clientip'</code></td></tr>
-            <tr><td><code>search</code></td><td>app, batch, detach, earliest_time, header, id, index_earliest, index_latest, latest_time, max_time, maxout, output, preview, timeout, uri, wrap</td><td>1. Uses the wildcard as the search object. Triggers an asynchronous search and displays the job id and ttl for the search.<br><code>./splunk search '*' -detach true</code><br>2. Uses eventtype=webaccess error as the search object. Does not line wrap for individual lines longer than the terminal width.<br><code>./splunk search 'eventtype=webaccess error' -wrap 0</code></td></tr>
-            <tr><td><code>set</code></td><td>datastore-dir, deploy-poll, default-hostname, default-index, indexing-ready, minfreemb, servername, server-type, splunkd-port, web-port, kvstore-port</td><td>1. Sets the force indexing ready bit.<br><code>./splunk set indexing-ready</code><br>2. Sets bologna:1234 as the deployment server to poll updates from.<br><code>./splunk set deploy-poll bologna:1234</code></td></tr>
-            <tr><td><code>show</code></td><td>config, cluster-bundle-status, datastore-dir, deploy-poll, default-hostname, default-index, jobs, minfreemb, servername, splunkd-port, web-port, kvstore-port, kvstore-status, shcluster-kvmigration-status</td><td>1. Shows current logging levels.<br><code>./splunk show log-level</code><br>2. Shows which deployment server Splunk Enterprise is configured to poll from.<br><code>./splunk show deploy-poll</code></td></tr>
-            <tr><td><code>spool</code></td><td>NONE</td><td>&mdash;</td></tr>
-            <tr><td><code>start-shcluster-migration</code></td><td>kvstore</td><td>1. Migrate the KV store to the target storage engine in a clustered environment.<br><code>./splunk start-shcluster-migration kvstore -storageEngine wiredTiger</code><br>2. Check to see if the KV store is ready to migrate to the target storage engine.<br><code>./splunk start-shcluster-migration kvstore -storageEngine wiredTiger -isDryRun</code></td></tr>
-            <tr><td><code>start</code>, <code>stop</code>, <code>restart</code></td><td>splunkd, splunkweb</td><td>&mdash;</td></tr>
-            <tr><td><code>status</code></td><td>splunkd, splunkweb</td><td>Checks if splunkd is running and shows the PID.</td></tr>
-            <tr><td><code>validate</code></td><td>index, files, cluster-bundle</td><td>1. Validates the main index and verifies the index paths specified in indexes.conf.<br><code>./splunk validate index main</code><br>2. For files examples, see Check the integrity of your Splunk software files.<br>3. For cluster-bundle examples, see Update common peer configurations and apps in the Managing Indexers and Clusters of Indexers manual.</td></tr>
-          </tbody></table></div>
-        </div>
-      </details>
     </div>
   </section>
 
@@ -15657,72 +15573,6 @@ const rolesTableData = [
   {"Role": "mc_soar_proxy", "Platform": "Splunk SOAR", "Capability": "mc_delete_soar_assets", "What it lets you do": "Allows deletion of Splunk SOAR assets through Splunk Mission Control.", "Priv": "Y", "Source / Notes": "Added from supplied Splunk Mission Control role mapping"}
 ];
 
-const splunkBinTableColumns = ["Command", "Category", "Purpose"];
-const splunkBinTableData = [
-  {"Command": "splunk _internal call /authentication/providers/services/_reload", "Category": "User & Auth", "Purpose": "Reload authentication configurations (Splunk 6.x)"},
-  {"Command": "splunk _internal call /data/inputs/monitor/_reload", "Category": "Data Inputs", "Purpose": "Reload Splunk file input configuration"},
-  {"Command": "splunk _internal call /data/inputs/tcp/raw", "Category": "Data Inputs", "Purpose": "List TCP inputs"},
-  {"Command": "splunk _internal call /data/inputs/tcp/raw -get:search sourcetype=foo", "Category": "Data Inputs", "Purpose": "Restrict listing of TCP inputs to only those with a source type of foo"},
-  {"Command": "splunk _internal call /services/authentication/users -get:search admin", "Category": "User & Auth", "Purpose": "Search for all users who are admins"},
-  {"Command": "splunk _internal call /services/authentication/users -get:search indexes_edit", "Category": "User & Auth", "Purpose": "See which users could edit indexes"},
-  {"Command": "splunk _internal call /services/authentication/users/helpdesk -method DELETE", "Category": "User & Auth", "Purpose": "Delete the user helpdesk (use the remove link in the returned XML output)"},
-  {"Command": "splunk add forward-server hostname.domain:9997", "Category": "Forwarding", "Purpose": "Add Forward server"},
-  {"Command": "splunk add index <name>", "Category": "Indexing", "Purpose": "Splunk index add"},
-  {"Command": "splunk add licenses <filepath>", "Category": "Licensing", "Purpose": "Splunk license add"},
-  {"Command": "splunk add monitor /var/log/apache2/ -index web_logs", "Category": "Data Inputs", "Purpose": "Monitor a file or directory, indexing new content as it's written"},
-  {"Command": "splunk add role analyst -capability search -srchIndexesAllowed main,security", "Category": "User & Auth", "Purpose": "Create a custom role with specific capabilities and index access"},
-  {"Command": "splunk add search-server <scheme>://<host>:<port> -auth <user>:<password> -remoteUsername <user> -remotePassword <passremote>", "Category": "Distributed Search", "Purpose": "Add a distributed search peer for federated/distributed search"},
-  {"Command": "splunk add user john -password changeme -role user", "Category": "User & Auth", "Purpose": "Create a new user account with a specified role"},
-  {"Command": "splunk apply cluster-bundle", "Category": "Clustering", "Purpose": "Push the configuration bundle from the Cluster Manager to indexer cluster peers"},
-  {"Command": "splunk backup kvstore [-archiveName <archive>] [-collectionName <collection>] [-appName <app>]", "Category": "KV Store", "Purpose": "Back up KV Store data, optionally scoped to an archive name, collection or app"},
-  {"Command": "splunk btool --debug server list | grep shcluster", "Category": "btool", "Purpose": "Show server.conf settings with source file per setting, filtered to shcluster stanzas"},
-  {"Command": "splunk btool alert_actions list email --debug", "Category": "btool", "Purpose": "Show effective alert_actions.conf settings for the email stanza, with source file per setting"},
-  {"Command": "splunk btool check", "Category": "btool", "Purpose": "Check Splunk configuration syntax"},
-  {"Command": "splunk btool indexes list --debug | findstr [", "Category": "btool", "Purpose": "List indexes.conf stanza names (Windows findstr filtered to lines starting with '[')"},
-  {"Command": "splunk btool inputs list", "Category": "btool", "Purpose": "Splunk list inputs"},
-  {"Command": "splunk btool inputs list --debug | findstr splunktcp", "Category": "btool", "Purpose": "Show inputs.conf settings for splunktcp stanzas, with source file per setting (Windows findstr filter)"},
-  {"Command": "splunk btool inputs list monitor:///var/log", "Category": "btool", "Purpose": "Splunk disk configuration for input"},
-  {"Command": "splunk btool inputs list monitor:///var/log -debug", "Category": "btool", "Purpose": "Splunk disk configuration for input, with exact conf location"},
-  {"Command": "splunk btool macros list host_eventcount --debug", "Category": "btool", "Purpose": "Show effective macros.conf settings for the host_eventcount macro, with source file per setting"},
-  {"Command": "splunk btool outputs list --debug | grep discovery", "Category": "btool", "Purpose": "Show outputs.conf settings related to indexer discovery, with source file per setting"},
-  {"Command": "splunk clean eventdata -index test_index", "Category": "Indexing", "Purpose": "Remove all indexed data from the specified index -- irreversible"},
-  {"Command": "splunk clean kvstore --cluster", "Category": "KV Store", "Purpose": "Clear KV Store data across a KV Store cluster"},
-  {"Command": "splunk cmd btool inputs list --debug", "Category": "btool", "Purpose": "Show effective inputs.conf settings for all stanzas, with source file per setting"},
-  {"Command": "splunk cmd btool outputs list --debug", "Category": "btool", "Purpose": "Show effective outputs.conf settings for all stanzas, with source file per setting"},
-  {"Command": "splunk cmd btool props list --debug", "Category": "btool", "Purpose": "Show effective props.conf settings for all stanzas, with source file per setting"},
-  {"Command": "splunk cmd btool savedsearches list --debug", "Category": "btool", "Purpose": "Show effective savedsearches.conf settings for all stanzas, with source file per setting"},
-  {"Command": "splunk diag --collect=etc,log --days=7", "Category": "Diagnostics", "Purpose": "Generate a diagnostic bundle for a support case"},
-  {"Command": "splunk disable deploy-server", "Category": "Deployment", "Purpose": "Disable this instance's deployment server role"},
-  {"Command": "splunk disable listen -port <port> -auth <username>:<password>", "Category": "Forwarding", "Purpose": "Disable a receiving port (stop listening for forwarded data on that port)"},
-  {"Command": "splunk display app -name search", "Category": "Apps", "Purpose": "Show information about an installed app and its status"},
-  {"Command": "splunk edit licenser-localslave -master_uri https://192.168.86.56:8089", "Category": "Licensing", "Purpose": "Splunk point to license server"},
-  {"Command": "splunk edit user <locked user> -locked-out false -auth <admin:password>", "Category": "User & Auth", "Purpose": "Splunk unlock local user"},
-  {"Command": "splunk edit user john -password newpass -email john@company.com", "Category": "User & Auth", "Purpose": "Modify an existing user's password, roles or email"},
-  {"Command": "splunk edit user test_user -force-change-pass true -auth admin:changeme", "Category": "User & Auth", "Purpose": "Force a user to change their password at next login"},
-  {"Command": "splunk enable boot-start", "Category": "Startup", "Purpose": "Enable boot start"},
-  {"Command": "splunk enable deploy-server", "Category": "Deployment", "Purpose": "Enable this instance's deployment server role"},
-  {"Command": "splunk enable listen 9997", "Category": "Forwarding", "Purpose": "Indexer add 9997 receiver"},
-  {"Command": "splunk install app <path-to-appfile>", "Category": "Apps", "Purpose": "Splunk install app"},
-  {"Command": "splunk list forward-server", "Category": "Forwarding", "Purpose": "Test Splunk forwarder connection"},
-  {"Command": "splunk list index", "Category": "Indexing", "Purpose": "List all configured indexes with their paths and basic configuration"},
-  {"Command": "splunk list licenser-localslave", "Category": "Licensing", "Purpose": "List the configured license manager this instance points to"},
-  {"Command": "splunk list licenses", "Category": "Licensing", "Purpose": "Show your current license"},
-  {"Command": "splunk list monitor", "Category": "Data Inputs", "Purpose": "List all monitored file/directory inputs"},
-  {"Command": "splunk migrate input-csv /path/to/migration.csv", "Category": "Diagnostics", "Purpose": "Migrate configuration or data between Splunk versions"},
-  {"Command": "splunk reload deploy-server", "Category": "Deployment", "Purpose": "Reload the deployment server's serverclass.conf configuration"},
-  {"Command": "splunk remove app <path-to-appfile>", "Category": "Apps", "Purpose": "Splunk remove app"},
-  {"Command": "splunk remove user john", "Category": "User & Auth", "Purpose": "Delete a user account"},
-  {"Command": "splunk restart", "Category": "Startup", "Purpose": "Restart Splunk services -- equivalent to stop followed by start, typically after a config change"},
-  {"Command": "splunk set deploy-poll ds1.mycompany.com:8089", "Category": "Deployment", "Purpose": "Splunk point to deployment server"},
-  {"Command": "splunk show config inputs", "Category": "Data Inputs", "Purpose": "Display the effective configuration for a given .conf object (e.g. inputs)"},
-  {"Command": "splunk show kvstore-status", "Category": "KV Store", "Purpose": "Show KV Store cluster and member status"},
-  {"Command": "splunk show-decrypted --value \"Encrypted string\"", "Category": "User & Auth", "Purpose": "Decrypt a value encrypted with the instance's local secret (splunk.secret)"},
-  {"Command": "splunk start --accept-license", "Category": "Startup", "Purpose": "Start Splunk services (splunkd and Splunk Web), skipping the license prompt"},
-  {"Command": "splunk status", "Category": "Startup", "Purpose": "Check whether the splunkd and Splunk Web processes are running"},
-  {"Command": "splunk stop", "Category": "Startup", "Purpose": "Stop all Splunk services gracefully (splunkd and Splunk Web)"},
-  {"Command": "splunk stop && splunk enable webserver && splunk start", "Category": "Startup", "Purpose": "Stop Splunk, enable the web server, then start Splunk again -- restarts Splunk with Splunk Web enabled"},
-  {"Command": "splunk validate inputs", "Category": "Data Inputs", "Purpose": "Validate a configuration file for syntax errors"}
-];
 
 
 
@@ -17116,15 +16966,11 @@ const rolesRoleFilter = document.getElementById("rolesRoleFilter");
 const rolesPrivFilter = document.getElementById("rolesPrivFilter");
 const rolesPlatformFilter = document.getElementById("rolesPlatformFilter");
 const rolesCapabilityFilter = document.getElementById("rolesCapabilityFilter");
-const splunkBinTableBody = document.getElementById("splunkBinTableBody");
-const splunkBinTableSearch = document.getElementById("splunkBinTableSearch");
-const splunkBinCategoryFilter = document.getElementById("splunkBinCategoryFilter");
 let visibleLoggingPatternRows = [...loggingPatternTableData];
 let visibleHealthCheckRows = [...healthCheckTableData];
 let visibleSplunkPortsRows = [...splunkPortsTableData];
 let visibleNetworkFlowsRows = [...networkFlowsTableData];
 let visibleRolesRows = [...rolesTableData];
-let visibleSplunkBinRows = [...splunkBinTableData];
 
 
 const viabilityAssessmentData = [
@@ -18640,7 +18486,6 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
     if (location.hash === "#network-flows") { expandReferenceSection("networkReferenceSection"); setActiveNetRefView("flows"); }
     else if (location.hash === "#splunk-ports" || location.hash === "#network-reference") { expandReferenceSection("networkReferenceSection"); setActiveNetRefView("ports"); }
     else if (location.hash === "#roles") expandReferenceSection("rolesSection");
-    else if (location.hash === "#splunk-bin") expandReferenceSection("splunkBinSection");
   }
   if (updateHash && history.replaceState) {
     const hash = selected === "info"
@@ -18938,7 +18783,6 @@ const REFERENCE_COLLAPSIBLE_SECTIONS = [
   { id: "configFileReferences", title: "Configuration file reference" },
   { id: "networkReferenceSection", title: "Network reference" },
   { id: "rolesSection", title: "Roles" },
-  { id: "splunkBinSection", title: "Splunk bin" },
 ];
 function initCollapsibleReferenceSections() {
   REFERENCE_COLLAPSIBLE_SECTIONS.forEach(({ id, title }) => {
@@ -19260,7 +19104,6 @@ function pageNameFromHash() {
   if (location.hash === "#splunk-ports") return "reference";
   if (location.hash === "#network-flows") return "reference";
   if (location.hash === "#roles") return "reference";
-  if (location.hash === "#splunk-bin") return "reference";
   return "info";
 }
 
@@ -19452,51 +19295,6 @@ function exportVisibleRoles(event) {
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = "Splunk-Roles-Capabilities-Visible.csv";
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(link.href);
-  event.currentTarget.textContent = "Exported";
-  setTimeout(() => { if (event.currentTarget) event.currentTarget.textContent = "Export visible CSV"; }, 1400);
-}
-
-function splunkBinSearchText(row) {
-  return splunkBinTableColumns.map(column => row[column] || "").join(" ").toLowerCase();
-}
-
-function filteredSplunkBinRows() {
-  const query = splunkBinTableSearch.value.trim().toLowerCase();
-  const category = splunkBinCategoryFilter.value;
-  return splunkBinTableData.filter(row => {
-    if (query && !splunkBinSearchText(row).includes(query)) return false;
-    if (category && row["Category"] !== category) return false;
-    return true;
-  });
-}
-
-function renderSplunkBinTable() {
-  visibleSplunkBinRows = filteredSplunkBinRows();
-  if (!visibleSplunkBinRows.length) {
-    splunkBinTableBody.innerHTML = `<tr><td class="patterns-empty" colspan="${splunkBinTableColumns.length}">No commands match the current filters.</td></tr>`;
-  } else {
-    splunkBinTableBody.innerHTML = visibleSplunkBinRows.map(row => {
-      const cells = splunkBinTableColumns.map(column => `<td>${column === "Command" ? `<code>${escapeHtml(row[column])}</code>` : escapeHtml(row[column])}</td>`).join("");
-      return `<tr>${cells}</tr>`;
-    }).join("");
-  }
-  document.getElementById("splunkBinVisibleCount").textContent = String(visibleSplunkBinRows.length);
-  document.getElementById("splunkBinCategoryCount").textContent = String(new Set(visibleSplunkBinRows.map(row => row["Category"])).size);
-}
-
-function exportVisibleSplunkBin(event) {
-  const lines = [
-    splunkBinTableColumns.map(csvValue).join(","),
-    ...visibleSplunkBinRows.map(row => splunkBinTableColumns.map(column => csvValue(row[column])).join(","))
-  ];
-  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "Splunk-Bin-Commands-Visible.csv";
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -19820,15 +19618,6 @@ rolesColumnOrder
     rolesPrivFilter.appendChild(option);
   });
 renderRolesTable();
-[...new Set(splunkBinTableData.map(row => row["Category"]).filter(Boolean))]
-  .sort((a, b) => a.localeCompare(b))
-  .forEach(category => {
-    const option = document.createElement("option");
-    option.value = category;
-    option.textContent = category;
-    splunkBinCategoryFilter.appendChild(option);
-  });
-renderSplunkBinTable();
 renderSplunkPortsTable();
 renderNetworkFlowsTable();
 
@@ -19984,14 +19773,6 @@ document.getElementById("resetRolesTable").addEventListener("click", () => {
   renderRolesTable();
 });
 document.getElementById("exportRolesTable").addEventListener("click", exportVisibleRoles);
-splunkBinTableSearch.addEventListener("input", renderSplunkBinTable);
-splunkBinCategoryFilter.addEventListener("change", renderSplunkBinTable);
-document.getElementById("resetSplunkBinTable").addEventListener("click", () => {
-  splunkBinTableSearch.value = "";
-  splunkBinCategoryFilter.value = "";
-  renderSplunkBinTable();
-});
-document.getElementById("exportSplunkBinTable").addEventListener("click", exportVisibleSplunkBin);
 window.addEventListener("hashchange", () => setActivePage(pageNameFromHash(), false));
 
 advisorForm.addEventListener("submit", event => {
