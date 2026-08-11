@@ -19023,7 +19023,7 @@ const ONBOARDING_MAP_PHASES = [
 
 function renderOnboardingFlowMap() {
   const rows = ONBOARDING_MAP_ROWS;
-  const rowH = 30, pitch = 92, topPad = 20;
+  const rowH = 30, pitch = 92, topPad = 26;
   const nodeX = 30, nodeW = 232;
   const idxOf = {};
   rows.forEach((r, i) => { idxOf[r.id] = i; });
@@ -19042,26 +19042,21 @@ function renderOnboardingFlowMap() {
   const totalHeight = Math.max(mainColumnHeight, branchColumnHeight);
   const totalWidth = branchX + branchW + 16;
 
-  const PX_PER_CHAR_PER_PT = 0.564; // measured from rendered 800-weight SVG label text
   const phaseBands = ONBOARDING_MAP_PHASES.map((p, pi) => {
     const isLast = pi === ONBOARDING_MAP_PHASES.length - 1;
-    const top = yOf(idxOf[p.from]) - (pi === 0 ? 10 : 5);
+    const top = yOf(idxOf[p.from]) - 18;
     const bottom = isLast ? totalHeight - 6 : yOf(idxOf[p.to]) + rowH + 5;
     const height = bottom - top;
     const width = totalWidth - 8;
-    const midY = (top + bottom) / 2;
-    // size the vertical label to fit the band's own height, clamped to a legible range
-    const textBudget = height - 14;
-    const renderedCharCount = p.letter.length + 3 + p.short.length; // "X · " prefix included
-    const fitSize = textBudget / (renderedCharCount * PX_PER_CHAR_PER_PT);
-    const fontSize = Math.max(6.5, Math.min(9.5, fitSize));
+    // horizontal label sits over the node column only, clear of both the gate
+    // status text column (starts at statusX) and the row-badge text (right-
+    // aligned above the node) so none of the three ever collide
+    const labelX = nodeX + 4, labelY = top + 13;
     return `<g>
       <title>${escapeHtml(p.label)}</title>
       <rect x="4" y="${top}" width="${width}" height="${height}" rx="8" fill="${p.color}" />
       <rect x="4" y="${top}" width="4" height="${height}" fill="${p.tab}" />
-      <g transform="rotate(-90 13 ${midY})">
-        <text x="13" y="${midY}" text-anchor="middle" font-size="${fontSize.toFixed(1)}" font-weight="800" fill="${p.tab}" letter-spacing="0.2">${p.letter} &middot; ${escapeHtml(p.short)}</text>
-      </g>
+      <text x="${labelX}" y="${labelY}" text-anchor="start" font-size="11" font-weight="800" fill="${p.tab}" letter-spacing="0.2">${p.letter} &middot; ${escapeHtml(p.short)}</text>
     </g>`;
   }).join("");
 
