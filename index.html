@@ -15702,7 +15702,6 @@ const splunkBinTableData = [
   {"Command": "splunk enable boot-start", "Category": "Startup", "Purpose": "Enable boot start"},
   {"Command": "splunk enable deploy-server", "Category": "Deployment", "Purpose": "Enable this instance's deployment server role"},
   {"Command": "splunk enable listen 9997", "Category": "Forwarding", "Purpose": "Indexer add 9997 receiver"},
-  {"Command": "splunk export 'index=main' -output csv -filename results.csv", "Category": "Search & Export", "Purpose": "Export search results to a file (CSV/JSON/XML)"},
   {"Command": "splunk install app <path-to-appfile>", "Category": "Apps", "Purpose": "Splunk install app"},
   {"Command": "splunk list forward-server", "Category": "Forwarding", "Purpose": "Test Splunk forwarder connection"},
   {"Command": "splunk list index", "Category": "Indexing", "Purpose": "List all configured indexes with their paths and basic configuration"},
@@ -15714,7 +15713,6 @@ const splunkBinTableData = [
   {"Command": "splunk remove app <path-to-appfile>", "Category": "Apps", "Purpose": "Splunk remove app"},
   {"Command": "splunk remove user john", "Category": "User & Auth", "Purpose": "Delete a user account"},
   {"Command": "splunk restart", "Category": "Startup", "Purpose": "Restart Splunk services -- equivalent to stop followed by start, typically after a config change"},
-  {"Command": "splunk search 'index=main error' -earliest -1h", "Category": "Search & Export", "Purpose": "Run a search from the command line over a specified time range"},
   {"Command": "splunk set deploy-poll ds1.mycompany.com:8089", "Category": "Deployment", "Purpose": "Splunk point to deployment server"},
   {"Command": "splunk show config inputs", "Category": "Data Inputs", "Purpose": "Display the effective configuration for a given .conf object (e.g. inputs)"},
   {"Command": "splunk show kvstore-status", "Category": "KV Store", "Purpose": "Show KV Store cluster and member status"},
@@ -15725,6 +15723,7 @@ const splunkBinTableData = [
   {"Command": "splunk stop && splunk enable webserver && splunk start", "Category": "Startup", "Purpose": "Stop Splunk, enable the web server, then start Splunk again -- restarts Splunk with Splunk Web enabled"},
   {"Command": "splunk validate inputs", "Category": "Data Inputs", "Purpose": "Validate a configuration file for syntax errors"}
 ];
+
 
 
 
