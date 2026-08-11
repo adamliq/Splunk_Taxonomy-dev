@@ -18958,34 +18958,55 @@ const ONBOARDING_MAP_ROWS = [
   { id: "ob-opsready", label: "Operational readiness" },
   { id: "ob-socready", label: "SOC readiness" },
   { id: "ob-golive", label: "GO-LIVE", badge: "ACTIVE" },
-  { id: "ob-sustainment", label: "Log Sustainment" },
+  { id: "ob-sustainment", label: "Log Sustainment", note: "Value expires → loops back to Governance approval for re-approval" },
   { id: "ob-review90", label: "90-day value review" },
 ];
+// Each gate is a decision point that sits in the gap right after its stage.
+// "outcomes" lists only the exceptional branches (a plain pass-through down to
+// the next stage is implied and not listed); tone "stop" ends the flow, tone
+// "loop" sends it back to an earlier stage for rework.
 const ONBOARDING_MAP_GATES = [
   { after: "ob-candidate", label: "Platform Registered?" },
-  { after: "ob-viability", label: "Viability Decision", stop: "Not viable", selfLoop: true },
-  { after: "ob-worthiness", label: "Worthiness Decision", stop: "Not worth building" },
-  { after: "ob-connectivity", label: "Connectivity Succeeded?" },
-  { after: "ob-ingestion", label: "Ingestion Confirmed?" },
-  { after: "ob-quality", label: "Quality Gates Pass?" },
-  { after: "ob-preingest", label: "Overall Gate Result" },
-  { after: "ob-cybervalue", label: "Ingestion Decision", stop: "Reject" },
-  { after: "ob-implementation", label: "Build & Acceptance Result", selfLoop: true },
-  { after: "ob-governance", label: "Approval Decision", stop: "Rejected", selfLoop: true },
-  { after: "ob-opsready", label: "Operational Readiness Confirmed?" },
-  { after: "ob-socready", label: "SOC Ready?" },
-  { after: "ob-review90", label: "Retain / Filter / Retire Decision" },
-];
-const ONBOARDING_MAP_LOOPS = [
-  { from: "ob-connectivity", to: "ob-topology", label: "HOLD", lane: 4 },
-  { from: "ob-ingestion", to: "ob-build", label: "HOLD", lane: 1 },
-  { from: "ob-quality", to: "ob-build", label: "HOLD", lane: 2 },
-  { from: "ob-preingest", to: "ob-build", label: "HOLD", lane: 3 },
-  { from: "ob-opsready", to: "ob-implementation", label: "HOLD", lane: 4 },
-  { from: "ob-socready", to: "ob-build", label: "HOLD", lane: 5 },
-  { from: "ob-sustainment", to: "ob-governance", label: "EXPIRED", lane: 6, stageAnchor: true },
-  { from: "ob-review90", to: "ob-sustainment", label: "RETAIN", lane: 4 },
-  { from: "ob-review90", to: "ob-preingest", label: "FILTER", lane: 7 },
+  { after: "ob-viability", label: "Viability Decision", outcomes: [
+    { tone: "stop", text: "Fail → Stop: Not viable" },
+    { tone: "loop", text: "Rework → retry viability assessment" },
+  ] },
+  { after: "ob-worthiness", label: "Worthiness Decision", outcomes: [
+    { tone: "stop", text: "Fail → Stop: Not worth building" },
+  ] },
+  { after: "ob-connectivity", label: "Connectivity Succeeded?", outcomes: [
+    { tone: "loop", text: "Fail → Hold, return to Select pattern & topology" },
+  ] },
+  { after: "ob-ingestion", label: "Ingestion Confirmed?", outcomes: [
+    { tone: "loop", text: "Fail → Hold, return to Engineering build" },
+  ] },
+  { after: "ob-quality", label: "Quality Gates Pass?", outcomes: [
+    { tone: "loop", text: "Fail → Hold, return to Engineering build" },
+  ] },
+  { after: "ob-preingest", label: "Overall Gate Result", outcomes: [
+    { tone: "loop", text: "Fail → Hold, return to Engineering build" },
+  ] },
+  { after: "ob-cybervalue", label: "Ingestion Decision", outcomes: [
+    { tone: "stop", text: "Fail → Stop: Reject" },
+  ] },
+  { after: "ob-implementation", label: "Build & Acceptance Result", outcomes: [
+    { tone: "loop", text: "Fail → retry build & acceptance" },
+  ] },
+  { after: "ob-governance", label: "Approval Decision", outcomes: [
+    { tone: "stop", text: "Rejected → Stop" },
+    { tone: "loop", text: "Returned → retry approval" },
+  ] },
+  { after: "ob-opsready", label: "Operational Readiness Confirmed?", outcomes: [
+    { tone: "loop", text: "Fail → Hold, return to Log Implementation" },
+  ] },
+  { after: "ob-socready", label: "SOC Ready?", outcomes: [
+    { tone: "loop", text: "Fail → Hold, return to Engineering build" },
+  ] },
+  { after: "ob-review90", label: "Retain / Filter / Retire Decision", terminal: true, outcomes: [
+    { tone: "loop", text: "Retain → continue Log Sustainment" },
+    { tone: "loop", text: "Filter → return to Pre-ingest cyber-value gates" },
+    { tone: "stop", text: "Retire → Stop" },
+  ] },
 ];
 const ONBOARDING_MAP_BRANCH = [
   { id: "ob-detection", label: "Detection Engineering" },
@@ -19002,20 +19023,17 @@ const ONBOARDING_MAP_PHASES = [
 
 function renderOnboardingFlowMap() {
   const rows = ONBOARDING_MAP_ROWS;
-  const rowH = 30, pitch = 72, topPad = 20;
-  const laneSpacing = 16, gutterMargin = 22, gutterLanes = 7;
-  const gutterWidth = gutterMargin + gutterLanes * laneSpacing;
-  const nodeX = gutterWidth + 8, nodeW = 232;
+  const rowH = 30, pitch = 92, topPad = 20;
+  const nodeX = 30, nodeW = 232;
   const idxOf = {};
   rows.forEach((r, i) => { idxOf[r.id] = i; });
   const yOf = i => topPad + i * pitch;
   const halfGap = (pitch - rowH) / 2;
-  const gateByAfter = {};
-  ONBOARDING_MAP_GATES.forEach(g => { gateByAfter[g.after] = g; });
   // a gate sits in the gap after its stage; the terminal gate (after the last row) sits just below it
   const gateYOf = afterId => yOf(idxOf[afterId]) + rowH + halfGap;
 
-  const branchX = nodeX + nodeW + 76, branchW = 196;
+  const statusX = nodeX + nodeW + 16, statusWidth = 250;
+  const branchX = statusX + statusWidth + 40, branchW = 196;
   const sustIdx = idxOf["ob-sustainment"];
   const branchYs = ONBOARDING_MAP_BRANCH.map((b, i) => topPad + sustIdx * pitch + (i + 1) * pitch);
 
@@ -19054,7 +19072,8 @@ function renderOnboardingFlowMap() {
       <rect x="${nodeX}" y="${y}" width="${nodeW}" height="${rowH}" rx="7" fill="${fill}" />
       <text x="${nodeX + nodeW / 2}" y="${y + rowH / 2 + 4}" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">${escapeHtml(r.label)}</text>
       ${r.badge ? `<text x="${nodeX + nodeW - 8}" y="${y - 4}" text-anchor="end" font-size="9" fill="#166534" font-weight="700">${escapeHtml(r.badge)}</text>` : ""}
-    </g>`;
+    </g>
+    ${r.note ? `<text x="${nodeX + nodeW / 2}" y="${y + rowH + 13}" text-anchor="middle" font-size="7.6" fill="#c2410c" font-style="italic">${escapeHtml(r.note)}</text>` : ""}`;
   }).join("");
 
   let mainArrows = "";
@@ -19066,31 +19085,25 @@ function renderOnboardingFlowMap() {
   const lastGateY = gateYOf(rows[rows.length - 1].id);
   mainArrows += `<line x1="${nodeX + nodeW / 2}" y1="${yOf(rows.length - 1) + rowH}" x2="${nodeX + nodeW / 2}" y2="${lastGateY - 7}" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#obArrow)" />`;
 
+  // Each gate renders as a diamond plus a title + status text block placed just
+  // to its right -- title always shown, status lines cover every possible
+  // outcome of the decision (a plain pass-through is implied unless the gate
+  // is terminal, where every outcome is spelled out explicitly).
   const gateSize = 9;
+  const TONE_COLOR = { pass: "#475569", stop: "#b91c1c", loop: "#c2410c" };
   const gatesSvg = ONBOARDING_MAP_GATES.map(g => {
     const cx = nodeX + nodeW / 2, cy = gateYOf(g.after);
     const pts = `${cx},${cy - gateSize} ${cx + gateSize},${cy} ${cx},${cy + gateSize} ${cx - gateSize},${cy}`;
-    return `<g><title>Gate &middot; ${escapeHtml(g.label)}</title><polygon points="${pts}" fill="#fffbeb" stroke="#b45309" stroke-width="1.4" /></g>`;
-  }).join("");
-
-  const stopMarks = ONBOARDING_MAP_GATES.map(g => {
-    if (!g.stop) return "";
-    const y = gateYOf(g.after), x = nodeX + nodeW / 2 + gateSize + 16;
-    return `<circle cx="${x}" cy="${y}" r="7" fill="#fff" stroke="#b91c1c" stroke-width="1.5"/><text x="${x}" y="${y + 3}" text-anchor="middle" font-size="9" fill="#b91c1c" font-weight="800">&#215;</text><text x="${x + 12}" y="${y + 3}" font-size="8.5" fill="#b91c1c">${escapeHtml(g.stop)}</text>`;
-  }).join("");
-
-  const selfLoops = ONBOARDING_MAP_GATES.filter(g => g.selfLoop).map(g => {
-    const cy = gateYOf(g.after), x = nodeX + nodeW / 2 - gateSize;
-    return `<path d="M ${x} ${cy - 5} C ${x - 20} ${cy - 12}, ${x - 20} ${cy + 12}, ${x} ${cy + 5}" fill="none" stroke="#c2410c" stroke-width="1.3" marker-end="url(#obArrowOrange)" />`;
-  }).join("");
-
-  const crossLoops = ONBOARDING_MAP_LOOPS.map(l => {
-    const laneX = gutterMargin + (l.lane - 1) * laneSpacing;
-    const yFrom = l.stageAnchor ? (yOf(idxOf[l.from]) + rowH / 2) : gateYOf(l.from);
-    const yTo = yOf(idxOf[l.to]) + rowH / 2;
-    const midY = (yFrom + yTo) / 2;
-    return `<path d="M ${nodeX} ${yFrom} L ${laneX} ${yFrom} L ${laneX} ${yTo} L ${nodeX} ${yTo}" fill="none" stroke="#c2410c" stroke-width="1.3" marker-end="url(#obArrowOrange)" />
-      <text x="${laneX - 4}" y="${midY}" font-size="7.5" fill="#c2410c" text-anchor="middle" transform="rotate(-90 ${laneX - 4} ${midY})">${escapeHtml(l.label)}</text>`;
+    const lines = g.terminal ? [] : [{ tone: "pass", text: "Pass → continue" }];
+    (g.outcomes || []).forEach(o => lines.push(o));
+    const lineH = 10;
+    const totalLines = lines.length + 1; // +1 for the title line
+    const blockTop = cy - (totalLines * lineH) / 2 + lineH * 0.8;
+    const titleText = `<text x="${statusX}" y="${blockTop}" font-size="8.6" font-weight="700" fill="#1f2937">${escapeHtml(g.label)}</text>`;
+    const statusLines = lines.map((l, i) => `<text x="${statusX}" y="${blockTop + lineH * (i + 1)}" font-size="7.5" fill="${TONE_COLOR[l.tone]}">${escapeHtml(l.text)}</text>`).join("");
+    return `<g><title>Gate &middot; ${escapeHtml(g.label)}</title><polygon points="${pts}" fill="#fffbeb" stroke="#b45309" stroke-width="1.4" /></g>
+      ${titleText}
+      ${statusLines}`;
   }).join("");
 
   let branchPaths = "";
@@ -19112,17 +19125,13 @@ function renderOnboardingFlowMap() {
   return `<svg class="onboarding-flow-map-svg" viewBox="0 0 ${totalWidth} ${totalHeight}" width="${totalWidth}" height="${totalHeight}" role="img" aria-label="Onboarding flow map: click a stage to jump to its detail">
     <defs>
       <marker id="obArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
-      <marker id="obArrowOrange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/></marker>
       <marker id="obArrowPurple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7030a0"/></marker>
     </defs>
     ${phaseBands}
-    ${crossLoops}
-    ${selfLoops}
     ${mainArrows}
     ${gatesSvg}
     ${branchSvg}
     ${nodesSvg}
-    ${stopMarks}
   </svg>`;
 }
 function initOnboardingFlowMap() {
