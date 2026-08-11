@@ -15694,7 +15694,17 @@ const splunkBinTableData = [
   {"Command": "splunk clean kvstore --cluster", "Category": "KV Store", "Purpose": "Clear KV Store data across a KV Store cluster"},
   {"Command": "splunk show kvstore-status", "Category": "KV Store", "Purpose": "Show KV Store cluster and member status"},
   {"Command": "splunk add search-server <scheme>://<host>:<port> -auth <user>:<password> -remoteUsername <user> -remotePassword <passremote>", "Category": "Distributed Search", "Purpose": "Add a distributed search peer for federated/distributed search"},
-  {"Command": "splunk apply cluster-bundle", "Category": "Clustering", "Purpose": "Push the configuration bundle from the Cluster Manager to indexer cluster peers"}
+  {"Command": "splunk apply cluster-bundle", "Category": "Clustering", "Purpose": "Push the configuration bundle from the Cluster Manager to indexer cluster peers"},
+  {"Command": "splunk stop && splunk enable webserver && splunk start", "Category": "Startup", "Purpose": "Stop Splunk, enable the web server, then start Splunk again -- restarts Splunk with Splunk Web enabled"},
+  {"Command": "splunk btool check", "Category": "btool", "Purpose": "Check Splunk configuration syntax"},
+  {"Command": "splunk list licenses", "Category": "Licensing", "Purpose": "Show your current license"},
+  {"Command": "splunk _internal call /data/inputs/monitor/_reload", "Category": "Data Inputs", "Purpose": "Reload Splunk file input configuration"},
+  {"Command": "splunk _internal call /data/inputs/tcp/raw", "Category": "Data Inputs", "Purpose": "List TCP inputs"},
+  {"Command": "splunk _internal call /data/inputs/tcp/raw -get:search sourcetype=foo", "Category": "Data Inputs", "Purpose": "Restrict listing of TCP inputs to only those with a source type of foo"},
+  {"Command": "splunk _internal call /authentication/providers/services/_reload", "Category": "User & Auth", "Purpose": "Reload authentication configurations (Splunk 6.x)"},
+  {"Command": "splunk _internal call /services/authentication/users -get:search admin", "Category": "User & Auth", "Purpose": "Search for all users who are admins"},
+  {"Command": "splunk _internal call /services/authentication/users -get:search indexes_edit", "Category": "User & Auth", "Purpose": "See which users could edit indexes"},
+  {"Command": "splunk _internal call /services/authentication/users/helpdesk -method DELETE", "Category": "User & Auth", "Purpose": "Delete the user helpdesk (use the remove link in the returned XML output)"}
 ];
 
 
