@@ -2582,6 +2582,37 @@
     .sizing-result { margin-top:20px; }
     .sizing-result .eccs-table-wrap { margin-top:14px; }
     @media(max-width:640px){.sizing-toggle-btn{flex:1 1 100%}}
+    /* ---- S3 Cost & Size Calculator ---- */
+    .s3c-stat-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+    .s3c-stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 12px; color: var(--muted); box-shadow: var(--shadow); }
+    .s3c-stat-card strong { color: var(--primary); font-size: 17px; display: block; margin-bottom: 2px; }
+    .s3c-chart-wrap { background:#fff; border:1px solid var(--border); border-radius:10px; padding:10px; overflow-x:auto; }
+    .s3c-badge { display:inline-block; padding:3px 10px; border-radius:999px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.03em; }
+    .s3c-badge.excellent { background:#dcfce7; color:#166534; }
+    .s3c-badge.good { background:#dbeafe; color:#1d4ed8; }
+    .s3c-badge.moderate { background:#fef9c3; color:#854d0e; }
+    .s3c-badge.high { background:#ffedd5; color:#9a3412; }
+    .s3c-badge.severe { background:#fee2e2; color:#b91c1c; }
+    .s3c-driver-row { display:grid; grid-template-columns: 28px 1fr 2fr 50px; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border); }
+    .s3c-driver-rank { width:24px; height:24px; border-radius:50%; background:#eff6ff; color:#1d4ed8; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; }
+    .s3c-driver-info { display:flex; flex-direction:column; font-size:13px; }
+    .s3c-driver-info span { color:var(--muted); font-size:12px; }
+    .s3c-driver-bar-wrap { background:#eef2f7; border-radius:6px; height:10px; overflow:hidden; }
+    .s3c-driver-bar { background:#2F75B5; height:100%; border-radius:6px; }
+    .s3c-driver-pct { text-align:right; font-weight:700; font-size:12px; color:#334155; }
+    .s3c-tco-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; }
+    .s3c-tco-card h4 { margin:0 0 6px; font-size:14px; }
+    .s3c-tco-card p { margin:0 0 10px; font-size:12px; color:var(--muted); }
+    .s3c-tco-card strong { font-size:20px; color:#1e293b; }
+    .s3c-tco-card span { font-size:12px; color:var(--muted); }
+    .s3c-tco-total { border-color:#1e3a8a; background:#eff6ff; }
+    .s3c-total-row td { border-top:2px solid #334155; }
+    .s3c-saved-scenario { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 12px; border:1px solid var(--border); border-radius:8px; margin-bottom:8px; flex-wrap:wrap; }
+    #s3CalcPage .sizing-grid label strong { font-size:15px; color:#1e293b; }
+    @media print {
+      .main-menu, .page-tabs, .reference-jump, #s3cExportJson, #s3cExportCostCsv, #s3cExportCapacityCsv, #s3cExportScenarioCsv, #s3cExportMarkdown, #s3cPrintReport, #s3cImportFile, .method-actions { display:none !important; }
+      #s3CalcPage { display:block !important; }
+    }
     .framework-flow { display:grid; grid-template-columns: repeat(6,minmax(145px,1fr)); gap:10px; }
     .framework-step { position:relative; min-height:130px; padding:16px; border:1px solid var(--border); border-radius:14px; background:#fff; box-shadow:0 6px 18px rgba(15,23,42,.05); }
     .framework-step::after { content:'→'; position:absolute; right:-9px; top:50%; transform:translateY(-50%); color:#94a3b8; font-weight:900; z-index:2; }
@@ -3203,6 +3234,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
     <button id="showObjectTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="objectTaxonomyPage">Splunk Taxonomy</button>
     <button id="showAssessmentsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentsPage">Assessments</button>
     <button id="showSizingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="sizingCalculatorPage">Sizing calculator</button>
+    <button id="showS3CalcPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="s3CalcPage">S3 cost calculator</button>
     <button id="showReferencePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="referencePage">Reference</button>
     <button id="showPromptLibraryPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="promptLibraryPage">Prompt library</button>
     <button id="showCmeiPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cmeiPage">Framework</button>
@@ -8112,6 +8144,569 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
 
     <div class="method-actions"><button id="calculateIndexSizing" type="button">Calculate</button></div>
     <div id="sizingCalculatorResult" class="sizing-result" aria-live="polite"></div>
+  </section>
+
+  <section id="s3CalcPage" class="page-view reference-page" role="tabpanel" aria-labelledby="showS3CalcPage" hidden>
+    <div class="reference-hero">
+      <div class="eyebrow">Cost &amp; capacity planning</div>
+      <h2>Splunk Cloud &rarr; Ingest Processor &rarr; Amazon S3 &rarr; Federated Search Cost &amp; Size Calculator</h2>
+      <p>Models two distinct cost paths -- <strong>writing</strong> security telemetry from Splunk Cloud / Ingest Processor to Amazon S3, and <strong>searching</strong> that S3 data from Splunk Cloud using Federated Search -- plus a combined Total Cost of Ownership view. AWS region: Asia Pacific (Sydney), <code>ap-southeast-2</code>, data residency Australia.</p>
+      <div class="eccs-note"><strong>This is a planning tool, not a vendor quote.</strong> It runs entirely in your browser with no backend, no database and no live AWS/Splunk API calls. Every price is user-editable in <a href="#s3c-pricing" onclick="document.getElementById('s3c-pricing').scrollIntoView({behavior:'smooth'});return false;">Pricing Configuration</a> below -- default figures are illustrative examples only and must be verified against current <code>ap-southeast-2</code> and Splunk contract pricing before use in any purchasing or architecture decision.</p></div>
+      <div class="reference-jump">
+        <button type="button" onclick="document.getElementById('s3c-overview').scrollIntoView({behavior:'smooth'})">Overview</button>
+        <button type="button" onclick="document.getElementById('s3c-volume').scrollIntoView({behavior:'smooth'})">Data volume</button>
+        <button type="button" onclick="document.getElementById('s3c-ingest').scrollIntoView({behavior:'smooth'})">Ingest Processor</button>
+        <button type="button" onclick="document.getElementById('s3c-storage').scrollIntoView({behavior:'smooth'})">S3 storage</button>
+        <button type="button" onclick="document.getElementById('s3c-objects').scrollIntoView({behavior:'smooth'})">Object sizing</button>
+        <button type="button" onclick="document.getElementById('s3c-ancillary').scrollIntoView({behavior:'smooth'})">KMS / Glue / SQS / Transfer</button>
+        <button type="button" onclick="document.getElementById('s3c-search').scrollIntoView({behavior:'smooth'})">Federated Search</button>
+        <button type="button" onclick="document.getElementById('s3c-replication').scrollIntoView({behavior:'smooth'})">Replication</button>
+        <button type="button" onclick="document.getElementById('s3c-cost-summary').scrollIntoView({behavior:'smooth'})">Cost summary</button>
+        <button type="button" onclick="document.getElementById('s3c-capacity').scrollIntoView({behavior:'smooth'})">Capacity &amp; charts</button>
+        <button type="button" onclick="document.getElementById('s3c-scenarios').scrollIntoView({behavior:'smooth'})">Scenarios</button>
+        <button type="button" onclick="document.getElementById('s3c-projection').scrollIntoView({behavior:'smooth'})">Projection &amp; break-even</button>
+        <button type="button" onclick="document.getElementById('s3c-recommendations').scrollIntoView({behavior:'smooth'})">Recommendations</button>
+        <button type="button" onclick="document.getElementById('s3c-pricing').scrollIntoView({behavior:'smooth'})">Pricing config</button>
+        <button type="button" onclick="document.getElementById('s3c-export').scrollIntoView({behavior:'smooth'})">Export / Import</button>
+      </div>
+    </div>
+
+    <section id="s3c-overview" class="reference-section">
+      <div class="reference-section-heading"><div><h3>Overview &amp; design principles</h3></div></div>
+      <div class="sizing-grid">
+        <label>Scenario name<input type="text" data-s3c="meta.scenarioName" value="Baseline"></label>
+        <label>Currency<select data-s3c="meta.currency"><option value="AUD">AUD</option><option value="USD">USD</option></select></label>
+        <label>USD &rarr; AUD exchange rate<input type="number" min="0" step="0.01" data-s3c="meta.usdToAud" value="1.50"></label>
+        <label class="sizing-checkbox-label"><input type="checkbox" data-s3c="meta.showBothCurrencies"> Show both currencies on totals</label>
+      </div>
+      <div class="eccs-note" style="margin-top:14px"><strong>Ingest Processor &rarr; Sydney S3 cost is primarily driven by volume &times; retention, plus processing, routing and transfer.</strong><br><strong>Federated Search &rarr; Sydney S3 cost is primarily driven by search frequency &times; search breadth &times; data scanned.</strong></div>
+      <div class="sizing-grid" style="margin-top:14px">
+        <div><h4 style="margin:0 0 6px">Write-side optimisation</h4><p style="margin:0;font-size:13px;color:#475569">Optimise retention, compression, object size, S3 storage class, regional placement and replication.</p></div>
+        <div><h4 style="margin:0 0 6px">Read-side optimisation</h4><p style="margin:0;font-size:13px;color:#475569">Optimise partition pruning, time constraints, file layout, dataset selection, SPL search discipline, search frequency and bytes scanned.</p></div>
+      </div>
+      <div class="eccs-note" style="margin-top:14px"><strong>Security/SOC context.</strong> S3 is generally most economically attractive when data is retained extensively but searched relatively infrequently. High-value, frequently queried telemetry (real-time detections, correlation searches, ES risk/notables, dashboards, active investigations) may be more appropriate for Splunk indexing. S3/Federated Search may be more appropriate for long-term retention, historical investigations, compliance, hunting older telemetry, or lower-value/deferred telemetry. This calculator does not automatically recommend one architecture -- it calculates and compares.</div>
+      <div class="eccs-examples" style="margin-top:16px"><details><summary>Architecture diagram</summary><div class="eccs-example-body"><pre style="overflow-x:auto;font-size:12px;line-height:1.5;background:#0f172a;color:#e2e8f0;padding:16px;border-radius:10px">                         +----------------------+
+                         |     Data Source      |
+                         +----------+-----------+
+                                    | GB/day
+                                    v
+                        +-----------------------+
+                        |   Ingest Processor    |
+                        | Processing cost       |
+                        | Transformation cost   |
+                        | Routing entitlement   |
+                        +-----+-----------+-----+
+                    Indexed   |           | Archive
+                              v           v
+                   +----------------+  +-------------------+
+                   | Splunk Cloud   |  | Amazon S3          |
+                   | Ingest         |  | Sydney ap-southeast-2 |
+                   | Retention      |  | Storage / PUT / KMS|
+                   | Workload       |  | Transfer / Glue/SQS |
+                   +----------------+  +---------+----------+
+                                                  | Historical search
+                                                  v
+                                    +---------------------------+
+                                    |   Federated Search        |
+                                    | Splunk search workload    |
+                                    | S3 GET/LIST, data scanned |
+                                    | Glue/catalog, KMS         |
+                                    | Network transfer          |
+                                    +---------------------------+</pre></div></details></div>
+      <div class="eccs-examples" style="margin-top:10px"><details><summary>Calculation formulas used by this calculator</summary><div class="eccs-example-body">
+        <ul style="margin:0;padding-left:20px;line-height:1.9">
+          <li><code>Raw GB/year = Raw GB/day &times; 365</code></li>
+          <li><code>Compressed GB/day = Raw GB/day &times; Stored Percentage</code></li>
+          <li><code>Stored GB = Compressed GB/day &times; Retention Days</code></li>
+          <li><code>S3 Monthly Cost = Stored GB (per class) &times; Price per GB-month</code></li>
+          <li><code>Objects/day = Compressed MB/day &divide; Average Object MB</code></li>
+          <li><code>PUT Cost = (PUT Requests &divide; 1,000) &times; Request Price</code></li>
+          <li><code>Scanned GB/month = Searches/month &times; Average GB scanned/search</code></li>
+          <li><code>Effective Scan = Unoptimised Scan &times; (1 - Partition Pruning Efficiency)</code></li>
+          <li><code>Search Amplification Ratio = Bytes Scanned &divide; Bytes Returned</code></li>
+          <li><code>Total Cost = Splunk + S3 + Requests + KMS + Glue + SQS + Transfer + Search + Replication + Other</code></li>
+        </ul>
+      </div></details></div>
+    </section>
+
+    <section id="s3c-volume" class="reference-section">
+      <div class="reference-section-heading"><div><h3>Data volume, compression &amp; retention</h3><p>Example initial scenario: 500 GB/day raw, 365 days retention, 30% stored after compression &asymp; 182.5 TB raw retained / 54.75 TB compressed retained.</p></div></div>
+      <div class="sizing-grid">
+        <label>Volume input mode<select data-s3c="volume.inputMode"><option value="volume">Volume-driven (GB/day &rarr; events)</option><option value="events">Event-count-driven (EPS &rarr; GB/day)</option></select></label>
+        <label>Raw GB/day (user-entered if volume-driven)<input type="number" min="0" step="1" data-s3c="volume.rawGbDay" value="500"></label>
+        <label>Average event size (bytes)<input type="number" min="1" step="1" data-s3c="volume.avgEventBytes" value="500"></label>
+        <label>Events/second (user-entered if event-driven)<input type="number" min="0" step="1" data-s3c="volume.eventsPerSec" value="11574"></label>
+        <label>Peak multiplier (&times; average EPS)<input type="number" min="1" step="0.1" data-s3c="volume.peakMultiplier" value="2"></label>
+        <label>Number of data sources<input type="number" min="0" step="1" data-s3c="volume.numSources" value="10"></label>
+        <label>Number of sourcetypes<input type="number" min="0" step="1" data-s3c="volume.numSourcetypes" value="15"></label>
+        <label>Number of hosts<input type="number" min="0" step="1" data-s3c="volume.numHosts" value="200"></label>
+        <label>Number of tenants<input type="number" min="0" step="1" data-s3c="volume.numTenants" value="1"></label>
+        <label>Number of environments<input type="number" min="0" step="1" data-s3c="volume.numEnvironments" value="1"></label>
+      </div>
+      <div class="eccs-table-wrap" style="margin-top:14px"><table class="eccs-matrix">
+        <thead><tr><th>Calculated</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>GB/hour (raw)</td><td><span data-s3c-out="rawGbHour" data-s3c-fmt="num2"></span></td></tr>
+          <tr><td>GB/day (raw)</td><td><span data-s3c-out="rawGbDay" data-s3c-fmt="num1"></span></td></tr>
+          <tr><td>GB/month (raw)</td><td><span data-s3c-out="rawGbMonth" data-s3c-fmt="num1"></span></td></tr>
+          <tr><td>TB/month (raw)</td><td><span data-s3c-out="rawTbMonth" data-s3c-fmt="num2"></span></td></tr>
+          <tr><td>GB/year (raw)</td><td><span data-s3c-out="rawGbYear" data-s3c-fmt="num0"></span></td></tr>
+          <tr><td>TB/year (raw)</td><td><span data-s3c-out="rawTbYear" data-s3c-fmt="num2"></span></td></tr>
+          <tr><td>Events/hour</td><td><span data-s3c-out="eventsPerHour" data-s3c-fmt="int"></span></td></tr>
+          <tr><td>Events/day</td><td><span data-s3c-out="eventsPerDay" data-s3c-fmt="int"></span></td></tr>
+          <tr><td>Events/month</td><td><span data-s3c-out="eventsPerMonth" data-s3c-fmt="int"></span></td></tr>
+          <tr><td>Events/year</td><td><span data-s3c-out="eventsPerYear" data-s3c-fmt="int"></span></td></tr>
+          <tr><td>Peak EPS (avg &times; multiplier)</td><td><span data-s3c-out="peakEps" data-s3c-fmt="int"></span></td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="reference-section-heading" style="margin-top:20px"><div><h3>Compression</h3></div></div>
+      <div class="sizing-grid">
+        <label>Compression mode<select data-s3c="compression.mode">
+          <option value="none">No compression (100% stored)</option>
+          <option value="storedPercent" selected>Stored percentage (direct entry)</option>
+          <option value="ratio">Compression ratio (N:1)</option>
+          <option value="custom">Custom compressed GB/day</option>
+        </select></label>
+        <label>Stored percentage of raw (%)<input type="number" min="0" max="100" step="1" data-s3c="compression.storedPercent" value="30"></label>
+        <label>Compression ratio (N:1)<input type="number" min="0.01" step="0.1" data-s3c="compression.ratio" value="4"></label>
+        <label>Custom compressed GB/day<input type="number" min="0" step="1" data-s3c="compression.customGbDay" value="150"></label>
+      </div>
+      <div class="eccs-table-wrap" style="margin-top:14px"><table class="eccs-matrix">
+        <thead><tr><th>Calculated</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Resolved stored percentage</td><td><span data-s3c-out="storedPercent" data-s3c-fmt="pct"></span></td></tr>
+          <tr><td>Compressed GB/day (raw &times; stored %)</td><td><span data-s3c-out="compressedGbDay" data-s3c-fmt="num1"></span></td></tr>
+          <tr><td>Compressed GB/month</td><td><span data-s3c-out="compressedGbMonth" data-s3c-fmt="num1"></span></td></tr>
+          <tr><td>Compressed TB/month</td><td><span data-s3c-out="compressedTbMonth" data-s3c-fmt="num2"></span></td></tr>
+          <tr><td>Compressed GB/year</td><td><span data-s3c-out="compressedGbYear" data-s3c-fmt="num0"></span></td></tr>
+          <tr><td>Compressed TB/year</td><td><span data-s3c-out="compressedTbYear" data-s3c-fmt="num2"></span></td></tr>
+          <tr><td>Storage saved (raw &minus; compressed, GB/year)</td><td><span data-s3c-out="storageSavedGbYear" data-s3c-fmt="num0"></span></td></tr>
+          <tr><td>Percentage reduction</td><td><span data-s3c-out="compressionReductionPct" data-s3c-fmt="pct"></span></td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="reference-section-heading" style="margin-top:20px"><div><h3>Retention</h3></div></div>
+      <div class="sizing-grid">
+        <label>Retention (days)<input type="number" min="0" step="1" data-s3c="retention.days" value="365"></label>
+        <label>Presets<select id="s3cRetentionPreset">
+          <option value="">-- choose a preset --</option>
+          <option value="30">30 days</option><option value="60">60 days</option><option value="90">90 days</option>
+          <option value="180">180 days</option><option value="365">365 days</option><option value="730">2 years</option>
+          <option value="1095">3 years</option><option value="1825">5 years</option><option value="2555">7 years</option>
+        </select></label>
+      </div>
+      <div class="eccs-table-wrap" style="margin-top:14px"><table class="eccs-matrix">
+        <thead><tr><th>Calculated</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Stored GB (compressed GB/day &times; retention days)</td><td><span data-s3c-out="storedGb" data-s3c-fmt="num0"></span></td></tr>
+          <tr><td>Stored TB</td><td><span data-s3c-out="storedTb" data-s3c-fmt="num2"></span></td></tr>
+          <tr><td>Raw retained TB (uncompressed equivalent)</td><td><span data-s3c-out="rawRetainedTb" data-s3c-fmt="num2"></span></td></tr>
+          <tr><td>Average stored capacity (ramp-up average)</td><td><span data-s3c-out="avgStoredGb" data-s3c-fmt="num0"></span> GB</td></tr>
+          <tr><td>Monthly growth</td><td><span data-s3c-out="monthlyGrowthGb" data-s3c-fmt="num1"></span> GB/month</td></tr>
+          <tr><td>Annual growth</td><td><span data-s3c-out="annualGrowthTb" data-s3c-fmt="num2"></span> TB/year</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="s3c-ingest" class="reference-section">
+      <div class="reference-section-heading"><div><h3>Ingest Processor cost model</h3></div></div>
+      <div class="eccs-note">Splunk commercial licensing varies by subscription and contract. Confirm whether Ingest Processor entitlement is based on data processed, data delivered, workload, routing, or another commercial metric.</div>
+      <div class="sizing-grid" style="margin-top:14px">
+        <label>Cost model<select data-s3c="ingestProcessor.model">
+          <option value="perGb">Per GB processed</option>
+          <option value="workloadUnit">Per workload unit</option>
+          <option value="flat">Flat monthly subscription</option>
+          <option value="custom">Custom / manual monthly figure</option>
+        </select></label>
+        <label>Cost per GB (Pricing Config)<input type="number" min="0" step="0.001" data-s3c="ingestProcessor.costPerGb" value="0"></label>
+        <label>Workload units</label>
+        <input type="number" min="0" step="1" data-s3c="ingestProcessor.workloadUnits" value="0">
+        <label>Cost per workload unit<input type="number" min="0" step="0.01" data-s3c="ingestProcessor.costPerWorkloadUnit" value="0"></label>
+        <label>Flat monthly entitlement<input type="number" min="0" step="1" data-s3c="ingestProcessor.flatMonthly" value="0"></label>
+        <label>Contract discount (%)<input type="number" min="0" max="100" step="1" data-s3c="ingestProcessor.contractDiscountPct" value="0"></label>
+        <label>Custom/manual monthly cost<input type="number" min="0" step="1" data-s3c="ingestProcessor.customMonthlyCost" value="0"></label>
+      </div>
+      <div class="patterns-stats" style="margin-top:14px">
+        <span class="patterns-stat">Daily processing cost: <strong><span data-s3c-out="ingestProcessorDaily" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Monthly processing cost: <strong><span data-s3c-out="ingestProcessorMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Annual processing cost: <strong><span data-s3c-out="ingestProcessorAnnual" data-s3c-fmt="money"></span></strong></span>
+      </div>
+
+      <div class="reference-section-heading" style="margin-top:20px"><div><h3>Splunk indexed copy</h3><p>Toggle whether this data is <em>also</em> indexed in Splunk Cloud (Source &rarr; Ingest Processor &rarr; Splunk Index + S3) versus S3-only (Source &rarr; Ingest Processor &rarr; S3 only).</p></div></div>
+      <div class="sizing-grid">
+        <label class="sizing-checkbox-label"><input type="checkbox" data-s3c="splunkIndex.enabled"> Also index this data in Splunk Cloud</label>
+        <label>Percentage of total data indexed<input type="number" min="0" max="100" step="1" data-s3c="splunkIndex.indexedPercent" value="100"></label>
+        <label>Splunk cost per GB<input type="number" min="0" step="0.001" data-s3c="splunkIndex.costPerGb" value="0"></label>
+        <label>Workload cost (monthly)<input type="number" min="0" step="1" data-s3c="splunkIndex.workloadCost" value="0"></label>
+        <label>Splunk index retention (days)<input type="number" min="0" step="1" data-s3c="splunkIndex.retentionDaysIndex" value="90"></label>
+        <label>Other Splunk storage/entitlement charges (monthly)<input type="number" min="0" step="1" data-s3c="splunkIndex.otherMonthly" value="0"></label>
+      </div>
+      <div class="patterns-stats" style="margin-top:14px">
+        <span class="patterns-stat">Indexed GB/day at this %: <strong><span data-s3c-out="indexedGbDay" data-s3c-fmt="num1"></span></strong></span>
+        <span class="patterns-stat">Indexed stored GB: <strong><span data-s3c-out="indexedStoredGb" data-s3c-fmt="num0"></span></strong></span>
+        <span class="patterns-stat">Monthly Splunk indexing cost: <strong><span data-s3c-out="splunkIndexMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Annual Splunk indexing cost: <strong><span data-s3c-out="splunkIndexAnnual" data-s3c-fmt="money"></span></strong></span>
+      </div>
+      <div class="eccs-note" style="margin-top:12px">Use the <a href="#s3c-scenarios" onclick="document.getElementById('s3c-scenarios').scrollIntoView({behavior:'smooth'});return false;">Scenario Comparison</a> section below to see the financial impact of indexing 100%, 50%, 25% or 0% of this data side by side.</div>
+    </section>
+
+    <section id="s3c-storage" class="reference-section">
+      <div class="reference-section-heading"><div><h3>Amazon S3 storage &amp; lifecycle</h3><p>Region: Asia Pacific (Sydney), <code>ap-southeast-2</code>. Percentages should sum to 100% across the classes actually in use (a warning appears in Recommendations if they don't).</p></div></div>
+      <div class="eccs-table-wrap"><table class="eccs-matrix">
+        <thead><tr><th>Storage class</th><th>% of data stored</th><th>Cost / GB-month</th><th>Min duration (days)</th><th>Retrieval cost / GB</th></tr></thead>
+        <tbody id="s3cStorageClassBody"></tbody>
+      </table></div>
+      <div class="patterns-stats" style="margin-top:14px">
+        <span class="patterns-stat">Monthly S3 storage cost: <strong><span data-s3c-out="s3StorageMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Annual S3 storage cost: <strong><span data-s3c-out="s3StorageAnnual" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Cost / TB-month: <strong><span data-s3c-out="s3CostPerTbMonth" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Cost / TB-year: <strong><span data-s3c-out="s3CostPerTbYear" data-s3c-fmt="money"></span></strong></span>
+      </div>
+
+      <div class="reference-section-heading" style="margin-top:20px"><div><h3>Storage lifecycle modelling</h3></div></div>
+      <div class="sizing-grid">
+        <label class="sizing-checkbox-label"><input type="checkbox" data-s3c="lifecycle.enabled"> Enable lifecycle tiering (overrides the flat percentages above)</label>
+        <label>Tier 1 ends at day<input type="number" min="0" step="1" data-s3c="lifecycle.tier1Days" value="30"></label>
+        <label>Tier 1 class<select data-s3c="lifecycle.tier1Class"><option value="standard">S3 Standard</option><option value="intelligent">Intelligent-Tiering</option><option value="standardIa">Standard-IA</option></select></label>
+        <label>Tier 2 ends at day<input type="number" min="0" step="1" data-s3c="lifecycle.tier2Days" value="90"></label>
+        <label>Tier 2 class<select data-s3c="lifecycle.tier2Class"><option value="standardIa">Standard-IA</option><option value="oneZoneIa">One Zone-IA</option><option value="glacierIr">Glacier Instant Retrieval</option></select></label>
+        <label>Tier 3 ends at day<input type="number" min="0" step="1" data-s3c="lifecycle.tier3Days" value="365"></label>
+        <label>Tier 3 class<select data-s3c="lifecycle.tier3Class"><option value="glacierIr">Glacier Instant Retrieval</option><option value="glacierFr">Glacier Flexible Retrieval</option><option value="deepArchive">Glacier Deep Archive</option></select></label>
+        <label>Beyond tier 3, class<select data-s3c="lifecycle.tier4Class"><option value="deepArchive">Glacier Deep Archive</option><option value="glacierFr">Glacier Flexible Retrieval</option></select></label>
+      </div>
+      <div id="s3cLifecycleTable" style="margin-top:14px"></div>
+      <div class="eccs-note" style="margin-top:12px" id="s3cArchiveWarning">Federated Search may require immediate object access. Archive storage classes can introduce retrieval delay, retrieval charges, minimum storage duration, or restore requirements.</div>
+    </section>
+
+    <section id="s3c-objects" class="reference-section">
+      <div class="reference-section-heading"><div><h3>S3 object size &amp; PUT cost</h3></div></div>
+      <div class="sizing-grid">
+        <label>Target object size (MB)<select data-s3c="objectSize.targetMb">
+          <option value="1">1 MB</option><option value="10">10 MB</option><option value="32">32 MB</option>
+          <option value="64">64 MB</option><option value="128" selected>128 MB (example analytical range 128-512 MB, subject to validation)</option>
+          <option value="256">256 MB</option><option value="512">512 MB</option><option value="1024">1 GB</option>
+        </select></label>
+        <label>Buffer / flush interval (minutes)<input type="number" min="0" step="1" data-s3c="objectSize.bufferMinutes" value="5"></label>
+        <label>Parallel data sources<input type="number" min="1" step="1" data-s3c="objectSize.parallelSources" value="10"></label>
+        <label>PUT cost / 1,000 requests<input type="number" min="0" step="0.0001" data-s3c="s3Put.costPer1000" value="0.0054"></label>
+      </div>
+      <div class="patterns-stats" style="margin-top:14px">
+        <span class="patterns-stat">Objects/hour: <strong><span data-s3c-out="objectsPerHour" data-s3c-fmt="int"></span></strong></span>
+        <span class="patterns-stat">Objects/day: <strong><span data-s3c-out="objectsPerDay" data-s3c-fmt="int"></span></strong></span>
+        <span class="patterns-stat">Objects/month: <strong><span data-s3c-out="objectsPerMonth" data-s3c-fmt="int"></span></strong></span>
+        <span class="patterns-stat">Objects/year: <strong><span data-s3c-out="objectsPerYear" data-s3c-fmt="int"></span></strong></span>
+        <span class="patterns-stat">Small file risk: <strong data-s3c-out="smallFileRisk" data-s3c-fmt="raw" data-s3c-class="smallFileRiskClass" data-s3c-class-base="s3c-badge"></strong></span>
+      </div>
+      <div class="eccs-note" style="margin-top:12px">Excessive small files can increase S3 PUT/GET/LIST requests, Glue metadata, KMS operations, Federated Search startup overhead and partition management overhead. 128-512 MB is shown here as an example analytical object-size range, not a universally optimal figure -- validate against your own workload.</div>
+      <div class="patterns-stats" style="margin-top:14px">
+        <span class="patterns-stat">PUT requests/month: <strong><span data-s3c-out="putRequestsMonth" data-s3c-fmt="int"></span></strong></span>
+        <span class="patterns-stat">PUT requests/year: <strong><span data-s3c-out="putRequestsYear" data-s3c-fmt="int"></span></strong></span>
+        <span class="patterns-stat">Monthly PUT cost: <strong><span data-s3c-out="s3PutMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Annual PUT cost: <strong><span data-s3c-out="s3PutAnnual" data-s3c-fmt="money"></span></strong></span>
+      </div>
+    </section>
+
+    <section id="s3c-ancillary" class="reference-section">
+      <div class="reference-section-heading"><div><h3>S3 GET/LIST, KMS, Glue &amp; SQS</h3><p>Request- and metadata-level costs driven by Federated Search activity (configured in the next section).</p></div></div>
+      <h4>S3 GET &amp; LIST (Federated Search requests)</h4>
+      <div class="sizing-grid">
+        <label>Objects accessed/search<input type="number" min="0" step="1" data-s3c="s3GetList.objectsPerSearch" value="50"></label>
+        <label>GET requests/object accessed<input type="number" min="0" step="1" data-s3c="s3GetList.getsPerSearchObject" value="1"></label>
+        <label>LIST requests/search<input type="number" min="0" step="1" data-s3c="s3GetList.listsPerSearch" value="5"></label>
+        <label>GET cost / 1,000 requests<input type="number" min="0" step="0.0001" data-s3c="s3GetList.getCostPer1000" value="0.0004"></label>
+        <label>LIST cost / 1,000 requests<input type="number" min="0" step="0.0001" data-s3c="s3GetList.listCostPer1000" value="0.0054"></label>
+      </div>
+      <div class="patterns-stats" style="margin-top:12px">
+        <span class="patterns-stat">GETs/day: <strong><span data-s3c-out="getsPerDay" data-s3c-fmt="int"></span></strong></span>
+        <span class="patterns-stat">GETs/month: <strong><span data-s3c-out="getsPerMonth" data-s3c-fmt="int"></span></strong></span>
+        <span class="patterns-stat">LISTs/day: <strong><span data-s3c-out="listsPerDay" data-s3c-fmt="int"></span></strong></span>
+        <span class="patterns-stat">LISTs/month: <strong><span data-s3c-out="listsPerMonth" data-s3c-fmt="int"></span></strong></span>
+        <span class="patterns-stat">Monthly request cost: <strong><span data-s3c-out="s3GetListMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Annual request cost: <strong><span data-s3c-out="s3GetListAnnual" data-s3c-fmt="money"></span></strong></span>
+      </div>
+
+      <h4 style="margin-top:20px">AWS KMS</h4>
+      <div class="sizing-grid">
+        <label class="sizing-checkbox-label"><input type="checkbox" data-s3c="kms.enabled"> Use AWS KMS encryption (SSE-KMS)</label>
+        <label>KMS key monthly cost<input type="number" min="0" step="0.01" data-s3c="kms.keyMonthlyCost" value="1.00"></label>
+        <label>Cost / 10,000 API calls<input type="number" min="0" step="0.001" data-s3c="kms.costPer10000" value="0.03"></label>
+      </div>
+      <div class="patterns-stats" style="margin-top:12px">
+        <span class="patterns-stat">Monthly encrypt requests (from writes): <strong><span data-s3c-out="kmsEncryptMonth" data-s3c-fmt="int"></span></strong></span>
+        <span class="patterns-stat">Monthly decrypt requests (from search reads): <strong><span data-s3c-out="kmsDecryptMonth" data-s3c-fmt="int"></span></strong></span>
+        <span class="patterns-stat">Monthly KMS cost: <strong><span data-s3c-out="kmsMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Annual KMS cost: <strong><span data-s3c-out="kmsAnnual" data-s3c-fmt="money"></span></strong></span>
+      </div>
+
+      <h4 style="margin-top:20px">AWS Glue / metadata</h4>
+      <div class="sizing-grid">
+        <label class="sizing-checkbox-label"><input type="checkbox" data-s3c="glue.enabled"> Use Glue Data Catalog / crawler</label>
+        <label>Databases<input type="number" min="0" step="1" data-s3c="glue.numDatabases" value="1"></label>
+        <label>Tables<input type="number" min="0" step="1" data-s3c="glue.numTables" value="5"></label>
+        <label>New partitions/day<input type="number" min="0" step="1" data-s3c="glue.newPartitionsPerDay" value="24"></label>
+        <label>Crawler runs/day<input type="number" min="0" step="1" data-s3c="glue.crawlerRunsPerDay" value="0"></label>
+        <label>Crawler duration (minutes)<input type="number" min="0" step="1" data-s3c="glue.crawlerDurationMinutes" value="10"></label>
+        <label>Cost / DPU-hour<input type="number" min="0" step="0.01" data-s3c="glue.costPerDpuHour" value="0.44"></label>
+        <label>Catalog request cost / million<input type="number" min="0" step="0.01" data-s3c="glue.catalogRequestCostPerMillion" value="1.00"></label>
+        <label>Flat/custom monthly cost<input type="number" min="0" step="1" data-s3c="glue.flatMonthly" value="0"></label>
+      </div>
+      <div class="patterns-stats" style="margin-top:12px">
+        <span class="patterns-stat">New partitions/month: <strong><span data-s3c-out="newPartitionsMonth" data-s3c-fmt="int"></span></strong></span>
+        <span class="patterns-stat">Monthly Glue cost: <strong><span data-s3c-out="glueMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Annual Glue cost: <strong><span data-s3c-out="glueAnnual" data-s3c-fmt="money"></span></strong></span>
+      </div>
+
+      <h4 style="margin-top:20px">Amazon SQS</h4>
+      <div class="sizing-grid">
+        <label class="sizing-checkbox-label"><input type="checkbox" data-s3c="sqs.enabled"> Use SQS for object notifications / discovery</label>
+        <label>Messages/object<input type="number" min="0" step="1" data-s3c="sqs.messagesPerObject" value="1"></label>
+        <label>Requests/message<input type="number" min="0" step="1" data-s3c="sqs.requestsPerMessage" value="1"></label>
+        <label>Cost / million requests<input type="number" min="0" step="0.01" data-s3c="sqs.costPerMillion" value="0.40"></label>
+      </div>
+      <div class="patterns-stats" style="margin-top:12px">
+        <span class="patterns-stat">Requests/month: <strong><span data-s3c-out="sqsRequestsMonth" data-s3c-fmt="int"></span></strong></span>
+        <span class="patterns-stat">Requests/year: <strong><span data-s3c-out="sqsRequestsYear" data-s3c-fmt="int"></span></strong></span>
+        <span class="patterns-stat">Monthly SQS cost: <strong><span data-s3c-out="sqsMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Annual SQS cost: <strong><span data-s3c-out="sqsAnnual" data-s3c-fmt="money"></span></strong></span>
+      </div>
+
+      <h4 style="margin-top:20px">AWS data transfer</h4>
+      <p style="font-size:13px;color:#475569">Actual transfer treatment depends on Splunk Cloud hosting location, AWS region, service architecture, and whether data remains inside AWS, crosses regions, or crosses a cloud boundary. Not every byte scanned is assumed to leave S3/AWS -- bytes scanned, physically read, returned and transferred are tracked separately.</p>
+      <div class="sizing-grid">
+        <label>Write path: ingress cost/GB (Ingest Processor &rarr; Sydney)<input type="number" min="0" step="0.001" data-s3c="transfer.writeIngressCostPerGb" value="0"></label>
+        <label>Write path: Splunk egress cost/GB (if applicable)<input type="number" min="0" step="0.001" data-s3c="transfer.writeEgressCostPerGb" value="0"></label>
+        <label>Write path: cross-cloud transfer cost/GB<input type="number" min="0" step="0.001" data-s3c="transfer.crossCloudCostPerGb" value="0"></label>
+        <label>Search path transfer model<select data-s3c="transfer.searchTransferModel">
+          <option value="sameRegion">Same-region (stays inside ap-southeast-2)</option>
+          <option value="crossRegion">Cross-region transfer</option>
+          <option value="internet">Internet/cloud egress</option>
+        </select></label>
+        <label>Same-region transfer cost/GB<input type="number" min="0" step="0.001" data-s3c="transfer.searchSameRegionCostPerGb" value="0"></label>
+        <label>Cross-region transfer cost/GB<input type="number" min="0" step="0.001" data-s3c="transfer.searchCrossRegionCostPerGb" value="0.02"></label>
+        <label>Internet/cloud egress cost/GB<input type="number" min="0" step="0.001" data-s3c="transfer.searchInternetEgressCostPerGb" value="0.114"></label>
+      </div>
+      <div class="patterns-stats" style="margin-top:12px">
+        <span class="patterns-stat">Write-path transfer/month: <strong><span data-s3c-out="writeTransferMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Search-path transfer/month: <strong><span data-s3c-out="searchTransferMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Total transfer/month: <strong><span data-s3c-out="transferMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Total transfer/year: <strong><span data-s3c-out="transferAnnual" data-s3c-fmt="money"></span></strong></span>
+      </div>
+    </section>
+
+    <section id="s3c-search" class="reference-section">
+      <div class="reference-section-heading"><div><h3>Federated Search usage, partition pruning &amp; search amplification</h3></div></div>
+      <div class="sizing-grid">
+        <label>Searches/day<input type="number" min="0" step="1" data-s3c="federatedSearch.searchesPerDay" value="20"></label>
+        <label>% of searches targeting S3<input type="number" min="0" max="100" step="1" data-s3c="federatedSearch.pctSearchesTargetS3" value="100"></label>
+        <label>Average GB scanned/search (unoptimised)<input type="number" min="0" step="1" data-s3c="federatedSearch.avgGbScannedPerSearch" value="500"></label>
+        <label>Average GB returned/search<input type="number" min="0" step="0.001" data-s3c="federatedSearch.avgGbReturnedPerSearch" value="0.5"></label>
+        <label>Analysts<input type="number" min="0" step="1" data-s3c="federatedSearch.analysts" value="5"></label>
+        <label>Search workload cost/search<input type="number" min="0" step="0.001" data-s3c="federatedSearch.searchWorkloadCostPerSearch" value="0"></label>
+        <label>Federated Search entitlement (monthly)<input type="number" min="0" step="1" data-s3c="federatedSearch.entitlementMonthly" value="0"></label>
+        <label>Custom monthly Federated Search charge<input type="number" min="0" step="1" data-s3c="federatedSearch.customMonthly" value="0"></label>
+      </div>
+      <div class="patterns-stats" style="margin-top:14px">
+        <span class="patterns-stat">TB scanned/day: <strong><span data-s3c-out="tbScannedDay" data-s3c-fmt="num2"></span></strong></span>
+        <span class="patterns-stat">TB scanned/month: <strong><span data-s3c-out="tbScannedMonth" data-s3c-fmt="num2"></span></strong></span>
+        <span class="patterns-stat">TB scanned/year: <strong><span data-s3c-out="tbScannedYear" data-s3c-fmt="num1"></span></strong></span>
+        <span class="patterns-stat">TB returned/month: <strong><span data-s3c-out="tbReturnedMonth" data-s3c-fmt="num3"></span></strong></span>
+        <span class="patterns-stat">Cost/search: <strong><span data-s3c-out="costPerSearch" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Cost/analyst: <strong><span data-s3c-out="costPerAnalyst" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Monthly Federated Search cost: <strong><span data-s3c-out="federatedSearchMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Annual Federated Search cost: <strong><span data-s3c-out="federatedSearchAnnual" data-s3c-fmt="money"></span></strong></span>
+      </div>
+
+      <h4 style="margin-top:20px">Partitioning model</h4>
+      <p style="font-size:13px;color:#475569">Example partition layout: <code>s3://splunk-security-data/source=windows/sourcetype=wineventlog_security/year=2026/month=08/day=14/hour=08/</code></p>
+      <div class="sizing-grid">
+        <label>Partition pruning efficiency (%)<select data-s3c="partitioning.pruningEfficiencyPct">
+          <option value="0">0%</option><option value="25">25%</option><option value="50">50%</option>
+          <option value="75">75%</option><option value="90" selected>90%</option><option value="95">95%</option><option value="99">99%</option>
+        </select></label>
+      </div>
+      <div class="patterns-stats" style="margin-top:12px">
+        <span class="patterns-stat">Unoptimised scan/search: <strong><span data-s3c-out="unoptimisedScanGbSearch" data-s3c-fmt="num1"></span> GB</strong></span>
+        <span class="patterns-stat">Optimised (effective) scan/search: <strong><span data-s3c-out="effectiveScanGbSearch" data-s3c-fmt="num1"></span> GB</strong></span>
+        <span class="patterns-stat">Data avoided/search: <strong><span data-s3c-out="scanDataAvoidedGbSearch" data-s3c-fmt="num1"></span> GB</strong></span>
+        <span class="patterns-stat">Percentage reduction: <strong><span data-s3c-out="scanReductionPct" data-s3c-fmt="pct"></span></strong></span>
+      </div>
+
+      <h4 style="margin-top:20px">Search Amplification Ratio</h4>
+      <div class="patterns-stats">
+        <span class="patterns-stat">Bytes scanned/search: <strong><span data-s3c-out="bytesScannedPerSearch" data-s3c-fmt="num1"></span> GB</strong></span>
+        <span class="patterns-stat">Bytes returned/search: <strong><span data-s3c-out="bytesReturnedPerSearch" data-s3c-fmt="num3"></span> GB</strong></span>
+        <span class="patterns-stat">Amplification ratio: <strong><span data-s3c-out="amplificationRatio" data-s3c-fmt="int"></span>:1 (<span data-s3c-out="amplificationLabel" data-s3c-fmt="raw" data-s3c-class="amplificationClass" data-s3c-class-base="s3c-badge"></span>)</strong></span>
+      </div>
+      <div class="eccs-note" style="margin-top:12px">Thresholds (Excellent/Good/Moderate/Poor/Severe) are organisation-configurable engineering thresholds built into this tool's defaults, not universal industry standards. Use the ratio to identify potentially inefficient SPL, partitioning, data organisation, search time windows, or dataset selection.</div>
+
+      <h4 style="margin-top:20px">Search guardrail calculator</h4>
+      <div class="sizing-grid">
+        <label>Constrained search: GB scanned/search (bounded by earliest/latest, dataset, source, sourcetype, tenant, environment, year/month/day/hour)<input type="number" min="0" step="1" data-s3c="partitioning.constrainedGbPerSearch" value="200"></label>
+      </div>
+      <div id="s3cGuardrailOutput" style="margin-top:12px"></div>
+    </section>
+
+    <section id="s3c-replication" class="reference-section">
+      <div class="reference-section-heading"><div><h3>Replication</h3></div></div>
+      <div class="sizing-grid">
+        <label>Replication mode<select data-s3c="replication.mode">
+          <option value="none">No replication</option>
+          <option value="srr">Same Region Replication</option>
+          <option value="crr">Cross Region Replication</option>
+        </select></label>
+        <label>Replica percentage<input type="number" min="0" max="100" step="1" data-s3c="replication.replicaPercent" value="100"></label>
+        <label>Replication PUT cost / 1,000<input type="number" min="0" step="0.0001" data-s3c="replication.putCostPer1000" value="0.0054"></label>
+        <label>Replication data transfer cost/GB (CRR)<input type="number" min="0" step="0.001" data-s3c="replication.transferCostPerGb" value="0.02"></label>
+        <label>Secondary region storage cost/GB-month<input type="number" min="0" step="0.001" data-s3c="replication.secondaryStorageCostPerGbMonth" value="0.025"></label>
+      </div>
+      <div class="patterns-stats" style="margin-top:14px">
+        <span class="patterns-stat">Primary S3 storage cost/month: <strong><span data-s3c-out="primaryStorageMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Replica storage cost/month: <strong><span data-s3c-out="replicaStorageMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Replication request cost/month: <strong><span data-s3c-out="replicationPutMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Replication transfer cost/month: <strong><span data-s3c-out="replicationTransferMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Total replication overhead/month: <strong><span data-s3c-out="replicationMonthly" data-s3c-fmt="money"></span></strong></span>
+        <span class="patterns-stat">Total replication overhead/year: <strong><span data-s3c-out="replicationAnnual" data-s3c-fmt="money"></span></strong></span>
+      </div>
+      <div class="eccs-note" style="margin-top:12px">Primary S3 cost and resilience/replication overhead are kept separate above and in the Cost Summary breakdown -- replication is an overhead on top of primary storage, not a substitute for it.</div>
+    </section>
+
+    <section id="s3c-cost-summary" class="reference-section">
+      <div class="reference-section-heading"><div><h3>Cost summary</h3></div></div>
+      <div class="eccs-table-wrap"><table class="eccs-matrix">
+        <thead><tr><th>Category</th><th>Monthly</th><th>Annual</th><th>% of total</th></tr></thead>
+        <tbody id="s3cCostTableBody"></tbody>
+      </table></div>
+      <div class="sizing-grid" style="margin-top:16px">
+        <div class="s3c-tco-card"><h4>Write / Retention cost</h4><p>Ingest Processor &rarr; Sydney S3: processing, transfer, storage, PUT, KMS, metadata, lifecycle, replication.</p><strong><span data-s3c-out="writeMonthly" data-s3c-fmt="money"></span>/mo</strong><br><span><span data-s3c-out="writeAnnual" data-s3c-fmt="money"></span>/yr</span></div>
+        <div class="s3c-tco-card"><h4>Search cost</h4><p>Splunk Federated Search &rarr; Sydney S3: search workload, GET, LIST, KMS decrypt, metadata/catalog, retrieval, transfer.</p><strong><span data-s3c-out="searchMonthly" data-s3c-fmt="money"></span>/mo</strong><br><span><span data-s3c-out="searchAnnual" data-s3c-fmt="money"></span>/yr</span></div>
+        <div class="s3c-tco-card s3c-tco-total"><h4>Combined TCO</h4><p>Write + Retention + Search.</p><strong><span data-s3c-out="tcoMonthly" data-s3c-fmt="moneyBoth"></span>/mo</strong><br><span><span data-s3c-out="tcoAnnual" data-s3c-fmt="moneyBoth"></span>/yr</span></div>
+      </div>
+      <div class="sizing-grid" style="margin-top:16px">
+        <label>Cost / raw GB<strong><span data-s3c-out="costPerRawGb" data-s3c-fmt="money"></span></strong></label>
+        <label>Cost / stored GB<strong><span data-s3c-out="costPerStoredGb" data-s3c-fmt="money"></span></strong></label>
+        <label>Cost / TB retained<strong><span data-s3c-out="costPerTbRetained" data-s3c-fmt="money"></span></strong></label>
+        <label>Cost / million events<strong><span data-s3c-out="costPerMillionEvents" data-s3c-fmt="money"></span></strong></label>
+        <label>Cost / search<strong><span data-s3c-out="costPerSearchTotal" data-s3c-fmt="money"></span></strong></label>
+        <label>Cost / analyst<strong><span data-s3c-out="costPerAnalystTotal" data-s3c-fmt="money"></span></strong></label>
+        <label>Cost / datasource<strong><span data-s3c-out="costPerDatasource" data-s3c-fmt="money"></span></strong></label>
+        <label>Cost / year of retention<strong><span data-s3c-out="costPerYearRetention" data-s3c-fmt="money"></span></strong></label>
+      </div>
+      <h4 style="margin-top:20px">Cost drivers (ranked)</h4>
+      <div id="s3cCostDrivers"></div>
+    </section>
+
+    <section id="s3c-capacity" class="reference-section">
+      <div class="reference-section-heading"><div><h3>Capacity dashboard</h3></div></div>
+      <div id="s3cCapacityCards" class="s3c-stat-grid"></div>
+
+      <h4 style="margin-top:20px">Cost breakdown by category</h4>
+      <div class="s3c-chart-wrap" id="s3cChartCostBreakdown"></div>
+      <h4 style="margin-top:20px">Monthly cost trend, months 1-12</h4>
+      <div class="s3c-chart-wrap" id="s3cChartCostTrend"></div>
+      <h4 style="margin-top:20px">Storage growth over time</h4>
+      <div class="s3c-chart-wrap" id="s3cChartStorageGrowth"></div>
+      <h4 style="margin-top:20px">Raw vs compressed (TB/year)</h4>
+      <div class="s3c-chart-wrap" id="s3cChartRawVsCompressed"></div>
+      <h4 style="margin-top:20px">Scan efficiency (available vs scanned vs returned)</h4>
+      <div class="s3c-chart-wrap" id="s3cChartScanEfficiency"></div>
+      <h4 style="margin-top:20px">Cost by architecture scenario</h4>
+      <div class="s3c-chart-wrap" id="s3cChartArchitecture"></div>
+    </section>
+
+    <section id="s3c-scenarios" class="reference-section">
+      <div class="reference-section-heading"><div><h3>Scenario comparison</h3><p>Four named scenarios computed from the current inputs above, varying only the Splunk-indexed percentage and (for Scenario D) partition pruning efficiency.</p></div></div>
+      <div class="eccs-table-wrap"><table class="eccs-matrix">
+        <thead><tr><th>Scenario</th><th>Splunk indexed GB/day</th><th>Stored TB</th><th>Search TB/month</th><th>Monthly cost</th><th>Annual cost</th><th>3-year cost</th><th>5-year cost</th></tr></thead>
+        <tbody id="s3cScenarioBody"></tbody>
+      </table></div>
+    </section>
+
+    <section id="s3c-projection" class="reference-section">
+      <div class="reference-section-heading"><div><h3>Long-term cost projection</h3></div></div>
+      <div class="sizing-grid">
+        <label>Annual data growth (%)<input type="number" step="0.1" data-s3c="growth.annualDataGrowthPct" value="10"></label>
+        <label>Annual AWS price adjustment (%)<input type="number" step="0.1" data-s3c="growth.annualAwsPriceChangePct" value="0"></label>
+        <label>Annual Splunk price adjustment (%)<input type="number" step="0.1" data-s3c="growth.annualSplunkPriceChangePct" value="0"></label>
+        <label>Annual search growth (%)<input type="number" step="0.1" data-s3c="growth.annualSearchGrowthPct" value="10"></label>
+        <label>Annual analyst growth (%)<input type="number" step="0.1" data-s3c="growth.annualAnalystGrowthPct" value="0"></label>
+      </div>
+      <div class="eccs-table-wrap" style="margin-top:14px"><table class="eccs-matrix">
+        <thead><tr><th>Milestone</th><th>Annual cost at that year</th><th>Cumulative TCO</th></tr></thead>
+        <tbody id="s3cProjectionBody"></tbody>
+      </table></div>
+
+      <h4 style="margin-top:20px">Break-even analysis</h4>
+      <div class="sizing-grid">
+        <label>Splunk storage/index cost, $/GB-month<input type="number" min="0" step="0.001" data-s3c="breakEven.splunkCostPerGbMonth" value="0.30"></label>
+      </div>
+      <div id="s3cBreakEvenOutput" style="margin-top:12px"></div>
+    </section>
+
+    <section id="s3c-recommendations" class="reference-section">
+      <div class="reference-section-heading"><div><h3>Cost optimisation recommendations</h3><p>Automatically generated from the values entered above.</p></div></div>
+      <div id="s3cRecommendations"></div>
+
+      <h4 style="margin-top:20px">Assumptions register</h4>
+      <div class="eccs-table-wrap"><table class="eccs-matrix">
+        <thead><tr><th>Parameter</th><th>Value</th><th>Unit</th><th>Source</th><th>Entered/Calculated</th><th>Confidence</th></tr></thead>
+        <tbody id="s3cAssumptionsBody"></tbody>
+      </table></div>
+    </section>
+
+    <section id="s3c-pricing" class="reference-section">
+      <div class="reference-section-heading"><div><h3>Pricing configuration</h3><p>All unit prices used throughout this calculator, in one place. Defaults are illustrative examples only -- verify against current <code>ap-southeast-2</code> AWS pricing and your Splunk contract before use.</p></div></div>
+      <h4>Splunk</h4>
+      <div class="sizing-grid">
+        <label>Ingest Processor cost/GB<input type="number" min="0" step="0.001" data-s3c="ingestProcessor.costPerGb" value="0"></label>
+        <label>Ingest Processor cost/workload unit<input type="number" min="0" step="0.01" data-s3c="ingestProcessor.costPerWorkloadUnit" value="0"></label>
+        <label>Splunk indexed ingestion cost/GB<input type="number" min="0" step="0.001" data-s3c="splunkIndex.costPerGb" value="0"></label>
+        <label>Splunk Federated Search cost/search<input type="number" min="0" step="0.001" data-s3c="federatedSearch.searchWorkloadCostPerSearch" value="0"></label>
+        <label>Splunk Federated Search entitlement (monthly)<input type="number" min="0" step="1" data-s3c="federatedSearch.entitlementMonthly" value="0"></label>
+        <label>Custom Splunk monthly cost<input type="number" min="0" step="1" data-s3c="ingestProcessor.customMonthlyCost" value="0"></label>
+      </div>
+      <div class="eccs-note" style="margin-top:12px">Splunk pricing is never invented by this tool. Every figure above defaults to <strong>0</strong> until you enter a value sourced from your own Splunk quote or contract.</div>
+
+      <h4 style="margin-top:20px">AWS -- Sydney (ap-southeast-2)</h4>
+      <p style="font-size:13px;color:#475569">Storage-class prices are edited directly in the S3 storage table above. The fields below cover the remaining unit prices. <strong>Example figures only -- verify against the AWS Pricing Calculator for ap-southeast-2 before use.</strong></p>
+      <div class="eccs-table-wrap"><table class="eccs-matrix">
+        <thead><tr><th>Field</th><th>Unit</th><th>Current value</th><th>Source / notes</th><th>Last verified</th></tr></thead>
+        <tbody>
+          <tr><td>S3 PUT</td><td>$ / 1,000 requests</td><td><input type="number" min="0" step="0.0001" data-s3c="s3Put.costPer1000" value="0.0054" style="width:110px"></td><td><input type="text" placeholder="e.g. AWS Pricing Calculator, 2026-08" style="width:220px"></td><td><input type="date"></td></tr>
+          <tr><td>S3 GET</td><td>$ / 1,000 requests</td><td><input type="number" min="0" step="0.0001" data-s3c="s3GetList.getCostPer1000" value="0.0004" style="width:110px"></td><td><input type="text" style="width:220px"></td><td><input type="date"></td></tr>
+          <tr><td>S3 LIST</td><td>$ / 1,000 requests</td><td><input type="number" min="0" step="0.0001" data-s3c="s3GetList.listCostPer1000" value="0.0054" style="width:110px"></td><td><input type="text" style="width:220px"></td><td><input type="date"></td></tr>
+          <tr><td>KMS key</td><td>$ / key / month</td><td><input type="number" min="0" step="0.01" data-s3c="kms.keyMonthlyCost" value="1.00" style="width:110px"></td><td><input type="text" style="width:220px"></td><td><input type="date"></td></tr>
+          <tr><td>KMS requests</td><td>$ / 10,000 calls</td><td><input type="number" min="0" step="0.001" data-s3c="kms.costPer10000" value="0.03" style="width:110px"></td><td><input type="text" style="width:220px"></td><td><input type="date"></td></tr>
+          <tr><td>Glue crawler</td><td>$ / DPU-hour</td><td><input type="number" min="0" step="0.01" data-s3c="glue.costPerDpuHour" value="0.44" style="width:110px"></td><td><input type="text" style="width:220px"></td><td><input type="date"></td></tr>
+          <tr><td>SQS requests</td><td>$ / million</td><td><input type="number" min="0" step="0.01" data-s3c="sqs.costPerMillion" value="0.40" style="width:110px"></td><td><input type="text" style="width:220px"></td><td><input type="date"></td></tr>
+          <tr><td>Cross-region transfer</td><td>$ / GB</td><td><input type="number" min="0" step="0.001" data-s3c="transfer.searchCrossRegionCostPerGb" value="0.02" style="width:110px"></td><td><input type="text" style="width:220px"></td><td><input type="date"></td></tr>
+          <tr><td>Internet/cloud egress</td><td>$ / GB</td><td><input type="number" min="0" step="0.001" data-s3c="transfer.searchInternetEgressCostPerGb" value="0.114" style="width:110px"></td><td><input type="text" style="width:220px"></td><td><input type="date"></td></tr>
+          <tr><td>Replication (CRR) transfer</td><td>$ / GB</td><td><input type="number" min="0" step="0.001" data-s3c="replication.transferCostPerGb" value="0.02" style="width:110px"></td><td><input type="text" style="width:220px"></td><td><input type="date"></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="s3c-export" class="reference-section">
+      <div class="reference-section-heading"><div><h3>Export / Import &amp; scenario management</h3></div></div>
+      <div class="method-actions">
+        <button type="button" id="s3cExportJson">Export full assessment (JSON)</button>
+        <button type="button" id="s3cExportCostCsv">Export cost summary (CSV)</button>
+        <button type="button" id="s3cExportCapacityCsv">Export capacity summary (CSV)</button>
+        <button type="button" id="s3cExportScenarioCsv">Export scenario comparison (CSV)</button>
+        <button type="button" id="s3cExportMarkdown">Export Markdown report</button>
+        <button type="button" id="s3cPrintReport">Printable report</button>
+      </div>
+      <div class="sizing-grid" style="margin-top:14px">
+        <label>Import a previously exported JSON configuration<input type="file" id="s3cImportFile" accept="application/json"></label>
+      </div>
+      <div class="method-actions" style="margin-top:14px">
+        <button type="button" id="s3cSaveScenario">Save current inputs as a named scenario</button>
+        <button type="button" id="s3cResetDefaults">Reset to defaults (example scenario)</button>
+      </div>
+      <h4 style="margin-top:16px">Saved scenarios (this browser)</h4>
+      <div id="s3cSavedScenarioList"></div>
+      <div class="eccs-note" style="margin-top:14px">Values, saved scenarios and pricing persist in this browser's local storage. Nothing is sent to a server -- clearing browser data or using a different browser/device will not carry saved scenarios across.</div>
+    </section>
   </section>
 
 
@@ -16980,6 +17575,7 @@ const pageTabs = {
   objectTaxonomy: document.getElementById("showObjectTaxonomyPage"),
   assessments: document.getElementById("showAssessmentsPage"),
   sizing: document.getElementById("showSizingPage"),
+  s3calc: document.getElementById("showS3CalcPage"),
   reference: document.getElementById("showReferencePage"),
   prompts: document.getElementById("showPromptLibraryPage"),
   cmei: document.getElementById("showCmeiPage"),
@@ -16995,6 +17591,7 @@ const pageViews = {
   objectTaxonomy: document.getElementById("objectTaxonomyPage"),
   assessments: document.getElementById("assessmentsPage"),
   sizing: document.getElementById("sizingCalculatorPage"),
+  s3calc: document.getElementById("s3CalcPage"),
   reference: document.getElementById("referencePage"),
   prompts: document.getElementById("promptLibraryPage"),
   cmei: document.getElementById("cmeiPage"),
@@ -18528,7 +19125,7 @@ function exportViabilityCalculator(event) {
 }
 
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "externalTools"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "externalTools"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#file-mon-/.test(location.hash) ? "file-monitoring-profile" : /^#rest-api-/.test(location.hash) ? "rest-api-collection-profile" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : /^#eda-/.test(location.hash) ? "eda-playbook" : "");
   
@@ -18559,6 +19156,8 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
         ? "#assessments"
         : selected === "sizing"
           ? "#sizing-calculator"
+        : selected === "s3calc"
+          ? "#s3-calculator"
         : selected === "reference"
           ? "#reference"
         : selected === "prompts"
@@ -19149,6 +19748,7 @@ function pageNameFromHash() {
   if (location.hash === "#taxonomy") return "taxonomy";
   if (location.hash === "#object-taxonomy") return "objectTaxonomy";
   if (location.hash === "#assessments") return "assessments";
+  if (location.hash === "#s3-calculator") return "s3calc";
   if (location.hash === "#reference") return "reference";
   if (/^#eccs-/.test(location.hash)) return "reference";
   if (/^#novelty-/.test(location.hash)) return "reference";
@@ -20223,6 +20823,1088 @@ renderLoggingPatternTable();
 renderHealthCheckTable();
 initCollapsibleReferenceSections();
 initOnboardingFlowMap();
+
+/* =========================================================================
+   S3 Cost & Size Calculator (Splunk Cloud -> Ingest Processor -> S3 -> Federated Search)
+   Self-contained module. All state lives under S3C. No external dependencies.
+   This is a planning/estimation tool -- not a vendor quote. All prices are
+   user-editable and must be validated against current AWS/Splunk pricing.
+   ========================================================================= */
+
+function s3cDefaultState() {
+  return {
+    meta: { scenarioName: "Baseline", currency: "AUD", usdToAud: 1.50, showBothCurrencies: false },
+    volume: {
+      inputMode: "volume",
+      rawGbDay: 500,
+      eventsPerSec: 11574,
+      avgEventBytes: 500,
+      peakMultiplier: 2,
+      numSources: 10,
+      numSourcetypes: 15,
+      numHosts: 200,
+      numTenants: 1,
+      numEnvironments: 1
+    },
+    compression: { mode: "storedPercent", storedPercent: 30, ratio: 4, customGbDay: 150 },
+    retention: { days: 365 },
+    ingestProcessor: {
+      model: "perGb", costPerGb: 0, workloadUnits: 0, costPerWorkloadUnit: 0,
+      flatMonthly: 0, contractDiscountPct: 0, customMonthlyCost: 0
+    },
+    splunkIndex: {
+      enabled: false, indexedPercent: 100, costPerGb: 0, workloadCost: 0,
+      retentionDaysIndex: 90, otherMonthly: 0
+    },
+    s3Storage: {
+      classes: [
+        { id: "standard", name: "S3 Standard", pctOfData: 100, costPerGbMonth: 0.025, minDurationDays: 0, retrievalPerGb: 0, transitionPer1000: 0 },
+        { id: "intelligent", name: "S3 Intelligent-Tiering", pctOfData: 0, costPerGbMonth: 0.025, minDurationDays: 0, retrievalPerGb: 0, transitionPer1000: 0 },
+        { id: "standardIa", name: "S3 Standard-IA", pctOfData: 0, costPerGbMonth: 0.019, minDurationDays: 30, retrievalPerGb: 0.01, transitionPer1000: 0.01 },
+        { id: "oneZoneIa", name: "S3 One Zone-IA", pctOfData: 0, costPerGbMonth: 0.0152, minDurationDays: 30, retrievalPerGb: 0.01, transitionPer1000: 0.01 },
+        { id: "glacierIr", name: "Glacier Instant Retrieval", pctOfData: 0, costPerGbMonth: 0.006, minDurationDays: 90, retrievalPerGb: 0.03, transitionPer1000: 0.02 },
+        { id: "glacierFr", name: "Glacier Flexible Retrieval", pctOfData: 0, costPerGbMonth: 0.0045, minDurationDays: 90, retrievalPerGb: 0.01, transitionPer1000: 0.03 },
+        { id: "deepArchive", name: "Glacier Deep Archive", pctOfData: 0, costPerGbMonth: 0.002, minDurationDays: 180, retrievalPerGb: 0.02, transitionPer1000: 0.05 },
+        { id: "custom", name: "Custom storage class", pctOfData: 0, costPerGbMonth: 0.025, minDurationDays: 0, retrievalPerGb: 0, transitionPer1000: 0 }
+      ]
+    },
+    lifecycle: {
+      enabled: false,
+      tier1Days: 30, tier1Class: "standard",
+      tier2Days: 90, tier2Class: "standardIa",
+      tier3Days: 365, tier3Class: "glacierIr",
+      tier4Class: "deepArchive"
+    },
+    objectSize: { targetMb: 128, bufferMinutes: 5, parallelSources: 10 },
+    s3Put: { costPer1000: 0.0054, lifecycleCostPer1000: 0.0054 },
+    s3GetList: {
+      objectsPerSearch: 50, getsPerSearchObject: 1, listsPerSearch: 5,
+      getCostPer1000: 0.0004, listCostPer1000: 0.0054
+    },
+    kms: { enabled: true, keyMonthlyCost: 1.00, costPer10000: 0.03 },
+    glue: {
+      enabled: true, numDatabases: 1, numTables: 5, newPartitionsPerDay: 24,
+      crawlerRunsPerDay: 0, crawlerDurationMinutes: 10, costPerDpuHour: 0.44,
+      catalogRequestCostPerMillion: 1.00, flatMonthly: 0
+    },
+    sqs: { enabled: false, messagesPerObject: 1, requestsPerMessage: 1, costPerMillion: 0.40 },
+    transfer: {
+      writeIngressCostPerGb: 0, writeEgressCostPerGb: 0, crossCloudCostPerGb: 0,
+      searchSameRegionCostPerGb: 0, searchCrossRegionCostPerGb: 0.02, searchInternetEgressCostPerGb: 0.114,
+      searchTransferModel: "sameRegion"
+    },
+    federatedSearch: {
+      searchesPerDay: 20, avgGbScannedPerSearch: 500, avgGbReturnedPerSearch: 0.5,
+      analysts: 5, searchWorkloadCostPerSearch: 0, entitlementMonthly: 0, customMonthly: 0,
+      pctSearchesTargetS3: 100
+    },
+    partitioning: { pruningEfficiencyPct: 90, constrainedGbPerSearch: 200 },
+    replication: {
+      mode: "none", replicaPercent: 100, putCostPer1000: 0.0054,
+      transferCostPerGb: 0.02, secondaryStorageCostPerGbMonth: 0.025
+    },
+    growth: {
+      annualDataGrowthPct: 10, annualAwsPriceChangePct: 0, annualSplunkPriceChangePct: 0,
+      annualSearchGrowthPct: 10, annualAnalystGrowthPct: 0
+    },
+    breakEven: { splunkCostPerGbMonth: 0.30 }
+  };
+}
+
+const S3C = { state: s3cDefaultState(), results: null };
+
+/* ---------- path helpers ---------- */
+function s3cGetPath(obj, path) {
+  return path.split(".").reduce((o, k) => (o == null ? o : o[k]), obj);
+}
+function s3cSetPath(obj, path, val) {
+  const parts = path.split(".");
+  let cur = obj;
+  for (let i = 0; i < parts.length - 1; i++) cur = cur[parts[i]];
+  cur[parts[parts.length - 1]] = val;
+}
+
+/* ---------- formatting ---------- */
+function s3cNum(n, dp) {
+  if (!isFinite(n)) return "0";
+  const d = dp == null ? 2 : dp;
+  return Number(n).toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
+}
+function s3cInt(n) {
+  if (!isFinite(n)) return "0";
+  return Math.round(n).toLocaleString();
+}
+function s3cCurrencySymbol() {
+  return S3C.state.meta.currency === "USD" ? "US$" : "A$";
+}
+function s3cMoney(n, dp) {
+  if (!isFinite(n)) n = 0;
+  return s3cCurrencySymbol() + s3cNum(n, dp == null ? 2 : dp);
+}
+function s3cMoneyBoth(n) {
+  const primary = s3cMoney(n);
+  if (!S3C.state.meta.showBothCurrencies) return primary;
+  const rate = S3C.state.meta.usdToAud || 1;
+  const other = S3C.state.meta.currency === "USD" ? n * rate : n / rate;
+  const otherSym = S3C.state.meta.currency === "USD" ? "A$" : "US$";
+  return primary + " (" + otherSym + s3cNum(other) + ")";
+}
+function s3cPct(n) { return s3cNum(n, 1) + "%"; }
+function s3cClamp(n, lo, hi) { if (!isFinite(n)) return lo; return Math.min(hi, Math.max(lo, n)); }
+function s3cSafeDiv(a, b) { return b ? a / b : 0; }
+
+/* ---------- data binding: read inputs -> state, state -> inputs ---------- */
+// A handful of state paths (e.g. splunkIndex.costPerGb) are intentionally bound
+// from two places -- once where the figure is used, once again as a mirror in
+// Pricing Configuration. Reading *every* bound element on each keystroke would
+// let whichever duplicate sits later in DOM order silently overwrite the one
+// just edited, so input/change events instead read only the element that fired
+// and then sync any other elements sharing the same path from the new state.
+function s3cReadElementIntoState(el) {
+  const path = el.dataset.s3c;
+  let val;
+  if (el.type === "checkbox") val = el.checked;
+  else if (el.tagName === "SELECT") val = el.value;
+  else if (el.type === "number") {
+    val = el.value === "" ? 0 : parseFloat(el.value);
+    if (isNaN(val)) val = 0;
+    if (el.min !== "" && val < parseFloat(el.min)) val = parseFloat(el.min);
+    if (el.max !== "" && val > parseFloat(el.max)) val = parseFloat(el.max);
+  } else val = el.value;
+  s3cSetPath(S3C.state, path, val);
+  return path;
+}
+function s3cSyncBoundElements(path, sourceEl) {
+  document.querySelectorAll('#s3CalcPage [data-s3c="' + path + '"]').forEach(el => {
+    if (el === sourceEl) return;
+    const val = s3cGetPath(S3C.state, path);
+    if (val === undefined) return;
+    if (el.type === "checkbox") el.checked = !!val;
+    else el.value = val;
+  });
+}
+function s3cApplyStateToInputs() {
+  document.querySelectorAll("#s3CalcPage [data-s3c]").forEach(el => {
+    const val = s3cGetPath(S3C.state, el.dataset.s3c);
+    if (val === undefined) return;
+    if (el.type === "checkbox") el.checked = !!val;
+    else el.value = val;
+  });
+}
+
+/* =========================================================================
+   CORE COMPUTE ENGINE
+   Pure function: state -> results. No DOM access.
+   ========================================================================= */
+function s3cCompute(state) {
+  const r = {};
+  const v = state.volume, c = state.compression, ret = state.retention;
+
+  /* ---- 1. Data volume ---- */
+  let rawGbDay = Math.max(0, v.rawGbDay);
+  let eventsPerDay;
+  if (v.inputMode === "events") {
+    eventsPerDay = Math.max(0, v.eventsPerSec) * 86400;
+    rawGbDay = s3cSafeDiv(eventsPerDay * Math.max(1, v.avgEventBytes), 1e9);
+  } else {
+    eventsPerDay = v.avgEventBytes > 0 ? s3cSafeDiv(rawGbDay * 1e9, v.avgEventBytes) : 0;
+  }
+  const eventsPerSec = eventsPerDay / 86400;
+  const peakEps = eventsPerSec * Math.max(1, v.peakMultiplier);
+
+  r.rawGbHour = rawGbDay / 24;
+  r.rawGbDay = rawGbDay;
+  r.rawGbMonth = rawGbDay * 30.44;
+  r.rawTbMonth = r.rawGbMonth / 1000;
+  r.rawGbYear = rawGbDay * 365;
+  r.rawTbYear = r.rawGbYear / 1000;
+  r.eventsPerSec = eventsPerSec;
+  r.peakEps = peakEps;
+  r.eventsPerHour = eventsPerDay / 24;
+  r.eventsPerDay = eventsPerDay;
+  r.eventsPerMonth = eventsPerDay * 30.44;
+  r.eventsPerYear = eventsPerDay * 365;
+
+  /* ---- 2. Compression ---- */
+  let storedPercent;
+  if (c.mode === "none") storedPercent = 100;
+  else if (c.mode === "ratio") storedPercent = c.ratio > 0 ? 100 / c.ratio : 100;
+  else if (c.mode === "custom") storedPercent = rawGbDay > 0 ? s3cClamp(100 * c.customGbDay / rawGbDay, 0, 100) : 0;
+  else storedPercent = s3cClamp(c.storedPercent, 0, 100);
+  r.storedPercent = storedPercent;
+  const compressedGbDay = rawGbDay * storedPercent / 100;
+  r.compressedGbDay = compressedGbDay;
+  r.compressedGbMonth = compressedGbDay * 30.44;
+  r.compressedTbMonth = r.compressedGbMonth / 1000;
+  r.compressedGbYear = compressedGbDay * 365;
+  r.compressedTbYear = r.compressedGbYear / 1000;
+  r.storageSavedGbYear = r.rawGbYear - r.compressedGbYear;
+  r.compressionReductionPct = r.rawGbYear > 0 ? 100 * r.storageSavedGbYear / r.rawGbYear : 0;
+
+  /* ---- 3. Retention & stored capacity ---- */
+  const retentionDays = Math.max(0, ret.days);
+  r.retentionDays = retentionDays;
+  const storedGb = compressedGbDay * retentionDays;
+  r.storedGb = storedGb;
+  r.storedTb = storedGb / 1000;
+  r.rawRetainedTb = (rawGbDay * retentionDays) / 1000;
+  r.avgStoredGb = storedGb / 2; // ramp-up average, steady state after retention window
+  r.monthlyGrowthGb = compressedGbDay * 30.44;
+  r.annualGrowthTb = r.compressedTbYear;
+
+  /* ---- 4. Ingest Processor cost ---- */
+  const ip = state.ingestProcessor;
+  let ipMonthly = 0;
+  if (ip.model === "perGb") ipMonthly = r.compressedGbMonth * ip.costPerGb;
+  else if (ip.model === "workloadUnit") ipMonthly = ip.workloadUnits * ip.costPerWorkloadUnit;
+  else if (ip.model === "flat") ipMonthly = ip.flatMonthly;
+  else ipMonthly = ip.customMonthlyCost;
+  ipMonthly = ipMonthly * (1 - s3cClamp(ip.contractDiscountPct, 0, 100) / 100);
+  r.ingestProcessorDaily = ipMonthly / 30.44;
+  r.ingestProcessorMonthly = ipMonthly;
+  r.ingestProcessorAnnual = ipMonthly * 12;
+
+  /* ---- 5. Splunk indexed copy ---- */
+  const si = state.splunkIndex;
+  const indexedPct = si.enabled ? s3cClamp(si.indexedPercent, 0, 100) : 0;
+  const indexedGbDay = compressedGbDay * indexedPct / 100;
+  r.indexedGbDay = indexedGbDay;
+  r.indexedPct = indexedPct;
+  const indexedStoredGb = indexedGbDay * Math.min(si.retentionDaysIndex, retentionDays);
+  r.indexedStoredGb = indexedStoredGb;
+  const splunkIndexMonthly = si.enabled
+    ? (indexedGbDay * 30.44 * si.costPerGb) + si.workloadCost + si.otherMonthly
+    : 0;
+  r.splunkIndexMonthly = splunkIndexMonthly;
+  r.splunkIndexAnnual = splunkIndexMonthly * 12;
+
+  /* ---- 6. S3 storage classes & lifecycle ---- */
+  let s3StorageMonthly = 0;
+  let pctSum = 0;
+  const classById = {};
+  state.s3Storage.classes.forEach(cl => { classById[cl.id] = cl; });
+  if (state.lifecycle.enabled) {
+    const lc = state.lifecycle;
+    const t1 = Math.min(lc.tier1Days, retentionDays);
+    const t2 = Math.min(lc.tier2Days, retentionDays) - t1;
+    const t3 = Math.min(lc.tier3Days, retentionDays) - t1 - t2;
+    const t4 = Math.max(0, retentionDays - lc.tier1Days - Math.max(0,(lc.tier2Days-lc.tier1Days)) - Math.max(0,(lc.tier3Days-lc.tier2Days)));
+    const tierGb = [
+      { days: Math.max(0, t1), cls: classById[lc.tier1Class] },
+      { days: Math.max(0, t2), cls: classById[lc.tier2Class] },
+      { days: Math.max(0, t3), cls: classById[lc.tier3Class] },
+      { days: Math.max(0, retentionDays - lc.tier3Days), cls: classById[lc.tier4Class] }
+    ];
+    r.lifecycleTiers = tierGb.map(t => {
+      const gb = compressedGbDay * Math.max(0, t.days);
+      const monthly = gb * (t.cls ? t.cls.costPerGbMonth : 0);
+      s3StorageMonthly += monthly;
+      return { name: t.cls ? t.cls.name : "-", days: Math.max(0, t.days), gb, monthly };
+    });
+  } else {
+    state.s3Storage.classes.forEach(cl => {
+      pctSum += cl.pctOfData;
+      const gb = storedGb * cl.pctOfData / 100;
+      s3StorageMonthly += gb * cl.costPerGbMonth;
+    });
+  }
+  r.s3StorageClassPctSum = pctSum;
+  r.s3StorageMonthly = s3StorageMonthly;
+  r.s3StorageAnnual = s3StorageMonthly * 12;
+  r.s3CostPerTbMonth = s3cSafeDiv(s3StorageMonthly, r.storedTb);
+  r.s3CostPerTbYear = r.s3CostPerTbMonth * 12;
+  const anyArchive = state.s3Storage.classes.some(cl => cl.pctOfData > 0 && (cl.id === "glacierIr" || cl.id === "glacierFr" || cl.id === "deepArchive"));
+  r.archiveWarning = anyArchive || (state.lifecycle.enabled && [state.lifecycle.tier3Class, state.lifecycle.tier4Class].some(id => ["glacierIr","glacierFr","deepArchive"].includes(id)));
+
+  /* ---- 7. Object sizing & PUT ---- */
+  const os = state.objectSize;
+  const objMb = Math.max(0.001, os.targetMb);
+  const compressedMbDay = compressedGbDay * 1000;
+  const objectsPerDay = s3cSafeDiv(compressedMbDay, objMb);
+  r.objectsPerDay = objectsPerDay;
+  r.objectsPerHour = objectsPerDay / 24;
+  r.objectsPerMonth = objectsPerDay * 30.44;
+  r.objectsPerYear = objectsPerDay * 365;
+  // small file risk: objects/day per GB/day compressed -- higher = smaller objects = more risk
+  const objectsPerGb = s3cSafeDiv(objectsPerDay, compressedGbDay);
+  let risk = "Excellent", riskClass = "excellent";
+  if (objMb < 1) { risk = "Severe"; riskClass = "severe"; }
+  else if (objMb < 8) { risk = "High"; riskClass = "high"; }
+  else if (objMb < 32) { risk = "Moderate"; riskClass = "moderate"; }
+  else if (objMb < 128) { risk = "Good"; riskClass = "good"; }
+  else { risk = "Excellent"; riskClass = "excellent"; }
+  r.smallFileRisk = risk;
+  r.smallFileRiskClass = riskClass;
+  r.objectsPerGb = objectsPerGb;
+
+  const putReqMonth = r.objectsPerMonth;
+  r.putRequestsMonth = putReqMonth;
+  r.putRequestsYear = objectsPerDay * 365;
+  r.s3PutMonthly = s3cSafeDiv(putReqMonth, 1000) * state.s3Put.costPer1000;
+  r.s3PutAnnual = r.s3PutMonthly * 12;
+
+  /* ---- 8. GET/LIST (Federated Search request cost) ---- */
+  const gl = state.s3GetList;
+  const searchesPerDayForRequests = state.federatedSearch.searchesPerDay * s3cClamp(state.federatedSearch.pctSearchesTargetS3, 0, 100) / 100;
+  const getsPerDay = searchesPerDayForRequests * gl.objectsPerSearch * gl.getsPerSearchObject;
+  const listsPerDay = searchesPerDayForRequests * gl.listsPerSearch;
+  r.getsPerDay = getsPerDay; r.getsPerMonth = getsPerDay * 30.44; r.getsPerYear = getsPerDay * 365;
+  r.listsPerDay = listsPerDay; r.listsPerMonth = listsPerDay * 30.44; r.listsPerYear = listsPerDay * 365;
+  const s3RequestMonthly = s3cSafeDiv(r.getsPerMonth, 1000) * gl.getCostPer1000 + s3cSafeDiv(r.listsPerMonth, 1000) * gl.listCostPer1000;
+  r.s3GetListMonthly = s3RequestMonthly;
+  r.s3GetListAnnual = s3RequestMonthly * 12;
+
+  /* ---- 9. KMS ---- */
+  const kms = state.kms;
+  let kmsMonthly = 0, kmsEncryptMonth = 0, kmsDecryptMonth = 0;
+  if (kms.enabled) {
+    kmsEncryptMonth = r.objectsPerMonth;
+    kmsDecryptMonth = r.getsPerMonth;
+    kmsMonthly = kms.keyMonthlyCost + s3cSafeDiv(kmsEncryptMonth + kmsDecryptMonth, 10000) * kms.costPer10000;
+  }
+  r.kmsEncryptMonth = kmsEncryptMonth;
+  r.kmsDecryptMonth = kmsDecryptMonth;
+  r.kmsMonthly = kmsMonthly;
+  r.kmsAnnual = kmsMonthly * 12;
+
+  /* ---- 10. Glue / metadata ---- */
+  const gl2 = state.glue;
+  let glueMonthly = 0;
+  if (gl2.enabled) {
+    const crawlerMonthly = gl2.crawlerRunsPerDay * (gl2.crawlerDurationMinutes / 60) * gl2.costPerDpuHour * 30.44;
+    const catalogRequests = (gl2.newPartitionsPerDay * 30.44) * 4; // rough: a few catalog calls per new partition
+    const catalogMonthly = s3cSafeDiv(catalogRequests, 1e6) * gl2.catalogRequestCostPerMillion;
+    glueMonthly = crawlerMonthly + catalogMonthly + gl2.flatMonthly;
+  }
+  r.newPartitionsMonth = gl2.newPartitionsPerDay * 30.44;
+  r.glueMonthly = glueMonthly;
+  r.glueAnnual = glueMonthly * 12;
+
+  /* ---- 11. SQS ---- */
+  const sq = state.sqs;
+  let sqsMonthly = 0;
+  if (sq.enabled) {
+    const messagesPerDay = objectsPerDay * sq.messagesPerObject;
+    const requestsPerDay = messagesPerDay * sq.requestsPerMessage;
+    r.sqsRequestsMonth = requestsPerDay * 30.44;
+    r.sqsRequestsYear = requestsPerDay * 365;
+    sqsMonthly = s3cSafeDiv(r.sqsRequestsMonth, 1e6) * sq.costPerMillion;
+  } else { r.sqsRequestsMonth = 0; r.sqsRequestsYear = 0; }
+  r.sqsMonthly = sqsMonthly;
+  r.sqsAnnual = sqsMonthly * 12;
+
+  /* ---- 12. Data transfer ---- */
+  const tr = state.transfer;
+  const writeTransferMonthly = r.compressedGbMonth * (tr.writeIngressCostPerGb + tr.writeEgressCostPerGb + tr.crossCloudCostPerGb);
+  const fedGbScannedMonth = searchesPerDayForRequests * state.federatedSearch.avgGbScannedPerSearch * 30.44;
+  const fedGbReturnedMonth = searchesPerDayForRequests * state.federatedSearch.avgGbReturnedPerSearch * 30.44;
+  let searchTransferRate = tr.searchSameRegionCostPerGb;
+  if (tr.searchTransferModel === "crossRegion") searchTransferRate = tr.searchCrossRegionCostPerGb;
+  else if (tr.searchTransferModel === "internet") searchTransferRate = tr.searchInternetEgressCostPerGb;
+  const searchTransferMonthly = fedGbReturnedMonth * searchTransferRate;
+  r.writeTransferMonthly = writeTransferMonthly;
+  r.writeTransferAnnual = writeTransferMonthly * 12;
+  r.searchTransferMonthly = searchTransferMonthly;
+  r.searchTransferAnnual = searchTransferMonthly * 12;
+  r.transferMonthly = writeTransferMonthly + searchTransferMonthly;
+  r.transferAnnual = r.transferMonthly * 12;
+
+  /* ---- 13. Partitioning & search amplification ---- */
+  const part = state.partitioning;
+  const pruningPct = s3cClamp(part.pruningEfficiencyPct, 0, 99.999);
+  r.pruningEfficiencyPct = pruningPct;
+  const unoptimisedScanGbSearch = state.federatedSearch.avgGbScannedPerSearch;
+  const effectiveScanGbSearch = unoptimisedScanGbSearch * (1 - pruningPct / 100);
+  r.unoptimisedScanGbSearch = unoptimisedScanGbSearch;
+  r.effectiveScanGbSearch = effectiveScanGbSearch;
+  r.scanDataAvoidedGbSearch = unoptimisedScanGbSearch - effectiveScanGbSearch;
+  r.scanReductionPct = unoptimisedScanGbSearch > 0 ? 100 * r.scanDataAvoidedGbSearch / unoptimisedScanGbSearch : 0;
+
+  const bytesScanned = effectiveScanGbSearch;
+  const bytesReturned = Math.max(0.000001, state.federatedSearch.avgGbReturnedPerSearch);
+  const amplification = s3cSafeDiv(bytesScanned, bytesReturned);
+  r.bytesScannedPerSearch = bytesScanned;
+  r.bytesReturnedPerSearch = bytesReturned;
+  r.amplificationRatio = amplification;
+  let ampLabel = "Excellent", ampClass = "excellent";
+  if (amplification > 10000) { ampLabel = "Severe"; ampClass = "severe"; }
+  else if (amplification > 1000) { ampLabel = "Poor"; ampClass = "high"; }
+  else if (amplification > 100) { ampLabel = "Moderate"; ampClass = "moderate"; }
+  else if (amplification > 10) { ampLabel = "Good"; ampClass = "good"; }
+  else { ampLabel = "Excellent"; ampClass = "excellent"; }
+  r.amplificationLabel = ampLabel;
+  r.amplificationClass = ampClass;
+
+  // guardrail comparison: poor (unconstrained) vs constrained search
+  const poorScanTotalGb = unoptimisedScanGbSearch * state.federatedSearch.searchesPerDay;
+  const constrainedScanTotalGb = part.constrainedGbPerSearch * state.federatedSearch.searchesPerDay;
+  r.poorScanTotalGb = poorScanTotalGb;
+  r.constrainedScanTotalGb = constrainedScanTotalGb;
+  r.guardrailReductionFactor = constrainedScanTotalGb > 0 ? poorScanTotalGb / constrainedScanTotalGb : 0;
+
+  /* ---- 14. Federated Search cost ---- */
+  const fs = state.federatedSearch;
+  r.tbScannedDay = (searchesPerDayForRequests * effectiveScanGbSearch) / 1000;
+  r.tbScannedMonth = r.tbScannedDay * 30.44;
+  r.tbScannedYear = r.tbScannedDay * 365;
+  r.tbReturnedMonth = fedGbReturnedMonth / 1000;
+  const searchesMonth = searchesPerDayForRequests * 30.44;
+  r.searchesPerMonth = searchesMonth;
+  r.searchesPerYear = fs.searchesPerDay * 365;
+  const fedSearchMonthly = (searchesMonth * fs.searchWorkloadCostPerSearch) + fs.entitlementMonthly + fs.customMonthly;
+  r.federatedSearchMonthly = fedSearchMonthly;
+  r.federatedSearchAnnual = fedSearchMonthly * 12;
+  r.costPerSearch = s3cSafeDiv(fedSearchMonthly, searchesMonth);
+  r.costPerAnalyst = s3cSafeDiv(fedSearchMonthly, Math.max(1, fs.analysts));
+
+  /* ---- 15. Replication ---- */
+  const rep = state.replication;
+  let replicationMonthly = 0, replicaStorageMonthly = 0, replicationPutMonthly = 0, replicationTransferMonthly = 0;
+  if (rep.mode !== "none") {
+    const replicaGb = storedGb * s3cClamp(rep.replicaPercent, 0, 100) / 100;
+    replicaStorageMonthly = replicaGb * rep.secondaryStorageCostPerGbMonth;
+    replicationPutMonthly = s3cSafeDiv(objectsPerDay * 30.44 * s3cClamp(rep.replicaPercent,0,100)/100, 1000) * rep.putCostPer1000;
+    if (rep.mode === "crr") replicationTransferMonthly = compressedGbDay * 30.44 * s3cClamp(rep.replicaPercent,0,100)/100 * rep.transferCostPerGb;
+    replicationMonthly = replicaStorageMonthly + replicationPutMonthly + replicationTransferMonthly;
+  }
+  r.replicaStorageMonthly = replicaStorageMonthly;
+  r.replicationPutMonthly = replicationPutMonthly;
+  r.replicationTransferMonthly = replicationTransferMonthly;
+  r.replicationMonthly = replicationMonthly;
+  r.replicationAnnual = replicationMonthly * 12;
+  r.primaryStorageMonthly = s3StorageMonthly;
+
+  /* ---- 16. Cost summary ---- */
+  const categories = [
+    { key: "ingest", label: "Splunk Ingest Processor", monthly: r.ingestProcessorMonthly, group: "write" },
+    { key: "splunkIndex", label: "Splunk indexing", monthly: r.splunkIndexMonthly, group: "write" },
+    { key: "s3Storage", label: "S3 storage", monthly: r.s3StorageMonthly, group: "write" },
+    { key: "s3Put", label: "S3 PUT", monthly: r.s3PutMonthly, group: "write" },
+    { key: "s3GetList", label: "S3 GET / LIST", monthly: r.s3GetListMonthly, group: "search" },
+    { key: "kms", label: "AWS KMS", monthly: r.kmsMonthly, group: "both" },
+    { key: "glue", label: "AWS Glue", monthly: r.glueMonthly, group: "both" },
+    { key: "sqs", label: "Amazon SQS", monthly: r.sqsMonthly, group: "write" },
+    { key: "transfer", label: "Data transfer", monthly: r.transferMonthly, group: "both" },
+    { key: "replication", label: "Replication", monthly: r.replicationMonthly, group: "write" },
+    { key: "federatedSearch", label: "Federated Search", monthly: r.federatedSearchMonthly, group: "search" }
+  ];
+  const totalMonthly = categories.reduce((s, c) => s + c.monthly, 0);
+  r.categories = categories.map(c => ({ ...c, annual: c.monthly * 12, pct: totalMonthly > 0 ? 100 * c.monthly / totalMonthly : 0 }));
+  r.totalMonthly = totalMonthly;
+  r.totalAnnual = totalMonthly * 12;
+
+  const writeMonthly = r.ingestProcessorMonthly + r.splunkIndexMonthly + r.s3StorageMonthly + r.s3PutMonthly + r.kmsMonthly * 0.5 + r.glueMonthly * 0.5 + r.sqsMonthly + r.writeTransferMonthly + r.replicationMonthly;
+  const searchMonthly = r.s3GetListMonthly + r.federatedSearchMonthly + r.kmsMonthly * 0.5 + r.glueMonthly * 0.5 + r.searchTransferMonthly;
+  r.writeMonthly = writeMonthly;
+  r.writeAnnual = writeMonthly * 12;
+  r.searchMonthly = searchMonthly;
+  r.searchAnnual = searchMonthly * 12;
+  r.tcoMonthly = writeMonthly + searchMonthly;
+  r.tcoAnnual = r.tcoMonthly * 12;
+
+  r.costPerRawGb = s3cSafeDiv(totalMonthly, r.rawGbMonth);
+  r.costPerStoredGb = s3cSafeDiv(totalMonthly, storedGb);
+  r.costPerTbRetained = s3cSafeDiv(totalMonthly, r.storedTb);
+  r.costPerMillionEvents = s3cSafeDiv(totalMonthly, r.eventsPerMonth / 1e6);
+  r.costPerSearchTotal = s3cSafeDiv(searchMonthly, searchesMonth);
+  r.costPerAnalystTotal = s3cSafeDiv(searchMonthly, Math.max(1, fs.analysts));
+  r.costPerDatasource = s3cSafeDiv(totalMonthly, Math.max(1, v.numSources));
+  r.costPerYearRetention = s3cSafeDiv(r.totalAnnual, Math.max(1, retentionDays / 365));
+
+  r.costDrivers = [...r.categories].sort((a, b) => b.monthly - a.monthly).filter(c => c.monthly > 0);
+
+  /* ---- 17. Capacity dashboard already covered by r.* above ---- */
+
+  return r;
+}
+
+/* =========================================================================
+   RENDER
+   ========================================================================= */
+function s3cRenderOutputs(results) {
+  document.querySelectorAll("#s3CalcPage [data-s3c-out]").forEach(el => {
+    const key = el.dataset.s3cOut;
+    const fmt = el.dataset.s3cFmt || "num2";
+    if (!(key in results)) return;
+    const val = results[key];
+    let text;
+    if (fmt === "money") text = s3cMoney(val);
+    else if (fmt === "moneyBoth") text = s3cMoneyBoth(val);
+    else if (fmt === "int") text = s3cInt(val);
+    else if (fmt === "pct") text = s3cPct(val);
+    else if (fmt === "num0") text = s3cNum(val, 0);
+    else if (fmt === "num1") text = s3cNum(val, 1);
+    else if (fmt === "raw") text = String(val);
+    else text = s3cNum(val, 2);
+    el.textContent = text;
+  });
+  document.querySelectorAll("#s3CalcPage [data-s3c-class]").forEach(el => {
+    const key = el.dataset.s3cClass;
+    if (key in results) el.className = el.dataset.s3cClassBase + " " + results[key];
+  });
+}
+
+function s3cRenderCostTable(results) {
+  const tbody = document.getElementById("s3cCostTableBody");
+  if (!tbody) return;
+  tbody.innerHTML = results.categories.map(c =>
+    `<tr><td>${c.label}</td><td>${s3cMoney(c.monthly)}</td><td>${s3cMoney(c.annual)}</td><td>${s3cNum(c.pct, 1)}%</td></tr>`
+  ).join("") + `<tr class="s3c-total-row"><td><strong>TOTAL</strong></td><td><strong>${s3cMoney(results.totalMonthly)}</strong></td><td><strong>${s3cMoney(results.totalAnnual)}</strong></td><td><strong>100%</strong></td></tr>`;
+}
+
+function s3cRenderCostDrivers(results) {
+  const el = document.getElementById("s3cCostDrivers");
+  if (!el) return;
+  if (!results.costDrivers.length) { el.innerHTML = "<p>No cost drivers yet -- enter pricing in the Pricing Configuration section.</p>"; return; }
+  el.innerHTML = results.costDrivers.map((c, i) =>
+    `<div class="s3c-driver-row">
+      <div class="s3c-driver-rank">${i + 1}</div>
+      <div class="s3c-driver-info"><strong>${c.label}</strong><span>${s3cMoney(c.monthly)}/mo &middot; ${s3cMoney(c.annual)}/yr</span></div>
+      <div class="s3c-driver-bar-wrap"><div class="s3c-driver-bar" style="width:${Math.max(2, c.pct)}%"></div></div>
+      <div class="s3c-driver-pct">${s3cNum(c.pct, 1)}%</div>
+    </div>`
+  ).join("");
+}
+
+function s3cRenderStorageClassRows() {
+  const tbody = document.getElementById("s3cStorageClassBody");
+  if (!tbody) return;
+  tbody.innerHTML = S3C.state.s3Storage.classes.map((cl, i) => `
+    <tr>
+      <td>${cl.name}</td>
+      <td><input type="number" min="0" max="100" step="1" data-s3c="s3Storage.classes.${i}.pctOfData" value="${cl.pctOfData}"></td>
+      <td><input type="number" min="0" step="0.0001" data-s3c="s3Storage.classes.${i}.costPerGbMonth" value="${cl.costPerGbMonth}"></td>
+      <td><input type="number" min="0" step="1" data-s3c="s3Storage.classes.${i}.minDurationDays" value="${cl.minDurationDays}"></td>
+      <td><input type="number" min="0" step="0.001" data-s3c="s3Storage.classes.${i}.retrievalPerGb" value="${cl.retrievalPerGb}"></td>
+    </tr>`).join("");
+}
+
+function s3cRenderLifecycleTable(results) {
+  const el = document.getElementById("s3cLifecycleTable");
+  if (!el) return;
+  if (!S3C.state.lifecycle.enabled || !results.lifecycleTiers) { el.innerHTML = "<p>Lifecycle modelling is off. Enable it above to see a per-tier breakdown.</p>"; return; }
+  el.innerHTML = `<div class="eccs-table-wrap"><table class="eccs-matrix"><thead><tr><th>Tier</th><th>Storage class</th><th>Days covered</th><th>Avg GB in tier</th><th>Monthly cost</th></tr></thead><tbody>` +
+    results.lifecycleTiers.map((t, i) => `<tr><td>Tier ${i + 1}</td><td>${t.name}</td><td>${s3cInt(t.days)}</td><td>${s3cNum(t.gb, 1)}</td><td>${s3cMoney(t.monthly)}</td></tr>`).join("") +
+    `</tbody></table></div>`;
+}
+
+function s3cRenderAssumptions() {
+  const el = document.getElementById("s3cAssumptionsBody");
+  if (!el) return;
+  const rows = [
+    ["Raw data volume", S3C.state.volume.rawGbDay + " GB/day", "GB/day", "User-entered", "User-entered", "Confirmed"],
+    ["Compression / stored %", S3C.state.compression.storedPercent + "%", "% of raw", "User-entered", "User-entered", "Estimated"],
+    ["Retention period", S3C.state.retention.days + " days", "days", "User-entered", "User-entered", "Confirmed"],
+    ["AWS region", "Asia Pacific (Sydney) ap-southeast-2", "region", "User-specified requirement", "User-entered", "Confirmed"],
+    ["Ingest Processor cost model", S3C.state.ingestProcessor.model, "model", "User-selected", "User-entered", "Assumed"],
+    ["Partition pruning efficiency", S3C.state.partitioning.pruningEfficiencyPct + "%", "%", "User estimate", "User-entered", "Estimated"],
+    ["Federated Search frequency", S3C.state.federatedSearch.searchesPerDay + "/day", "searches/day", "User estimate", "User-entered", "Estimated"],
+    ["All AWS/Splunk unit prices", "See Pricing Configuration", "various", "User-supplied -- not authoritative", "User-entered", "Unknown"]
+  ];
+  el.innerHTML = rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td></tr>`).join("");
+}
+
+function s3cRenderRecommendations(results) {
+  const el = document.getElementById("s3cRecommendations");
+  if (!el) return;
+  const recs = [];
+  if (results.compressionReductionPct < 40) {
+    recs.push("Compression represents a significant storage optimisation opportunity -- current stored percentage is " + s3cNum(results.storedPercent, 0) + "% of raw. Review parsing/format choices and compression settings.");
+  }
+  if (results.smallFileRiskClass === "high" || results.smallFileRiskClass === "severe") {
+    recs.push("Object count is high relative to stored volume (target object size " + s3cNum(S3C.state.objectSize.targetMb, 0) + " MB). Consider batching objects to reduce PUT/GET/LIST and metadata overhead.");
+  }
+  if (results.amplificationClass === "high" || results.amplificationClass === "severe") {
+    recs.push("Searches are scanning substantially more data than they return (amplification ratio " + s3cInt(results.amplificationRatio) + ":1). Review partitioning, search time ranges, and SPL constraints.");
+  }
+  if (results.pruningEfficiencyPct < 75) {
+    recs.push("Partition pruning efficiency is only " + s3cNum(results.pruningEfficiencyPct, 0) + "%. Increase selectivity using time, dataset, source, sourcetype, tenant, or environment partitions.");
+  }
+  if (S3C.state.federatedSearch.searchesPerDay > 100) {
+    recs.push("This dataset may be too frequently queried for an archive-first S3 model at " + S3C.state.federatedSearch.searchesPerDay + " searches/day. Compare the cost of retaining the most frequently accessed period in Splunk instead.");
+  }
+  if (results.archiveWarning) {
+    recs.push("Archive storage classes are selected while Federated Search may require immediate object access. This can introduce retrieval delay, retrieval charges, minimum storage duration, or restore requirements incompatible with interactive SOC investigations.");
+  }
+  if (results.s3StorageClassPctSum !== 100 && !S3C.state.lifecycle.enabled) {
+    recs.push("S3 storage class percentages sum to " + s3cNum(results.s3StorageClassPctSum, 0) + "%, not 100%. Storage cost figures will under- or over-state actual spend until this is corrected.");
+  }
+  if (!recs.length) recs.push("No automatic flags raised against the configured thresholds. Review the Assumptions Register before treating any figure as final.");
+  el.innerHTML = recs.map(t => `<div class="eccs-note" style="margin-bottom:10px">${t}</div>`).join("");
+}
+
+/* ---------- Scenario comparison (4 built-in scenarios) ---------- */
+function s3cComputeScenario(overrides) {
+  const st = JSON.parse(JSON.stringify(S3C.state));
+  if ("indexedPercent" in overrides) { st.splunkIndex.enabled = overrides.indexedPercent > 0; st.splunkIndex.indexedPercent = overrides.indexedPercent; }
+  if ("pruningEfficiencyPct" in overrides) st.partitioning.pruningEfficiencyPct = overrides.pruningEfficiencyPct;
+  return s3cCompute(st);
+}
+function s3cRenderScenarios() {
+  const el = document.getElementById("s3cScenarioBody");
+  if (!el) return;
+  const scenarios = [
+    { name: "A -- Baseline (100% Splunk + S3)", indexedPercent: 100, pruningEfficiencyPct: S3C.state.partitioning.pruningEfficiencyPct },
+    { name: "B -- Selective Indexing (25% Splunk + 100% S3)", indexedPercent: 25, pruningEfficiencyPct: S3C.state.partitioning.pruningEfficiencyPct },
+    { name: "C -- Archive Focused (0% Splunk + 100% S3)", indexedPercent: 0, pruningEfficiencyPct: S3C.state.partitioning.pruningEfficiencyPct },
+    { name: "D -- Optimised Federated Search (25% Splunk + aggressive pruning)", indexedPercent: 25, pruningEfficiencyPct: Math.max(S3C.state.partitioning.pruningEfficiencyPct, 95) }
+  ];
+  const rows = scenarios.map(sc => {
+    const res = s3cComputeScenario(sc);
+    return { ...sc, res };
+  });
+  const lowestCost = Math.min(...rows.map(r => r.res.totalMonthly));
+  const lowestS3 = Math.min(...rows.map(r => r.res.s3StorageMonthly));
+  const lowestSplunk = Math.min(...rows.map(r => r.res.splunkIndexMonthly + r.res.ingestProcessorMonthly));
+  const lowestSearch = Math.min(...rows.map(r => r.res.federatedSearchMonthly + r.res.s3GetListMonthly));
+  const lowestScan = Math.min(...rows.map(r => r.res.tbScannedMonth));
+  const highestCost = Math.max(...rows.map(r => r.res.totalMonthly));
+  el.innerHTML = rows.map(r => {
+    const badges = [];
+    if (r.res.totalMonthly === lowestCost) badges.push('<span class="s3c-badge good">Lowest total cost</span>');
+    if (r.res.totalMonthly === highestCost) badges.push('<span class="s3c-badge severe">Highest total cost</span>');
+    if ((r.res.splunkIndexMonthly + r.res.ingestProcessorMonthly) === lowestSplunk) badges.push('<span class="s3c-badge good">Lowest Splunk cost</span>');
+    if (r.res.s3StorageMonthly === lowestS3) badges.push('<span class="s3c-badge good">Lowest S3 cost</span>');
+    if ((r.res.federatedSearchMonthly + r.res.s3GetListMonthly) === lowestSearch) badges.push('<span class="s3c-badge good">Lowest search cost</span>');
+    if (r.res.tbScannedMonth === lowestScan) badges.push('<span class="s3c-badge good">Lowest data scan</span>');
+    return `<tr>
+      <td><strong>${r.name}</strong><br>${badges.join(" ")}</td>
+      <td>${s3cInt(r.res.indexedGbDay)} GB/day</td>
+      <td>${s3cNum(r.res.storedTb, 1)} TB</td>
+      <td>${s3cNum(r.res.tbScannedMonth, 1)} TB</td>
+      <td>${s3cMoney(r.res.totalMonthly)}</td>
+      <td>${s3cMoney(r.res.totalAnnual)}</td>
+      <td>${s3cMoney(r.res.totalAnnual * 3)}</td>
+      <td>${s3cMoney(r.res.totalAnnual * 5)}</td>
+    </tr>`;
+  }).join("");
+  S3C._lastScenarios = rows;
+}
+
+/* ---------- Long-term projection ---------- */
+function s3cRenderProjection(results) {
+  const el = document.getElementById("s3cProjectionBody");
+  if (!el) return;
+  const g = S3C.state.growth;
+  let cumulative = 0;
+  const years = [1, 2, 3, 5, 7];
+  const rows = [];
+  let runningMonthly = results.totalMonthly;
+  let lastYear = 0;
+  years.forEach(y => {
+    for (let yr = lastYear + 1; yr <= y; yr++) {
+      runningMonthly = runningMonthly *
+        (1 + g.annualDataGrowthPct / 100) *
+        (1 + g.annualAwsPriceChangePct / 100) *
+        (1 + g.annualSplunkPriceChangePct / 100) *
+        (1 + g.annualSearchGrowthPct / 200) * // half-weighted since search is only part of total
+        (1 + g.annualAnalystGrowthPct / 200);
+      cumulative += runningMonthly * 12;
+    }
+    lastYear = y;
+    rows.push({ year: y, annual: runningMonthly * 12, cumulative });
+  });
+  el.innerHTML = rows.map(row => `<tr><td>Year ${row.year}</td><td>${s3cMoney(row.annual)}</td><td>${s3cMoney(row.cumulative)}</td></tr>`).join("");
+}
+
+/* ---------- Break-even analysis ---------- */
+function s3cRenderBreakEven(results) {
+  const el = document.getElementById("s3cBreakEvenOutput");
+  if (!el) return;
+  const be = S3C.state.breakEven;
+  const splunkMonthlyPerGb = be.splunkCostPerGbMonth;
+  const splunkFullMonthly = results.compressedGbDay * splunkMonthlyPerGb;
+  const s3FixedMonthly = results.s3StorageMonthly + results.s3PutMonthly + results.kmsMonthly + results.glueMonthly;
+  const perSearchCost = S3C.state.federatedSearch.searchWorkloadCostPerSearch +
+    (S3C.state.federatedSearch.avgGbReturnedPerSearch * (S3C.state.transfer.searchSameRegionCostPerGb || 0)) +
+    (S3C.state.s3GetList.objectsPerSearch / 1000 * S3C.state.s3GetList.getCostPer1000) +
+    (S3C.state.s3GetList.listsPerSearch / 1000 * S3C.state.s3GetList.listCostPer1000);
+  const budgetForSearch = splunkFullMonthly - s3FixedMonthly;
+  const breakEvenSearchesMonth = perSearchCost > 0 ? budgetForSearch / perSearchCost : Infinity;
+  const breakEvenSearchesDay = breakEvenSearchesMonth / 30.44;
+  el.innerHTML = `
+    <p>Keeping this volume fully indexed in Splunk costs an estimated <strong>${s3cMoney(splunkFullMonthly)}/month</strong> (${s3cNum(splunkMonthlyPerGb,3)}/GB &times; ${s3cNum(results.compressedGbDay,1)} GB/day).</p>
+    <p>S3 fixed costs (storage + PUT + KMS + Glue) are an estimated <strong>${s3cMoney(s3FixedMonthly)}/month</strong>, leaving roughly <strong>${s3cMoney(Math.max(0,budgetForSearch))}/month</strong> of "budget" before Federated Search costs would exceed the Splunk-indexed alternative.</p>
+    <p>At an estimated per-search cost of <strong>${s3cMoney(perSearchCost)}</strong>, the break-even point is approximately
+      <strong>${isFinite(breakEvenSearchesDay) ? s3cInt(breakEvenSearchesDay) + " searches/day (" + s3cInt(breakEvenSearchesMonth) + "/month)" : "not reachable at $0 per-search cost"}</strong>.
+      Beyond that search frequency, this planning model suggests Splunk indexing may become the more economical option for this dataset.</p>
+    <div class="eccs-note">This is a planning model built entirely from the assumptions entered above -- not contractual pricing guidance. Validate per-GB Splunk cost, per-search cost components and actual usage patterns before using this to justify an architecture decision.</div>`;
+}
+
+/* ---------- Capacity dashboard ---------- */
+function s3cRenderCapacityCards(results) {
+  const el = document.getElementById("s3cCapacityCards");
+  if (!el) return;
+  const cards = [
+    ["Raw GB/day", s3cNum(results.rawGbDay, 1)],
+    ["Compressed GB/day", s3cNum(results.compressedGbDay, 1)],
+    ["Raw TB/year", s3cNum(results.rawTbYear, 2)],
+    ["Stored TB", s3cNum(results.storedTb, 2)],
+    ["Objects/day", s3cInt(results.objectsPerDay)],
+    ["Objects/year", s3cInt(results.objectsPerYear)],
+    ["Searches/day", s3cInt(S3C.state.federatedSearch.searchesPerDay)],
+    ["TB scanned/month", s3cNum(results.tbScannedMonth, 2)],
+    ["TB returned/month", s3cNum(results.tbReturnedMonth, 3)],
+    ["Search amplification", s3cInt(results.amplificationRatio) + ":1"],
+    ["Partition pruning", s3cNum(results.pruningEfficiencyPct, 0) + "%"],
+    ["Monthly cost", s3cMoney(results.totalMonthly)],
+    ["Annual cost", s3cMoney(results.totalAnnual)]
+  ];
+  el.innerHTML = cards.map(([label, val]) => `<div class="s3c-stat-card"><strong>${val}</strong>${label}</div>`).join("");
+}
+
+/* ---------- Charts (hand-rolled inline SVG, no external libs) ---------- */
+function s3cSvgBarChart(items, opts) {
+  const w = opts.width || 560, h = opts.height || 220, pad = 34;
+  const max = Math.max(1, ...items.map(i => i.value));
+  const barW = (w - pad * 2) / items.length;
+  const bars = items.map((it, i) => {
+    const bh = Math.max(1, (it.value / max) * (h - pad * 2));
+    const x = pad + i * barW + barW * 0.15;
+    const y = h - pad - bh;
+    const bw = barW * 0.7;
+    return `<g><title>${it.label}: ${it.display}</title>
+      <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" rx="3" fill="${it.color || '#2F75B5'}" />
+      <text x="${(x + bw / 2).toFixed(1)}" y="${(h - pad + 14).toFixed(1)}" text-anchor="middle" font-size="9" fill="#475569">${it.label.length>12?it.label.slice(0,11)+'…':it.label}</text>
+      <text x="${(x + bw / 2).toFixed(1)}" y="${(y - 4).toFixed(1)}" text-anchor="middle" font-size="9" fill="#1e293b" font-weight="700">${it.display}</text>
+    </g>`;
+  }).join("");
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" role="img" aria-label="${opts.title || 'bar chart'}">
+    <line x1="${pad}" y1="${h - pad}" x2="${w - pad}" y2="${h - pad}" stroke="#cbd5e1" />
+    ${bars}
+  </svg>`;
+}
+function s3cSvgLineChart(points, opts) {
+  const w = opts.width || 560, h = opts.height || 220, pad = 34;
+  const max = Math.max(1, ...points.map(p => p.value));
+  const stepX = (w - pad * 2) / Math.max(1, points.length - 1);
+  const coords = points.map((p, i) => {
+    const x = pad + i * stepX;
+    const y = h - pad - (p.value / max) * (h - pad * 2);
+    return { x, y, p };
+  });
+  const path = coords.map((c, i) => (i === 0 ? "M" : "L") + c.x.toFixed(1) + " " + c.y.toFixed(1)).join(" ");
+  const dots = coords.map(c => `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="3" fill="#2F75B5"><title>${c.p.label}: ${c.p.display}</title></circle>`).join("");
+  const labels = coords.filter((_, i) => i % Math.ceil(points.length / 12) === 0).map(c => `<text x="${c.x.toFixed(1)}" y="${(h - pad + 14).toFixed(1)}" text-anchor="middle" font-size="8" fill="#475569">${c.p.label}</text>`).join("");
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" role="img" aria-label="${opts.title || 'line chart'}">
+    <line x1="${pad}" y1="${h - pad}" x2="${w - pad}" y2="${h - pad}" stroke="#cbd5e1" />
+    <path d="${path}" fill="none" stroke="#2F75B5" stroke-width="2" />
+    ${dots}${labels}
+  </svg>`;
+}
+
+function s3cRenderCharts(results) {
+  const costEl = document.getElementById("s3cChartCostBreakdown");
+  if (costEl) {
+    const items = results.categories.filter(c => c.monthly > 0).map(c => ({ label: c.label, value: c.monthly, display: s3cMoney(c.monthly) }));
+    costEl.innerHTML = items.length ? s3cSvgBarChart(items, { title: "Monthly cost by category" }) : "<p>Enter pricing to see the cost breakdown chart.</p>";
+  }
+  const trendEl = document.getElementById("s3cChartCostTrend");
+  if (trendEl) {
+    const g = S3C.state.growth;
+    let running = results.totalMonthly;
+    const points = [];
+    for (let m = 1; m <= 12; m++) {
+      if (m > 1) running *= (1 + g.annualDataGrowthPct / 1200);
+      points.push({ label: "M" + m, value: running, display: s3cMoney(running) });
+    }
+    trendEl.innerHTML = s3cSvgLineChart(points, { title: "Monthly cost trend, months 1-12" });
+  }
+  const growthEl = document.getElementById("s3cChartStorageGrowth");
+  if (growthEl) {
+    const points = [];
+    for (let m = 1; m <= 12; m++) {
+      const tb = (results.compressedGbDay * Math.min(m * 30.44, S3C.state.retention.days)) / 1000;
+      points.push({ label: "M" + m, value: tb, display: s3cNum(tb, 1) + " TB" });
+    }
+    growthEl.innerHTML = s3cSvgLineChart(points, { title: "Stored TB over time" });
+  }
+  const rawVsCompressedEl = document.getElementById("s3cChartRawVsCompressed");
+  if (rawVsCompressedEl) {
+    rawVsCompressedEl.innerHTML = s3cSvgBarChart([
+      { label: "Raw", value: results.rawTbYear, display: s3cNum(results.rawTbYear, 1) + " TB", color: "#94a3b8" },
+      { label: "Compressed", value: results.compressedTbYear, display: s3cNum(results.compressedTbYear, 1) + " TB", color: "#2F75B5" }
+    ], { title: "Raw vs compressed, TB/year" });
+  }
+  const scanEl = document.getElementById("s3cChartScanEfficiency");
+  if (scanEl) {
+    scanEl.innerHTML = s3cSvgBarChart([
+      { label: "Available", value: results.storedTb, display: s3cNum(results.storedTb, 1) + " TB", color: "#94a3b8" },
+      { label: "Scanned/mo", value: results.tbScannedMonth, display: s3cNum(results.tbScannedMonth, 2) + " TB", color: "#c2410c" },
+      { label: "Returned/mo", value: results.tbReturnedMonth, display: s3cNum(results.tbReturnedMonth, 3) + " TB", color: "#15803d" }
+    ], { title: "Data available vs scanned vs returned" });
+  }
+  const archEl = document.getElementById("s3cChartArchitecture");
+  if (archEl && S3C._lastScenarios) {
+    archEl.innerHTML = s3cSvgBarChart(S3C._lastScenarios.map(sc => ({
+      label: sc.name.split(" -- ")[0], value: sc.res.totalMonthly, display: s3cMoney(sc.res.totalMonthly)
+    })), { title: "Monthly cost by architecture scenario" });
+  }
+}
+
+/* ---------- Master render ---------- */
+function s3cRenderAll() {
+  const results = s3cCompute(S3C.state);
+  S3C.results = results;
+  s3cRenderOutputs(results);
+  s3cRenderCostTable(results);
+  s3cRenderCostDrivers(results);
+  s3cRenderLifecycleTable(results);
+  s3cRenderAssumptions();
+  s3cRenderRecommendations(results);
+  s3cRenderScenarios();
+  s3cRenderProjection(results);
+  s3cRenderBreakEven(results);
+  s3cRenderCapacityCards(results);
+  s3cRenderCharts(results);
+  s3cRenderGuardrail(results);
+  s3cSaveToLocalStorage();
+}
+function s3cRenderGuardrail(results) {
+  const el = document.getElementById("s3cGuardrailOutput");
+  if (!el) return;
+  el.innerHTML = `
+    <div class="eccs-table-wrap"><table class="eccs-matrix">
+      <thead><tr><th>Scenario</th><th>GB scanned/search</th><th>Searches/day</th><th>Total scanned/day</th></tr></thead>
+      <tbody>
+        <tr><td>Poor -- unconstrained search</td><td>${s3cNum(results.unoptimisedScanGbSearch,1)} GB</td><td>${s3cInt(S3C.state.federatedSearch.searchesPerDay)}</td><td>${s3cNum(results.poorScanTotalGb,1)} GB</td></tr>
+        <tr><td>Constrained -- time/dataset/tenant-bounded</td><td>${s3cNum(S3C.state.partitioning.constrainedGbPerSearch,1)} GB</td><td>${s3cInt(S3C.state.federatedSearch.searchesPerDay)}</td><td>${s3cNum(results.constrainedScanTotalGb,1)} GB</td></tr>
+      </tbody>
+    </table></div>
+    <p style="margin-top:10px">Constraining searches by earliest/latest time, dataset, source, sourcetype, tenant, environment and date partitions reduces scanned data by an estimated <strong>${s3cNum(results.guardrailReductionFactor,0)}&times;</strong> in this configuration.</p>`;
+}
+
+/* ---------- localStorage persistence & scenario management ---------- */
+const S3C_LS_STATE_KEY = "latch_s3calc_state_v1";
+const S3C_LS_SCENARIOS_KEY = "latch_s3calc_scenarios_v1";
+function s3cSaveToLocalStorage() {
+  try { localStorage.setItem(S3C_LS_STATE_KEY, JSON.stringify(S3C.state)); } catch (e) { /* ignore quota errors */ }
+}
+function s3cLoadFromLocalStorage() {
+  try {
+    const raw = localStorage.getItem(S3C_LS_STATE_KEY);
+    if (raw) {
+      const loaded = JSON.parse(raw);
+      S3C.state = s3cDeepMerge(s3cDefaultState(), loaded);
+    }
+  } catch (e) { /* ignore corrupt storage */ }
+}
+function s3cDeepMerge(base, override) {
+  if (Array.isArray(base)) return Array.isArray(override) ? override : base;
+  if (typeof base !== "object" || base === null) return override === undefined ? base : override;
+  const out = { ...base };
+  if (override && typeof override === "object") {
+    Object.keys(override).forEach(k => { out[k] = s3cDeepMerge(base[k], override[k]); });
+  }
+  return out;
+}
+function s3cListScenarios() {
+  try { return JSON.parse(localStorage.getItem(S3C_LS_SCENARIOS_KEY) || "[]"); } catch (e) { return []; }
+}
+function s3cSaveScenarios(list) {
+  try { localStorage.setItem(S3C_LS_SCENARIOS_KEY, JSON.stringify(list)); } catch (e) { /* ignore */ }
+}
+function s3cRenderSavedScenarios() {
+  const el = document.getElementById("s3cSavedScenarioList");
+  if (!el) return;
+  const list = s3cListScenarios();
+  if (!list.length) { el.innerHTML = "<p>No saved scenarios yet.</p>"; return; }
+  el.innerHTML = list.map(sc => `
+    <div class="s3c-saved-scenario">
+      <span>${sc.name}</span>
+      <div class="button-group">
+        <button type="button" data-s3c-load-scenario="${sc.id}">Load</button>
+        <button type="button" data-s3c-dup-scenario="${sc.id}">Duplicate</button>
+        <button type="button" data-s3c-rename-scenario="${sc.id}">Rename</button>
+        <button type="button" data-s3c-delete-scenario="${sc.id}">Delete</button>
+      </div>
+    </div>`).join("");
+}
+function s3cInitScenarioButtons() {
+  document.getElementById("s3cSaveScenario")?.addEventListener("click", () => {
+    const name = S3C.state.meta.scenarioName || "Untitled scenario";
+    const list = s3cListScenarios();
+    list.push({ id: "sc_" + Date.now(), name, state: JSON.parse(JSON.stringify(S3C.state)) });
+    s3cSaveScenarios(list);
+    s3cRenderSavedScenarios();
+  });
+  document.getElementById("s3cResetDefaults")?.addEventListener("click", () => {
+    if (!confirm("Reset the calculator to its default example scenario? This clears unsaved changes.")) return;
+    S3C.state = s3cDefaultState();
+    s3cApplyStateToInputs();
+    s3cRenderStorageClassRows();
+    s3cRenderAll();
+  });
+  document.getElementById("s3cSavedScenarioList")?.addEventListener("click", event => {
+    const btn = event.target.closest("button");
+    if (!btn) return;
+    const list = s3cListScenarios();
+    if (btn.dataset.s3cLoadScenario) {
+      const sc = list.find(x => x.id === btn.dataset.s3cLoadScenario);
+      if (sc) { S3C.state = s3cDeepMerge(s3cDefaultState(), sc.state); s3cApplyStateToInputs(); s3cRenderStorageClassRows(); s3cRenderAll(); }
+    } else if (btn.dataset.s3cDupScenario) {
+      const sc = list.find(x => x.id === btn.dataset.s3cDupScenario);
+      if (sc) { list.push({ id: "sc_" + Date.now(), name: sc.name + " (copy)", state: sc.state }); s3cSaveScenarios(list); s3cRenderSavedScenarios(); }
+    } else if (btn.dataset.s3cRenameScenario) {
+      const sc = list.find(x => x.id === btn.dataset.s3cRenameScenario);
+      if (sc) { const newName = prompt("Rename scenario", sc.name); if (newName) { sc.name = newName; s3cSaveScenarios(list); s3cRenderSavedScenarios(); } }
+    } else if (btn.dataset.s3cDeleteScenario) {
+      if (confirm("Delete this saved scenario?")) { s3cSaveScenarios(list.filter(x => x.id !== btn.dataset.s3cDeleteScenario)); s3cRenderSavedScenarios(); }
+    }
+  });
+}
+
+/* ---------- Export / Import ---------- */
+function s3cDownload(filename, content, mime) {
+  const blob = new Blob([content], { type: mime });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+}
+function s3cExportJson() {
+  s3cDownload("s3-calculator-config.json", JSON.stringify(S3C.state, null, 2), "application/json");
+}
+function s3cCsvEscape(v) { const s = String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
+function s3cExportCostCsv() {
+  const r = S3C.results;
+  const lines = ["Category,Monthly,Annual,Percent"];
+  r.categories.forEach(c => lines.push([c.label, c.monthly.toFixed(2), c.annual.toFixed(2), c.pct.toFixed(1)].map(s3cCsvEscape).join(",")));
+  lines.push(["TOTAL", r.totalMonthly.toFixed(2), r.totalAnnual.toFixed(2), "100"].join(","));
+  s3cDownload("s3-calculator-cost-summary.csv", lines.join("\r\n"), "text/csv;charset=utf-8");
+}
+function s3cExportCapacityCsv() {
+  const r = S3C.results;
+  const lines = ["Metric,Value"];
+  const items = [
+    ["Raw GB/day", r.rawGbDay], ["Compressed GB/day", r.compressedGbDay], ["Raw TB/year", r.rawTbYear],
+    ["Stored TB", r.storedTb], ["Objects/day", r.objectsPerDay], ["Objects/year", r.objectsPerYear],
+    ["Searches/day", S3C.state.federatedSearch.searchesPerDay], ["TB scanned/month", r.tbScannedMonth],
+    ["TB returned/month", r.tbReturnedMonth], ["Search amplification ratio", r.amplificationRatio],
+    ["Partition pruning efficiency %", r.pruningEfficiencyPct], ["Monthly cost", r.totalMonthly], ["Annual cost", r.totalAnnual]
+  ];
+  items.forEach(([k, v]) => lines.push(k + "," + (typeof v === "number" ? v.toFixed(3) : v)));
+  s3cDownload("s3-calculator-capacity-summary.csv", lines.join("\r\n"), "text/csv;charset=utf-8");
+}
+function s3cExportScenarioCsv() {
+  if (!S3C._lastScenarios) s3cRenderScenarios();
+  const lines = ["Scenario,Indexed GB/day,Stored TB,Scanned TB/month,Monthly cost,Annual cost,3-year cost,5-year cost"];
+  S3C._lastScenarios.forEach(sc => {
+    lines.push([sc.name, sc.res.indexedGbDay.toFixed(1), sc.res.storedTb.toFixed(2), sc.res.tbScannedMonth.toFixed(2),
+      sc.res.totalMonthly.toFixed(2), sc.res.totalAnnual.toFixed(2), (sc.res.totalAnnual * 3).toFixed(2), (sc.res.totalAnnual * 5).toFixed(2)
+    ].map(s3cCsvEscape).join(","));
+  });
+  s3cDownload("s3-calculator-scenario-comparison.csv", lines.join("\r\n"), "text/csv;charset=utf-8");
+}
+function s3cExportMarkdown() {
+  const r = S3C.results;
+  const st = S3C.state;
+  const md = `# Splunk Cloud -> Ingest Processor -> Amazon S3 -> Federated Search Cost & Size Report
+
+## Architecture
+Ingest Processor -> Sydney S3 (ap-southeast-2) for write/retention; Splunk Federated Search -> Sydney S3 for search.
+${st.splunkIndex.enabled ? "A Splunk-indexed copy is also retained (" + st.splunkIndex.indexedPercent + "% of data, " + st.splunkIndex.retentionDaysIndex + " days)." : "No Splunk-indexed copy is modelled (S3-only for this run)."}
+
+## AWS region
+Amazon Web Services, Asia Pacific (Sydney), ap-southeast-2, data residency Australia.
+
+## Assumptions
+- Raw data: ${s3cNum(r.rawGbDay,1)} GB/day
+- Compression: ${s3cNum(r.storedPercent,1)}% of raw stored
+- Retention: ${st.retention.days} days
+- Partition pruning efficiency: ${s3cNum(r.pruningEfficiencyPct,1)}%
+- Federated Search: ${st.federatedSearch.searchesPerDay} searches/day, ${s3cNum(st.federatedSearch.avgGbScannedPerSearch,1)} GB scanned/search (unoptimised), ${s3cNum(st.federatedSearch.avgGbReturnedPerSearch,3)} GB returned/search
+All prices are user-supplied and must be validated against current AWS/Splunk pricing before use in a purchasing decision.
+
+## Data volume
+Raw: ${s3cNum(r.rawGbDay,1)} GB/day, ${s3cNum(r.rawTbYear,2)} TB/year.
+Compressed: ${s3cNum(r.compressedGbDay,1)} GB/day, ${s3cNum(r.compressedTbYear,2)} TB/year.
+
+## Retention & storage
+Stored capacity: ${s3cNum(r.storedTb,2)} TB at ${st.retention.days} days retention.
+
+## Object sizing
+Target object size: ${st.objectSize.targetMb} MB -> ${s3cInt(r.objectsPerDay)} objects/day (${s3cInt(r.objectsPerYear)}/year). Small file risk: ${r.smallFileRisk}.
+
+## Search behaviour & amplification
+Search Amplification Ratio: ${s3cInt(r.amplificationRatio)}:1 (${r.amplificationLabel}). Bytes scanned/search: ${s3cNum(r.bytesScannedPerSearch,1)} GB. Bytes returned/search: ${s3cNum(r.bytesReturnedPerSearch,3)} GB.
+
+## Partition pruning
+Unoptimised scan: ${s3cNum(r.unoptimisedScanGbSearch,1)} GB/search. Effective scan after pruning: ${s3cNum(r.effectiveScanGbSearch,1)} GB/search (${s3cNum(r.pruningEfficiencyPct,1)}% pruning).
+
+## Cost summary
+Monthly: ${s3cMoney(r.totalMonthly)}. Annual: ${s3cMoney(r.totalAnnual)}.
+Write/Retention cost: ${s3cMoney(r.writeMonthly)}/mo. Search cost: ${s3cMoney(r.searchMonthly)}/mo. Combined TCO: ${s3cMoney(r.tcoMonthly)}/mo.
+3-year TCO: ${s3cMoney(r.tcoAnnual * 3)}. 5-year TCO: ${s3cMoney(r.tcoAnnual * 5)}.
+
+## Major cost drivers
+${r.costDrivers.slice(0, 5).map((c, i) => (i + 1) + ". " + c.label + " -- " + s3cMoney(c.monthly) + "/mo (" + s3cNum(c.pct, 1) + "%)").join("\n")}
+
+## Risks
+${r.archiveWarning ? "- Archive storage classes are selected; Federated Search may need immediate object access.\n" : ""}${r.s3StorageClassPctSum !== 100 && !st.lifecycle.enabled ? "- S3 storage class percentages do not sum to 100%.\n" : ""}- All monetary figures depend entirely on user-supplied prices in Pricing Configuration -- none are authoritative Splunk or AWS list prices.
+
+## Recommendations
+${document.getElementById("s3cRecommendations") ? [...document.getElementById("s3cRecommendations").children].map(d => "- " + d.textContent).join("\n") : ""}
+
+---
+Generated by the LATCH S3 Cost & Size Calculator. Planning estimate only -- not a vendor quote.`;
+  s3cDownload("s3-calculator-report.md", md, "text/markdown;charset=utf-8");
+}
+function s3cPrintReport() { window.print(); }
+function s3cImportJson(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const loaded = JSON.parse(reader.result);
+      S3C.state = s3cDeepMerge(s3cDefaultState(), loaded);
+      s3cApplyStateToInputs();
+      s3cRenderStorageClassRows();
+      s3cRenderAll();
+      s3cSetupImportedListeners();
+    } catch (e) {
+      alert("Could not parse that file as a valid S3 Calculator JSON export.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* ---------- init ---------- */
+function s3cSetupImportedListeners() {
+  // storage class rows are re-rendered on import/reset, so their inputs need (re)binding -- delegation below handles it
+}
+function s3cInitCalculator() {
+  s3cLoadFromLocalStorage();
+  s3cRenderStorageClassRows();
+  s3cApplyStateToInputs();
+  const page = document.getElementById("s3CalcPage");
+  if (!page) return;
+  const handleBoundInput = event => {
+    const el = event.target.closest("[data-s3c]");
+    if (!el) return;
+    const path = s3cReadElementIntoState(el);
+    s3cSyncBoundElements(path, el);
+    s3cRenderAll();
+  };
+  page.addEventListener("input", handleBoundInput);
+  page.addEventListener("change", handleBoundInput);
+  document.getElementById("s3cExportJson")?.addEventListener("click", s3cExportJson);
+  document.getElementById("s3cExportCostCsv")?.addEventListener("click", s3cExportCostCsv);
+  document.getElementById("s3cExportCapacityCsv")?.addEventListener("click", s3cExportCapacityCsv);
+  document.getElementById("s3cExportScenarioCsv")?.addEventListener("click", s3cExportScenarioCsv);
+  document.getElementById("s3cExportMarkdown")?.addEventListener("click", s3cExportMarkdown);
+  document.getElementById("s3cPrintReport")?.addEventListener("click", s3cPrintReport);
+  document.getElementById("s3cImportFile")?.addEventListener("change", event => {
+    if (event.target.files && event.target.files[0]) s3cImportJson(event.target.files[0]);
+  });
+  s3cInitScenarioButtons();
+  s3cRenderSavedScenarios();
+  s3cRenderAll();
+}
+
+s3cInitCalculator();
 setActivePage(pageNameFromHash(), false);
 
 
