@@ -12771,28 +12771,57 @@ E. Assumptions and unresolved inputs</pre>
         <details open>
           <summary>Architecture diagram</summary>
           <div class="eccs-example-body s3c-chart-wrap"><pre class="mermaid" id="s1ArchitectureDiagram">
-flowchart LR
-    subgraph SIT["Search / Indexing Tier"]
-        SHIDX["SH/IDX
-one or more standalone
-Splunk instances"]
+flowchart TB
+    subgraph TIERS[" "]
+        direction LR
+        subgraph SIT["Search / Indexing Tier<br/>Process and store data; power search and analytics"]
+            direction TB
+            SHIDX["<b>SH/IDX</b><br/>Search Head / Indexer"]
+            SIT_NOTE("One or more<br/>standalone instances")
+        end
+
+        subgraph MGMT["Management<br/>Configure, deploy and manage the environment"]
+            direction TB
+            DS["<b>DS</b><br/>Deployment Server"]
+            MGMT_NOTE["Distributes apps, configs and<br/>system settings to managed components"]
+        end
+
+        subgraph CT["Collection Tier<br/>Collect and forward data to the platform"]
+            direction LR
+            HEC["<b>HTTP Event Collector</b><br/>Receives events via HTTP<br/>TCP 8088 (HEC)"]
+            FWD["<b>Forwarders</b><br/>Lightweight agents that<br/>forward data<br/>TCP 9997 (Data)"]
+            NET["<b>Network Input</b><br/>Collects data from<br/>tcp/udp sources<br/>TCP 9997 (Data)"]
+            OTHER["<b>Other Inputs</b><br/>Files, scripts, APIs,<br/>databases, etc.<br/>TCP 9997 (Data)"]
+        end
+
+        CT -.->|"Data Flow (Ingestion)<br/>TCP 9997 (Splunk Data)"| SIT
+        SIT <-.->|"8089<br/>Management (HTTPS)"| MGMT
+        CT <-.->|"8089<br/>Management (HTTPS)"| MGMT
     end
-    subgraph MGMT["Management"]
-        DS["DS
-Deployment Server"]
+
+    subgraph LEGEND["Legend / Key"]
+        direction LR
+        LA(" ") -.->|"Data Flow (Ingestion)<br/>TCP 9997"| LB(" ")
+        LC(" ") <-.->|"Management (HTTPS)<br/>TCP 8089"| LD(" ")
+        LE(" ") ---|"HTTP Event Collector<br/>TCP 8088"| LF(" ")
+        LG["Component / Service<br/>Represents a Splunk component"]
     end
-    subgraph CT["Collection Tier"]
-        HEC["HTTP Event
-Collector"]
-        FWD["Forwarders"]
-        NET["Network
-Input"]
-        OTHER["Other
-Inputs"]
-    end
-    CT -->|data flow| SIT
-    MGMT -.->|mgmt / DS| SIT
-    MGMT -.->|mgmt / DS| CT
+
+    TIERS ~~~ LEGEND
+
+    style TIERS fill:none,stroke:none
+    style SIT fill:#eafaf0,stroke:#16a34a,stroke-width:2px,stroke-dasharray:5 5
+    style MGMT fill:#f5f0ff,stroke:#7c3aed,stroke-width:2px,stroke-dasharray:5 5
+    style CT fill:#fff7ed,stroke:#ea580c,stroke-width:2px,stroke-dasharray:5 5
+    style LEGEND fill:#f8fafc,stroke:#cbd5e1,stroke-width:1px
+
+    linkStyle 0 stroke:#dc2626,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle 1 stroke:#2563eb,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle 2 stroke:#2563eb,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle 3 stroke:#dc2626,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle 4 stroke:#2563eb,stroke-width:2px,stroke-dasharray:6 4
+    linkStyle 5 stroke:#ea580c,stroke-width:2px
+    linkStyle 6 stroke:none
           </pre></div>
         </details>
       </div>
