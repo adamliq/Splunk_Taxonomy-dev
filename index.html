@@ -3232,7 +3232,6 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
     <button id="showOnboardingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="onboardingPage">Onboarding flow</button>
     <button id="showTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="taxonomyPage">Onboard Taxonomy</button>
     <button id="showObjectTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="objectTaxonomyPage">Splunk Taxonomy</button>
-    <button id="showSvaArchPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="svaArchPage">Splunk architecture</button>
     <button id="showAssessmentsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentsPage">Assessments</button>
     <button id="showSizingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="sizingCalculatorPage">Sizing calculator</button>
     <button id="showS3CalcPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="s3CalcPage">S3 cost calculator</button>
@@ -12750,68 +12749,6 @@ E. Assumptions and unresolved inputs</pre>
   </section>
 
 
-  <section id="svaArchPage" class="page-view reference-page" role="tabpanel" aria-labelledby="showSvaArchPage" hidden>
-    <div class="reference-hero">
-      <div class="eyebrow">Reference &middot; Splunk Validated Architectures</div>
-      <h2>Splunk Architecture</h2>
-      <p>Detailed reference pages for Splunk's published <strong>Validated Architectures (SVAs)</strong> -- the indexing/search topology permutations catalogued as design-time classifications under <code>SOT-08.08</code> in the Splunk Taxonomy. Each entry below is built directly from Splunk's own SVA documentation and is added incrementally as source content is supplied; topologies not yet detailed here are still catalogued in the taxonomy and link straight through to their record.</p>
-      <div class="reference-jump">
-        <button type="button" onclick="document.getElementById('sva-arch-s1').scrollIntoView({behavior:'smooth'})">S1 &mdash; Single Server</button>
-        <button type="button" onclick="document.getElementById('sva-arch-others').scrollIntoView({behavior:'smooth'})">Other topologies</button>
-      </div>
-    </div>
-
-    <section id="sva-arch-s1" class="reference-section">
-      <div class="reference-section-heading">
-        <div><h3>S1 &mdash; Single Server Deployment</h3><p>The simplest Splunk Validated Architecture: one instance performs collection, indexing and search.</p></div>
-        <button type="button" class="ref-pill" data-jump-sot="SOT-08.08.01">SOT-08.08.01 &middot; SVA-S1-001</button>
-      </div>
-
-      <div class="reference-section-heading" style="margin-top:20px"><div><h3 style="font-size:16px">Architecture overview</h3></div></div>
-      <p>The Single Server Deployment topology is typically used for smaller, non-business critical use-cases that are often departmental in nature. It provides a very simple, cost effective solution if your environment meets all of the following criteria:</p>
-      <ul class="method-list" style="font-size:13px">
-        <li>You do not have any requirements to provide high availability or automated disaster recovery for your Splunk software deployment.</li>
-        <li>Your daily data ingest is less than approximately 500 GB.</li>
-        <li>You have a small number of users with non-critical search use cases.</li>
-      </ul>
-
-      <div class="sizing-grid" style="margin-top:16px">
-        <div>
-          <h4 style="margin:0 0 6px">Benefits</h4>
-          <ul class="method-list" style="font-size:13px">
-            <li>Simple administration, performant search for smaller data volumes, and a fixed total cost of ownership (TCO).</li>
-            <li>Multiple independent single-instance deployments can be managed by a single management tier.</li>
-            <li>Straightforward migration path to a distributed deployment.</li>
-          </ul>
-        </div>
-        <div>
-          <h4 style="margin:0 0 6px">Limitations</h4>
-          <ul class="method-list" style="font-size:13px">
-            <li>No high availability for search or indexing.</li>
-            <li>Scalability limited by hardware capacity.</li>
-          </ul>
-        </div>
-      </div>
-
-      <p class="sot-note" style="margin-top:20px">Source: Splunk, <em>Single Server Deployment (S1)</em>, Splunk Validated Architectures &ndash; Splunk Platform Indexing and Search, <a href="https://help.splunk.com/en/splunk-cloud-platform/splunk-validated-architectures/splunk-platform-indexing-and-search/single-server-deployment-s1" target="_blank" rel="noopener">help.splunk.com</a> (supplied by user, captured 2026-08-15).</p>
-    </section>
-
-    <section id="sva-arch-others" class="reference-section">
-      <div class="reference-section-heading"><div><h3>Other SVA topologies</h3><p>Already catalogued in the Splunk Taxonomy under <code>SOT-08.08</code> -- full architecture detail pages will be added here as source content is supplied for each.</p></div></div>
-      <div class="method-grid">
-        <article class="method-card"><h4>D1/D11 &mdash; Distributed Non-Clustered Deployment</h4><p>Separate indexing and search tiers without clustering.</p><div class="method-actions"><button type="button" data-jump-sot="SOT-08.08.02">View in Splunk Taxonomy</button></div></article>
-        <article class="method-card"><h4>C1/C11 &mdash; Distributed Clustered Deployment, Single Site</h4><p>Indexer clustering for data resilience and search availability, single site.</p><div class="method-actions"><button type="button" data-jump-sot="SOT-08.08.03">View in Splunk Taxonomy</button></div></article>
-        <article class="method-card"><h4>C3/C13 &mdash; Distributed Clustered Deployment with SHC, Single Site</h4><p>Adds a Search Head Cluster to C1/C11, single site.</p><div class="method-actions"><button type="button" data-jump-sot="SOT-08.08.04">View in Splunk Taxonomy</button></div></article>
-        <article class="method-card"><h4>M2/M12 &mdash; Distributed Clustered Deployment, Multisite</h4><p>Indexer clustering stretched across multiple sites.</p><div class="method-actions"><button type="button" data-jump-sot="SOT-08.08.05">View in Splunk Taxonomy</button></div></article>
-        <article class="method-card"><h4>M3/M13 &mdash; Distributed Clustered Deployment with SHC, Multisite</h4><p>Adds a Search Head Cluster to M2/M12, multisite indexing.</p><div class="method-actions"><button type="button" data-jump-sot="SOT-08.08.06">View in Splunk Taxonomy</button></div></article>
-        <article class="method-card"><h4>M4/M14 &mdash; Distributed Clustered Deployment with SHC, Multisite (Stretched SHC)</h4><p>As M3/M13, but the Search Head Cluster is itself stretched across the same sites as the indexer cluster.</p><div class="method-actions"><button type="button" data-jump-sot="SOT-08.08.07">View in Splunk Taxonomy</button></div></article>
-        <article class="method-card"><h4>Custom Topology</h4><p>No standard SVA code applies -- document the actual node placement and constraints directly.</p><div class="method-actions"><button type="button" data-jump-sot="SOT-08.08.08">View in Splunk Taxonomy</button></div></article>
-      </div>
-    </section>
-  </section>
-
-
-
   <section id="assurancePage" class="page-view assurance-page" role="tabpanel" aria-labelledby="showAssurancePage" hidden>
     <div class="assurance-hero">
       <div>
@@ -17636,7 +17573,6 @@ const pageTabs = {
   onboarding: document.getElementById("showOnboardingPage"),
   taxonomy: document.getElementById("showTaxonomyPage"),
   objectTaxonomy: document.getElementById("showObjectTaxonomyPage"),
-  svaArch: document.getElementById("showSvaArchPage"),
   assessments: document.getElementById("showAssessmentsPage"),
   sizing: document.getElementById("showSizingPage"),
   s3calc: document.getElementById("showS3CalcPage"),
@@ -17653,7 +17589,6 @@ const pageViews = {
   onboarding: document.getElementById("onboardingPage"),
   taxonomy: document.getElementById("taxonomyPage"),
   objectTaxonomy: document.getElementById("objectTaxonomyPage"),
-  svaArch: document.getElementById("svaArchPage"),
   assessments: document.getElementById("assessmentsPage"),
   sizing: document.getElementById("sizingCalculatorPage"),
   s3calc: document.getElementById("s3CalcPage"),
@@ -19190,7 +19125,7 @@ function exportViabilityCalculator(event) {
 }
 
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "svaArch", "assessments", "sizing", "s3calc", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "externalTools"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "externalTools"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#file-mon-/.test(location.hash) ? "file-monitoring-profile" : /^#rest-api-/.test(location.hash) ? "rest-api-collection-profile" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : /^#eda-/.test(location.hash) ? "eda-playbook" : "");
   
@@ -19243,9 +19178,7 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
                   ? "#my-tools"
                   : selected === "objectTaxonomy"
                     ? "#object-taxonomy"
-                    : selected === "svaArch"
-                      ? "#splunk-architecture"
-                      : "#taxonomy";
+                    : "#taxonomy";
     history.replaceState(null, "", hash);
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -19814,7 +19747,6 @@ function pageNameFromHash() {
   if (location.hash === "#onboarding-flow") return "onboarding";
   if (location.hash === "#taxonomy") return "taxonomy";
   if (location.hash === "#object-taxonomy") return "objectTaxonomy";
-  if (location.hash === "#splunk-architecture") return "svaArch";
   if (location.hash === "#assessments") return "assessments";
   if (location.hash === "#s3-calculator") return "s3calc";
   if (location.hash === "#reference") return "reference";
@@ -21973,10 +21905,6 @@ function s3cInitCalculator() {
 }
 
 s3cInitCalculator();
-
-document.querySelectorAll("#svaArchPage [data-jump-sot]").forEach(el => {
-  el.addEventListener("click", () => jumpToSotObject(el.getAttribute("data-jump-sot")));
-});
 
 setActivePage(pageNameFromHash(), false);
 
