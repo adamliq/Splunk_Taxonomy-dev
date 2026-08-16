@@ -12679,7 +12679,7 @@ E. Assumptions and unresolved inputs</pre>
       <div>
         <div class="eyebrow">Reference · Splunk Object Taxonomy (SOT)</div>
         <h2>Splunk Object Taxonomy</h2>
-        <p>A hierarchical taxonomy of every kind of object that exists across the Splunk universe -- describing <em>what each object is</em>, organised into 13 SOT-01&ndash;SOT-13 domains (each with class &rarr; subclass levels down to the object itself), independent of this app's own LATCH <code>TAX-XX</code> taxonomy. Attributes like scope, config file, dependencies and lifecycle live on the object as properties rather than as branches of the classification. Use the Tree Explorer for the hierarchy, or the Table View for a flat, filterable catalogue.</p>
+        <p>A hierarchical taxonomy of every kind of object that exists across the Splunk universe -- describing <em>what each object is</em>, organised into 14 SOT-01&ndash;SOT-14 domains (each with class &rarr; subclass levels down to the object itself), independent of this app's own LATCH <code>TAX-XX</code> taxonomy. Attributes like scope, config file, dependencies and lifecycle live on the object as properties rather than as branches of the classification. Use the Tree Explorer for the hierarchy, or the Table View for a flat, filterable catalogue.</p>
       </div>
     </div>
 
@@ -23618,6 +23618,66 @@ const SOT_OBJECTS = [
     def: "Seeds a Deployment Client with a starter set of apps at first startup, before it has contacted a Deployment Server -- useful for baking a known-good app set into a forwarder image or install package.",
     notes: "Applied only once, at first run; subsequent app management is handled normally by the Deployment Client's ongoing check-ins against its configured Deployment Server.",
     deps: [], feeds: ["Deployment Client"], sotCode: "SOT-08.04.06", instanceId: "SVSEED-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+{ name: "Introduction to the Splunk Success Framework", domain: "SOT-14 — Splunk Success Framework & Organizational Governance Objects", type: "Platform Object", scope: "Organization-level (methodology/governance guidance, not runtime state)",
+    config: "N/A -- a methodology/guidance document published on Splunk Lantern, not a queryable or configured object",
+    def: "An introduction to the Splunk Success Framework (SSF), Splunk's published methodology for organizing and maturing how an organization runs its Splunk deployment -- organized into Fundamentals, four Functional Areas (Program, People, Platform and Data Management) and four outcome-oriented paths (Reduce Costs, Mitigate Risk, Improve Performance, Increase Efficiencies).",
+    notes: "Source: Splunk Lantern, https://lantern.splunk.com/Splunk_Success_Framework. Adoption levels used across the SSF's functional areas: Foundational, Standard, Intermediate, Advanced.",
+    deps: [], feeds: [], sotCode: "SOT-14.01.01", instanceId: "SSF-INTRO-001", objectClass: "Platform Object", product: "Splunk Success Framework", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
+{ name: "Define a Charter (Purpose & Scope)", domain: "SOT-14 — Splunk Success Framework & Organizational Governance Objects", type: "Platform Object", scope: "Organization-level (methodology/governance guidance, not runtime state)",
+    config: "N/A -- a methodology/guidance document published on Splunk Lantern, not a queryable or configured object",
+    def: "Splunk Success Framework guidance for determining the purpose and scope of a Splunk deployment by defining a charter -- a Fundamentals-stage activity.",
+    notes: "Source: Splunk Lantern, https://lantern.splunk.com/Splunk_Success_Framework.",
+    deps: [], feeds: [], sotCode: "SOT-14.01.02", instanceId: "SSF-CHARTER-001", objectClass: "Platform Object", product: "Splunk Success Framework", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
+{ name: "Setting Success Metrics", domain: "SOT-14 — Splunk Success Framework & Organizational Governance Objects", type: "Platform Object", scope: "Organization-level (methodology/governance guidance, not runtime state)",
+    config: "N/A -- a methodology/guidance document published on Splunk Lantern, not a queryable or configured object",
+    def: "Splunk Success Framework guidance for defining the metrics used to measure the success of a Splunk deployment -- a Fundamentals-stage activity.",
+    notes: "Source: Splunk Lantern, https://lantern.splunk.com/Splunk_Success_Framework.",
+    deps: [], feeds: [], sotCode: "SOT-14.01.03", instanceId: "SSF-METRICS-001", objectClass: "Platform Object", product: "Splunk Success Framework", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
+{ name: "SSF Helpful Resource Links", domain: "SOT-14 — Splunk Success Framework & Organizational Governance Objects", type: "Platform Object", scope: "Organization-level (methodology/governance guidance, not runtime state)",
+    config: "N/A -- a methodology/guidance document published on Splunk Lantern, not a queryable or configured object",
+    def: "A curated set of links to Splunk resources referenced by the Splunk Success Framework's Fundamentals section.",
+    notes: "Source: Splunk Lantern, https://lantern.splunk.com/Splunk_Success_Framework.",
+    deps: [], feeds: [], sotCode: "SOT-14.01.04", instanceId: "SSF-LINKS-001", objectClass: "Platform Object", product: "Splunk Success Framework", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
+{ name: "Program Management (SSF Functional Area)", domain: "SOT-14 — Splunk Success Framework & Organizational Governance Objects", type: "Platform Object", scope: "Organization-level (methodology/governance guidance, not runtime state)",
+    config: "N/A -- a methodology/guidance document published on Splunk Lantern, not a queryable or configured object",
+    def: "The Splunk Success Framework functional area covering the operating cadence, governance and stakeholder alignment of a Splunk deployment, assessed across Foundational -> Standard -> Intermediate -> Advanced adoption levels.",
+    notes: "Overview activities: Change Control, Maintenance, Upgrades; Community Management; Collaboration; Staffing; Business Alignment; Value Realization. Key guidance pages: Establishing and communicating with your Splunk user community; Establishing service levels; Change management; Managing stakeholders; Assigning responsibility for a Splunk deployment (RACI); Scheduling quarterly business reviews; Showing the value of your Splunk deployment (Use case registry, Value Realization Cycle, showback). Source: Splunk Lantern, https://lantern.splunk.com/Splunk_Success_Framework.",
+    deps: [], feeds: [], sotCode: "SOT-14.02.01", instanceId: "SSF-PROG-001", objectClass: "Platform Object", product: "Splunk Success Framework", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
+{ name: "People Management (SSF Functional Area)", domain: "SOT-14 — Splunk Success Framework & Organizational Governance Objects", type: "Platform Object", scope: "Organization-level (methodology/governance guidance, not runtime state)",
+    config: "N/A -- a methodology/guidance document published on Splunk Lantern, not a queryable or configured object",
+    def: "The Splunk Success Framework functional area covering roles, authorization, team lifecycle and education for the people operating a Splunk deployment, assessed across Foundational -> Standard -> Intermediate -> Advanced adoption levels.",
+    notes: "Overview activities: Define Roles and Capabilities; Authorization Implementation; User and Team Maintenance and Retirement; Team Education Strategy. Key guidance pages: Staffing a Splunk deployment; Setting roles and responsibilities; Enabling users with incentives; Managing data based on role; Building user group workspaces; Setting up a welcome page. Source: Splunk Lantern, https://lantern.splunk.com/Splunk_Success_Framework.",
+    deps: [], feeds: [], sotCode: "SOT-14.02.02", instanceId: "SSF-PEOPLE-001", objectClass: "Platform Object", product: "Splunk Success Framework", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
+{ name: "Platform Management (SSF Functional Area)", domain: "SOT-14 — Splunk Success Framework & Organizational Governance Objects", type: "Platform Object", scope: "Organization-level (methodology/governance guidance, not runtime state)",
+    config: "N/A -- a methodology/guidance document published on Splunk Lantern, not a queryable or configured object",
+    def: "The Splunk Success Framework functional area covering the technical architecture, capacity, continuity and support of the Splunk platform itself, assessed across Foundational -> Standard -> Intermediate -> Advanced adoption levels.",
+    notes: "Overview activities: Education (engineering team); Architecture; Continuity Planning; Support and Incident Management; Capacity Management. Key guidance pages: Using a Splunk sandbox; Setting up a lab environment; Platform capacity considerations; Managing backup and restore processes; Preparing for failures in the Splunk utility tier; Indexing and search architecture (links to the Splunk Validated Architectures at SOT-08.08/SOT-08.09); Data collection architecture. Source: Splunk Lantern, https://lantern.splunk.com/Splunk_Success_Framework.",
+    deps: [], feeds: [], sotCode: "SOT-14.02.03", instanceId: "SSF-PLAT-001", objectClass: "Platform Object", product: "Splunk Success Framework", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
+{ name: "Data Management (SSF Functional Area)", domain: "SOT-14 — Splunk Success Framework & Organizational Governance Objects", type: "Platform Object", scope: "Organization-level (methodology/governance guidance, not runtime state)",
+    config: "N/A -- a methodology/guidance document published on Splunk Lantern, not a queryable or configured object",
+    def: "The Splunk Success Framework functional area covering how data is requested, defined, onboarded and retired for a Splunk deployment, assessed across Foundational -> Standard -> Intermediate -> Advanced adoption levels.",
+    notes: "Overview activities: Data onboarding / request process; Define the data; Data lifecycle / retirement of use cases. Key guidance pages: GDI -- Getting Data In; Naming conventions; Data onboarding workflow; Improving data onboarding with props.conf configurations. Source: Splunk Lantern, https://lantern.splunk.com/Splunk_Success_Framework.",
+    deps: [], feeds: [], sotCode: "SOT-14.02.04", instanceId: "SSF-DATA-001", objectClass: "Platform Object", product: "Splunk Success Framework", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
+{ name: "Reduce Costs (SSF Outcome Path)", domain: "SOT-14 — Splunk Success Framework & Organizational Governance Objects", type: "Platform Object", scope: "Organization-level (methodology/governance guidance, not runtime state)",
+    config: "N/A -- a methodology/guidance document published on Splunk Lantern, not a queryable or configured object",
+    def: "The Splunk Success Framework prescriptive outcome path for reducing the cost of a Splunk deployment, organized into three pathways: reducing infrastructure footprint, reducing search load, and optimizing storage.",
+    notes: "Reducing your infrastructure footprint: sizing your Splunk architecture; creating efficient searches and dashboards for cost reduction; implementing best practices for workload management; improving data onboarding with props.conf configurations; optimizing Splunk knowledge bundles; complying with the Splunk Common Information Model. Reducing search load: implementing search filters; limiting concurrent searches. Optimizing storage: defining data retention policies. Source: Splunk Lantern, https://lantern.splunk.com/Splunk_Success_Framework.",
+    deps: [], feeds: [], sotCode: "SOT-14.03.01", instanceId: "SSF-COST-001", objectClass: "Platform Object", product: "Splunk Success Framework", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
+{ name: "Mitigate Risk (SSF Outcome Path)", domain: "SOT-14 — Splunk Success Framework & Organizational Governance Objects", type: "Platform Object", scope: "Organization-level (methodology/governance guidance, not runtime state)",
+    config: "N/A -- a methodology/guidance document published on Splunk Lantern, not a queryable or configured object",
+    def: "The Splunk Success Framework prescriptive outcome path for mitigating risk to a Splunk deployment, organized into three pathways: compliance, disaster recovery/business continuity, and guarding against revenue impact.",
+    notes: "Implementing business, data, and security compliance: role-based access control (RBAC). Establishing disaster recovery and business continuity. Guarding against impact to revenue: designing a scalable architecture. Source: Splunk Lantern, https://lantern.splunk.com/Splunk_Success_Framework.",
+    deps: [], feeds: [], sotCode: "SOT-14.03.02", instanceId: "SSF-RISK-001", objectClass: "Platform Object", product: "Splunk Success Framework", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
+{ name: "Improve Performance (SSF Outcome Path)", domain: "SOT-14 — Splunk Success Framework & Organizational Governance Objects", type: "Platform Object", scope: "Organization-level (methodology/governance guidance, not runtime state)",
+    config: "N/A -- a methodology/guidance document published on Splunk Lantern, not a queryable or configured object",
+    def: "The Splunk Success Framework prescriptive outcome path for improving the performance of a Splunk deployment, organized into three pathways: infrastructure/resource scalability, data management and governance, and optimizing systems/knowledge objects.",
+    notes: "Planning for infrastructure and resource scalability. Improving data management and governance: following data onboarding best practices; establishing data retention policies; creating a data governance framework. Optimizing systems and knowledge objects: cleaning up knowledge objects; using summary indexing; optimizing searches and dashboards. Source: Splunk Lantern, https://lantern.splunk.com/Splunk_Success_Framework.",
+    deps: [], feeds: [], sotCode: "SOT-14.03.03", instanceId: "SSF-PERF-001", objectClass: "Platform Object", product: "Splunk Success Framework", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
+{ name: "Increase Efficiencies (SSF Outcome Path)", domain: "SOT-14 — Splunk Success Framework & Organizational Governance Objects", type: "Platform Object", scope: "Organization-level (methodology/governance guidance, not runtime state)",
+    config: "N/A -- a methodology/guidance document published on Splunk Lantern, not a queryable or configured object",
+    def: "The Splunk Success Framework prescriptive outcome path for increasing operational efficiency of a Splunk deployment, organized into three pathways: deployment/automation, data management and governance, and Splunk Cloud Platform migration readiness.",
+    notes: "Enhancing deployment and automation strategies: streamlining Splunk deployments -- a guide to automation strategies. Enhancing data management and governance: following data onboarding best practices; establishing data retention policies; classifying and tagging data. Conducting a Splunk Cloud Platform migration readiness assessment. Source: Splunk Lantern, https://lantern.splunk.com/Splunk_Success_Framework.",
+    deps: [], feeds: [], sotCode: "SOT-14.03.04", instanceId: "SSF-EFF-001", objectClass: "Platform Object", product: "Splunk Success Framework", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
 ];
 
 const SOT_TREE = {
@@ -24090,6 +24150,26 @@ const SOT_TREE = {
       "SOT-13.03.01": "End-of-Support Product",
     } },
     "SOT-13.04": { label: "Historical Reference", desc: "Kept for context only; no longer sold or supported in any form.", subclasses: {
+    } },
+  } },
+  "SOT-14": { label: "Splunk Success Framework & Organizational Governance Objects", desc: "Splunk's published organizational maturity and program-governance methodology (the Splunk Success Framework) for running and growing a Splunk deployment -- fundamentals, functional areas and outcome-oriented guidance paths. Distinct from the technical/platform domains above: describes how an organization operates and governs Splunk, not what Splunk itself is built from. Source: Splunk Lantern, https://lantern.splunk.com/Splunk_Success_Framework.", classes: {
+    "SOT-14.01": { label: "Fundamentals", desc: "The foundational, pre-functional-area activities of the Splunk Success Framework.", subclasses: {
+      "SOT-14.01.01": "Introduction to the Splunk Success Framework",
+      "SOT-14.01.02": "Define a Charter (Purpose & Scope)",
+      "SOT-14.01.03": "Setting Success Metrics",
+      "SOT-14.01.04": "SSF Helpful Resource Links",
+    } },
+    "SOT-14.02": { label: "Functional Areas", desc: "The four operating areas the Splunk Success Framework assesses and matures, each rated across Foundational, Standard, Intermediate and Advanced adoption levels.", subclasses: {
+      "SOT-14.02.01": "Program Management (SSF Functional Area)",
+      "SOT-14.02.02": "People Management (SSF Functional Area)",
+      "SOT-14.02.03": "Platform Management (SSF Functional Area)",
+      "SOT-14.02.04": "Data Management (SSF Functional Area)",
+    } },
+    "SOT-14.03": { label: "Outcome Paths", desc: "The Splunk Success Framework's four prescriptive, outcome-oriented guidance paths, each organized into pathways containing multiple strategies.", subclasses: {
+      "SOT-14.03.01": "Reduce Costs (SSF Outcome Path)",
+      "SOT-14.03.02": "Mitigate Risk (SSF Outcome Path)",
+      "SOT-14.03.03": "Improve Performance (SSF Outcome Path)",
+      "SOT-14.03.04": "Increase Efficiencies (SSF Outcome Path)",
     } },
   } },
 };
