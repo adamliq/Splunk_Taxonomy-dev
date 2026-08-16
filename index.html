@@ -3241,6 +3241,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
     <button id="showCataloguePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cataloguePage">Data source catalogue</button>
     <button id="showPatternsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="patternsPage">Logging patterns table</button>
     <button id="showHealthChecksPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="healthChecksPage">Health checks table</button>
+    <button id="showPortsMatrixPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="portsMatrixPage">Ports matrix</button>
     <button id="showExternalToolsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="externalToolsPage">Companion tools</button>
   </nav>
 
@@ -13470,6 +13471,72 @@ E. Assumptions and unresolved inputs</pre>
     </div>
   </section>
 
+  <section id="portsMatrixPage" class="page-view patterns-page" role="tabpanel" aria-labelledby="showPortsMatrixPage" hidden>
+    <div class="patterns-hero">
+      <div>
+        <div class="eyebrow">Network reference</div>
+        <h2>Splunk Component-to-Component TCP Ports Matrix (Expanded)</h2>
+        <p>A source-component-to-destination-component cross-matrix of the TCP ports Splunk components use to talk to each other. Ports shown are the destination component's listening ports; source ports are ephemeral unless otherwise noted. This complements the Splunk Ports and Network Flow Matrix tables under Reference &rarr; Network reference -- those list ports and flows as flat rows; this page lays the same information out as a component &times; component grid.</p>
+      </div>
+    </div>
+
+    <h3>Expanded Cross-Matrix</h3>
+    <p class="patterns-scroll-hint" aria-hidden="true">&#8596; Swipe sideways to see every destination component</p>
+    <div class="eccs-table-wrap" role="region" aria-label="Scrollable component-to-component TCP ports matrix" tabindex="0">
+      <table class="eccs-matrix">
+        <thead><tr><th scope="col">Source &darr; / Destination &rarr;</th><th scope="col">Universal Forwarder (UF)</th><th scope="col">Heavy Forwarder (HF)</th><th scope="col">Indexer / IDX Peer</th><th scope="col">Search Head / SHC Member</th><th scope="col">Deployment Server (DS)</th><th scope="col">Cluster Manager (CM)</th><th scope="col">License Manager (LM)</th><th scope="col">Deployer</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Universal Forwarder (UF)</th><td>&mdash;</td><td>9997 (data)<br>9998 (SSL data)</td><td>9997 (data)<br>9998 (SSL data)</td><td>&mdash;</td><td>8089 (mgmt / phone-home / apps)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row">Heavy Forwarder (HF)</th><td>&mdash;</td><td>9997 (intermediate data)</td><td>9997 (data)<br>9998 (SSL data)</td><td>&mdash;</td><td>8089 (mgmt)</td><td>&mdash;</td><td>8089 (license)</td><td>&mdash;</td></tr>
+          <tr><th scope="row">Indexer / IDX Peer</th><td>&mdash;</td><td>&mdash;</td><td>8080 / 9887 (replication)</td><td>8089 (cluster internal)<br>8089 (distributed search responses)</td><td>8089 (mgmt)</td><td>8089 (cluster control)</td><td>8089 (license)</td><td>&mdash;</td></tr>
+          <tr><th scope="row">Search Head / SHC Member</th><td>&mdash;</td><td>&mdash;</td><td>8089 (distributed search)</td><td>8081 / 8181 / 9777 / 9887 (SHC replication)<br>8191 / 8065 (KV Store)</td><td>8089 (mgmt)</td><td>8089 (optional)</td><td>8089 (license)</td><td>8089 (config / bundle push)</td></tr>
+          <tr><th scope="row">Deployment Server (DS)</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row">Cluster Manager (CM)</th><td>&mdash;</td><td>&mdash;</td><td>8089 (cluster management)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>8089 (license)</td><td>&mdash;</td></tr>
+          <tr><th scope="row">License Manager (LM)</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row">Deployer</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>8089 (app / config push)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:24px">Key Port Meanings in the Matrix</h3>
+    <div class="eccs-table-wrap" role="region" aria-label="Scrollable key port meanings table" tabindex="0">
+      <table class="eccs-matrix">
+        <thead><tr><th scope="col">Port</th><th scope="col">Typical Use in Matrix</th></tr></thead>
+        <tbody>
+          <tr><td>8089</td><td>Management / REST API / distributed search / deployment / licensing / cluster control (used almost everywhere)</td></tr>
+          <tr><td>9997</td><td>Data forwarding (conventional default)</td></tr>
+          <tr><td>9998</td><td>SSL-encrypted data forwarding</td></tr>
+          <tr><td>8080 / 9887</td><td>Indexer cluster replication (examples -- configurable)</td></tr>
+          <tr><td>8081 / 8181 / 9777 / 9887</td><td>Search Head Cluster replication (examples -- configurable)</td></tr>
+          <tr><td>8191 / 8065</td><td>KV Store + replication (critical for SHC)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:24px">Additional Listening Ports (not always inter-component)</h3>
+    <p>Commonly open on the listed components, but usually accessed by users, external systems, or internal processes rather than other Splunk roles:</p>
+    <div class="eccs-table-wrap" role="region" aria-label="Scrollable additional listening ports table" tabindex="0">
+      <table class="eccs-matrix">
+        <thead><tr><th scope="col">Port</th><th scope="col">Component(s)</th><th scope="col">Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>8000</td><td>Search Head, (optional) Indexer / HF</td><td>Splunk Web UI</td></tr>
+          <tr><td>8088</td><td>Indexer, Heavy Forwarder</td><td>HTTP Event Collector (HEC)</td></tr>
+          <tr><td>514</td><td>Indexer / HF / UF</td><td>Syslog input (TCP or UDP) -- not recommended directly into Splunk</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="eccs-note" style="margin-top:16px">
+      <strong>Notes</strong>
+      <ul class="method-list">
+        <li>Replication ports (8080, 8081, 8181, 9887, 9777, etc.) are examples. Any free port can be chosen -- never reuse 8089 or 9997.</li>
+        <li>Direction matters: most management traffic is client &rarr; server on 8089.</li>
+        <li>Best practice: enable SSL/TLS on 8089, 9997/9998, and HEC (8088) in production.</li>
+        <li>Always confirm the actual configured ports on each instance via configuration files or <code>splunk show</code> / <code>netstat</code> / <code>ss</code>.</li>
+      </ul>
+    </div>
+  </section>
+
   <section id="externalToolsPage" class="page-view reference-page" role="tabpanel" aria-labelledby="showExternalToolsPage" hidden>
     <div class="reference-hero">
       <div class="eyebrow">External resources</div>
@@ -17583,6 +17650,7 @@ const pageTabs = {
   catalogue: document.getElementById("showCataloguePage"),
   patterns: document.getElementById("showPatternsPage"),
   health: document.getElementById("showHealthChecksPage"),
+  portsMatrix: document.getElementById("showPortsMatrixPage"),
   externalTools: document.getElementById("showExternalToolsPage")
 };
 const pageViews = {
@@ -17601,6 +17669,7 @@ const pageViews = {
   catalogue: document.getElementById("cataloguePage"),
   patterns: document.getElementById("patternsPage"),
   health: document.getElementById("healthChecksPage"),
+  portsMatrix: document.getElementById("portsMatrixPage"),
   externalTools: document.getElementById("externalToolsPage")
 };
 const patternTableBody = document.getElementById("patternTableBody");
@@ -19126,7 +19195,7 @@ function exportViabilityCalculator(event) {
 }
 
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "externalTools"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "portsMatrix", "externalTools"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#file-mon-/.test(location.hash) ? "file-monitoring-profile" : /^#rest-api-/.test(location.hash) ? "rest-api-collection-profile" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : /^#eda-/.test(location.hash) ? "eda-playbook" : "");
   
