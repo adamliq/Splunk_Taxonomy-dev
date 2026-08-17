@@ -13679,22 +13679,21 @@ E. Assumptions and unresolved inputs</pre>
     <p>Sourced from Splunk's "Introduction to securing the Splunk platform with TLS" documentation (version 10.4) -- its own "Table of most common encrypted Splunk platform instance communication scenarios." <strong>Cloud</strong> refers specifically to Splunk Cloud Platform; <strong>Enterprise</strong> refers to Splunk Enterprise and its components, including the universal forwarder.</p>
     <div class="eccs-table-wrap" role="region" aria-label="Scrollable encrypted communication scenarios table" tabindex="0">
       <table class="eccs-matrix">
-        <thead><tr><th scope="col">Type of Exchange</th><th scope="col">Node A (initiates / client)</th><th scope="col">Node B (responds / server)</th><th scope="col">Default Encryption</th></tr></thead>
+        <thead><tr><th scope="col">Type of Exchange</th><th scope="col">Node A (initiates / client)</th><th scope="col">Node B (responds / server)</th><th scope="col">Default Encryption</th><th scope="col">Default Certificate-Based Authentication</th><th scope="col">Default Common Name Checking</th><th scope="col">Type of Data Exchanged</th></tr></thead>
         <tbody>
-          <tr><td>Browser to Splunk Web</td><td>Browser</td><td>Splunk Web</td><td>Cloud: on &middot; Enterprise: off</td></tr>
-          <tr><td>Splunk Web to search head</td><td>Splunk Web</td><td><code>splunkd</code> as a search head</td><td>On</td></tr>
-          <tr><td>Forwarding</td><td><code>splunkd</code> as a forwarder</td><td><code>splunkd</code> as an indexer</td><td>Cloud: on &middot; Enterprise: off</td></tr>
-          <tr><td>Splunk-to-Splunk</td><td><code>splunkd</code> as a client</td><td><code>splunkd</code> as a server</td><td>On</td></tr>
-          <tr><td>Agent management to agents</td><td><code>splunkd</code> as agent</td><td><code>splunkd</code> as agent management</td><td>On</td></tr>
-          <tr><td>Distributed search</td><td><code>splunkd</code> as search peer</td><td><code>splunkd</code> as a search head</td><td>On</td></tr>
-          <tr><td>Search head clusters</td><td><code>splunkd</code> as cluster members</td><td><code>splunkd</code> as cluster members</td><td>Cloud: on &middot; Enterprise: off</td></tr>
-          <tr><td>Search head cluster deployer</td><td><code>splunkd</code> as cluster members</td><td><code>splunkd</code> as cluster deployer</td><td>On</td></tr>
-          <tr><td>Indexer cluster peer nodes</td><td><code>splunkd</code> as indexer cluster peer nodes</td><td><code>splunkd</code> as indexer cluster peer nodes</td><td>Cloud: on &middot; Enterprise: off. Use the <code>replication_port.ssl</code> setting in the <code>server.conf</code> configuration file to turn on replication over TLS.</td></tr>
-          <tr><td>Indexer cluster manager</td><td><code>splunkd</code> as peer and search head nodes</td><td><code>splunkd</code> as a manager node</td><td>On</td></tr>
+          <tr><td>Browser to Splunk Web</td><td>Browser</td><td>Splunk Web</td><td>Cloud: on &middot; Enterprise: off</td><td>Browser determines this</td><td>Browser determines this</td><td>Configuration and search data</td></tr>
+          <tr><td>Splunk Web to search head</td><td>Splunk Web</td><td><code>splunkd</code> as a search head</td><td>On</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Configuration and search data</td></tr>
+          <tr><td>Forwarding</td><td><code>splunkd</code> as a forwarder</td><td><code>splunkd</code> as an indexer</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Data to be indexed</td></tr>
+          <tr><td>Splunk-to-Splunk</td><td><code>splunkd</code> as a client</td><td><code>splunkd</code> as a server</td><td>On</td><td>Off</td><td>Off</td><td>Configuration data, user data</td></tr>
+          <tr><td>Agent management to agents</td><td><code>splunkd</code> as agent</td><td><code>splunkd</code> as agent management</td><td>On</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Configuration data</td></tr>
+          <tr><td>Distributed search</td><td><code>splunkd</code> as search peer</td><td><code>splunkd</code> as a search head</td><td>On</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Search data</td></tr>
+          <tr><td>Search head clusters</td><td><code>splunkd</code> as cluster members</td><td><code>splunkd</code> as cluster members</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Cluster data</td></tr>
+          <tr><td>Search head cluster deployer</td><td><code>splunkd</code> as cluster members</td><td><code>splunkd</code> as cluster deployer</td><td>On</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Configuration data</td></tr>
+          <tr><td>Indexer cluster peer nodes</td><td><code>splunkd</code> as indexer cluster peer nodes</td><td><code>splunkd</code> as indexer cluster peer nodes</td><td>Cloud: on &middot; Enterprise: off. Use the <code>replication_port-ssl</code> setting in the <code>server.conf</code> configuration file to turn on replication over TLS.</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Replication data</td></tr>
+          <tr><td>Indexer cluster manager</td><td><code>splunkd</code> as peer and search head nodes</td><td><code>splunkd</code> as a manager node</td><td>On</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Cluster data</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="eccs-note" style="margin-top:14px">The source PDF's version of this table also defines three further columns -- <strong>Default certificate-based authentication</strong>, <strong>Default Common Name checking</strong>, and <strong>Type of data exchanged</strong> -- but its page layout cut those columns off before they could be captured here; they are not included above rather than guessed at. Confirm against the live Splunk documentation ("Introduction to securing the Splunk platform with TLS") if you need those three columns' values.</p>
 
     <div class="eccs-note" style="margin-top:16px">
       <strong>Notes</strong>
