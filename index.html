@@ -2710,6 +2710,22 @@
     .ports-matrix-legend strong { color:#0f172a; }
     .ports-matrix-legend .legend-swatch { display:inline-block; width:11px; height:11px; border-radius:3px; vertical-align:middle; margin-right:4px; }
     .ports-pattern-toolbar input[type="search"] { flex:1 1 300px; min-width:200px; padding:9px 11px; border-radius:10px; border:1px solid var(--border); font-size:13px; }
+    .legend-swatch-btn { display:inline-flex; align-items:center; border:1px solid transparent; background:transparent; padding:2px 7px; border-radius:999px; cursor:pointer; font-size:12px; font-family:inherit; color:#475569; }
+    .legend-swatch-btn:hover { background:#f1f5f9; border-color:var(--border); color:#0f172a; }
+    .legend-swatch-btn:focus-visible { outline:2px solid #7030a0; outline-offset:1px; }
+    .pattern-matrix-link { margin-left:6px; padding:0; border:0; background:transparent; color:#7030a0; font-size:11px; font-weight:700; text-decoration:underline; text-underline-offset:2px; cursor:pointer; white-space:nowrap; }
+    .pattern-matrix-link:hover { color:#5b2683; }
+    @media (max-width:860px) {
+      .ports-pattern-toolbar { flex-direction:column; align-items:stretch; }
+      .ports-pattern-toolbar select,
+      .ports-pattern-toolbar input[type="search"],
+      .ports-pattern-toolbar button { width:100%; flex:1 1 auto; }
+      .ports-matrix-wrap .eccs-matrix th,
+      .ports-matrix-wrap .eccs-matrix td { padding:7px 8px; font-size:11px; }
+      .ports-matrix-wrap .eccs-matrix th:first-child,
+      .ports-matrix-wrap .eccs-matrix td:first-child { min-width:96px; }
+      .ports-matrix-legend { font-size:11px; gap:4px 8px; }
+    }
     .eccs-examples { display:grid; gap:10px; }
     .eccs-examples details { border:1px solid var(--border); border-radius:12px; background:#fff; overflow:hidden; }
     .eccs-examples summary { padding:14px 16px; cursor:pointer; color:#0f172a; font-weight:900; }
@@ -13527,7 +13543,7 @@ E. Assumptions and unresolved inputs</pre>
       <select id="portsMatrixPatternSelect" aria-label="Select a logging pattern to highlight its components in the matrix">
         <option value="">(none selected)</option>
       </select>
-      <button id="portsMatrixPatternClear" type="button">Clear highlight</button>
+      <button id="portsMatrixPatternClear" type="button">Clear filters</button>
     </div>
     <div class="ports-pattern-toolbar">
       <label for="portsMatrixComponentSearch">Show only components matching:</label>
@@ -13536,6 +13552,10 @@ E. Assumptions and unresolved inputs</pre>
       <button id="portsMatrixExportBtn" class="primary-button" type="button">Export visible CSV</button>
     </div>
     <p class="ports-pattern-caption" id="portsMatrixPatternCaption" aria-live="polite"></p>
+    <div class="patterns-stats" id="portsMatrixStats" aria-live="polite">
+      <span class="patterns-stat"><strong id="portsMatrixVisibleComponents">52 / 52</strong> components shown</span>
+      <span class="patterns-stat"><strong id="portsMatrixVisibleFlows">190 / 190</strong> flows shown</span>
+    </div>
     <div class="ports-matrix-legend">
       <strong>Flow types:</strong>
       <span class="flow-badge flow-ING">ING</span> Ingest
@@ -13551,13 +13571,13 @@ E. Assumptions and unresolved inputs</pre>
       <span class="flow-badge flow-ALRT">ALRT</span> Alerting
       <span class="flow-badge flow-CCP">CCP</span> Cloud Control Plane
     </div>
-    <div class="ports-matrix-legend">
-      <strong>Column/row groups:</strong>
-      <span class="legend-swatch" style="background:#93c5fd"></span> Core Platform Roles
-      <span class="legend-swatch" style="background:#fda4af"></span> External Actors &amp; Clients
-      <span class="legend-swatch" style="background:#86efac"></span> Directory, Auth &amp; Core Infrastructure
-      <span class="legend-swatch" style="background:#fcd34d"></span> Data Source Integrations
-      <span class="legend-swatch" style="background:#d8b4fe"></span> Splunk Cloud &amp; SaaS Dependencies
+    <div class="ports-matrix-legend" id="portsMatrixGroupLegend">
+      <strong>Column/row groups (click to isolate):</strong>
+      <button type="button" class="legend-swatch-btn" data-group-name="Core Platform Roles"><span class="legend-swatch" style="background:#93c5fd"></span> Core Platform Roles</button>
+      <button type="button" class="legend-swatch-btn" data-group-name="External Actors &amp; Clients"><span class="legend-swatch" style="background:#fda4af"></span> External Actors &amp; Clients</button>
+      <button type="button" class="legend-swatch-btn" data-group-name="Directory, Auth &amp; Core Infrastructure"><span class="legend-swatch" style="background:#86efac"></span> Directory, Auth &amp; Core Infrastructure</button>
+      <button type="button" class="legend-swatch-btn" data-group-name="Data Source Integrations"><span class="legend-swatch" style="background:#fcd34d"></span> Data Source Integrations</button>
+      <button type="button" class="legend-swatch-btn" data-group-name="Splunk Cloud &amp; SaaS Dependencies"><span class="legend-swatch" style="background:#d8b4fe"></span> Splunk Cloud &amp; SaaS Dependencies</button>
     </div>
     <p class="patterns-scroll-hint" aria-hidden="true">&#8596; Swipe sideways to see every destination component</p>
     <div class="eccs-table-wrap ports-matrix-wrap" role="region" aria-label="Scrollable component-to-component TCP ports matrix" tabindex="0">
@@ -19397,6 +19417,8 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
               ? "#logging-patterns"
               : selected === "health"
                 ? "#health-checks"
+                : selected === "portsMatrix"
+                  ? "#ports-matrix"
                 : selected === "externalTools"
                   ? "#my-tools"
                   : selected === "objectTaxonomy"
@@ -19986,6 +20008,7 @@ function pageNameFromHash() {
   if (location.hash === "#data-source-catalogue") return "catalogue";
   if (location.hash === "#logging-patterns") return "patterns";
   if (location.hash === "#health-checks") return "health";
+  if (/^#ports-matrix/.test(location.hash)) return "portsMatrix";
   if (location.hash === "#my-tools") return "externalTools";
   if (location.hash === "#network-reference") return "reference";
   if (location.hash === "#splunk-ports") return "reference";
@@ -20029,7 +20052,7 @@ function renderLoggingPatternTable() {
     patternTableBody.innerHTML = visibleLoggingPatternRows.map(row => {
       const cells = loggingPatternTableColumns.map(column => {
         if (column === "Pattern ID") {
-          return `<td><button class="pattern-id-button" type="button" data-pattern-id="${escapeHtml(row[column])}" title="Open ${escapeHtml(row[column])} in the taxonomy explorer">${escapeHtml(row[column])}</button></td>`;
+          return `<td><button class="pattern-id-button" type="button" data-pattern-id="${escapeHtml(row[column])}" title="Open ${escapeHtml(row[column])} in the taxonomy explorer">${escapeHtml(row[column])}</button><button class="pattern-matrix-link" type="button" data-matrix-pattern-id="${escapeHtml(row[column])}" title="View ${escapeHtml(row[column])} highlighted in the Ports Matrix">View in matrix &rarr;</button></td>`;
         }
         if (column === "Destination") return `<td>${patternDestinationBadge(row[column])}</td>`;
         const requirementClass = column.endsWith("requirements") ? ' class="requirement-cell"' : "";
@@ -20132,6 +20155,7 @@ const portsMatrixPatternEdges = {
   "LP-018-SC": [["Syslog Source", "Syslog Collector (SC4S / rsyslog / syslog-ng)"], ["Syslog Collector (SC4S / rsyslog / syslog-ng)", "Universal Forwarder (UF)"], ["Universal Forwarder (UF)", "Splunk Cloud"], ["Universal Forwarder (UF)", "Deployment Server (DS)"]],
   "LP-018-OP": [["Syslog Source", "Syslog Collector (SC4S / rsyslog / syslog-ng)"], ["Syslog Collector (SC4S / rsyslog / syslog-ng)", "Universal Forwarder (UF)"], ["Universal Forwarder (UF)", "Indexer / IDX Peer"], ["Universal Forwarder (UF)", "Deployment Server (DS)"]],
 };
+let portsMatrixHashHandler = null;
 function initPortsMatrixPatternHighlighter() {
   const select = document.getElementById("portsMatrixPatternSelect");
   const clearBtn = document.getElementById("portsMatrixPatternClear");
@@ -20140,6 +20164,9 @@ function initPortsMatrixPatternHighlighter() {
   const hideEmptyCheckbox = document.getElementById("portsMatrixHideEmpty");
   const exportBtn = document.getElementById("portsMatrixExportBtn");
   const searchInput = document.getElementById("portsMatrixComponentSearch");
+  const statComponents = document.getElementById("portsMatrixVisibleComponents");
+  const statFlows = document.getElementById("portsMatrixVisibleFlows");
+  const groupLegendButtons = Array.from(document.querySelectorAll("#portsMatrixGroupLegend .legend-swatch-btn"));
   if (!select || !table || typeof loggingPatternTableData === "undefined") return;
 
   loggingPatternTableData.forEach(row => {
@@ -20234,14 +20261,19 @@ function initPortsMatrixPatternHighlighter() {
   // actually has a real (non-dash) flow with, in either direction, so the
   // filtered view always shows a connected neighborhood rather than just the
   // isolated matches (which would often render as all-dash columns/rows).
+  // Comma-separated terms are OR'd together (e.g. "AWS, LDAP" matches both
+  // neighborhoods at once), matching the comma example in the placeholder.
   function getSearchInvolvedSet(query) {
-    const q = query.trim().toLowerCase();
+    const terms = query.split(",").map(term => term.trim().toLowerCase()).filter(Boolean);
     const matched = new Set();
-    headerCells.forEach((th, idx) => {
-      if (idx === 0) return;
-      const label = th.textContent.trim();
-      if (label.toLowerCase().includes(q)) matched.add(label);
-    });
+    if (terms.length) {
+      headerCells.forEach((th, idx) => {
+        if (idx === 0) return;
+        const label = th.textContent.trim();
+        const labelLower = label.toLowerCase();
+        if (terms.some(term => labelLower.includes(term))) matched.add(label);
+      });
+    }
     const involved = new Set(matched);
     matched.forEach(label => {
       const tr = rowByName[label];
@@ -20266,12 +20298,14 @@ function initPortsMatrixPatternHighlighter() {
     const query = searchInput ? searchInput.value : "";
     if (!query || !query.trim()) {
       applyEmptyFilter();
+      updatePortsMatrixStats();
       return;
     }
     const { matched, involved } = getSearchInvolvedSet(query);
     if (matched.size === 0) {
       showAllRowsAndColumns();
       caption.textContent = `No component names match "${query.trim()}".`;
+      updatePortsMatrixStats();
       return;
     }
     headerCells.forEach((th, idx) => {
@@ -20294,6 +20328,102 @@ function initPortsMatrixPatternHighlighter() {
     });
     const extra = involved.size - matched.size;
     caption.textContent = `Showing ${matched.size} matching component${matched.size === 1 ? "" : "s"} for "${query.trim()}" plus ${extra} connected component${extra === 1 ? "" : "s"} (${involved.size} total) -- clear the search to show the full matrix again.`;
+    updatePortsMatrixStats();
+  }
+
+  // Group filter: clicking a legend swatch isolates just that group's
+  // components as both rows and columns (no connected-neighbor expansion --
+  // this is direct membership, not a flow search), clearing any active
+  // pattern/search first.
+  function applyGroupFilter(groupName) {
+    select.value = "";
+    if (searchInput) searchInput.value = "";
+    clearHighlight();
+    const groupSet = new Set();
+    headerCells.forEach((th, idx) => {
+      if (idx === 0) return;
+      if (th.dataset.componentGroup === groupName) groupSet.add(th.textContent.trim());
+    });
+    headerCells.forEach((th, idx) => {
+      if (idx === 0) return;
+      th.classList.toggle("ports-hidden", !groupSet.has(th.textContent.trim()));
+    });
+    bodyRows.forEach(tr => {
+      const label = tr.querySelector("th").textContent.trim();
+      tr.classList.toggle("ports-hidden", !groupSet.has(label));
+    });
+    bodyRows.forEach(tr => {
+      tr.querySelectorAll("td").forEach((td, i) => {
+        const colLabel = headerCells[i + 1].textContent.trim();
+        td.classList.toggle("ports-hidden", !groupSet.has(colLabel));
+      });
+    });
+    caption.textContent = `Showing ${groupSet.size} component${groupSet.size === 1 ? "" : "s"} in the "${groupName}" group -- use Clear filters to show the full matrix again.`;
+    updatePortsMatrixStats();
+  }
+
+  // Live stat chips: recomputed after every filter change so they always
+  // reflect the current view (e.g. "8 / 52 components shown") rather than a
+  // static total that never changes with the toolbar.
+  function updatePortsMatrixStats() {
+    if (!statComponents || !statFlows) return;
+    const totalComponents = headerCells.length - 1;
+    const visibleComponents = new Set();
+    headerCells.forEach((th, idx) => {
+      if (idx !== 0 && !th.classList.contains("ports-hidden")) visibleComponents.add(th.textContent.trim());
+    });
+    bodyRows.forEach(tr => {
+      if (!tr.classList.contains("ports-hidden")) visibleComponents.add(tr.querySelector("th").textContent.trim());
+    });
+    let totalFlows = 0;
+    let visibleFlows = 0;
+    bodyRows.forEach(tr => {
+      const rowVisible = !tr.classList.contains("ports-hidden");
+      tr.querySelectorAll("td").forEach((td, i) => {
+        if (cellText(td) === DASH) return;
+        totalFlows++;
+        const colVisible = !headerCells[i + 1].classList.contains("ports-hidden");
+        if (rowVisible && colVisible) visibleFlows++;
+      });
+    });
+    statComponents.textContent = `${visibleComponents.size} / ${totalComponents}`;
+    statFlows.textContent = `${visibleFlows} / ${totalFlows}`;
+  }
+
+  // URL deep-linking: "#ports-matrix?pattern=LP-007-SC" or
+  // "#ports-matrix?search=aws" restores that exact filtered view, mirroring
+  // the location.hash convention other reference sub-pages already use.
+  function parsePortsMatrixHash() {
+    const hash = location.hash;
+    const qIdx = hash.indexOf("?");
+    if (!/^#ports-matrix/.test(hash) || qIdx === -1) return { pattern: "", search: "" };
+    const params = new URLSearchParams(hash.slice(qIdx + 1));
+    return { pattern: params.get("pattern") || "", search: params.get("search") || "" };
+  }
+
+  function updatePortsMatrixHash() {
+    if (!history.replaceState) return;
+    if (select.value) {
+      history.replaceState(null, "", `#ports-matrix?pattern=${encodeURIComponent(select.value)}`);
+    } else if (searchInput && searchInput.value.trim()) {
+      history.replaceState(null, "", `#ports-matrix?search=${encodeURIComponent(searchInput.value.trim())}`);
+    } else {
+      history.replaceState(null, "", "#ports-matrix");
+    }
+  }
+
+  function applyPortsMatrixHashState() {
+    const { pattern, search } = parsePortsMatrixHash();
+    if (pattern && Array.from(select.options).some(option => option.value === pattern)) {
+      select.value = pattern;
+      applyHighlight(pattern);
+    } else if (search) {
+      select.value = "";
+      if (searchInput) searchInput.value = search;
+      applySearchOrEmptyFilter();
+    } else {
+      updatePortsMatrixStats();
+    }
   }
 
   function applyHighlight(patternId) {
@@ -20350,7 +20480,8 @@ function initPortsMatrixPatternHighlighter() {
       applySearchOrEmptyFilter();
     } else {
       const componentCount = involved.size;
-      caption.textContent = `Highlighting ${cellsHighlighted} flow${cellsHighlighted === 1 ? "" : "s"} across ${componentCount} component${componentCount === 1 ? "" : "s"} for ${patternId}${patternRow ? " — " + patternRow["Pattern"] : ""} -- other rows/columns are hidden; use Clear highlight to show the full matrix again.`;
+      caption.textContent = `Highlighting ${cellsHighlighted} flow${cellsHighlighted === 1 ? "" : "s"} across ${componentCount} component${componentCount === 1 ? "" : "s"} for ${patternId}${patternRow ? " — " + patternRow["Pattern"] : ""} -- other rows/columns are hidden; use Clear filters to show the full matrix again.`;
+      updatePortsMatrixStats();
     }
   }
 
@@ -20384,8 +20515,13 @@ function initPortsMatrixPatternHighlighter() {
     setTimeout(() => { if (event.currentTarget) event.currentTarget.textContent = "Export visible CSV"; }, 1400);
   }
 
-  select.addEventListener("change", () => applyHighlight(select.value));
-  clearBtn.addEventListener("click", () => { select.value = ""; applyHighlight(""); });
+  select.addEventListener("change", () => { applyHighlight(select.value); updatePortsMatrixHash(); });
+  clearBtn.addEventListener("click", () => {
+    select.value = "";
+    if (searchInput) searchInput.value = "";
+    applyHighlight("");
+    updatePortsMatrixHash();
+  });
   if (hideEmptyCheckbox) {
     hideEmptyCheckbox.addEventListener("change", () => {
       if (!select.value) applySearchOrEmptyFilter();
@@ -20393,10 +20529,27 @@ function initPortsMatrixPatternHighlighter() {
   }
   if (searchInput) {
     searchInput.addEventListener("input", () => {
-      if (!select.value) applySearchOrEmptyFilter();
+      if (!select.value) { applySearchOrEmptyFilter(); updatePortsMatrixHash(); }
     });
   }
   if (exportBtn) exportBtn.addEventListener("click", exportVisiblePortsMatrix);
+  groupLegendButtons.forEach(btn => {
+    btn.addEventListener("click", () => applyGroupFilter(btn.dataset.groupName));
+  });
+
+  portsMatrixHashHandler = applyPortsMatrixHashState;
+  applyPortsMatrixHashState();
+}
+
+function openPortsMatrixForPattern(patternId) {
+  setActivePage("portsMatrix");
+  const select = document.getElementById("portsMatrixPatternSelect");
+  const searchInput = document.getElementById("portsMatrixComponentSearch");
+  if (searchInput) searchInput.value = "";
+  if (select) {
+    select.value = patternId;
+    select.dispatchEvent(new Event("change"));
+  }
 }
 
 
@@ -20917,6 +21070,8 @@ document.getElementById("resetPatternTable").addEventListener("click", () => {
 document.getElementById("exportPatternTable").addEventListener("click", exportVisibleLoggingPatterns);
 document.getElementById("patternsOpenAdvisor").addEventListener("click", event => openAdvisor(event.currentTarget));
 patternTableBody.addEventListener("click", event => {
+  const matrixButton = event.target.closest("[data-matrix-pattern-id]");
+  if (matrixButton) { openPortsMatrixForPattern(matrixButton.dataset.matrixPatternId); return; }
   const button = event.target.closest("[data-pattern-id]");
   if (button) openLoggingPatternInTaxonomy(button.dataset.patternId);
 });
@@ -20970,7 +21125,11 @@ document.getElementById("resetRolesTable").addEventListener("click", () => {
   renderRolesTable();
 });
 document.getElementById("exportRolesTable").addEventListener("click", exportVisibleRoles);
-window.addEventListener("hashchange", () => setActivePage(pageNameFromHash(), false));
+window.addEventListener("hashchange", () => {
+  const hashPage = pageNameFromHash();
+  setActivePage(hashPage, false);
+  if (hashPage === "portsMatrix" && portsMatrixHashHandler) portsMatrixHashHandler();
+});
 
 advisorForm.addEventListener("submit", event => {
   event.preventDefault();
