@@ -13546,6 +13546,12 @@ E. Assumptions and unresolved inputs</pre>
       <button id="portsMatrixPatternClear" type="button">Clear filters</button>
     </div>
     <div class="ports-pattern-toolbar">
+      <label for="portsMatrixTopologySelect">Highlight components for validated architecture topology:</label>
+      <select id="portsMatrixTopologySelect" aria-label="Select a Splunk Validated Architecture topology to highlight its components in the matrix">
+        <option value="">(none selected)</option>
+      </select>
+    </div>
+    <div class="ports-pattern-toolbar">
       <label for="portsMatrixComponentSearch">Show only components matching:</label>
       <input type="search" id="portsMatrixComponentSearch" placeholder="e.g. AWS, HF, cloud…" aria-label="Filter the matrix to components whose name matches this text, plus whatever they connect to" />
       <label class="ports-checkbox-label" for="portsMatrixHideEmpty"><input type="checkbox" id="portsMatrixHideEmpty" /> Hide fully-empty rows/columns</label>
@@ -20155,6 +20161,99 @@ const portsMatrixPatternEdges = {
   "LP-018-SC": [["Syslog Source", "Syslog Collector (SC4S / rsyslog / syslog-ng)"], ["Syslog Collector (SC4S / rsyslog / syslog-ng)", "Universal Forwarder (UF)"], ["Universal Forwarder (UF)", "Splunk Cloud"], ["Universal Forwarder (UF)", "Deployment Server (DS)"]],
   "LP-018-OP": [["Syslog Source", "Syslog Collector (SC4S / rsyslog / syslog-ng)"], ["Syslog Collector (SC4S / rsyslog / syslog-ng)", "Universal Forwarder (UF)"], ["Universal Forwarder (UF)", "Indexer / IDX Peer"], ["Universal Forwarder (UF)", "Deployment Server (DS)"]],
 };
+
+// Splunk Validated Architectures (SVA) reference topologies, sourced from
+// Splunk's official SVA documentation (the "Splunk Validated Architectures"
+// whitepaper plus the individual per-topology SVA pages). Every edge below
+// was checked against this matrix's actual populated cells before being
+// added -- same discipline as portsMatrixPatternEdges above; none of these
+// pairs are invented.
+const portsMatrixTopologyLabels = {
+  "CLOUD": "Splunk Cloud Deployment Architecture",
+  "S1": "Single Server Deployment",
+  "D1/D11": "Distributed Non-Clustered Deployment",
+  "C1/C11": "Distributed Clustered Deployment -- Single Site",
+  "C3/C13": "Distributed Clustered Deployment + SHC -- Single Site",
+  "M2/M12": "Distributed Clustered Deployment -- Multisite",
+  "M3/M13": "Distributed Clustered Deployment + SHC -- Multisite",
+  "M4/M14": "Distributed Clustered Deployment + SHC -- Multisite (Stretched)"
+};
+
+// The multisite topologies (M2/M12, M3/M13, M4/M14) replicate indexer
+// and/or search-head clustering across two or more sites, but that
+// site-to-site distinction isn't a separate component pair at this
+// matrix's granularity -- the underlying component relationships are
+// identical to their single-site counterparts (C1/C11 and C3/C13). This
+// note is surfaced in the caption rather than silently reusing the same
+// edge set with no explanation.
+const portsMatrixTopologyNotes = {
+  "M2/M12": "Same component-to-component relationships as C1/C11 -- the cross-site replication this topology adds isn't a distinct component pair in this matrix.",
+  "M3/M13": "Same component-to-component relationships as C3/C13 -- the cross-site replication this topology adds isn't a distinct component pair in this matrix.",
+  "M4/M14": "Same component-to-component relationships as C3/C13 -- the stretched, cross-site search head cluster this topology adds isn't a distinct component pair in this matrix."
+};
+
+const portsMatrixTopologyEdges = {
+  "CLOUD": [
+    ["Universal Forwarder (UF)", "Splunk Cloud"],
+    ["Heavy Forwarder (HF)", "Splunk Cloud"],
+    ["HEC Client (Application)", "Splunk Cloud"],
+    ["Admin / API Client", "Splunk Cloud"],
+    ["Search Head / SHC Member", "Splunk Cloud"],
+    ["Universal Forwarder (UF)", "Deployment Server (DS)"]
+  ],
+  "S1": [
+    ["Universal Forwarder (UF)", "Indexer / IDX Peer"],
+    ["HEC Client (Application)", "Indexer / IDX Peer"],
+    ["Syslog Source", "Indexer / IDX Peer"],
+    ["Universal Forwarder (UF)", "Deployment Server (DS)"],
+    ["Indexer / IDX Peer", "Deployment Server (DS)"]
+  ],
+  "D1/D11": [
+    ["Universal Forwarder (UF)", "Indexer / IDX Peer"],
+    ["HEC Client (Application)", "Indexer / IDX Peer"],
+    ["Syslog Source", "Indexer / IDX Peer"],
+    ["Indexer / IDX Peer", "Search Head / SHC Member"],
+    ["Universal Forwarder (UF)", "Deployment Server (DS)"],
+    ["Indexer / IDX Peer", "Deployment Server (DS)"],
+    ["Indexer / IDX Peer", "License Manager (LM)"],
+    ["Monitoring Console (MC)", "Indexer / IDX Peer"],
+    ["Monitoring Console (MC)", "Search Head / SHC Member"]
+  ],
+  "C1/C11": [
+    ["Universal Forwarder (UF)", "Indexer / IDX Peer"],
+    ["HEC Client (Application)", "Indexer / IDX Peer"],
+    ["Syslog Source", "Indexer / IDX Peer"],
+    ["Indexer / IDX Peer", "Search Head / SHC Member"],
+    ["Indexer / IDX Peer", "Indexer / IDX Peer"],
+    ["Indexer / IDX Peer", "Cluster Manager (CM)"],
+    ["Cluster Manager (CM)", "Indexer / IDX Peer"],
+    ["Search Head / SHC Member", "Cluster Manager (CM)"],
+    ["Universal Forwarder (UF)", "Deployment Server (DS)"],
+    ["Indexer / IDX Peer", "Deployment Server (DS)"],
+    ["Indexer / IDX Peer", "License Manager (LM)"],
+    ["Monitoring Console (MC)", "Indexer / IDX Peer"]
+  ],
+  "C3/C13": [
+    ["Universal Forwarder (UF)", "Indexer / IDX Peer"],
+    ["HEC Client (Application)", "Indexer / IDX Peer"],
+    ["Syslog Source", "Indexer / IDX Peer"],
+    ["Indexer / IDX Peer", "Search Head / SHC Member"],
+    ["Indexer / IDX Peer", "Indexer / IDX Peer"],
+    ["Indexer / IDX Peer", "Cluster Manager (CM)"],
+    ["Cluster Manager (CM)", "Indexer / IDX Peer"],
+    ["Search Head / SHC Member", "Cluster Manager (CM)"],
+    ["Search Head / SHC Member", "Search Head / SHC Member"],
+    ["Deployer", "Search Head / SHC Member"],
+    ["Universal Forwarder (UF)", "Deployment Server (DS)"],
+    ["Indexer / IDX Peer", "Deployment Server (DS)"],
+    ["Indexer / IDX Peer", "License Manager (LM)"],
+    ["Monitoring Console (MC)", "Indexer / IDX Peer"]
+  ]
+};
+portsMatrixTopologyEdges["M2/M12"] = portsMatrixTopologyEdges["C1/C11"];
+portsMatrixTopologyEdges["M3/M13"] = portsMatrixTopologyEdges["C3/C13"];
+portsMatrixTopologyEdges["M4/M14"] = portsMatrixTopologyEdges["C3/C13"];
+
 let portsMatrixHashHandler = null;
 function initPortsMatrixPatternHighlighter() {
   const select = document.getElementById("portsMatrixPatternSelect");
@@ -20167,6 +20266,7 @@ function initPortsMatrixPatternHighlighter() {
   const statComponents = document.getElementById("portsMatrixVisibleComponents");
   const statFlows = document.getElementById("portsMatrixVisibleFlows");
   const groupLegendButtons = Array.from(document.querySelectorAll("#portsMatrixGroupLegend .legend-swatch-btn"));
+  const topologySelect = document.getElementById("portsMatrixTopologySelect");
   if (!select || !table || typeof loggingPatternTableData === "undefined") return;
 
   loggingPatternTableData.forEach(row => {
@@ -20175,6 +20275,15 @@ function initPortsMatrixPatternHighlighter() {
     option.textContent = `${row["Pattern ID"]} — ${row["Pattern"]}`;
     select.appendChild(option);
   });
+
+  if (topologySelect) {
+    Object.entries(portsMatrixTopologyLabels).forEach(([id, label]) => {
+      const option = document.createElement("option");
+      option.value = id;
+      option.textContent = `${id} — ${label}`;
+      topologySelect.appendChild(option);
+    });
+  }
 
   const headerCells = Array.from(table.querySelectorAll("thead th"));
   const columnIndexByName = {};
@@ -20337,6 +20446,7 @@ function initPortsMatrixPatternHighlighter() {
   // pattern/search first.
   function applyGroupFilter(groupName) {
     select.value = "";
+    if (topologySelect) topologySelect.value = "";
     if (searchInput) searchInput.value = "";
     clearHighlight();
     const groupSet = new Set();
@@ -20396,15 +20506,17 @@ function initPortsMatrixPatternHighlighter() {
   function parsePortsMatrixHash() {
     const hash = location.hash;
     const qIdx = hash.indexOf("?");
-    if (!/^#ports-matrix/.test(hash) || qIdx === -1) return { pattern: "", search: "" };
+    if (!/^#ports-matrix/.test(hash) || qIdx === -1) return { pattern: "", search: "", topology: "" };
     const params = new URLSearchParams(hash.slice(qIdx + 1));
-    return { pattern: params.get("pattern") || "", search: params.get("search") || "" };
+    return { pattern: params.get("pattern") || "", search: params.get("search") || "", topology: params.get("topology") || "" };
   }
 
   function updatePortsMatrixHash() {
     if (!history.replaceState) return;
     if (select.value) {
       history.replaceState(null, "", `#ports-matrix?pattern=${encodeURIComponent(select.value)}`);
+    } else if (topologySelect && topologySelect.value) {
+      history.replaceState(null, "", `#ports-matrix?topology=${encodeURIComponent(topologySelect.value)}`);
     } else if (searchInput && searchInput.value.trim()) {
       history.replaceState(null, "", `#ports-matrix?search=${encodeURIComponent(searchInput.value.trim())}`);
     } else {
@@ -20413,10 +20525,13 @@ function initPortsMatrixPatternHighlighter() {
   }
 
   function applyPortsMatrixHashState() {
-    const { pattern, search } = parsePortsMatrixHash();
+    const { pattern, search, topology } = parsePortsMatrixHash();
     if (pattern && Array.from(select.options).some(option => option.value === pattern)) {
       select.value = pattern;
       applyHighlight(pattern);
+    } else if (topology && portsMatrixTopologyEdges[topology]) {
+      if (topologySelect) topologySelect.value = topology;
+      applyTopologyHighlight(topology);
     } else if (search) {
       select.value = "";
       if (searchInput) searchInput.value = search;
@@ -20426,15 +20541,10 @@ function initPortsMatrixPatternHighlighter() {
     }
   }
 
-  function applyHighlight(patternId) {
-    clearHighlight();
-    if (!patternId) {
-      caption.textContent = "";
-      applySearchOrEmptyFilter();
-      return;
-    }
-    const edgeList = portsMatrixPatternEdges[patternId] || [];
-    const patternRow = loggingPatternTableData.find(r => r["Pattern ID"] === patternId);
+  // Shared by applyHighlight() (logging patterns) and applyTopologyHighlight()
+  // (SVA topologies) -- both just supply a different edge list against the
+  // same highlight-and-hide mechanics.
+  function highlightEdges(edgeList) {
     const involved = new Set();
     edgeList.forEach(([src, dst]) => { involved.add(src); involved.add(dst); });
 
@@ -20475,12 +20585,48 @@ function initPortsMatrixPatternHighlighter() {
       if (cell) { cell.classList.add("ports-hl-cell"); cellsHighlighted++; }
     });
 
+    return { cellsHighlighted, componentCount: involved.size };
+  }
+
+  function applyHighlight(patternId) {
+    clearHighlight();
+    if (patternId && topologySelect) topologySelect.value = "";
+    if (!patternId) {
+      caption.textContent = "";
+      applySearchOrEmptyFilter();
+      return;
+    }
+    const edgeList = portsMatrixPatternEdges[patternId] || [];
+    const patternRow = loggingPatternTableData.find(r => r["Pattern ID"] === patternId);
+
     if (edgeList.length === 0) {
       caption.textContent = patternRow ? `No mapped flow for ${patternId} yet.` : "";
       applySearchOrEmptyFilter();
     } else {
-      const componentCount = involved.size;
+      const { cellsHighlighted, componentCount } = highlightEdges(edgeList);
       caption.textContent = `Highlighting ${cellsHighlighted} flow${cellsHighlighted === 1 ? "" : "s"} across ${componentCount} component${componentCount === 1 ? "" : "s"} for ${patternId}${patternRow ? " — " + patternRow["Pattern"] : ""} -- other rows/columns are hidden; use Clear filters to show the full matrix again.`;
+      updatePortsMatrixStats();
+    }
+  }
+
+  function applyTopologyHighlight(topologyId) {
+    clearHighlight();
+    if (topologyId) select.value = "";
+    if (!topologyId) {
+      caption.textContent = "";
+      applySearchOrEmptyFilter();
+      return;
+    }
+    const edgeList = portsMatrixTopologyEdges[topologyId] || [];
+    const label = portsMatrixTopologyLabels[topologyId] || topologyId;
+
+    if (edgeList.length === 0) {
+      caption.textContent = `No mapped flow for ${label} yet.`;
+      applySearchOrEmptyFilter();
+    } else {
+      const { cellsHighlighted, componentCount } = highlightEdges(edgeList);
+      const note = portsMatrixTopologyNotes[topologyId] ? ` ${portsMatrixTopologyNotes[topologyId]}` : "";
+      caption.textContent = `Highlighting ${cellsHighlighted} flow${cellsHighlighted === 1 ? "" : "s"} across ${componentCount} component${componentCount === 1 ? "" : "s"} for ${topologyId} — ${label} -- other rows/columns are hidden; use Clear filters to show the full matrix again.${note}`;
       updatePortsMatrixStats();
     }
   }
@@ -20516,20 +20662,24 @@ function initPortsMatrixPatternHighlighter() {
   }
 
   select.addEventListener("change", () => { applyHighlight(select.value); updatePortsMatrixHash(); });
+  if (topologySelect) {
+    topologySelect.addEventListener("change", () => { applyTopologyHighlight(topologySelect.value); updatePortsMatrixHash(); });
+  }
   clearBtn.addEventListener("click", () => {
     select.value = "";
+    if (topologySelect) topologySelect.value = "";
     if (searchInput) searchInput.value = "";
     applyHighlight("");
     updatePortsMatrixHash();
   });
   if (hideEmptyCheckbox) {
     hideEmptyCheckbox.addEventListener("change", () => {
-      if (!select.value) applySearchOrEmptyFilter();
+      if (!select.value && (!topologySelect || !topologySelect.value)) applySearchOrEmptyFilter();
     });
   }
   if (searchInput) {
     searchInput.addEventListener("input", () => {
-      if (!select.value) { applySearchOrEmptyFilter(); updatePortsMatrixHash(); }
+      if (!select.value && (!topologySelect || !topologySelect.value)) { applySearchOrEmptyFilter(); updatePortsMatrixHash(); }
     });
   }
   if (exportBtn) exportBtn.addEventListener("click", exportVisiblePortsMatrix);
