@@ -13675,9 +13675,31 @@ E. Assumptions and unresolved inputs</pre>
       </table>
     </div>
 
+    <h3 style="margin-top:24px">Encrypted Communication Scenarios (TLS)</h3>
+    <p>Sourced from Splunk's "Introduction to securing the Splunk platform with TLS" documentation (version 10.4) -- its own "Table of most common encrypted Splunk platform instance communication scenarios." <strong>Cloud</strong> refers specifically to Splunk Cloud Platform; <strong>Enterprise</strong> refers to Splunk Enterprise and its components, including the universal forwarder.</p>
+    <div class="eccs-table-wrap" role="region" aria-label="Scrollable encrypted communication scenarios table" tabindex="0">
+      <table class="eccs-matrix">
+        <thead><tr><th scope="col">Type of Exchange</th><th scope="col">Node A (initiates / client)</th><th scope="col">Node B (responds / server)</th><th scope="col">Default Encryption</th></tr></thead>
+        <tbody>
+          <tr><td>Browser to Splunk Web</td><td>Browser</td><td>Splunk Web</td><td>Cloud: on &middot; Enterprise: off</td></tr>
+          <tr><td>Splunk Web to search head</td><td>Splunk Web</td><td><code>splunkd</code> as a search head</td><td>On</td></tr>
+          <tr><td>Forwarding</td><td><code>splunkd</code> as a forwarder</td><td><code>splunkd</code> as an indexer</td><td>Cloud: on &middot; Enterprise: off</td></tr>
+          <tr><td>Splunk-to-Splunk</td><td><code>splunkd</code> as a client</td><td><code>splunkd</code> as a server</td><td>On</td></tr>
+          <tr><td>Agent management to agents</td><td><code>splunkd</code> as agent</td><td><code>splunkd</code> as agent management</td><td>On</td></tr>
+          <tr><td>Distributed search</td><td><code>splunkd</code> as search peer</td><td><code>splunkd</code> as a search head</td><td>On</td></tr>
+          <tr><td>Search head clusters</td><td><code>splunkd</code> as cluster members</td><td><code>splunkd</code> as cluster members</td><td>Cloud: on &middot; Enterprise: off</td></tr>
+          <tr><td>Search head cluster deployer</td><td><code>splunkd</code> as cluster members</td><td><code>splunkd</code> as cluster deployer</td><td>On</td></tr>
+          <tr><td>Indexer cluster peer nodes</td><td><code>splunkd</code> as indexer cluster peer nodes</td><td><code>splunkd</code> as indexer cluster peer nodes</td><td>Cloud: on &middot; Enterprise: off. Use the <code>replication_port.ssl</code> setting in the <code>server.conf</code> configuration file to turn on replication over TLS.</td></tr>
+          <tr><td>Indexer cluster manager</td><td><code>splunkd</code> as peer and search head nodes</td><td><code>splunkd</code> as a manager node</td><td>On</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="eccs-note" style="margin-top:14px">The source PDF's version of this table also defines three further columns -- <strong>Default certificate-based authentication</strong>, <strong>Default Common Name checking</strong>, and <strong>Type of data exchanged</strong> -- but its page layout cut those columns off before they could be captured here; they are not included above rather than guessed at. Confirm against the live Splunk documentation ("Introduction to securing the Splunk platform with TLS") if you need those three columns' values.</p>
+
     <div class="eccs-note" style="margin-top:16px">
       <strong>Notes</strong>
       <ul class="method-list">
+        <li>The <strong>Encrypted Communication Scenarios (TLS)</strong> table above is a separate reference from the Expanded Cross-Matrix -- it documents which <em>Splunk-defined communication roles</em> (browser, search head, forwarder, indexer, cluster member/manager, etc.) are encrypted by default, not specific ports. Cross-reference it against the matrix's own component rows/columns (e.g. its "Forwarding" scenario corresponds to Universal Forwarder/Heavy Forwarder &rarr; Indexer in the matrix above) -- the two tables use different levels of abstraction and aren't a 1:1 row mapping.</li>
         <li>Splunk-to-Splunk (S2S) forwarding conventionally uses TCP 9997 whether or not TLS is enabled -- TLS changes the protocol/configuration on that same port, not the listening port itself. This matrix no longer lists 9998 as a separate standard SSL port; cells that previously said "9997 (data) / 9998 (SSL data)" now read "9997 (S2S, TCP, optionally TLS)."</li>
         <li>Indexer cluster (bucket/data) replication is primarily TCP 9887 -- the earlier "8080 / 9887" pairing on the Indexer &rarr; Indexer cell has been corrected to 9887 alone. 8080 is not represented as a validated default replication port without a specific configured use; see the Key Port Meanings table.</li>
         <li>Direction matters: most management traffic is client &rarr; server on 8089 (deployment clients &rarr; Deployment Server; Splunk instances &rarr; License Manager; Search Head &rarr; Indexer; Cluster Manager &rarr; Indexer Peer; Deployer &rarr; SHC Member; Admin/API client &rarr; Splunk management). The earlier Search Head &rarr; Deployer cell has been removed as a directionality error -- only Deployer &rarr; SHC Member (8089, app/config push) is a real flow; SHC members don't independently connect back out to the Deployer.</li>
