@@ -2671,6 +2671,7 @@
     .eccs-matrix th:last-child,.eccs-matrix td:last-child { border-right:0; }
     .eccs-matrix th.ports-hl-header { background:#fef08a !important; }
     .eccs-matrix td.ports-hl-cell { background:#fde047 !important; box-shadow:inset 0 0 0 2px #ca8a04; font-weight:700; }
+    .eccs-matrix .ports-hidden { display:none; }
     .ports-pattern-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:14px 0 10px; }
     .ports-pattern-toolbar label { font-weight:800; font-size:13px; color:#0f172a; }
     .ports-pattern-toolbar select { flex:1 1 340px; min-width:240px; padding:9px 11px; border-radius:10px; border:1px solid var(--border); font-size:13px; background:#fff; }
@@ -20068,10 +20069,19 @@ function initPortsMatrixPatternHighlighter() {
     table.querySelectorAll(".ports-hl-cell").forEach(el => el.classList.remove("ports-hl-cell"));
   }
 
+  function showAllRowsAndColumns() {
+    headerCells.forEach(th => th.classList.remove("ports-hidden"));
+    bodyRows.forEach(tr => {
+      tr.classList.remove("ports-hidden");
+      tr.querySelectorAll("td").forEach(td => td.classList.remove("ports-hidden"));
+    });
+  }
+
   function applyHighlight(patternId) {
     clearHighlight();
     if (!patternId) {
       caption.textContent = "";
+      showAllRowsAndColumns();
       return;
     }
     const edgeList = portsMatrixPatternEdges[patternId] || [];
@@ -20079,12 +20089,31 @@ function initPortsMatrixPatternHighlighter() {
     const involved = new Set();
     edgeList.forEach(([src, dst]) => { involved.add(src); involved.add(dst); });
 
-    headerCells.forEach(th => {
-      if (involved.has(th.textContent.trim())) th.classList.add("ports-hl-header");
+    // Column headers: highlight if involved, hide (with their column's cells
+    // below) if not. Index 0 is the corner label and always stays visible.
+    headerCells.forEach((th, idx) => {
+      if (idx === 0) return;
+      const label = th.textContent.trim();
+      const isInvolved = involved.has(label);
+      th.classList.toggle("ports-hl-header", isInvolved);
+      th.classList.toggle("ports-hidden", !isInvolved);
     });
+
+    // Rows: highlight/show if involved, hide entirely if not.
     bodyRows.forEach(tr => {
-      const label = tr.querySelector("th").textContent.trim();
-      if (involved.has(label)) tr.querySelector("th").classList.add("ports-hl-header");
+      const rowTh = tr.querySelector("th");
+      const label = rowTh.textContent.trim();
+      const isInvolved = involved.has(label);
+      rowTh.classList.toggle("ports-hl-header", isInvolved);
+      tr.classList.toggle("ports-hidden", !isInvolved);
+    });
+
+    // Cells: hide/show per column position to match the header visibility above.
+    bodyRows.forEach(tr => {
+      tr.querySelectorAll("td").forEach((td, i) => {
+        const colLabel = headerCells[i + 1].textContent.trim();
+        td.classList.toggle("ports-hidden", !involved.has(colLabel));
+      });
     });
 
     let cellsHighlighted = 0;
@@ -20099,9 +20128,10 @@ function initPortsMatrixPatternHighlighter() {
 
     if (edgeList.length === 0) {
       caption.textContent = patternRow ? `No mapped flow for ${patternId} yet.` : "";
+      showAllRowsAndColumns();
     } else {
       const componentCount = involved.size;
-      caption.textContent = `Highlighting ${cellsHighlighted} flow${cellsHighlighted === 1 ? "" : "s"} across ${componentCount} component${componentCount === 1 ? "" : "s"} for ${patternId}${patternRow ? " — " + patternRow["Pattern"] : ""}.`;
+      caption.textContent = `Highlighting ${cellsHighlighted} flow${cellsHighlighted === 1 ? "" : "s"} across ${componentCount} component${componentCount === 1 ? "" : "s"} for ${patternId}${patternRow ? " — " + patternRow["Pattern"] : ""} -- other rows/columns are hidden; use Clear highlight to show the full matrix again.`;
     }
   }
 
