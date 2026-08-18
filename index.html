@@ -13596,7 +13596,7 @@ E. Assumptions and unresolved inputs</pre>
       <span class="tls-badge tls-on">&#128274; TLS: On</span> encrypted by default everywhere
       <span class="tls-badge tls-cloud-only">&#128274; TLS: Cloud only</span> Cloud: on &middot; Enterprise: off
       <span class="tls-badge tls-capable">&#128274; TLS: Capable</span> supported on this port, not on by default
-      <span style="color:#94a3b8">Sourced from three places: Splunk's TLS scenarios table (9 On, 3 Cloud-only), this matrix's own port wording for dual plaintext/TLS options -- 9997 within Core Platform Roles, LDAP/LDAPS to the LDAP / AD Server column, Kafka's 9092/9093, SMTP Relay's 25/465/587, User &rarr; HF/Indexer/Search Head/Monitoring Console's Splunk Web UI at 8000/8443, and 9887 among the SHC and indexer-cluster replication ports (21 Capable total) -- and every remaining populated cell whose port is 443 (HTTPS) or 8089 (splunkd's management/REST API, HTTPS by Splunk default) -- both TLS by definition/default (106 more On). Together these cover 139 of the matrix's 190 populated flows; the other 51 aren't badged simply because none of these three sources describe them, not because they're unencrypted.</span>
+      <span style="color:#94a3b8">Sourced from three places: Splunk's TLS scenarios table (9 On, 3 Cloud-only), this matrix's own port wording for dual plaintext/TLS options -- 9997 within Core Platform Roles, LDAP/LDAPS to the LDAP / AD Server column, Kafka's 9092/9093, SMTP Relay's 25/465/587, User's Splunk Web UI at 8000/8443, 9887 among the SHC and indexer-cluster replication ports, Syslog's 514/6514, and Database Server (JDBC)'s same-port TLS negotiation (23 Capable total), plus HTTP Event Collector's HTTPS-by-Splunk-default on 8088/443 (9 more On) -- and every remaining populated cell whose port is 443 (HTTPS) or 8089 (splunkd's management/REST API, HTTPS by Splunk default) -- both TLS by definition/default (102 more On). Together these cover 146 of the matrix's 190 populated flows; the other 44 aren't badged simply because none of these three sources describe them, not because they're unencrypted.</span>
     </div>
     <p class="patterns-scroll-hint" aria-hidden="true">&#8596; Swipe sideways to see every destination component</p>
     <div class="eccs-table-wrap ports-matrix-wrap" role="region" aria-label="Scrollable component-to-component TCP ports matrix" tabindex="0">
@@ -13746,7 +13746,7 @@ E. Assumptions and unresolved inputs</pre>
         <li>&mdash; <strong>Vendor / Source API (External REST/HTTPS)</strong>: the external endpoint that a Heavy Forwarder (LP-005) or an HEC-pushing application/script/serverless function -- Azure Function, AWS Lambda, on-premises Python/PowerShell (LP-017 variants) -- polls on 443 before delivering data via HEC. Row is entirely dashes; a vendor API is a passive responder, not a connection initiator into Splunk.</li>
         <li>Eighteen enterprise/cloud service dependencies -- Splunk SOAR/SOAR Cloud, Enterprise Security/Mission Control (Cloud), ACS, Observability Cloud, Splunkbase/updates, SNMP Manager/Trap Receiver, Webhook Destination, Ticketing/ITSM API, TAXII Server, Proxy Authentication Service, Container/Kubernetes API, OpenTelemetry Collector, Kafka, AWS Kinesis, Azure Storage/ARM, Microsoft Graph, Google Cloud APIs/Pub/Sub, and Git Host -- were added directly to the Expanded Cross-Matrix per user request, promoted from a flat reference table this page previously carried instead. Each "Initiated By" mapped onto the closest existing matrix component (e.g. "Search Head (ES adaptive response)" &rarr; Search Head / SHC Member; "CI/CD Runner" &rarr; Admin / API Client, which already explicitly covers CI/CD pipelines and ACS/Splunk Cloud tooling in its own definition above). Splunkbase and Proxy Authentication Service are populated universally across the platform-role set, the same treatment as DNS/NTP/Internet-Proxy/CA-CRL-OCSP, since "any instance" and "any Splunk instance behind a proxy" are both genuinely broad. All eighteen rows are entirely dashes except <strong>OpenTelemetry Collector</strong>, which genuinely relays data onward: it receives OTLP telemetry from HEC Client (Application) on 4317/4318, and forwards to Heavy Forwarder (8088, HEC), Splunk Observability Cloud (443), and the Container/Kubernetes API (443/6443) it also queries for collection metadata.</li>
         <li>The "Highlight components for logging pattern" dropdown above the matrix maps each of the 39 Logging Patterns Table rows to the specific components and cells its documented flow touches, so selecting one highlights only the primary, best-supported path for that pattern rather than every possible alternative port/route mentioned in its full description -- consult the Logging Patterns Table itself for the complete text, including secondary options (e.g. an alternate receiving tier, or a load-balancer front end). None of the 39 logging patterns reference the 18 enterprise/cloud service dependencies above, so selecting a pattern will never highlight those columns.</li>
-        <li>The "Show TLS defaults" checkbox overlays a small badge on 139 of the matrix's 190 populated flows, from three sources, applied in this order (each cell gets one badge, from whichever source reaches it first). First, the "Encrypted Communication Scenarios (TLS)" table above: <strong>TLS: Cloud only</strong> (3 flows, Cloud: on / Enterprise: off: forwarding to Splunk Cloud from UF/HF/Splunk Stream Forwarder) -- the "On" scenarios from this same table (agent-to-Deployment-Server phone-home, distributed search, indexer cluster manager) all happen to use port 8089, so they're counted in the port-based total below rather than separately here. The 3 scenarios that don't map cleanly onto this matrix's component model (Splunk Web to search head, Splunk-to-Splunk as a general category, and Search head cluster deployer, whose stated initiator direction conflicts with this matrix's own Deployer&rarr;SH-only convention) are deliberately left unbadged rather than force-mapped. Second, <strong>TLS: Capable</strong> (21 flows) is sourced from this matrix's own port notes instead, wherever a cell's own text already lists both a plaintext and a TLS option for the same port family: every 9997 (S2S) hop entirely within the Core Platform Roles group (8 flows), every populated cell reaching the LDAP / AD Server column, which lists both plain LDAP (389) and LDAPS (636) (4 flows: HF, Indexer, Search Head, and Monitoring Console), Heavy Forwarder &rarr; Kafka, which lists 9092 (plaintext) / 9093 (TLS) (1 flow), both populated SMTP Relay cells, which list 25 (plain SMTP) alongside 465/587 (implicit-TLS/STARTTLS submission) (2 flows: Search Head and Monitoring Console), User's 4 Splunk Web UI cells (HF, Indexer, Search Head, Monitoring Console), which now list 8000 (plain) alongside 8443 (HTTPS) after 8443 was added to their cell text per user request (4 flows), and the Search Head / SHC Member and Indexer / IDX Peer self-referencing cluster-replication cells, both of which list 9887 among their configurable replication ports and were reclassified here from "Cloud only" per user request (2 flows) -- in each case TLS is available on the same port family but isn't on by default. Third and last, every remaining populated cell not already covered above whose port text contains 443 or 8089 is marked <strong>TLS: On</strong> (115 flows total) -- port 443 is HTTPS, which is TLS by definition; port 8089 is splunkd's management/REST API port, which uses HTTPS by Splunk default (with Splunk's default certificate unless replaced) -- both independent of any named scenario. This is also why User &rarr; Load Balancer and User &rarr; Splunk Cloud show "On" rather than "Cloud only" despite being part of the Browser-to-Splunk-Web scenario -- both use port 443, which is more definitive than that scenario's Cloud/Enterprise split (the other 4 Browser-to-Splunk-Web cells, at 8000/8443, are "Capable" instead, per above). Where a matched cell also lists a non-matching port as an alternative (e.g. the CA/CRL/OCSP columns' "80 / 443", or the Syslog Collector rows' "8088 / 443"), the badge speaks only to the matched port -- the other listed port isn't necessarily encrypted. The matrix's other 51 populated flows stay unbadged simply because none of these three sources describe them, not because they're unencrypted. This overlay is independent of the pattern/topology/search/group filters above and composes with whichever one is active.</li>
+        <li>The "Show TLS defaults" checkbox overlays a small badge on 146 of the matrix's 190 populated flows, from three sources, applied in this order (each cell gets one badge, from whichever source reaches it first). First, the "Encrypted Communication Scenarios (TLS)" table above: <strong>TLS: Cloud only</strong> (3 flows, Cloud: on / Enterprise: off: forwarding to Splunk Cloud from UF/HF/Splunk Stream Forwarder) and <strong>TLS: On</strong> (9 flows: agent-to-Deployment-Server phone-home, distributed search, indexer cluster manager) -- the 3 scenarios that don't map cleanly onto this matrix's component model (Splunk Web to search head, Splunk-to-Splunk as a general category, and Search head cluster deployer, whose stated initiator direction conflicts with this matrix's own Deployer&rarr;SH-only convention) are deliberately left unbadged rather than force-mapped. Second, this matrix's own port notes, wherever a cell's own text already documents a protocol's TLS behavior more specifically than a generic port rule would: <strong>TLS: Capable</strong> (23 flows) wherever a cell lists both a plaintext and a TLS option for the same port family -- 9997 within Core Platform Roles (8), LDAP/LDAPS to the LDAP / AD Server column (4: HF, Indexer, Search Head, Monitoring Console), Heavy Forwarder &rarr; Kafka's 9092/9093 (1), both SMTP Relay cells' 25/465/587 (2), User's 4 Splunk Web UI cells at 8000/8443, added per user request (4), the Search Head and Indexer self-referencing replication cells' 9887, reclassified from "Cloud only" per user request (2), Syslog Source &rarr; Syslog Collector's 514/6514 (1), and Heavy Forwarder &rarr; Database Server (JDBC), whose SQL Server/Oracle/PostgreSQL/MySQL protocols each negotiate TLS on the same port rather than a separate listener (1); and <strong>TLS: On</strong> (9 flows) for every genuinely HEC-labeled cell (HEC Client, Edge/Ingest Processor, OpenTelemetry Collector, and Syslog Collector reaching HF/Indexer/Splunk Cloud on 8088 and/or 443), since HEC uses HTTPS by Splunk default -- grouped here rather than left to the generic port-443 rule below so cells like Syslog Collector &rarr; Splunk Cloud get an HEC-specific tooltip instead of a generic one. Third and last, every remaining populated cell not already covered above whose port text contains 443 or 8089 is marked <strong>TLS: On</strong> (102 flows) -- port 443 is HTTPS, which is TLS by definition; port 8089 is splunkd's management/REST API port, which uses HTTPS by Splunk default (with Splunk's default certificate unless replaced) -- both independent of any named scenario. This is also why User &rarr; Load Balancer and User &rarr; Splunk Cloud show "On" rather than "Cloud only" despite being part of the Browser-to-Splunk-Web scenario -- both use port 443, which is more definitive than that scenario's Cloud/Enterprise split (the other 4 Browser-to-Splunk-Web cells, at 8000/8443, are "Capable" instead, per above). Where a matched cell also lists a non-matching port as an alternative (e.g. the CA/CRL/OCSP columns' "80 / 443", or the Syslog Collector rows' "8088 / 443"), the badge speaks only to the matched port -- the other listed port isn't necessarily encrypted. Two direct-to-Splunk syslog cells (Syslog Source &rarr; HF/Indexer, both already noted "not recommended") list only plain 514 with no TLS alternative, so they're left unbadged rather than force-classified. The matrix's other 44 populated flows stay unbadged simply because none of these sources describe them, not because they're unencrypted. This overlay is independent of the pattern/topology/search/group filters above and composes with whichever one is active.</li>
       </ul>
     </div>
   </section>
@@ -20310,7 +20310,7 @@ const portsMatrixTLSDefaults = [
     // reclassified as "Capable" in the group just below rather than kept
     // here as "Cloud only," since the dual-port listing on the cell
     // itself is more specific than that borrowed Cloud/Enterprise split.
-    scenario: "Splunk Web UI (8000 plain / 8443 HTTPS)", status: "capable",
+    scenario: "Splunk Web UI (8000 plain / 8443 HTTPS)", status: "capable", source: "matrix-documented",
     pairs: [
       ["User", "Heavy Forwarder (HF)"], ["User", "Indexer / IDX Peer"],
       ["User", "Search Head / SHC Member"], ["User", "Monitoring Console (MC)"]
@@ -20325,7 +20325,7 @@ const portsMatrixTLSDefaults = [
     // describes the customer's overall deployment type, not specifically
     // an on-prem-to-on-prem hop -- "optionally TLS," already this matrix's
     // own wording for these cells, is the more precise label for them.
-    scenario: "Forwarding (to Splunk Cloud)", status: "cloud-only",
+    scenario: "Forwarding (to Splunk Cloud)", status: "cloud-only", source: "splunk-tls-doc",
     pairs: [
       ["Universal Forwarder (UF)", "Splunk Cloud"],
       ["Heavy Forwarder (HF)", "Splunk Cloud"],
@@ -20337,7 +20337,7 @@ const portsMatrixTLSDefaults = [
     // TLS is available on this port but is an explicit per-deployment
     // configuration choice, not on by default in either direction, so
     // "Capable" rather than "On"/"Cloud only" is the accurate label.
-    scenario: "9997 (S2S) within Core Platform Roles", status: "capable",
+    scenario: "9997 (S2S) within Core Platform Roles", status: "capable", source: "matrix-documented",
     pairs: [
       ["Universal Forwarder (UF)", "Heavy Forwarder (HF)"], ["Universal Forwarder (UF)", "Indexer / IDX Peer"],
       ["Heavy Forwarder (HF)", "Heavy Forwarder (HF)"], ["Heavy Forwarder (HF)", "Indexer / IDX Peer"],
@@ -20350,7 +20350,7 @@ const portsMatrixTLSDefaults = [
     // (389) and LDAPS (636) as options -- TLS is available via LDAPS but
     // isn't on by default, so "Capable" applies the same way it does to
     // the 9997 group above.
-    scenario: "LDAP directory authentication (389/636)", status: "capable",
+    scenario: "LDAP directory authentication (389/636)", status: "capable", source: "matrix-documented",
     pairs: [
       ["Heavy Forwarder (HF)", "LDAP / AD Server"], ["Indexer / IDX Peer", "LDAP / AD Server"],
       ["Search Head / SHC Member", "LDAP / AD Server"], ["Monitoring Console (MC)", "LDAP / AD Server"]
@@ -20360,7 +20360,7 @@ const portsMatrixTLSDefaults = [
     // Kafka's own cell already lists both a plaintext port and a TLS
     // port -- same dual-option "Capable" situation as LDAP/389-636 and
     // 9997 above.
-    scenario: "Kafka (9092 plaintext / 9093 TLS)", status: "capable",
+    scenario: "Kafka (9092 plaintext / 9093 TLS)", status: "capable", source: "matrix-documented",
     pairs: [["Heavy Forwarder (HF)", "Kafka"]]
   },
   {
@@ -20368,32 +20368,70 @@ const portsMatrixTLSDefaults = [
     // TLS/SMTPS), and 587 (submission, typically STARTTLS) together --
     // the same "TLS is one of the listed options, not on by default"
     // situation as the other Capable groups.
-    scenario: "SMTP Relay (25 plain / 465 & 587 TLS-capable)", status: "capable",
+    scenario: "SMTP Relay (25 plain / 465 & 587 TLS-capable)", status: "capable", source: "matrix-documented",
     pairs: [["Search Head / SHC Member", "SMTP Relay"], ["Monitoring Console (MC)", "SMTP Relay"]]
   },
   {
-    scenario: "Agent management to agents", status: "on",
+    scenario: "Agent management to agents", status: "on", source: "splunk-tls-doc",
     pairs: [
       ["Universal Forwarder (UF)", "Deployment Server (DS)"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"],
       ["Indexer / IDX Peer", "Deployment Server (DS)"], ["Search Head / SHC Member", "Deployment Server (DS)"],
       ["Splunk Stream Server", "Deployment Server (DS)"], ["Splunk Stream Forwarder (Client)", "Deployment Server (DS)"]
     ]
   },
-  { scenario: "Distributed search", status: "on", pairs: [["Indexer / IDX Peer", "Search Head / SHC Member"]] },
+  { scenario: "Distributed search", status: "on", source: "splunk-tls-doc", pairs: [["Indexer / IDX Peer", "Search Head / SHC Member"]] },
   {
     // Per user request: both cells list 9887 among their replication
     // ports, and this matrix's own port notes already describe 9887 as
     // configurable rather than mandatory-on -- "Capable" fits better than
     // the Cloud/Enterprise split borrowed from Splunk's TLS doc.
-    scenario: "Search head clusters (9887 among SHC replication ports)", status: "capable",
+    scenario: "Search head clusters (9887 among SHC replication ports)", status: "capable", source: "matrix-documented",
     pairs: [["Search Head / SHC Member", "Search Head / SHC Member"]]
   },
   {
-    scenario: "Indexer cluster peer nodes (9887 cluster replication)", status: "capable",
+    scenario: "Indexer cluster peer nodes (9887 cluster replication)", status: "capable", source: "matrix-documented",
     pairs: [["Indexer / IDX Peer", "Indexer / IDX Peer"]]
   },
   {
-    scenario: "Indexer cluster manager", status: "on",
+    // Syslog Source's own cell lists both 514 (TCP/UDP, plaintext) and
+    // 6514 (TLS) -- the classic syslog dual-port pattern, same "Capable"
+    // situation as LDAP/389-636. The two direct-to-Splunk syslog cells
+    // (Syslog Source -> HF/Indexer, both "not recommended") only list
+    // plain 514 with no TLS alternative, so they're left unbadged rather
+    // than force-classified.
+    scenario: "Syslog (514 plaintext / 6514 TLS)", status: "capable", source: "matrix-documented",
+    pairs: [["Syslog Source", "Syslog Collector (SC4S / rsyslog / syslog-ng)"]]
+  },
+  {
+    // Database Server (JDBC): unlike the dual-port examples above, SQL
+    // Server/Oracle/PostgreSQL/MySQL each negotiate TLS on the same port
+    // via their own wire protocol rather than a separate listener -- but
+    // the practical effect is identical to "Capable" elsewhere in this
+    // overlay: TLS is supported, not on by default, and is a per-database
+    // configuration choice.
+    scenario: "Database Server (JDBC) -- same-port TLS negotiation", status: "capable", source: "matrix-documented",
+    pairs: [["Heavy Forwarder (HF)", "Database Server (JDBC)"]]
+  },
+  {
+    // Every genuinely HEC-labeled cell (8088 and/or 443, explicitly
+    // described as HEC in its own text) -- HEC uses HTTPS by Splunk
+    // default (enableSSL defaults to true on the HEC input), the same
+    // reasoning already applied to port 8089. Grouped here for accurate
+    // tooltip attribution even where a cell also happens to list 443
+    // (Syslog Collector/HEC Client -> Splunk Cloud), rather than relying
+    // on the generic port-443 rule for those two.
+    scenario: "HTTP Event Collector (8088/443, HTTPS by Splunk default)", status: "on", source: "matrix-documented",
+    pairs: [
+      ["HEC Client (Application)", "Heavy Forwarder (HF)"], ["HEC Client (Application)", "Indexer / IDX Peer"],
+      ["HEC Client (Application)", "Splunk Cloud"],
+      ["Edge / Ingest Processor", "Heavy Forwarder (HF)"], ["Edge / Ingest Processor", "Indexer / IDX Peer"],
+      ["OpenTelemetry Collector", "Heavy Forwarder (HF)"],
+      ["Syslog Collector (SC4S / rsyslog / syslog-ng)", "Heavy Forwarder (HF)"], ["Syslog Collector (SC4S / rsyslog / syslog-ng)", "Indexer / IDX Peer"],
+      ["Syslog Collector (SC4S / rsyslog / syslog-ng)", "Splunk Cloud"]
+    ]
+  },
+  {
+    scenario: "Indexer cluster manager", status: "on", source: "splunk-tls-doc",
     pairs: [["Indexer / IDX Peer", "Cluster Manager (CM)"], ["Search Head / SHC Member", "Cluster Manager (CM)"]]
   }
 ];
@@ -20816,7 +20854,8 @@ function initPortsMatrixPatternHighlighter() {
         const cell = cells[colIdx - 1];
         if (!cell) return;
         const meta = TLS_STATUS_META[group.status];
-        const title = `TLS status (${group.status === "capable" ? "matrix-documented" : "Splunk TLS doc"}, "${group.scenario}"): ${meta.statusText}`;
+        const sourceLabel = group.source === "splunk-tls-doc" ? "Splunk TLS doc" : "matrix-documented";
+        const title = `TLS status (${sourceLabel}, "${group.scenario}"): ${meta.statusText}`;
         if (addTLSBadge(cell, group.status, title)) badgedCells.add(cell);
       });
     });
