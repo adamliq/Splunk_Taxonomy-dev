@@ -2714,6 +2714,9 @@
     .legend-swatch-btn { display:inline-flex; align-items:center; border:1px solid transparent; background:transparent; padding:2px 7px; border-radius:999px; cursor:pointer; font-size:12px; font-family:inherit; color:#475569; }
     .legend-swatch-btn:hover { background:#f1f5f9; border-color:var(--border); color:#0f172a; }
     .legend-swatch-btn:focus-visible { outline:2px solid #7030a0; outline-offset:1px; }
+    .tls-badge { display:inline-block; font-size:9px; font-weight:800; letter-spacing:.02em; padding:1px 6px; border-radius:5px; vertical-align:middle; white-space:nowrap; margin-left:3px; color:#fff; }
+    .tls-badge.tls-on { background:#166534; }
+    .tls-badge.tls-cloud-only { background:#92400e; }
     .pattern-matrix-link { margin-left:6px; padding:0; border:0; background:transparent; color:#7030a0; font-size:11px; font-weight:700; text-decoration:underline; text-underline-offset:2px; cursor:pointer; white-space:nowrap; }
     .pattern-matrix-link:hover { color:#5b2683; }
     @media (max-width:860px) {
@@ -13556,6 +13559,7 @@ E. Assumptions and unresolved inputs</pre>
       <label for="portsMatrixComponentSearch">Show only components matching:</label>
       <input type="search" id="portsMatrixComponentSearch" placeholder="e.g. AWS, HF, cloud…" aria-label="Filter the matrix to components whose name matches this text, plus whatever they connect to" />
       <label class="ports-checkbox-label" for="portsMatrixHideEmpty"><input type="checkbox" id="portsMatrixHideEmpty" /> Hide fully-empty rows/columns</label>
+      <label class="ports-checkbox-label" for="portsMatrixShowTLS"><input type="checkbox" id="portsMatrixShowTLS" /> Show TLS defaults</label>
       <button id="portsMatrixExportBtn" class="primary-button" type="button">Export visible CSV</button>
     </div>
     <p class="ports-pattern-caption" id="portsMatrixPatternCaption" aria-live="polite"></p>
@@ -13585,6 +13589,12 @@ E. Assumptions and unresolved inputs</pre>
       <button type="button" class="legend-swatch-btn" data-group-name="Directory, Auth &amp; Core Infrastructure"><span class="legend-swatch" style="background:#86efac"></span> Directory, Auth &amp; Core Infrastructure</button>
       <button type="button" class="legend-swatch-btn" data-group-name="Data Source Integrations"><span class="legend-swatch" style="background:#fcd34d"></span> Data Source Integrations</button>
       <button type="button" class="legend-swatch-btn" data-group-name="Splunk Cloud &amp; SaaS Dependencies"><span class="legend-swatch" style="background:#d8b4fe"></span> Splunk Cloud &amp; SaaS Dependencies</button>
+    </div>
+    <div class="ports-matrix-legend" id="portsMatrixTLSLegend">
+      <strong>TLS defaults (optional overlay, "Show TLS defaults" above):</strong>
+      <span class="tls-badge tls-on">&#128274; TLS: On</span> encrypted by default everywhere
+      <span class="tls-badge tls-cloud-only">&#128274; TLS: Cloud only</span> Cloud: on &middot; Enterprise: off
+      <span style="color:#94a3b8">Sourced from Splunk's "Table of most common encrypted Splunk platform instance communication scenarios" -- covers 23 of the matrix's 190 populated flows; most flows aren't described by that 10-scenario table and won't show a badge even when this overlay is on.</span>
     </div>
     <p class="patterns-scroll-hint" aria-hidden="true">&#8596; Swipe sideways to see every destination component</p>
     <div class="eccs-table-wrap ports-matrix-wrap" role="region" aria-label="Scrollable component-to-component TCP ports matrix" tabindex="0">
@@ -13734,6 +13744,7 @@ E. Assumptions and unresolved inputs</pre>
         <li>&mdash; <strong>Vendor / Source API (External REST/HTTPS)</strong>: the external endpoint that a Heavy Forwarder (LP-005) or an HEC-pushing application/script/serverless function -- Azure Function, AWS Lambda, on-premises Python/PowerShell (LP-017 variants) -- polls on 443 before delivering data via HEC. Row is entirely dashes; a vendor API is a passive responder, not a connection initiator into Splunk.</li>
         <li>Eighteen enterprise/cloud service dependencies -- Splunk SOAR/SOAR Cloud, Enterprise Security/Mission Control (Cloud), ACS, Observability Cloud, Splunkbase/updates, SNMP Manager/Trap Receiver, Webhook Destination, Ticketing/ITSM API, TAXII Server, Proxy Authentication Service, Container/Kubernetes API, OpenTelemetry Collector, Kafka, AWS Kinesis, Azure Storage/ARM, Microsoft Graph, Google Cloud APIs/Pub/Sub, and Git Host -- were added directly to the Expanded Cross-Matrix per user request, promoted from a flat reference table this page previously carried instead. Each "Initiated By" mapped onto the closest existing matrix component (e.g. "Search Head (ES adaptive response)" &rarr; Search Head / SHC Member; "CI/CD Runner" &rarr; Admin / API Client, which already explicitly covers CI/CD pipelines and ACS/Splunk Cloud tooling in its own definition above). Splunkbase and Proxy Authentication Service are populated universally across the platform-role set, the same treatment as DNS/NTP/Internet-Proxy/CA-CRL-OCSP, since "any instance" and "any Splunk instance behind a proxy" are both genuinely broad. All eighteen rows are entirely dashes except <strong>OpenTelemetry Collector</strong>, which genuinely relays data onward: it receives OTLP telemetry from HEC Client (Application) on 4317/4318, and forwards to Heavy Forwarder (8088, HEC), Splunk Observability Cloud (443), and the Container/Kubernetes API (443/6443) it also queries for collection metadata.</li>
         <li>The "Highlight components for logging pattern" dropdown above the matrix maps each of the 39 Logging Patterns Table rows to the specific components and cells its documented flow touches, so selecting one highlights only the primary, best-supported path for that pattern rather than every possible alternative port/route mentioned in its full description -- consult the Logging Patterns Table itself for the complete text, including secondary options (e.g. an alternate receiving tier, or a load-balancer front end). None of the 39 logging patterns reference the 18 enterprise/cloud service dependencies above, so selecting a pattern will never highlight those columns.</li>
+        <li>The "Show TLS defaults" checkbox overlays a small badge on the specific matrix cells that correspond to the 7 cleanly-matched rows of the "Encrypted Communication Scenarios (TLS)" table above -- 23 of the matrix's 190 populated flows in total. <strong>TLS: On</strong> means encrypted by default everywhere; <strong>TLS: Cloud only</strong> means Cloud: on / Enterprise: off per that table. The 3 scenarios that don't map cleanly onto this matrix's component model (Splunk Web to search head, Splunk-to-Splunk as a general category, and Search head cluster deployer, whose stated initiator direction conflicts with this matrix's own Deployer&rarr;SH-only convention) are deliberately left unbadged rather than force-mapped -- most of the matrix's other 167 populated flows also stay unbadged simply because Splunk's own TLS table doesn't describe them, not because they're unencrypted. This overlay is independent of the pattern/topology/search/group filters above and composes with whichever one is active.</li>
       </ul>
     </div>
   </section>
@@ -20276,6 +20287,50 @@ portsMatrixTopologyEdges["M2/M12"] = portsMatrixTopologyEdges["C1/C11"];
 portsMatrixTopologyEdges["M3/M13"] = portsMatrixTopologyEdges["C3/C13"];
 portsMatrixTopologyEdges["M4/M14"] = portsMatrixTopologyEdges["C3/C13"];
 
+// TLS default-encryption overlay: maps each of Splunk's 7 cleanly-matched
+// "Table of most common encrypted Splunk platform instance communication
+// scenarios" rows onto the specific matrix cells they describe. Every pair
+// below was checked against the matrix's actual populated (non-dash) cells
+// before being added -- same discipline as the pattern/topology edge maps.
+// The 3 scenarios that don't map cleanly (Splunk Web to search head has no
+// distinct matrix node; Splunk-to-Splunk overlaps Forwarding rather than
+// being distinct; Search head cluster deployer directionality conflicts
+// with this matrix's own established Deployer->SH-only convention) are
+// deliberately left out rather than force-mapped.
+const portsMatrixTLSDefaults = [
+  {
+    scenario: "Browser to Splunk Web", status: "cloud-only",
+    pairs: [
+      ["User", "Heavy Forwarder (HF)"], ["User", "Indexer / IDX Peer"],
+      ["User", "Search Head / SHC Member"], ["User", "Monitoring Console (MC)"],
+      ["User", "Load Balancer / Reverse Proxy"], ["User", "Splunk Cloud"]
+    ]
+  },
+  {
+    scenario: "Forwarding", status: "cloud-only",
+    pairs: [
+      ["Universal Forwarder (UF)", "Indexer / IDX Peer"], ["Universal Forwarder (UF)", "Splunk Cloud"],
+      ["Heavy Forwarder (HF)", "Indexer / IDX Peer"], ["Heavy Forwarder (HF)", "Splunk Cloud"],
+      ["Splunk Stream Forwarder (Client)", "Indexer / IDX Peer"], ["Splunk Stream Forwarder (Client)", "Splunk Cloud"]
+    ]
+  },
+  {
+    scenario: "Agent management to agents", status: "on",
+    pairs: [
+      ["Universal Forwarder (UF)", "Deployment Server (DS)"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"],
+      ["Indexer / IDX Peer", "Deployment Server (DS)"], ["Search Head / SHC Member", "Deployment Server (DS)"],
+      ["Splunk Stream Server", "Deployment Server (DS)"], ["Splunk Stream Forwarder (Client)", "Deployment Server (DS)"]
+    ]
+  },
+  { scenario: "Distributed search", status: "on", pairs: [["Indexer / IDX Peer", "Search Head / SHC Member"]] },
+  { scenario: "Search head clusters", status: "cloud-only", pairs: [["Search Head / SHC Member", "Search Head / SHC Member"]] },
+  { scenario: "Indexer cluster peer nodes", status: "cloud-only", pairs: [["Indexer / IDX Peer", "Indexer / IDX Peer"]] },
+  {
+    scenario: "Indexer cluster manager", status: "on",
+    pairs: [["Indexer / IDX Peer", "Cluster Manager (CM)"], ["Search Head / SHC Member", "Cluster Manager (CM)"]]
+  }
+];
+
 let portsMatrixHashHandler = null;
 function initPortsMatrixPatternHighlighter() {
   const select = document.getElementById("portsMatrixPatternSelect");
@@ -20289,6 +20344,7 @@ function initPortsMatrixPatternHighlighter() {
   const statFlows = document.getElementById("portsMatrixVisibleFlows");
   const groupLegendButtons = Array.from(document.querySelectorAll("#portsMatrixGroupLegend .legend-swatch-btn"));
   const topologySelect = document.getElementById("portsMatrixTopologySelect");
+  const tlsCheckbox = document.getElementById("portsMatrixShowTLS");
   if (!select || !table || typeof loggingPatternTableData === "undefined") return;
 
   loggingPatternTableData.forEach(row => {
@@ -20653,6 +20709,35 @@ function initPortsMatrixPatternHighlighter() {
     }
   }
 
+  // TLS default-encryption overlay: an independent toggle, orthogonal to
+  // pattern/topology highlighting, search, group isolation, and hide-empty
+  // -- it only adds/removes badge elements inside already-populated cells
+  // and never touches ports-hidden/ports-hl-* classes, so it composes with
+  // whatever filter is currently active rather than resetting it. Always
+  // clears existing badges first so repeated toggling is idempotent.
+  function applyTLSOverlay() {
+    table.querySelectorAll(".tls-badge").forEach(el => el.remove());
+    if (!tlsCheckbox || !tlsCheckbox.checked) return;
+    portsMatrixTLSDefaults.forEach(group => {
+      group.pairs.forEach(([src, dst]) => {
+        const row = rowByName[src];
+        const colIdx = columnIndexByName[dst];
+        if (!row || colIdx === undefined) return;
+        const cells = row.querySelectorAll("td");
+        const cell = cells[colIdx - 1];
+        if (!cell) return;
+        const flowBadge = cell.querySelector(".flow-badge");
+        if (!flowBadge) return;
+        const badge = document.createElement("span");
+        badge.className = `tls-badge tls-${group.status}`;
+        const statusText = group.status === "on" ? "On" : "Cloud: on / Enterprise: off";
+        badge.title = `Default encryption (Splunk TLS doc, "${group.scenario}"): ${statusText}`;
+        badge.textContent = group.status === "on" ? "\u{1F512} TLS: On" : "\u{1F512} TLS: Cloud only";
+        flowBadge.after(badge);
+      });
+    });
+  }
+
   function exportVisiblePortsMatrix(event) {
     const visibleColIdx = [];
     headerCells.forEach((th, idx) => {
@@ -20705,6 +20790,7 @@ function initPortsMatrixPatternHighlighter() {
     });
   }
   if (exportBtn) exportBtn.addEventListener("click", exportVisiblePortsMatrix);
+  if (tlsCheckbox) tlsCheckbox.addEventListener("change", applyTLSOverlay);
   groupLegendButtons.forEach(btn => {
     btn.addEventListener("click", () => applyGroupFilter(btn.dataset.groupName));
   });
