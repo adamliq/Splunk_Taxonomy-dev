@@ -2717,6 +2717,7 @@
     .tls-badge { display:inline-block; font-size:9px; font-weight:800; letter-spacing:.02em; padding:1px 6px; border-radius:5px; vertical-align:middle; white-space:nowrap; margin-left:3px; color:#fff; }
     .tls-badge.tls-on { background:#166534; }
     .tls-badge.tls-cloud-only { background:#92400e; }
+    .tls-badge.tls-capable { background:#1d4ed8; }
     .pattern-matrix-link { margin-left:6px; padding:0; border:0; background:transparent; color:#7030a0; font-size:11px; font-weight:700; text-decoration:underline; text-underline-offset:2px; cursor:pointer; white-space:nowrap; }
     .pattern-matrix-link:hover { color:#5b2683; }
     @media (max-width:860px) {
@@ -13594,7 +13595,8 @@ E. Assumptions and unresolved inputs</pre>
       <strong>TLS defaults (optional overlay, "Show TLS defaults" above):</strong>
       <span class="tls-badge tls-on">&#128274; TLS: On</span> encrypted by default everywhere
       <span class="tls-badge tls-cloud-only">&#128274; TLS: Cloud only</span> Cloud: on &middot; Enterprise: off
-      <span style="color:#94a3b8">Sourced from Splunk's "Table of most common encrypted Splunk platform instance communication scenarios" -- covers 23 of the matrix's 190 populated flows; most flows aren't described by that 10-scenario table and won't show a badge even when this overlay is on.</span>
+      <span class="tls-badge tls-capable">&#128274; TLS: Capable</span> supported on this port, not on by default
+      <span style="color:#94a3b8">On/Cloud-only sourced from Splunk's "Table of most common encrypted Splunk platform instance communication scenarios"; Capable covers the 9997 (S2S) hops within Core Platform Roles per this matrix's own port notes. Together these cover 28 of the matrix's 190 populated flows; most flows aren't described by either source and won't show a badge even when this overlay is on.</span>
     </div>
     <p class="patterns-scroll-hint" aria-hidden="true">&#8596; Swipe sideways to see every destination component</p>
     <div class="eccs-table-wrap ports-matrix-wrap" role="region" aria-label="Scrollable component-to-component TCP ports matrix" tabindex="0">
@@ -13744,7 +13746,7 @@ E. Assumptions and unresolved inputs</pre>
         <li>&mdash; <strong>Vendor / Source API (External REST/HTTPS)</strong>: the external endpoint that a Heavy Forwarder (LP-005) or an HEC-pushing application/script/serverless function -- Azure Function, AWS Lambda, on-premises Python/PowerShell (LP-017 variants) -- polls on 443 before delivering data via HEC. Row is entirely dashes; a vendor API is a passive responder, not a connection initiator into Splunk.</li>
         <li>Eighteen enterprise/cloud service dependencies -- Splunk SOAR/SOAR Cloud, Enterprise Security/Mission Control (Cloud), ACS, Observability Cloud, Splunkbase/updates, SNMP Manager/Trap Receiver, Webhook Destination, Ticketing/ITSM API, TAXII Server, Proxy Authentication Service, Container/Kubernetes API, OpenTelemetry Collector, Kafka, AWS Kinesis, Azure Storage/ARM, Microsoft Graph, Google Cloud APIs/Pub/Sub, and Git Host -- were added directly to the Expanded Cross-Matrix per user request, promoted from a flat reference table this page previously carried instead. Each "Initiated By" mapped onto the closest existing matrix component (e.g. "Search Head (ES adaptive response)" &rarr; Search Head / SHC Member; "CI/CD Runner" &rarr; Admin / API Client, which already explicitly covers CI/CD pipelines and ACS/Splunk Cloud tooling in its own definition above). Splunkbase and Proxy Authentication Service are populated universally across the platform-role set, the same treatment as DNS/NTP/Internet-Proxy/CA-CRL-OCSP, since "any instance" and "any Splunk instance behind a proxy" are both genuinely broad. All eighteen rows are entirely dashes except <strong>OpenTelemetry Collector</strong>, which genuinely relays data onward: it receives OTLP telemetry from HEC Client (Application) on 4317/4318, and forwards to Heavy Forwarder (8088, HEC), Splunk Observability Cloud (443), and the Container/Kubernetes API (443/6443) it also queries for collection metadata.</li>
         <li>The "Highlight components for logging pattern" dropdown above the matrix maps each of the 39 Logging Patterns Table rows to the specific components and cells its documented flow touches, so selecting one highlights only the primary, best-supported path for that pattern rather than every possible alternative port/route mentioned in its full description -- consult the Logging Patterns Table itself for the complete text, including secondary options (e.g. an alternate receiving tier, or a load-balancer front end). None of the 39 logging patterns reference the 18 enterprise/cloud service dependencies above, so selecting a pattern will never highlight those columns.</li>
-        <li>The "Show TLS defaults" checkbox overlays a small badge on the specific matrix cells that correspond to the 7 cleanly-matched rows of the "Encrypted Communication Scenarios (TLS)" table above -- 23 of the matrix's 190 populated flows in total. <strong>TLS: On</strong> means encrypted by default everywhere; <strong>TLS: Cloud only</strong> means Cloud: on / Enterprise: off per that table. The 3 scenarios that don't map cleanly onto this matrix's component model (Splunk Web to search head, Splunk-to-Splunk as a general category, and Search head cluster deployer, whose stated initiator direction conflicts with this matrix's own Deployer&rarr;SH-only convention) are deliberately left unbadged rather than force-mapped -- most of the matrix's other 167 populated flows also stay unbadged simply because Splunk's own TLS table doesn't describe them, not because they're unencrypted. This overlay is independent of the pattern/topology/search/group filters above and composes with whichever one is active.</li>
+        <li>The "Show TLS defaults" checkbox overlays a small badge on 28 of the matrix's 190 populated flows, from two sources. <strong>TLS: On</strong> (9 flows) and <strong>TLS: Cloud only</strong> (11 flows, Cloud: on / Enterprise: off) come from the 7 cleanly-matched rows of the "Encrypted Communication Scenarios (TLS)" table above; the 3 scenarios that don't map cleanly onto this matrix's component model (Splunk Web to search head, Splunk-to-Splunk as a general category, and Search head cluster deployer, whose stated initiator direction conflicts with this matrix's own Deployer&rarr;SH-only convention) are deliberately left unbadged rather than force-mapped. <strong>TLS: Capable</strong> (8 flows) is sourced from this matrix's own port notes instead -- every 9997 (S2S) hop entirely within the Core Platform Roles group (UF/HF/Splunk Stream Forwarder/Edge-Ingest-Processor &rarr; HF/Indexer), where TLS is available on the same port but isn't on by default in either Cloud or Enterprise, matching the "optionally TLS" wording already on those cells; forwarding hops that actually leave for Splunk Cloud (UF/HF/Splunk Stream Forwarder &rarr; Splunk Cloud) keep the TLS doc's Cloud/Enterprise framing instead, since that split describes the customer's overall deployment type rather than an on-prem-to-on-prem hop. The matrix's other 162 populated flows stay unbadged simply because neither source describes them, not because they're unencrypted. This overlay is independent of the pattern/topology/search/group filters above and composes with whichever one is active.</li>
       </ul>
     </div>
   </section>
@@ -20307,11 +20309,32 @@ const portsMatrixTLSDefaults = [
     ]
   },
   {
-    scenario: "Forwarding", status: "cloud-only",
+    // Only the flows that actually leave the on-premises estate for Splunk
+    // Cloud keep the TLS doc's Cloud/Enterprise framing -- the same 9997
+    // hops entirely within Core Platform Roles (forwarder -> forwarder/
+    // indexer, never touching Splunk Cloud) are reclassified below as
+    // "Capable" instead, since Splunk's Cloud-vs-Enterprise on/off split
+    // describes the customer's overall deployment type, not specifically
+    // an on-prem-to-on-prem hop -- "optionally TLS," already this matrix's
+    // own wording for these cells, is the more precise label for them.
+    scenario: "Forwarding (to Splunk Cloud)", status: "cloud-only",
     pairs: [
-      ["Universal Forwarder (UF)", "Indexer / IDX Peer"], ["Universal Forwarder (UF)", "Splunk Cloud"],
-      ["Heavy Forwarder (HF)", "Indexer / IDX Peer"], ["Heavy Forwarder (HF)", "Splunk Cloud"],
-      ["Splunk Stream Forwarder (Client)", "Indexer / IDX Peer"], ["Splunk Stream Forwarder (Client)", "Splunk Cloud"]
+      ["Universal Forwarder (UF)", "Splunk Cloud"],
+      ["Heavy Forwarder (HF)", "Splunk Cloud"],
+      ["Splunk Stream Forwarder (Client)", "Splunk Cloud"]
+    ]
+  },
+  {
+    // Every 9997 (S2S) hop entirely within the Core Platform Roles group --
+    // TLS is available on this port but is an explicit per-deployment
+    // configuration choice, not on by default in either direction, so
+    // "Capable" rather than "On"/"Cloud only" is the accurate label.
+    scenario: "9997 (S2S) within Core Platform Roles", status: "capable",
+    pairs: [
+      ["Universal Forwarder (UF)", "Heavy Forwarder (HF)"], ["Universal Forwarder (UF)", "Indexer / IDX Peer"],
+      ["Heavy Forwarder (HF)", "Heavy Forwarder (HF)"], ["Heavy Forwarder (HF)", "Indexer / IDX Peer"],
+      ["Splunk Stream Forwarder (Client)", "Heavy Forwarder (HF)"], ["Splunk Stream Forwarder (Client)", "Indexer / IDX Peer"],
+      ["Edge / Ingest Processor", "Heavy Forwarder (HF)"], ["Edge / Ingest Processor", "Indexer / IDX Peer"]
     ]
   },
   {
@@ -20330,6 +20353,12 @@ const portsMatrixTLSDefaults = [
     pairs: [["Indexer / IDX Peer", "Cluster Manager (CM)"], ["Search Head / SHC Member", "Cluster Manager (CM)"]]
   }
 ];
+
+const TLS_STATUS_META = {
+  "on": { label: "On", statusText: "On" },
+  "cloud-only": { label: "Cloud only", statusText: "Cloud: on / Enterprise: off" },
+  "capable": { label: "Capable", statusText: "Supported on this port, but not on by default -- an explicit per-deployment configuration choice" }
+};
 
 let portsMatrixHashHandler = null;
 function initPortsMatrixPatternHighlighter() {
@@ -20728,11 +20757,11 @@ function initPortsMatrixPatternHighlighter() {
         if (!cell) return;
         const flowBadge = cell.querySelector(".flow-badge");
         if (!flowBadge) return;
+        const meta = TLS_STATUS_META[group.status];
         const badge = document.createElement("span");
         badge.className = `tls-badge tls-${group.status}`;
-        const statusText = group.status === "on" ? "On" : "Cloud: on / Enterprise: off";
-        badge.title = `Default encryption (Splunk TLS doc, "${group.scenario}"): ${statusText}`;
-        badge.textContent = group.status === "on" ? "\u{1F512} TLS: On" : "\u{1F512} TLS: Cloud only";
+        badge.title = `TLS status (${group.status === "capable" ? "matrix-documented" : "Splunk TLS doc"}, "${group.scenario}"): ${meta.statusText}`;
+        badge.textContent = `\u{1F512} TLS: ${meta.label}`;
         flowBadge.after(badge);
       });
     });
