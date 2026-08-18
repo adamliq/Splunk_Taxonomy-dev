@@ -2669,6 +2669,64 @@
     .eccs-matrix th:first-child { z-index:3; }
     .eccs-matrix tr:last-child td { border-bottom:0; }
     .eccs-matrix th:last-child,.eccs-matrix td:last-child { border-right:0; }
+    .eccs-matrix th.ports-hl-header { background:#fef08a !important; }
+    .eccs-matrix td.ports-hl-cell { background:#fde047 !important; box-shadow:inset 0 0 0 2px #ca8a04; font-weight:700; }
+    .eccs-matrix .ports-hidden { display:none; }
+    .ports-pattern-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:14px 0 10px; }
+    .ports-pattern-toolbar label { font-weight:800; font-size:13px; color:#0f172a; }
+    .ports-pattern-toolbar select { flex:1 1 340px; min-width:240px; padding:9px 11px; border-radius:10px; border:1px solid var(--border); font-size:13px; font-family:inherit; background:#fff; }
+    .ports-pattern-toolbar select option { font-size:13px; font-family:inherit; }
+    .ports-pattern-toolbar button { padding:9px 14px; border-radius:10px; border:1px solid var(--border); background:#fff; cursor:pointer; font-size:13px; font-weight:700; }
+    .ports-pattern-toolbar button:hover { background:#f8fafc; }
+    .ports-pattern-caption { font-size:13px; color:#475569; margin:0 0 10px; min-height:18px; }
+    .ports-pattern-toolbar .ports-checkbox-label { display:flex; align-items:center; gap:6px; font-weight:700; font-size:13px; color:#0f172a; cursor:pointer; }
+    .ports-pattern-toolbar input[type="checkbox"] { width:auto; padding:0; border:none; background:transparent; accent-color:#7030a0; }
+    .ports-pattern-toolbar button.primary-button { background:#7030a0; color:#fff; border-color:#7030a0; }
+    .ports-pattern-toolbar button.primary-button:hover { background:#5b2683; }
+    .eccs-table-wrap.ports-matrix-wrap { max-height:70vh; }
+    .flow-badge { display:inline-block; font-size:9px; font-weight:800; letter-spacing:.02em; padding:1px 5px; border-radius:5px; color:#fff; vertical-align:middle; white-space:nowrap; }
+    .flow-ING { background:#0369a1; }
+    .flow-MGMT { background:#7c3aed; }
+    .flow-CLU { background:#b45309; }
+    .flow-SRCH { background:#059669; }
+    .flow-AUTH { background:#be123c; }
+    .flow-LIC { background:#4338ca; }
+    .flow-REPL { background:#0891b2; }
+    .flow-API { background:#9333ea; }
+    .flow-INFRA { background:#64748b; }
+    .flow-ACC { background:#ea580c; }
+    .flow-ALRT { background:#dc2626; }
+    .flow-CCP { background:#0d9488; }
+    .ports-matrix-grouped thead th.ports-grp-0 { background:#eff6ff; }
+    .ports-matrix-grouped thead th.ports-grp-1 { background:#fff1f2; }
+    .ports-matrix-grouped thead th.ports-grp-2 { background:#f0fdf4; }
+    .ports-matrix-grouped thead th.ports-grp-3 { background:#fffbeb; }
+    .ports-matrix-grouped thead th.ports-grp-4 { background:#faf5ff; }
+    .ports-matrix-grouped tbody th.ports-grp-0 { box-shadow:inset 3px 0 0 #93c5fd; }
+    .ports-matrix-grouped tbody th.ports-grp-1 { box-shadow:inset 3px 0 0 #fda4af; }
+    .ports-matrix-grouped tbody th.ports-grp-2 { box-shadow:inset 3px 0 0 #86efac; }
+    .ports-matrix-grouped tbody th.ports-grp-3 { box-shadow:inset 3px 0 0 #fcd34d; }
+    .ports-matrix-grouped tbody th.ports-grp-4 { box-shadow:inset 3px 0 0 #d8b4fe; }
+    .ports-matrix-legend { display:flex; flex-wrap:wrap; gap:6px 10px; margin:10px 0; align-items:center; font-size:12px; color:#475569; }
+    .ports-matrix-legend strong { color:#0f172a; }
+    .ports-matrix-legend .legend-swatch { display:inline-block; width:11px; height:11px; border-radius:3px; vertical-align:middle; margin-right:4px; }
+    .ports-pattern-toolbar input[type="search"] { flex:1 1 300px; min-width:200px; padding:9px 11px; border-radius:10px; border:1px solid var(--border); font-size:13px; }
+    .legend-swatch-btn { display:inline-flex; align-items:center; border:1px solid transparent; background:transparent; padding:2px 7px; border-radius:999px; cursor:pointer; font-size:12px; font-family:inherit; color:#475569; }
+    .legend-swatch-btn:hover { background:#f1f5f9; border-color:var(--border); color:#0f172a; }
+    .legend-swatch-btn:focus-visible { outline:2px solid #7030a0; outline-offset:1px; }
+    .pattern-matrix-link { margin-left:6px; padding:0; border:0; background:transparent; color:#7030a0; font-size:11px; font-weight:700; text-decoration:underline; text-underline-offset:2px; cursor:pointer; white-space:nowrap; }
+    .pattern-matrix-link:hover { color:#5b2683; }
+    @media (max-width:860px) {
+      .ports-pattern-toolbar { flex-direction:column; align-items:stretch; }
+      .ports-pattern-toolbar select,
+      .ports-pattern-toolbar input[type="search"],
+      .ports-pattern-toolbar button { width:100%; flex:1 1 auto; }
+      .ports-matrix-wrap .eccs-matrix th,
+      .ports-matrix-wrap .eccs-matrix td { padding:7px 8px; font-size:11px; }
+      .ports-matrix-wrap .eccs-matrix th:first-child,
+      .ports-matrix-wrap .eccs-matrix td:first-child { min-width:96px; }
+      .ports-matrix-legend { font-size:11px; gap:4px 8px; }
+    }
     .eccs-examples { display:grid; gap:10px; }
     .eccs-examples details { border:1px solid var(--border); border-radius:12px; background:#fff; overflow:hidden; }
     .eccs-examples summary { padding:14px 16px; cursor:pointer; color:#0f172a; font-weight:900; }
@@ -3241,6 +3299,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
     <button id="showCataloguePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cataloguePage">Data source catalogue</button>
     <button id="showPatternsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="patternsPage">Logging patterns table</button>
     <button id="showHealthChecksPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="healthChecksPage">Health checks table</button>
+    <button id="showPortsMatrixPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="portsMatrixPage">Ports matrix</button>
     <button id="showExternalToolsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="externalToolsPage">Companion tools</button>
   </nav>
 
@@ -13470,6 +13529,215 @@ E. Assumptions and unresolved inputs</pre>
     </div>
   </section>
 
+  <section id="portsMatrixPage" class="page-view patterns-page" role="tabpanel" aria-labelledby="showPortsMatrixPage" hidden>
+    <div class="patterns-hero">
+      <div>
+        <div class="eyebrow">Network reference</div>
+        <h2>Splunk Component-to-Component TCP Ports Matrix (Expanded)</h2>
+        <p>A source-component-to-destination-component cross-matrix of the TCP ports Splunk components use to talk to each other. Ports shown are the destination component's listening ports; source ports are ephemeral unless otherwise noted. This complements the Splunk Ports and Network Flow Matrix tables under Reference &rarr; Network reference -- those list ports and flows as flat rows; this page lays the same information out as a component &times; component grid.</p>
+      </div>
+    </div>
+
+    <h3>Expanded Cross-Matrix</h3>
+    <div class="ports-pattern-toolbar">
+      <label for="portsMatrixPatternSelect">Highlight components for logging pattern:</label>
+      <select id="portsMatrixPatternSelect" aria-label="Select a logging pattern to highlight its components in the matrix">
+        <option value="">(none selected)</option>
+      </select>
+      <button id="portsMatrixPatternClear" type="button">Clear filters</button>
+    </div>
+    <div class="ports-pattern-toolbar">
+      <label for="portsMatrixTopologySelect">Highlight components for validated architecture topology:</label>
+      <select id="portsMatrixTopologySelect" aria-label="Select a Splunk Validated Architecture topology to highlight its components in the matrix">
+        <option value="">(none selected)</option>
+      </select>
+    </div>
+    <div class="ports-pattern-toolbar">
+      <label for="portsMatrixComponentSearch">Show only components matching:</label>
+      <input type="search" id="portsMatrixComponentSearch" placeholder="e.g. AWS, HF, cloud…" aria-label="Filter the matrix to components whose name matches this text, plus whatever they connect to" />
+      <label class="ports-checkbox-label" for="portsMatrixHideEmpty"><input type="checkbox" id="portsMatrixHideEmpty" /> Hide fully-empty rows/columns</label>
+      <button id="portsMatrixExportBtn" class="primary-button" type="button">Export visible CSV</button>
+    </div>
+    <p class="ports-pattern-caption" id="portsMatrixPatternCaption" aria-live="polite"></p>
+    <div class="patterns-stats" id="portsMatrixStats" aria-live="polite">
+      <span class="patterns-stat"><strong id="portsMatrixVisibleComponents">52 / 52</strong> components shown</span>
+      <span class="patterns-stat"><strong id="portsMatrixVisibleFlows">190 / 190</strong> flows shown</span>
+    </div>
+    <div class="ports-matrix-legend">
+      <strong>Flow types:</strong>
+      <span class="flow-badge flow-ING">ING</span> Ingest
+      <span class="flow-badge flow-MGMT">MGMT</span> Management
+      <span class="flow-badge flow-CLU">CLU</span> Cluster
+      <span class="flow-badge flow-SRCH">SRCH</span> Search
+      <span class="flow-badge flow-AUTH">AUTH</span> Authentication
+      <span class="flow-badge flow-LIC">LIC</span> Licensing
+      <span class="flow-badge flow-REPL">REPL</span> Replication
+      <span class="flow-badge flow-API">API</span> External API
+      <span class="flow-badge flow-INFRA">INFRA</span> Infrastructure
+      <span class="flow-badge flow-ACC">ACC</span> User Access
+      <span class="flow-badge flow-ALRT">ALRT</span> Alerting
+      <span class="flow-badge flow-CCP">CCP</span> Cloud Control Plane
+    </div>
+    <div class="ports-matrix-legend" id="portsMatrixGroupLegend">
+      <strong>Column/row groups (click to isolate):</strong>
+      <button type="button" class="legend-swatch-btn" data-group-name="Core Platform Roles"><span class="legend-swatch" style="background:#93c5fd"></span> Core Platform Roles</button>
+      <button type="button" class="legend-swatch-btn" data-group-name="External Actors &amp; Clients"><span class="legend-swatch" style="background:#fda4af"></span> External Actors &amp; Clients</button>
+      <button type="button" class="legend-swatch-btn" data-group-name="Directory, Auth &amp; Core Infrastructure"><span class="legend-swatch" style="background:#86efac"></span> Directory, Auth &amp; Core Infrastructure</button>
+      <button type="button" class="legend-swatch-btn" data-group-name="Data Source Integrations"><span class="legend-swatch" style="background:#fcd34d"></span> Data Source Integrations</button>
+      <button type="button" class="legend-swatch-btn" data-group-name="Splunk Cloud &amp; SaaS Dependencies"><span class="legend-swatch" style="background:#d8b4fe"></span> Splunk Cloud &amp; SaaS Dependencies</button>
+    </div>
+    <p class="patterns-scroll-hint" aria-hidden="true">&#8596; Swipe sideways to see every destination component</p>
+    <div class="eccs-table-wrap ports-matrix-wrap" role="region" aria-label="Scrollable component-to-component TCP ports matrix" tabindex="0">
+      <table class="eccs-matrix ports-matrix-grouped" id="portsMatrixTable">
+        <thead><tr><th scope="col">Source &darr; / Destination &rarr;</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Universal Forwarder (UF)</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Heavy Forwarder (HF)</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Indexer / IDX Peer</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Search Head / SHC Member</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Deployment Server (DS)</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Cluster Manager (CM)</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">License Manager (LM)</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Deployer</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Splunk Stream Server</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Splunk Stream Forwarder (Client)</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Monitoring Console (MC)</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Edge / Ingest Processor</th><th scope="col" class="ports-grp-1" data-component-group="External Actors & Clients">User</th><th scope="col" class="ports-grp-1" data-component-group="External Actors & Clients">Syslog Source</th><th scope="col" class="ports-grp-1" data-component-group="External Actors & Clients">HEC Client (Application)</th><th scope="col" class="ports-grp-1" data-component-group="External Actors & Clients">Admin / API Client</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">LDAP / AD Server</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">SAML IdP</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">DNS Server</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">NTP Server</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">SMTP Relay</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">Internet / Proxy</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">CA / CRL / OCSP (PKI Validation)</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">Syslog Collector (SC4S / rsyslog / syslog-ng)</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">Load Balancer / Reverse Proxy</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Database Server (JDBC)</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Azure Event Hub</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">AWS S3</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">AWS SQS</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">AWS STS</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">AWS KMS</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">AWS Glue</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Vendor / Source API (External REST/HTTPS)</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Kafka</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">AWS Kinesis</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Azure Storage / ARM</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Microsoft Graph</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Google Cloud APIs / Pub/Sub</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">SNMP Manager / Trap Receiver</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">OpenTelemetry Collector</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Container / Kubernetes API</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunk Cloud</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunk SOAR / SOAR Cloud</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunk Enterprise Security / Mission Control (Cloud)</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunk ACS (Admin Config Service)</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunk Observability Cloud</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunkbase / Update Service</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Webhook Destination</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Ticketing / ITSM API</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">TAXII Server (Threat Intelligence)</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Proxy Authentication Service</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Git Host (GitHub / GitLab / Azure DevOps)</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" class="ports-grp-0" data-component-group="Core Platform Roles">Universal Forwarder (UF)</th><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 9997 (S2S, TCP, optionally TLS)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 9997 (S2S, TCP, optionally TLS)</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / phone-home / apps)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 53 (DNS, UDP/TCP)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 123 (NTP, UDP)</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 443 (HTTPS, apps/updates/cloud APIs)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 80 / 443 (CA / CRL / OCSP, TLS certificate validation)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 9997 (S2S, TCP) -- conventional default; verify the actual forwarding endpoint/port for your Splunk Cloud stack</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 443 (HTTPS, app/update download)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> environment-specific (often the proxy's own listener, e.g. 3128/8080)</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-0" data-component-group="Core Platform Roles">Heavy Forwarder (HF)</th><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 9997 (S2S, TCP, chained/intermediate forwarding, optionally TLS)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 9997 (S2S, TCP, optionally TLS)</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt)</td><td>&mdash;</td><td><span class="flow-badge flow-LIC" title="LICENSING">LIC</span> 8089 (license)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-AUTH" title="AUTHENTICATION">AUTH</span> 389 (LDAP)<br>636 (LDAPS)<br>88 (Kerberos, TCP/UDP), optional</td><td><span class="flow-badge flow-AUTH" title="AUTHENTICATION">AUTH</span> 443 (SAML SSO), optional</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 53 (DNS, UDP/TCP)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 123 (NTP, UDP)</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 443 (HTTPS, apps/updates/cloud APIs)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 80 / 443 (CA / CRL / OCSP, TLS certificate validation)</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 1433 (SQL Server)<br>1521 (Oracle)<br>5432 (PostgreSQL)<br>3306 (MySQL), varies by target DB</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 5671 (AMQP over TLS)<br>443 (HTTPS / AMQP-WebSockets)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 443 (HTTPS, S3 regional endpoint)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 443 (HTTPS, SQS regional endpoint)</td><td><span class="flow-badge flow-API" title="EXTERNAL API">API</span> 443 (HTTPS, conditional -- if using temporary/assumed IAM credentials)</td><td><span class="flow-badge flow-API" title="EXTERNAL API">API</span> 443 (HTTPS, conditional -- if server-side encryption is used)</td><td>&mdash;</td><td><span class="flow-badge flow-API" title="EXTERNAL API">API</span> 443 (HTTPS, REST/API polling)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 9092 (plaintext)<br>9093 (TLS)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 443 (HTTPS)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 443 (HTTPS)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 443 (HTTPS)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 443 (HTTPS)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 161 (UDP, polling)</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 9997 (S2S, TCP) -- where supported/configured; verify the actual forwarding endpoint/port for your Splunk Cloud stack</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-API" title="EXTERNAL API">API</span> 443 (HTTPS)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 443 (HTTPS, app/update download)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> environment-specific (often the proxy's own listener, e.g. 3128/8080)</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-0" data-component-group="Core Platform Roles">Indexer / IDX Peer</th><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-REPL" title="REPLICATION">REPL</span> 9887 (cluster replication)</td><td><span class="flow-badge flow-SRCH" title="SEARCH">SRCH</span> 8089 (cluster internal)<br>8089 (distributed search responses)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt)</td><td><span class="flow-badge flow-CLU" title="CLUSTER">CLU</span> 8089 (cluster control)</td><td><span class="flow-badge flow-LIC" title="LICENSING">LIC</span> 8089 (license)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-AUTH" title="AUTHENTICATION">AUTH</span> 389 (LDAP)<br>636 (LDAPS)<br>88 (Kerberos, TCP/UDP), optional</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 53 (DNS, UDP/TCP)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 123 (NTP, UDP)</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 443 (HTTPS, apps/updates/cloud APIs)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 80 / 443 (CA / CRL / OCSP, TLS certificate validation)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 443 (HTTPS, app/update download)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> environment-specific (often the proxy's own listener, e.g. 3128/8080)</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-0" data-component-group="Core Platform Roles">Search Head / SHC Member</th><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-SRCH" title="SEARCH">SRCH</span> 8089 (distributed search)</td><td><span class="flow-badge flow-REPL" title="REPLICATION">REPL</span> 8081 / 8181 / 9777 / 9887 (SHC replication, examples -- validate against your SHC's actual configured/versioned ports, not a fixed default)<br>8191 (KV Store, primary)<br>8065 (KV Store-related, context-dependent -- not a universal default)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt)</td><td><span class="flow-badge flow-CLU" title="CLUSTER">CLU</span> 8089 (optional)</td><td><span class="flow-badge flow-LIC" title="LICENSING">LIC</span> 8089 (license)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-AUTH" title="AUTHENTICATION">AUTH</span> 389 (LDAP)<br>636 (LDAPS)<br>88 (Kerberos, TCP/UDP)<br>3268 / 3269 (Global Catalog, LDAP/LDAPS -- AD forest-wide lookups)</td><td><span class="flow-badge flow-AUTH" title="AUTHENTICATION">AUTH</span> 443 (SAML SSO)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 53 (DNS, UDP/TCP)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 123 (NTP, UDP)</td><td><span class="flow-badge flow-ALRT" title="ALERTING">ALRT</span> 25 / 465 / 587 (SMTP, alert email)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 443 (HTTPS, apps/updates/cloud APIs)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 80 / 443 (CA / CRL / OCSP, TLS certificate validation)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 443 (HTTPS, federated search to S3 regional endpoint)</td><td>&mdash;</td><td><span class="flow-badge flow-API" title="EXTERNAL API">API</span> 443 (HTTPS, conditional -- if using temporary/assumed IAM credentials)</td><td><span class="flow-badge flow-API" title="EXTERNAL API">API</span> 443 (HTTPS, conditional -- if server-side encryption is used)</td><td><span class="flow-badge flow-SRCH" title="SEARCH">SRCH</span> 443 (HTTPS, federated search to Glue Data Catalog)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / API access, immutable)</td><td><span class="flow-badge flow-API" title="EXTERNAL API">API</span> 443 (HTTPS, ES adaptive response)</td><td><span class="flow-badge flow-API" title="EXTERNAL API">API</span> 443 (HTTPS, ES app)</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 443 (HTTPS, app/update download)</td><td><span class="flow-badge flow-ALRT" title="ALERTING">ALRT</span> 443 (HTTPS, commonly)</td><td><span class="flow-badge flow-ALRT" title="ALERTING">ALRT</span> 443 (HTTPS, alert action / add-on)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 443 (HTTPS, ES Threat Intelligence framework)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> environment-specific (often the proxy's own listener, e.g. 3128/8080)</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-0" data-component-group="Core Platform Roles">Deployment Server (DS)</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 53 (DNS, UDP/TCP)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 123 (NTP, UDP)</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 443 (HTTPS, apps/updates/cloud APIs)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 80 / 443 (CA / CRL / OCSP, TLS certificate validation)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 443 (HTTPS, app/update download)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> environment-specific (often the proxy's own listener, e.g. 3128/8080)</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-0" data-component-group="Core Platform Roles">Cluster Manager (CM)</th><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-CLU" title="CLUSTER">CLU</span> 8089 (cluster management)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-LIC" title="LICENSING">LIC</span> 8089 (license)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 53 (DNS, UDP/TCP)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 123 (NTP, UDP)</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 443 (HTTPS, apps/updates/cloud APIs)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 80 / 443 (CA / CRL / OCSP, TLS certificate validation)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 443 (HTTPS, app/update download)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> environment-specific (often the proxy's own listener, e.g. 3128/8080)</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-0" data-component-group="Core Platform Roles">License Manager (LM)</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 53 (DNS, UDP/TCP)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 123 (NTP, UDP)</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 443 (HTTPS, apps/updates/cloud APIs)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 80 / 443 (CA / CRL / OCSP, TLS certificate validation)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 443 (HTTPS, app/update download)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> environment-specific (often the proxy's own listener, e.g. 3128/8080)</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-0" data-component-group="Core Platform Roles">Deployer</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (app / config push)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 53 (DNS, UDP/TCP)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 123 (NTP, UDP)</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 443 (HTTPS, apps/updates/cloud APIs)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 80 / 443 (CA / CRL / OCSP, TLS certificate validation)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 443 (HTTPS, app/update download)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> environment-specific (often the proxy's own listener, e.g. 3128/8080)</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-0" data-component-group="Core Platform Roles">Splunk Stream Server</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / phone-home / apps)</td><td>&mdash;</td><td><span class="flow-badge flow-LIC" title="LICENSING">LIC</span> 8089 (license)</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> not confirmed (config push, see note)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 53 (DNS, UDP/TCP)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 123 (NTP, UDP)</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 443 (HTTPS, apps/updates/cloud APIs)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 80 / 443 (CA / CRL / OCSP, TLS certificate validation)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 443 (HTTPS, app/update download)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> environment-specific (often the proxy's own listener, e.g. 3128/8080)</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-0" data-component-group="Core Platform Roles">Splunk Stream Forwarder (Client)</th><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 9997 (S2S, TCP, optionally TLS)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 9997 (S2S, TCP, optionally TLS)</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / phone-home / apps)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> not confirmed (config check-in, see note)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 53 (DNS, UDP/TCP)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 123 (NTP, UDP)</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 443 (HTTPS, apps/updates/cloud APIs)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 80 / 443 (CA / CRL / OCSP, TLS certificate validation)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 9997 (S2S, TCP, immutable)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 443 (HTTPS, app/update download)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> environment-specific (often the proxy's own listener, e.g. 3128/8080)</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-0" data-component-group="Core Platform Roles">Monitoring Console (MC)</th><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / distributed monitoring, if registered as a search peer -- exact relationship depends on how distributed monitoring is configured)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / distributed monitoring, if registered as a search peer -- exact relationship depends on how distributed monitoring is configured)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / distributed monitoring, if registered as a search peer -- exact relationship depends on how distributed monitoring is configured)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / distributed monitoring, if registered as a search peer -- exact relationship depends on how distributed monitoring is configured)</td><td><span class="flow-badge flow-CLU" title="CLUSTER">CLU</span> 8089 (mgmt / distributed monitoring, if registered as a search peer -- exact relationship depends on how distributed monitoring is configured)</td><td><span class="flow-badge flow-LIC" title="LICENSING">LIC</span> 8089 (mgmt / distributed monitoring, if registered as a search peer -- exact relationship depends on how distributed monitoring is configured)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / distributed monitoring, if registered as a search peer -- exact relationship depends on how distributed monitoring is configured)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / distributed monitoring, if registered as a search peer -- exact relationship depends on how distributed monitoring is configured)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / distributed monitoring, if registered as a search peer -- exact relationship depends on how distributed monitoring is configured)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-AUTH" title="AUTHENTICATION">AUTH</span> 389 (LDAP)<br>636 (LDAPS)<br>88 (Kerberos, TCP/UDP), optional</td><td><span class="flow-badge flow-AUTH" title="AUTHENTICATION">AUTH</span> 443 (SAML SSO), optional</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 53 (DNS, UDP/TCP)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 123 (NTP, UDP)</td><td><span class="flow-badge flow-ALRT" title="ALERTING">ALRT</span> 25 / 465 / 587 (SMTP, platform alerting), optional</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 443 (HTTPS, apps/updates/cloud APIs)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 80 / 443 (CA / CRL / OCSP, TLS certificate validation)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 443 (HTTPS, app/update download)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> environment-specific (often the proxy's own listener, e.g. 3128/8080)</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-0" data-component-group="Core Platform Roles">Edge / Ingest Processor</th><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 8088 (HEC) or 9997 (S2S), depending on configuration</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 8088 (HEC) or 9997 (S2S), depending on configuration</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 53 (DNS, UDP/TCP)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 123 (NTP, UDP)</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 443 (management plane / identity)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 80 / 443 (CA / CRL / OCSP, TLS certificate validation)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 443 (ingest / HEC endpoint)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 443 (HTTPS, app/update download)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> environment-specific (often the proxy's own listener, e.g. 3128/8080)</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-1" data-component-group="External Actors & Clients">User</th><td>&mdash;</td><td><span class="flow-badge flow-ACC" title="USER ACCESS">ACC</span> 8000 (Splunk Web UI, optional)</td><td><span class="flow-badge flow-ACC" title="USER ACCESS">ACC</span> 8000 (Splunk Web UI, optional)</td><td><span class="flow-badge flow-ACC" title="USER ACCESS">ACC</span> 8000 (Splunk Web UI)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-ACC" title="USER ACCESS">ACC</span> 8000 (Splunk Web UI)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-AUTH" title="AUTHENTICATION">AUTH</span> 443 (SAML SSO, browser-mediated redirect to the IdP -- the user's browser participates directly, not just Splunk server-to-IdP)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-ACC" title="USER ACCESS">ACC</span> 443 (HTTPS, front-end)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-ACC" title="USER ACCESS">ACC</span> 443 (Web, mandatory SSL, immutable)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-1" data-component-group="External Actors & Clients">Syslog Source</th><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 514 (syslog input, TCP/UDP), not recommended</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 514 (syslog input, TCP/UDP), possible, not recommended</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 514 (TCP/UDP)<br>6514 (TLS)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-1" data-component-group="External Actors & Clients">HEC Client (Application)</th><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 8088 (HEC, HTTP/HTTPS)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 8088 (HEC, HTTP/HTTPS)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 443 (HTTPS, front-end, when HEC is proxied)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-API" title="EXTERNAL API">API</span> 443 (HTTPS, REST/API polling before pushing via HEC -- e.g. Azure Function, AWS Lambda, on-premises script)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 4317 (OTLP gRPC)<br>4318 (OTLP HTTP)</td><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 443 (HEC, HTTPS) -- Splunk Cloud's public HEC endpoint; 8088 is the on-premises default and is not used for Splunk Cloud</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-1" data-component-group="External Actors & Clients">Admin / API Client</th><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / REST API)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / REST API)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / REST API)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / REST API)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / REST API)</td><td><span class="flow-badge flow-CLU" title="CLUSTER">CLU</span> 8089 (mgmt / REST API)</td><td><span class="flow-badge flow-LIC" title="LICENSING">LIC</span> 8089 (mgmt / REST API)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / REST API)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / REST API)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / REST API)</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / REST API)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / API access, immutable)</td><td><span class="flow-badge flow-API" title="EXTERNAL API">API</span> 443 (HTTPS)</td><td>&mdash;</td><td><span class="flow-badge flow-CCP" title="CLOUD CONTROL PLANE">CCP</span> 443 (HTTPS)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-API" title="EXTERNAL API">API</span> 443 (HTTPS, detection-as-code / CI-CD sync)</td></tr>
+          <tr><th scope="row" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">LDAP / AD Server</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">SAML IdP</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">DNS Server</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">NTP Server</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">SMTP Relay</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">Internet / Proxy</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">CA / CRL / OCSP (PKI Validation)</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">Syslog Collector (SC4S / rsyslog / syslog-ng)</th><td><span class="flow-badge flow-ING" title="INGEST">ING</span> N/A (local file access, not a network flow)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 8088 / 443 (HEC, default); 9997 (S2S) also supported</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 8088 / 443 (HEC, default); 9997 (S2S) also supported</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 443 (HEC)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">Load Balancer / Reverse Proxy</th><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 8088 (backend, implementation-specific)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 8088 (backend, implementation-specific)</td><td><span class="flow-badge flow-ACC" title="USER ACCESS">ACC</span> 8000 (backend, implementation-specific)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">Database Server (JDBC)</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">Azure Event Hub</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">AWS S3</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">AWS SQS</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">AWS STS</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">AWS KMS</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">AWS Glue</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">Vendor / Source API (External REST/HTTPS)</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">Kafka</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">AWS Kinesis</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">Azure Storage / ARM</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">Microsoft Graph</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">Google Cloud APIs / Pub/Sub</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">SNMP Manager / Trap Receiver</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">OpenTelemetry Collector</th><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 8088 (HEC, relaying collected telemetry onward)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-API" title="EXTERNAL API">API</span> 443 / 6443 (K8s API access for metadata/collection)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-API" title="EXTERNAL API">API</span> 443 (HTTPS, OTLP/HEC ingestion)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-3" data-component-group="Data Source Integrations">Container / Kubernetes API</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunk Cloud</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-API" title="EXTERNAL API">API</span> 443 (HTTPS, Splunk Cloud input service to vendor API)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunk SOAR / SOAR Cloud</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-ALRT" title="ALERTING">ALRT</span> 443 (HTTPS, playbook action)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunk Enterprise Security / Mission Control (Cloud)</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunk ACS (Admin Config Service)</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunk Observability Cloud</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunkbase / Update Service</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Webhook Destination</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Ticketing / ITSM API</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">TAXII Server (Threat Intelligence)</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Proxy Authentication Service</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><th scope="row" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Git Host (GitHub / GitLab / Azure DevOps)</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:24px">Key Port Meanings in the Matrix</h3>
+    <div class="eccs-table-wrap" role="region" aria-label="Scrollable key port meanings table" tabindex="0">
+      <table class="eccs-matrix">
+        <thead><tr><th scope="col">Port</th><th scope="col">Typical Use in Matrix</th></tr></thead>
+        <tbody>
+          <tr><td>8089</td><td>Management / REST API / distributed search / deployment / licensing / cluster control (used almost everywhere)</td></tr>
+          <tr><td>9997</td><td>Splunk-to-Splunk (S2S) data forwarding (conventional default) -- used whether or not TLS is enabled; TLS changes the protocol on this same port rather than moving to a different one.</td></tr>
+          <tr><td>9998</td><td>Seen in some older references as a distinct "SSL forwarding" port, but not represented as a standard default in this matrix -- S2S forwarding conventionally stays on 9997 with or without TLS. Confirm against the specific Splunk release/documentation if an environment genuinely uses 9998.</td></tr>
+          <tr><td>9887</td><td>Indexer cluster (bucket/data) replication -- the primary convention. Configurable; don't treat other numbers seen in older references (e.g. 8080) as a validated default without a specific configured use.</td></tr>
+          <tr><td>8081 / 8181 / 9777 / 9887</td><td>Search Head Cluster replication (examples -- configurable)</td></tr>
+          <tr><td>8191 / 8065</td><td>KV Store + replication (critical for SHC)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:24px">Additional Listening Ports (not always inter-component)</h3>
+    <p>Commonly open on the listed components, but usually accessed by users, external systems, or internal processes rather than other Splunk roles:</p>
+    <div class="eccs-table-wrap" role="region" aria-label="Scrollable additional listening ports table" tabindex="0">
+      <table class="eccs-matrix">
+        <thead><tr><th scope="col">Port</th><th scope="col">Component(s)</th><th scope="col">Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>8000</td><td>Search Head, (optional) Indexer / HF</td><td>Splunk Web UI</td></tr>
+          <tr><td>8088</td><td>Indexer, Heavy Forwarder</td><td>HTTP Event Collector (HEC)</td></tr>
+          <tr><td>514</td><td>Indexer / HF / UF</td><td>Syslog input (TCP or UDP) -- not recommended directly into Splunk</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:24px">Encrypted Communication Scenarios (TLS)</h3>
+    <p>Sourced from Splunk's "Introduction to securing the Splunk platform with TLS" documentation (version 10.4) -- its own "Table of most common encrypted Splunk platform instance communication scenarios." <strong>Cloud</strong> refers specifically to Splunk Cloud Platform; <strong>Enterprise</strong> refers to Splunk Enterprise and its components, including the universal forwarder.</p>
+    <div class="eccs-table-wrap" role="region" aria-label="Scrollable encrypted communication scenarios table" tabindex="0">
+      <table class="eccs-matrix">
+        <thead><tr><th scope="col">Type of Exchange</th><th scope="col">Node A (initiates / client)</th><th scope="col">Node B (responds / server)</th><th scope="col">Default Encryption</th><th scope="col">Default Certificate-Based Authentication</th><th scope="col">Default Common Name Checking</th><th scope="col">Type of Data Exchanged</th></tr></thead>
+        <tbody>
+          <tr><td>Browser to Splunk Web</td><td>Browser</td><td>Splunk Web</td><td>Cloud: on &middot; Enterprise: off</td><td>Browser determines this</td><td>Browser determines this</td><td>Configuration and search data</td></tr>
+          <tr><td>Splunk Web to search head</td><td>Splunk Web</td><td><code>splunkd</code> as a search head</td><td>On</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Configuration and search data</td></tr>
+          <tr><td>Forwarding</td><td><code>splunkd</code> as a forwarder</td><td><code>splunkd</code> as an indexer</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Data to be indexed</td></tr>
+          <tr><td>Splunk-to-Splunk</td><td><code>splunkd</code> as a client</td><td><code>splunkd</code> as a server</td><td>On</td><td>Off</td><td>Off</td><td>Configuration data, user data</td></tr>
+          <tr><td>Agent management to agents</td><td><code>splunkd</code> as agent</td><td><code>splunkd</code> as agent management</td><td>On</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Configuration data</td></tr>
+          <tr><td>Distributed search</td><td><code>splunkd</code> as search peer</td><td><code>splunkd</code> as a search head</td><td>On</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Search data</td></tr>
+          <tr><td>Search head clusters</td><td><code>splunkd</code> as cluster members</td><td><code>splunkd</code> as cluster members</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Cluster data</td></tr>
+          <tr><td>Search head cluster deployer</td><td><code>splunkd</code> as cluster members</td><td><code>splunkd</code> as cluster deployer</td><td>On</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Configuration data</td></tr>
+          <tr><td>Indexer cluster peer nodes</td><td><code>splunkd</code> as indexer cluster peer nodes</td><td><code>splunkd</code> as indexer cluster peer nodes</td><td>Cloud: on &middot; Enterprise: off. Use the <code>replication_port-ssl</code> setting in the <code>server.conf</code> configuration file to turn on replication over TLS.</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Replication data</td></tr>
+          <tr><td>Indexer cluster manager</td><td><code>splunkd</code> as peer and search head nodes</td><td><code>splunkd</code> as a manager node</td><td>On</td><td>Cloud: on &middot; Enterprise: off</td><td>Cloud: on &middot; Enterprise: off</td><td>Cluster data</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="eccs-note" style="margin-top:16px">
+      <strong>Notes</strong>
+      <ul class="method-list">
+        <li>The <strong>Encrypted Communication Scenarios (TLS)</strong> table above is a separate reference from the Expanded Cross-Matrix -- it documents which <em>Splunk-defined communication roles</em> (browser, search head, forwarder, indexer, cluster member/manager, etc.) are encrypted by default, not specific ports. Cross-reference it against the matrix's own component rows/columns (e.g. its "Forwarding" scenario corresponds to Universal Forwarder/Heavy Forwarder &rarr; Indexer in the matrix above) -- the two tables use different levels of abstraction and aren't a 1:1 row mapping.</li>
+        <li>Splunk-to-Splunk (S2S) forwarding conventionally uses TCP 9997 whether or not TLS is enabled -- TLS changes the protocol/configuration on that same port, not the listening port itself. This matrix no longer lists 9998 as a separate standard SSL port; cells that previously said "9997 (data) / 9998 (SSL data)" now read "9997 (S2S, TCP, optionally TLS)."</li>
+        <li>Indexer cluster (bucket/data) replication is primarily TCP 9887 -- the earlier "8080 / 9887" pairing on the Indexer &rarr; Indexer cell has been corrected to 9887 alone. 8080 is not represented as a validated default replication port without a specific configured use; see the Key Port Meanings table.</li>
+        <li>Direction matters: most management traffic is client &rarr; server on 8089 (deployment clients &rarr; Deployment Server; Splunk instances &rarr; License Manager; Search Head &rarr; Indexer; Cluster Manager &rarr; Indexer Peer; Deployer &rarr; SHC Member; Admin/API client &rarr; Splunk management). The earlier Search Head &rarr; Deployer cell has been removed as a directionality error -- only Deployer &rarr; SHC Member (8089, app/config push) is a real flow; SHC members don't independently connect back out to the Deployer.</li>
+        <li>Replication ports beyond 9887 (8081, 8181, 9777, etc., used for Search Head Clustering) are examples. Any free port can be chosen -- never reuse 8089 or 9997.</li>
+        <li>Best practice: enable SSL/TLS in production. For S2S forwarding (9997) and HEC (8088) this means enabling TLS on the same port rather than switching to a separate one; also enable it on 8089 management traffic.</li>
+        <li>Always confirm the actual configured ports on each instance via configuration files or <code>splunk show</code> / <code>netstat</code> / <code>ss</code>. Version-specific Splunk Stream and SHC replication ports in particular should be confirmed against the exact Splunk release in use.</li>
+        <li>Splunk Stream Server (SOT-05.07.01) is the management component of the Splunk App for Stream and typically runs as an app on the Search Head rather than as its own separate network tier -- its Deployment Server and License Manager entries above are the same generic phone-home / license-reporting behavior any Splunk Enterprise instance has, not a Stream-specific flow.</li>
+        <li>Splunk Stream Forwarder (Client) (SOT-05.07.07) is the lightweight agent (or appliance) that captures and decodes network packets from a SPAN/TAP -- distinct from Splunk Stream Server, which configures it. Its HF/Indexer entries reuse the standard forwarding ports since it streams the resulting structured events into ordinary Forwarder Inputs for indexing, same as any forwarder. Its actual Stream-specific relationship with Splunk Stream Server -- the Server distributing capture configuration to it, and receiving its parsed wire-data metadata back -- is real (see SOT-05.07.01/.07's own definitions) but is marked "not confirmed" in both directions above rather than guessed at, since this session doesn't have a verified port for Splunk Stream's distributed forwarder-management channel. Its Splunk Cloud (9997, immutable) and Deployment Server (8089) entries follow the same generic forwarder/phone-home behavior as any other forwarding tier, per LP-013 in the Logging Patterns Table.</li>
+        <li>The <strong>User</strong> row represents an administrator or analyst's browser session reaching a component's Splunk Web UI (port 8000, per the Additional Listening Ports table above). It is only populated for the components already documented there as having a web UI -- Search Head / SHC Member, and Indexer / Heavy Forwarder (both optional, and commonly disabled in production once a dedicated search tier exists) -- plus Monitoring Console, which has its own Splunk Web view. Splunk components never open outbound connections back to a user's browser, so the User column is all dashes and exists only to keep the grid square.</li>
+        <li>The <strong>Syslog Source</strong> row represents an external syslog-emitting device or system (firewall, network appliance, *nix host, etc.). Its Universal Forwarder cell has been removed -- a UF is normally a file monitor, not a network syslog receiver, so direct syslog-to-UF is not represented as a standard flow. Its Heavy Forwarder and Indexer cells remain (both accept direct syslog input per the Additional Listening Ports table above) but are now explicitly marked "not recommended" -- a dedicated syslog collection tier (rsyslog, syslog-ng, or SC4S; see the new Syslog Collector row/column below) is the better-supported pattern. Splunk components don't connect back out to a syslog source, so the Syslog Source column is all dashes and exists only for grid symmetry.</li>
+        <li>The <strong>Splunk Cloud</strong> column/row represents a Splunk Cloud Platform stack as the managed counterpart to an on-premises/hybrid deployment, reusing the ports already published in the Splunk Ports table under Reference &rarr; Network reference: 9997 (S2S data) from Universal Forwarder / Heavy Forwarder; 8089 (management / API access) from Search Head / SHC Member and Admin/API Client; 443 (Splunk Web, mandatory SSL) from User; and 443 (HEC) from HEC Client -- corrected from an earlier revision that showed HEC Client &rarr; Splunk Cloud on 8088, which is the on-premises HEC default, not Splunk Cloud's. The 9997/8089/443 numbers themselves are no longer labeled "immutable" -- per user review, Splunk Cloud forwarding commonly uses managed endpoints and TLS, but the exact destination/port is stack-specific and should be confirmed against your own stack's documentation rather than treated as a hard guarantee. Unlike an on-premises deployment, Splunk Cloud is a managed service that only exposes a fixed, stack-specific set of endpoints, so nothing here should be treated as exhaustive. Always validate against the stack-specific allowlist Splunk provides for the target Splunk Cloud stack rather than these generic port numbers. Its one outbound entry -- Splunk Cloud &rarr; Vendor / Source API (443) -- is Splunk Cloud's own managed input service reaching a vendor API directly, per LP-011; every other cell in this row remains a dash, since Splunk Cloud otherwise doesn't appear as a connection-initiating source toward the other components in this matrix.</li>
+        <li>The <strong>HEC Client (Application)</strong> row represents any application, script, or API integration pushing data to Splunk over the HTTP Event Collector, reusing the same port already documented on this page and in the Splunk Ports table under Reference &rarr; Network reference: 8088 to Indexer and Heavy Forwarder (HTTP or HTTPS, on-premises), and <strong>443</strong> to Splunk Cloud (Splunk Cloud's public HEC endpoint -- corrected from an earlier revision that showed 8088, which is the on-premises default and is not used for Splunk Cloud), plus 443 to a Load Balancer / Reverse Proxy when HEC is fronted by one. HEC itself is not modeled as its own separate destination component -- it's a feature of Heavy Forwarder, Indexer, and Splunk Cloud, not a separately network-addressable role. Splunk components don't connect back out to a HEC-sending application, so the column is all dashes and exists only for grid symmetry.</li>
+        <li>The <strong>LDAP / AD Server</strong> column now also carries Kerberos (88, TCP/UDP) alongside LDAP/LDAPS wherever LDAP is already populated (Search Head primary; Heavy Forwarder / Indexer / Monitoring Console optional), and Global Catalog (3268/3269, LDAP/LDAPS for AD forest-wide lookups) on Search Head specifically, since federated/multi-domain lookups are primarily a search-tier concern. A real Active Directory deployment may spread LDAP, Kerberos, and Global Catalog across different domain controllers/GC servers in a forest; this matrix models them as reachable via the same "LDAP / AD Server" destination for simplicity, since the underlying port numbers are what matter for firewall rules regardless of which specific DC answers.</li>
+        <li>The <strong>SAML IdP</strong> column's Search Head/HF/Indexer/MC entries represent Splunk-side (server-to-IdP) traffic such as metadata exchange -- they are not the whole SAML story. The <strong>User</strong> row's new SAML IdP entry (443) represents the browser-mediated side of the flow: the user's own browser is redirected to the IdP and back as part of the SSO handshake, a step Splunk's own backend isn't a party to. Both legs are real and both matter for a firewall review of an SSO-enabled deployment.</li>
+        <li>Corrected wording, not new data: Universal Forwarder / Heavy Forwarder &rarr; Splunk Cloud (9997) no longer says "immutable" -- Splunk Cloud forwarding commonly uses managed endpoints and TLS, but the exact destination/port is stack-specific and should be confirmed against your own stack's documentation. The Search Head self-referencing cell's SHC replication ports (8081/8181/9777/9887) are now explicitly marked as examples to validate against your SHC's actual configured/versioned ports rather than presented as a fixed default; its KV Store ports now distinguish 8191 (the primary KV Store port) from 8065 (context-dependent, not a universal default). Splunk Stream Server &harr; Splunk Stream Forwarder remains marked "not confirmed" rather than guessed at -- along with the SHC replication set and any Splunk Cloud entry, treat these as needing exact version/service validation before relying on them as authoritative.</li>
+        <li>The <strong>LDAP / AD Server</strong> column represents an external directory service Splunk authenticates against, reusing the ports already published in the Network Flow Matrix table under Reference &rarr; Network reference: 389 (LDAP) and 636 (LDAPS), sourced there from "Splunk components." Populated on Search Head / SHC Member as the primary, well-documented case (login/authentication and Enterprise Security both live there), and marked optional on Heavy Forwarder / Indexer / Monitoring Console by the same reasoning already used for the User row above -- LDAP is evaluated wherever a user can log in via Splunk Web, so it extends to the same optional components. An LDAP/AD server is a passive directory service, not a connection initiator, so the LDAP / AD Server row is entirely dashes.</li>
+        <li>The <strong>DNS Server</strong> column reuses the port already published in the Network Flow Matrix table under Reference &rarr; Network reference: 53 (UDP/TCP), documented there as "Splunk components -> DNS Servers." DNS resolution is a near-universal need, so it's populated on every actual Splunk platform role in this matrix (Universal Forwarder through Splunk Stream Forwarder, plus Monitoring Console) rather than a narrow subset -- but not on the external actors/services/infrastructure this matrix also models (User, Syslog Source, Splunk Cloud, HEC Client, LDAP / AD Server, Syslog Collector, Load Balancer) since the source data specifically says "Splunk components," not that wider set. A DNS server is a passive resolver, not a connection initiator, so the DNS Server row is entirely dashes.</li>
+        <li>The <strong>Monitoring Console (MC)</strong> row represents the dedicated distributed-monitoring role (often hosted on its own instance, or on the Deployment Server in smaller deployments), reusing 8089 for distributed monitoring/REST polling of every registered instance across the platform -- the cell text now notes this depends on how distributed monitoring is configured, since MC can also use distributed-search relationships rather than only plain REST polling. Universal Forwarder is deliberately excluded from this row: MC normally monitors Splunk Enterprise server roles (indexers, search heads, license/deployment/cluster managers), not a UF directly -- a UF's health is normally observed through deployment/forwarder telemetry rather than the UF being a direct MC-monitored peer. Also gets its own DNS, NTP, Internet/Proxy, and CA/CRL/OCSP entries (plus optional LDAP/Kerberos/SAML/SMTP) since it's a genuine Splunk platform role like the original ten rows.</li>
+        <li>The <strong>Admin / API Client</strong> row represents a human administrator or an automation tool (Ansible, Terraform, CI/CD pipeline, ACS/Splunk Cloud tooling, etc.) calling the REST/management API directly on 8089 rather than through Splunk Web -- distinct from the <strong>User</strong> row, which represents browser-based access on 8000/443. Populated against every actual Splunk platform role plus Splunk Cloud (8089, immutable, per the Splunk Ports table). Nothing connects back out to it, so its column is all dashes.</li>
+        <li>The <strong>NTP Server</strong> column represents an external time source. Not documented in this app's existing reference tables, but included because accurate host time is a near-universal operational requirement for correct event timestamping and cluster/replication consistency -- treated the same way as the DNS Server column, populated on every actual Splunk platform role (123, UDP). Confirm actual NTP configuration in your environment; this is standard operational guidance, not Splunk-specific documentation.</li>
+        <li>The <strong>SMTP Relay</strong> column represents an outbound mail relay for alert-action email. Unlike DNS/NTP, this is deliberately narrow rather than universal -- populated only on Search Head / SHC Member (where saved-search/alert actions actually run) and, optionally, Monitoring Console (platform-health alerting). Ports (25, 465, 587) are standard SMTP/submission conventions, not something documented elsewhere in this app; confirm against your mail relay's actual configuration.</li>
+        <li>The <strong>SAML IdP</strong> column represents an external SAML identity provider for SSO, modeled the same way as LDAP / AD Server -- 443 to Search Head / SHC Member as the primary case, and optional on Heavy Forwarder / Indexer / Monitoring Console by the same web-UI-availability reasoning. An IdP is largely browser-redirect-mediated rather than a backend connection initiator in the common case, so its row is entirely dashes.</li>
+        <li>The <strong>Internet / Proxy</strong> column represents generic outbound HTTPS connectivity (Splunkbase/app installs, phone-home telemetry, cloud API integrations, etc.), populated on 443 across every actual Splunk platform role plus Monitoring Console, the same set as DNS/NTP. Not documented elsewhere in this app as a single table; treat this as a general operational placeholder to prompt a real proxy/allowlist review rather than a specific documented Splunk requirement.</li>
+        <li>The <strong>Syslog Collector (SC4S / rsyslog / syslog-ng)</strong> row/column represents a dedicated syslog relay/receiver sitting between an external Syslog Source and Splunk -- the better-supported alternative to direct syslog-to-Splunk input referenced above (and covered in the SOT catalogue under Data Collection &amp; Routing, SOT-05.07.03 through SOT-05.07.05). Its Syslog Source &rarr; Syslog Collector cell (514 TCP/UDP, 6514 TLS) is the external device's own flow; its Syslog Collector &rarr; Universal Forwarder cell is deliberately not a port -- a UF typically monitors the files the collector writes locally (<code>monitor://</code>), not a network listener. Syslog Collector &rarr; Heavy Forwarder / Indexer / Splunk Cloud (8088/443, HEC) reflects SC4S's documented default delivery method per LP-002 in the Logging Patterns Table -- S2S forwarding (9997) is also supported depending on configuration, but HEC is what SC4S ships with.</li>
+        <li>The <strong>Load Balancer / Reverse Proxy</strong> row/column represents an optional front-end device commonly placed ahead of Search Head Web and/or HEC endpoints, especially in larger or cloud-adjacent deployments -- not a required part of every architecture. Its front-end ports (User &rarr; LB and HEC Client &rarr; LB, both 443) and backend ports (LB &rarr; Search Head 8000, LB &rarr; Heavy Forwarder / Indexer 8088) are marked "implementation-specific" since the actual backend port depends entirely on how the proxy is configured; this row doesn't replace the direct User/HEC Client cells elsewhere in the matrix, which remain valid for architectures without a front-end proxy.</li>
+        <li>Search Head Cluster Captain and KV Store are not modeled as separate rows/columns -- the Captain is one of the Search Head / SHC Member instances (its role can migrate between members and doesn't change its network identity), and KV Store's ports (8191/8065) are already carried on the Search Head / SHC Member self-referencing cell above. Both can be represented as their own rows if a specific engagement needs to build firewall rules that isolate them individually.</li>
+        <li>Five components were added by cross-checking every "Collection tier / runtime," "Transport," and "Port / firewall requirements" value across all 39 rows of the Logging Patterns Table (Reference &rarr; Logging patterns table), so every TCP/UDP-bearing collection tier represented there now has a matching component here:</li>
+        <li>&mdash; <strong>Database Server (JDBC)</strong>: the target of Splunk DB Connect (SOT-05.07.02), reached from the Heavy Forwarder on the database's own listener port -- 1433 (SQL Server), 1521 (Oracle), 5432 (PostgreSQL), or 3306 (MySQL), per LP-008. Row is entirely dashes; a database server doesn't connect back out to Splunk.</li>
+        <li>&mdash; <strong>Azure Event Hub</strong>: reached from the Heavy Forwarder (the pattern's "Heavy Forwarder or IDM" tier) on 5671 (AMQP over TLS) or 443 (HTTPS / AMQP-over-WebSockets), per LP-006. Azure identity/authentication traffic for this flow reuses the existing Internet / Proxy column rather than a separate cell.</li>
+        <li>&mdash; <strong>AWS S3 / SQS / STS / KMS / Glue</strong>: originally one combined component, later split into five per user review -- S3, SQS, STS, KMS, and Glue each have their own IAM policy and firewall boundary in a real AWS environment, so a single merged column understated that. Heavy Forwarder reaches S3 and SQS (LP-007, S3 input with SQS notifications) plus STS and KMS conditionally (only if using temporary/assumed IAM credentials or server-side encryption, respectively); Search Head / SHC Member reaches S3 and Glue (LP-009, Federated Search to S3/Glue Data Catalog) plus the same conditional STS/KMS. Federated Search is modeled as a Search Head capability rather than its own row, the same treatment given to SHC Captain and KV Store above. All five are 443 HTTPS to AWS regional endpoints; none of the five rows have outbound entries, since they're passive cloud API endpoints.</li>
+        <li>&mdash; <strong>CA / CRL / OCSP (PKI Validation)</strong>: added per user review as a genuinely universal dependency that's easy to overlook in a locked-down network -- 80/443 for TLS certificate validation, populated across the same platform-role set as DNS/NTP/Internet-Proxy (every genuine Splunk software instance doing outbound TLS needs it). Missing CA/CRL/OCSP reachability is a common, hard-to-diagnose cause of seemingly inexplicable TLS failures.</li>
+        <li>&mdash; <strong>Edge / Ingest Processor</strong>: the SOT-05.06.03 platform role behind LP-010, reaching Heavy Forwarder / Indexer on 8088 (HEC) or 9997 (S2S) depending on configuration, Splunk Cloud on 443 (ingest/HEC endpoint), and Internet / Proxy on 443 (management plane / identity). Unlike the external services above, it's genuine Splunk software, so it also gets DNS and NTP entries like the other platform roles. Its inbound column is left dashes -- LP-010 describes the source-specific inbound protocol as varying by source, not a single documented port.</li>
+        <li>&mdash; <strong>Vendor / Source API (External REST/HTTPS)</strong>: the external endpoint that a Heavy Forwarder (LP-005) or an HEC-pushing application/script/serverless function -- Azure Function, AWS Lambda, on-premises Python/PowerShell (LP-017 variants) -- polls on 443 before delivering data via HEC. Row is entirely dashes; a vendor API is a passive responder, not a connection initiator into Splunk.</li>
+        <li>Eighteen enterprise/cloud service dependencies -- Splunk SOAR/SOAR Cloud, Enterprise Security/Mission Control (Cloud), ACS, Observability Cloud, Splunkbase/updates, SNMP Manager/Trap Receiver, Webhook Destination, Ticketing/ITSM API, TAXII Server, Proxy Authentication Service, Container/Kubernetes API, OpenTelemetry Collector, Kafka, AWS Kinesis, Azure Storage/ARM, Microsoft Graph, Google Cloud APIs/Pub/Sub, and Git Host -- were added directly to the Expanded Cross-Matrix per user request, promoted from a flat reference table this page previously carried instead. Each "Initiated By" mapped onto the closest existing matrix component (e.g. "Search Head (ES adaptive response)" &rarr; Search Head / SHC Member; "CI/CD Runner" &rarr; Admin / API Client, which already explicitly covers CI/CD pipelines and ACS/Splunk Cloud tooling in its own definition above). Splunkbase and Proxy Authentication Service are populated universally across the platform-role set, the same treatment as DNS/NTP/Internet-Proxy/CA-CRL-OCSP, since "any instance" and "any Splunk instance behind a proxy" are both genuinely broad. All eighteen rows are entirely dashes except <strong>OpenTelemetry Collector</strong>, which genuinely relays data onward: it receives OTLP telemetry from HEC Client (Application) on 4317/4318, and forwards to Heavy Forwarder (8088, HEC), Splunk Observability Cloud (443), and the Container/Kubernetes API (443/6443) it also queries for collection metadata.</li>
+        <li>The "Highlight components for logging pattern" dropdown above the matrix maps each of the 39 Logging Patterns Table rows to the specific components and cells its documented flow touches, so selecting one highlights only the primary, best-supported path for that pattern rather than every possible alternative port/route mentioned in its full description -- consult the Logging Patterns Table itself for the complete text, including secondary options (e.g. an alternate receiving tier, or a load-balancer front end). None of the 39 logging patterns reference the 18 enterprise/cloud service dependencies above, so selecting a pattern will never highlight those columns.</li>
+      </ul>
+    </div>
+  </section>
+
   <section id="externalToolsPage" class="page-view reference-page" role="tabpanel" aria-labelledby="showExternalToolsPage" hidden>
     <div class="reference-hero">
       <div class="eyebrow">External resources</div>
@@ -17583,6 +17851,7 @@ const pageTabs = {
   catalogue: document.getElementById("showCataloguePage"),
   patterns: document.getElementById("showPatternsPage"),
   health: document.getElementById("showHealthChecksPage"),
+  portsMatrix: document.getElementById("showPortsMatrixPage"),
   externalTools: document.getElementById("showExternalToolsPage")
 };
 const pageViews = {
@@ -17601,6 +17870,7 @@ const pageViews = {
   catalogue: document.getElementById("cataloguePage"),
   patterns: document.getElementById("patternsPage"),
   health: document.getElementById("healthChecksPage"),
+  portsMatrix: document.getElementById("portsMatrixPage"),
   externalTools: document.getElementById("externalToolsPage")
 };
 const patternTableBody = document.getElementById("patternTableBody");
@@ -19126,7 +19396,7 @@ function exportViabilityCalculator(event) {
 }
 
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "externalTools"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "portsMatrix", "externalTools"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#file-mon-/.test(location.hash) ? "file-monitoring-profile" : /^#rest-api-/.test(location.hash) ? "rest-api-collection-profile" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : /^#eda-/.test(location.hash) ? "eda-playbook" : "");
   
@@ -19175,6 +19445,8 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
               ? "#logging-patterns"
               : selected === "health"
                 ? "#health-checks"
+                : selected === "portsMatrix"
+                  ? "#ports-matrix"
                 : selected === "externalTools"
                   ? "#my-tools"
                   : selected === "objectTaxonomy"
@@ -19764,6 +20036,7 @@ function pageNameFromHash() {
   if (location.hash === "#data-source-catalogue") return "catalogue";
   if (location.hash === "#logging-patterns") return "patterns";
   if (location.hash === "#health-checks") return "health";
+  if (/^#ports-matrix/.test(location.hash)) return "portsMatrix";
   if (location.hash === "#my-tools") return "externalTools";
   if (location.hash === "#network-reference") return "reference";
   if (location.hash === "#splunk-ports") return "reference";
@@ -19807,7 +20080,7 @@ function renderLoggingPatternTable() {
     patternTableBody.innerHTML = visibleLoggingPatternRows.map(row => {
       const cells = loggingPatternTableColumns.map(column => {
         if (column === "Pattern ID") {
-          return `<td><button class="pattern-id-button" type="button" data-pattern-id="${escapeHtml(row[column])}" title="Open ${escapeHtml(row[column])} in the taxonomy explorer">${escapeHtml(row[column])}</button></td>`;
+          return `<td><button class="pattern-id-button" type="button" data-pattern-id="${escapeHtml(row[column])}" title="Open ${escapeHtml(row[column])} in the taxonomy explorer">${escapeHtml(row[column])}</button><button class="pattern-matrix-link" type="button" data-matrix-pattern-id="${escapeHtml(row[column])}" title="View ${escapeHtml(row[column])} highlighted in the Ports Matrix">View in matrix &rarr;</button></td>`;
         }
         if (column === "Destination") return `<td>${patternDestinationBadge(row[column])}</td>`;
         const requirementClass = column.endsWith("requirements") ? ' class="requirement-cell"' : "";
@@ -19867,6 +20140,588 @@ function exportVisibleSplunkPorts(event) {
   URL.revokeObjectURL(link.href);
   event.currentTarget.textContent = "Exported";
   setTimeout(() => { if (event.currentTarget) event.currentTarget.textContent = "Export visible CSV"; }, 1400);
+}
+
+const portsMatrixPatternEdges = {
+  "LP-001-SC": [["Universal Forwarder (UF)", "Splunk Cloud"], ["Universal Forwarder (UF)", "Deployment Server (DS)"]],
+  "LP-001-OP": [["Universal Forwarder (UF)", "Indexer / IDX Peer"], ["Universal Forwarder (UF)", "Deployment Server (DS)"]],
+  "LP-002-SC": [["Syslog Source", "Syslog Collector (SC4S / rsyslog / syslog-ng)"], ["Syslog Collector (SC4S / rsyslog / syslog-ng)", "Splunk Cloud"]],
+  "LP-002-OP": [["Syslog Source", "Syslog Collector (SC4S / rsyslog / syslog-ng)"], ["Syslog Collector (SC4S / rsyslog / syslog-ng)", "Indexer / IDX Peer"]],
+  "LP-003-SC": [["Syslog Source", "Heavy Forwarder (HF)"], ["Heavy Forwarder (HF)", "Splunk Cloud"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-003-OP": [["Syslog Source", "Heavy Forwarder (HF)"], ["Heavy Forwarder (HF)", "Indexer / IDX Peer"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-004-SC": [["HEC Client (Application)", "Splunk Cloud"]],
+  "LP-004-OP": [["HEC Client (Application)", "Heavy Forwarder (HF)"]],
+  "LP-005-SC": [["Heavy Forwarder (HF)", "Vendor / Source API (External REST/HTTPS)"], ["Heavy Forwarder (HF)", "Splunk Cloud"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-005-OP": [["Heavy Forwarder (HF)", "Vendor / Source API (External REST/HTTPS)"], ["Heavy Forwarder (HF)", "Indexer / IDX Peer"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-006-SC": [["Heavy Forwarder (HF)", "Azure Event Hub"], ["Heavy Forwarder (HF)", "Splunk Cloud"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-006-OP": [["Heavy Forwarder (HF)", "Azure Event Hub"], ["Heavy Forwarder (HF)", "Indexer / IDX Peer"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-007-SC": [["Heavy Forwarder (HF)", "AWS S3"], ["Heavy Forwarder (HF)", "AWS SQS"], ["Heavy Forwarder (HF)", "Splunk Cloud"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-007-OP": [["Heavy Forwarder (HF)", "AWS S3"], ["Heavy Forwarder (HF)", "AWS SQS"], ["Heavy Forwarder (HF)", "Indexer / IDX Peer"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-008-SC": [["Heavy Forwarder (HF)", "Database Server (JDBC)"], ["Heavy Forwarder (HF)", "Splunk Cloud"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-008-OP": [["Heavy Forwarder (HF)", "Database Server (JDBC)"], ["Heavy Forwarder (HF)", "Indexer / IDX Peer"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-009-SC": [["Search Head / SHC Member", "AWS S3"], ["Search Head / SHC Member", "AWS Glue"]],
+  "LP-009-OP": [["Search Head / SHC Member", "AWS S3"], ["Search Head / SHC Member", "AWS Glue"]],
+  "LP-010-SC": [["Edge / Ingest Processor", "Splunk Cloud"]],
+  "LP-010-OP": [["Edge / Ingest Processor", "Heavy Forwarder (HF)"]],
+  "LP-011-SC": [["Splunk Cloud", "Vendor / Source API (External REST/HTTPS)"]],
+  "LP-011-OP": [["Splunk Cloud", "Vendor / Source API (External REST/HTTPS)"]],
+  "LP-012-SC": [["Heavy Forwarder (HF)", "Vendor / Source API (External REST/HTTPS)"], ["Heavy Forwarder (HF)", "Splunk Cloud"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-012-OP": [["Heavy Forwarder (HF)", "Vendor / Source API (External REST/HTTPS)"], ["Heavy Forwarder (HF)", "Indexer / IDX Peer"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-013-SC": [["Splunk Stream Forwarder (Client)", "Splunk Cloud"], ["Splunk Stream Forwarder (Client)", "Deployment Server (DS)"]],
+  "LP-013-OP": [["Splunk Stream Forwarder (Client)", "Indexer / IDX Peer"], ["Splunk Stream Forwarder (Client)", "Deployment Server (DS)"]],
+  "LP-014-SC": [["Heavy Forwarder (HF)", "Splunk Cloud"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-014-OP": [["Heavy Forwarder (HF)", "Indexer / IDX Peer"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-015-SC": [["HEC Client (Application)", "Heavy Forwarder (HF)"], ["Heavy Forwarder (HF)", "Splunk Cloud"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-015-OP": [["HEC Client (Application)", "Heavy Forwarder (HF)"], ["Heavy Forwarder (HF)", "Indexer / IDX Peer"], ["Heavy Forwarder (HF)", "Deployment Server (DS)"]],
+  "LP-016-SC": [["HEC Client (Application)", "Splunk Cloud"]],
+  "LP-017-AZF-SC": [["HEC Client (Application)", "Vendor / Source API (External REST/HTTPS)"], ["HEC Client (Application)", "Splunk Cloud"]],
+  "LP-017-AZF-OP": [["HEC Client (Application)", "Vendor / Source API (External REST/HTTPS)"], ["HEC Client (Application)", "Heavy Forwarder (HF)"]],
+  "LP-017-LMB-SC": [["HEC Client (Application)", "Vendor / Source API (External REST/HTTPS)"], ["HEC Client (Application)", "Splunk Cloud"]],
+  "LP-017-LMB-OP": [["HEC Client (Application)", "Vendor / Source API (External REST/HTTPS)"], ["HEC Client (Application)", "Heavy Forwarder (HF)"]],
+  "LP-017-OPS-SC": [["HEC Client (Application)", "Vendor / Source API (External REST/HTTPS)"], ["HEC Client (Application)", "Splunk Cloud"]],
+  "LP-017-OPS-OP": [["HEC Client (Application)", "Vendor / Source API (External REST/HTTPS)"], ["HEC Client (Application)", "Heavy Forwarder (HF)"]],
+  "LP-018-SC": [["Syslog Source", "Syslog Collector (SC4S / rsyslog / syslog-ng)"], ["Syslog Collector (SC4S / rsyslog / syslog-ng)", "Universal Forwarder (UF)"], ["Universal Forwarder (UF)", "Splunk Cloud"], ["Universal Forwarder (UF)", "Deployment Server (DS)"]],
+  "LP-018-OP": [["Syslog Source", "Syslog Collector (SC4S / rsyslog / syslog-ng)"], ["Syslog Collector (SC4S / rsyslog / syslog-ng)", "Universal Forwarder (UF)"], ["Universal Forwarder (UF)", "Indexer / IDX Peer"], ["Universal Forwarder (UF)", "Deployment Server (DS)"]],
+};
+
+// Splunk Validated Architectures (SVA) reference topologies, sourced from
+// Splunk's official SVA documentation (the "Splunk Validated Architectures"
+// whitepaper plus the individual per-topology SVA pages). Every edge below
+// was checked against this matrix's actual populated cells before being
+// added -- same discipline as portsMatrixPatternEdges above; none of these
+// pairs are invented.
+const portsMatrixTopologyLabels = {
+  "CLOUD": "Splunk Cloud Deployment Architecture",
+  "S1": "Single Server Deployment",
+  "D1/D11": "Distributed Non-Clustered Deployment",
+  "C1/C11": "Distributed Clustered Deployment -- Single Site",
+  "C3/C13": "Distributed Clustered Deployment + SHC -- Single Site",
+  "M2/M12": "Distributed Clustered Deployment -- Multisite",
+  "M3/M13": "Distributed Clustered Deployment + SHC -- Multisite",
+  "M4/M14": "Distributed Clustered Deployment + SHC -- Multisite (Stretched)"
+};
+
+// The multisite topologies (M2/M12, M3/M13, M4/M14) replicate indexer
+// and/or search-head clustering across two or more sites, but that
+// site-to-site distinction isn't a separate component pair at this
+// matrix's granularity -- the underlying component relationships are
+// identical to their single-site counterparts (C1/C11 and C3/C13). This
+// note is surfaced in the caption rather than silently reusing the same
+// edge set with no explanation.
+const portsMatrixTopologyNotes = {
+  "M2/M12": "Same component-to-component relationships as C1/C11 -- the cross-site replication this topology adds isn't a distinct component pair in this matrix.",
+  "M3/M13": "Same component-to-component relationships as C3/C13 -- the cross-site replication this topology adds isn't a distinct component pair in this matrix.",
+  "M4/M14": "Same component-to-component relationships as C3/C13 -- the stretched, cross-site search head cluster this topology adds isn't a distinct component pair in this matrix."
+};
+
+const portsMatrixTopologyEdges = {
+  "CLOUD": [
+    ["Universal Forwarder (UF)", "Splunk Cloud"],
+    ["Heavy Forwarder (HF)", "Splunk Cloud"],
+    ["HEC Client (Application)", "Splunk Cloud"],
+    ["Admin / API Client", "Splunk Cloud"],
+    ["Search Head / SHC Member", "Splunk Cloud"],
+    ["Universal Forwarder (UF)", "Deployment Server (DS)"]
+  ],
+  "S1": [
+    ["Universal Forwarder (UF)", "Indexer / IDX Peer"],
+    ["HEC Client (Application)", "Indexer / IDX Peer"],
+    ["Syslog Source", "Indexer / IDX Peer"],
+    ["Universal Forwarder (UF)", "Deployment Server (DS)"],
+    ["Indexer / IDX Peer", "Deployment Server (DS)"]
+  ],
+  "D1/D11": [
+    ["Universal Forwarder (UF)", "Indexer / IDX Peer"],
+    ["HEC Client (Application)", "Indexer / IDX Peer"],
+    ["Syslog Source", "Indexer / IDX Peer"],
+    ["Indexer / IDX Peer", "Search Head / SHC Member"],
+    ["Universal Forwarder (UF)", "Deployment Server (DS)"],
+    ["Indexer / IDX Peer", "Deployment Server (DS)"],
+    ["Indexer / IDX Peer", "License Manager (LM)"],
+    ["Monitoring Console (MC)", "Indexer / IDX Peer"],
+    ["Monitoring Console (MC)", "Search Head / SHC Member"]
+  ],
+  "C1/C11": [
+    ["Universal Forwarder (UF)", "Indexer / IDX Peer"],
+    ["HEC Client (Application)", "Indexer / IDX Peer"],
+    ["Syslog Source", "Indexer / IDX Peer"],
+    ["Indexer / IDX Peer", "Search Head / SHC Member"],
+    ["Indexer / IDX Peer", "Indexer / IDX Peer"],
+    ["Indexer / IDX Peer", "Cluster Manager (CM)"],
+    ["Cluster Manager (CM)", "Indexer / IDX Peer"],
+    ["Search Head / SHC Member", "Cluster Manager (CM)"],
+    ["Universal Forwarder (UF)", "Deployment Server (DS)"],
+    ["Indexer / IDX Peer", "Deployment Server (DS)"],
+    ["Indexer / IDX Peer", "License Manager (LM)"],
+    ["Monitoring Console (MC)", "Indexer / IDX Peer"]
+  ],
+  "C3/C13": [
+    ["Universal Forwarder (UF)", "Indexer / IDX Peer"],
+    ["HEC Client (Application)", "Indexer / IDX Peer"],
+    ["Syslog Source", "Indexer / IDX Peer"],
+    ["Indexer / IDX Peer", "Search Head / SHC Member"],
+    ["Indexer / IDX Peer", "Indexer / IDX Peer"],
+    ["Indexer / IDX Peer", "Cluster Manager (CM)"],
+    ["Cluster Manager (CM)", "Indexer / IDX Peer"],
+    ["Search Head / SHC Member", "Cluster Manager (CM)"],
+    ["Search Head / SHC Member", "Search Head / SHC Member"],
+    ["Deployer", "Search Head / SHC Member"],
+    ["Universal Forwarder (UF)", "Deployment Server (DS)"],
+    ["Indexer / IDX Peer", "Deployment Server (DS)"],
+    ["Indexer / IDX Peer", "License Manager (LM)"],
+    ["Monitoring Console (MC)", "Indexer / IDX Peer"]
+  ]
+};
+portsMatrixTopologyEdges["M2/M12"] = portsMatrixTopologyEdges["C1/C11"];
+portsMatrixTopologyEdges["M3/M13"] = portsMatrixTopologyEdges["C3/C13"];
+portsMatrixTopologyEdges["M4/M14"] = portsMatrixTopologyEdges["C3/C13"];
+
+let portsMatrixHashHandler = null;
+function initPortsMatrixPatternHighlighter() {
+  const select = document.getElementById("portsMatrixPatternSelect");
+  const clearBtn = document.getElementById("portsMatrixPatternClear");
+  const caption = document.getElementById("portsMatrixPatternCaption");
+  const table = document.getElementById("portsMatrixTable");
+  const hideEmptyCheckbox = document.getElementById("portsMatrixHideEmpty");
+  const exportBtn = document.getElementById("portsMatrixExportBtn");
+  const searchInput = document.getElementById("portsMatrixComponentSearch");
+  const statComponents = document.getElementById("portsMatrixVisibleComponents");
+  const statFlows = document.getElementById("portsMatrixVisibleFlows");
+  const groupLegendButtons = Array.from(document.querySelectorAll("#portsMatrixGroupLegend .legend-swatch-btn"));
+  const topologySelect = document.getElementById("portsMatrixTopologySelect");
+  if (!select || !table || typeof loggingPatternTableData === "undefined") return;
+
+  loggingPatternTableData.forEach(row => {
+    const option = document.createElement("option");
+    option.value = row["Pattern ID"];
+    option.textContent = `${row["Pattern ID"]} — ${row["Pattern"]}`;
+    select.appendChild(option);
+  });
+
+  if (topologySelect) {
+    Object.entries(portsMatrixTopologyLabels).forEach(([id, label]) => {
+      const option = document.createElement("option");
+      option.value = id;
+      option.textContent = `${id} — ${label}`;
+      topologySelect.appendChild(option);
+    });
+  }
+
+  const headerCells = Array.from(table.querySelectorAll("thead th"));
+  const columnIndexByName = {};
+  headerCells.forEach((th, idx) => { columnIndexByName[th.textContent.trim()] = idx; });
+  const bodyRows = Array.from(table.querySelectorAll("tbody tr"));
+  const rowByName = {};
+  bodyRows.forEach(tr => { rowByName[tr.querySelector("th").textContent.trim()] = tr; });
+
+  const DASH = "—";
+
+  function cellText(td) {
+    const clone = td.cloneNode(true);
+    clone.querySelectorAll("br").forEach(br => br.replaceWith(" / "));
+    return clone.textContent.replace(/\s+/g, " ").trim();
+  }
+
+  function clearHighlight() {
+    table.querySelectorAll(".ports-hl-header").forEach(el => el.classList.remove("ports-hl-header"));
+    table.querySelectorAll(".ports-hl-cell").forEach(el => el.classList.remove("ports-hl-cell"));
+  }
+
+  function showAllRowsAndColumns() {
+    headerCells.forEach(th => th.classList.remove("ports-hidden"));
+    bodyRows.forEach(tr => {
+      tr.classList.remove("ports-hidden");
+      tr.querySelectorAll("td").forEach(td => td.classList.remove("ports-hidden"));
+    });
+  }
+
+  // Rows and columns are judged independently -- a component that never
+  // initiates (e.g. Database Server) has an entirely empty ROW but a
+  // populated COLUMN (other rows connect to it), and vice versa for a
+  // component that only initiates (e.g. User) and is never a destination.
+  // Hiding is per-axis, not a single combined "is this component used at
+  // all" flag, so each axis collapses independently of the other.
+  function emptyRowLabels() {
+    const empty = new Set();
+    bodyRows.forEach(tr => {
+      const label = tr.querySelector("th").textContent.trim();
+      const cells = Array.from(tr.querySelectorAll("td"));
+      if (cells.every(td => cellText(td) === DASH)) empty.add(label);
+    });
+    return empty;
+  }
+
+  function emptyColumnLabels() {
+    const empty = new Set();
+    headerCells.forEach((th, idx) => {
+      if (idx === 0) return;
+      const label = th.textContent.trim();
+      const allDash = bodyRows.every(tr => {
+        const cells = tr.querySelectorAll("td");
+        return !cells[idx - 1] || cellText(cells[idx - 1]) === DASH;
+      });
+      if (allDash) empty.add(label);
+    });
+    return empty;
+  }
+
+  function applyEmptyFilter() {
+    if (!hideEmptyCheckbox || !hideEmptyCheckbox.checked) {
+      showAllRowsAndColumns();
+      return;
+    }
+    const emptyRows = emptyRowLabels();
+    const emptyCols = emptyColumnLabels();
+    headerCells.forEach((th, idx) => {
+      if (idx === 0) return;
+      th.classList.toggle("ports-hidden", emptyCols.has(th.textContent.trim()));
+    });
+    bodyRows.forEach(tr => {
+      const label = tr.querySelector("th").textContent.trim();
+      tr.classList.toggle("ports-hidden", emptyRows.has(label));
+    });
+    bodyRows.forEach(tr => {
+      tr.querySelectorAll("td").forEach((td, i) => {
+        const colLabel = headerCells[i + 1].textContent.trim();
+        td.classList.toggle("ports-hidden", emptyCols.has(colLabel));
+      });
+    });
+  }
+
+  // Free-text component search: a name match pulls in every component it
+  // actually has a real (non-dash) flow with, in either direction, so the
+  // filtered view always shows a connected neighborhood rather than just the
+  // isolated matches (which would often render as all-dash columns/rows).
+  // Comma-separated terms are OR'd together (e.g. "AWS, LDAP" matches both
+  // neighborhoods at once), matching the comma example in the placeholder.
+  function getSearchInvolvedSet(query) {
+    const terms = query.split(",").map(term => term.trim().toLowerCase()).filter(Boolean);
+    const matched = new Set();
+    if (terms.length) {
+      headerCells.forEach((th, idx) => {
+        if (idx === 0) return;
+        const label = th.textContent.trim();
+        const labelLower = label.toLowerCase();
+        if (terms.some(term => labelLower.includes(term))) matched.add(label);
+      });
+    }
+    const involved = new Set(matched);
+    matched.forEach(label => {
+      const tr = rowByName[label];
+      if (tr) {
+        tr.querySelectorAll("td").forEach((td, i) => {
+          if (cellText(td) !== DASH) involved.add(headerCells[i + 1].textContent.trim());
+        });
+      }
+      const colIdx = columnIndexByName[label];
+      if (colIdx !== undefined) {
+        bodyRows.forEach(row => {
+          const cells = row.querySelectorAll("td");
+          const cell = cells[colIdx - 1];
+          if (cell && cellText(cell) !== DASH) involved.add(row.querySelector("th").textContent.trim());
+        });
+      }
+    });
+    return { matched, involved };
+  }
+
+  function applySearchOrEmptyFilter() {
+    const query = searchInput ? searchInput.value : "";
+    if (!query || !query.trim()) {
+      applyEmptyFilter();
+      updatePortsMatrixStats();
+      return;
+    }
+    const { matched, involved } = getSearchInvolvedSet(query);
+    if (matched.size === 0) {
+      showAllRowsAndColumns();
+      caption.textContent = `No component names match "${query.trim()}".`;
+      updatePortsMatrixStats();
+      return;
+    }
+    headerCells.forEach((th, idx) => {
+      if (idx === 0) return;
+      const label = th.textContent.trim();
+      th.classList.toggle("ports-hidden", !involved.has(label));
+      th.classList.toggle("ports-hl-header", matched.has(label));
+    });
+    bodyRows.forEach(tr => {
+      const rowTh = tr.querySelector("th");
+      const label = rowTh.textContent.trim();
+      tr.classList.toggle("ports-hidden", !involved.has(label));
+      rowTh.classList.toggle("ports-hl-header", matched.has(label));
+    });
+    bodyRows.forEach(tr => {
+      tr.querySelectorAll("td").forEach((td, i) => {
+        const colLabel = headerCells[i + 1].textContent.trim();
+        td.classList.toggle("ports-hidden", !involved.has(colLabel));
+      });
+    });
+    const extra = involved.size - matched.size;
+    caption.textContent = `Showing ${matched.size} matching component${matched.size === 1 ? "" : "s"} for "${query.trim()}" plus ${extra} connected component${extra === 1 ? "" : "s"} (${involved.size} total) -- clear the search to show the full matrix again.`;
+    updatePortsMatrixStats();
+  }
+
+  // Group filter: clicking a legend swatch isolates just that group's
+  // components as both rows and columns (no connected-neighbor expansion --
+  // this is direct membership, not a flow search), clearing any active
+  // pattern/search first.
+  function applyGroupFilter(groupName) {
+    select.value = "";
+    if (topologySelect) topologySelect.value = "";
+    if (searchInput) searchInput.value = "";
+    clearHighlight();
+    const groupSet = new Set();
+    headerCells.forEach((th, idx) => {
+      if (idx === 0) return;
+      if (th.dataset.componentGroup === groupName) groupSet.add(th.textContent.trim());
+    });
+    headerCells.forEach((th, idx) => {
+      if (idx === 0) return;
+      th.classList.toggle("ports-hidden", !groupSet.has(th.textContent.trim()));
+    });
+    bodyRows.forEach(tr => {
+      const label = tr.querySelector("th").textContent.trim();
+      tr.classList.toggle("ports-hidden", !groupSet.has(label));
+    });
+    bodyRows.forEach(tr => {
+      tr.querySelectorAll("td").forEach((td, i) => {
+        const colLabel = headerCells[i + 1].textContent.trim();
+        td.classList.toggle("ports-hidden", !groupSet.has(colLabel));
+      });
+    });
+    caption.textContent = `Showing ${groupSet.size} component${groupSet.size === 1 ? "" : "s"} in the "${groupName}" group -- use Clear filters to show the full matrix again.`;
+    updatePortsMatrixStats();
+  }
+
+  // Live stat chips: recomputed after every filter change so they always
+  // reflect the current view (e.g. "8 / 52 components shown") rather than a
+  // static total that never changes with the toolbar.
+  function updatePortsMatrixStats() {
+    if (!statComponents || !statFlows) return;
+    const totalComponents = headerCells.length - 1;
+    const visibleComponents = new Set();
+    headerCells.forEach((th, idx) => {
+      if (idx !== 0 && !th.classList.contains("ports-hidden")) visibleComponents.add(th.textContent.trim());
+    });
+    bodyRows.forEach(tr => {
+      if (!tr.classList.contains("ports-hidden")) visibleComponents.add(tr.querySelector("th").textContent.trim());
+    });
+    let totalFlows = 0;
+    let visibleFlows = 0;
+    bodyRows.forEach(tr => {
+      const rowVisible = !tr.classList.contains("ports-hidden");
+      tr.querySelectorAll("td").forEach((td, i) => {
+        if (cellText(td) === DASH) return;
+        totalFlows++;
+        const colVisible = !headerCells[i + 1].classList.contains("ports-hidden");
+        if (rowVisible && colVisible) visibleFlows++;
+      });
+    });
+    statComponents.textContent = `${visibleComponents.size} / ${totalComponents}`;
+    statFlows.textContent = `${visibleFlows} / ${totalFlows}`;
+  }
+
+  // URL deep-linking: "#ports-matrix?pattern=LP-007-SC" or
+  // "#ports-matrix?search=aws" restores that exact filtered view, mirroring
+  // the location.hash convention other reference sub-pages already use.
+  function parsePortsMatrixHash() {
+    const hash = location.hash;
+    const qIdx = hash.indexOf("?");
+    if (!/^#ports-matrix/.test(hash) || qIdx === -1) return { pattern: "", search: "", topology: "" };
+    const params = new URLSearchParams(hash.slice(qIdx + 1));
+    return { pattern: params.get("pattern") || "", search: params.get("search") || "", topology: params.get("topology") || "" };
+  }
+
+  function updatePortsMatrixHash() {
+    if (!history.replaceState) return;
+    if (select.value) {
+      history.replaceState(null, "", `#ports-matrix?pattern=${encodeURIComponent(select.value)}`);
+    } else if (topologySelect && topologySelect.value) {
+      history.replaceState(null, "", `#ports-matrix?topology=${encodeURIComponent(topologySelect.value)}`);
+    } else if (searchInput && searchInput.value.trim()) {
+      history.replaceState(null, "", `#ports-matrix?search=${encodeURIComponent(searchInput.value.trim())}`);
+    } else {
+      history.replaceState(null, "", "#ports-matrix");
+    }
+  }
+
+  function applyPortsMatrixHashState() {
+    const { pattern, search, topology } = parsePortsMatrixHash();
+    if (pattern && Array.from(select.options).some(option => option.value === pattern)) {
+      select.value = pattern;
+      applyHighlight(pattern);
+    } else if (topology && portsMatrixTopologyEdges[topology]) {
+      if (topologySelect) topologySelect.value = topology;
+      applyTopologyHighlight(topology);
+    } else if (search) {
+      select.value = "";
+      if (searchInput) searchInput.value = search;
+      applySearchOrEmptyFilter();
+    } else {
+      updatePortsMatrixStats();
+    }
+  }
+
+  // Shared by applyHighlight() (logging patterns) and applyTopologyHighlight()
+  // (SVA topologies) -- both just supply a different edge list against the
+  // same highlight-and-hide mechanics.
+  function highlightEdges(edgeList) {
+    const involved = new Set();
+    edgeList.forEach(([src, dst]) => { involved.add(src); involved.add(dst); });
+
+    // Column headers: highlight if involved, hide (with their column's cells
+    // below) if not. Index 0 is the corner label and always stays visible.
+    headerCells.forEach((th, idx) => {
+      if (idx === 0) return;
+      const label = th.textContent.trim();
+      const isInvolved = involved.has(label);
+      th.classList.toggle("ports-hl-header", isInvolved);
+      th.classList.toggle("ports-hidden", !isInvolved);
+    });
+
+    // Rows: highlight/show if involved, hide entirely if not.
+    bodyRows.forEach(tr => {
+      const rowTh = tr.querySelector("th");
+      const label = rowTh.textContent.trim();
+      const isInvolved = involved.has(label);
+      rowTh.classList.toggle("ports-hl-header", isInvolved);
+      tr.classList.toggle("ports-hidden", !isInvolved);
+    });
+
+    // Cells: hide/show per column position to match the header visibility above.
+    bodyRows.forEach(tr => {
+      tr.querySelectorAll("td").forEach((td, i) => {
+        const colLabel = headerCells[i + 1].textContent.trim();
+        td.classList.toggle("ports-hidden", !involved.has(colLabel));
+      });
+    });
+
+    let cellsHighlighted = 0;
+    edgeList.forEach(([src, dst]) => {
+      const row = rowByName[src];
+      const colIdx = columnIndexByName[dst];
+      if (!row || colIdx === undefined) return;
+      const cells = row.querySelectorAll("td");
+      const cell = cells[colIdx - 1];
+      if (cell) { cell.classList.add("ports-hl-cell"); cellsHighlighted++; }
+    });
+
+    return { cellsHighlighted, componentCount: involved.size };
+  }
+
+  function applyHighlight(patternId) {
+    clearHighlight();
+    if (patternId && topologySelect) topologySelect.value = "";
+    if (!patternId) {
+      caption.textContent = "";
+      applySearchOrEmptyFilter();
+      return;
+    }
+    const edgeList = portsMatrixPatternEdges[patternId] || [];
+    const patternRow = loggingPatternTableData.find(r => r["Pattern ID"] === patternId);
+
+    if (edgeList.length === 0) {
+      caption.textContent = patternRow ? `No mapped flow for ${patternId} yet.` : "";
+      applySearchOrEmptyFilter();
+    } else {
+      const { cellsHighlighted, componentCount } = highlightEdges(edgeList);
+      caption.textContent = `Highlighting ${cellsHighlighted} flow${cellsHighlighted === 1 ? "" : "s"} across ${componentCount} component${componentCount === 1 ? "" : "s"} for ${patternId}${patternRow ? " — " + patternRow["Pattern"] : ""} -- other rows/columns are hidden; use Clear filters to show the full matrix again.`;
+      updatePortsMatrixStats();
+    }
+  }
+
+  function applyTopologyHighlight(topologyId) {
+    clearHighlight();
+    if (topologyId) select.value = "";
+    if (!topologyId) {
+      caption.textContent = "";
+      applySearchOrEmptyFilter();
+      return;
+    }
+    const edgeList = portsMatrixTopologyEdges[topologyId] || [];
+    const label = portsMatrixTopologyLabels[topologyId] || topologyId;
+
+    if (edgeList.length === 0) {
+      caption.textContent = `No mapped flow for ${label} yet.`;
+      applySearchOrEmptyFilter();
+    } else {
+      const { cellsHighlighted, componentCount } = highlightEdges(edgeList);
+      const note = portsMatrixTopologyNotes[topologyId] ? ` ${portsMatrixTopologyNotes[topologyId]}` : "";
+      caption.textContent = `Highlighting ${cellsHighlighted} flow${cellsHighlighted === 1 ? "" : "s"} across ${componentCount} component${componentCount === 1 ? "" : "s"} for ${topologyId} — ${label} -- other rows/columns are hidden; use Clear filters to show the full matrix again.${note}`;
+      updatePortsMatrixStats();
+    }
+  }
+
+  function exportVisiblePortsMatrix(event) {
+    const visibleColIdx = [];
+    headerCells.forEach((th, idx) => {
+      if (idx === 0) return;
+      if (!th.classList.contains("ports-hidden")) visibleColIdx.push(idx);
+    });
+    const headerLine = ["Source ↓ / Destination →", ...visibleColIdx.map(idx => headerCells[idx].textContent.trim())];
+    const lines = [headerLine.map(csvValue).join(",")];
+    bodyRows.forEach(tr => {
+      if (tr.classList.contains("ports-hidden")) return;
+      const label = tr.querySelector("th").textContent.trim();
+      const cells = tr.querySelectorAll("td");
+      const rowValues = visibleColIdx.map(idx => {
+        const cell = cells[idx - 1];
+        return cell ? cellText(cell) : "";
+      });
+      lines.push([label, ...rowValues].map(csvValue).join(","));
+    });
+    const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "Splunk-Ports-Matrix-Visible.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(link.href);
+    event.currentTarget.textContent = "Exported";
+    setTimeout(() => { if (event.currentTarget) event.currentTarget.textContent = "Export visible CSV"; }, 1400);
+  }
+
+  select.addEventListener("change", () => { applyHighlight(select.value); updatePortsMatrixHash(); });
+  if (topologySelect) {
+    topologySelect.addEventListener("change", () => { applyTopologyHighlight(topologySelect.value); updatePortsMatrixHash(); });
+  }
+  clearBtn.addEventListener("click", () => {
+    select.value = "";
+    if (topologySelect) topologySelect.value = "";
+    if (searchInput) searchInput.value = "";
+    applyHighlight("");
+    updatePortsMatrixHash();
+  });
+  if (hideEmptyCheckbox) {
+    hideEmptyCheckbox.addEventListener("change", () => {
+      if (!select.value && (!topologySelect || !topologySelect.value)) applySearchOrEmptyFilter();
+    });
+  }
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      if (!select.value && (!topologySelect || !topologySelect.value)) { applySearchOrEmptyFilter(); updatePortsMatrixHash(); }
+    });
+  }
+  if (exportBtn) exportBtn.addEventListener("click", exportVisiblePortsMatrix);
+  groupLegendButtons.forEach(btn => {
+    btn.addEventListener("click", () => applyGroupFilter(btn.dataset.groupName));
+  });
+
+  portsMatrixHashHandler = applyPortsMatrixHashState;
+  applyPortsMatrixHashState();
+}
+
+function openPortsMatrixForPattern(patternId) {
+  setActivePage("portsMatrix");
+  const select = document.getElementById("portsMatrixPatternSelect");
+  const searchInput = document.getElementById("portsMatrixComponentSearch");
+  if (searchInput) searchInput.value = "";
+  if (select) {
+    select.value = patternId;
+    select.dispatchEvent(new Event("change"));
+  }
 }
 
 
@@ -20286,6 +21141,7 @@ rolesColumnOrder
 renderRolesTable();
 renderSplunkPortsTable();
 renderNetworkFlowsTable();
+initPortsMatrixPatternHighlighter();
 
 Object.entries(pageTabs).forEach(([name, tab]) => {
   if (tab) tab.addEventListener("click", () => setActivePage(name));
@@ -20386,6 +21242,8 @@ document.getElementById("resetPatternTable").addEventListener("click", () => {
 document.getElementById("exportPatternTable").addEventListener("click", exportVisibleLoggingPatterns);
 document.getElementById("patternsOpenAdvisor").addEventListener("click", event => openAdvisor(event.currentTarget));
 patternTableBody.addEventListener("click", event => {
+  const matrixButton = event.target.closest("[data-matrix-pattern-id]");
+  if (matrixButton) { openPortsMatrixForPattern(matrixButton.dataset.matrixPatternId); return; }
   const button = event.target.closest("[data-pattern-id]");
   if (button) openLoggingPatternInTaxonomy(button.dataset.patternId);
 });
@@ -20439,7 +21297,11 @@ document.getElementById("resetRolesTable").addEventListener("click", () => {
   renderRolesTable();
 });
 document.getElementById("exportRolesTable").addEventListener("click", exportVisibleRoles);
-window.addEventListener("hashchange", () => setActivePage(pageNameFromHash(), false));
+window.addEventListener("hashchange", () => {
+  const hashPage = pageNameFromHash();
+  setActivePage(hashPage, false);
+  if (hashPage === "portsMatrix" && portsMatrixHashHandler) portsMatrixHashHandler();
+});
 
 advisorForm.addEventListener("submit", event => {
   event.preventDefault();
@@ -22530,7 +23392,7 @@ const SOT_OBJECTS = [
     config: "streamfwd.conf",
     def: "The lightweight agent (or appliance) that captures and decodes network packets from a SPAN/TAP and generates structured protocol events, distinct from the Stream Server that configures it.",
     notes: "Decodes 30+ protocols; streams the resulting structured events into ordinary Forwarder Inputs for indexing.",
-    deps: ["Splunk Stream Server"], feeds: ["Data Input"], sotCode: "SOT-05.07.01", instanceId: "STRM-002", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["Splunk Stream Server"], feeds: ["Data Input"], sotCode: "SOT-05.07.07", instanceId: "STRM-002", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
   // ---------- SOT-07 — Identity, Access & Security Objects ----------
 { name: "Role", domain: "SOT-07 — Identity, Access & Security Objects", type: "Platform Object", scope: "Deployment-level",
     config: "authorize.conf",
@@ -23999,12 +24861,13 @@ const SOT_TREE = {
       "SOT-05.06.03": "Edge Processor",
     } },
     "SOT-05.07": { label: "Specialist Collection", desc: "Purpose-built collection mechanisms for a specific data class.", subclasses: {
-      "SOT-05.07.01": "Splunk Stream",
+      "SOT-05.07.01": "Splunk Stream Server",
       "SOT-05.07.02": "DB Connect",
       "SOT-05.07.03": "Direct TCP/UDP Syslog Input (UF/HF)",
       "SOT-05.07.04": "Rsyslog/Syslog-NG Relay with Forwarder",
       "SOT-05.07.05": "Splunk Connect for Syslog (SC4S)",
       "SOT-05.07.06": "Edge Processor Syslog Receiver",
+      "SOT-05.07.07": "Splunk Stream Forwarder",
     } },
     "SOT-05.08": { label: "Getting Data In -- Guidance & Cloud Onboarding", desc: "Getting-started and architecture guidance documents from Splunk's 'Getting Data In, Forwarding, and Preprocessing' documentation section that describe how to onboard a class of data or deploy a collection pattern, rather than being individual queryable/configured objects themselves.", subclasses: {
       "SOT-05.08.01": "Intermediate Data Routing Using Universal and Heavy Forwarders",
