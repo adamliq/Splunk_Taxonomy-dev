@@ -13793,6 +13793,7 @@ E. Assumptions and unresolved inputs</pre>
         <li>Eighteen enterprise/cloud service dependencies -- Splunk SOAR/SOAR Cloud, Enterprise Security/Mission Control (Cloud), ACS, Observability Cloud, Splunkbase/updates, SNMP Manager/Trap Receiver, Webhook Destination, Ticketing/ITSM API, TAXII Server, Proxy Authentication Service, Container/Kubernetes API, OpenTelemetry Collector, Kafka, AWS Kinesis, Azure Storage/ARM, Microsoft Graph, Google Cloud APIs/Pub/Sub, and Git Host -- were added directly to the Expanded Cross-Matrix per user request, promoted from a flat reference table this page previously carried instead. Each "Initiated By" mapped onto the closest existing matrix component (e.g. "Search Head (ES adaptive response)" &rarr; Search Head / SHC Member; "CI/CD Runner" &rarr; Admin / API Client, which already explicitly covers CI/CD pipelines and ACS/Splunk Cloud tooling in its own definition above). Splunkbase and Proxy Authentication Service are populated universally across the platform-role set, the same treatment as DNS/NTP/Internet-Proxy/CA-CRL-OCSP, since "any instance" and "any Splunk instance behind a proxy" are both genuinely broad. Sixteen of the eighteen rows are entirely dashes; the exceptions are <strong>OpenTelemetry Collector</strong>, which genuinely relays data onward (it receives OTLP telemetry from HEC Client (Application) on 4317/4318, and forwards to Heavy Forwarder (8088, HEC), Splunk Observability Cloud (443), and the Container/Kubernetes API (443/6443) it also queries for collection metadata), and <strong>Splunk SOAR / SOAR Cloud</strong>, whose own two outbound cells (Ticketing / ITSM API, and Vendor / Source API for its app-connector response/enrichment actions against third-party security products) are both 443 HTTPS calls SOAR itself initiates.</li>
         <li>The "Highlight components for logging pattern" dropdown above the matrix maps each of the 39 Logging Patterns Table rows to the specific components and cells its documented flow touches, so selecting one highlights only the primary, best-supported path for that pattern rather than every possible alternative port/route mentioned in its full description -- consult the Logging Patterns Table itself for the complete text, including secondary options (e.g. an alternate receiving tier, or a load-balancer front end). None of the 39 logging patterns reference the 18 enterprise/cloud service dependencies above, so selecting a pattern will never highlight those columns.</li>
         <li>The "Show TLS defaults" checkbox overlays a small badge on 147 of the matrix's 191 populated flows, from three sources, applied in this order (each cell gets one badge, from whichever source reaches it first). First, the "Encrypted Communication Scenarios (TLS)" table above: <strong>TLS: Cloud only</strong> (3 flows, Cloud: on / Enterprise: off: forwarding to Splunk Cloud from UF/HF/Splunk Stream Forwarder) and <strong>TLS: On</strong> (9 flows: agent-to-Deployment-Server phone-home, distributed search, indexer cluster manager) -- the 3 scenarios that don't map cleanly onto this matrix's component model (Splunk Web to search head, Splunk-to-Splunk as a general category, and Search head cluster deployer, whose stated initiator direction conflicts with this matrix's own Deployer&rarr;SH-only convention) are deliberately left unbadged rather than force-mapped. Second, this matrix's own port notes, wherever a cell's own text already documents a protocol's TLS behavior more specifically than a generic port rule would: <strong>TLS: Capable</strong> (23 flows) wherever a cell lists both a plaintext and a TLS option for the same port family -- 9997 within Core Platform Roles (8), LDAP/LDAPS to the LDAP / AD Server column (4: HF, Indexer, Search Head, Monitoring Console), Heavy Forwarder &rarr; Kafka's 9092/9093 (1), both SMTP Relay cells' 25/465/587 (2), User's 4 Splunk Web UI cells at 8000/8443, added per user request (4), the Search Head and Indexer self-referencing replication cells' 9887, reclassified from "Cloud only" per user request (2), Syslog Source &rarr; Syslog Collector's 514/6514 (1), and Heavy Forwarder &rarr; Database Server (JDBC), whose SQL Server/Oracle/PostgreSQL/MySQL protocols each negotiate TLS on the same port rather than a separate listener (1); and <strong>TLS: On</strong> (9 flows) for every genuinely HEC-labeled cell (HEC Client, Edge/Ingest Processor, OpenTelemetry Collector, and Syslog Collector reaching HF/Indexer/Splunk Cloud on 8088 and/or 443), since HEC uses HTTPS by Splunk default -- grouped here rather than left to the generic port-443 rule below so cells like Syslog Collector &rarr; Splunk Cloud get an HEC-specific tooltip instead of a generic one. Third and last, every remaining populated cell not already covered above whose port text contains 443 or 8089 is marked <strong>TLS: On</strong> (103 flows, including Splunk SOAR / SOAR Cloud &rarr; Vendor / Source API, its response/enrichment action against third-party security products) -- port 443 is HTTPS, which is TLS by definition; port 8089 is splunkd's management/REST API port, which uses HTTPS by Splunk default (with Splunk's default certificate unless replaced) -- both independent of any named scenario. This is also why User &rarr; Load Balancer and User &rarr; Splunk Cloud show "On" rather than "Cloud only" despite being part of the Browser-to-Splunk-Web scenario -- both use port 443, which is more definitive than that scenario's Cloud/Enterprise split (the other 4 Browser-to-Splunk-Web cells, at 8000/8443, are "Capable" instead, per above). Where a matched cell also lists a non-matching port as an alternative (e.g. the CA/CRL/OCSP columns' "80 / 443", or the Syslog Collector rows' "8088 / 443"), the badge speaks only to the matched port -- the other listed port isn't necessarily encrypted. Two direct-to-Splunk syslog cells (Syslog Source &rarr; HF/Indexer, both already noted "not recommended") list only plain 514 with no TLS alternative, so they're left unbadged rather than force-classified. The matrix's other 44 populated flows stay unbadged simply because none of these sources describe them, not because they're unencrypted. This overlay is independent of the pattern/topology/search/group filters above and composes with whichever one is active.</li>
+        <li>Selecting a logging pattern or SVA topology now also lists the specific Flow ID(s) involved in that selection's caption (e.g. "Flow IDs: SPL-NET-ING-002, SPL-NET-MGMT-001") -- a direct lookup against the Flow Schema Table's own records for that same [Source, Destination] pair, not a separately maintained list, so it can't drift out of sync with that table. Likewise, the grid's "Export visible CSV" button now prefixes every populated, currently-visible cell's text with its <code>[Flow ID]</code> in the exported file (e.g. <code>[SPL-NET-ING-002] ING 9997 (S2S, TCP, optionally TLS)</code>) -- so exporting a pattern- or topology-filtered view produces a CSV that already carries stable, citable IDs for each flow, suitable for handing to a network/firewall team as a change-request artifact. The visible grid itself is unchanged by this -- Flow IDs only appear in the caption text and the CSV export, not as an on-cell label.</li>
       </ul>
     </div>
     </div>
@@ -27970,6 +27971,14 @@ const portsMatrixFlowSchema = [
   },
 ];
 
+const portsFlowIdByEdgeKey = {};
+portsMatrixFlowSchema.forEach(rec => { portsFlowIdByEdgeKey[`${rec.srcComponent}|${rec.dstComponent}`] = rec.id; });
+function flowIdsForEdgeList(edgeList) {
+  return edgeList
+    .map(([src, dst]) => portsFlowIdByEdgeKey[`${src}|${dst}`])
+    .filter(Boolean);
+}
+
 let portsMatrixHashHandler = null;
 function initPortsMatrixPatternHighlighter() {
   const select = document.getElementById("portsMatrixPatternSelect");
@@ -28321,7 +28330,9 @@ function initPortsMatrixPatternHighlighter() {
       applySearchOrEmptyFilter();
     } else {
       const { cellsHighlighted, componentCount } = highlightEdges(edgeList);
-      caption.textContent = `Highlighting ${cellsHighlighted} flow${cellsHighlighted === 1 ? "" : "s"} across ${componentCount} component${componentCount === 1 ? "" : "s"} for ${patternId}${patternRow ? " — " + patternRow["Pattern"] : ""} -- other rows/columns are hidden; use Clear filters to show the full matrix again.`;
+      const flowIds = flowIdsForEdgeList(edgeList);
+      const flowIdNote = flowIds.length ? ` Flow IDs: ${flowIds.join(", ")}.` : "";
+      caption.textContent = `Highlighting ${cellsHighlighted} flow${cellsHighlighted === 1 ? "" : "s"} across ${componentCount} component${componentCount === 1 ? "" : "s"} for ${patternId}${patternRow ? " — " + patternRow["Pattern"] : ""} -- other rows/columns are hidden; use Clear filters to show the full matrix again.${flowIdNote}`;
       updatePortsMatrixStats();
     }
   }
@@ -28343,7 +28354,9 @@ function initPortsMatrixPatternHighlighter() {
     } else {
       const { cellsHighlighted, componentCount } = highlightEdges(edgeList);
       const note = portsMatrixTopologyNotes[topologyId] ? ` ${portsMatrixTopologyNotes[topologyId]}` : "";
-      caption.textContent = `Highlighting ${cellsHighlighted} flow${cellsHighlighted === 1 ? "" : "s"} across ${componentCount} component${componentCount === 1 ? "" : "s"} for ${topologyId} — ${label} -- other rows/columns are hidden; use Clear filters to show the full matrix again.${note}`;
+      const flowIds = flowIdsForEdgeList(edgeList);
+      const flowIdNote = flowIds.length ? ` Flow IDs: ${flowIds.join(", ")}.` : "";
+      caption.textContent = `Highlighting ${cellsHighlighted} flow${cellsHighlighted === 1 ? "" : "s"} across ${componentCount} component${componentCount === 1 ? "" : "s"} for ${topologyId} — ${label} -- other rows/columns are hidden; use Clear filters to show the full matrix again.${note}${flowIdNote}`;
       updatePortsMatrixStats();
     }
   }
@@ -28424,7 +28437,12 @@ function initPortsMatrixPatternHighlighter() {
       const cells = tr.querySelectorAll("td");
       const rowValues = visibleColIdx.map(idx => {
         const cell = cells[idx - 1];
-        return cell ? cellText(cell) : "";
+        if (!cell) return "";
+        const text = cellText(cell);
+        if (!cell.querySelector(".flow-badge")) return text;
+        const dstName = headerCells[idx].textContent.trim();
+        const flowId = portsFlowIdByEdgeKey[`${label}|${dstName}`];
+        return flowId ? `[${flowId}] ${text}` : text;
       });
       lines.push([label, ...rowValues].map(csvValue).join(","));
     });
