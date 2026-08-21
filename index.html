@@ -2641,6 +2641,16 @@
     .reference-link:hover { background:transparent; color:#1e3a8a; }
     .reference-empty { padding:24px; border:1px dashed #cbd5e1; border-radius:12px; background:#fff; color:#64748b; text-align:center; }
     .reference-search-scope { margin: -4px 0 12px; color: #64748b; font-size: 12px; }
+    .config-setting-toolbar { margin:0 0 4px; }
+    .config-setting-toolbar input[type="search"] { width:100%; padding:9px 12px; border-radius:10px; border:1px solid var(--border); font-size:13px; }
+    .config-setting-results { display:flex; flex-direction:column; gap:6px; margin:10px 0 4px; }
+    .config-setting-result { display:flex; flex-direction:column; gap:2px; padding:10px 12px; border:1px solid var(--border); border-radius:10px; background:#fff; cursor:pointer; text-align:left; font:inherit; width:100%; }
+    .config-setting-result:hover { border-color:#7030a0; box-shadow:0 0 0 2px rgba(112,48,160,.12); }
+    .config-setting-result .setting-name { font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace; font-size:12.5px; font-weight:700; color:#1e293b; }
+    .config-setting-result .setting-file { font-size:11.5px; color:#7030a0; font-weight:700; }
+    .config-setting-result .setting-desc { font-size:12px; color:#64748b; line-height:1.4; }
+    .config-setting-count { margin:0 0 8px; color:#64748b; font-size:12px; }
+    .eccs-table tr.highlight td { background:rgba(112,48,160,.14); }
     .eccs-reference { padding-bottom:42px; }
     .eccs-reference-hero { padding:24px; border:1px solid #c4b5fd; border-radius:18px; background:linear-gradient(135deg,#0f2034 0%,#1f4e78 58%,#7030a0 100%); color:#fff; box-shadow:var(--shadow); }
     .eccs-reference-hero .eyebrow { color:#dbeafe; }
@@ -3819,6 +3829,8 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
 
     <section id="configFileReferences" class="reference-section">
       <div class="reference-section-heading"><div><h3>Configuration file reference</h3><p>Stanzas and settings for individual Splunk .conf files, mapped onto the Splunk Taxonomy objects they configure.</p></div></div>
+      <div class="config-setting-toolbar"><input id="configSettingSearch" type="search" placeholder="Search individual settings across every .conf file (e.g. srchIndexesAllowed, TIME_PREFIX, allowedDomainList)…" aria-label="Search configuration settings" /></div>
+      <div id="configSettingResults" class="config-setting-results" hidden></div>
       <div id="configFileReferencesGrid" class="method-grid">
         <article class="method-card"><h4>Alert Actions Configuration</h4><p>The global alert-action defaults <code>alert_actions.conf</code> defines -- email, RSS, script, lookup, summary index, webhook, and custom alert actions -- overridden per saved search via <code>action.&lt;name&gt;.*</code> settings in <code>savedsearches.conf</code>.</p><ul class="method-list"><li><code>[email]</code> SMTP, TLS &amp; PDF rendering settings</li><li><code>allowedDomainList</code> &amp; webhook <code>allowlist.&lt;name&gt;</code> hardening</li><li><code>[script]</code>, <code>[lookup]</code> &amp; <code>[summary_index]</code> actions</li><li>Worked <code>alert_actions.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="alert-actions-conf">Open detailed reference</button></div></article>
         <article class="method-card"><h4>App Configuration</h4><p>The per-app <code>app.conf</code> stanzas covering identity/launcher metadata, install/upgrade behaviour, custom-conf reload triggers, UI visibility, search head cluster deployment mode, and legacy credential verification.</p><ul class="method-list"><li><code>[install]</code> state, build &amp; upgrade settings</li><li><code>[triggers]</code> conf-level &amp; stanza-level reload</li><li><code>[shclustering]</code> deployer push modes</li><li>Worked <code>app.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="app-conf">Open detailed reference</button></div></article>
@@ -19651,6 +19663,82 @@ function filterReferenceMethodCards(gridId,emptyId,q){
   });
   const empty=document.getElementById(emptyId); if(empty) empty.hidden=visibleCount>0;
 }
+let configSettingIndexCache=null;
+function buildConfigSettingIndex(){
+  if(configSettingIndexCache) return configSettingIndexCache;
+  const index=[];
+  document.querySelectorAll('article.eccs-reference[id$="ConfReferenceView"]').forEach(article=>{
+    const fileTitle=article.querySelector("h2")?.textContent.trim()||article.id;
+    article.querySelectorAll(".eccs-table tbody tr").forEach(row=>{
+      const cells=row.querySelectorAll("td");
+      if(cells.length<2) return;
+      const settingText=cells[0].textContent.replace(/\s+/g," ").trim();
+      const descText=cells[1].textContent.replace(/\s+/g," ").trim();
+      if(!settingText) return;
+      const section=row.closest(".eccs-detail-section");
+      index.push({
+        articleId:article.id,
+        fileTitle,
+        sectionTitle:section?.querySelector("h3")?.textContent.trim()||"",
+        settingText,
+        descText,
+        row
+      });
+    });
+  });
+  configSettingIndexCache=index;
+  return index;
+}
+function configDetailNameFromArticleId(id){
+  return id.replace(/ReferenceView$/,"").replace(/([a-z0-9])([A-Z])/g,"$1-$2").toLowerCase();
+}
+function jumpToConfigSetting(entry){
+  showReferenceDetail(configDetailNameFromArticleId(entry.articleId));
+  requestAnimationFrame(()=>{
+    document.querySelectorAll(".eccs-table tr.highlight").forEach(x=>x.classList.remove("highlight"));
+    entry.row.classList.add("highlight");
+    entry.row.scrollIntoView({behavior:"smooth",block:"center"});
+  });
+}
+function renderConfigSettingSearch(){
+  const input=document.getElementById("configSettingSearch");
+  const resultsEl=document.getElementById("configSettingResults");
+  const gridEl=document.getElementById("configFileReferencesGrid");
+  const emptyEl=document.getElementById("configFileReferencesEmpty");
+  if(!input||!resultsEl) return;
+  const q=input.value.trim().toLowerCase();
+  if(!q){
+    resultsEl.hidden=true;
+    resultsEl.innerHTML="";
+    if(gridEl) gridEl.hidden=false;
+    if(emptyEl) emptyEl.hidden=true;
+    return;
+  }
+  if(gridEl) gridEl.hidden=true;
+  if(emptyEl) emptyEl.hidden=true;
+  resultsEl.hidden=false;
+  const index=buildConfigSettingIndex();
+  const matches=index.filter(e=>e.settingText.toLowerCase().includes(q)||e.descText.toLowerCase().includes(q)).slice(0,80);
+  if(!matches.length){
+    resultsEl.innerHTML='<div class="reference-empty">No settings match &ldquo;'+escapeHtml(input.value.trim())+'&rdquo;.</div>';
+    return;
+  }
+  const countLabel='<p class="config-setting-count">'+matches.length+(matches.length===80?"+":"")+' matching setting'+(matches.length===1?"":"s")+'</p>';
+  resultsEl.innerHTML=countLabel+matches.map((e,i)=>
+    '<button type="button" class="config-setting-result" data-config-setting-index="'+i+'">'
+    +'<span class="setting-name">'+escapeHtml(e.settingText)+'</span>'
+    +'<span class="setting-file">'+escapeHtml(e.fileTitle)+(e.sectionTitle?" — "+escapeHtml(e.sectionTitle):"")+'</span>'
+    +'<span class="setting-desc">'+escapeHtml(e.descText.length>170?e.descText.slice(0,170)+"…":e.descText)+'</span>'
+    +'</button>'
+  ).join("");
+  resultsEl.querySelectorAll("[data-config-setting-index]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const idx=Number(btn.dataset.configSettingIndex);
+      jumpToConfigSetting(matches[idx]);
+    });
+  });
+}
+document.getElementById("configSettingSearch")?.addEventListener("input",renderConfigSettingSearch);
 function setReferenceDetailVisibility(detailName){
   const index=document.getElementById("referenceIndexView");
   const eccs=document.getElementById("eccsReferenceView");
