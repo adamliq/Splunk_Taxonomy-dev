@@ -3772,6 +3772,78 @@
       "taxonomyCode": "TAX-07.01",
       "taxonomyTerm": "Log Viability",
       "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q417",
+      "section": "Taxonomy: Log Source Cyber Value Assessment (TAX-06.05)",
+      "subsection": "TAX-06.05.02 Assessment Gates",
+      "question": "Do the sampled events meet the minimum successful parsing threshold required to pass the cyber value gate?",
+      "taxonomyCode": "TAX-06.05.02.01",
+      "taxonomyTerm": "Minimum Parse Rate Gate",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q418",
+      "section": "Taxonomy: Log Source Cyber Value Assessment (TAX-06.05)",
+      "subsection": "TAX-06.05.02 Assessment Gates",
+      "question": "Are usable event timestamps and reliable timezone context present in the sampled events?",
+      "taxonomyCode": "TAX-06.05.02.02",
+      "taxonomyTerm": "Timestamp & Timezone Gate",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q419",
+      "section": "Taxonomy: Log Source Cyber Value Assessment (TAX-06.05)",
+      "subsection": "TAX-06.05.02 Assessment Gates",
+      "question": "Is the source schema sufficiently stable across the assessed sample?",
+      "taxonomyCode": "TAX-06.05.02.03",
+      "taxonomyTerm": "Schema Stability Gate",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q420",
+      "section": "Taxonomy: Log Source Cyber Value Assessment (TAX-06.05)",
+      "subsection": "TAX-06.05.02 Assessment Gates",
+      "question": "Have all cyber value gates (parse rate, timestamp & timezone, schema stability) passed so that scoring may proceed?",
+      "taxonomyCode": "TAX-06.05.02.04",
+      "taxonomyTerm": "Overall Gate Result",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q421",
+      "section": "Taxonomy: Log Source Cyber Value Assessment (TAX-06.05)",
+      "subsection": "TAX-06.05.14 Ninety-day Value Review",
+      "question": "Based on observed outcomes from the ninety-day value review, should the scoring rubric's weights or thresholds be adjusted?",
+      "taxonomyCode": "TAX-06.05.14.09",
+      "taxonomyTerm": "Rubric Adjustment Decision",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q422",
+      "section": "Taxonomy: Data Collection & Routing (TAX-03.02)",
+      "subsection": "TAX-03.02.06 Firewall Rule",
+      "question": "Is return traffic for this flow handled automatically by a stateful firewall, or does it require its own explicit rule?",
+      "taxonomyCode": "TAX-03.02.06.05",
+      "taxonomyTerm": "Stateful Return Traffic",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q423",
+      "section": "Taxonomy: Data Collection & Routing (TAX-03.02)",
+      "subsection": "TAX-03.02.04 Collection Topology",
+      "question": "Does the implemented topology conform to its approved logging pattern, and if not, is the deviation formally approved?",
+      "taxonomyCode": "TAX-03.02.04.08",
+      "taxonomyTerm": "Logging Pattern Conformance",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q424",
+      "section": "Taxonomy: Lifecycle, Assurance & Dependency (TAX-06.02)",
+      "subsection": "TAX-06.02 Dependency Management",
+      "question": "Is this platform's notable events or alerts integrated with a SOAR or orchestration tool -- and if so, what is forwarded, which playbooks respond, and does the SOAR tool write actions or case status back into Splunk?",
+      "taxonomyCode": "TAX-06.02.02",
+      "taxonomyTerm": "SOAR / Orchestration Integration",
+      "onboardingPhase": "Log Sustainment"
     }
   ]
 }
