@@ -13273,8 +13273,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can an attacker inject arbitrary text into logged fields?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.01",
+      "taxonomyTerm": "Injection and Delimiter Confusion",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13282,8 +13282,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can an attacker inject line breaks into logged values?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.01",
+      "taxonomyTerm": "Injection and Delimiter Confusion",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13291,8 +13291,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can an attacker forge apparent syslog headers?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.01",
+      "taxonomyTerm": "Injection and Delimiter Confusion",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13300,8 +13300,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can an attacker inject JSON delimiters?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.01",
+      "taxonomyTerm": "Injection and Delimiter Confusion",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13309,8 +13309,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can an attacker inject XML delimiters?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.01",
+      "taxonomyTerm": "Injection and Delimiter Confusion",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13318,8 +13318,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can an attacker cause event-boundary confusion?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.01",
+      "taxonomyTerm": "Injection and Delimiter Confusion",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13327,8 +13327,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can oversized events exhaust parser or pipeline resources?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.02",
+      "taxonomyTerm": "Resource Exhaustion and Malformed Input Handling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13336,8 +13336,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can deeply nested JSON exhaust parsing resources?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.02",
+      "taxonomyTerm": "Resource Exhaustion and Malformed Input Handling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13345,8 +13345,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can malformed Unicode affect parsing?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.02",
+      "taxonomyTerm": "Resource Exhaustion and Malformed Input Handling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13354,8 +13354,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can control characters enter logs?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.02",
+      "taxonomyTerm": "Resource Exhaustion and Malformed Input Handling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13363,8 +13363,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can ANSI escape sequences enter logs?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.02",
+      "taxonomyTerm": "Resource Exhaustion and Malformed Input Handling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13372,8 +13372,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can attacker-controlled field names be generated?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.03",
+      "taxonomyTerm": "Metadata Spoofing and Trust Boundary",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13381,8 +13381,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can attacker input create unexpected high-cardinality fields?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.03",
+      "taxonomyTerm": "Metadata Spoofing and Trust Boundary",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13390,8 +13390,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can malicious URLs or markup appear in analyst-facing fields?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.04",
+      "taxonomyTerm": "Downstream and Analyst-Facing Risk",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13399,8 +13399,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can log content influence downstream dashboards, exports, or reports?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.04",
+      "taxonomyTerm": "Downstream and Analyst-Facing Risk",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13408,8 +13408,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can CSV or spreadsheet formula injection occur when events are exported?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.04",
+      "taxonomyTerm": "Downstream and Analyst-Facing Risk",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13417,8 +13417,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can attacker-controlled values masquerade as trusted metadata?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.03",
+      "taxonomyTerm": "Metadata Spoofing and Trust Boundary",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13426,8 +13426,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can an attacker spoof `host`, `source`, tenant, username, severity, or event type?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.03",
+      "taxonomyTerm": "Metadata Spoofing and Trust Boundary",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13435,8 +13435,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Are metadata fields separated from untrusted payload content?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.03",
+      "taxonomyTerm": "Metadata Spoofing and Trust Boundary",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13444,8 +13444,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Are log injection attempts themselves detectable?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.05",
+      "taxonomyTerm": "Injection Detection and Parser Hardening Testing",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13453,8 +13453,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Are parsers tested against malformed and hostile samples?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.05",
+      "taxonomyTerm": "Injection Detection and Parser Hardening Testing",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13462,8 +13462,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Are limits configured for event size, nesting, field count, and line length?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.02",
+      "taxonomyTerm": "Resource Exhaustion and Malformed Input Handling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13471,8 +13471,8 @@
       "section": "Log Onboarding Questionnaire — 60. Adversarial Event Safety",
       "subsection": "",
       "question": "Can one malformed event disrupt processing of subsequent valid events?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-04.14.02",
+      "taxonomyTerm": "Resource Exhaustion and Malformed Input Handling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14164,8 +14164,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Can a single user or device generate unbounded events?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.01",
+      "taxonomyTerm": "Rate Limiting and Quota Controls",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14173,8 +14173,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Are source-side rate limits present?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.01",
+      "taxonomyTerm": "Rate Limiting and Quota Controls",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14182,8 +14182,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Can rate limiting cause important events to be discarded?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.02",
+      "taxonomyTerm": "Fair-Share and Prioritisation Under Load",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14191,8 +14191,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Are security-critical event classes exempt from suppression?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.02",
+      "taxonomyTerm": "Fair-Share and Prioritisation Under Load",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14200,8 +14200,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Can one noisy tenant starve another?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.02",
+      "taxonomyTerm": "Fair-Share and Prioritisation Under Load",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14209,8 +14209,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Are per-source quotas present?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.01",
+      "taxonomyTerm": "Rate Limiting and Quota Controls",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14218,8 +14218,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Are per-tenant quotas present?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.01",
+      "taxonomyTerm": "Rate Limiting and Quota Controls",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14227,8 +14227,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Are per-input quotas present?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.01",
+      "taxonomyTerm": "Rate Limiting and Quota Controls",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14236,8 +14236,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Can Splunk or intermediary throttling cause silent loss?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.02",
+      "taxonomyTerm": "Fair-Share and Prioritisation Under Load",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14245,8 +14245,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Are dropped events observable during saturation?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.03",
+      "taxonomyTerm": "Throttling and Loss Observability",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14254,8 +14254,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Are throttling decisions logged?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.03",
+      "taxonomyTerm": "Throttling and Loss Observability",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14263,8 +14263,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Can the logging pipeline itself become a denial-of-service vector?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.04",
+      "taxonomyTerm": "Pipeline Resource Exhaustion",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14272,8 +14272,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Can malformed events trigger excessive CPU or memory consumption?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.04",
+      "taxonomyTerm": "Pipeline Resource Exhaustion",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14281,8 +14281,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Can excessive cardinality cause downstream resource exhaustion?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.04",
+      "taxonomyTerm": "Pipeline Resource Exhaustion",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14290,8 +14290,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Can log floods increase cost beyond approved thresholds?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.04",
+      "taxonomyTerm": "Pipeline Resource Exhaustion",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14299,8 +14299,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Are emergency controls available without causing unacceptable blind spots?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.05",
+      "taxonomyTerm": "Emergency Response and Flood Readiness",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -14308,8 +14308,8 @@
       "section": "Log Onboarding Questionnaire — 68. Logging Pipeline Denial-of-Service Resistance",
       "subsection": "",
       "question": "Is there a tested incident procedure for telemetry floods?",
-      "taxonomyCode": "UNMAPPED",
-      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "taxonomyCode": "TAX-03.02.10.05",
+      "taxonomyTerm": "Emergency Response and Flood Readiness",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
