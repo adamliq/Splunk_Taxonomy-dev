@@ -3970,6 +3970,240 @@
       "taxonomyCode": "TAX-02.07.01",
       "taxonomyTerm": "Incident Response Plan",
       "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q439",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Information about the data",
+      "question": "What application/service/appliance is generating the data?",
+      "taxonomyCode": "TAX-03.02.09",
+      "taxonomyTerm": "Provenance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q440",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Information about the data",
+      "question": "What hosts are generating the data?",
+      "taxonomyCode": "TAX-03.01.01",
+      "taxonomyTerm": "Data Source",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q441",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Information about the data",
+      "question": "What is the path to the data on the host?",
+      "taxonomyCode": "TAX-03.04.01",
+      "taxonomyTerm": "Input Stanza",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q442",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Information about the data",
+      "question": "What format is the data in?",
+      "taxonomyCode": "TAX-04.05.01",
+      "taxonomyTerm": "Data Format",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q443",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Information about the data",
+      "question": "What methods are available for sending the data to Splunk?",
+      "taxonomyCode": "TAX-03.02.04",
+      "taxonomyTerm": "Collection Topology",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q444",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Information about the data",
+      "question": "Are any Splunk Technology Add-ons available?",
+      "taxonomyCode": "TAX-03.03.03",
+      "taxonomyTerm": "App & Technology Add-on",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q445",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Information about the data",
+      "question": "Does any sensitive data need to be scrubbed prior to indexing?",
+      "taxonomyCode": "TAX-04.13.08",
+      "taxonomyTerm": "Field Masking / Redaction Rule",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q446",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Information about the data",
+      "question": "Does the data contain any PII or other potentially sensitive data?",
+      "taxonomyCode": "TAX-02.02.06",
+      "taxonomyTerm": "Data Classification",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q447",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Information about the data",
+      "question": "What Data Classification is this data?",
+      "taxonomyCode": "TAX-02.02.06",
+      "taxonomyTerm": "Data Classification",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q448",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Information about the data",
+      "question": "Who can have access to the data?",
+      "taxonomyCode": "TAX-02.08",
+      "taxonomyTerm": "Access Control",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q449",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Data storage",
+      "question": "Is there an existing index this data should be sent to or is a new index requested or required?",
+      "taxonomyCode": "TAX-03.01.03",
+      "taxonomyTerm": "Index Destination",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q450",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Data storage",
+      "question": "For how long must this data be retained?",
+      "taxonomyCode": "TAX-02.06.05",
+      "taxonomyTerm": "Retention Policy",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q451",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Data storage",
+      "question": "What is the earliest date from which the data should be ingested?",
+      "taxonomyCode": "TAX-06.01.01",
+      "taxonomyTerm": "Onboarding Record",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q452",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Data storage",
+      "question": "How often should data come into Splunk from the source?",
+      "taxonomyCode": "TAX-04.12.03",
+      "taxonomyTerm": "Expected Frequency",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q453",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Additional information",
+      "question": "What is the use case(s) for this data?",
+      "taxonomyCode": "TAX-05.01",
+      "taxonomyTerm": "Use Case Definition",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q454",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Additional information",
+      "question": "What do you intend to do with the data?",
+      "taxonomyCode": "TAX-07.25.02",
+      "taxonomyTerm": "Expected Business Outcomes",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q455",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Additional information",
+      "question": "Who is the Data Owner?",
+      "taxonomyCode": "UNMAPPED",
+      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q456",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Additional information",
+      "question": "Who is the subject matter expert on this data?",
+      "taxonomyCode": "UNMAPPED",
+      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q457",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Additional information",
+      "question": "Does this data need to be monitored in case of an outage?",
+      "taxonomyCode": "TAX-04.10.01",
+      "taxonomyTerm": "Event Health Check",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q458",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Additional information",
+      "question": "Who needs to be notified if there is an outage on this data source?",
+      "taxonomyCode": "TAX-02.07.04",
+      "taxonomyTerm": "Escalation Matrix",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q459",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Additional information",
+      "question": "At what level should data be monitored?",
+      "taxonomyCode": "TAX-04.10",
+      "taxonomyTerm": "Data Quality & Health Checks",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q460",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Additional information",
+      "question": "What method should be used to send the alert?",
+      "taxonomyCode": "TAX-02.07.04",
+      "taxonomyTerm": "Escalation Matrix",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q461",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Consultations and Metadata > Additional information",
+      "question": "What is the impact and urgency if a data outage occurs?",
+      "taxonomyCode": "TAX-02.07.04",
+      "taxonomyTerm": "Escalation Matrix",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q462",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Things to Test While Configuring Data Ingestion > Other things to check and configure > Data parsing (in addition to the Great 8)",
+      "question": "Is the host name properly set?",
+      "taxonomyCode": "UNMAPPED",
+      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q463",
+      "section": "Clara-fication: Data Onboarding Best Practices (Splunk Blog, Feb 2025)",
+      "subsection": "Things to Test While Configuring Data Ingestion > Other things to check and configure > Data parsing (in addition to the Great 8)",
+      "question": "What format is the data in?",
+      "taxonomyCode": "TAX-04.05.05",
+      "taxonomyTerm": "Parsing Strategy",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q464",
+      "section": "Central Log Request Form (Splunk Intake Template)",
+      "subsection": "",
+      "question": "Any Additional Requested Services?",
+      "taxonomyCode": "UNMAPPED",
+      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "onboardingPhase": "Log Viability"
     }
   ]
 }
