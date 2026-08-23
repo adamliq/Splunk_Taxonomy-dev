@@ -6046,8 +6046,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "When are events generated?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.04",
+      "taxonomyTerm": "Event Generation Timing",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6055,8 +6055,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Are events generated immediately?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.04",
+      "taxonomyTerm": "Event Generation Timing",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6064,8 +6064,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Are events buffered?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.04",
+      "taxonomyTerm": "Event Generation Timing",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6073,8 +6073,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Are events produced asynchronously?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.04",
+      "taxonomyTerm": "Event Generation Timing",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6082,8 +6082,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Are audit records generated before or after an action completes?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.04",
+      "taxonomyTerm": "Event Generation Timing",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6091,8 +6091,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Can events be delayed internally?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.04",
+      "taxonomyTerm": "Event Generation Timing",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6100,8 +6100,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Are events aggregated before export?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.04",
+      "taxonomyTerm": "Event Generation Timing",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6109,8 +6109,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Are repeated events suppressed?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.05",
+      "taxonomyTerm": "Source-Side Suppression and Failure Behaviour",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6118,8 +6118,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Is rate limiting performed?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.05",
+      "taxonomyTerm": "Source-Side Suppression and Failure Behaviour",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6127,8 +6127,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Is deduplication performed?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.05",
+      "taxonomyTerm": "Source-Side Suppression and Failure Behaviour",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6136,8 +6136,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Are events sampled?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.05",
+      "taxonomyTerm": "Source-Side Suppression and Failure Behaviour",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6145,8 +6145,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Can logging be disabled by an administrator?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.05",
+      "taxonomyTerm": "Source-Side Suppression and Failure Behaviour",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6154,8 +6154,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Can users alter or delete logs?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.05",
+      "taxonomyTerm": "Source-Side Suppression and Failure Behaviour",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6163,8 +6163,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "What happens when local storage becomes full?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.05",
+      "taxonomyTerm": "Source-Side Suppression and Failure Behaviour",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6172,8 +6172,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Does logging stop?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.05",
+      "taxonomyTerm": "Source-Side Suppression and Failure Behaviour",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6181,8 +6181,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Are old events overwritten?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.05",
+      "taxonomyTerm": "Source-Side Suppression and Failure Behaviour",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6190,8 +6190,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Is an alert generated if logging fails?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.05",
+      "taxonomyTerm": "Source-Side Suppression and Failure Behaviour",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -6199,8 +6199,8 @@
       "section": "Log Onboarding Questionnaire — 12. Log Generation Behaviour",
       "subsection": "",
       "question": "Can the application continue operating if logging fails?",
-      "taxonomyCode": "TAX-03",
-      "taxonomyTerm": "Data Collection & Routing",
+      "taxonomyCode": "TAX-04.12.05",
+      "taxonomyTerm": "Source-Side Suppression and Failure Behaviour",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7306,8 +7306,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Is transport encrypted?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-03.02.11.01",
+      "taxonomyTerm": "Transport Encryption Requirements",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7315,8 +7315,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "What encryption protocol is used?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-03.02.11.01",
+      "taxonomyTerm": "Transport Encryption Requirements",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7324,8 +7324,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Is encryption mandatory?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-03.02.11.01",
+      "taxonomyTerm": "Transport Encryption Requirements",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7333,8 +7333,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Are certificates validated?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-03.02.11.02",
+      "taxonomyTerm": "Certificate and Key Management",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7342,8 +7342,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Who manages certificates?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-03.02.11.02",
+      "taxonomyTerm": "Certificate and Key Management",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7351,8 +7351,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Is mutual authentication required?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-03.02.11.02",
+      "taxonomyTerm": "Certificate and Key Management",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7360,8 +7360,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Is data encrypted while buffered?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-03.02.11.01",
+      "taxonomyTerm": "Transport Encryption Requirements",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7369,8 +7369,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Is data encrypted at rest?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-03.02.11.01",
+      "taxonomyTerm": "Transport Encryption Requirements",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7378,8 +7378,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Is customer-managed key encryption required?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-03.02.11.02",
+      "taxonomyTerm": "Certificate and Key Management",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7387,8 +7387,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Is KMS or equivalent used?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-03.02.11.02",
+      "taxonomyTerm": "Certificate and Key Management",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7396,8 +7396,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Are sensitive fields included?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-04.13.12",
+      "taxonomyTerm": "Sensitive Data Exposure Assessment",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7405,8 +7405,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Are credentials ever written to logs?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-04.13.12",
+      "taxonomyTerm": "Sensitive Data Exposure Assessment",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7414,8 +7414,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Are tokens or secrets present?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-04.13.12",
+      "taxonomyTerm": "Sensitive Data Exposure Assessment",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7423,8 +7423,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Are session cookies present?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-04.13.12",
+      "taxonomyTerm": "Sensitive Data Exposure Assessment",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7432,8 +7432,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Are personal identifiers present?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-04.13.12",
+      "taxonomyTerm": "Sensitive Data Exposure Assessment",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7441,8 +7441,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Is masking required?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-04.13.12",
+      "taxonomyTerm": "Sensitive Data Exposure Assessment",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7450,8 +7450,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Is tokenization required?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-04.13.12",
+      "taxonomyTerm": "Sensitive Data Exposure Assessment",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7459,8 +7459,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Is redaction required?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-04.13.12",
+      "taxonomyTerm": "Sensitive Data Exposure Assessment",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7468,8 +7468,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "At what point should masking occur?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-04.13.12",
+      "taxonomyTerm": "Sensitive Data Exposure Assessment",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -7477,8 +7477,8 @@
       "section": "Log Onboarding Questionnaire — 20. Encryption and Data Protection",
       "subsection": "",
       "question": "Must original unredacted data be retained anywhere?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-04.13.12",
+      "taxonomyTerm": "Sensitive Data Exposure Assessment",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11185,8 +11185,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Can an attacker disable logging?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-02.02.05.01",
+      "taxonomyTerm": "Logging Pipeline Threat Model",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11194,8 +11194,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Can an attacker delete source logs?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-02.02.05.01",
+      "taxonomyTerm": "Logging Pipeline Threat Model",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11203,8 +11203,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Can an attacker alter source logs?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-02.02.05.01",
+      "taxonomyTerm": "Logging Pipeline Threat Model",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11212,8 +11212,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Can an attacker intercept logs in transit?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-02.02.05.01",
+      "taxonomyTerm": "Logging Pipeline Threat Model",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11221,8 +11221,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Can an attacker forge log events?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-04.14.03",
+      "taxonomyTerm": "Metadata Spoofing and Trust Boundary",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11230,8 +11230,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Can an attacker replay events?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-02.02.05.01",
+      "taxonomyTerm": "Logging Pipeline Threat Model",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11239,8 +11239,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Can an attacker overwhelm the pipeline?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-03.02.10.04",
+      "taxonomyTerm": "Pipeline Resource Exhaustion",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11248,8 +11248,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Can an attacker exhaust queues?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-03.02.10.04",
+      "taxonomyTerm": "Pipeline Resource Exhaustion",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11257,8 +11257,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Can an attacker poison parsing?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-04.14.01",
+      "taxonomyTerm": "Injection and Delimiter Confusion",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11266,8 +11266,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Can malformed events affect collectors?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-04.14.02",
+      "taxonomyTerm": "Resource Exhaustion and Malformed Input Handling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11275,8 +11275,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Are credentials for log collection protected?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-02.02.05.01",
+      "taxonomyTerm": "Logging Pipeline Threat Model",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11284,8 +11284,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Can compromise of a collector provide access back into the source environment?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-02.02.05.01",
+      "taxonomyTerm": "Logging Pipeline Threat Model",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11293,8 +11293,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Are collector permissions minimized?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-02.02.05.01",
+      "taxonomyTerm": "Logging Pipeline Threat Model",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11302,8 +11302,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Is the ingestion endpoint exposed to the internet?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-02.02.05.01",
+      "taxonomyTerm": "Logging Pipeline Threat Model",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11311,8 +11311,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Can unauthorised systems send events to it?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-02.02.05.01",
+      "taxonomyTerm": "Logging Pipeline Threat Model",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11320,8 +11320,8 @@
       "section": "Log Onboarding Questionnaire — 46. Threat Model of the Logging Pipeline",
       "subsection": "",
       "question": "Is source authentication enforced?",
-      "taxonomyCode": "TAX-02",
-      "taxonomyTerm": "Governance & Compliance",
+      "taxonomyCode": "TAX-02.02.05.01",
+      "taxonomyTerm": "Logging Pipeline Threat Model",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -11635,8 +11635,8 @@
       "section": "Log Onboarding Questionnaire — 50. Operational Runbook",
       "subsection": "",
       "question": "How is the collection started?",
-      "taxonomyCode": "TAX-06",
-      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "taxonomyCode": "TAX-02.07.10.01",
+      "taxonomyTerm": "Lifecycle Operations",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -11644,8 +11644,8 @@
       "section": "Log Onboarding Questionnaire — 50. Operational Runbook",
       "subsection": "",
       "question": "How is it stopped?",
-      "taxonomyCode": "TAX-06",
-      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "taxonomyCode": "TAX-02.07.10.01",
+      "taxonomyTerm": "Lifecycle Operations",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -11653,8 +11653,8 @@
       "section": "Log Onboarding Questionnaire — 50. Operational Runbook",
       "subsection": "",
       "question": "How is it restarted?",
-      "taxonomyCode": "TAX-06",
-      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "taxonomyCode": "TAX-02.07.10.01",
+      "taxonomyTerm": "Lifecycle Operations",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -11662,8 +11662,8 @@
       "section": "Log Onboarding Questionnaire — 50. Operational Runbook",
       "subsection": "",
       "question": "How is collection health checked?",
-      "taxonomyCode": "TAX-06",
-      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "taxonomyCode": "TAX-02.07.10.01",
+      "taxonomyTerm": "Lifecycle Operations",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -11671,8 +11671,8 @@
       "section": "Log Onboarding Questionnaire — 50. Operational Runbook",
       "subsection": "",
       "question": "How are credentials updated?",
-      "taxonomyCode": "TAX-06",
-      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "taxonomyCode": "TAX-02.07.10.02",
+      "taxonomyTerm": "Credential and Certificate Maintenance",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -11680,8 +11680,8 @@
       "section": "Log Onboarding Questionnaire — 50. Operational Runbook",
       "subsection": "",
       "question": "How are certificates renewed?",
-      "taxonomyCode": "TAX-06",
-      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "taxonomyCode": "TAX-02.07.10.02",
+      "taxonomyTerm": "Credential and Certificate Maintenance",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -11689,8 +11689,8 @@
       "section": "Log Onboarding Questionnaire — 50. Operational Runbook",
       "subsection": "",
       "question": "How is a failed queue recovered?",
-      "taxonomyCode": "TAX-06",
-      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "taxonomyCode": "TAX-02.07.10.03",
+      "taxonomyTerm": "Recovery and Rollback Procedures",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -11698,8 +11698,8 @@
       "section": "Log Onboarding Questionnaire — 50. Operational Runbook",
       "subsection": "",
       "question": "How is a backfill initiated?",
-      "taxonomyCode": "TAX-06",
-      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "taxonomyCode": "TAX-02.07.10.03",
+      "taxonomyTerm": "Recovery and Rollback Procedures",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -11707,8 +11707,8 @@
       "section": "Log Onboarding Questionnaire — 50. Operational Runbook",
       "subsection": "",
       "question": "How are missing events investigated?",
-      "taxonomyCode": "TAX-06",
-      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "taxonomyCode": "TAX-02.07.10.04",
+      "taxonomyTerm": "Failure Investigation Procedures",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -11716,8 +11716,8 @@
       "section": "Log Onboarding Questionnaire — 50. Operational Runbook",
       "subsection": "",
       "question": "How is volume investigated?",
-      "taxonomyCode": "TAX-06",
-      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "taxonomyCode": "TAX-02.07.10.04",
+      "taxonomyTerm": "Failure Investigation Procedures",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -11725,8 +11725,8 @@
       "section": "Log Onboarding Questionnaire — 50. Operational Runbook",
       "subsection": "",
       "question": "How are parsing failures investigated?",
-      "taxonomyCode": "TAX-06",
-      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "taxonomyCode": "TAX-02.07.10.04",
+      "taxonomyTerm": "Failure Investigation Procedures",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -11734,8 +11734,8 @@
       "section": "Log Onboarding Questionnaire — 50. Operational Runbook",
       "subsection": "",
       "question": "How is the integration rolled back?",
-      "taxonomyCode": "TAX-06",
-      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "taxonomyCode": "TAX-02.07.10.03",
+      "taxonomyTerm": "Recovery and Rollback Procedures",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -11743,8 +11743,8 @@
       "section": "Log Onboarding Questionnaire — 50. Operational Runbook",
       "subsection": "",
       "question": "Who should be contacted for each failure type?",
-      "taxonomyCode": "TAX-06",
-      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "taxonomyCode": "TAX-02.07.10.05",
+      "taxonomyTerm": "Escalation and Evidence Collection",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -11752,8 +11752,8 @@
       "section": "Log Onboarding Questionnaire — 50. Operational Runbook",
       "subsection": "",
       "question": "What evidence should support personnel collect before escalation?",
-      "taxonomyCode": "TAX-06",
-      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "taxonomyCode": "TAX-02.07.10.05",
+      "taxonomyTerm": "Escalation and Evidence Collection",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -12913,8 +12913,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "Who owns the data contract?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.01",
+      "taxonomyTerm": "Contract Ownership and Versioning",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -12922,8 +12922,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "Is the data contract version controlled?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.01",
+      "taxonomyTerm": "Contract Ownership and Versioning",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -12931,8 +12931,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "What constitutes a breaking schema change?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.02",
+      "taxonomyTerm": "Compatibility and Change Management",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -12940,8 +12940,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "How are consumers informed of changes?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.02",
+      "taxonomyTerm": "Compatibility and Change Management",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -12949,8 +12949,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "Can the producer and SIEM configuration be upgraded independently?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.02",
+      "taxonomyTerm": "Compatibility and Change Management",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -12958,8 +12958,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "Are incompatible versions prevented from silently operating together?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.02",
+      "taxonomyTerm": "Compatibility and Change Management",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -12967,8 +12967,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "Are mandatory fields explicitly identified?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.03",
+      "taxonomyTerm": "Field Semantics and Documentation",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -12976,8 +12976,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "Are semantic definitions provided for ambiguous fields?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.03",
+      "taxonomyTerm": "Field Semantics and Documentation",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -12985,8 +12985,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "Are enum values documented?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.03",
+      "taxonomyTerm": "Field Semantics and Documentation",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -12994,8 +12994,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "Are units documented?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.03",
+      "taxonomyTerm": "Field Semantics and Documentation",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13003,8 +13003,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "Are null, empty, zero, omitted, and unknown values distinguished?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.03",
+      "taxonomyTerm": "Field Semantics and Documentation",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13012,8 +13012,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "Is backward compatibility defined?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.02",
+      "taxonomyTerm": "Compatibility and Change Management",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13021,8 +13021,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "Is forward compatibility defined?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.02",
+      "taxonomyTerm": "Compatibility and Change Management",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13030,8 +13030,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "Is schema validation automated?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.04",
+      "taxonomyTerm": "Schema Validation and Drift Safety",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13039,8 +13039,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "Can unknown fields be retained safely?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.04",
+      "taxonomyTerm": "Schema Validation and Drift Safety",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13048,8 +13048,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "Can unknown event types be retained safely?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.04",
+      "taxonomyTerm": "Schema Validation and Drift Safety",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -13057,8 +13057,8 @@
       "section": "Log Onboarding Questionnaire — 58. Logging Data Contract",
       "subsection": "",
       "question": "Are schema violations observable?",
-      "taxonomyCode": "TAX-04",
-      "taxonomyTerm": "Data Engineering & Parsing",
+      "taxonomyCode": "TAX-04.15.04",
+      "taxonomyTerm": "Schema Validation and Drift Safety",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
