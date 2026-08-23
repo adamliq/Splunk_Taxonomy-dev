@@ -1,0 +1,2940 @@
+{
+  "schemaVersion": "1.0",
+  "description": "Extensible catalogue of review/validation questions used by the LATCH onboarding app's Reference → Questions table. Each entry pairs a question with the taxonomy node it is most relevant to and the onboarding phase it applies to, so questions can be filtered, grouped, or surfaced contextually alongside the taxonomy and onboarding flow they inform.",
+  "source": {
+    "origin": "logging-reference-architecture.md",
+    "note": "The initial 323 entries were extracted from the CISA Logging Reference Architecture (converted to Markdown in this repository). taxonomyCode/taxonomyTerm/onboardingPhase were assigned by editorial judgement at the (section, subsection) level, not verbatim from the source document -- treat them as a reasoned starting point, refine as needed."
+  },
+  "onboardingPhases": [
+    {
+      "value": "Log Viability",
+      "taxonomyCode": "TAX-07.01",
+      "description": "Phase 1 -- is onboarding feasible, supportable and proportionate?"
+    },
+    {
+      "value": "Worthiness & Implementation",
+      "taxonomyCode": "TAX-07.02–TAX-07.03",
+      "description": "Is it worth building, and was it built and accepted correctly?"
+    },
+    {
+      "value": "Cyber Value Gates",
+      "taxonomyCode": "TAX-06.05",
+      "description": "Does the parsed data clear the minimum bar to ingest?"
+    },
+    {
+      "value": "Log Sustainment",
+      "taxonomyCode": "TAX-07.04",
+      "description": "Does it stay healthy, used and worth keeping?"
+    }
+  ],
+  "howToAddQuestions": "Append a new object to the `questions` array below. `id` should be the next unused Q### value (zero-padded, unique). `taxonomyCode` should be a real code from the taxonomy (Onboard Taxonomy tab) -- use the most specific node that fits, or a domain-level code (e.g. \"TAX-03\") if no more specific node exists yet. `onboardingPhase` must be one of the four values listed in `onboardingPhases` above. `section`/`subsection` are free text describing where the question comes from (a source document heading, a review checklist name, etc.) -- leave `subsection` as an empty string if the question has no finer-grained grouping.",
+  "questions": [
+    {
+      "id": "Q001",
+      "section": "2. HOW TO USE THE LRA",
+      "subsection": "",
+      "question": "What security outcomes must the logging capability support?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q002",
+      "section": "2. HOW TO USE THE LRA",
+      "subsection": "",
+      "question": "What data must my agency collect and retain to support those outcomes?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q003",
+      "section": "2. HOW TO USE THE LRA",
+      "subsection": "",
+      "question": "How should that data move through the logging infrastructure from collection through analysis and storage?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q004",
+      "section": "2. HOW TO USE THE LRA",
+      "subsection": "",
+      "question": "What controls must my agency put in place to protect the logging capability and govern access, retention, and authorized sharing?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q005",
+      "section": "2. HOW TO USE THE LRA",
+      "subsection": "",
+      "question": "How will my agency validate that the logging capability is complete, usable, and aligns to policy?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q006",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.1 CONTINUOUS EVENT MONITORING",
+      "question": "Is suspicious or anomalous activity occurring across identity, endpoint, network, cloud, IoT, application/service, and administrative domains?",
+      "taxonomyCode": "TAX-05",
+      "taxonomyTerm": "Detection & Response",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q007",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.1 CONTINUOUS EVENT MONITORING",
+      "question": "Are security tool alerts generated with enough context and timeliness to support triage and follow-on investigation?",
+      "taxonomyCode": "TAX-05",
+      "taxonomyTerm": "Detection & Response",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q008",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.1 CONTINUOUS EVENT MONITORING",
+      "question": "Are known indicators of compromise (IOCs) present in current or recent telemetry?",
+      "taxonomyCode": "TAX-05",
+      "taxonomyTerm": "Detection & Response",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q009",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.2 THREAT HUNTING",
+      "question": "Can analysts search and correlate normalized and source-detailed data across identity, endpoint, network, cloud, IoT, and application/services sources?",
+      "taxonomyCode": "TAX-05",
+      "taxonomyTerm": "Detection & Response",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q010",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.2 THREAT HUNTING",
+      "question": "Are sufficiently detailed fields available for investigation, such as command-line arguments, parent- child process relationships, authentication context, and cloud application programming interface (API) request details?",
+      "taxonomyCode": "TAX-05",
+      "taxonomyTerm": "Detection & Response",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q011",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.2 THREAT HUNTING",
+      "question": "Do consistent identity and asset identifiers exist across sources to support pivot-based investigation?",
+      "taxonomyCode": "TAX-05",
+      "taxonomyTerm": "Detection & Response",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q012",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.3 INCIDENT RESPONSE",
+      "question": "Which systems, accounts, identities, and/or data are affected?",
+      "taxonomyCode": "TAX-05",
+      "taxonomyTerm": "Detection & Response",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q013",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.3 INCIDENT RESPONSE",
+      "question": "Can analysts reconstruct user and process timelines from correlated logs?",
+      "taxonomyCode": "TAX-05",
+      "taxonomyTerm": "Detection & Response",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q014",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.3 INCIDENT RESPONSE",
+      "question": "Are records integrity-protected and handled in a way that supports evidentiary use where required?",
+      "taxonomyCode": "TAX-05",
+      "taxonomyTerm": "Detection & Response",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q015",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.4 DIGITAL FORENSICS",
+      "question": "Can investigators reconstruct the sequence of events, including initial access, escalation, lateral movement, and data impact?",
+      "taxonomyCode": "TAX-05",
+      "taxonomyTerm": "Detection & Response",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q016",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.4 DIGITAL FORENSICS",
+      "question": "Are designated datasets protected in ways that support evidentiary use, such as hashing, signing, or immutability where required?",
+      "taxonomyCode": "TAX-05",
+      "taxonomyTerm": "Detection & Response",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q017",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.4 DIGITAL FORENSICS",
+      "question": "Are acquisition and handling procedures documented, and are duties appropriately separated where evidentiary handling is required?",
+      "taxonomyCode": "TAX-05",
+      "taxonomyTerm": "Detection & Response",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q018",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.5 MEASURING LOGGING CAPABILITY READINESS",
+      "question": "Are there mitigations in place, or other log sources that are already in place that make collection of that data less impactful?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q019",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.5 MEASURING LOGGING CAPABILITY READINESS",
+      "question": "What is the degree of impact the system has on the agency’s mission?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q020",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.5 MEASURING LOGGING CAPABILITY READINESS",
+      "question": "Are there alternative infrastructure or design choices that achieve mission and operational goals while decreasing cost or complexity for operability?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q021",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.5 MEASURING LOGGING CAPABILITY READINESS",
+      "question": "Are required log sources across all environments represented?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q022",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.5 MEASURING LOGGING CAPABILITY READINESS",
+      "question": "Does collected telemetry sufficiently depict network and host activity?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q023",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.5 MEASURING LOGGING CAPABILITY READINESS",
+      "question": "Are evaluations conducted to identify logging gaps and overlap?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q024",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.5 MEASURING LOGGING CAPABILITY READINESS",
+      "question": "Are events available quickly enough to support the intended outcome?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q025",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.5 MEASURING LOGGING CAPABILITY READINESS",
+      "question": "Do event records contain the fields and context required for correlation, scoping, and reconstruction?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q026",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.5 MEASURING LOGGING CAPABILITY READINESS",
+      "question": "Have logs or other data collected been altered or manipulated in any way outside of planned data engineering for log collection, ingestion, and normalization?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q027",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.5 MEASURING LOGGING CAPABILITY READINESS",
+      "question": "Can analysts search and retrieve data within the expected windows?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q028",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.5 MEASURING LOGGING CAPABILITY READINESS",
+      "question": "Are timestamps reliable, required fields populated, mappings stable, and parser failures visible?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q029",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.5 MEASURING LOGGING CAPABILITY READINESS",
+      "question": "Can analysts perform expected pivots and investigations without excessive manual reconciliation?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q030",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.5 MEASURING LOGGING CAPABILITY READINESS",
+      "question": "Are there attributes (such as timestamps) that are available that allow for correlation between events from the same and different log sources?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q031",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.5 MEASURING LOGGING CAPABILITY READINESS",
+      "question": "Are designated datasets protected and handled appropriately for evidentiary use where needed?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q032",
+      "section": "3. SECURITY OUTCOMES",
+      "subsection": "3.5 MEASURING LOGGING CAPABILITY READINESS",
+      "question": "Does the agency actively test whether the capability is complete, usable, and resilient over time?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q033",
+      "section": "4. ARCHITECTURAL DECISIONS",
+      "subsection": "4.1 TELEMETRY DECISIONS",
+      "question": "What telemetry categories are required to support baseline outcomes?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q034",
+      "section": "4. ARCHITECTURAL DECISIONS",
+      "subsection": "4.1 TELEMETRY DECISIONS",
+      "question": "What systems, services, and environments are expected to generate them?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q035",
+      "section": "4. ARCHITECTURAL DECISIONS",
+      "subsection": "4.1 TELEMETRY DECISIONS",
+      "question": "What event fidelity is required for the data to be operationally usable?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q036",
+      "section": "4. ARCHITECTURAL DECISIONS",
+      "subsection": "4.1 TELEMETRY DECISIONS",
+      "question": "What gaps exist today, and which are most urgent to close?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q037",
+      "section": "4. ARCHITECTURAL DECISIONS",
+      "subsection": "4.5 SEARCHABLE, RETRIEVABLE, AND IMMUTABLE HANDLING",
+      "question": "What datasets drive routine monitoring and hunting?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q038",
+      "section": "4. ARCHITECTURAL DECISIONS",
+      "subsection": "4.5 SEARCHABLE, RETRIEVABLE, AND IMMUTABLE HANDLING",
+      "question": "How long must the datasets remain actively searchable?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q039",
+      "section": "4. ARCHITECTURAL DECISIONS",
+      "subsection": "4.5 SEARCHABLE, RETRIEVABLE, AND IMMUTABLE HANDLING",
+      "question": "What datasets are eligible for earlier transition to lower-cost retrievable tiers?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q040",
+      "section": "4. ARCHITECTURAL DECISIONS",
+      "subsection": "4.5 SEARCHABLE, RETRIEVABLE, AND IMMUTABLE HANDLING",
+      "question": "What datasets require immutable handling and for how long?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q041",
+      "section": "4. ARCHITECTURAL DECISIONS",
+      "subsection": "4.5 SEARCHABLE, RETRIEVABLE, AND IMMUTABLE HANDLING",
+      "question": "How will retrieval, integrity, and auditability be validated?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q042",
+      "section": "4. ARCHITECTURAL DECISIONS",
+      "subsection": "4.7 LOGGING CAPABILITY OBSERVATION, VALIDATION, AND SAFE CHANGES",
+      "question": "How will the agency know that required datasets are present, timely, complete, and usable for the outcomes they are intended to support, and how will the agency detect and recover from degradation over time?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q043",
+      "section": "8. LOGGING INFRASTRUCTURE SECURITY, INTEGRITY, AND RESILIENCE",
+      "subsection": "8.3 RESILIENCE AND FAILURE HANDLING",
+      "question": "How does the agency detect degradation, recover missed data, preserve trust during partial failure, and validate that required datasets remain complete and usable over time?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q044",
+      "section": "9. RISK-INFORMED LOGGING BEYOND THE BASELINE",
+      "subsection": "9.3 METHOD FOR DETERMINING ABOVE-BASELINE LOGGING",
+      "question": "Can the agency reconstruct credential use across cloud and on-premises systems?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q045",
+      "section": "9. RISK-INFORMED LOGGING BEYOND THE BASELINE",
+      "subsection": "9.3 METHOD FOR DETERMINING ABOVE-BASELINE LOGGING",
+      "question": "Can it determine who changed a privileged role assignment and from where the change was made?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q046",
+      "section": "9. RISK-INFORMED LOGGING BEYOND THE BASELINE",
+      "subsection": "9.3 METHOD FOR DETERMINING ABOVE-BASELINE LOGGING",
+      "question": "Can it measure the scope and timing of data exfiltration?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q047",
+      "section": "9. RISK-INFORMED LOGGING BEYOND THE BASELINE",
+      "subsection": "9.3 METHOD FOR DETERMINING ABOVE-BASELINE LOGGING",
+      "question": "Can it verify integrity changes to critical files, services, or controller configurations?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q048",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.2 OUTCOME ALIGNMENT > C.2.1 Required Security Outcomes",
+      "question": "Does the plan clearly explain how the logging capability supports continuous event monitoring?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q049",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.2 OUTCOME ALIGNMENT > C.2.1 Required Security Outcomes",
+      "question": "Does the plan clearly explain how the logging capability supports threat hunting?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q050",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.2 OUTCOME ALIGNMENT > C.2.1 Required Security Outcomes",
+      "question": "Does the plan clearly explain how the logging capability supports incident response?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q051",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.2 OUTCOME ALIGNMENT > C.2.1 Required Security Outcomes",
+      "question": "Does the plan clearly explain how the logging capability supports digital forensics?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q052",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.2 OUTCOME ALIGNMENT > C.2.2 Operational Questions",
+      "question": "Does the plan identify the operational questions the agency must be able to answer with its logging capability?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q053",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.2 OUTCOME ALIGNMENT > C.2.2 Operational Questions",
+      "question": "Are those questions tied to concrete data, fidelity, searchability, and retention decisions?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q054",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.2 OUTCOME ALIGNMENT > C.2.2 Operational Questions",
+      "question": "Are timeliness expectations defined where monitoring or response speed matters?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q055",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.2 OUTCOME ALIGNMENT > C.2.3 Enterprise Perspective",
+      "question": "Does the plan describe how enterprise-level visibility will be achieved?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q056",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.2 OUTCOME ALIGNMENT > C.2.3 Enterprise Perspective",
+      "question": "Does it account for cross-domain operations across identity, endpoint, network, cloud, and administrative planes?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q057",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.2 OUTCOME ALIGNMENT > C.2.3 Enterprise Perspective",
+      "question": "Does it avoid treating logging as a set of disconnected local tool implementations?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q058",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.3 SCOPE AND COVERAGE > C.3.1 Scope Definition",
+      "question": "Are the environments, systems, services, and organizational boundaries in scope clearly defined?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q059",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.3 SCOPE AND COVERAGE > C.3.1 Scope Definition",
+      "question": "Are out-of-scope or deferred environments explicitly identified?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q060",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.3 SCOPE AND COVERAGE > C.3.1 Scope Definition",
+      "question": "Is the reason for exclusion or delay documented?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q061",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.3 SCOPE AND COVERAGE > C.3.2 Baseline Coverage",
+      "question": "Does the plan show how baseline logging requirements are satisfied?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q062",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.3 SCOPE AND COVERAGE > C.3.2 Baseline Coverage",
+      "question": "Does it identify the telemetry categories used to meet each baseline requirement?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q063",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.3 SCOPE AND COVERAGE > C.3.2 Baseline Coverage",
+      "question": "Does it address identity, network, endpoint, privileged/admin, cloud/SaaS admin, object/resource/data, and security-tool visibility as applicable?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q064",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.3 SCOPE AND COVERAGE > C.3.3 Specialized and High-Value Environments",
+      "question": "Does the plan address HVAs and other mission-critical systems?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q065",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.3 SCOPE AND COVERAGE > C.3.3 Specialized and High-Value Environments",
+      "question": "Does it address specialized environments such as OT, IoT, segmented, remote, or constrained systems where applicable?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q066",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.3 SCOPE AND COVERAGE > C.3.3 Specialized and High-Value Environments",
+      "question": "Does it address relevant zero trust policy decisions?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q067",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.3 SCOPE AND COVERAGE > C.3.3 Specialized and High-Value Environments",
+      "question": "Does it explain how collection differs in those environments without lowering trustworthiness expectations?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q068",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.4 TELEMETRY FIDELITY AND USABILITY > C.4.1 Minimum Event Fidelity",
+      "question": "Does the plan define the minimum event fidelity required for each major telemetry category?",
+      "taxonomyCode": "TAX-04",
+      "taxonomyTerm": "Data Engineering & Parsing",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q069",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.4 TELEMETRY FIDELITY AND USABILITY > C.4.1 Minimum Event Fidelity",
+      "question": "Does it move beyond source presence to address field completeness, attribution, and usable context?",
+      "taxonomyCode": "TAX-04",
+      "taxonomyTerm": "Data Engineering & Parsing",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q070",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.4 TELEMETRY FIDELITY AND USABILITY > C.4.1 Minimum Event Fidelity",
+      "question": "Does it identify major fidelity gaps that would weaken investigation, scoping, or reconstruction?",
+      "taxonomyCode": "TAX-04",
+      "taxonomyTerm": "Data Engineering & Parsing",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q071",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.4 TELEMETRY FIDELITY AND USABILITY > C.4.2 Common Fields for Cross-Source Use",
+      "question": "Does the plan identify the common fields required for cross-source operations?",
+      "taxonomyCode": "TAX-07.09.03",
+      "taxonomyTerm": "Required Fields",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q072",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.4 TELEMETRY FIDELITY AND USABILITY > C.4.2 Common Fields for Cross-Source Use",
+      "question": "Are timestamp, event type, identity or system context, affected resource, outcome, and provenance addressed?",
+      "taxonomyCode": "TAX-07.09.03",
+      "taxonomyTerm": "Required Fields",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q073",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.4 TELEMETRY FIDELITY AND USABILITY > C.4.2 Common Fields for Cross-Source Use",
+      "question": "Are additional fields preserved in support of zero trust policy decisions, where applicable for privilege state, network/session context, request detail, or object-level analysis?",
+      "taxonomyCode": "TAX-07.09.03",
+      "taxonomyTerm": "Required Fields",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q074",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.4 TELEMETRY FIDELITY AND USABILITY > C.4.3 Operational Usability",
+      "question": "Does the plan explain how analysts will pivot across identity, endpoint, network, cloud, and administrative data?",
+      "taxonomyCode": "TAX-04",
+      "taxonomyTerm": "Data Engineering & Parsing",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q075",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.4 TELEMETRY FIDELITY AND USABILITY > C.4.3 Operational Usability",
+      "question": "Does it preserve enough source-native detail for deeper investigation?",
+      "taxonomyCode": "TAX-04",
+      "taxonomyTerm": "Data Engineering & Parsing",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q076",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.4 TELEMETRY FIDELITY AND USABILITY > C.4.3 Operational Usability",
+      "question": "Does it avoid relying solely on alerts or summarized outputs where underlying event context is still needed?",
+      "taxonomyCode": "TAX-04",
+      "taxonomyTerm": "Data Engineering & Parsing",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q077",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.5 COLLECTION AND PROVENANCE > C.5.1 Collection Model",
+      "question": "Does the plan explain where collection occurs for each major telemetry class?",
+      "taxonomyCode": "TAX-03.02.01",
+      "taxonomyTerm": "Logging Pattern",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q078",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.5 COLLECTION AND PROVENANCE > C.5.1 Collection Model",
+      "question": "Does it identify which sources are treated as authoritative?",
+      "taxonomyCode": "TAX-03.02.01",
+      "taxonomyTerm": "Logging Pattern",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q079",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.5 COLLECTION AND PROVENANCE > C.5.1 Collection Model",
+      "question": "Does it account for collection differences across enterprise, cloud, SaaS, and specialized environments?",
+      "taxonomyCode": "TAX-03.02.01",
+      "taxonomyTerm": "Logging Pattern",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q080",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.5 COLLECTION AND PROVENANCE > C.5.2 Provenance Preservation",
+      "question": "Does the plan describe how provenance is preserved from source through downstream handling?",
+      "taxonomyCode": "TAX-03.02.09",
+      "taxonomyTerm": "Provenance",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q081",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.5 COLLECTION AND PROVENANCE > C.5.2 Provenance Preservation",
+      "question": "Are source identity, event time, and collection path recorded or recoverable?",
+      "taxonomyCode": "TAX-03.02.09",
+      "taxonomyTerm": "Provenance",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q082",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.5 COLLECTION AND PROVENANCE > C.5.2 Provenance Preservation",
+      "question": "Does the plan account for transformation history where it materially affects interpretation?",
+      "taxonomyCode": "TAX-03.02.09",
+      "taxonomyTerm": "Provenance",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q083",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.5 COLLECTION AND PROVENANCE > C.5.3 Delivery Assurance",
+      "question": "Does the plan address buffering, retry, restart persistence, or equivalent delivery safeguards?",
+      "taxonomyCode": "TAX-03.02.07",
+      "taxonomyTerm": "Transport Delivery Pattern",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q084",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.5 COLLECTION AND PROVENANCE > C.5.3 Delivery Assurance",
+      "question": "Does it describe how missed delivery or collection gaps are detected?",
+      "taxonomyCode": "TAX-03.02.07",
+      "taxonomyTerm": "Transport Delivery Pattern",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q085",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.5 COLLECTION AND PROVENANCE > C.5.3 Delivery Assurance",
+      "question": "Does it identify where silent loss could still occur?",
+      "taxonomyCode": "TAX-03.02.07",
+      "taxonomyTerm": "Transport Delivery Pattern",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q086",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.6 TRANSPORT AND DATAFLOW > C.6.1 Transport Patterns",
+      "question": "Does the plan specify how telemetry moves through the logging infrastructure?",
+      "taxonomyCode": "TAX-03.02.07",
+      "taxonomyTerm": "Transport Delivery Pattern",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q087",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.6 TRANSPORT AND DATAFLOW > C.6.1 Transport Patterns",
+      "question": "Does it distinguish between event-driven delivery, polling, buffering, store-and-forward, and other patterns?",
+      "taxonomyCode": "TAX-03.02.07",
+      "taxonomyTerm": "Transport Delivery Pattern",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q088",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.6 TRANSPORT AND DATAFLOW > C.6.1 Transport Patterns",
+      "question": "Are transport decisions tied to the needs of the source and the operational outcome?",
+      "taxonomyCode": "TAX-03.02.07",
+      "taxonomyTerm": "Transport Delivery Pattern",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q089",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.6 TRANSPORT AND DATAFLOW > C.6.2 Durability and Replay",
+      "question": "Does the plan identify where durable handoff occurs?",
+      "taxonomyCode": "TAX-03.02.07",
+      "taxonomyTerm": "Transport Delivery Pattern",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q090",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.6 TRANSPORT AND DATAFLOW > C.6.2 Durability and Replay",
+      "question": "Does it address replay, checkpointing, or backfill mechanisms where needed?",
+      "taxonomyCode": "TAX-03.02.07",
+      "taxonomyTerm": "Transport Delivery Pattern",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q091",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.6 TRANSPORT AND DATAFLOW > C.6.2 Durability and Replay",
+      "question": "Does it describe how the architecture behaves during partial failure?",
+      "taxonomyCode": "TAX-03.02.07",
+      "taxonomyTerm": "Transport Delivery Pattern",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q092",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.6 TRANSPORT AND DATAFLOW > C.6.3 Enterprise Dataflow",
+      "question": "Does the plan explain where collection ends and common downstream handling begins?",
+      "taxonomyCode": "TAX-03.02.08",
+      "taxonomyTerm": "Enterprise Architecture Pattern",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q093",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.6 TRANSPORT AND DATAFLOW > C.6.3 Enterprise Dataflow",
+      "question": "Does it explain how data reaches enterprise analytical or monitoring functions?",
+      "taxonomyCode": "TAX-03.02.08",
+      "taxonomyTerm": "Enterprise Architecture Pattern",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q094",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.6 TRANSPORT AND DATAFLOW > C.6.3 Enterprise Dataflow",
+      "question": "Does it describe how separate enclaves or environments converge into a usable enterprise view?",
+      "taxonomyCode": "TAX-03.02.08",
+      "taxonomyTerm": "Enterprise Architecture Pattern",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q095",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.7 NORMALIZATION, ENRICHMENT, AND SCHEMA GOVERNANCE > C.7.1 Normalized Event Representation",
+      "question": "Does the plan identify where normalized event records are produced?",
+      "taxonomyCode": "TAX-04.07",
+      "taxonomyTerm": "Field Normalisation",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q096",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.7 NORMALIZATION, ENRICHMENT, AND SCHEMA GOVERNANCE > C.7.1 Normalized Event Representation",
+      "question": "Does it explain what fields are normalized and why?",
+      "taxonomyCode": "TAX-04.07",
+      "taxonomyTerm": "Field Normalisation",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q097",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.7 NORMALIZATION, ENRICHMENT, AND SCHEMA GOVERNANCE > C.7.1 Normalized Event Representation",
+      "question": "Does it distinguish normalized event records from narrower workflow objects such as alerts or case payloads?",
+      "taxonomyCode": "TAX-04.07",
+      "taxonomyTerm": "Field Normalisation",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q098",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.7 NORMALIZATION, ENRICHMENT, AND SCHEMA GOVERNANCE > C.7.2 Recoverable Source-Native Context",
+      "question": "Does the plan specify what source-native detail remains recoverable?",
+      "taxonomyCode": "TAX-04.06",
+      "taxonomyTerm": "Field Extraction",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q099",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.7 NORMALIZATION, ENRICHMENT, AND SCHEMA GOVERNANCE > C.7.2 Recoverable Source-Native Context",
+      "question": "Does it explain where fuller context is preserved and how it is accessed?",
+      "taxonomyCode": "TAX-04.06",
+      "taxonomyTerm": "Field Extraction",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q100",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.7 NORMALIZATION, ENRICHMENT, AND SCHEMA GOVERNANCE > C.7.2 Recoverable Source-Native Context",
+      "question": "Does it avoid over-flattening records into operationally weak representations?",
+      "taxonomyCode": "TAX-04.06",
+      "taxonomyTerm": "Field Extraction",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q101",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.7 NORMALIZATION, ENRICHMENT, AND SCHEMA GOVERNANCE > C.7.3 Enrichment",
+      "question": "Does the plan explain what authoritative enrichment sources are used, such as identity, asset, or configuration data?",
+      "taxonomyCode": "TAX-04",
+      "taxonomyTerm": "Data Engineering & Parsing",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q102",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.7 NORMALIZATION, ENRICHMENT, AND SCHEMA GOVERNANCE > C.7.3 Enrichment",
+      "question": "Does it describe how enrichment improves usability without obscuring original event meaning?",
+      "taxonomyCode": "TAX-04",
+      "taxonomyTerm": "Data Engineering & Parsing",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q103",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.7 NORMALIZATION, ENRICHMENT, AND SCHEMA GOVERNANCE > C.7.3 Enrichment",
+      "question": "Can analysts distinguish source-provided values from added context where necessary?",
+      "taxonomyCode": "TAX-04",
+      "taxonomyTerm": "Data Engineering & Parsing",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q104",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.7 NORMALIZATION, ENRICHMENT, AND SCHEMA GOVERNANCE > C.7.4 Schema Governance",
+      "question": "Does the plan define how new sources are onboarded?",
+      "taxonomyCode": "TAX-04",
+      "taxonomyTerm": "Data Engineering & Parsing",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q105",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.7 NORMALIZATION, ENRICHMENT, AND SCHEMA GOVERNANCE > C.7.4 Schema Governance",
+      "question": "Does it define required fields and mapping expectations?",
+      "taxonomyCode": "TAX-04",
+      "taxonomyTerm": "Data Engineering & Parsing",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q106",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.7 NORMALIZATION, ENRICHMENT, AND SCHEMA GOVERNANCE > C.7.4 Schema Governance",
+      "question": "Does it address parser failure, unmapped values, schema drift, and downstream dependency management?",
+      "taxonomyCode": "TAX-04",
+      "taxonomyTerm": "Data Engineering & Parsing",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q107",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.8 STORAGE, SEARCHABILITY, AND RETENTION > C.8.1 Searchable Operational Window",
+      "question": "Does the plan identify which datasets must remain operationally searchable?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q108",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.8 STORAGE, SEARCHABILITY, AND RETENTION > C.8.1 Searchable Operational Window",
+      "question": "Does it define how long those datasets remain actively searchable?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q109",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.8 STORAGE, SEARCHABILITY, AND RETENTION > C.8.1 Searchable Operational Window",
+      "question": "Does it state whether search performance is sufficient for monitoring, hunting, and routine investigation?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q110",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.8 STORAGE, SEARCHABILITY, AND RETENTION > C.8.2 Retrievable Retention",
+      "question": "Does the plan identify which datasets may move into lower-cost retrievable storage?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q111",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.8 STORAGE, SEARCHABILITY, AND RETENTION > C.8.2 Retrievable Retention",
+      "question": "Does it define retrieval expectations and access paths?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q112",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.8 STORAGE, SEARCHABILITY, AND RETENTION > C.8.2 Retrievable Retention",
+      "question": "Does it ensure retrievability supports reconstruction, oversight, and longer-horizon review?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q113",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.8 STORAGE, SEARCHABILITY, AND RETENTION > C.8.3 Immutable or Evidentiary Handling",
+      "question": "Does the plan identify which datasets require stronger integrity or immutable handling?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q114",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.8 STORAGE, SEARCHABILITY, AND RETENTION > C.8.3 Immutable or Evidentiary Handling",
+      "question": "Does it explain why those datasets are designated that way?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q115",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.8 STORAGE, SEARCHABILITY, AND RETENTION > C.8.3 Immutable or Evidentiary Handling",
+      "question": "Does it document access, auditability, and handling expectations for those datasets?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q116",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.8 STORAGE, SEARCHABILITY, AND RETENTION > C.8.4 Storage Design Rationale",
+      "question": "Are storage and tiering decisions tied to operational outcomes rather than vendor defaults alone?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q117",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.8 STORAGE, SEARCHABILITY, AND RETENTION > C.8.4 Storage Design Rationale",
+      "question": "Does the plan distinguish actively searchable retention from retrievable retention clearly?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q118",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.8 STORAGE, SEARCHABILITY, AND RETENTION > C.8.4 Storage Design Rationale",
+      "question": "Does it identify major cost or scale constraints affecting storage design?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q119",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.9 SECURITY, ACCESS, MINIMIZATION, AND SHARING > C.9.1 Logging Infrastructure Protection",
+      "question": "Does the plan identify how the logging infrastructure is protected as a mission-critical capability?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q120",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.9 SECURITY, ACCESS, MINIMIZATION, AND SHARING > C.9.1 Logging Infrastructure Protection",
+      "question": "Are administrative access controls, least privilege, segmentation, and monitoring of privileged actions addressed?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q121",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.9 SECURITY, ACCESS, MINIMIZATION, AND SHARING > C.9.1 Logging Infrastructure Protection",
+      "question": "Does the plan cover more than just the analytics tier, including collection, transport, processing, and storage components?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q122",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.9 SECURITY, ACCESS, MINIMIZATION, AND SHARING > C.9.2 Integrity and Provenance",
+      "question": "Does the plan explain what integrity protections apply and where?",
+      "taxonomyCode": "TAX-03.02.09",
+      "taxonomyTerm": "Provenance",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q123",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.9 SECURITY, ACCESS, MINIMIZATION, AND SHARING > C.9.2 Integrity and Provenance",
+      "question": "Are hashing, signing, immutability, or equivalent controls identified where needed?",
+      "taxonomyCode": "TAX-03.02.09",
+      "taxonomyTerm": "Provenance",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q124",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.9 SECURITY, ACCESS, MINIMIZATION, AND SHARING > C.9.2 Integrity and Provenance",
+      "question": "Does the plan describe how provenance is preserved for designated datasets?",
+      "taxonomyCode": "TAX-03.02.09",
+      "taxonomyTerm": "Provenance",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q125",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.9 SECURITY, ACCESS, MINIMIZATION, AND SHARING > C.9.3 Access Control",
+      "question": "Does the plan define who can access what types of log data?",
+      "taxonomyCode": "TAX-02.08",
+      "taxonomyTerm": "Access Control",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q126",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.9 SECURITY, ACCESS, MINIMIZATION, AND SHARING > C.9.3 Access Control",
+      "question": "Are least privilege, separation of duties, and sensitive-data access restrictions addressed?",
+      "taxonomyCode": "TAX-02.08",
+      "taxonomyTerm": "Access Control",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q127",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.9 SECURITY, ACCESS, MINIMIZATION, AND SHARING > C.9.3 Access Control",
+      "question": "Are access logging and auditability covered?",
+      "taxonomyCode": "TAX-02.08",
+      "taxonomyTerm": "Access Control",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q128",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.9 SECURITY, ACCESS, MINIMIZATION, AND SHARING > C.9.4 Minimization and Redaction",
+      "question": "Does the plan identify what data must be minimized, redacted, or segmented?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q129",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.9 SECURITY, ACCESS, MINIMIZATION, AND SHARING > C.9.4 Minimization and Redaction",
+      "question": "Does it specify where those controls are applied?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q130",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.9 SECURITY, ACCESS, MINIMIZATION, AND SHARING > C.9.4 Minimization and Redaction",
+      "question": "Does it avoid scattering policy logic inconsistently across multiple tools or paths?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q131",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.9 SECURITY, ACCESS, MINIMIZATION, AND SHARING > C.9.5 Authorized Sharing",
+      "question": "Does the plan define what logging data may be shared externally and under what conditions?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q132",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.9 SECURITY, ACCESS, MINIMIZATION, AND SHARING > C.9.5 Authorized Sharing",
+      "question": "Does it explain how tagging, minimization, redaction, and routing are applied before sharing?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q133",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.9 SECURITY, ACCESS, MINIMIZATION, AND SHARING > C.9.5 Authorized Sharing",
+      "question": "Are sharing approvals, governance, and auditability addressed?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q134",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.10 VALIDATION, OBSERVABILITY, AND CHANGE CONTROL > C.10.1 Coverage Validation",
+      "question": "Does the plan explain how required sources and categories are validated for presence and completeness?",
+      "taxonomyCode": "TAX-07.26.02",
+      "taxonomyTerm": "Source Presence and Collection Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q135",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.10 VALIDATION, OBSERVABILITY, AND CHANGE CONTROL > C.10.1 Coverage Validation",
+      "question": "Are coverage reviews periodic and repeatable?",
+      "taxonomyCode": "TAX-07.26.02",
+      "taxonomyTerm": "Source Presence and Collection Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q136",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.10 VALIDATION, OBSERVABILITY, AND CHANGE CONTROL > C.10.1 Coverage Validation",
+      "question": "Are gaps tracked explicitly?",
+      "taxonomyCode": "TAX-07.26.02",
+      "taxonomyTerm": "Source Presence and Collection Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q137",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.10 VALIDATION, OBSERVABILITY, AND CHANGE CONTROL > C.10.2 Timeliness and Quality Validation",
+      "question": "Does the plan define how timeliness is measured?",
+      "taxonomyCode": "TAX-07.26.03",
+      "taxonomyTerm": "Timeliness and Latency Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q138",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.10 VALIDATION, OBSERVABILITY, AND CHANGE CONTROL > C.10.2 Timeliness and Quality Validation",
+      "question": "Are timestamp quality, field completeness, parser health, and schema conformance checked?",
+      "taxonomyCode": "TAX-07.26.03",
+      "taxonomyTerm": "Timeliness and Latency Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q139",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.10 VALIDATION, OBSERVABILITY, AND CHANGE CONTROL > C.10.2 Timeliness and Quality Validation",
+      "question": "Are degraded conditions visible to the agency before they affect operations materially?",
+      "taxonomyCode": "TAX-07.26.03",
+      "taxonomyTerm": "Timeliness and Latency Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q140",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.10 VALIDATION, OBSERVABILITY, AND CHANGE CONTROL > C.10.3 Operational Usability Validation",
+      "question": "Does the plan explain how the agency verifies that analysts can perform required pivots and investigations?",
+      "taxonomyCode": "TAX-07.26.07",
+      "taxonomyTerm": "Operational Usability Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q141",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.10 VALIDATION, OBSERVABILITY, AND CHANGE CONTROL > C.10.3 Operational Usability Validation",
+      "question": "Are synthetic tests, replay tests, exercises, or equivalent validation methods used?",
+      "taxonomyCode": "TAX-07.26.07",
+      "taxonomyTerm": "Operational Usability Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q142",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.10 VALIDATION, OBSERVABILITY, AND CHANGE CONTROL > C.10.3 Operational Usability Validation",
+      "question": "Does the plan validate searchability and retrieval in practice rather than assume they work?",
+      "taxonomyCode": "TAX-07.26.07",
+      "taxonomyTerm": "Operational Usability Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q143",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.10 VALIDATION, OBSERVABILITY, AND CHANGE CONTROL > C.10.4 Drift and Change Management",
+      "question": "Does the plan identify how source, parser, and schema changes are introduced?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q144",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.10 VALIDATION, OBSERVABILITY, AND CHANGE CONTROL > C.10.4 Drift and Change Management",
+      "question": "Are rollback or mitigation procedures defined?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q145",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.10 VALIDATION, OBSERVABILITY, AND CHANGE CONTROL > C.10.4 Drift and Change Management",
+      "question": "Does the plan describe how operational regressions will be detected after change?",
+      "taxonomyCode": "TAX-06",
+      "taxonomyTerm": "Lifecycle, Assurance & Dependency",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q146",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.11 ABOVE-BASELINE LOGGING DECISIONS > C.11.1 Decision Basis",
+      "question": "Does the plan explain where the agency has chosen to go above baseline?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q147",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.11 ABOVE-BASELINE LOGGING DECISIONS > C.11.1 Decision Basis",
+      "question": "Are those decisions justified by mission, threat, risk, or visibility considerations?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q148",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.11 ABOVE-BASELINE LOGGING DECISIONS > C.11.1 Decision Basis",
+      "question": "Are they documented clearly enough that another team could understand the rationale?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q149",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.11 ABOVE-BASELINE LOGGING DECISIONS > C.11.2 Investigative Use Case Linkage",
+      "question": "Does the plan connect above-baseline telemetry to specific investigative or operational questions?",
+      "taxonomyCode": "TAX-05",
+      "taxonomyTerm": "Detection & Response",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q150",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.11 ABOVE-BASELINE LOGGING DECISIONS > C.11.2 Investigative Use Case Linkage",
+      "question": "Does it explain what those additional data sources or fidelity levels enable?",
+      "taxonomyCode": "TAX-05",
+      "taxonomyTerm": "Detection & Response",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q151",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.11 ABOVE-BASELINE LOGGING DECISIONS > C.11.2 Investigative Use Case Linkage",
+      "question": "Does it avoid treating above-baseline logging as ad hoc accumulation?",
+      "taxonomyCode": "TAX-05",
+      "taxonomyTerm": "Detection & Response",
+      "onboardingPhase": "Log Viability"
+    },
+    {
+      "id": "Q152",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.11 ABOVE-BASELINE LOGGING DECISIONS > C.11.3 Integration Into the Architecture",
+      "question": "Does the plan show how above-baseline telemetry is collected, transported, normalized, stored, protected, and validated?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q153",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.11 ABOVE-BASELINE LOGGING DECISIONS > C.11.3 Integration Into the Architecture",
+      "question": "Are retention and cost implications addressed?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q154",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.11 ABOVE-BASELINE LOGGING DECISIONS > C.11.3 Integration Into the Architecture",
+      "question": "Is above-baseline telemetry available to the teams that need it?",
+      "taxonomyCode": "TAX-03",
+      "taxonomyTerm": "Data Collection & Routing",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q155",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.12 MATURITY AND IMPROVEMENT > C.12.1 Current State",
+      "question": "Does the plan state the agency’s current maturity stage or equivalent current-state view?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q156",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.12 MATURITY AND IMPROVEMENT > C.12.1 Current State",
+      "question": "Does it describe the evidence supporting that assessment?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q157",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.12 MATURITY AND IMPROVEMENT > C.12.1 Current State",
+      "question": "Does it identify the largest operational gaps honestly?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q158",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.12 MATURITY AND IMPROVEMENT > C.12.2 Improvement Priorities",
+      "question": "Does the plan identify the highest-priority improvements for the next planning cycle?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q159",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.12 MATURITY AND IMPROVEMENT > C.12.2 Improvement Priorities",
+      "question": "Are those priorities tied to the largest risks to detection, threat hunting, incident response, or forensics?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q160",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.12 MATURITY AND IMPROVEMENT > C.12.2 Improvement Priorities",
+      "question": "Are dependencies and constraints identified?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q161",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.12 MATURITY AND IMPROVEMENT > C.12.3 Governance and Review",
+      "question": "Does the plan identify ownership and review cadence?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q162",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.12 MATURITY AND IMPROVEMENT > C.12.3 Governance and Review",
+      "question": "Does it define what events trigger plan updates?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q163",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.12 MATURITY AND IMPROVEMENT > C.12.3 Governance and Review",
+      "question": "Does it treat the plan as a living decision record rather than a static artifact?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q164",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.13 REVIEWER SUMMARY",
+      "question": "Does the Agency Logging Plan clearly explain how the agency’s logging capability supports monitoring, threat hunting, incident response, and forensics?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q165",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.13 REVIEWER SUMMARY",
+      "question": "Does it make the key architectural, retention, integrity, access, and validation decisions explicit?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q166",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.13 REVIEWER SUMMARY",
+      "question": "Does it identify what is still incomplete and how those gaps will be addressed?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q167",
+      "section": "Appendix C: PRIORITY ARCHITECTURE AND DESIGN DECISION CHECKLIST",
+      "subsection": "C.13 REVIEWER SUMMARY",
+      "question": "Would an implementation team be able to use this plan to build, validate, or improve the capability without having to infer major design decisions?",
+      "taxonomyCode": "TAX-02",
+      "taxonomyTerm": "Governance & Compliance",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q168",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.1 HOW TO USE THIS APPENDIX",
+      "question": "Coverage Does the agency collect this category for the relevant systems, services, and environments?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q169",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.1 HOW TO USE THIS APPENDIX",
+      "question": "Minimum usable fidelity Do event records preserve the minimum fields and context needed for correlation, scoping, and reconstruction?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q170",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.1 HOW TO USE THIS APPENDIX",
+      "question": "Operational accessibility Is the data available in the right timeframes and storage tiers for monitoring, threat hunting, incident response, and forensics?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q171",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.1 HOW TO USE THIS APPENDIX",
+      "question": "Known weaknesses What failure modes still materially weaken the agency’s ability to use this category?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q172",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.10 COMMON FIELDS REQUIRED ACROSS CATEGORIES > D.10.2 Validation Prompts",
+      "question": "Are these fields present and usable across the major baseline categories?",
+      "taxonomyCode": "TAX-07.09.03",
+      "taxonomyTerm": "Required Fields",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q173",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.10 COMMON FIELDS REQUIRED ACROSS CATEGORIES > D.10.2 Validation Prompts",
+      "question": "Are the field meanings stable enough for correlation across sources?",
+      "taxonomyCode": "TAX-07.09.03",
+      "taxonomyTerm": "Required Fields",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q174",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.10 COMMON FIELDS REQUIRED ACROSS CATEGORIES > D.10.2 Validation Prompts",
+      "question": "Are timestamps reliable enough for cross-source sequence reconstruction?",
+      "taxonomyCode": "TAX-07.09.03",
+      "taxonomyTerm": "Required Fields",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q175",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.10 COMMON FIELDS REQUIRED ACROSS CATEGORIES > D.10.2 Validation Prompts",
+      "question": "Is provenance preserved in a way that allows analysts to understand where the record came from and how it entered the logging infrastructure?",
+      "taxonomyCode": "TAX-07.09.03",
+      "taxonomyTerm": "Required Fields",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q176",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.11 QUICK GAP IDENTIFICATION PROMPTS > D.11.1 Coverage",
+      "question": "Which baseline categories are only partially covered today?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q177",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.11 QUICK GAP IDENTIFICATION PROMPTS > D.11.1 Coverage",
+      "question": "Which environments are missing one or more baseline categories entirely?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q178",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.11 QUICK GAP IDENTIFICATION PROMPTS > D.11.1 Coverage",
+      "question": "Are HVAs or mission-critical cloud services treated differently enough to reflect their risk?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q179",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.11 QUICK GAP IDENTIFICATION PROMPTS > D.11.2 Fidelity",
+      "question": "Which categories lack enough detail for real investigation or reconstruction?",
+      "taxonomyCode": "TAX-07.06",
+      "taxonomyTerm": "Log Format Quality Score",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q180",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.11 QUICK GAP IDENTIFICATION PROMPTS > D.11.2 Fidelity",
+      "question": "Where are key fields missing, unreliable, or inconsistently mapped?",
+      "taxonomyCode": "TAX-07.06",
+      "taxonomyTerm": "Log Format Quality Score",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q181",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.11 QUICK GAP IDENTIFICATION PROMPTS > D.11.2 Fidelity",
+      "question": "Which categories exist mainly as summaries or alerts rather than usable event records?",
+      "taxonomyCode": "TAX-07.06",
+      "taxonomyTerm": "Log Format Quality Score",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q182",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.11 QUICK GAP IDENTIFICATION PROMPTS > D.11.3 Searchability and Access",
+      "question": "Which categories are retained but not actively searchable?",
+      "taxonomyCode": "TAX-07.26.06",
+      "taxonomyTerm": "Searchability and Retrieval Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q183",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.11 QUICK GAP IDENTIFICATION PROMPTS > D.11.3 Searchability and Access",
+      "question": "Which categories are present only in isolated tools or enclaves?",
+      "taxonomyCode": "TAX-07.26.06",
+      "taxonomyTerm": "Searchability and Retrieval Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q184",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.11 QUICK GAP IDENTIFICATION PROMPTS > D.11.3 Searchability and Access",
+      "question": "Which categories are inaccessible to the enterprise SOC or central investigative function?",
+      "taxonomyCode": "TAX-07.26.06",
+      "taxonomyTerm": "Searchability and Retrieval Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q185",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.11 QUICK GAP IDENTIFICATION PROMPTS > D.11.4 Correlation",
+      "question": "Which categories cannot be reliably correlated across identity, endpoint, network, cloud, and administrative sources?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q186",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.11 QUICK GAP IDENTIFICATION PROMPTS > D.11.4 Correlation",
+      "question": "Where do entity identifiers or timestamps break enterprise pivots?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q187",
+      "section": "Appendix D: BASELINE LOGGING CATEGORIES AND MINIMUM FIDELITY QUICK REFERENCE",
+      "subsection": "D.11 QUICK GAP IDENTIFICATION PROMPTS > D.11.4 Correlation",
+      "question": "Which categories most frequently require manual reconciliation?",
+      "taxonomyCode": "TAX-07",
+      "taxonomyTerm": "Data Assessment Results",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q188",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "",
+      "question": "Is data arriving in time to support monitoring and response?",
+      "taxonomyCode": "TAX-07.26",
+      "taxonomyTerm": "CISA LRA Validation and Operational Readiness Checklist",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q189",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "",
+      "question": "Is event fidelity sufficient for investigation and reconstruction?",
+      "taxonomyCode": "TAX-07.26",
+      "taxonomyTerm": "CISA LRA Validation and Operational Readiness Checklist",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q190",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "",
+      "question": "Are required telemetry sources present and producing usable records?",
+      "taxonomyCode": "TAX-07.26",
+      "taxonomyTerm": "CISA LRA Validation and Operational Readiness Checklist",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q191",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "",
+      "question": "Can analysts search, pivot, retrieve, and validate the data they need?",
+      "taxonomyCode": "TAX-07.26",
+      "taxonomyTerm": "CISA LRA Validation and Operational Readiness Checklist",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q192",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "",
+      "question": "Are integrity, provenance, and access protections working as intended?",
+      "taxonomyCode": "TAX-07.26",
+      "taxonomyTerm": "CISA LRA Validation and Operational Readiness Checklist",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q193",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "",
+      "question": "Can the agency detect when the logging capability has degraded?",
+      "taxonomyCode": "TAX-07.26",
+      "taxonomyTerm": "CISA LRA Validation and Operational Readiness Checklist",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q194",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "",
+      "question": "Can the agency safely change the capability without silently breaking it?",
+      "taxonomyCode": "TAX-07.26",
+      "taxonomyTerm": "CISA LRA Validation and Operational Readiness Checklist",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q195",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.2 SCOPE AND COVERAGE VALIDATION > E.2.1 In-Scope Environment Validation",
+      "question": "Has the agency validated that all in-scope environments identified in the Agency Logging Plan are represented in the logging capability?",
+      "taxonomyCode": "TAX-07.26.01.01",
+      "taxonomyTerm": "In-Scope Environment Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q196",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.2 SCOPE AND COVERAGE VALIDATION > E.2.1 In-Scope Environment Validation",
+      "question": "Are enterprise, cloud, SaaS, mission, and specialized environments covered as described in the plan?",
+      "taxonomyCode": "TAX-07.26.01.01",
+      "taxonomyTerm": "In-Scope Environment Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q197",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.2 SCOPE AND COVERAGE VALIDATION > E.2.1 In-Scope Environment Validation",
+      "question": "Are out-of-scope or deferred environments explicitly identified and tracked?",
+      "taxonomyCode": "TAX-07.26.01.01",
+      "taxonomyTerm": "In-Scope Environment Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q198",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.2 SCOPE AND COVERAGE VALIDATION > E.2.2 Baseline Category Coverage Validation",
+      "question": "Has the agency validated that each baseline logging category is covered for the appropriate systems and environments?",
+      "taxonomyCode": "TAX-07.26.01.02",
+      "taxonomyTerm": "Baseline Category Coverage Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q199",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.2 SCOPE AND COVERAGE VALIDATION > E.2.2 Baseline Category Coverage Validation",
+      "question": "Are identity, network, endpoint/system, privileged/admin, cloud/SaaS admin, object/resource/data, and security-tool categories present where expected?",
+      "taxonomyCode": "TAX-07.26.01.02",
+      "taxonomyTerm": "Baseline Category Coverage Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q200",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.2 SCOPE AND COVERAGE VALIDATION > E.2.2 Baseline Category Coverage Validation",
+      "question": "Has the agency identified any baseline categories that are only partially present or inconsistently available?",
+      "taxonomyCode": "TAX-07.26.01.02",
+      "taxonomyTerm": "Baseline Category Coverage Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q201",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.2 SCOPE AND COVERAGE VALIDATION > E.2.3 High-Value and Specialized Environment Validation",
+      "question": "Has the agency validated that HVAs, mission-critical systems, or specialized environments receive the intended level of logging coverage?",
+      "taxonomyCode": "TAX-07.26.01.03",
+      "taxonomyTerm": "High-Value and Specialized Environment Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q202",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.2 SCOPE AND COVERAGE VALIDATION > E.2.3 High-Value and Specialized Environment Validation",
+      "question": "Are constrained environments handled through validated alternate collection patterns rather than undocumented exceptions?",
+      "taxonomyCode": "TAX-07.26.01.03",
+      "taxonomyTerm": "High-Value and Specialized Environment Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q203",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.2 SCOPE AND COVERAGE VALIDATION > E.2.3 High-Value and Specialized Environment Validation",
+      "question": "Are key blind spots for those environments documented and prioritized?",
+      "taxonomyCode": "TAX-07.26.01.03",
+      "taxonomyTerm": "High-Value and Specialized Environment Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q204",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.3 SOURCE PRESENCE AND COLLECTION VALIDATION > E.3.1 Source Onboarding Validation",
+      "question": "Has each required source or source class been validated as onboarded successfully?",
+      "taxonomyCode": "TAX-07.26.02.01",
+      "taxonomyTerm": "Source Onboarding Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q205",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.3 SOURCE PRESENCE AND COLLECTION VALIDATION > E.3.1 Source Onboarding Validation",
+      "question": "Are source owners and data dependencies known?",
+      "taxonomyCode": "TAX-07.26.02.01",
+      "taxonomyTerm": "Source Onboarding Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q206",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.3 SOURCE PRESENCE AND COLLECTION VALIDATION > E.3.1 Source Onboarding Validation",
+      "question": "Is the agency relying on authoritative sources where intended?",
+      "taxonomyCode": "TAX-07.26.02.01",
+      "taxonomyTerm": "Source Onboarding Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q207",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.3 SOURCE PRESENCE AND COLLECTION VALIDATION > E.3.2 Collection Integrity Validation",
+      "question": "Has the agency validated that collection occurs where planned?",
+      "taxonomyCode": "TAX-07.26.02.02",
+      "taxonomyTerm": "Collection Integrity Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q208",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.3 SOURCE PRESENCE AND COLLECTION VALIDATION > E.3.2 Collection Integrity Validation",
+      "question": "Is source identity preserved through collection?",
+      "taxonomyCode": "TAX-07.26.02.02",
+      "taxonomyTerm": "Collection Integrity Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q209",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.3 SOURCE PRESENCE AND COLLECTION VALIDATION > E.3.2 Collection Integrity Validation",
+      "question": "Are collection paths documented and testable?",
+      "taxonomyCode": "TAX-07.26.02.02",
+      "taxonomyTerm": "Collection Integrity Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q210",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.3 SOURCE PRESENCE AND COLLECTION VALIDATION > E.3.3 Gap Detection",
+      "question": "Can the agency detect when a required source stops sending data?",
+      "taxonomyCode": "TAX-07.26.02.03",
+      "taxonomyTerm": "Gap Detection",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q211",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.3 SOURCE PRESENCE AND COLLECTION VALIDATION > E.3.3 Gap Detection",
+      "question": "Can it detect reduced event volume, missing event classes, or intermittent delivery from a source?",
+      "taxonomyCode": "TAX-07.26.02.03",
+      "taxonomyTerm": "Gap Detection",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q212",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.3 SOURCE PRESENCE AND COLLECTION VALIDATION > E.3.3 Gap Detection",
+      "question": "Are collection failures visible to operators before they materially affect monitoring or response?",
+      "taxonomyCode": "TAX-07.26.02.03",
+      "taxonomyTerm": "Gap Detection",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q213",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.4 TIMELINESS AND LATENCY VALIDATION > E.4.1 Event Arrival Timeliness",
+      "question": "Has the agency validated that events arrive within the timeframes required for their intended operational use?",
+      "taxonomyCode": "TAX-07.26.03.01",
+      "taxonomyTerm": "Event Arrival Timeliness",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q214",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.4 TIMELINESS AND LATENCY VALIDATION > E.4.1 Event Arrival Timeliness",
+      "question": "Are latency thresholds defined for major telemetry categories?",
+      "taxonomyCode": "TAX-07.26.03.01",
+      "taxonomyTerm": "Event Arrival Timeliness",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q215",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.4 TIMELINESS AND LATENCY VALIDATION > E.4.1 Event Arrival Timeliness",
+      "question": "Are those thresholds measured continuously or at regular intervals?",
+      "taxonomyCode": "TAX-07.26.03.01",
+      "taxonomyTerm": "Event Arrival Timeliness",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q216",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.4 TIMELINESS AND LATENCY VALIDATION > E.4.2 Delay and Backlog Detection",
+      "question": "Can the agency detect transport delay, processing backlog, indexing lag, or retrieval delay?",
+      "taxonomyCode": "TAX-07.26.03.02",
+      "taxonomyTerm": "Delay and Backlog Detection",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q217",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.4 TIMELINESS AND LATENCY VALIDATION > E.4.2 Delay and Backlog Detection",
+      "question": "Are queue depth, backlog age, or equivalent indicators monitored?",
+      "taxonomyCode": "TAX-07.26.03.02",
+      "taxonomyTerm": "Delay and Backlog Detection",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q218",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.4 TIMELINESS AND LATENCY VALIDATION > E.4.2 Delay and Backlog Detection",
+      "question": "Is there a documented response process when timeliness degrades?",
+      "taxonomyCode": "TAX-07.26.03.02",
+      "taxonomyTerm": "Delay and Backlog Detection",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q219",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.4 TIMELINESS AND LATENCY VALIDATION > E.4.3 Polling and Retrieval Validation",
+      "question": "For sources that use polling or scheduled retrieval, has the agency validated that the cadence is sufficient for the outcome being supported?",
+      "taxonomyCode": "TAX-07.26.03.03",
+      "taxonomyTerm": "Polling and Retrieval Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q220",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.4 TIMELINESS AND LATENCY VALIDATION > E.4.3 Polling and Retrieval Validation",
+      "question": "Has the agency measured lag introduced by API-based or scheduled collection?",
+      "taxonomyCode": "TAX-07.26.03.03",
+      "taxonomyTerm": "Polling and Retrieval Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q221",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.4 TIMELINESS AND LATENCY VALIDATION > E.4.3 Polling and Retrieval Validation",
+      "question": "Are missed windows, provider-side changes, or retrieval failures visible?",
+      "taxonomyCode": "TAX-07.26.03.03",
+      "taxonomyTerm": "Polling and Retrieval Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q222",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.5 EVENT FIDELITY AND DATA QUALITY VALIDATION > E.5.1 Minimum Field Validation",
+      "question": "Has the agency validated that required common fields are present across the major telemetry categories?",
+      "taxonomyCode": "TAX-07.26.04.01",
+      "taxonomyTerm": "Minimum Field Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q223",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.5 EVENT FIDELITY AND DATA QUALITY VALIDATION > E.5.1 Minimum Field Validation",
+      "question": "Are timestamp, event type, identity/system context, affected resource, outcome, and provenance fields populated where expected?",
+      "taxonomyCode": "TAX-07.26.04.01",
+      "taxonomyTerm": "Minimum Field Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q224",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.5 EVENT FIDELITY AND DATA QUALITY VALIDATION > E.5.1 Minimum Field Validation",
+      "question": "Are required category-specific fields validated as well?",
+      "taxonomyCode": "TAX-07.26.04.01",
+      "taxonomyTerm": "Minimum Field Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q225",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.5 EVENT FIDELITY AND DATA QUALITY VALIDATION > E.5.2 Timestamp Validation",
+      "question": "Has the agency validated timestamp quality and consistency across major sources?",
+      "taxonomyCode": "TAX-07.26.04.02",
+      "taxonomyTerm": "Timestamp Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q226",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.5 EVENT FIDELITY AND DATA QUALITY VALIDATION > E.5.2 Timestamp Validation",
+      "question": "Are timestamps reliable enough to support cross-source reconstruction?",
+      "taxonomyCode": "TAX-07.26.04.02",
+      "taxonomyTerm": "Timestamp Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q227",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.5 EVENT FIDELITY AND DATA QUALITY VALIDATION > E.5.2 Timestamp Validation",
+      "question": "Are time-synchronization or time-zone issues documented?",
+      "taxonomyCode": "TAX-07.26.04.02",
+      "taxonomyTerm": "Timestamp Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q228",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.5 EVENT FIDELITY AND DATA QUALITY VALIDATION > E.5.3 Parsing and Mapping Validation",
+      "question": "Has the agency validated that fields are parsed and mapped correctly?",
+      "taxonomyCode": "TAX-07.26.04.03",
+      "taxonomyTerm": "Parsing and Mapping Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q229",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.5 EVENT FIDELITY AND DATA QUALITY VALIDATION > E.5.3 Parsing and Mapping Validation",
+      "question": "Are unmapped values, parser failures, or malformed records visible?",
+      "taxonomyCode": "TAX-07.26.04.03",
+      "taxonomyTerm": "Parsing and Mapping Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q230",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.5 EVENT FIDELITY AND DATA QUALITY VALIDATION > E.5.3 Parsing and Mapping Validation",
+      "question": "Is field meaning stable across updates?",
+      "taxonomyCode": "TAX-07.26.04.03",
+      "taxonomyTerm": "Parsing and Mapping Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q231",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.5 EVENT FIDELITY AND DATA QUALITY VALIDATION > E.5.4 Fidelity Sufficiency Validation",
+      "question": "Has the agency validated that records preserve enough detail to support triage, threat hunting, scoping, and reconstruction?",
+      "taxonomyCode": "TAX-07.26.04.04",
+      "taxonomyTerm": "Fidelity Sufficiency Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q232",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.5 EVENT FIDELITY AND DATA QUALITY VALIDATION > E.5.4 Fidelity Sufficiency Validation",
+      "question": "Can analysts reach source-native context when normalized records are not enough?",
+      "taxonomyCode": "TAX-07.26.04.04",
+      "taxonomyTerm": "Fidelity Sufficiency Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q233",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.5 EVENT FIDELITY AND DATA QUALITY VALIDATION > E.5.4 Fidelity Sufficiency Validation",
+      "question": "Are any categories present only as weak summaries or alerts without enough underlying event detail?",
+      "taxonomyCode": "TAX-07.26.04.04",
+      "taxonomyTerm": "Fidelity Sufficiency Validation",
+      "onboardingPhase": "Cyber Value Gates"
+    },
+    {
+      "id": "Q234",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.6 SCHEMA, NORMALIZATION, AND CORRELATION VALIDATION > E.6.1 Normalized Event Validation",
+      "question": "Has the agency validated that normalized event records exist where intended?",
+      "taxonomyCode": "TAX-07.26.05.01",
+      "taxonomyTerm": "Normalized Event Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q235",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.6 SCHEMA, NORMALIZATION, AND CORRELATION VALIDATION > E.6.1 Normalized Event Validation",
+      "question": "Are normalized records durable and operationally usable?",
+      "taxonomyCode": "TAX-07.26.05.01",
+      "taxonomyTerm": "Normalized Event Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q236",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.6 SCHEMA, NORMALIZATION, AND CORRELATION VALIDATION > E.6.1 Normalized Event Validation",
+      "question": "Are normalized records sufficient for routine cross-source pivots?",
+      "taxonomyCode": "TAX-07.26.05.01",
+      "taxonomyTerm": "Normalized Event Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q237",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.6 SCHEMA, NORMALIZATION, AND CORRELATION VALIDATION > E.6.2 Source-Native Context Validation",
+      "question": "Has the agency validated that richer source-native context remains recoverable where needed?",
+      "taxonomyCode": "TAX-07.26.05.02",
+      "taxonomyTerm": "Source-Native Context Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q238",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.6 SCHEMA, NORMALIZATION, AND CORRELATION VALIDATION > E.6.2 Source-Native Context Validation",
+      "question": "Can analysts retrieve original or equivalent detailed event context during investigations?",
+      "taxonomyCode": "TAX-07.26.05.02",
+      "taxonomyTerm": "Source-Native Context Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q239",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.6 SCHEMA, NORMALIZATION, AND CORRELATION VALIDATION > E.6.2 Source-Native Context Validation",
+      "question": "Are recovery paths documented and usable under pressure?",
+      "taxonomyCode": "TAX-07.26.05.02",
+      "taxonomyTerm": "Source-Native Context Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q240",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.6 SCHEMA, NORMALIZATION, AND CORRELATION VALIDATION > E.6.3 Entity Correlation Validation",
+      "question": "Can the agency correlate activity across identity, endpoint, network, cloud, and administrative datasets?",
+      "taxonomyCode": "TAX-07.26.05.03",
+      "taxonomyTerm": "Entity Correlation Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q241",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.6 SCHEMA, NORMALIZATION, AND CORRELATION VALIDATION > E.6.3 Entity Correlation Validation",
+      "question": "Are shared identifiers usable in practice?",
+      "taxonomyCode": "TAX-07.26.05.03",
+      "taxonomyTerm": "Entity Correlation Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q242",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.6 SCHEMA, NORMALIZATION, AND CORRELATION VALIDATION > E.6.3 Entity Correlation Validation",
+      "question": "Are there common situations where analysts still must manually reconcile core entities?",
+      "taxonomyCode": "TAX-07.26.05.03",
+      "taxonomyTerm": "Entity Correlation Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q243",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.6 SCHEMA, NORMALIZATION, AND CORRELATION VALIDATION > E.6.4 Drift Detection Validation",
+      "question": "Has the agency validated its ability to detect schema drift or changed field meaning?",
+      "taxonomyCode": "TAX-07.26.05.04",
+      "taxonomyTerm": "Drift Detection Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q244",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.6 SCHEMA, NORMALIZATION, AND CORRELATION VALIDATION > E.6.4 Drift Detection Validation",
+      "question": "Are parser and mapping regressions surfaced operationally?",
+      "taxonomyCode": "TAX-07.26.05.04",
+      "taxonomyTerm": "Drift Detection Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q245",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.6 SCHEMA, NORMALIZATION, AND CORRELATION VALIDATION > E.6.4 Drift Detection Validation",
+      "question": "Are downstream detections, dashboards, or workflows tested when source schemas change?",
+      "taxonomyCode": "TAX-07.26.05.04",
+      "taxonomyTerm": "Drift Detection Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q246",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.7 SEARCHABILITY AND RETRIEVAL VALIDATION > E.7.1 Searchability Validation",
+      "question": "Has the agency validated actively searchable datasets remain available in the intended low- latency tiers?",
+      "taxonomyCode": "TAX-07.26.06.01",
+      "taxonomyTerm": "Searchability Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q247",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.7 SEARCHABILITY AND RETRIEVAL VALIDATION > E.7.1 Searchability Validation",
+      "question": "Can analysts perform expected search and pivot actions within operationally useful timeframes?",
+      "taxonomyCode": "TAX-07.26.06.01",
+      "taxonomyTerm": "Searchability Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q248",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.7 SEARCHABILITY AND RETRIEVAL VALIDATION > E.7.1 Searchability Validation",
+      "question": "Are query performance expectations documented and tested?",
+      "taxonomyCode": "TAX-07.26.06.01",
+      "taxonomyTerm": "Searchability Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q249",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.7 SEARCHABILITY AND RETRIEVAL VALIDATION > E.7.2 Retrieval Validation",
+      "question": "Has the agency validated retrievable datasets that can be retrieved within the expected timeframe?",
+      "taxonomyCode": "TAX-07.26.06.02",
+      "taxonomyTerm": "Retrieval Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q250",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.7 SEARCHABILITY AND RETRIEVAL VALIDATION > E.7.2 Retrieval Validation",
+      "question": "Are restored or retrieved datasets complete and usable?",
+      "taxonomyCode": "TAX-07.26.06.02",
+      "taxonomyTerm": "Retrieval Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q251",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.7 SEARCHABILITY AND RETRIEVAL VALIDATION > E.7.2 Retrieval Validation",
+      "question": "Are retrieval paths exercised periodically rather than assumed?",
+      "taxonomyCode": "TAX-07.26.06.02",
+      "taxonomyTerm": "Retrieval Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q252",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.7 SEARCHABILITY AND RETRIEVAL VALIDATION > E.7.3 Searchability vs. Retrieval Distinction",
+      "question": "Has the agency validated that datasets intended only for retrieval, are not being mistakenly treated as actively searchable?",
+      "taxonomyCode": "TAX-07.26.06.03",
+      "taxonomyTerm": "Searchability vs. Retrieval Distinction",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q253",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.7 SEARCHABILITY AND RETRIEVAL VALIDATION > E.7.3 Searchability vs. Retrieval Distinction",
+      "question": "Are operators clear on what is actively searchable versus what requires retrieval?",
+      "taxonomyCode": "TAX-07.26.06.03",
+      "taxonomyTerm": "Searchability vs. Retrieval Distinction",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q254",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.7 SEARCHABILITY AND RETRIEVAL VALIDATION > E.7.3 Searchability vs. Retrieval Distinction",
+      "question": "Are expectations aligned with the Agency Logging Plan?",
+      "taxonomyCode": "TAX-07.26.06.03",
+      "taxonomyTerm": "Searchability vs. Retrieval Distinction",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q255",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.8 OPERATIONAL USABILITY VALIDATION > E.8.1 Monitoring Use Case Validation",
+      "question": "Can the agency’s monitoring teams use the data to identify suspicious activity in operationally relevant timeframes?",
+      "taxonomyCode": "TAX-07.26.07.01",
+      "taxonomyTerm": "Monitoring Use Case Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q256",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.8 OPERATIONAL USABILITY VALIDATION > E.8.1 Monitoring Use Case Validation",
+      "question": "Do alerts include enough context to support triage?",
+      "taxonomyCode": "TAX-07.26.07.01",
+      "taxonomyTerm": "Monitoring Use Case Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q257",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.8 OPERATIONAL USABILITY VALIDATION > E.8.1 Monitoring Use Case Validation",
+      "question": "Can teams move from alert to supporting event data without excessive manual effort?",
+      "taxonomyCode": "TAX-07.26.07.01",
+      "taxonomyTerm": "Monitoring Use Case Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q258",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.8 OPERATIONAL USABILITY VALIDATION > E.8.2 Threat Hunting Validation",
+      "question": "Can analysts search and pivot across the datasets needed for threat hunting?",
+      "taxonomyCode": "TAX-07.26.07.02",
+      "taxonomyTerm": "Threat Hunting Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q259",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.8 OPERATIONAL USABILITY VALIDATION > E.8.2 Threat Hunting Validation",
+      "question": "Are required hunt-ready fields and contexts available?",
+      "taxonomyCode": "TAX-07.26.07.02",
+      "taxonomyTerm": "Threat Hunting Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q260",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.8 OPERATIONAL USABILITY VALIDATION > E.8.2 Threat Hunting Validation",
+      "question": "Can analysts perform representative hunt workflows without depending on ad hoc data recovery?",
+      "taxonomyCode": "TAX-07.26.07.02",
+      "taxonomyTerm": "Threat Hunting Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q261",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.8 OPERATIONAL USABILITY VALIDATION > E.8.3 Incident Response Validation",
+      "question": "Can responders reconstruct timelines and scope affected systems, identities, and data?",
+      "taxonomyCode": "TAX-07.26.07.03",
+      "taxonomyTerm": "Incident Response Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q262",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.8 OPERATIONAL USABILITY VALIDATION > E.8.3 Incident Response Validation",
+      "question": "Can the agency pivot from alerts into correlated supporting datasets quickly enough to support containment decisions?",
+      "taxonomyCode": "TAX-07.26.07.03",
+      "taxonomyTerm": "Incident Response Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q263",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.8 OPERATIONAL USABILITY VALIDATION > E.8.3 Incident Response Validation",
+      "question": "Are investigative workflows impeded by missing or inaccessible data?",
+      "taxonomyCode": "TAX-07.26.07.03",
+      "taxonomyTerm": "Incident Response Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q264",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.8 OPERATIONAL USABILITY VALIDATION > E.8.4 Digital Forensics Validation",
+      "question": "Can investigators reconstruct key events with sufficient confidence using retained data?",
+      "taxonomyCode": "TAX-07.26.07.04",
+      "taxonomyTerm": "Digital Forensics Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q265",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.8 OPERATIONAL USABILITY VALIDATION > E.8.4 Digital Forensics Validation",
+      "question": "Are designated forensic or evidentiary datasets preserved as intended?",
+      "taxonomyCode": "TAX-07.26.07.04",
+      "taxonomyTerm": "Digital Forensics Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q266",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.8 OPERATIONAL USABILITY VALIDATION > E.8.4 Digital Forensics Validation",
+      "question": "Is supporting context, such as inventories or baseline information, accessible when needed?",
+      "taxonomyCode": "TAX-07.26.07.04",
+      "taxonomyTerm": "Digital Forensics Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q267",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.9 INTEGRITY, PROVENANCE, AND ACCESS VALIDATION > E.9.1 Integrity Control Validation",
+      "question": "Has the agency validated that required integrity protections are functioning as intended?",
+      "taxonomyCode": "TAX-07.26.08.01",
+      "taxonomyTerm": "Integrity Control Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q268",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.9 INTEGRITY, PROVENANCE, AND ACCESS VALIDATION > E.9.1 Integrity Control Validation",
+      "question": "Are hashing, signing, immutability, or equivalent protections applied where designated?",
+      "taxonomyCode": "TAX-07.26.08.01",
+      "taxonomyTerm": "Integrity Control Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q269",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.9 INTEGRITY, PROVENANCE, AND ACCESS VALIDATION > E.9.1 Integrity Control Validation",
+      "question": "Can the agency detect unauthorized modification or integrity loss where such controls are expected?",
+      "taxonomyCode": "TAX-07.26.08.01",
+      "taxonomyTerm": "Integrity Control Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q270",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.9 INTEGRITY, PROVENANCE, AND ACCESS VALIDATION > E.9.2 Provenance Validation",
+      "question": "Can the agency trace records back to their origin and handling path where needed?",
+      "taxonomyCode": "TAX-07.26.08.02",
+      "taxonomyTerm": "Provenance Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q271",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.9 INTEGRITY, PROVENANCE, AND ACCESS VALIDATION > E.9.2 Provenance Validation",
+      "question": "Are meaningful transformations documented or recoverable?",
+      "taxonomyCode": "TAX-07.26.08.02",
+      "taxonomyTerm": "Provenance Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q272",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.9 INTEGRITY, PROVENANCE, AND ACCESS VALIDATION > E.9.2 Provenance Validation",
+      "question": "Does the agency know when provenance is insufficient for trust-sensitive use cases?",
+      "taxonomyCode": "TAX-07.26.08.02",
+      "taxonomyTerm": "Provenance Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q273",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.9 INTEGRITY, PROVENANCE, AND ACCESS VALIDATION > E.9.3 Access Control Validation",
+      "question": "Has the agency validated that access restrictions work as intended?",
+      "taxonomyCode": "TAX-07.26.08.03",
+      "taxonomyTerm": "Access Control Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q274",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.9 INTEGRITY, PROVENANCE, AND ACCESS VALIDATION > E.9.3 Access Control Validation",
+      "question": "Are least privilege and separation-of-duties controls enforced for sensitive log data?",
+      "taxonomyCode": "TAX-07.26.08.03",
+      "taxonomyTerm": "Access Control Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q275",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.9 INTEGRITY, PROVENANCE, AND ACCESS VALIDATION > E.9.3 Access Control Validation",
+      "question": "Are privileged and sensitive-data access events logged and reviewable?",
+      "taxonomyCode": "TAX-07.26.08.03",
+      "taxonomyTerm": "Access Control Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q276",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.9 INTEGRITY, PROVENANCE, AND ACCESS VALIDATION > E.9.4 Minimization and Sharing Validation",
+      "question": "Has the agency validated that minimization, redaction, segmentation, and sharing controls are applied at the intended enforcement points?",
+      "taxonomyCode": "TAX-07.26.08.04",
+      "taxonomyTerm": "Minimization and Sharing Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q277",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.9 INTEGRITY, PROVENANCE, AND ACCESS VALIDATION > E.9.4 Minimization and Sharing Validation",
+      "question": "Are external or boundary-crossing data flows governed and auditable?",
+      "taxonomyCode": "TAX-07.26.08.04",
+      "taxonomyTerm": "Minimization and Sharing Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q278",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.9 INTEGRITY, PROVENANCE, AND ACCESS VALIDATION > E.9.4 Minimization and Sharing Validation",
+      "question": "Are policy-controlled views or subsets operating as intended?",
+      "taxonomyCode": "TAX-07.26.08.04",
+      "taxonomyTerm": "Minimization and Sharing Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q279",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.10 PIPELINE HEALTH AND RESILIENCE VALIDATION > E.10.1 Health Monitoring Validation",
+      "question": "Does the agency monitor the health of major pipeline stages such as collection, transport, processing, storage, and analytics?",
+      "taxonomyCode": "TAX-07.26.09.01",
+      "taxonomyTerm": "Health Monitoring Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q280",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.10 PIPELINE HEALTH AND RESILIENCE VALIDATION > E.10.1 Health Monitoring Validation",
+      "question": "Are failures visible quickly enough for intervention?",
+      "taxonomyCode": "TAX-07.26.09.01",
+      "taxonomyTerm": "Health Monitoring Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q281",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.10 PIPELINE HEALTH AND RESILIENCE VALIDATION > E.10.1 Health Monitoring Validation",
+      "question": "Are health indicators tied to operational escalation paths?",
+      "taxonomyCode": "TAX-07.26.09.01",
+      "taxonomyTerm": "Health Monitoring Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q282",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.10 PIPELINE HEALTH AND RESILIENCE VALIDATION > E.10.2 Partial Failure Validation",
+      "question": "Has the agency validated how the pipeline behaves under partial failure?",
+      "taxonomyCode": "TAX-07.26.09.02",
+      "taxonomyTerm": "Partial Failure Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q283",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.10 PIPELINE HEALTH AND RESILIENCE VALIDATION > E.10.2 Partial Failure Validation",
+      "question": "Can the agency identify what data is delayed, degraded, or at risk during component failure?",
+      "taxonomyCode": "TAX-07.26.09.02",
+      "taxonomyTerm": "Partial Failure Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q284",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.10 PIPELINE HEALTH AND RESILIENCE VALIDATION > E.10.2 Partial Failure Validation",
+      "question": "Are degraded-mode behaviors documented?",
+      "taxonomyCode": "TAX-07.26.09.02",
+      "taxonomyTerm": "Partial Failure Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q285",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.10 PIPELINE HEALTH AND RESILIENCE VALIDATION > E.10.3 Buffering and Replay Validation",
+      "question": "Has the agency validated buffering, queueing, replay, or backfill mechanisms where they are required?",
+      "taxonomyCode": "TAX-07.26.09.03",
+      "taxonomyTerm": "Buffering and Replay Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q286",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.10 PIPELINE HEALTH AND RESILIENCE VALIDATION > E.10.3 Buffering and Replay Validation",
+      "question": "Can missed or delayed data be recovered as intended?",
+      "taxonomyCode": "TAX-07.26.09.03",
+      "taxonomyTerm": "Buffering and Replay Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q287",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.10 PIPELINE HEALTH AND RESILIENCE VALIDATION > E.10.3 Buffering and Replay Validation",
+      "question": "Are replay and backfill tested periodically?",
+      "taxonomyCode": "TAX-07.26.09.03",
+      "taxonomyTerm": "Buffering and Replay Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q288",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.10 PIPELINE HEALTH AND RESILIENCE VALIDATION > E.10.4 Single-Point Fragility Validation",
+      "question": "Has the agency identified fragile chokepoints in the pipeline?",
+      "taxonomyCode": "TAX-07.26.09.04",
+      "taxonomyTerm": "Single-Point Fragility Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q289",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.10 PIPELINE HEALTH AND RESILIENCE VALIDATION > E.10.4 Single-Point Fragility Validation",
+      "question": "Has it validated whether failure of a key component causes silent loss or enterprise-wide blindness?",
+      "taxonomyCode": "TAX-07.26.09.04",
+      "taxonomyTerm": "Single-Point Fragility Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q290",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.10 PIPELINE HEALTH AND RESILIENCE VALIDATION > E.10.4 Single-Point Fragility Validation",
+      "question": "Are mitigation or recovery steps documented?",
+      "taxonomyCode": "TAX-07.26.09.04",
+      "taxonomyTerm": "Single-Point Fragility Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q291",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.11 CHANGE MANAGEMENT AND REGRESSION VALIDATION > E.11.1 Controlled Change Validation",
+      "question": "Are source onboarding, parser changes, field mapping changes, and storage/pipeline changes introduced through governed processes?",
+      "taxonomyCode": "TAX-07.26.10.01",
+      "taxonomyTerm": "Controlled Change Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q292",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.11 CHANGE MANAGEMENT AND REGRESSION VALIDATION > E.11.1 Controlled Change Validation",
+      "question": "Are changes reviewed for downstream impact before rollout?",
+      "taxonomyCode": "TAX-07.26.10.01",
+      "taxonomyTerm": "Controlled Change Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q293",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.11 CHANGE MANAGEMENT AND REGRESSION VALIDATION > E.11.1 Controlled Change Validation",
+      "question": "Are rollback paths defined?",
+      "taxonomyCode": "TAX-07.26.10.01",
+      "taxonomyTerm": "Controlled Change Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q294",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.11 CHANGE MANAGEMENT AND REGRESSION VALIDATION > E.11.2 Regression Testing",
+      "question": "Does the agency perform regression testing for major changes affecting schema, ingestion, or operational content?",
+      "taxonomyCode": "TAX-07.26.10.02",
+      "taxonomyTerm": "Regression Testing",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q295",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.11 CHANGE MANAGEMENT AND REGRESSION VALIDATION > E.11.2 Regression Testing",
+      "question": "Are representative monitoring, threat hunting, incident response, and retrieval use cases re-tested after change?",
+      "taxonomyCode": "TAX-07.26.10.02",
+      "taxonomyTerm": "Regression Testing",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q296",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.11 CHANGE MANAGEMENT AND REGRESSION VALIDATION > E.11.2 Regression Testing",
+      "question": "Are failures or regressions surfaced to the right owners?",
+      "taxonomyCode": "TAX-07.26.10.02",
+      "taxonomyTerm": "Regression Testing",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q297",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.11 CHANGE MANAGEMENT AND REGRESSION VALIDATION > E.11.3 Post-Change Review",
+      "question": "After changes are deployed, does the agency validate that expected data is still present, timely, and usable?",
+      "taxonomyCode": "TAX-07.26.10.03",
+      "taxonomyTerm": "Post-Change Review",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q298",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.11 CHANGE MANAGEMENT AND REGRESSION VALIDATION > E.11.3 Post-Change Review",
+      "question": "Are dashboards, detections, workflows, and retrieval paths checked for breakage?",
+      "taxonomyCode": "TAX-07.26.10.03",
+      "taxonomyTerm": "Post-Change Review",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q299",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.11 CHANGE MANAGEMENT AND REGRESSION VALIDATION > E.11.3 Post-Change Review",
+      "question": "Is drift overtime reviewed rather than assumed away?",
+      "taxonomyCode": "TAX-07.26.10.03",
+      "taxonomyTerm": "Post-Change Review",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q300",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.12 EXERCISES, SYNTHETIC TESTS, AND READINESS DEMONSTRATIONS > E.12.1 Synthetic Event Validation",
+      "question": "Does the agency inject or generate representative events to confirm collection, parsing, and downstream handling?",
+      "taxonomyCode": "TAX-07.26.11.01",
+      "taxonomyTerm": "Synthetic Event Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q301",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.12 EXERCISES, SYNTHETIC TESTS, AND READINESS DEMONSTRATIONS > E.12.1 Synthetic Event Validation",
+      "question": "Are synthetic tests tied to expected source categories and investigative workflows?",
+      "taxonomyCode": "TAX-07.26.11.01",
+      "taxonomyTerm": "Synthetic Event Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q302",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.12 EXERCISES, SYNTHETIC TESTS, AND READINESS DEMONSTRATIONS > E.12.1 Synthetic Event Validation",
+      "question": "Are failed synthetic tests tracked to remediation?",
+      "taxonomyCode": "TAX-07.26.11.01",
+      "taxonomyTerm": "Synthetic Event Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q303",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.12 EXERCISES, SYNTHETIC TESTS, AND READINESS DEMONSTRATIONS > E.12.2 Tabletop and Exercise Support Validation",
+      "question": "Do exercises and incident-response drills use the actual logging capability as part of validation?",
+      "taxonomyCode": "TAX-07.26.11.02",
+      "taxonomyTerm": "Tabletop and Exercise Support Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q304",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.12 EXERCISES, SYNTHETIC TESTS, AND READINESS DEMONSTRATIONS > E.12.2 Tabletop and Exercise Support Validation",
+      "question": "Are lessons learned from those exercises fed back into logging design and validation?",
+      "taxonomyCode": "TAX-07.26.11.02",
+      "taxonomyTerm": "Tabletop and Exercise Support Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q305",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.12 EXERCISES, SYNTHETIC TESTS, AND READINESS DEMONSTRATIONS > E.12.2 Tabletop and Exercise Support Validation",
+      "question": "Are exercises used to validate cross-team access and coordination, not just technical presence?",
+      "taxonomyCode": "TAX-07.26.11.02",
+      "taxonomyTerm": "Tabletop and Exercise Support Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q306",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.12 EXERCISES, SYNTHETIC TESTS, AND READINESS DEMONSTRATIONS > E.12.3 Replay and Historical Validation",
+      "question": "Can the agency use historical or replayed data to validate pipeline behavior and investigative usability?",
+      "taxonomyCode": "TAX-07.26.11.03",
+      "taxonomyTerm": "Replay and Historical Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q307",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.12 EXERCISES, SYNTHETIC TESTS, AND READINESS DEMONSTRATIONS > E.12.3 Replay and Historical Validation",
+      "question": "Are restoration and replay paths exercised often enough to remain trustworthy?",
+      "taxonomyCode": "TAX-07.26.11.03",
+      "taxonomyTerm": "Replay and Historical Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q308",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.12 EXERCISES, SYNTHETIC TESTS, AND READINESS DEMONSTRATIONS > E.12.3 Replay and Historical Validation",
+      "question": "Is there evidence or documentation that the agency possesses capabilities necessary to reconstruct prior time windows when needed?",
+      "taxonomyCode": "TAX-07.26.11.03",
+      "taxonomyTerm": "Replay and Historical Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q309",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.13 GAP TRACKING AND IMPROVEMENT VALIDATION > E.13.1 Known Gap Visibility",
+      "question": "Are known gaps in source coverage, fidelity, access, correlation, or retention documented explicitly?",
+      "taxonomyCode": "TAX-07.26.12.01",
+      "taxonomyTerm": "Known Gap Visibility",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q310",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.13 GAP TRACKING AND IMPROVEMENT VALIDATION > E.13.1 Known Gap Visibility",
+      "question": "Are those gaps visible to both technical and governance stakeholders?",
+      "taxonomyCode": "TAX-07.26.12.01",
+      "taxonomyTerm": "Known Gap Visibility",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q311",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.13 GAP TRACKING AND IMPROVEMENT VALIDATION > E.13.1 Known Gap Visibility",
+      "question": "Are high-impact gaps prioritized?",
+      "taxonomyCode": "TAX-07.26.12.01",
+      "taxonomyTerm": "Known Gap Visibility",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q312",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.13 GAP TRACKING AND IMPROVEMENT VALIDATION > E.13.2 Remediation Tracking",
+      "question": "Does each known material gap have an owner, remediation path, and review cadence?",
+      "taxonomyCode": "TAX-07.26.12.02",
+      "taxonomyTerm": "Remediation Tracking",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q313",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.13 GAP TRACKING AND IMPROVEMENT VALIDATION > E.13.2 Remediation Tracking",
+      "question": "Are unresolved dependencies or funding constraints documented?",
+      "taxonomyCode": "TAX-07.26.12.02",
+      "taxonomyTerm": "Remediation Tracking",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q314",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.13 GAP TRACKING AND IMPROVEMENT VALIDATION > E.13.2 Remediation Tracking",
+      "question": "Is improvement progress tied to measurable outcomes rather than generic status statements?",
+      "taxonomyCode": "TAX-07.26.12.02",
+      "taxonomyTerm": "Remediation Tracking",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q315",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.13 GAP TRACKING AND IMPROVEMENT VALIDATION > E.13.3 Maturity Progress Validation",
+      "question": "Has the agency identified what maturity stage best describes its current logging capability?",
+      "taxonomyCode": "TAX-07.26.12.03",
+      "taxonomyTerm": "Maturity Progress Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q316",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.13 GAP TRACKING AND IMPROVEMENT VALIDATION > E.13.3 Maturity Progress Validation",
+      "question": "Are validation results being used to refine the maturity assessment over time?",
+      "taxonomyCode": "TAX-07.26.12.03",
+      "taxonomyTerm": "Maturity Progress Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q317",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.13 GAP TRACKING AND IMPROVEMENT VALIDATION > E.13.3 Maturity Progress Validation",
+      "question": "Is there evidence of movement toward the next stage?",
+      "taxonomyCode": "TAX-07.26.12.03",
+      "taxonomyTerm": "Maturity Progress Validation",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q318",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.14 HIGH-LEVEL READINESS QUESTIONS",
+      "question": "Are the required baseline telemetry categories present across the intended environments?",
+      "taxonomyCode": "TAX-07.26",
+      "taxonomyTerm": "CISA LRA Validation and Operational Readiness Checklist",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q319",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.14 HIGH-LEVEL READINESS QUESTIONS",
+      "question": "Is the data timely enough, complete enough, and detailed enough to support monitoring, threat hunting, incident response, and digital forensics?",
+      "taxonomyCode": "TAX-07.26",
+      "taxonomyTerm": "CISA LRA Validation and Operational Readiness Checklist",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q320",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.14 HIGH-LEVEL READINESS QUESTIONS",
+      "question": "Can analysts and responders search, pivot, retrieve, and reconstruct activity using the datasets the plan says they depend on?",
+      "taxonomyCode": "TAX-07.26",
+      "taxonomyTerm": "CISA LRA Validation and Operational Readiness Checklist",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q321",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.14 HIGH-LEVEL READINESS QUESTIONS",
+      "question": "Are integrity, provenance, access, minimization, and sharing controls working as intended?",
+      "taxonomyCode": "TAX-07.26",
+      "taxonomyTerm": "CISA LRA Validation and Operational Readiness Checklist",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q322",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.14 HIGH-LEVEL READINESS QUESTIONS",
+      "question": "Can the agency detect when the logging capability is degraded and recover from that degradation?",
+      "taxonomyCode": "TAX-07.26",
+      "taxonomyTerm": "CISA LRA Validation and Operational Readiness Checklist",
+      "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q323",
+      "section": "Appendix E: VALIDATION AND OPERATIONAL READINESS CHECKLIST",
+      "subsection": "E.14 HIGH-LEVEL READINESS QUESTIONS",
+      "question": "Can the agency introduce change without silently breaking critical operational use cases?",
+      "taxonomyCode": "TAX-07.26",
+      "taxonomyTerm": "CISA LRA Validation and Operational Readiness Checklist",
+      "onboardingPhase": "Log Sustainment"
+    }
+  ]
+}
