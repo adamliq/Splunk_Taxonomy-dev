@@ -27,7 +27,7 @@
       "description": "Does it stay healthy, used and worth keeping?"
     }
   ],
-  "howToAddQuestions": "Append a new object to the `questions` array below. `id` should be the next unused Q### value (zero-padded, unique). `taxonomyCode` should be a real code from the taxonomy (Onboard Taxonomy tab) -- use the most specific node that fits, or a domain-level code (e.g. \"TAX-03\") if no more specific node exists yet. `onboardingPhase` must be one of the four values listed in `onboardingPhases` above. `section`/`subsection` are free text describing where the question comes from (a source document heading, a review checklist name, etc.) -- leave `subsection` as an empty string if the question has no finer-grained grouping.",
+  "howToAddQuestions": "Append a new object to the `questions` array below. `id` should be the next unused Q### value (zero-padded, unique). `taxonomyCode` should be a real code from the taxonomy (Onboard Taxonomy tab) -- use the most specific node that fits, or a domain-level code (e.g. \"TAX-03\") if no more specific node exists yet. `onboardingPhase` must be one of the four values listed in `onboardingPhases` above. `section`/`subsection` are free text describing where the question comes from (a source document heading, a review checklist name, etc.) -- leave `subsection` as an empty string if the question has no finer-grained grouping. If no existing taxonomy node genuinely fits a question, use taxonomyCode \"UNMAPPED\" and a taxonomyTerm explaining why (e.g. \"No current taxonomy node fits -- flagged for future taxonomy review\") rather than forcing a loose match -- this is an intentional, explicit placeholder, not an error, and is excluded from the live-taxonomy verification check applied to every other code.",
   "questions": [
     {
       "id": "Q001",
@@ -3844,6 +3844,132 @@
       "taxonomyCode": "TAX-06.02.02",
       "taxonomyTerm": "SOAR / Orchestration Integration",
       "onboardingPhase": "Log Sustainment"
+    },
+    {
+      "id": "Q425",
+      "section": "Implementing SIEM and SOAR Platforms (CISA/ASD Practitioner Guidance)",
+      "subsection": "4. Best Practice Principles > Principles for Procurement > Principle 1: Define the Scope of Implementation",
+      "question": "What is the primary objective of the implementation?",
+      "taxonomyCode": "TAX-07.25.02",
+      "taxonomyTerm": "Expected Business Outcomes",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q426",
+      "section": "Implementing SIEM and SOAR Platforms (CISA/ASD Practitioner Guidance)",
+      "subsection": "4. Best Practice Principles > Principles for Procurement > Principle 1: Define the Scope of Implementation",
+      "question": "Who are the relevant stakeholders in the use and outcomes of the implementation?",
+      "taxonomyCode": "TAX-07.25.01",
+      "taxonomyTerm": "Stakeholders",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q427",
+      "section": "Implementing SIEM and SOAR Platforms (CISA/ASD Practitioner Guidance)",
+      "subsection": "4. Best Practice Principles > Principles for Procurement > Principle 1: Define the Scope of Implementation",
+      "question": "What in-scope risks, threats, and use cases will the implementation address?",
+      "taxonomyCode": "TAX-05.01",
+      "taxonomyTerm": "Use Case Definition",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q428",
+      "section": "Implementing SIEM and SOAR Platforms (CISA/ASD Practitioner Guidance)",
+      "subsection": "4. Best Practice Principles > Principles for Procurement > Principle 1: Define the Scope of Implementation",
+      "question": "Which data sources should be prioritised for ingesting?",
+      "taxonomyCode": "TAX-05.02",
+      "taxonomyTerm": "Data & Event Requirements",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q429",
+      "section": "Implementing SIEM and SOAR Platforms (CISA/ASD Practitioner Guidance)",
+      "subsection": "4. Best Practice Principles > Principles for Procurement > Principle 1: Define the Scope of Implementation",
+      "question": "Will third-party or integration dependencies hinder the implementation, such as single sign-on (SSO), Application Programming Interface (API) integrations, and/or existing security tools?",
+      "taxonomyCode": "UNMAPPED",
+      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q430",
+      "section": "Implementing SIEM and SOAR Platforms (CISA/ASD Practitioner Guidance)",
+      "subsection": "4. Best Practice Principles > Principles for Procurement > Principle 1: Define the Scope of Implementation",
+      "question": "Should the platform(s) be implemented on-premises or through a Software as a Service (SaaS) provider?",
+      "taxonomyCode": "TAX-01.03.02",
+      "taxonomyTerm": "Hosting Model",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q431",
+      "section": "Implementing SIEM and SOAR Platforms (CISA/ASD Practitioner Guidance)",
+      "subsection": "4. Best Practice Principles > Principles for Procurement > Principle 1: Define the Scope of Implementation",
+      "question": "Does implementing a SaaS-based SIEM/SOAR reduce maintenance overhead?",
+      "taxonomyCode": "TAX-01.03.02",
+      "taxonomyTerm": "Hosting Model",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q432",
+      "section": "Implementing SIEM and SOAR Platforms (CISA/ASD Practitioner Guidance)",
+      "subsection": "4. Best Practice Principles > Principles for Procurement > Principle 1: Define the Scope of Implementation",
+      "question": "What integration with on-premises, hybrid, and cloud or multi-cloud architectures will be required?",
+      "taxonomyCode": "TAX-01",
+      "taxonomyTerm": "Platform & Ownership",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q433",
+      "section": "Implementing SIEM and SOAR Platforms (CISA/ASD Practitioner Guidance)",
+      "subsection": "4. Best Practice Principles > Principles for Procurement > Principle 1: Define the Scope of Implementation",
+      "question": "Which team(s) are responsible for the implementation, including ongoing maintenance of the platform(s)?",
+      "taxonomyCode": "TAX-01.02.02",
+      "taxonomyTerm": "Technical Owner",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q434",
+      "section": "Implementing SIEM and SOAR Platforms (CISA/ASD Practitioner Guidance)",
+      "subsection": "4. Best Practice Principles > Principles for Procurement > Principle 1: Define the Scope of Implementation",
+      "question": "Are human resources, including the security analysts and engineers who will operate the platform, available for several weeks of implementation?",
+      "taxonomyCode": "UNMAPPED",
+      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q435",
+      "section": "Implementing SIEM and SOAR Platforms (CISA/ASD Practitioner Guidance)",
+      "subsection": "4. Best Practice Principles > Principles for Procurement > Principle 1: Define the Scope of Implementation",
+      "question": "Do the available human resources have sufficient expertise for their role in the implementation?",
+      "taxonomyCode": "UNMAPPED",
+      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q436",
+      "section": "Implementing SIEM and SOAR Platforms (CISA/ASD Practitioner Guidance)",
+      "subsection": "4. Best Practice Principles > Principles for Procurement > Principle 1: Define the Scope of Implementation",
+      "question": "Does the vendor have sufficient support and are there other professional service support options?",
+      "taxonomyCode": "UNMAPPED",
+      "taxonomyTerm": "No current taxonomy node fits -- flagged for future taxonomy review",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q437",
+      "section": "Implementing SIEM and SOAR Platforms (CISA/ASD Practitioner Guidance)",
+      "subsection": "4. Best Practice Principles > Principles for Procurement > Principle 1: Define the Scope of Implementation",
+      "question": "Who will be accountable for the implementation?",
+      "taxonomyCode": "TAX-01.02",
+      "taxonomyTerm": "Ownership & Accountability",
+      "onboardingPhase": "Worthiness & Implementation"
+    },
+    {
+      "id": "Q438",
+      "section": "Implementing SIEM and SOAR Platforms (CISA/ASD Practitioner Guidance)",
+      "subsection": "4. Best Practice Principles > Principles for Procurement > Principle 1: Define the Scope of Implementation",
+      "question": "Does your organisation have existing incident response processes?",
+      "taxonomyCode": "TAX-02.07.01",
+      "taxonomyTerm": "Incident Response Plan",
+      "onboardingPhase": "Worthiness & Implementation"
     }
   ]
 }
