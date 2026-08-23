@@ -17494,8 +17494,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "Which event timestamp is used?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17503,8 +17503,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "Is event time trustworthy?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17512,8 +17512,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "Is clock synchronization reliable?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17521,8 +17521,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "How much clock drift is tolerated?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17530,8 +17530,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "Does the detection depend on event ordering?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17539,8 +17539,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "Does it depend on precise timestamps?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17548,8 +17548,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "What time window is required?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17557,8 +17557,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "What lookback window is required?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17566,8 +17566,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "What search overlap is required?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17575,8 +17575,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "What happens to late events?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17584,8 +17584,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "What happens to future-dated events?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17593,8 +17593,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "Can out-of-order events break correlation?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17602,8 +17602,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "Does source-to-SIEM latency fit the detection requirement?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17611,8 +17611,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "Is P95 latency measured?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17620,8 +17620,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "Is P99 latency measured?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17629,8 +17629,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "What maximum delay can be tolerated?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -17638,8 +17638,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Time Requirements",
       "subsection": "",
       "question": "Are replayed events distinguished from live events?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18034,8 +18034,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threshold Engineering",
       "subsection": "",
       "question": "What threshold is used?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18043,8 +18043,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threshold Engineering",
       "subsection": "",
       "question": "Why was it selected?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18052,8 +18052,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threshold Engineering",
       "subsection": "",
       "question": "Was the threshold derived from baseline data?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18061,8 +18061,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threshold Engineering",
       "subsection": "",
       "question": "Does it vary by user?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18070,8 +18070,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threshold Engineering",
       "subsection": "",
       "question": "Does it vary by asset?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18079,8 +18079,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threshold Engineering",
       "subsection": "",
       "question": "Does it vary by privilege?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18088,8 +18088,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threshold Engineering",
       "subsection": "",
       "question": "Does it vary by environment?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18097,8 +18097,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threshold Engineering",
       "subsection": "",
       "question": "Does it vary by tenant?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18106,8 +18106,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threshold Engineering",
       "subsection": "",
       "question": "Does it vary by time of day?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18115,8 +18115,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threshold Engineering",
       "subsection": "",
       "question": "Can an attacker remain below the threshold?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18124,8 +18124,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threshold Engineering",
       "subsection": "",
       "question": "Can an attacker distribute activity across entities?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18133,8 +18133,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threshold Engineering",
       "subsection": "",
       "question": "Can low-and-slow behaviour evade the threshold?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18142,8 +18142,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threshold Engineering",
       "subsection": "",
       "question": "Does a threshold create excessive false positives?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18151,8 +18151,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threshold Engineering",
       "subsection": "",
       "question": "Is the threshold automatically adjusted?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18160,8 +18160,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threshold Engineering",
       "subsection": "",
       "question": "Are threshold changes audited?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18169,8 +18169,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Behavioural Baselines",
       "subsection": "",
       "question": "What entity is baselined?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18178,8 +18178,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Behavioural Baselines",
       "subsection": "",
       "question": "What baseline window is used?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18187,8 +18187,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Behavioural Baselines",
       "subsection": "",
       "question": "What population is compared?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18196,8 +18196,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Behavioural Baselines",
       "subsection": "",
       "question": "Is the baseline user-specific, host-specific, resource-specific, peer-group based, or organisation-wide?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18205,8 +18205,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Behavioural Baselines",
       "subsection": "",
       "question": "What minimum history is required?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18214,8 +18214,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Behavioural Baselines",
       "subsection": "",
       "question": "How are new users handled?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18223,8 +18223,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Behavioural Baselines",
       "subsection": "",
       "question": "How are new assets handled?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18232,8 +18232,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Behavioural Baselines",
       "subsection": "",
       "question": "How are dormant identities handled?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18241,8 +18241,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Behavioural Baselines",
       "subsection": "",
       "question": "How are seasonal changes handled?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18250,8 +18250,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Behavioural Baselines",
       "subsection": "",
       "question": "How are maintenance periods handled?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18259,8 +18259,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Behavioural Baselines",
       "subsection": "",
       "question": "How rapidly does the baseline adapt?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18268,8 +18268,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Behavioural Baselines",
       "subsection": "",
       "question": "Can attackers poison the baseline?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18277,8 +18277,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Behavioural Baselines",
       "subsection": "",
       "question": "Can persistent malicious activity become normalized?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18286,8 +18286,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Behavioural Baselines",
       "subsection": "",
       "question": "Is baseline drift monitored?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18295,8 +18295,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Behavioural Baselines",
       "subsection": "",
       "question": "Can baseline state be inspected by analysts?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18304,8 +18304,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Rare and First-Seen Behaviour",
       "subsection": "",
       "question": "What qualifies as rare?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18313,8 +18313,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Rare and First-Seen Behaviour",
       "subsection": "",
       "question": "Against what population?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18322,8 +18322,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Rare and First-Seen Behaviour",
       "subsection": "",
       "question": "Over what time window?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18331,8 +18331,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Rare and First-Seen Behaviour",
       "subsection": "",
       "question": "What qualifies as first seen?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18340,8 +18340,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Rare and First-Seen Behaviour",
       "subsection": "",
       "question": "Is first seen calculated per user, host, tenant, application, or organisation?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18349,8 +18349,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Rare and First-Seen Behaviour",
       "subsection": "",
       "question": "Is history complete enough to make that determination?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18358,8 +18358,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Rare and First-Seen Behaviour",
       "subsection": "",
       "question": "How are newly onboarded sources handled?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18367,8 +18367,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Rare and First-Seen Behaviour",
       "subsection": "",
       "question": "Can incomplete historical data generate false first-seen alerts?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18376,8 +18376,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Rare and First-Seen Behaviour",
       "subsection": "",
       "question": "Can legitimate software deployments generate excessive rare-event detections?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18385,8 +18385,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Absence-Based Detection",
       "subsection": "",
       "question": "Does the analytic depend on an expected event not occurring?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18394,8 +18394,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Absence-Based Detection",
       "subsection": "",
       "question": "What event is expected?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18403,8 +18403,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Absence-Based Detection",
       "subsection": "",
       "question": "How frequently should it occur?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18412,8 +18412,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Absence-Based Detection",
       "subsection": "",
       "question": "How is collection failure distinguished from genuine absence?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18421,8 +18421,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Absence-Based Detection",
       "subsection": "",
       "question": "How is maintenance distinguished from suspicious absence?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18430,8 +18430,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Absence-Based Detection",
       "subsection": "",
       "question": "How is source shutdown handled?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18439,8 +18439,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Absence-Based Detection",
       "subsection": "",
       "question": "Can an attacker disable the source and satisfy the detection condition incorrectly?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18448,8 +18448,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Absence-Based Detection",
       "subsection": "",
       "question": "Is telemetry health evaluated before absence-based logic fires?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.09",
+      "taxonomyTerm": "Threshold and Baseline Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18898,8 +18898,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Are exclusions used?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18907,8 +18907,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Why is each exclusion required?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18916,8 +18916,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Is each exclusion documented?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18925,8 +18925,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Who approved it?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18934,8 +18934,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Does it have an expiry date?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18943,8 +18943,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Is the exclusion narrowly scoped?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18952,8 +18952,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Is an entity excluded entirely?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18961,8 +18961,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Is only a specific legitimate behaviour excluded?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18970,8 +18970,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Could an attacker exploit the exclusion?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18979,8 +18979,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Can privileged identities be excluded?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18988,8 +18988,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Can security tools be excluded?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -18997,8 +18997,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Are exclusions independently tested?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -19006,8 +19006,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Are exclusions reviewed periodically?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -19015,8 +19015,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Are unused exclusions removed?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -19024,8 +19024,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Are exclusion changes version controlled?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -19033,8 +19033,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Allowlist and Exclusion Engineering",
       "subsection": "",
       "question": "Is exclusion growth monitored?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.10",
+      "taxonomyTerm": "Allowlist and Exclusion Engineering",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -20194,8 +20194,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Search Scheduling",
       "subsection": "",
       "question": "What schedule does the detection use?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -20203,8 +20203,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Search Scheduling",
       "subsection": "",
       "question": "Why was this schedule selected?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -20212,8 +20212,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Search Scheduling",
       "subsection": "",
       "question": "What search window is used?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -20221,8 +20221,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Search Scheduling",
       "subsection": "",
       "question": "Is overlap intentional?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -20230,8 +20230,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Search Scheduling",
       "subsection": "",
       "question": "Are events searched more than once?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -20239,8 +20239,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Search Scheduling",
       "subsection": "",
       "question": "Can events fall between windows?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -20248,8 +20248,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Search Scheduling",
       "subsection": "",
       "question": "Is schedule skew expected?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -20257,8 +20257,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Search Scheduling",
       "subsection": "",
       "question": "Does scheduler delay matter?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -20266,8 +20266,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Search Scheduling",
       "subsection": "",
       "question": "What happens if a search is skipped?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -20275,8 +20275,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Search Scheduling",
       "subsection": "",
       "question": "Are skipped searches alerted?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -20284,8 +20284,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Search Scheduling",
       "subsection": "",
       "question": "Is maximum search delay defined?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -20293,8 +20293,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Search Scheduling",
       "subsection": "",
       "question": "Is real-time search actually required?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -20302,8 +20302,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Search Scheduling",
       "subsection": "",
       "question": "Would scheduled search provide equivalent security value at lower cost?",
-      "taxonomyCode": "TAX-05.03.01",
-      "taxonomyTerm": "Detection Analytic & Rule",
+      "taxonomyCode": "TAX-05.03.11",
+      "taxonomyTerm": "Detection Timing and Scheduling",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -22552,8 +22552,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Drift",
       "subsection": "",
       "question": "Can source schema changes break the analytic?",
-      "taxonomyCode": "TAX-05.03.07",
-      "taxonomyTerm": "Detection Health",
+      "taxonomyCode": "TAX-05.03.13",
+      "taxonomyTerm": "Detection Drift",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -22561,8 +22561,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Drift",
       "subsection": "",
       "question": "Can new event types affect logic?",
-      "taxonomyCode": "TAX-05.03.07",
-      "taxonomyTerm": "Detection Health",
+      "taxonomyCode": "TAX-05.03.13",
+      "taxonomyTerm": "Detection Drift",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -22570,8 +22570,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Drift",
       "subsection": "",
       "question": "Can value semantics change?",
-      "taxonomyCode": "TAX-05.03.07",
-      "taxonomyTerm": "Detection Health",
+      "taxonomyCode": "TAX-05.03.13",
+      "taxonomyTerm": "Detection Drift",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -22579,8 +22579,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Drift",
       "subsection": "",
       "question": "Can normal behaviour drift?",
-      "taxonomyCode": "TAX-05.03.07",
-      "taxonomyTerm": "Detection Health",
+      "taxonomyCode": "TAX-05.03.13",
+      "taxonomyTerm": "Detection Drift",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -22588,8 +22588,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Drift",
       "subsection": "",
       "question": "Can threat behaviour drift?",
-      "taxonomyCode": "TAX-05.03.07",
-      "taxonomyTerm": "Detection Health",
+      "taxonomyCode": "TAX-05.03.13",
+      "taxonomyTerm": "Detection Drift",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -22597,8 +22597,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Drift",
       "subsection": "",
       "question": "Can ATT&CK mappings become stale?",
-      "taxonomyCode": "TAX-05.03.07",
-      "taxonomyTerm": "Detection Health",
+      "taxonomyCode": "TAX-05.03.13",
+      "taxonomyTerm": "Detection Drift",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -22606,8 +22606,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Drift",
       "subsection": "",
       "question": "Can platform upgrades affect SPL?",
-      "taxonomyCode": "TAX-05.03.07",
-      "taxonomyTerm": "Detection Health",
+      "taxonomyCode": "TAX-05.03.13",
+      "taxonomyTerm": "Detection Drift",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -22615,8 +22615,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Drift",
       "subsection": "",
       "question": "Can add-on upgrades alter fields?",
-      "taxonomyCode": "TAX-05.03.07",
-      "taxonomyTerm": "Detection Health",
+      "taxonomyCode": "TAX-05.03.13",
+      "taxonomyTerm": "Detection Drift",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -22624,8 +22624,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Drift",
       "subsection": "",
       "question": "Can lookups become stale?",
-      "taxonomyCode": "TAX-05.03.07",
-      "taxonomyTerm": "Detection Health",
+      "taxonomyCode": "TAX-05.03.13",
+      "taxonomyTerm": "Detection Drift",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -22633,8 +22633,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Drift",
       "subsection": "",
       "question": "Can exclusions accumulate?",
-      "taxonomyCode": "TAX-05.03.07",
-      "taxonomyTerm": "Detection Health",
+      "taxonomyCode": "TAX-05.03.13",
+      "taxonomyTerm": "Detection Drift",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -22642,8 +22642,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Drift",
       "subsection": "",
       "question": "Can thresholds become obsolete?",
-      "taxonomyCode": "TAX-05.03.07",
-      "taxonomyTerm": "Detection Health",
+      "taxonomyCode": "TAX-05.03.13",
+      "taxonomyTerm": "Detection Drift",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -22651,8 +22651,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Drift",
       "subsection": "",
       "question": "Is drift automatically detected?",
-      "taxonomyCode": "TAX-05.03.07",
-      "taxonomyTerm": "Detection Health",
+      "taxonomyCode": "TAX-05.03.13",
+      "taxonomyTerm": "Detection Drift",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -22660,8 +22660,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Drift",
       "subsection": "",
       "question": "Does drift trigger revalidation?",
-      "taxonomyCode": "TAX-05.03.07",
-      "taxonomyTerm": "Detection Health",
+      "taxonomyCode": "TAX-05.03.13",
+      "taxonomyTerm": "Detection Drift",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -24001,8 +24001,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Is the threat hypothesis defined?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24010,8 +24010,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Is security value established?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24019,8 +24019,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Are required sources available?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24028,8 +24028,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Is source coverage sufficient?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24037,8 +24037,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Are required fields present?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24046,8 +24046,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Is analytic logic documented?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24055,8 +24055,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Are exclusions justified?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24064,8 +24064,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Is ATT&CK mapping correct?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24073,8 +24073,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Are positive tests passing?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24082,8 +24082,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Are negative tests passing?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24091,8 +24091,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Are boundary tests passing?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24100,8 +24100,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Are known false positives documented?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24109,8 +24109,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Are known false negatives documented?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24118,8 +24118,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Has telemetry-loss behaviour been considered?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24127,8 +24127,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Has duplicate-event behaviour been tested?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24136,8 +24136,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Has late-arrival behaviour been tested?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24145,8 +24145,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Has performance been tested?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24154,8 +24154,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Has peer review passed?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24163,8 +24163,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Is analyst guidance complete?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24172,8 +24172,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Is detection health monitoring defined?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24181,8 +24181,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Threat Detection Quality Gate",
       "subsection": "",
       "question": "Is the deployment reversible?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24190,8 +24190,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Enhanced Validation Gate",
       "subsection": "",
       "question": "Has Purple Team validation passed?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24199,8 +24199,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Enhanced Validation Gate",
       "subsection": "",
       "question": "Has adversarial bypass testing occurred?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24208,8 +24208,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Enhanced Validation Gate",
       "subsection": "",
       "question": "Are alternate implementations of the technique tested?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24217,8 +24217,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Enhanced Validation Gate",
       "subsection": "",
       "question": "Is source completeness independently validated?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24226,8 +24226,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Enhanced Validation Gate",
       "subsection": "",
       "question": "Is detection latency measured?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24235,8 +24235,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Enhanced Validation Gate",
       "subsection": "",
       "question": "Is end-to-end behaviour validated?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24244,8 +24244,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Enhanced Validation Gate",
       "subsection": "",
       "question": "Are downstream response workflows validated?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24253,8 +24253,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Enhanced Validation Gate",
       "subsection": "",
       "question": "Are source and parser dependencies monitored?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24262,8 +24262,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Enhanced Validation Gate",
       "subsection": "",
       "question": "Are golden events retained?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24271,8 +24271,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Enhanced Validation Gate",
       "subsection": "",
       "question": "Is automated regression testing present?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24280,8 +24280,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Enhanced Validation Gate",
       "subsection": "",
       "question": "Are known blind spots risk accepted?",
-      "taxonomyCode": "TAX-05.03.02",
-      "taxonomyTerm": "Detection Lifecycle State",
+      "taxonomyCode": "TAX-05.03.12",
+      "taxonomyTerm": "Detection Quality Gate",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24568,8 +24568,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Is the threat hypothesis retained as evidence?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24577,8 +24577,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Is supporting threat intelligence retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24586,8 +24586,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Is ATT&CK mapping evidence retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24595,8 +24595,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Are required telemetry definitions retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24604,8 +24604,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Are sample raw events retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24613,8 +24613,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Are field mappings retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24622,8 +24622,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Is SPL or analytic logic retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24631,8 +24631,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Are positive test results retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24640,8 +24640,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Are negative test results retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24649,8 +24649,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Are boundary test results retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24658,8 +24658,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Are Purple Team test results retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24667,8 +24667,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Is Red Team feedback retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24676,8 +24676,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Are performance test results retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24685,8 +24685,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Is peer-review evidence retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24694,8 +24694,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Is deployment-validation evidence retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24703,8 +24703,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Is false-positive analysis retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24712,8 +24712,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Are known false negatives retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24721,8 +24721,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Are tuning decisions retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24730,8 +24730,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Is validation history retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24739,8 +24739,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Are effectiveness metrics retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -24748,8 +24748,8 @@
       "section": "Comprehensive Threat Detection Engineering Questionnaire — Detection Evidence",
       "subsection": "",
       "question": "Is retirement evidence retained?",
-      "taxonomyCode": "TAX-05.08.01",
-      "taxonomyTerm": "Detection-as-Code and Version Control",
+      "taxonomyCode": "TAX-05.08.03",
+      "taxonomyTerm": "Detection Evidence Retention",
       "onboardingPhase": "Worthiness & Implementation"
     }
   ]
