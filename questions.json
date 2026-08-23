@@ -10510,8 +10510,8 @@
       "section": "Log Onboarding Questionnaire — 39. Testing and Validation",
       "subsection": "",
       "question": "Have detection rules been validated using the new data?",
-      "taxonomyCode": "TAX-07.26.10.02",
-      "taxonomyTerm": "Regression Testing",
+      "taxonomyCode": "TAX-05.05.01",
+      "taxonomyTerm": "Detection Validation",
       "onboardingPhase": "Worthiness & Implementation"
     },
     {
@@ -10519,8 +10519,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "What detections will be enabled immediately?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.03.02",
+      "taxonomyTerm": "Detection Lifecycle State",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -10528,8 +10528,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "What detections depend on normalization?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.03.08",
+      "taxonomyTerm": "Detection Dependency Model",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -10537,8 +10537,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "Are detection-required fields populated?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.02.02",
+      "taxonomyTerm": "Use Case–Event Mapping",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -10546,8 +10546,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "Are detection-required event types available?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.02.02",
+      "taxonomyTerm": "Use Case–Event Mapping",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -10555,8 +10555,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "Is event latency low enough for the detection?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.02",
+      "taxonomyTerm": "Data & Event Requirements",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -10564,8 +10564,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "Are entity identifiers reliable?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.03.04",
+      "taxonomyTerm": "Correlation Engineering",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -10573,8 +10573,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "Can event outcomes be distinguished?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.02.02",
+      "taxonomyTerm": "Use Case–Event Mapping",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -10582,8 +10582,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "Are failure reasons provided?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.02.02",
+      "taxonomyTerm": "Use Case–Event Mapping",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -10591,8 +10591,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "Are privilege levels identifiable?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.02.02",
+      "taxonomyTerm": "Use Case–Event Mapping",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -10600,8 +10600,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "Are administrative actions distinguishable from ordinary user activity?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.02.02",
+      "taxonomyTerm": "Use Case–Event Mapping",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -10609,8 +10609,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "Are detections resistant to duplicate events?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.05.04",
+      "taxonomyTerm": "Detection Testing",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -10618,8 +10618,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "Are thresholds appropriate for observed baseline behaviour?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.05.06",
+      "taxonomyTerm": "Detection Quality Metrics",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -10627,8 +10627,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "Has baseline behaviour been measured?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.05.06",
+      "taxonomyTerm": "Detection Quality Metrics",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -10636,8 +10636,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "Have false-positive expectations been documented?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.05.06",
+      "taxonomyTerm": "Detection Quality Metrics",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -10645,8 +10645,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "Are threat-intelligence pivots available?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.03.06",
+      "taxonomyTerm": "Detection Enrichment Dependency",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -10654,8 +10654,8 @@
       "section": "Log Onboarding Questionnaire — 40. Detection Readiness",
       "subsection": "",
       "question": "Can notable events/incidents link back to the original records?",
-      "taxonomyCode": "TAX-05",
-      "taxonomyTerm": "Detection & Response",
+      "taxonomyCode": "TAX-05.07.01",
+      "taxonomyTerm": "Alert & Notable Event Chain",
       "onboardingPhase": "Cyber Value Gates"
     },
     {
@@ -11815,8 +11815,8 @@
       "section": "Log Onboarding Questionnaire — 51. Change Management",
       "subsection": "",
       "question": "Is detection-as-code used?",
-      "taxonomyCode": "TAX-07.26.10.01",
-      "taxonomyTerm": "Controlled Change Validation",
+      "taxonomyCode": "TAX-05.08.01",
+      "taxonomyTerm": "Detection-as-Code and Version Control",
       "onboardingPhase": "Log Sustainment"
     },
     {
@@ -12085,8 +12085,8 @@
       "section": "Log Onboarding Questionnaire — 53. Decommissioning",
       "subsection": "",
       "question": "Must monitoring rules be retired?",
-      "taxonomyCode": "TAX-07.04",
-      "taxonomyTerm": "Log Sustainment",
+      "taxonomyCode": "TAX-05.03.02",
+      "taxonomyTerm": "Detection Lifecycle State",
       "onboardingPhase": "Log Sustainment"
     },
     {
