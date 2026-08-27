@@ -695,6 +695,40 @@
     }
     .page-view[hidden] { display: none !important; }
 
+    /* Input coverage page: secondary (sub-menu) tab bar within a page */
+    .page-subnav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 4px 0 24px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-subtab {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .page-subtab:hover { border-color: var(--accent); color: var(--accent); }
+    .page-subtab.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+    .subpage-view[hidden] { display: none !important; }
+    .input-coverage-group { margin-bottom: 28px; }
+    .input-coverage-group h4 { margin: 0 0 4px; font-size: 15px; color: var(--text); }
+    .input-coverage-group .ta-tag { font-family: var(--mono); font-size: 11px; color: var(--accent); background: var(--primary-light); border-radius: 6px; padding: 2px 8px; margin-left: 8px; }
+    .input-coverage-group p { margin: 0 0 12px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .input-coverage-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; list-style: none; margin: 0; padding: 0; }
+    .input-coverage-list li { border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 13px; color: var(--text); background: var(--surface); }
+
     /* Logging patterns table page */
     .patterns-page { padding-bottom: 42px; }
     .patterns-hero {
@@ -3342,6 +3376,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
     <button id="showHealthChecksPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="healthChecksPage">Health checks table</button>
     <button id="showPortsMatrixPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="portsMatrixPage">Ports matrix</button>
     <button id="showExternalToolsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="externalToolsPage">Companion tools</button>
+    <button id="showInputCoveragePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="inputCoveragePage">Input coverage</button>
   </nav>
 
 
@@ -13931,6 +13966,92 @@ E. Assumptions and unresolved inputs</pre>
     </section>
   </section>
 
+  <section id="inputCoveragePage" class="page-view reference-page" role="tabpanel" aria-labelledby="showInputCoveragePage" hidden>
+    <div class="reference-hero">
+      <div class="eyebrow">Data source coverage</div>
+      <h2>Input Coverage</h2>
+      <p>Reference listings of the specific inputs a Splunk technology add-on (TA) exposes for a vendor platform, organised by product family. Use these alongside the Data Source Catalogue (<code>TAX-03.01.01</code>) when scoping which inputs a tenant/subscription needs enabled.</p>
+    </div>
+    <div class="page-subnav" role="tablist" aria-label="Input coverage sections">
+      <button id="showMsCloudInputsSubpage" class="page-subtab active" type="button" role="tab" aria-selected="true" aria-controls="msCloudInputsSubpage" data-subpage="msCloudInputs">Microsoft cloud based inputs</button>
+    </div>
+    <div id="msCloudInputsSubpage" class="subpage-view" role="tabpanel" aria-labelledby="showMsCloudInputsSubpage">
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Microsoft cloud based inputs</h3><p>40 inputs across four Splunk-maintained Microsoft add-ons. Each input is a distinct, separately-enabled data feed within its TA -- not every tenant/subscription will need every input.</p></div></div>
+
+        <div class="input-coverage-group">
+          <h4>Microsoft 365 / Office 365 <span class="ta-tag">splunk_ta_o365</span></h4>
+          <p>Splunk Add-on for Microsoft Office 365 -- collects Office 365 Management Activity API events and related M365 service telemetry.</p>
+          <ul class="input-coverage-list">
+            <li>Management Activity</li>
+            <li>MailBox</li>
+            <li>Office365</li>
+            <li>OneDrive</li>
+            <li>SharePoint</li>
+            <li>Teams</li>
+            <li>Yammer</li>
+            <li>Audit Logs</li>
+            <li>Service Health &amp; Communications</li>
+            <li>Cloud Application Security</li>
+            <li>Message Trace</li>
+            <li>Microsoft Entra ID Metadata</li>
+          </ul>
+        </div>
+
+        <div class="input-coverage-group">
+          <h4>Microsoft Azure Infrastructure <span class="ta-tag">Splunk_TA_microsoft-cloudservices</span></h4>
+          <p>Splunk Add-on for Microsoft Cloud Services -- collects general Azure Resource Manager telemetry: resource/storage/audit logs, VM metrics, consumption/billing data and Log Analytics KQL query results.</p>
+          <ul class="input-coverage-list">
+            <li>Azure Resource</li>
+            <li>Azure Storage Table</li>
+            <li>Azure Storage Blob</li>
+            <li>Azure Virtual Machine Metrics</li>
+            <li>Azure Consumption (Billing)</li>
+            <li>Azure KQL Log Analytics</li>
+            <li>Azure Metrics</li>
+            <li>Azure Event Hub</li>
+            <li>Azure Audit</li>
+          </ul>
+        </div>
+
+        <div class="input-coverage-group">
+          <h4>Microsoft Entra ID (Identity) <span class="ta-tag">TA-MS-AAD</span></h4>
+          <p>Microsoft Entra ID (Azure AD) add-on -- collects Entra ID identity telemetry: sign-ins, directory objects, audit logs, Identity Protection risk events and related Graph Security/Defender for Cloud/Resource Graph data.</p>
+          <ul class="input-coverage-list">
+            <li>Microsoft Entra ID Interactive Sign-ins</li>
+            <li>Microsoft Entra ID Users</li>
+            <li>Microsoft Entra ID Groups</li>
+            <li>Microsoft Entra ID Applications</li>
+            <li>Microsoft Entra ID Audit</li>
+            <li>Microsoft Entra ID Identity Protection</li>
+            <li>Microsoft Entra ID Devices</li>
+            <li>Microsoft Graph Security API</li>
+            <li>Azure Metrics</li>
+            <li>Microsoft Defender for cloud Alerts and Tasks</li>
+            <li>Resource Graph</li>
+            <li>Azure Topology Auto</li>
+            <li>Azure Topology Manual</li>
+          </ul>
+        </div>
+
+        <div class="input-coverage-group">
+          <h4>Microsoft Defender XDR <span class="ta-tag">Splunk_TA_MS_Security</span></h4>
+          <p>Splunk Add-on for Microsoft Security -- collects Microsoft 365 Defender / Defender for Endpoint telemetry: incidents, alerts, attack simulations, threat intelligence datasets and managed machine inventory.</p>
+          <ul class="input-coverage-list">
+            <li>Microsoft 365 Defender Incidents</li>
+            <li>Microsoft Defender for Endpoint Alerts</li>
+            <li>Microsoft Defender Simulations</li>
+            <li>Microsoft Defender Event Hub</li>
+            <li>Microsoft Defender Threat Intelligence DataSets</li>
+            <li>Microsoft Defender Machines</li>
+          </ul>
+        </div>
+
+        <p class="sot-note">Note: <strong>Azure Metrics</strong> appears under both <code>Splunk_TA_microsoft-cloudservices</code> and <code>TA-MS-AAD</code> -- these are two distinct inputs from two different apps, not a duplicate. For tenant/subscription-level enablement tracking against these 40 inputs, see <code>docs/microsoft_cloud_input_tenant_tracker.xlsx</code> in this repository.</p>
+      </section>
+    </div>
+  </section>
+
 </main>
 
 
@@ -20773,7 +20894,8 @@ const pageTabs = {
   patterns: document.getElementById("showPatternsPage"),
   health: document.getElementById("showHealthChecksPage"),
   portsMatrix: document.getElementById("showPortsMatrixPage"),
-  externalTools: document.getElementById("showExternalToolsPage")
+  externalTools: document.getElementById("showExternalToolsPage"),
+  inputCoverage: document.getElementById("showInputCoveragePage")
 };
 const pageViews = {
   info: document.getElementById("infoPage"),
@@ -20792,7 +20914,8 @@ const pageViews = {
   patterns: document.getElementById("patternsPage"),
   health: document.getElementById("healthChecksPage"),
   portsMatrix: document.getElementById("portsMatrixPage"),
-  externalTools: document.getElementById("externalToolsPage")
+  externalTools: document.getElementById("externalToolsPage"),
+  inputCoverage: document.getElementById("inputCoveragePage")
 };
 const patternTableBody = document.getElementById("patternTableBody");
 const patternTableSearch = document.getElementById("patternTableSearch");
@@ -22323,7 +22446,7 @@ function exportViabilityCalculator(event) {
 }
 
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "portsMatrix", "externalTools"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "portsMatrix", "externalTools", "inputCoverage"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#file-mon-/.test(location.hash) ? "file-monitoring-profile" : /^#rest-api-/.test(location.hash) ? "rest-api-collection-profile" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : /^#eda-/.test(location.hash) ? "eda-playbook" : "");
   
@@ -22378,6 +22501,8 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
                   ? "#my-tools"
                   : selected === "objectTaxonomy"
                     ? "#object-taxonomy"
+                  : selected === "inputCoverage"
+                    ? "#input-coverage"
                     : "#taxonomy";
     history.replaceState(null, "", hash);
   }
@@ -23044,6 +23169,7 @@ function pageNameFromHash() {
   if (location.hash === "#health-checks") return "health";
   if (/^#ports-matrix/.test(location.hash)) return "portsMatrix";
   if (location.hash === "#my-tools") return "externalTools";
+  if (location.hash === "#input-coverage") return "inputCoverage";
   if (location.hash === "#network-reference") return "reference";
   if (location.hash === "#splunk-ports") return "reference";
   if (location.hash === "#network-flows") return "reference";
@@ -32125,6 +32251,21 @@ initPortsMatrixCellModal();
 
 Object.entries(pageTabs).forEach(([name, tab]) => {
   if (tab) tab.addEventListener("click", () => setActivePage(name));
+});
+
+const inputCoverageSubtabs = document.querySelectorAll("#inputCoveragePage .page-subtab");
+function setActiveInputCoverageSubpage(subpageName) {
+  inputCoverageSubtabs.forEach(tab => {
+    const active = tab.dataset.subpage === subpageName;
+    tab.classList.toggle("active", active);
+    tab.setAttribute("aria-selected", String(active));
+  });
+  document.querySelectorAll("#inputCoveragePage .subpage-view").forEach(view => {
+    view.hidden = view.id !== `${subpageName}Subpage`;
+  });
+}
+inputCoverageSubtabs.forEach(tab => {
+  tab.addEventListener("click", () => setActiveInputCoverageSubpage(tab.dataset.subpage));
 });
 
 document.querySelectorAll("[data-info-page]").forEach(button => {
