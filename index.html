@@ -32365,16 +32365,32 @@ msCloudInputsViewTabs.forEach(tab => {
 
 /* ---------- Input Coverage: editable Microsoft cloud input tracker ---------- */
 const inputCoverageTenantColumns = ["Tenant ID", "Tenant Name", "Subscription ID", "Subscription Name"];
+// appId/baseLink/sourcetype are deliberately "To be confirmed" -- Splunkbase and docs.splunk.com are both
+// unreachable from this environment (egress-blocked), so these were not fabricated. appName is a best-effort
+// reading of the well-known public listing name for each add-on; verify against Splunkbase before treating as final.
 const inputCoverageGroups = [
-  { tag: "splunk_ta_o365", inputs: ["Management Activity", "MailBox", "Office365", "OneDrive", "SharePoint", "Teams", "Yammer", "Audit Logs", "Service Health & Communications", "Cloud Application Security", "Message Trace", "Microsoft Entra ID Metadata"] },
-  { tag: "Splunk_TA_microsoft-cloudservices", inputs: ["Azure Resource", "Azure Storage Table", "Azure Storage Blob", "Azure Virtual Machine Metrics", "Azure Consumption (Billing)", "Azure KQL Log Analytics", "Azure Metrics", "Azure Event Hub", "Azure Audit"] },
-  { tag: "TA-MS-AAD", inputs: ["Microsoft Entra ID Interactive Sign-ins", "Microsoft Entra ID Users", "Microsoft Entra ID Groups", "Microsoft Entra ID Applications", "Microsoft Entra ID Audit", "Microsoft Entra ID Identity Protection", "Microsoft Entra ID Devices", "Microsoft Graph Security API", "Azure Metrics", "Microsoft Defender for cloud Alerts and Tasks", "Resource Graph", "Azure Topology Auto", "Azure Topology Manual"] },
-  { tag: "Splunk_TA_MS_Security", inputs: ["Microsoft 365 Defender Incidents", "Microsoft Defender for Endpoint Alerts", "Microsoft Defender Simulations", "Microsoft Defender Event Hub", "Microsoft Defender Threat Intelligence DataSets", "Microsoft Defender Machines"] }
+  { tag: "splunk_ta_o365", appName: "Splunk Add-on for Microsoft Office 365", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["Management Activity", "MailBox", "Office365", "OneDrive", "SharePoint", "Teams", "Yammer", "Audit Logs", "Service Health & Communications", "Cloud Application Security", "Message Trace", "Microsoft Entra ID Metadata"] },
+  { tag: "Splunk_TA_microsoft-cloudservices", appName: "Splunk Add-on for Microsoft Cloud Services", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["Azure Resource", "Azure Storage Table", "Azure Storage Blob", "Azure Virtual Machine Metrics", "Azure Consumption (Billing)", "Azure KQL Log Analytics", "Azure Metrics", "Azure Event Hub", "Azure Audit"] },
+  { tag: "TA-MS-AAD", appName: "Microsoft Entra ID (Azure AD) Add-on for Splunk", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["Microsoft Entra ID Interactive Sign-ins", "Microsoft Entra ID Users", "Microsoft Entra ID Groups", "Microsoft Entra ID Applications", "Microsoft Entra ID Audit", "Microsoft Entra ID Identity Protection", "Microsoft Entra ID Devices", "Microsoft Graph Security API", "Azure Metrics", "Microsoft Defender for cloud Alerts and Tasks", "Resource Graph", "Azure Topology Auto", "Azure Topology Manual"] },
+  { tag: "Splunk_TA_MS_Security", appName: "Splunk Add-on for Microsoft Security", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["Microsoft 365 Defender Incidents", "Microsoft Defender for Endpoint Alerts", "Microsoft Defender Simulations", "Microsoft Defender Event Hub", "Microsoft Defender Threat Intelligence DataSets", "Microsoft Defender Machines"] }
 ];
+// Sourcetype is not yet verified for any input (see note above) -- every column defaults to "To be confirmed"
+// here rather than a guessed value; replace with real sourcetypes once confirmed against each add-on's docs.
+const inputCoverageSourcetypes = {};
 // Each input column's canonical/export key disambiguates "Azure Metrics" (appears under two apps) via the "[TA]" suffix.
 const inputCoverageInputColumns = inputCoverageGroups.flatMap(group =>
-  group.inputs.map(label => ({ key: `${label} [${group.tag}]`, label, tag: group.tag }))
+  group.inputs.map(label => {
+    const key = `${label} [${group.tag}]`;
+    return {
+      key, label, tag: group.tag,
+      appName: group.appName, appId: group.appId, baseLink: group.baseLink,
+      sourcetype: inputCoverageSourcetypes[key] || "To be confirmed"
+    };
+  })
 );
+function inputCoverageColumnTooltip(c) {
+  return `Splunk app ID: ${c.appId}\nSplunk app name: ${c.appName}\nSplunk app base link: ${c.baseLink}\nInput name: ${c.label}\nSourcetype: ${c.sourcetype}`;
+}
 const inputCoverageAllColumns = [...inputCoverageTenantColumns, ...inputCoverageInputColumns.map(c => c.key)];
 const INPUT_COVERAGE_LS_KEY = "latch_input_coverage_v1";
 
@@ -32461,7 +32477,7 @@ function renderInputCoverageTable() {
           return `<th class="ic-group-collapsed-col" data-toggle-group="${escapeHtml(g.tag)}" title="Click to expand ${escapeHtml(g.tag)}">&#9656;</th>`;
         }
         return inputCoverageInputColumns.filter(c => c.tag === g.tag)
-          .map(c => `<th title="${escapeHtml(c.key)}">${escapeHtml(c.label)}</th>`).join("");
+          .map(c => `<th title="${escapeHtml(inputCoverageColumnTooltip(c))}">${escapeHtml(c.label)}</th>`).join("");
       }).join("")
     + `<th></th>`;
   head.innerHTML = `<tr class="ic-group-row"><th colspan="${inputCoverageTenantColumns.length}"></th>${groupInputCells}<th></th></tr>`
