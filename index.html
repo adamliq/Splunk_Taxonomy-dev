@@ -743,6 +743,33 @@
     .input-coverage-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; list-style: none; margin: 0; padding: 0; }
     .input-coverage-list li { border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 13px; color: var(--text); background: var(--surface); }
 
+    /* Editable Coverage table */
+    .input-coverage-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 4px 0 14px; }
+    .input-coverage-toolbar button { border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .input-coverage-toolbar button:hover { border-color: var(--accent); color: var(--accent); }
+    .input-coverage-toolbar button.primary-button { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .input-coverage-toolbar button.primary-button:hover { background: #163a5c; color: #fff; }
+    .input-coverage-status { font-size: 12px; color: var(--muted); }
+    .input-coverage-table-wrap { overflow: auto; max-height: 640px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+    table.input-coverage-table { border-collapse: collapse; font-size: 12.5px; min-width: 100%; }
+    table.input-coverage-table th, table.input-coverage-table td { border: 1px solid var(--border); padding: 0; white-space: nowrap; }
+    table.input-coverage-table thead th { position: sticky; top: 0; z-index: 2; background: var(--primary); color: #fff; padding: 8px 10px; font-size: 11px; text-align: center; }
+    table.input-coverage-table thead tr.ic-group-row th { background: var(--accent); font-family: var(--mono); font-size: 10px; font-weight: 600; top: 0; z-index: 3; }
+    table.input-coverage-table thead tr.ic-col-row th { top: 30px; }
+    table.input-coverage-table thead th.ic-tenant-col { background: #0f2034; }
+    table.input-coverage-table tbody td.ic-tenant-cell { background: var(--primary-light); }
+    table.input-coverage-table tbody tr:nth-child(even) td { background: #f8fafc; }
+    table.input-coverage-table tbody tr:nth-child(even) td.ic-tenant-cell { background: #e7eef7; }
+    .ic-text-input { width: 150px; border: none; padding: 8px 10px; font-size: 12.5px; font-family: inherit; background: transparent; color: var(--text); }
+    .ic-text-input:focus { outline: 2px solid var(--accent); outline-offset: -2px; background: #fff; }
+    .ic-yn-select { width: 62px; border: none; padding: 8px 4px; font-size: 12.5px; font-family: inherit; background: transparent; color: var(--text); text-align: center; cursor: pointer; }
+    .ic-yn-select:focus { outline: 2px solid var(--accent); outline-offset: -2px; background: #fff; }
+    .ic-yn-select[data-val="Y"] { color: #15803d; font-weight: 700; }
+    .ic-yn-select[data-val="N"] { color: #b91c1c; font-weight: 700; }
+    .ic-row-remove { border: none; background: transparent; color: #b91c1c; cursor: pointer; font-size: 15px; padding: 8px 10px; }
+    .ic-row-remove:hover { background: #fee2e2; }
+    .ic-empty-row td { padding: 16px; text-align: center; color: var(--muted); font-style: italic; white-space: normal; }
+
     /* Logging patterns table page */
     .patterns-page { padding-bottom: 42px; }
     .patterns-hero {
@@ -14073,11 +14100,25 @@ E. Assumptions and unresolved inputs</pre>
 
       <div id="msCoverageView" class="subpage-view" role="tabpanel" aria-labelledby="showMsCoverageView" hidden>
       <section class="reference-section">
-        <div class="reference-section-heading"><div><h3>Coverage</h3><p>Tenant/subscription-level enablement tracking against the 40 Microsoft cloud inputs listed under Inputs.</p></div></div>
-        <div class="info-action-grid" aria-label="Microsoft cloud input coverage tracker">
-          <a class="info-action-card" href="docs/microsoft_cloud_input_tenant_tracker.xlsx" download><strong>Microsoft Cloud Input Tenant/Subscription Tracker</strong><span>Downloadable Excel workbook -- one row per Tenant/Subscription, a Yes/No/N/A dropdown per input, grouped and colour-banded by owning Splunk TA. Includes a Legend sheet with fill-in instructions.</span><em>Download tracker (.xlsx) &#8595;</em></a>
+        <div class="reference-section-heading"><div><h3>Coverage</h3><p>Editable tenant/subscription-level enablement tracking against the 40 Microsoft cloud inputs listed under Inputs. Edits are saved in this browser automatically.</p></div></div>
+
+        <div class="input-coverage-toolbar">
+          <button id="inputCoverageAddRow" type="button">+ Add row</button>
+          <button id="inputCoverageImportBtn" type="button">Import CSV</button>
+          <input id="inputCoverageImportFile" type="file" accept=".csv,text/csv" hidden />
+          <button id="inputCoverageExportBtn" class="primary-button" type="button">Export CSV</button>
+          <button id="inputCoverageClearBtn" type="button">Clear all rows</button>
+          <span id="inputCoverageStatus" class="input-coverage-status" role="status" aria-live="polite"></span>
         </div>
-        <p class="sot-note">Columns: Tenant ID, Tenant Name, Subscription ID, Subscription Name, followed by one Yes/No/N/A column per input -- 12 for <code>splunk_ta_o365</code>, 9 for <code>Splunk_TA_microsoft-cloudservices</code>, 13 for <code>TA-MS-AAD</code> and 6 for <code>Splunk_TA_MS_Security</code> (44 columns total). <strong>Azure Metrics</strong> appears under both <code>Splunk_TA_microsoft-cloudservices</code> and <code>TA-MS-AAD</code> as two distinct tracked columns, disambiguated by the app tag in the workbook's column-group banner row.</p>
+
+        <div id="inputCoverageTableWrap" class="input-coverage-table-wrap">
+          <table id="inputCoverageTable" class="input-coverage-table">
+            <thead id="inputCoverageTableHead"></thead>
+            <tbody id="inputCoverageTableBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note">44 columns: Tenant ID, Tenant Name, Subscription ID, Subscription Name (free text) followed by one Y/N column per input -- 12 for <code>splunk_ta_o365</code>, 9 for <code>Splunk_TA_microsoft-cloudservices</code>, 13 for <code>TA-MS-AAD</code> and 6 for <code>Splunk_TA_MS_Security</code>. <strong>Azure Metrics</strong> appears under both <code>Splunk_TA_microsoft-cloudservices</code> and <code>TA-MS-AAD</code> as two distinct tracked columns. Exported/imported CSV headers use the full <code>Input Name [TA]</code> form to keep those two unambiguous. The original downloadable workbook is still available at <code>docs/microsoft_cloud_input_tenant_tracker.xlsx</code> for offline distribution.</p>
       </section>
       </div>
     </div>
@@ -32312,6 +32353,242 @@ function setActiveMsCloudInputsView(viewName) {
 }
 msCloudInputsViewTabs.forEach(tab => {
   tab.addEventListener("click", () => setActiveMsCloudInputsView(tab.dataset.msview));
+});
+
+/* ---------- Input Coverage: editable Microsoft cloud input tracker ---------- */
+const inputCoverageTenantColumns = ["Tenant ID", "Tenant Name", "Subscription ID", "Subscription Name"];
+const inputCoverageGroups = [
+  { tag: "splunk_ta_o365", inputs: ["Management Activity", "MailBox", "Office365", "OneDrive", "SharePoint", "Teams", "Yammer", "Audit Logs", "Service Health & Communications", "Cloud Application Security", "Message Trace", "Microsoft Entra ID Metadata"] },
+  { tag: "Splunk_TA_microsoft-cloudservices", inputs: ["Azure Resource", "Azure Storage Table", "Azure Storage Blob", "Azure Virtual Machine Metrics", "Azure Consumption (Billing)", "Azure KQL Log Analytics", "Azure Metrics", "Azure Event Hub", "Azure Audit"] },
+  { tag: "TA-MS-AAD", inputs: ["Microsoft Entra ID Interactive Sign-ins", "Microsoft Entra ID Users", "Microsoft Entra ID Groups", "Microsoft Entra ID Applications", "Microsoft Entra ID Audit", "Microsoft Entra ID Identity Protection", "Microsoft Entra ID Devices", "Microsoft Graph Security API", "Azure Metrics", "Microsoft Defender for cloud Alerts and Tasks", "Resource Graph", "Azure Topology Auto", "Azure Topology Manual"] },
+  { tag: "Splunk_TA_MS_Security", inputs: ["Microsoft 365 Defender Incidents", "Microsoft Defender for Endpoint Alerts", "Microsoft Defender Simulations", "Microsoft Defender Event Hub", "Microsoft Defender Threat Intelligence DataSets", "Microsoft Defender Machines"] }
+];
+// Each input column's canonical/export key disambiguates "Azure Metrics" (appears under two apps) via the "[TA]" suffix.
+const inputCoverageInputColumns = inputCoverageGroups.flatMap(group =>
+  group.inputs.map(label => ({ key: `${label} [${group.tag}]`, label, tag: group.tag }))
+);
+const inputCoverageAllColumns = [...inputCoverageTenantColumns, ...inputCoverageInputColumns.map(c => c.key)];
+const INPUT_COVERAGE_LS_KEY = "latch_input_coverage_v1";
+
+let inputCoverageRows = [];
+
+function newInputCoverageRow() {
+  const row = {};
+  inputCoverageAllColumns.forEach(col => { row[col] = ""; });
+  return row;
+}
+
+function loadInputCoverageRows() {
+  try {
+    const raw = localStorage.getItem(INPUT_COVERAGE_LS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        inputCoverageRows = parsed.map(saved => {
+          const row = newInputCoverageRow();
+          inputCoverageAllColumns.forEach(col => { if (saved && typeof saved[col] === "string") row[col] = saved[col]; });
+          return row;
+        });
+        return;
+      }
+    }
+  } catch (e) { /* ignore corrupt/unavailable storage */ }
+  inputCoverageRows = [newInputCoverageRow()];
+}
+
+function saveInputCoverageRows() {
+  try { localStorage.setItem(INPUT_COVERAGE_LS_KEY, JSON.stringify(inputCoverageRows)); } catch (e) { /* ignore quota/unavailable errors */ }
+}
+
+function setInputCoverageStatus(text) {
+  const el = document.getElementById("inputCoverageStatus");
+  if (el) el.textContent = text;
+}
+
+function renderInputCoverageTable() {
+  const head = document.getElementById("inputCoverageTableHead");
+  const body = document.getElementById("inputCoverageTableBody");
+  if (!head || !body) return;
+
+  const groupCells = inputCoverageTenantColumns.map(() => "").join("");
+  const groupInputCells = inputCoverageGroups.map(g => `<th colspan="${g.inputs.length}">[${escapeHtml(g.tag)}]</th>`).join("");
+  const colHeaderCells = inputCoverageTenantColumns.map(c => `<th class="ic-tenant-col">${escapeHtml(c)}</th>`).join("")
+    + inputCoverageInputColumns.map(c => `<th title="${escapeHtml(c.key)}">${escapeHtml(c.label)}</th>`).join("")
+    + `<th></th>`;
+  head.innerHTML = `<tr class="ic-group-row"><th colspan="${inputCoverageTenantColumns.length}"></th>${groupInputCells}<th></th></tr>`
+    + `<tr class="ic-col-row">${colHeaderCells}</tr>`;
+
+  if (!inputCoverageRows.length) {
+    body.innerHTML = `<tr class="ic-empty-row"><td colspan="${inputCoverageAllColumns.length + 1}">No rows yet. Use "+ Add row" or Import CSV to get started.</td></tr>`;
+  } else {
+    body.innerHTML = inputCoverageRows.map((row, rowIndex) => {
+      const tenantCells = inputCoverageTenantColumns.map(col =>
+        `<td class="ic-tenant-cell"><input class="ic-text-input" type="text" data-row="${rowIndex}" data-col="${escapeHtml(col)}" value="${escapeHtml(row[col] || "")}" placeholder="${escapeHtml(col)}" /></td>`
+      ).join("");
+      const inputCells = inputCoverageInputColumns.map(c => {
+        const val = row[c.key] === "Y" || row[c.key] === "N" ? row[c.key] : "";
+        return `<td><select class="ic-yn-select" data-row="${rowIndex}" data-col="${escapeHtml(c.key)}" data-val="${val}">
+          <option value=""${val === "" ? " selected" : ""}>--</option>
+          <option value="Y"${val === "Y" ? " selected" : ""}>Y</option>
+          <option value="N"${val === "N" ? " selected" : ""}>N</option>
+        </select></td>`;
+      }).join("");
+      return `<tr>${tenantCells}${inputCells}<td><button type="button" class="ic-row-remove" data-remove-row="${rowIndex}" title="Remove row" aria-label="Remove row">&times;</button></td></tr>`;
+    }).join("");
+  }
+  setInputCoverageStatus(`${inputCoverageRows.length} row${inputCoverageRows.length === 1 ? "" : "s"}`);
+}
+
+function parseInputCoverageCsv(text) {
+  // Minimal RFC4180-style CSV parser: handles quoted fields, embedded commas/newlines, and "" escaped quotes.
+  const rows = [];
+  let field = "", row = [], inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else inQuotes = false;
+      } else field += c;
+    } else if (c === '"') {
+      inQuotes = true;
+    } else if (c === ",") {
+      row.push(field); field = "";
+    } else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(field); field = "";
+      rows.push(row); row = [];
+    } else {
+      field += c;
+    }
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+  return rows.filter(r => r.length > 1 || (r.length === 1 && r[0] !== ""));
+}
+
+function normalizeYnValue(raw) {
+  const v = String(raw || "").trim().toLowerCase();
+  if (v === "y" || v === "yes" || v === "true") return "Y";
+  if (v === "n" || v === "no" || v === "false") return "N";
+  return "";
+}
+
+function exportInputCoverageCsv(event) {
+  const lines = [
+    inputCoverageAllColumns.map(csvValue).join(","),
+    ...inputCoverageRows.map(row => inputCoverageAllColumns.map(col => csvValue(row[col] || "")).join(","))
+  ];
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Microsoft-Cloud-Input-Coverage.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  if (event && event.currentTarget) {
+    const original = event.currentTarget.textContent;
+    event.currentTarget.textContent = "Exported";
+    setTimeout(() => { if (event.currentTarget) event.currentTarget.textContent = original; }, 1400);
+  }
+}
+
+function importInputCoverageCsv(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsedRows;
+    try {
+      parsedRows = parseInputCoverageCsv(String(reader.result || ""));
+    } catch (e) {
+      setInputCoverageStatus("Import failed: could not parse file as CSV.");
+      return;
+    }
+    if (!parsedRows.length) { setInputCoverageStatus("Import failed: file is empty."); return; }
+    const header = parsedRows[0].map(h => h.trim());
+    if (!header.includes("Tenant ID")) {
+      setInputCoverageStatus('Import failed: header row must include a "Tenant ID" column.');
+      return;
+    }
+    if (inputCoverageRows.length && !confirm(`This will replace the current ${inputCoverageRows.length} row(s) with the imported file. Continue?`)) {
+      return;
+    }
+    const colIndex = {};
+    header.forEach((h, i) => { colIndex[h] = i; });
+    const imported = parsedRows.slice(1).map(cells => {
+      const row = newInputCoverageRow();
+      inputCoverageTenantColumns.forEach(col => {
+        if (colIndex[col] !== undefined) row[col] = cells[colIndex[col]] || "";
+      });
+      inputCoverageInputColumns.forEach(c => {
+        if (colIndex[c.key] !== undefined) row[c.key] = normalizeYnValue(cells[colIndex[c.key]]);
+      });
+      return row;
+    });
+    inputCoverageRows = imported.length ? imported : [newInputCoverageRow()];
+    saveInputCoverageRows();
+    renderInputCoverageTable();
+    setInputCoverageStatus(`Imported ${imported.length} row${imported.length === 1 ? "" : "s"}.`);
+  };
+  reader.onerror = () => setInputCoverageStatus("Import failed: could not read file.");
+  reader.readAsText(file);
+}
+
+loadInputCoverageRows();
+renderInputCoverageTable();
+
+document.getElementById("inputCoverageTableBody").addEventListener("input", event => {
+  const target = event.target;
+  if (target.classList.contains("ic-text-input")) {
+    const rowIndex = Number(target.dataset.row);
+    const col = target.dataset.col;
+    if (inputCoverageRows[rowIndex]) {
+      inputCoverageRows[rowIndex][col] = target.value;
+      saveInputCoverageRows();
+    }
+  }
+});
+document.getElementById("inputCoverageTableBody").addEventListener("change", event => {
+  const target = event.target;
+  if (target.classList.contains("ic-yn-select")) {
+    const rowIndex = Number(target.dataset.row);
+    const col = target.dataset.col;
+    if (inputCoverageRows[rowIndex]) {
+      inputCoverageRows[rowIndex][col] = target.value;
+      target.dataset.val = target.value;
+      saveInputCoverageRows();
+    }
+  }
+});
+document.getElementById("inputCoverageTableBody").addEventListener("click", event => {
+  const btn = event.target.closest("[data-remove-row]");
+  if (!btn) return;
+  const rowIndex = Number(btn.dataset.removeRow);
+  inputCoverageRows.splice(rowIndex, 1);
+  saveInputCoverageRows();
+  renderInputCoverageTable();
+});
+document.getElementById("inputCoverageAddRow").addEventListener("click", () => {
+  inputCoverageRows.push(newInputCoverageRow());
+  saveInputCoverageRows();
+  renderInputCoverageTable();
+  const wrap = document.getElementById("inputCoverageTableWrap");
+  if (wrap) wrap.scrollTop = wrap.scrollHeight;
+});
+document.getElementById("inputCoverageClearBtn").addEventListener("click", () => {
+  if (!inputCoverageRows.length) return;
+  if (!confirm(`Remove all ${inputCoverageRows.length} row(s)? This cannot be undone.`)) return;
+  inputCoverageRows = [];
+  saveInputCoverageRows();
+  renderInputCoverageTable();
+});
+document.getElementById("inputCoverageExportBtn").addEventListener("click", exportInputCoverageCsv);
+document.getElementById("inputCoverageImportBtn").addEventListener("click", () => {
+  document.getElementById("inputCoverageImportFile").click();
+});
+document.getElementById("inputCoverageImportFile").addEventListener("change", event => {
+  const file = event.target.files && event.target.files[0];
+  if (file) importInputCoverageCsv(file);
+  event.target.value = "";
 });
 
 document.querySelectorAll("[data-info-page]").forEach(button => {
