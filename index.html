@@ -757,6 +757,12 @@
     table.input-coverage-table thead tr.ic-group-row th { background: var(--accent); font-family: var(--mono); font-size: 10px; font-weight: 600; top: 0; z-index: 3; }
     table.input-coverage-table thead tr.ic-col-row th { top: 30px; }
     table.input-coverage-table thead th.ic-tenant-col { background: #0f2034; }
+    table.input-coverage-table th.ic-group-toggle { cursor: pointer; user-select: none; white-space: nowrap; }
+    table.input-coverage-table th.ic-group-toggle:hover { background: #0b566b; }
+    table.input-coverage-table th.ic-group-collapsed-col { cursor: pointer; background: var(--primary-light); color: var(--accent); text-align: center; font-size: 14px; }
+    table.input-coverage-table th.ic-group-collapsed-col:hover { background: #dbeafe; }
+    table.input-coverage-table td.ic-group-collapsed-cell { cursor: pointer; text-align: center; color: var(--muted); font-size: 11px; background: #f1f5f9; }
+    table.input-coverage-table td.ic-group-collapsed-cell:hover { background: #e2e8f0; color: var(--accent); }
     table.input-coverage-table tbody td.ic-tenant-cell { background: var(--primary-light); }
     table.input-coverage-table tbody tr:nth-child(even) td { background: #f8fafc; }
     table.input-coverage-table tbody tr:nth-child(even) td.ic-tenant-cell { background: #e7eef7; }
@@ -32405,35 +32411,83 @@ function setInputCoverageStatus(text) {
   if (el) el.textContent = text;
 }
 
+const INPUT_COVERAGE_COLLAPSE_LS_KEY = "latch_input_coverage_collapsed_v1";
+// App columns start collapsed by default; collapse state is per-tag and persisted independently of row data.
+let inputCoverageCollapsedGroups = new Set(inputCoverageGroups.map(g => g.tag));
+
+function loadInputCoverageCollapseState() {
+  try {
+    const raw = localStorage.getItem(INPUT_COVERAGE_COLLAPSE_LS_KEY);
+    if (raw !== null) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        inputCoverageCollapsedGroups = new Set(parsed.filter(tag => inputCoverageGroups.some(g => g.tag === tag)));
+        return;
+      }
+    }
+  } catch (e) { /* ignore corrupt/unavailable storage */ }
+  // No saved preference yet -- default is every group collapsed.
+  inputCoverageCollapsedGroups = new Set(inputCoverageGroups.map(g => g.tag));
+}
+
+function saveInputCoverageCollapseState() {
+  try { localStorage.setItem(INPUT_COVERAGE_COLLAPSE_LS_KEY, JSON.stringify([...inputCoverageCollapsedGroups])); } catch (e) { /* ignore */ }
+}
+
+function toggleInputCoverageGroup(tag) {
+  if (inputCoverageCollapsedGroups.has(tag)) inputCoverageCollapsedGroups.delete(tag);
+  else inputCoverageCollapsedGroups.add(tag);
+  saveInputCoverageCollapseState();
+  renderInputCoverageTable();
+}
+
 function renderInputCoverageTable() {
   const head = document.getElementById("inputCoverageTableHead");
   const body = document.getElementById("inputCoverageTableBody");
   if (!head || !body) return;
 
-  const groupCells = inputCoverageTenantColumns.map(() => "").join("");
-  const groupInputCells = inputCoverageGroups.map(g => `<th colspan="${g.inputs.length}">[${escapeHtml(g.tag)}]</th>`).join("");
+  const groupInputCells = inputCoverageGroups.map(g => {
+    const collapsed = inputCoverageCollapsedGroups.has(g.tag);
+    const span = collapsed ? 1 : g.inputs.length;
+    const icon = collapsed ? "&#9656;" : "&#9662;";
+    const label = collapsed ? `${icon} [${escapeHtml(g.tag)}] (${g.inputs.length})` : `${icon} [${escapeHtml(g.tag)}]`;
+    return `<th class="ic-group-toggle" colspan="${span}" data-toggle-group="${escapeHtml(g.tag)}" title="Click to ${collapsed ? "expand" : "collapse"} ${escapeHtml(g.tag)}">${label}</th>`;
+  }).join("");
   const colHeaderCells = inputCoverageTenantColumns.map(c => `<th class="ic-tenant-col">${escapeHtml(c)}</th>`).join("")
-    + inputCoverageInputColumns.map(c => `<th title="${escapeHtml(c.key)}">${escapeHtml(c.label)}</th>`).join("")
+    + inputCoverageGroups.map(g => {
+        if (inputCoverageCollapsedGroups.has(g.tag)) {
+          return `<th class="ic-group-collapsed-col" data-toggle-group="${escapeHtml(g.tag)}" title="Click to expand ${escapeHtml(g.tag)}">&#9656;</th>`;
+        }
+        return inputCoverageInputColumns.filter(c => c.tag === g.tag)
+          .map(c => `<th title="${escapeHtml(c.key)}">${escapeHtml(c.label)}</th>`).join("");
+      }).join("")
     + `<th></th>`;
   head.innerHTML = `<tr class="ic-group-row"><th colspan="${inputCoverageTenantColumns.length}"></th>${groupInputCells}<th></th></tr>`
     + `<tr class="ic-col-row">${colHeaderCells}</tr>`;
 
   if (!inputCoverageRows.length) {
-    body.innerHTML = `<tr class="ic-empty-row"><td colspan="${inputCoverageAllColumns.length + 1}">No rows yet. Use "+ Add row" or Import CSV to get started.</td></tr>`;
+    body.innerHTML = `<tr class="ic-empty-row"><td colspan="${inputCoverageTenantColumns.length + inputCoverageGroups.length + 1}">No rows yet. Use "+ Add row" or Import CSV to get started.</td></tr>`;
   } else {
     body.innerHTML = inputCoverageRows.map((row, rowIndex) => {
       const tenantCells = inputCoverageTenantColumns.map(col =>
         `<td class="ic-tenant-cell"><input class="ic-text-input" type="text" data-row="${rowIndex}" data-col="${escapeHtml(col)}" value="${escapeHtml(row[col] || "")}" placeholder="${escapeHtml(col)}" /></td>`
       ).join("");
-      const inputCells = inputCoverageInputColumns.map(c => {
-        const val = row[c.key] === "Y" || row[c.key] === "N" ? row[c.key] : "";
-        return `<td><select class="ic-yn-select" data-row="${rowIndex}" data-col="${escapeHtml(c.key)}" data-val="${val}">
-          <option value=""${val === "" ? " selected" : ""}>--</option>
-          <option value="Y"${val === "Y" ? " selected" : ""}>Y</option>
-          <option value="N"${val === "N" ? " selected" : ""}>N</option>
-        </select></td>`;
+      const groupCells = inputCoverageGroups.map(g => {
+        const groupCols = inputCoverageInputColumns.filter(c => c.tag === g.tag);
+        if (inputCoverageCollapsedGroups.has(g.tag)) {
+          const yesCount = groupCols.filter(c => row[c.key] === "Y").length;
+          return `<td class="ic-group-collapsed-cell" data-toggle-group="${escapeHtml(g.tag)}" title="Click to expand ${escapeHtml(g.tag)}">${yesCount ? `${yesCount}/${groupCols.length} Y` : "&mdash;"}</td>`;
+        }
+        return groupCols.map(c => {
+          const val = row[c.key] === "Y" || row[c.key] === "N" ? row[c.key] : "";
+          return `<td><select class="ic-yn-select" data-row="${rowIndex}" data-col="${escapeHtml(c.key)}" data-val="${val}">
+            <option value=""${val === "" ? " selected" : ""}>--</option>
+            <option value="Y"${val === "Y" ? " selected" : ""}>Y</option>
+            <option value="N"${val === "N" ? " selected" : ""}>N</option>
+          </select></td>`;
+        }).join("");
       }).join("");
-      return `<tr>${tenantCells}${inputCells}<td><button type="button" class="ic-row-remove" data-remove-row="${rowIndex}" title="Remove row" aria-label="Remove row">&times;</button></td></tr>`;
+      return `<tr>${tenantCells}${groupCells}<td><button type="button" class="ic-row-remove" data-remove-row="${rowIndex}" title="Remove row" aria-label="Remove row">&times;</button></td></tr>`;
     }).join("");
   }
   setInputCoverageStatus(`${inputCoverageRows.length} row${inputCoverageRows.length === 1 ? "" : "s"}`);
@@ -32534,8 +32588,24 @@ function importInputCoverageCsv(file) {
 }
 
 loadInputCoverageRows();
+loadInputCoverageCollapseState();
 renderInputCoverageTable();
 
+document.getElementById("inputCoverageTableHead").addEventListener("click", event => {
+  const target = event.target.closest("[data-toggle-group]");
+  if (target) toggleInputCoverageGroup(target.dataset.toggleGroup);
+});
+document.getElementById("inputCoverageTableBody").addEventListener("click", event => {
+  const toggleTarget = event.target.closest("[data-toggle-group]");
+  if (toggleTarget) { toggleInputCoverageGroup(toggleTarget.dataset.toggleGroup); return; }
+  const removeBtn = event.target.closest("[data-remove-row]");
+  if (removeBtn) {
+    const rowIndex = Number(removeBtn.dataset.removeRow);
+    inputCoverageRows.splice(rowIndex, 1);
+    saveInputCoverageRows();
+    renderInputCoverageTable();
+  }
+});
 document.getElementById("inputCoverageTableBody").addEventListener("input", event => {
   const target = event.target;
   if (target.classList.contains("ic-text-input")) {
@@ -32558,14 +32628,6 @@ document.getElementById("inputCoverageTableBody").addEventListener("change", eve
       saveInputCoverageRows();
     }
   }
-});
-document.getElementById("inputCoverageTableBody").addEventListener("click", event => {
-  const btn = event.target.closest("[data-remove-row]");
-  if (!btn) return;
-  const rowIndex = Number(btn.dataset.removeRow);
-  inputCoverageRows.splice(rowIndex, 1);
-  saveInputCoverageRows();
-  renderInputCoverageTable();
 });
 document.getElementById("inputCoverageAddRow").addEventListener("click", () => {
   inputCoverageRows.push(newInputCoverageRow());
