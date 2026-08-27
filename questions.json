@@ -8403,7 +8403,7 @@
       "id": "Q931",
       "section": "Log Onboarding Questionnaire — 27. Syslog Collection",
       "subsection": "",
-      "question": "Does the source support RFC 3164, RFC 5424, or another format?",
+      "question": "Does the source support IETF RFC 3164, IETF RFC 5424, or another format?",
       "taxonomyCode": "TAX-03.02.01",
       "taxonomyTerm": "Logging Pattern",
       "onboardingPhase": "Worthiness & Implementation"
