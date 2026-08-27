@@ -762,7 +762,9 @@
     table.input-coverage-table th.ic-group-collapsed-col { cursor: pointer; background: var(--primary-light); color: var(--accent); text-align: center; font-size: 14px; }
     table.input-coverage-table th.ic-group-collapsed-col:hover { background: #dbeafe; }
     table.input-coverage-table td.ic-group-collapsed-cell { cursor: pointer; text-align: center; color: var(--muted); font-size: 11px; background: #f1f5f9; }
-    table.input-coverage-table td.ic-group-collapsed-cell:hover { background: #e2e8f0; color: var(--accent); }
+    table.input-coverage-table td.ic-group-collapsed-cell:hover { background: #e2e8f0; }
+    .ic-count-y { color: #15803d; font-weight: 700; }
+    .ic-count-n { color: #b91c1c; font-weight: 700; }
     table.input-coverage-table tbody td.ic-tenant-cell { background: var(--primary-light); }
     table.input-coverage-table tbody tr:nth-child(even) td { background: #f8fafc; }
     table.input-coverage-table tbody tr:nth-child(even) td.ic-tenant-cell { background: #e7eef7; }
@@ -32477,7 +32479,7 @@ function renderInputCoverageTable() {
         if (inputCoverageCollapsedGroups.has(g.tag)) {
           const yesCount = groupCols.filter(c => row[c.key] === "Y").length;
           const noCount = groupCols.filter(c => row[c.key] === "N").length;
-          const summary = (yesCount || noCount) ? `${yesCount}Y &middot; ${noCount}N` : "&mdash;";
+          const summary = (yesCount || noCount) ? `<span class="ic-count-y">${yesCount}Y</span> &middot; <span class="ic-count-n">${noCount}N</span>` : "&mdash;";
           return `<td class="ic-group-collapsed-cell" data-toggle-group="${escapeHtml(g.tag)}" title="Click to expand ${escapeHtml(g.tag)} -- ${yesCount} Y, ${noCount} N, ${groupCols.length - yesCount - noCount} unset of ${groupCols.length}">${summary}</td>`;
         }
         return groupCols.map(c => {
