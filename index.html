@@ -32476,7 +32476,9 @@ function renderInputCoverageTable() {
         const groupCols = inputCoverageInputColumns.filter(c => c.tag === g.tag);
         if (inputCoverageCollapsedGroups.has(g.tag)) {
           const yesCount = groupCols.filter(c => row[c.key] === "Y").length;
-          return `<td class="ic-group-collapsed-cell" data-toggle-group="${escapeHtml(g.tag)}" title="Click to expand ${escapeHtml(g.tag)}">${yesCount ? `${yesCount}/${groupCols.length} Y` : "&mdash;"}</td>`;
+          const noCount = groupCols.filter(c => row[c.key] === "N").length;
+          const summary = (yesCount || noCount) ? `${yesCount}Y &middot; ${noCount}N` : "&mdash;";
+          return `<td class="ic-group-collapsed-cell" data-toggle-group="${escapeHtml(g.tag)}" title="Click to expand ${escapeHtml(g.tag)} -- ${yesCount} Y, ${noCount} N, ${groupCols.length - yesCount - noCount} unset of ${groupCols.length}">${summary}</td>`;
         }
         return groupCols.map(c => {
           const val = row[c.key] === "Y" || row[c.key] === "N" ? row[c.key] : "";
