@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adamliq.github.io/splunk-taxonomy/schemas/ms-defender-sourcetype-reference.schema.json",
+  "title": "Microsoft Defender Sources Reference",
+  "description": "A multi-sourcetype registry (Splunk Add-on for Microsoft Security, Splunk_TA_MS_Security), covering the 16 sourcetypes documented for Microsoft 365 Defender Incidents, Defender for Endpoint Alerts, Attack Simulation Training, Defender Event Hub (Advanced Hunting), Defender Threat Intelligence DataSets (10 sourcetypes), and Defender Machines. As with the Azure/Entra sourcetype reference, there is no shared Common Schema across these sourcetypes in the source dictionary, so each branch is modeled independently under $defs, discriminated at the root by the always-present Splunk 'sourcetype' field. Several sections (Simulations, Event Hub Advanced Hunting tables, and 8 of the 10 Threat Intelligence sourcetypes) are described in the source dictionary only in prose or by example rather than as a complete list of exact field names -- those branches are deliberately left permissive (additionalProperties: true, minimal named properties) rather than asserting field names not actually given.",
+  "x-primary-add-on": "Splunk Add-on for Microsoft Security (Splunk_TA_MS_Security)",
+  "x-sourcetype-table": [
+    { "requestedDataSource": "Microsoft 365 Defender Incidents", "primarySourcetypes": ["ms365:defender:incident", "ms365:defender:incident:alerts"], "cimDataModels": ["Ticket Management", "Alerts"], "description": "Incidents + associated alerts" },
+    { "requestedDataSource": "Microsoft Defender for Endpoint Alerts", "primarySourcetypes": ["ms:defender:atp:alerts"], "cimDataModels": ["Alerts"], "description": "Defender for Endpoint (MDE) alerts" },
+    { "requestedDataSource": "Microsoft Defender Simulations", "primarySourcetypes": ["ms:defender:simulations"], "cimDataModels": ["Alerts"], "description": "Attack simulation training data" },
+    { "requestedDataSource": "Microsoft Defender Event Hub", "primarySourcetypes": ["ms:defender:eventhub"], "cimDataModels": ["Endpoint", "Certificates", "Compute Inventory"], "description": "Advanced Hunting events via Event Hub streaming" },
+    { "requestedDataSource": "Microsoft Defender Threat Intelligence DataSets", "primarySourcetypes": ["ms:defender:ti:articles", "ms:defender:ti:article_indicators", "ms:defender:ti:certificates", "ms:defender:ti:components", "ms:defender:ti:cookies", "ms:defender:ti:hostpairs", "ms:defender:ti:passivedns", "ms:defender:ti:subdomains", "ms:defender:ti:trackers", "ms:defender:ti:whois"], "cimDataModels": [], "description": "Threat Intelligence datasets" },
+    { "requestedDataSource": "Microsoft Defender Machines", "primarySourcetypes": ["ms:defender:machines"], "cimDataModels": ["Inventory"], "description": "Device/machine inventory" }
+  ],
+  "x-permissions-summary": [
+    { "data": "Incidents + related alerts", "permission": "Incident.Read.All / SecurityIncident.Read.All" },
+    { "data": "MDE Alerts", "permission": "Alert.Read.All / SecurityAlert.Read.All" },
+    { "data": "Simulations", "permission": "AttackSimulation.Read.All" },
+    { "data": "Event Hub streaming", "permission": "Azure Event Hubs Data Receiver role" },
+    { "data": "Machines", "permission": "Machine-related read permissions (Defender for Endpoint)" },
+    { "data": "Threat Intelligence", "permission": "ThreatIntelligence.Read.All (or equivalent)" }
+  ],
+  "x-validation-search": "index=* sourcetype IN (\"ms365:defender:incident\", \"ms365:defender:incident:alerts\", \"ms:defender:atp:alerts\", \"ms:defender:simulations\", \"ms:defender:eventhub\", \"ms:defender:machines\", \"ms:defender:ti:*\") | stats count by sourcetype",
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/$defs/incidentEvent" },
+    { "$ref": "#/$defs/incidentAlertsEvent" },
+    { "$ref": "#/$defs/atpAlertsEvent" },
+    { "$ref": "#/$defs/simulationsEvent" },
+    { "$ref": "#/$defs/eventhubEvent" },
+    { "$ref": "#/$defs/tiArticlesEvent" },
+    { "$ref": "#/$defs/tiArticleIndicatorsEvent" },
+    { "$ref": "#/$defs/tiEnrichmentEvent" },
+    { "$ref": "#/$defs/tiGenericEvent" },
+    { "$ref": "#/$defs/machinesEvent" }
+  ],
+  "$defs": {
+    "incidentEvent": {
+      "description": "Microsoft 365 Defender Incidents -- incident-level data only (see incidentAlertsEvent for the linked alerts). Sourcetype ms365:defender:incident. CIM: Ticket Management, Alerts. Permission: Incident.Read.All / SecurityIncident.Read.All (Graph).",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "ms365:defender:incident" },
+        "id": { "type": "string", "description": "Unique incident ID (alias: incidentId)." },
+        "incidentId": { "type": "string" },
+        "incidentName": { "type": "string" },
+        "title": { "type": "string" },
+        "severity": { "type": "string", "enum": ["Informational", "Low", "Medium", "High"] },
+        "status": { "type": "string", "description": "e.g. Active, Resolved, Redirected, etc. -- not an exhaustive enum." },
+        "classification": { "type": "string", "enum": ["TruePositive", "FalsePositive", "InformationalExpectedActivity", "Unknown"] },
+        "determination": { "type": "string", "description": "e.g. Multi-staged attack, Malware, Phishing, etc. -- not an exhaustive enum." },
+        "assignedTo": { "type": "string" },
+        "createdTime": { "type": "string", "format": "date-time" },
+        "lastUpdateTime": { "type": "string", "format": "date-time" },
+        "firstActivityTime": { "type": "string", "format": "date-time" },
+        "lastActivityTime": { "type": "string", "format": "date-time" },
+        "description": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "comments": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "redirectIncidentId": { "type": "string", "description": "If redirected." },
+        "incidentWebUrl": { "type": "string", "description": "Link to portal." },
+        "alertsCount": { "type": "integer", "description": "Number of related alerts. Other related counts (devices, users, etc.) are mentioned in the source dictionary but not individually named." }
+      }
+    },
+    "incidentAlertsEvent": {
+      "description": "Alerts linked to Microsoft 365 Defender Incidents. Sourcetype ms365:defender:incident:alerts. CIM: Ticket Management, Alerts.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "ms365:defender:incident:alerts" },
+        "id": { "type": "string", "description": "Alert ID." },
+        "title": { "type": "string" },
+        "severity": { "type": "string" },
+        "status": { "type": "string" },
+        "category": { "type": "string" },
+        "detectionSource": { "type": "string" },
+        "serviceSource": { "type": "string" },
+        "entities": { "type": "array", "items": { "type": "object", "additionalProperties": true }, "description": "users, devices, files, IPs, URLs, mailboxes..." },
+        "evidence": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "recommendedActions": { "type": "array", "items": { "type": "string" } },
+        "incidentId": { "type": "string", "description": "Linked incident." }
+      }
+    },
+    "atpAlertsEvent": {
+      "description": "Microsoft Defender for Endpoint (MDE) alerts. Sourcetype ms:defender:atp:alerts. CIM: Alerts. Permission: Alert.Read.All / SecurityAlert.Read.All.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "ms:defender:atp:alerts" },
+        "id": { "type": "string" },
+        "alertId": { "type": "string" },
+        "title": { "type": "string" },
+        "severity": { "type": "string", "enum": ["Informational", "Low", "Medium", "High"] },
+        "status": { "type": "string", "enum": ["New", "InProgress", "Resolved"] },
+        "classification": { "type": "string", "description": "True/False positive." },
+        "determination": { "type": "string" },
+        "category": { "type": "string", "description": "e.g. Malware, InitialAccess, Execution, Persistence, etc. -- not an exhaustive enum." },
+        "detectionSource": { "type": "string", "description": "e.g. WindowsDefenderAv, WindowsDefenderAtp, CustomerTI, etc. -- not an exhaustive enum." },
+        "threatName": { "type": "string" },
+        "threatFamilyName": { "type": "string" },
+        "machineId": { "type": "string" },
+        "computerDnsName": { "type": "string" },
+        "relatedUser": { "type": "string" },
+        "accountName": { "type": "string" },
+        "domainName": { "type": "string" },
+        "evidence": { "type": "array", "items": { "type": "object", "additionalProperties": true }, "description": "files, processes, registry, IPs, etc." },
+        "firstEventTime": { "type": "string", "format": "date-time" },
+        "lastEventTime": { "type": "string", "format": "date-time" },
+        "resolvedTime": { "type": "string", "format": "date-time" },
+        "description": { "type": "string" },
+        "recommendedActions": { "type": "string" },
+        "investigatorEmail": { "type": "string" },
+        "assignedTo": { "type": "string" }
+      }
+    },
+    "simulationsEvent": {
+      "description": "Microsoft 365 Defender / Attack Simulation Training data (phishing simulations, etc.). Sourcetype ms:defender:simulations. CIM: Alerts. Permission: AttackSimulation.Read.All. The source dictionary describes most of this content conceptually (simulation type/technique, launch/completion dates, payload details, targeted users/groups counts, compromised/reported/clicked rate metrics, automation/payload delivery details) rather than as exact field names, so only the more clearly-named fields are asserted as properties here -- see the description for the rest.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "ms:defender:simulations" },
+        "id": { "type": "string", "description": "Simulation ID." },
+        "displayName": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "type": "string", "description": "e.g. Draft, Scheduled, Running, Completed, Cancelled, etc. -- not an exhaustive enum." }
+      }
+    },
+    "eventhubEvent": {
+      "description": "Microsoft Defender Event Hub -- Advanced Hunting events streamed near real-time from the Microsoft Defender portal via Azure Event Hubs Streaming API. Sourcetype ms:defender:eventhub. CIM: Endpoint, Certificates, Compute Inventory (partial). Spans many different Advanced Hunting table types selectable at input configuration time (typically including DeviceProcessEvents, DeviceNetworkEvents, DeviceFileEvents, DeviceRegistryEvents, DeviceLogonEvents, DeviceImageLoadEvents, DeviceEvents, EmailEvents / EmailUrlInfo / EmailAttachmentInfo, CloudAppEvents, IdentityLogonEvents / IdentityQueryEvents, AlertInfo / AlertEvidence, and others) -- the exact field that names which table an event came from is not stated in the source dictionary. Field presence therefore varies by table; the properties below are the cross-table / commonly useful fields the dictionary documents, all optional.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "x-typical-tables": ["DeviceProcessEvents", "DeviceNetworkEvents", "DeviceFileEvents", "DeviceRegistryEvents", "DeviceLogonEvents", "DeviceImageLoadEvents", "DeviceEvents", "EmailEvents", "EmailUrlInfo", "EmailAttachmentInfo", "CloudAppEvents", "IdentityLogonEvents", "IdentityQueryEvents", "AlertInfo", "AlertEvidence"],
+      "properties": {
+        "sourcetype": { "const": "ms:defender:eventhub" },
+        "Timestamp": { "type": "string", "format": "date-time" },
+        "DeviceId": { "type": "string" },
+        "DeviceName": { "type": "string" },
+        "ReportId": { "type": "string" },
+        "FileName": { "type": "string", "description": "Process / File table field." },
+        "FolderPath": { "type": "string", "description": "Process / File table field." },
+        "SHA256": { "type": "string", "description": "Process / File table field." },
+        "SHA1": { "type": "string", "description": "File table field." },
+        "FileSize": { "type": "integer", "description": "File table field." },
+        "ProcessCommandLine": { "type": "string", "description": "Process table field." },
+        "InitiatingProcessFileName": { "type": "string", "description": "Process table field (InitiatingProcess* family)." },
+        "RemoteIP": { "type": "string", "description": "Network table field." },
+        "RemotePort": { "type": "integer", "description": "Network table field." },
+        "RemoteUrl": { "type": "string", "description": "Network table field." },
+        "Protocol": { "type": "string", "description": "Network table field." },
+        "AccountName": { "type": "string", "description": "Account table field." },
+        "AccountDomain": { "type": "string", "description": "Account table field." },
+        "AccountSid": { "type": "string", "description": "Account table field." },
+        "SenderFromAddress": { "type": "string", "description": "Email table field." },
+        "RecipientEmailAddress": { "type": "string", "description": "Email table field." },
+        "Subject": { "type": "string", "description": "Email table field." },
+        "Url": { "type": "string", "description": "Email table field." },
+        "AlertId": { "type": "string", "description": "Alert linkage field, when present." }
+      }
+    },
+    "tiArticlesEvent": {
+      "description": "Microsoft Defender Threat Intelligence -- threat intelligence articles / reports. Sourcetype ms:defender:ti:articles. Note: some duplication is expected by design for TI sourcetypes.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "ms:defender:ti:articles" },
+        "title": { "type": "string" },
+        "summary": { "type": "string" },
+        "publishedDate": { "type": "string", "format": "date-time" },
+        "severity": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "threatActors": { "type": "array", "items": { "type": "string" } },
+        "mitreTechniques": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "tiArticleIndicatorsEvent": {
+      "description": "Microsoft Defender Threat Intelligence -- indicators linked to articles. Sourcetype ms:defender:ti:article_indicators. Note: some duplication is expected by design for TI sourcetypes.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "ms:defender:ti:article_indicators" },
+        "indicatorValue": { "type": "string", "description": "IP, domain, hash, or URL." },
+        "type": { "type": "string" },
+        "confidence": { "type": "string" },
+        "expiration": { "type": "string", "format": "date-time" }
+      }
+    },
+    "tiEnrichmentEvent": {
+      "description": "Microsoft Defender Threat Intelligence -- Certificates, Passive DNS, and WHOIS datasets, which the source dictionary documents together as sharing standard TI enrichment fields. Sourcetypes ms:defender:ti:certificates (certificate data), ms:defender:ti:passivedns (passive DNS records), ms:defender:ti:whois (WHOIS records). Note: some duplication is expected by design for TI sourcetypes.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "enum": ["ms:defender:ti:certificates", "ms:defender:ti:passivedns", "ms:defender:ti:whois"] },
+        "firstSeen": { "type": "string", "format": "date-time" },
+        "lastSeen": { "type": "string", "format": "date-time" },
+        "registrar": { "type": "string" },
+        "subject": { "type": "string" },
+        "issuer": { "type": "string" }
+      }
+    },
+    "tiGenericEvent": {
+      "description": "Microsoft Defender Threat Intelligence -- Components, Cookies, Host-pairs, Subdomains, and Trackers datasets. The source dictionary names these sourcetypes and their one-line content only, with no field-level detail given, so this schema does not assert any properties beyond 'sourcetype'. Sourcetypes: ms:defender:ti:components (observed components), ms:defender:ti:cookies (cookie data), ms:defender:ti:hostpairs (host-pair relationships), ms:defender:ti:subdomains (subdomain data), ms:defender:ti:trackers (tracker / analytics IDs). Note: some duplication is expected by design for TI sourcetypes.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "enum": ["ms:defender:ti:components", "ms:defender:ti:cookies", "ms:defender:ti:hostpairs", "ms:defender:ti:subdomains", "ms:defender:ti:trackers"] }
+      }
+    },
+    "machinesEvent": {
+      "description": "Microsoft Defender Machines -- device inventory from the Microsoft Defender for Endpoint 'List Machines' API. Sourcetype ms:defender:machines. CIM: Inventory.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "ms:defender:machines" },
+        "id": { "type": "string" },
+        "machineId": { "type": "string" },
+        "computerDnsName": { "type": "string" },
+        "osPlatform": { "type": "string" },
+        "osVersion": { "type": "string" },
+        "osBuild": { "type": "string" },
+        "osArchitecture": { "type": "string" },
+        "healthStatus": { "type": "string", "description": "e.g. Active, Inactive, ImpairedCommunication, NoSensorData, etc. -- not an exhaustive enum." },
+        "riskScore": { "type": "string", "enum": ["None", "Low", "Medium", "High"] },
+        "exposureLevel": { "type": "string", "enum": ["None", "Low", "Medium", "High"] },
+        "isAadJoined": { "type": "boolean" },
+        "aadDeviceId": { "type": "string" },
+        "lastSeen": { "type": "string", "format": "date-time" },
+        "firstSeen": { "type": "string", "format": "date-time" },
+        "ipAddresses": { "type": "array", "items": { "type": "string" } },
+        "lastIpAddress": { "type": "string" },
+        "agentVersion": { "type": "string" },
+        "rbacGroupName": { "type": "string" },
+        "rbacGroupId": { "type": "string" },
+        "machineTags": { "type": "array", "items": { "type": "string" } },
+        "onboardingStatus": { "type": "string", "enum": ["Onboarded", "CanBeOnboarded", "Unsupported", "InsufficientInfo"] },
+        "defenderAvStatus": { "type": "string" },
+        "deviceValue": { "type": "string", "enum": ["Low", "Normal", "High"] }
+      }
+    }
+  }
+}

@@ -1,0 +1,336 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adamliq.github.io/splunk-taxonomy/schemas/azure-entra-sourcetype-reference.schema.json",
+  "title": "Microsoft Entra ID / Azure Sourcetype Reference",
+  "description": "A multi-sourcetype registry, not a single event shape: these data sources primarily come from the Splunk Add-on for Microsoft Azure (legacy -- now largely migrated/unsupported) and the Splunk Add-on for Microsoft Cloud Services (MSCS), with some overlap with the Office 365 / Microsoft Security add-ons. Unlike the o365:metadata and o365:management:activity schemas, there is no shared Common Schema across these sourcetypes in the source dictionary, so each sourcetype is modeled as an independent branch under $defs, discriminated at the root by the always-present Splunk 'sourcetype' field. Several sections in the source dictionary describe fields conceptually/in prose rather than as exact camelCase API field names (notably Azure Metrics and Azure Topology) -- those branches are deliberately left permissive (additionalProperties: true, no invented property keys) rather than asserting field names not actually given.",
+  "x-primary-add-ons": [
+    "Splunk Add-on for Microsoft Azure (legacy -- largely migrated/unsupported)",
+    "Splunk Add-on for Microsoft Cloud Services (MSCS)"
+  ],
+  "x-sourcetype-table": [
+    { "requestedDataSource": "Microsoft Entra ID Interactive Sign-ins", "primarySourcetypes": ["azure:aad:signin"], "recommendedAddOn": "Microsoft Azure TA (legacy) or Event Hub -> azure:monitor:aad via MSCS", "notes": "Interactive only in older TA; full sign-ins via Event Hub preferred" },
+    { "requestedDataSource": "Microsoft Entra ID Users", "primarySourcetypes": ["azure:aad:user", "o365:metadata"], "recommendedAddOn": "Azure TA / O365 TA (Entra ID Metadata)", "notes": "Inventory" },
+    { "requestedDataSource": "Microsoft Entra ID Groups", "primarySourcetypes": ["azure:aad:group", "o365:metadata"], "recommendedAddOn": "Azure TA / O365 TA", "notes": "Inventory" },
+    { "requestedDataSource": "Microsoft Entra ID Applications", "primarySourcetypes": ["(via o365:metadata or Graph -- no distinct legacy sourcetype)"], "recommendedAddOn": "O365 TA (Entra ID Metadata)", "notes": "Inventory -- see o365_metadata_schema.json#/$defs/applicationEvent" },
+    { "requestedDataSource": "Microsoft Entra ID Audit", "primarySourcetypes": ["azure:aad:audit", "azure:monitor:aad"], "recommendedAddOn": "Azure TA / MSCS (Event Hub)", "notes": "Directory changes" },
+    { "requestedDataSource": "Microsoft Entra ID Identity Protection", "primarySourcetypes": ["azure:aad:risk:detection"], "recommendedAddOn": "Azure TA / Event Hub", "notes": "Risk detections & risky users" },
+    { "requestedDataSource": "Microsoft Entra ID Devices", "primarySourcetypes": ["azure:aad:device", "o365:metadata"], "recommendedAddOn": "Azure TA / O365 TA", "notes": "Inventory" },
+    { "requestedDataSource": "Microsoft Graph Security API", "primarySourcetypes": ["GraphSecurityAlert (legacy, archived)"], "recommendedAddOn": "Archived add-on -> migrate to MSCS Event Hub, Microsoft Security TA, or O365 TA", "notes": "Unified security alerts" },
+    { "requestedDataSource": "Azure Metrics", "primarySourcetypes": ["azure:metrics", "mscs:metrics", "mscs:metrics:events"], "recommendedAddOn": "MSCS or Azure TA", "notes": "Performance metrics" },
+    { "requestedDataSource": "Microsoft Defender for Cloud Alerts and Tasks", "primarySourcetypes": ["azure:securityCenter:alert", "azure:securityCenter:task"], "recommendedAddOn": "Azure TA (legacy) -> MSCS or Microsoft Security TA", "notes": "Formerly Security Center" },
+    { "requestedDataSource": "Resource Graph", "primarySourcetypes": ["azure:resourcegraph"], "recommendedAddOn": "Azure TA / MSCS (Azure Resource input)", "notes": "Inventory query results" },
+    { "requestedDataSource": "Azure Topology Auto", "primarySourcetypes": ["azure:topology"], "recommendedAddOn": "Azure TA / MSCS", "notes": "IaaS relationship graph (auto)" },
+    { "requestedDataSource": "Azure Topology Manual", "primarySourcetypes": ["azure:topology"], "recommendedAddOn": "Azure TA / MSCS", "notes": "IaaS relationship graph (manual)" }
+  ],
+  "x-migration-notes": [
+    "Preferred modern path for high-volume Entra ID sign-in + audit + risk data -> Azure Event Hub + Splunk Add-on for Microsoft Cloud Services (azure:monitor:aad).",
+    "Inventory (Users/Groups/Apps/Devices) -> O365 TA o365:metadata input is the recommended current approach.",
+    "Microsoft Graph Security API add-on is archived -- do not start new deployments with it.",
+    "Defender for Cloud / Security Center data is evolving toward Microsoft Defender XDR / Microsoft Security add-on."
+  ],
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/$defs/signinEvent" },
+    { "$ref": "#/$defs/aadUserEvent" },
+    { "$ref": "#/$defs/aadGroupEvent" },
+    { "$ref": "#/$defs/aadDeviceEvent" },
+    { "$ref": "#/$defs/aadAuditEvent" },
+    { "$ref": "#/$defs/riskDetectionEvent" },
+    { "$ref": "#/$defs/graphSecurityAlertEvent" },
+    { "$ref": "#/$defs/metricsEvent" },
+    { "$ref": "#/$defs/defenderAlertEvent" },
+    { "$ref": "#/$defs/defenderTaskEvent" },
+    { "$ref": "#/$defs/resourceGraphEvent" },
+    { "$ref": "#/$defs/topologyEvent" }
+  ],
+  "$defs": {
+    "signinEvent": {
+      "description": "Microsoft Entra ID Interactive Sign-ins (Graph sign-in logs). CIM: Authentication (strong).",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "azure:aad:signin" },
+        "id": { "type": "string" },
+        "createdDateTime": { "type": "string", "format": "date-time" },
+        "userPrincipalName": { "type": "string" },
+        "userId": { "type": "string" },
+        "userDisplayName": { "type": "string" },
+        "appId": { "type": "string" },
+        "appDisplayName": { "type": "string" },
+        "resourceId": { "type": "string" },
+        "resourceDisplayName": { "type": "string" },
+        "ipAddress": { "type": "string" },
+        "clientAppUsed": { "type": "string" },
+        "userAgent": { "type": "string" },
+        "location": {
+          "type": "object",
+          "description": "city, state, countryOrRegion, geoCoordinates.",
+          "properties": {
+            "city": { "type": "string" },
+            "state": { "type": "string" },
+            "countryOrRegion": { "type": "string" },
+            "geoCoordinates": { "type": "object", "additionalProperties": true }
+          },
+          "additionalProperties": true
+        },
+        "status": { "type": "string", "description": "Listed alongside errorCode/failureReason in the source dictionary; not given as a nested object there." },
+        "errorCode": { "type": "string" },
+        "failureReason": { "type": "string" },
+        "conditionalAccessStatus": { "type": "string" },
+        "appliedConditionalAccessPolicies": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "mfaDetail": { "type": "object", "additionalProperties": true },
+        "authenticationRequirement": { "type": "string" },
+        "authenticationMethodsUsed": { "type": "array", "items": {} },
+        "deviceDetail": {
+          "type": "object",
+          "properties": {
+            "deviceId": { "type": "string" },
+            "operatingSystem": { "type": "string" },
+            "browser": { "type": "string" },
+            "isCompliant": { "type": "boolean" },
+            "isManaged": { "type": "boolean" },
+            "trustType": { "type": "string" }
+          },
+          "additionalProperties": true
+        },
+        "riskDetail": { "type": "string" },
+        "riskLevelAggregated": { "type": "string" },
+        "riskLevelDuringSignIn": { "type": "string" },
+        "riskState": { "type": "string" },
+        "correlationId": { "type": "string" },
+        "requestId": { "type": "string" }
+      }
+    },
+    "aadUserEvent": {
+      "description": "Microsoft Entra ID Users -- legacy Azure TA sourcetype. Inventory/snapshot event, the same conceptual object as o365_metadata_schema.json#/$defs/userEvent under the recommended o365:metadata sourcetype. Common useful fields per the source dictionary (not exhaustive).",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "azure:aad:user" },
+        "id": { "type": "string" },
+        "userPrincipalName": { "type": "string" },
+        "displayName": { "type": "string" },
+        "mail": { "type": "string" },
+        "accountEnabled": { "type": "boolean" },
+        "userType": { "type": "string" },
+        "jobTitle": { "type": "string" },
+        "department": { "type": "string" },
+        "onPremisesSyncEnabled": { "type": "boolean" },
+        "assignedLicenses": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "createdDateTime": { "type": "string", "format": "date-time" }
+      }
+    },
+    "aadGroupEvent": {
+      "description": "Microsoft Entra ID Groups -- legacy Azure TA sourcetype. Inventory/snapshot event, the same conceptual object as o365_metadata_schema.json#/$defs/groupEvent under the recommended o365:metadata sourcetype.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "azure:aad:group" },
+        "id": { "type": "string" },
+        "displayName": { "type": "string" },
+        "mail": { "type": "string" },
+        "mailEnabled": { "type": "boolean" },
+        "securityEnabled": { "type": "boolean" },
+        "groupTypes": { "type": "array", "items": { "type": "string" } },
+        "membershipRule": { "type": "string" },
+        "visibility": { "type": "string" }
+      }
+    },
+    "aadDeviceEvent": {
+      "description": "Microsoft Entra ID Devices -- legacy Azure TA sourcetype. Inventory/snapshot event, the same conceptual object as o365_metadata_schema.json#/$defs/deviceEvent under the recommended o365:metadata sourcetype.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "azure:aad:device" },
+        "id": { "type": "string" },
+        "deviceId": { "type": "string" },
+        "displayName": { "type": "string" },
+        "operatingSystem": { "type": "string" },
+        "operatingSystemVersion": { "type": "string" },
+        "accountEnabled": { "type": "boolean" },
+        "isCompliant": { "type": "boolean" },
+        "isManaged": { "type": "boolean" },
+        "trustType": { "type": "string" },
+        "approximateLastSignInDateTime": { "type": "string", "format": "date-time" }
+      }
+    },
+    "aadAuditEvent": {
+      "description": "Microsoft Entra ID Audit (directory changes). Sourcetype azure:aad:audit, or azure:monitor:aad via Event Hub (the recommended modern path). Typical activities: Add/Update/Delete user, Add member to role/group, Consent to application, Reset password, PIM role activation, etc. CIM: Change / Account_Management, Authentication.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "azure:aad:audit" },
+        "id": { "type": "string" },
+        "activityDateTime": { "type": "string", "format": "date-time" },
+        "activityDisplayName": { "type": "string" },
+        "operationName": { "type": "string" },
+        "category": { "type": "string" },
+        "result": { "type": "string" },
+        "resultReason": { "type": "string" },
+        "initiatedBy": {
+          "type": "object",
+          "description": "user or app: userPrincipalName, appId, displayName. Nested under 'user'/'app' sub-objects here as a reasonable, commonly-known Graph shape -- the source dictionary lists the field names but not this exact nesting.",
+          "properties": {
+            "user": { "type": "object", "properties": { "userPrincipalName": { "type": "string" }, "displayName": { "type": "string" }, "id": { "type": "string" } }, "additionalProperties": true },
+            "app": { "type": "object", "properties": { "appId": { "type": "string" }, "displayName": { "type": "string" } }, "additionalProperties": true }
+          },
+          "additionalProperties": true
+        },
+        "targetResources": {
+          "type": "array",
+          "description": "id, displayName, type, userPrincipalName, modifiedProperties with old/new values.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "displayName": { "type": "string" },
+              "type": { "type": "string" },
+              "userPrincipalName": { "type": "string" },
+              "modifiedProperties": {
+                "type": "array",
+                "items": { "type": "object", "properties": { "oldValue": { "type": "string" }, "newValue": { "type": "string" } }, "additionalProperties": true }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalDetails": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "correlationId": { "type": "string" },
+        "loggedByService": { "type": "string" }
+      }
+    },
+    "riskDetectionEvent": {
+      "description": "Microsoft Entra ID Identity Protection -- risk detections & risky users. Sourcetype azure:aad:risk:detection (risky-user variants also exist). CIM: Alerts, Authentication.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "azure:aad:risk:detection" },
+        "id": { "type": "string" },
+        "activityDateTime": { "type": "string", "format": "date-time" },
+        "detectedDateTime": { "type": "string", "format": "date-time" },
+        "userId": { "type": "string" },
+        "userDisplayName": { "type": "string" },
+        "userPrincipalName": { "type": "string" },
+        "riskEventType": { "type": "string", "description": "e.g. unlikelyTravel, anonymizedIPAddress, maliciousIPAddress, leakedCredentials, etc. -- not an exhaustive enum." },
+        "riskLevel": { "type": "string", "enum": ["low", "medium", "high", "hidden"] },
+        "riskState": { "type": "string", "description": "e.g. atRisk, confirmedCompromised, remediated, dismissed, etc. -- not an exhaustive enum." },
+        "riskDetail": { "type": "string" },
+        "ipAddress": { "type": "string" },
+        "location": { "type": "object", "additionalProperties": true },
+        "correlationId": { "type": "string" },
+        "requestId": { "type": "string" },
+        "source": { "type": "string" },
+        "detectionTimingType": { "type": "string" }
+      }
+    },
+    "graphSecurityAlertEvent": {
+      "description": "Microsoft Graph Security API -- unified security alerts. Sourcetype GraphSecurityAlert. The add-on providing this sourcetype is archived; do not use for new deployments -- migrate to Event Hub + MSCS (azure:monitor:aad or security alert sourcetypes), the Splunk Add-on for Microsoft Security, or the O365 TA (for some CAS/Defender data). CIM: Alerts.",
+      "deprecated": true,
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "GraphSecurityAlert" },
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "severity": { "type": "string" },
+        "status": { "type": "string" },
+        "category": { "type": "string" },
+        "vendor": { "type": "string" },
+        "provider": { "type": "string" },
+        "productName": { "type": "string" },
+        "createdDateTime": { "type": "string", "format": "date-time" },
+        "lastModifiedDateTime": { "type": "string", "format": "date-time" },
+        "userStates": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "hostStates": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "networkConnections": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "fileStates": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "malwareStates": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "recommendedActions": { "type": "string" },
+        "comments": { "type": "string" },
+        "assignedTo": { "type": "string" }
+      }
+    },
+    "metricsEvent": {
+      "description": "Azure Metrics -- performance metrics. The source dictionary describes this content conceptually (Metric name, namespace, resource ID, Timestamp, time grain / aggregation, Value(s), Dimensions (resource-specific), Subscription / resource group / location) rather than as exact field names, so this schema intentionally does not assert specific property keys beyond 'sourcetype' -- see the description for the conceptual content instead. Usually stored in a metrics index when configured that way. Time grain / aggregation is one of: Average, Total, Maximum, Minimum, Count.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "enum": ["azure:metrics", "mscs:metrics", "mscs:metrics:events"] }
+      }
+    },
+    "defenderAlertEvent": {
+      "description": "Microsoft Defender for Cloud Alerts (formerly Security Center). Sourcetype azure:securityCenter:alert. CIM: Alerts.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "azure:securityCenter:alert" },
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "alertDisplayName": { "type": "string" },
+        "description": { "type": "string" },
+        "severity": { "type": "string" },
+        "status": { "type": "string" },
+        "intent": { "type": "string" },
+        "compromisedEntity": { "type": "string" },
+        "extendedProperties": { "type": "object", "additionalProperties": true },
+        "entities": { "type": "array", "items": { "type": "object", "additionalProperties": true }, "description": "hosts, accounts, files, IPs, etc." },
+        "remediationSteps": { "type": "string" },
+        "vendorName": { "type": "string" },
+        "productName": { "type": "string" },
+        "startTimeUtc": { "type": "string", "format": "date-time" },
+        "endTimeUtc": { "type": "string", "format": "date-time" },
+        "reportedTimeUtc": { "type": "string", "format": "date-time" }
+      }
+    },
+    "defenderTaskEvent": {
+      "description": "Microsoft Defender for Cloud Tasks (formerly Security Center) -- security recommendations / tasks. Sourcetype azure:securityCenter:task. The source dictionary describes this content conceptually (state, severity, resource details, remediation) rather than as exact field names beyond the two named here, so additional fields are not asserted -- see the description for the conceptual content instead.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "azure:securityCenter:task" },
+        "state": { "type": "string" },
+        "severity": { "type": "string" }
+      }
+    },
+    "resourceGraphEvent": {
+      "description": "Resource Graph -- results of Azure Resource Graph queries (Kusto-like). Sourcetype azure:resourcegraph. Fields depend on the project / query used; these are the commonly-seen ones.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "azure:resourcegraph" },
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "location": { "type": "string" },
+        "resourceGroup": { "type": "string" },
+        "subscriptionId": { "type": "string" },
+        "tags": { "type": "object", "additionalProperties": true },
+        "properties": { "type": "object", "additionalProperties": true, "description": "Resource-specific." },
+        "sku": { "type": "object", "additionalProperties": true },
+        "kind": { "type": "string" },
+        "managedBy": { "type": "string" }
+      }
+    },
+    "topologyEvent": {
+      "description": "Azure Topology (both Auto and Manual collection -- same sourcetype for both). IaaS relationship / dependency graph, sourcetype azure:topology. The source dictionary describes this content conceptually only (resource IDs/names/types; associations/relationships, e.g. VM -> NIC -> NSG -> Public IP -> VNet/Subnet; topology nodes and edges; subscription/resource group context) without giving exact JSON field/property names, so this schema intentionally does not invent property keys beyond 'sourcetype' -- useful for asset inventory, blast-radius analysis, and visualization.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "azure:topology" }
+      }
+    }
+  }
+}
