@@ -32416,10 +32416,10 @@ const inputCoverageColumnDetails = {
   "Management Activity:Audit.SharePoint [splunk_ta_o365]": { inputCategory: "Management Activity", contentType: "Audit.SharePoint", entraIdType: "NIL", inputTypeSub: "Audit.SharePoint", source: "-" },
   "Management Activity:DLP.All [splunk_ta_o365]": { inputCategory: "Management Activity", contentType: "DLP.All", entraIdType: "NIL", inputTypeSub: "DLP.All", source: "-" },
   "Message Trace:NIL [splunk_ta_o365]": { inputCategory: "Message Trace", contentType: "NIL", entraIdType: "NIL", inputTypeSub: "NIL", source: "splunk_ta_o365_message_trace.." },
-  "Microsoft Entra ID Metadata:applications [splunk_ta_o365]": { inputCategory: "Microsoft Entra ID Metadata", contentType: "NIL", entraIdType: "applications", inputTypeSub: "applications", source: "ms_eid_applications:tenant_id:.." },
-  "Microsoft Entra ID Metadata:devices [splunk_ta_o365]": { inputCategory: "Microsoft Entra ID Metadata", contentType: "NIL", entraIdType: "devices", inputTypeSub: "devices", source: "ms_eid_devices:tenant_id:.." },
-  "Microsoft Entra ID Metadata:groups [splunk_ta_o365]": { inputCategory: "Microsoft Entra ID Metadata", contentType: "NIL", entraIdType: "groups", inputTypeSub: "groups", source: "ms_eid_groups:tenant_id:.." },
-  "Microsoft Entra ID Metadata:users [splunk_ta_o365]": { inputCategory: "Microsoft Entra ID Metadata", contentType: "NIL", entraIdType: "users", inputTypeSub: "users", source: "ms_eid_users:tenant_id:.." },
+  "Microsoft Entra ID Metadata:applications [splunk_ta_o365]": { inputCategory: "Microsoft Entra ID Metadata", contentType: "NIL", entraIdType: "applications", inputTypeSub: "applications", source: "ms_eid_applications:tenant_id:..", schema: "docs/o365_metadata_schema.json#/$defs/applicationEvent" },
+  "Microsoft Entra ID Metadata:devices [splunk_ta_o365]": { inputCategory: "Microsoft Entra ID Metadata", contentType: "NIL", entraIdType: "devices", inputTypeSub: "devices", source: "ms_eid_devices:tenant_id:..", schema: "docs/o365_metadata_schema.json#/$defs/deviceEvent" },
+  "Microsoft Entra ID Metadata:groups [splunk_ta_o365]": { inputCategory: "Microsoft Entra ID Metadata", contentType: "NIL", entraIdType: "groups", inputTypeSub: "groups", source: "ms_eid_groups:tenant_id:..", schema: "docs/o365_metadata_schema.json#/$defs/groupEvent" },
+  "Microsoft Entra ID Metadata:users [splunk_ta_o365]": { inputCategory: "Microsoft Entra ID Metadata", contentType: "NIL", entraIdType: "users", inputTypeSub: "users", source: "ms_eid_users:tenant_id:..", schema: "docs/o365_metadata_schema.json#/$defs/userEvent" },
   "Office 365:Office365GroupsActivityDetail [splunk_ta_o365]": { inputCategory: "Office 365", contentType: "Office365GroupsActivityDetail", entraIdType: "NIL", inputTypeSub: "Office365GroupsActivityDetail", source: "Office365GroupsActivityDetail" },
   "Office 365:Office365ServicesUserCounts [splunk_ta_o365]": { inputCategory: "Office 365", contentType: "Office365ServicesUserCounts", entraIdType: "NIL", inputTypeSub: "Office365ServicesUserCounts", source: "Office365ServicesUserCounts" },
   "One Drive:OneDriveActivityUserCounts [splunk_ta_o365]": { inputCategory: "One Drive", contentType: "OneDriveActivityUserCounts", entraIdType: "NIL", inputTypeSub: "OneDriveActivityUserCounts", source: "OneDriveActivityUserCounts" },
@@ -32447,12 +32447,13 @@ const inputCoverageInputColumns = inputCoverageGroups.flatMap(group =>
       contentType: details.contentType || "To be confirmed",
       entraIdType: details.entraIdType || "To be confirmed",
       inputTypeSub: details.inputTypeSub || "To be confirmed",
-      source: details.source || "To be confirmed"
+      source: details.source || "To be confirmed",
+      schema: details.schema || "To be confirmed"
     };
   })
 );
 function inputCoverageColumnTooltip(c) {
-  return `Splunk app ID: ${c.appId}\nSplunk app name: ${c.appName}\nSplunk app base link: ${c.baseLink}\nInput category: ${c.inputCategory}\nInput name: ${c.label}\nContent type: ${c.contentType}\nEntra ID type: ${c.entraIdType}\nInput type sub: ${c.inputTypeSub}\nSource: ${c.source}\nSourcetype: ${c.sourcetype}`;
+  return `Splunk app ID: ${c.appId}\nSplunk app name: ${c.appName}\nSplunk app base link: ${c.baseLink}\nInput category: ${c.inputCategory}\nInput name: ${c.label}\nContent type: ${c.contentType}\nEntra ID type: ${c.entraIdType}\nInput type sub: ${c.inputTypeSub}\nSource: ${c.source}\nSourcetype: ${c.sourcetype}\nSchema: ${c.schema}`;
 }
 
 // Renders the "Inputs" list view from the same inputCoverageGroups data model as the Coverage table (so the two
@@ -32499,11 +32500,15 @@ function openInputDetail(key, trigger) {
     ["Entra ID type", c.entraIdType],
     ["Input type sub", c.inputTypeSub],
     ["Source", c.source],
-    ["Sourcetype", c.sourcetype]
+    ["Sourcetype", c.sourcetype],
+    ["Schema", c.schema]
   ];
   document.getElementById("inputDetailGrid").innerHTML = rows.map(([k, v]) => {
-    const isLink = k === "Splunk app base link" && /^https?:\/\//.test(v);
-    const valueHtml = isLink ? `<a href="${escapeHtml(v)}" target="_blank" rel="noopener">${escapeHtml(v)}</a>` : escapeHtml(v);
+    const isExternalLink = k === "Splunk app base link" && /^https?:\/\//.test(v);
+    const isRepoLink = k === "Schema" && v !== "To be confirmed";
+    let valueHtml = escapeHtml(v);
+    if (isExternalLink) valueHtml = `<a href="${escapeHtml(v)}" target="_blank" rel="noopener">${escapeHtml(v)}</a>`;
+    else if (isRepoLink) valueHtml = `<a href="${escapeHtml(v)}">${escapeHtml(v)}</a>`;
     return `<dt>${escapeHtml(k)}</dt><dd>${valueHtml}</dd>`;
   }).join("");
   inputDetailModal.classList.add("open");
