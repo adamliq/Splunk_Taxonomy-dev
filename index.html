@@ -14070,7 +14070,7 @@ E. Assumptions and unresolved inputs</pre>
           </table>
         </div>
 
-        <p class="sot-note">44 columns: Tenant ID, Tenant Name, Subscription ID, Subscription Name (free text) followed by one Y/N column per input -- 12 for <code>splunk_ta_o365</code>, 9 for <code>Splunk_TA_microsoft-cloudservices</code>, 13 for <code>TA-MS-AAD</code> and 6 for <code>Splunk_TA_MS_Security</code>. <strong>Azure Metrics</strong> appears under both <code>Splunk_TA_microsoft-cloudservices</code> and <code>TA-MS-AAD</code> as two distinct tracked columns. Exported/imported CSV headers use the full <code>Input Name [TA]</code> form to keep those two unambiguous. The original downloadable workbook is still available at <code>docs/microsoft_cloud_input_tenant_tracker.xlsx</code> for offline distribution.</p>
+        <p class="sot-note" id="msCoverageColumnNote"></p>
       </section>
       </div>
     </div>
@@ -32478,6 +32478,15 @@ function renderMsInputsListView() {
   if (noteEl) noteEl.innerHTML = `Note: <strong>Azure Metrics</strong> appears under both <code>Splunk_TA_microsoft-cloudservices</code> and <code>TA-MS-AAD</code> -- these are two distinct inputs from two different apps, not a duplicate. See the Coverage tab for tenant/subscription-level enablement tracking against these ${inputCoverageInputColumns.length} inputs.`;
   const coverageSubtitleEl = document.getElementById("msCoverageSubtitle");
   if (coverageSubtitleEl) coverageSubtitleEl.textContent = `Editable tenant/subscription-level enablement tracking against the ${inputCoverageInputColumns.length} Microsoft cloud inputs listed under Inputs. Edits are saved in this browser automatically.`;
+  const columnNoteEl = document.getElementById("msCoverageColumnNote");
+  if (columnNoteEl) {
+    const totalColumns = inputCoverageTenantColumns.length + inputCoverageInputColumns.length;
+    const perTaParts = inputCoverageGroups.map(g => `${g.inputs.length} for <code>${escapeHtml(g.tag)}</code>`);
+    const perTaText = perTaParts.length > 1
+      ? `${perTaParts.slice(0, -1).join(", ")} and ${perTaParts[perTaParts.length - 1]}`
+      : perTaParts.join("");
+    columnNoteEl.innerHTML = `${totalColumns} columns: Tenant ID, Tenant Name, Subscription ID, Subscription Name (free text) followed by one Y/N column per input -- ${perTaText}. <strong>Azure Metrics</strong> appears under both <code>Splunk_TA_microsoft-cloudservices</code> and <code>TA-MS-AAD</code> as two distinct tracked columns. Exported/imported CSV headers use the full <code>Input Name [TA]</code> form to keep those two unambiguous. A downloadable workbook is available at <code>docs/microsoft_cloud_input_tenant_tracker.xlsx</code>, but it reflects the original 44-column category-level breakdown and has not been regenerated to match this table's current ${totalColumns} granular columns -- treat it as a legacy reference, not a current export template.`;
+  }
 }
 renderMsInputsListView();
 
