@@ -1,0 +1,290 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adamliq.github.io/splunk-taxonomy/schemas/o365-usage-reports.schema.json",
+  "title": "Microsoft 365 Usage Reports & Service Health",
+  "description": "Splunk Add-on for Microsoft Office 365 (splunk_ta_o365) -- Graph Reporting modular input (11 usage reports, all under sourcetype o365:graph:api) plus the 2 Service Health inputs (each with its own dedicated sourcetype). Unlike o365:metadata's @odata.type, this dictionary gives no reliable single field that names which of the 11 reports a given o365:graph:api event belongs to -- its own search tip uses 'source, report_*' rather than one fixed field/value. The root schema is therefore a permissive catch-all for o365:graph:api plus the 2 cleanly-discriminated Service Health branches; the 11 report shapes are documented as individually addressable *ReportEvent definitions under $defs rather than enforced via a root oneOf. Sections described only in prose (OneDriveActivityUserCounts, most of OneDriveUsageStorage, SharePointSiteUsageFileCounts, TeamsUserActivityCounts, and part of the two Yammer reports) are deliberately left permissive rather than asserting exact field names not actually given; sections with clear Title Case field labels (which match the real Microsoft Graph usage-report CSV/JSON column naming) are schematized property-by-property, spaces and all.",
+  "x-input-name": "Graph Reporting modular input + Service Health inputs",
+  "x-permissions-required": "Reports.Read.All (Application) for usage reports; ServiceHealth.Read.All for health.",
+  "x-search-tip": "sourcetype=o365:graph:api | stats count by source, report_*",
+  "x-data-delay-note": "Microsoft usage reports can lag 24-48 hours (sometimes longer).",
+  "x-sourcetype-table": [
+    { "requestedReport": "Office365GroupsActivityDetail", "graphContent": "getOffice365GroupsActivityDetail", "typicalPeriod": "D7/D30/D90/D180", "notes": "Per-group activity" },
+    { "requestedReport": "Office365ServicesUserCounts", "graphContent": "getOffice365ServicesUserCounts", "typicalPeriod": "D7/D30/D90/D180", "notes": "Active/inactive users by service" },
+    { "requestedReport": "OneDriveActivityUserCounts", "graphContent": "getOneDriveActivityUserCounts", "typicalPeriod": "Period-based", "notes": "User activity counts" },
+    { "requestedReport": "OneDriveUsageAccountDetail", "graphContent": "getOneDriveUsageAccountDetail", "typicalPeriod": "Period or date", "notes": "Per-account usage" },
+    { "requestedReport": "OneDriveUsageStorage", "graphContent": "getOneDriveUsageStorage", "typicalPeriod": "Period-based", "notes": "Storage trends" },
+    { "requestedReport": "SharePointSiteUsageDetail", "graphContent": "getSharePointSiteUsageDetail", "typicalPeriod": "Period or date", "notes": "Per-site usage" },
+    { "requestedReport": "SharePointSiteUsageFileCounts", "graphContent": "getSharePointSiteUsageFileCounts", "typicalPeriod": "Period-based", "notes": "File activity counts" },
+    { "requestedReport": "TeamsUserActivityCounts", "graphContent": "getTeamsUserActivityCounts", "typicalPeriod": "Period-based", "notes": "Activity type counts" },
+    { "requestedReport": "TeamsUserActivityUserDetail", "graphContent": "getTeamsUserActivityUserDetail", "typicalPeriod": "Period or date", "notes": "Per-user Teams activity" },
+    { "requestedReport": "Service Health", "graphContent": "Graph Service Health / Communications", "typicalPeriod": "Real-time", "notes": "o365:service:healthIssue" },
+    { "requestedReport": "Service Update Messages", "graphContent": "Service Communications", "typicalPeriod": "Real-time", "notes": "o365:service:updateMessage" },
+    { "requestedReport": "Yammer Groups Activity Details", "graphContent": "getYammerGroupsActivityDetail", "typicalPeriod": "Period-based", "notes": "Per-group activity" },
+    { "requestedReport": "Yammer Groups Activity Group Counts", "graphContent": "getYammerGroupsActivityGroupCounts", "typicalPeriod": "Period-based", "notes": "Group counts" }
+  ],
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/$defs/o365GraphApiReportEvent" },
+    { "$ref": "#/$defs/serviceHealthEvent" },
+    { "$ref": "#/$defs/serviceUpdateMessageEvent" }
+  ],
+  "$defs": {
+    "reportCommonFields": {
+      "description": "Fields present in the documented Key Fields list of virtually every usage report (Report Refresh Date, Report Period). Is Deleted, owner/UPN identity fields, storage-in-bytes fields, and activity counts are also common CONCEPTS across reports per the dictionary's 'Common Patterns' section, but their exact property names vary per report (e.g. 'Owner Principal Name' vs 'User Principal Name'), so they are defined individually on each report's own fields set rather than forced into this shared block.",
+      "type": "object",
+      "properties": {
+        "Report Refresh Date": { "type": "string", "format": "date-time", "description": "When the data was last refreshed by Microsoft." },
+        "Report Period": { "type": "string", "description": "Aggregation window (e.g. D7/D30/D90/D180) or a specific date, depending on the report." }
+      }
+    },
+    "o365GraphApiReportEvent": {
+      "description": "Catch-all for the o365:graph:api sourcetype, shared by all 11 Graph Reporting usage reports. See the individually addressable *ReportEvent definitions in this file's $defs for each report's own documented fields -- this root-level branch does not attempt to discriminate between them since the source dictionary names no single reliable field for that (its own search tip groups by 'source, report_*' rather than one fixed field).",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "o365:graph:api" },
+        "source": { "type": "string", "description": "Splunk source field -- may help distinguish which report an event came from, though no fixed value/pattern is documented." },
+        "Report Refresh Date": { "type": "string", "format": "date-time" },
+        "Report Period": { "type": "string" }
+      }
+    },
+    "office365GroupsActivityDetailFields": {
+      "type": "object",
+      "properties": {
+        "Group Id": { "type": "string" },
+        "Group Display Name": { "type": "string" },
+        "Group Type": { "type": "string", "enum": ["Public", "Private"] },
+        "Is Deleted": { "type": "boolean" },
+        "Owner Principal Name": { "type": "string" },
+        "Last Activity Date": { "type": "string", "format": "date-time" },
+        "Member Count": { "type": "integer" },
+        "External Member Count": { "type": "integer" },
+        "Guest Count": { "type": "integer" },
+        "Exchange Received Email Count": { "type": "integer" },
+        "Exchange Mailbox Total Item Count": { "type": "integer" },
+        "Exchange Mailbox Storage Used (Byte)": { "type": "integer" },
+        "SharePoint Active File Count": { "type": "integer" },
+        "SharePoint Total File Count": { "type": "integer" },
+        "SharePoint Site Storage Used (Byte)": { "type": "integer" },
+        "Yammer Posted Message Count": { "type": "integer" },
+        "Yammer Read Message Count": { "type": "integer" },
+        "Yammer Liked Message Count": { "type": "integer" },
+        "Teams Channel Messages Count": { "type": "integer" },
+        "Teams Meetings Organized Count": { "type": "integer" }
+      }
+    },
+    "office365ServicesUserCountsFields": {
+      "type": "object",
+      "properties": {
+        "Exchange Active": { "type": "integer" },
+        "Exchange Inactive": { "type": "integer" },
+        "OneDrive Active": { "type": "integer" },
+        "OneDrive Inactive": { "type": "integer" },
+        "SharePoint Active": { "type": "integer" },
+        "SharePoint Inactive": { "type": "integer" },
+        "Skype For Business Active": { "type": "integer" },
+        "Skype For Business Inactive": { "type": "integer" },
+        "Yammer Active": { "type": "integer" },
+        "Yammer Inactive": { "type": "integer" },
+        "Teams Active": { "type": "integer" },
+        "Teams Inactive": { "type": "integer" },
+        "Office 365 Active": { "type": "integer" },
+        "Office 365 Inactive": { "type": "integer" }
+      }
+    },
+    "oneDriveActivityUserCountsFields": {
+      "description": "The dictionary describes this report's activity-count fields only in prose ('Counts of users who performed: Viewed/Edited files, Shared internally/externally, Synced files, etc.', 'Active user trends by activity type') rather than as exact field names, so beyond the common fields this schema asserts nothing further -- additionalProperties covers the rest.",
+      "type": "object",
+      "properties": {}
+    },
+    "oneDriveUsageAccountDetailFields": {
+      "type": "object",
+      "properties": {
+        "Site URL": { "type": "string" },
+        "Owner Display Name": { "type": "string" },
+        "Owner Principal Name": { "type": "string" },
+        "Is Deleted": { "type": "boolean" },
+        "Last Activity Date": { "type": "string", "format": "date-time" },
+        "File Count": { "type": "integer" },
+        "Active File Count": { "type": "integer" },
+        "Storage Used (Byte)": { "type": "integer" },
+        "Storage Allocated (Byte)": { "type": "integer" }
+      }
+    },
+    "oneDriveUsageStorageFields": {
+      "description": "'Trend of total storage consumption' is described only conceptually in the dictionary, not as a distinct field name.",
+      "type": "object",
+      "properties": {
+        "Site Type": { "type": "string", "description": "e.g. All, OneDrive -- not necessarily exhaustive." },
+        "Storage Used (Byte)": { "type": "integer" },
+        "Storage Allocated (Byte)": { "type": "integer" }
+      }
+    },
+    "sharePointSiteUsageDetailFields": {
+      "type": "object",
+      "properties": {
+        "Site Id": { "type": "string" },
+        "Site URL": { "type": "string" },
+        "Owner Display Name": { "type": "string" },
+        "Owner Principal Name": { "type": "string" },
+        "Is Deleted": { "type": "boolean" },
+        "Last Activity Date": { "type": "string", "format": "date-time" },
+        "File Count": { "type": "integer" },
+        "Active File Count": { "type": "integer" },
+        "Page View Count": { "type": "integer" },
+        "Visited Page Count": { "type": "integer" },
+        "Storage Used (Byte)": { "type": "integer" },
+        "Storage Allocated (Byte)": { "type": "integer" },
+        "Root Web Template": { "type": "string" },
+        "Anonymous Link Count": { "type": "integer", "description": "One of several fields the dictionary flags with 'etc.' -- not an exhaustive list." }
+      }
+    },
+    "sharePointSiteUsageFileCountsFields": {
+      "description": "The dictionary describes this report's file-count fields only in prose ('Counts: Total files, Active files, Files viewed/edited, Files synced, Files shared internally/externally') rather than as exact field names, so beyond Site Type this schema asserts nothing further -- additionalProperties covers the rest.",
+      "type": "object",
+      "properties": {
+        "Site Type": { "type": "string" }
+      }
+    },
+    "teamsUserActivityCountsFields": {
+      "description": "The dictionary describes this report's activity-count fields only in prose ('Counts by activity type: Team Chat Messages, Private Chat Messages, Calls, Meetings, Other actions', 'Licensed vs total users performing activities') rather than as exact field names, so this schema asserts nothing beyond the common fields -- additionalProperties covers the rest.",
+      "type": "object",
+      "properties": {}
+    },
+    "teamsUserActivityUserDetailFields": {
+      "type": "object",
+      "properties": {
+        "User Id": { "type": "string" },
+        "User Principal Name": { "type": "string" },
+        "Last Activity Date": { "type": "string", "format": "date-time" },
+        "Is Deleted": { "type": "boolean" },
+        "Deleted Date": { "type": "string", "format": "date-time" },
+        "Is Licensed": { "type": "boolean" },
+        "Assigned Products": { "type": "array", "items": { "type": "string" } },
+        "Team Chat Message Count": { "type": "integer" },
+        "Private Chat Message Count": { "type": "integer" },
+        "Call Count": { "type": "integer" },
+        "Meeting Count": { "type": "integer" },
+        "Post Messages": { "type": "integer" },
+        "Reply Messages": { "type": "integer" },
+        "Urgent Messages": { "type": "integer" },
+        "Meetings Organized Count": { "type": "integer" },
+        "Meetings Attended Count": { "type": "integer" },
+        "Ad-hoc Meeting Count": { "type": "integer" },
+        "Scheduled One-time Meeting Count": { "type": "integer" },
+        "Scheduled Recurring Meeting Count": { "type": "integer" },
+        "Audio Duration": { "type": "string" },
+        "Audio Duration Seconds": { "type": "integer" },
+        "Video Duration": { "type": "string" },
+        "Video Duration Seconds": { "type": "integer" },
+        "Screen Share Duration": { "type": "string" },
+        "Screen Share Duration Seconds": { "type": "integer" }
+      }
+    },
+    "yammerGroupsActivityDetailFields": {
+      "description": "Documented as 'similar to Groups Activity Detail' (Office365GroupsActivityDetail) but only in prose for this report specifically ('Group identifiers and display name', 'Member / external member counts', 'Posted / Read / Liked message counts', 'Last activity date, storage, etc.'). The group-identity fields below are reused from Office365GroupsActivityDetail on the strength of that explicit cross-reference; the posted/read/liked message counts and storage fields are not given exact names here and so are left to additionalProperties.",
+      "type": "object",
+      "properties": {
+        "Group Id": { "type": "string" },
+        "Group Display Name": { "type": "string" },
+        "Member Count": { "type": "integer" },
+        "External Member Count": { "type": "integer" },
+        "Last Activity Date": { "type": "string", "format": "date-time" }
+      }
+    },
+    "yammerGroupsActivityGroupCountsFields": {
+      "description": "'Counts of groups with posted/read/liked activity' is described only conceptually in the dictionary, not as a distinct field name.",
+      "type": "object",
+      "properties": {
+        "Total Groups": { "type": "integer" },
+        "Active Groups": { "type": "integer" }
+      }
+    },
+    "office365GroupsActivityDetailEvent": {
+      "description": "Office365GroupsActivityDetail report -- per-group activity. Sourcetype o365:graph:api.",
+      "allOf": [{ "$ref": "#/$defs/reportCommonFields" }, { "$ref": "#/$defs/office365GroupsActivityDetailFields" }, { "type": "object", "required": ["sourcetype"], "properties": { "sourcetype": { "const": "o365:graph:api" } } }]
+    },
+    "office365ServicesUserCountsEvent": {
+      "description": "Office365ServicesUserCounts report -- active/inactive users by service. Sourcetype o365:graph:api.",
+      "allOf": [{ "$ref": "#/$defs/reportCommonFields" }, { "$ref": "#/$defs/office365ServicesUserCountsFields" }, { "type": "object", "required": ["sourcetype"], "properties": { "sourcetype": { "const": "o365:graph:api" } } }]
+    },
+    "oneDriveActivityUserCountsEvent": {
+      "description": "OneDriveActivityUserCounts report -- user activity counts. Sourcetype o365:graph:api.",
+      "allOf": [{ "$ref": "#/$defs/reportCommonFields" }, { "$ref": "#/$defs/oneDriveActivityUserCountsFields" }, { "type": "object", "required": ["sourcetype"], "properties": { "sourcetype": { "const": "o365:graph:api" } } }]
+    },
+    "oneDriveUsageAccountDetailEvent": {
+      "description": "OneDriveUsageAccountDetail report -- per-account usage. Sourcetype o365:graph:api.",
+      "allOf": [{ "$ref": "#/$defs/reportCommonFields" }, { "$ref": "#/$defs/oneDriveUsageAccountDetailFields" }, { "type": "object", "required": ["sourcetype"], "properties": { "sourcetype": { "const": "o365:graph:api" } } }]
+    },
+    "oneDriveUsageStorageEvent": {
+      "description": "OneDriveUsageStorage report -- storage trends. Sourcetype o365:graph:api.",
+      "allOf": [{ "$ref": "#/$defs/reportCommonFields" }, { "$ref": "#/$defs/oneDriveUsageStorageFields" }, { "type": "object", "required": ["sourcetype"], "properties": { "sourcetype": { "const": "o365:graph:api" } } }]
+    },
+    "sharePointSiteUsageDetailEvent": {
+      "description": "SharePointSiteUsageDetail report -- per-site usage. Sourcetype o365:graph:api.",
+      "allOf": [{ "$ref": "#/$defs/reportCommonFields" }, { "$ref": "#/$defs/sharePointSiteUsageDetailFields" }, { "type": "object", "required": ["sourcetype"], "properties": { "sourcetype": { "const": "o365:graph:api" } } }]
+    },
+    "sharePointSiteUsageFileCountsEvent": {
+      "description": "SharePointSiteUsageFileCounts report -- file activity counts. Sourcetype o365:graph:api.",
+      "allOf": [{ "$ref": "#/$defs/reportCommonFields" }, { "$ref": "#/$defs/sharePointSiteUsageFileCountsFields" }, { "type": "object", "required": ["sourcetype"], "properties": { "sourcetype": { "const": "o365:graph:api" } } }]
+    },
+    "teamsUserActivityCountsEvent": {
+      "description": "TeamsUserActivityCounts report -- activity type counts. Sourcetype o365:graph:api.",
+      "allOf": [{ "$ref": "#/$defs/reportCommonFields" }, { "$ref": "#/$defs/teamsUserActivityCountsFields" }, { "type": "object", "required": ["sourcetype"], "properties": { "sourcetype": { "const": "o365:graph:api" } } }]
+    },
+    "teamsUserActivityUserDetailEvent": {
+      "description": "TeamsUserActivityUserDetail report -- per-user Teams activity. Sourcetype o365:graph:api.",
+      "allOf": [{ "$ref": "#/$defs/reportCommonFields" }, { "$ref": "#/$defs/teamsUserActivityUserDetailFields" }, { "type": "object", "required": ["sourcetype"], "properties": { "sourcetype": { "const": "o365:graph:api" } } }]
+    },
+    "yammerGroupsActivityDetailEvent": {
+      "description": "Yammer Groups Activity Details report -- per-group activity. Sourcetype o365:graph:api.",
+      "allOf": [{ "$ref": "#/$defs/reportCommonFields" }, { "$ref": "#/$defs/yammerGroupsActivityDetailFields" }, { "type": "object", "required": ["sourcetype"], "properties": { "sourcetype": { "const": "o365:graph:api" } } }]
+    },
+    "yammerGroupsActivityGroupCountsEvent": {
+      "description": "Yammer Groups Activity Group Counts report -- group counts. Sourcetype o365:graph:api.",
+      "allOf": [{ "$ref": "#/$defs/reportCommonFields" }, { "$ref": "#/$defs/yammerGroupsActivityGroupCountsFields" }, { "type": "object", "required": ["sourcetype"], "properties": { "sourcetype": { "const": "o365:graph:api" } } }]
+    },
+    "serviceHealthEvent": {
+      "description": "Service Health. Sourcetype o365:service:healthIssue (or related status).",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "o365:service:healthIssue" },
+        "Service Name": { "type": "string", "description": "e.g. Exchange, SharePoint, Teams, OneDrive, etc." },
+        "Service Id": { "type": "string" },
+        "Status": { "type": "string", "description": "e.g. ServiceOperational, ServiceDegradation, ServiceInterruption, RestoringService, etc. -- not an exhaustive enum." },
+        "Feature Status": { "type": "string" },
+        "Feature Group Status": { "type": "string" },
+        "Incident Ids": { "type": "array", "items": { "type": "string" } },
+        "Advisory Ids": { "type": "array", "items": { "type": "string" } },
+        "Last Updated Time": { "type": "string", "format": "date-time" }
+      }
+    },
+    "serviceUpdateMessageEvent": {
+      "description": "Service Update Messages. Sourcetype o365:service:updateMessage.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "o365:service:updateMessage" },
+        "Message Id": { "type": "string" },
+        "Title": { "type": "string" },
+        "Category": { "type": "string", "description": "e.g. plan for change, stay informed, prevent/fix issues, etc. -- not an exhaustive enum." },
+        "Severity": { "type": "string" },
+        "Priority": { "type": "string" },
+        "Start Date": { "type": "string", "format": "date-time" },
+        "End Date": { "type": "string", "format": "date-time" },
+        "Last Modified Date": { "type": "string", "format": "date-time" },
+        "Services Affected": { "type": "array", "items": { "type": "string" } },
+        "Message Body": { "type": "string" },
+        "Details": { "type": "string" },
+        "Action Required": { "type": "string" },
+        "Classification": { "type": "string", "enum": ["Advisory", "Incident"] },
+        "IsMajorChange": { "type": "boolean" },
+        "IsResolved": { "type": "boolean" }
+      }
+    }
+  }
+}
