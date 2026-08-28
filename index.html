@@ -32373,9 +32373,23 @@ const inputCoverageGroups = [
   { tag: "TA-MS-AAD", appName: "Splunk Add-on for Microsoft Azure", appId: "3757", baseLink: "https://splunkbase.splunk.com/app/3757", inputs: ["Microsoft Entra ID Interactive Sign-ins", "Microsoft Entra ID Users", "Microsoft Entra ID Groups", "Microsoft Entra ID Applications", "Microsoft Entra ID Audit", "Microsoft Entra ID Identity Protection", "Microsoft Entra ID Devices", "Microsoft Graph Security API", "Azure Metrics", "Microsoft Defender for cloud Alerts and Tasks", "Resource Graph", "Azure Topology Auto", "Azure Topology Manual"] },
   { tag: "Splunk_TA_MS_Security", appName: "Splunk Add-on for Microsoft Security", appId: "6207", baseLink: "https://splunkbase.splunk.com/app/6207", inputs: ["Microsoft 365 Defender Incidents", "Microsoft Defender for Endpoint Alerts", "Microsoft Defender Simulations", "Microsoft Defender Event Hub", "Microsoft Defender Threat Intelligence DataSets", "Microsoft Defender Machines"] }
 ];
-// Sourcetype is not yet verified for any input (see note above) -- every column defaults to "To be confirmed"
-// here rather than a guessed value; replace with real sourcetypes once confirmed against each add-on's docs.
-const inputCoverageSourcetypes = {};
+// Sourcetype confirmed by the user (2026-08) for the splunk_ta_o365 inputs, sourced from that TA's own
+// input/content-type mapping. Inputs for the other 3 TAs remain unverified -- every column not listed here
+// defaults to "To be confirmed" rather than a guessed value; replace once confirmed against each add-on's docs.
+const inputCoverageSourcetypes = {
+  "Management Activity [splunk_ta_o365]": "o365:management:activity",
+  "MailBox [splunk_ta_o365]": "o365:graph:api",
+  "Office365 [splunk_ta_o365]": "o365:graph:api",
+  "OneDrive [splunk_ta_o365]": "o365:graph:api",
+  "SharePoint [splunk_ta_o365]": "o365:graph:api",
+  "Teams [splunk_ta_o365]": "o365:graph:api",
+  "Yammer [splunk_ta_o365]": "o365:graph:api",
+  "Audit Logs [splunk_ta_o365]": "o365:graph:api",
+  "Service Health & Communications [splunk_ta_o365]": "o365:graph:api",
+  "Cloud Application Security [splunk_ta_o365]": "o365:cas:api",
+  "Message Trace [splunk_ta_o365]": "o365:graph:messagetrace",
+  "Microsoft Entra ID Metadata [splunk_ta_o365]": "o365:metadata:application, o365:metadata:device, o365:metadata:group, o365:metadata:user (varies by object type)"
+};
 // Each input column's canonical/export key disambiguates "Azure Metrics" (appears under two apps) via the "[TA]" suffix.
 const inputCoverageInputColumns = inputCoverageGroups.flatMap(group =>
   group.inputs.map(label => {
