@@ -32409,19 +32409,62 @@ const inputCoverageSourcetypes = {
   "Yammer:Yammer Groups Activity Details [splunk_ta_o365]": "o365:graph:api",
   "Yammer:Yammer Groups Activity Group Counts [splunk_ta_o365]": "o365:graph:api"
 };
+// Remaining spreadsheet columns (content_type, entra_id_type, input_category, input_type_sub, Source) confirmed
+// by the user (2026-08) for the splunk_ta_o365 inputs, from the same source as inputCoverageSourcetypes above.
+// Inputs for the other 3 TAs have no equivalent breakdown -- every field not listed here defaults to
+// "To be confirmed" rather than a guessed value.
+const inputCoverageColumnDetails = {
+  "Audit Logs:AuditLogs.SignIns [splunk_ta_o365]": { inputCategory: "Audit Logs", contentType: "AuditLogs.SignIns", entraIdType: "NIL", inputTypeSub: "AuditLogs.SignIns", source: "AuditLogs.SignIns" },
+  "Cloud Application Security:Alerts [splunk_ta_o365]": { inputCategory: "Cloud Application Security", contentType: "Alerts", entraIdType: "NIL", inputTypeSub: "Alerts", source: "-" },
+  "Cloud Application Security:Policies [splunk_ta_o365]": { inputCategory: "Cloud Application Security", contentType: "Policies", entraIdType: "NIL", inputTypeSub: "Policies", source: "-" },
+  "Cloud Application Security:Cloud Discovery [splunk_ta_o365]": { inputCategory: "Cloud Application Security", contentType: "Cloud Discovery", entraIdType: "NIL", inputTypeSub: "Cloud Discovery", source: "-" },
+  "Cloud Application Security:Entities [splunk_ta_o365]": { inputCategory: "Cloud Application Security", contentType: "Entities", entraIdType: "NIL", inputTypeSub: "Entities", source: "-" },
+  "Cloud Application Security:Files [splunk_ta_o365]": { inputCategory: "Cloud Application Security", contentType: "Files", entraIdType: "NIL", inputTypeSub: "Files", source: "-" },
+  "Mailbox:MailboxUsageDetail [splunk_ta_o365]": { inputCategory: "Mailbox", contentType: "MailboxUsageDetail", entraIdType: "NIL", inputTypeSub: "MailboxUsageDetail", source: "MailboxUsageDetail" },
+  "Mailbox:MailboxUsageMailboxCounts [splunk_ta_o365]": { inputCategory: "Mailbox", contentType: "MailboxUsageMailboxCounts", entraIdType: "NIL", inputTypeSub: "MailboxUsageMailboxCounts", source: "MailboxUsageMailboxCounts" },
+  "Management Activity:Audit.AzureActiveDirectory [splunk_ta_o365]": { inputCategory: "Management Activity", contentType: "Audit.AzureActiveDirectory", entraIdType: "NIL", inputTypeSub: "Audit.AzureActiveDirectory", source: "-" },
+  "Management Activity:Audit.Exchange [splunk_ta_o365]": { inputCategory: "Management Activity", contentType: "Audit.Exchange", entraIdType: "NIL", inputTypeSub: "Audit.Exchange", source: "-" },
+  "Management Activity:Audit.General [splunk_ta_o365]": { inputCategory: "Management Activity", contentType: "Audit.General", entraIdType: "NIL", inputTypeSub: "Audit.General", source: "-" },
+  "Management Activity:Audit.SharePoint [splunk_ta_o365]": { inputCategory: "Management Activity", contentType: "Audit.SharePoint", entraIdType: "NIL", inputTypeSub: "Audit.SharePoint", source: "-" },
+  "Management Activity:DLP.All [splunk_ta_o365]": { inputCategory: "Management Activity", contentType: "DLP.All", entraIdType: "NIL", inputTypeSub: "DLP.All", source: "-" },
+  "Message Trace:NIL [splunk_ta_o365]": { inputCategory: "Message Trace", contentType: "NIL", entraIdType: "NIL", inputTypeSub: "NIL", source: "splunk_ta_o365_message_trace.." },
+  "Microsoft Entra ID Metadata:applications [splunk_ta_o365]": { inputCategory: "Microsoft Entra ID Metadata", contentType: "NIL", entraIdType: "applications", inputTypeSub: "applications", source: "ms_eid_applications:tenant_id:.." },
+  "Microsoft Entra ID Metadata:devices [splunk_ta_o365]": { inputCategory: "Microsoft Entra ID Metadata", contentType: "NIL", entraIdType: "devices", inputTypeSub: "devices", source: "ms_eid_devices:tenant_id:.." },
+  "Microsoft Entra ID Metadata:groups [splunk_ta_o365]": { inputCategory: "Microsoft Entra ID Metadata", contentType: "NIL", entraIdType: "groups", inputTypeSub: "groups", source: "ms_eid_groups:tenant_id:.." },
+  "Microsoft Entra ID Metadata:users [splunk_ta_o365]": { inputCategory: "Microsoft Entra ID Metadata", contentType: "NIL", entraIdType: "users", inputTypeSub: "users", source: "ms_eid_users:tenant_id:.." },
+  "Office 365:Office365GroupsActivityDetail [splunk_ta_o365]": { inputCategory: "Office 365", contentType: "Office365GroupsActivityDetail", entraIdType: "NIL", inputTypeSub: "Office365GroupsActivityDetail", source: "Office365GroupsActivityDetail" },
+  "Office 365:Office365ServicesUserCounts [splunk_ta_o365]": { inputCategory: "Office 365", contentType: "Office365ServicesUserCounts", entraIdType: "NIL", inputTypeSub: "Office365ServicesUserCounts", source: "Office365ServicesUserCounts" },
+  "One Drive:OneDriveActivityUserCounts [splunk_ta_o365]": { inputCategory: "One Drive", contentType: "OneDriveActivityUserCounts", entraIdType: "NIL", inputTypeSub: "OneDriveActivityUserCounts", source: "OneDriveActivityUserCounts" },
+  "One Drive:OneDriveUsageAccountDetail [splunk_ta_o365]": { inputCategory: "One Drive", contentType: "OneDriveUsageAccountDetail", entraIdType: "NIL", inputTypeSub: "OneDriveUsageAccountDetail", source: "OneDriveUsageAccountDetail" },
+  "One Drive:OneDriveUsageStorage [splunk_ta_o365]": { inputCategory: "One Drive", contentType: "OneDriveUsageStorage", entraIdType: "NIL", inputTypeSub: "OneDriveUsageStorage", source: "OneDriveUsageStorage" },
+  "Share Point:SharePointSiteUsageDetail [splunk_ta_o365]": { inputCategory: "Share Point", contentType: "SharePointSiteUsageDetail", entraIdType: "NIL", inputTypeSub: "SharePointSiteUsageDetail", source: "SharePointSiteUsageDetail" },
+  "Share Point:SharePointSiteUsageFileCounts [splunk_ta_o365]": { inputCategory: "Share Point", contentType: "SharePointSiteUsageFileCounts", entraIdType: "NIL", inputTypeSub: "SharePointSiteUsageFileCounts", source: "SharePointSiteUsageFileCounts" },
+  "Teams:TeamsUserActivityCounts [splunk_ta_o365]": { inputCategory: "Teams", contentType: "TeamsUserActivityCounts", entraIdType: "NIL", inputTypeSub: "TeamsUserActivityCounts", source: "TeamsUserActivityCounts" },
+  "Teams:TeamsUserActivityUserDetail [splunk_ta_o365]": { inputCategory: "Teams", contentType: "TeamsUserActivityUserDetail", entraIdType: "NIL", inputTypeSub: "TeamsUserActivityUserDetail", source: "TeamsUserActivityUserDetail" },
+  "Service Health & Communications:Service Health [splunk_ta_o365]": { inputCategory: "Service Health & Communications", contentType: "Service Health", entraIdType: "NIL", inputTypeSub: "-", source: "-" },
+  "Service Health & Communications:Service Update Messages [splunk_ta_o365]": { inputCategory: "Service Health & Communications", contentType: "Service Update Messages", entraIdType: "NIL", inputTypeSub: "-", source: "-" },
+  "Yammer:Yammer Groups Activity Details [splunk_ta_o365]": { inputCategory: "Yammer", contentType: "Yammer Groups Activity Detail", entraIdType: "NIL", inputTypeSub: "-", source: "YammerGroupsActivityDetail" },
+  "Yammer:Yammer Groups Activity Group Counts [splunk_ta_o365]": { inputCategory: "Yammer", contentType: "Yammer Groups Activity Group Counts", entraIdType: "NIL", inputTypeSub: "-", source: "YammerGroupsActivityGroupCounts" }
+};
 // Each input column's canonical/export key disambiguates "Azure Metrics" (appears under two apps) via the "[TA]" suffix.
 const inputCoverageInputColumns = inputCoverageGroups.flatMap(group =>
   group.inputs.map(label => {
     const key = `${label} [${group.tag}]`;
+    const details = inputCoverageColumnDetails[key] || {};
     return {
       key, label, tag: group.tag,
       appName: group.appName, appId: group.appId, baseLink: group.baseLink,
-      sourcetype: inputCoverageSourcetypes[key] || "To be confirmed"
+      sourcetype: inputCoverageSourcetypes[key] || "To be confirmed",
+      inputCategory: details.inputCategory || "To be confirmed",
+      contentType: details.contentType || "To be confirmed",
+      entraIdType: details.entraIdType || "To be confirmed",
+      inputTypeSub: details.inputTypeSub || "To be confirmed",
+      source: details.source || "To be confirmed"
     };
   })
 );
 function inputCoverageColumnTooltip(c) {
-  return `Splunk app ID: ${c.appId}\nSplunk app name: ${c.appName}\nSplunk app base link: ${c.baseLink}\nInput name: ${c.label}\nSourcetype: ${c.sourcetype}`;
+  return `Splunk app ID: ${c.appId}\nSplunk app name: ${c.appName}\nSplunk app base link: ${c.baseLink}\nInput category: ${c.inputCategory}\nInput name: ${c.label}\nContent type: ${c.contentType}\nEntra ID type: ${c.entraIdType}\nInput type sub: ${c.inputTypeSub}\nSource: ${c.source}\nSourcetype: ${c.sourcetype}`;
 }
 const inputCoverageAllColumns = [...inputCoverageTenantColumns, ...inputCoverageInputColumns.map(c => c.key)];
 const INPUT_COVERAGE_LS_KEY = "latch_input_coverage_v1";
