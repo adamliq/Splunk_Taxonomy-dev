@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adamliq.github.io/splunk-taxonomy/schemas/o365-cas-message-trace.schema.json",
+  "title": "Cloud Application Security & Message Trace",
+  "description": "Splunk Add-on for Microsoft Office 365 (splunk_ta_o365) -- two unrelated sourcetype families bundled together in the source dictionary: Cloud Application Security (Microsoft Defender for Cloud Apps / MCAS), sourcetype o365:cas:api, with 5 content types (Alerts, Policies, Cloud Discovery, Entities, Files); and Message Trace, which uses one of two sourcetypes depending on cloud (o365:graph:messagetrace worldwide, o365:reporting:messagetrace for USGovGCC/USGovGCCHigh) but shares one common field set. As with o365:management:activity and the usage-reports schema, the source dictionary names no single reliable field that discriminates between the 5 CAS content types sharing o365:cas:api -- its own search tip groups by 'source' alone. The root schema is therefore a permissive catch-all for o365:cas:api plus the cleanly-discriminated messageTraceEvent branch; the 5 CAS content-type shapes are individually addressable *Event definitions under $defs. Property names use the '[]' suffix convention from the source dictionary's own Alerts section (e.g. 'entities[]') to identify array fields, and are only asserted where the dictionary gives a clear identifier-like token rather than a full descriptive phrase -- purely descriptive bullets (e.g. 'Cloud apps involved, countries, IP categories') are captured in each definition's description text instead of being turned into invented property keys.",
+  "x-cas-input-name": "Cloud Application Security (Splunk Add-on for Microsoft Office 365)",
+  "x-cas-sourcetype": "o365:cas:api",
+  "x-cas-content-types": [
+    { "contentType": "Alerts", "description": "Risks and policy matches identified by Defender for Cloud Apps", "status": "Active" },
+    { "contentType": "Policies", "description": "Threat protection / activity / file / OAuth / discovery policies", "status": "Active" },
+    { "contentType": "Cloud Discovery", "description": "Discovered cloud apps, traffic, users", "status": "Deprecated (API endpoint removed by Microsoft)" },
+    { "contentType": "Entities", "description": "Users, accounts, IP addresses, devices, etc.", "status": "Active" },
+    { "contentType": "Files", "description": "Files and folders metadata in connected apps", "status": "Active (file monitoring must be enabled)" }
+  ],
+  "x-message-trace-lookback-limits": { "graphWorldwide": "up to 90 days", "reportingWebServiceGov": "up to 10 days" },
+  "x-message-trace-permissions": { "worldwide": "ExchangeMessageTrace.Read.All", "gov": "uses the Reporting Web Service path" },
+  "x-quick-validation-searches": [
+    "sourcetype=o365:cas:api | stats count by source",
+    "sourcetype=o365:graph:api (*MailboxUsage* OR report*mailbox*)",
+    "sourcetype=o365:graph:messagetrace OR sourcetype=o365:reporting:messagetrace | stats count by Status"
+  ],
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/$defs/o365CasApiEvent" },
+    { "$ref": "#/$defs/messageTraceEvent" }
+  ],
+  "$defs": {
+    "o365CasApiEvent": {
+      "description": "Catch-all for the o365:cas:api sourcetype, shared by all 5 Cloud Application Security content types. See the individually addressable *Event definitions in this file's $defs for each content type's own documented fields -- this root-level branch does not attempt to discriminate between them since the source dictionary names no single reliable field for that.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "o365:cas:api" },
+        "source": { "type": "string", "description": "Splunk source field -- the dictionary's own validation search groups by this." }
+      }
+    },
+    "alertEvent": {
+      "description": "Cloud Application Security Alerts -- risks and policy matches identified by Defender for Cloud Apps. Sourcetype o365:cas:api. Status: Active. CIM: Alerts. 'Cloud apps involved, countries, IP categories (Risky, Anonymous, etc.)' are documented conceptually but not as exact field names, so they are not asserted as properties here.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "o365:cas:api" },
+        "id": { "type": "string" },
+        "alertId": { "type": "string" },
+        "_id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "severity": { "type": "string", "enum": ["Low", "Medium", "High"] },
+        "status": { "type": "string", "description": "e.g. Open, Dismissed, Resolved, etc. -- not an exhaustive enum." },
+        "alertType": { "type": "string" },
+        "category": { "type": "string" },
+        "policyId": { "type": "string" },
+        "policyName": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "createdTime": { "type": "string", "format": "date-time" },
+        "lastUpdated": { "type": "string", "format": "date-time" },
+        "entities": { "type": "array", "items": { "type": "object", "additionalProperties": true }, "description": "users, IPs, files, apps, devices..." },
+        "activities": { "type": "array", "items": { "type": "string" }, "description": "Related activity IDs." },
+        "riskScore": { "type": "number" },
+        "threatScore": { "type": "number" },
+        "resolutionStatus": { "type": "string" },
+        "comment": { "type": "string" },
+        "assignedTo": { "type": "string" }
+      }
+    },
+    "policyEvent": {
+      "description": "Cloud Application Security Policies -- threat protection / activity / file / OAuth / discovery policies. Sourcetype o365:cas:api. Status: Active. 'Filters / conditions' and 'Alert settings / daily alert limit' are documented conceptually but not as exact field names, so they are not asserted as properties here.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "o365:cas:api" },
+        "policyId": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "policyType": { "type": "string", "description": "e.g. Activity, File, OAuth App, Anomaly Detection, App Discovery, etc. -- not an exhaustive enum." },
+        "severity": { "type": "string" },
+        "enabled": { "type": "boolean" },
+        "governanceActions": { "type": "array", "items": { "type": "string" }, "description": "e.g. notify, suspend user, revoke OAuth, quarantine file, etc. -- not an exhaustive enum." },
+        "createdTime": { "type": "string", "format": "date-time" },
+        "modifiedTime": { "type": "string", "format": "date-time" }
+      }
+    },
+    "cloudDiscoveryEvent": {
+      "description": "Cloud Application Security Cloud Discovery -- discovered cloud apps, traffic, users. Sourcetype o365:cas:api. Status: Deprecated -- Microsoft removed the discovery API endpoint. Disable this content type to avoid errors; use alternative discovery methods or Event Hub if still required. The source dictionary gives no field-level detail for this content type, so no properties are asserted beyond 'sourcetype'.",
+      "deprecated": true,
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "o365:cas:api" }
+      }
+    },
+    "entityEvent": {
+      "description": "Cloud Application Security Entities -- users, accounts, IP addresses, devices, etc. Sourcetype o365:cas:api. Status: Active. Fields vary by entity type (user, account, IP, device, app...). 'Affiliated cloud apps' is documented conceptually but not as an exact field name; a best-effort affiliatedCloudApps array property is still included since it reads as a clear compound concept rather than a vaguer descriptive phrase.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "o365:cas:api" },
+        "entityId": { "type": "string" },
+        "type": { "type": "string" },
+        "name": { "type": "string" },
+        "displayName": { "type": "string" },
+        "userPrincipalName": { "type": "string", "description": "For accounts." },
+        "email": { "type": "string", "description": "For accounts." },
+        "riskScore": { "type": "number" },
+        "threatScore": { "type": "number" },
+        "affiliatedCloudApps": { "type": "array", "items": { "type": "string" } },
+        "ipAddress": { "type": "string" },
+        "location": { "type": "string" },
+        "category": { "type": "string" },
+        "lastSeen": { "type": "string", "format": "date-time" },
+        "firstSeen": { "type": "string", "format": "date-time" },
+        "relatedAlertsCount": { "type": "integer" },
+        "relatedActivitiesCount": { "type": "integer" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "isExternal": { "type": "boolean" },
+        "isAdmin": { "type": "boolean" }
+      }
+    },
+    "fileEvent": {
+      "description": "Cloud Application Security Files -- files and folders metadata in connected apps. Sourcetype o365:cas:api. Status: Active (file monitoring must be enabled).",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "const": "o365:cas:api" },
+        "fileId": { "type": "string" },
+        "name": { "type": "string" },
+        "path": { "type": "string" },
+        "url": { "type": "string" },
+        "owner": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "modifiedBy": { "type": "string" },
+        "fileType": { "type": "string" },
+        "size": { "type": "integer" },
+        "mimeType": { "type": "string" },
+        "sharingLevel": { "type": "string", "enum": ["private", "internal", "external", "public"] },
+        "collaborators": { "type": "array", "items": { "type": "string" } },
+        "sharedWithDomains": { "type": "array", "items": { "type": "string" } },
+        "sensitivityLabels": { "type": "array", "items": { "type": "string" } },
+        "dlpMatches": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "app": { "type": "string", "description": "Service where the file resides, e.g. OneDrive, SharePoint, Box, etc." },
+        "createdTime": { "type": "string", "format": "date-time" },
+        "modifiedTime": { "type": "string", "format": "date-time" },
+        "accessedTime": { "type": "string", "format": "date-time" },
+        "malwareIndicators": { "type": "array", "items": { "type": "object", "additionalProperties": true }, "description": "Threat indicators, when present." }
+      }
+    },
+    "messageTraceEvent": {
+      "description": "Message Trace. Two sourcetypes sharing one common field set: o365:graph:messagetrace (Worldwide, via the Microsoft Graph Message Trace API, lookback up to 90 days) and o365:reporting:messagetrace (USGovGCC/USGovGCCHigh, via the Exchange Online Reporting Web Service, lookback up to 10 days). CIM: Email (strong mapping for recipient, src_user, status, size, message_id, etc.). Permission: ExchangeMessageTrace.Read.All (Worldwide); Gov clouds use the Reporting Web Service path instead. 'Detailed timestamps and descriptions per hop' (an additional/expanded Graph detail) is documented conceptually but not as an exact field name.",
+      "type": "object",
+      "required": ["sourcetype"],
+      "additionalProperties": true,
+      "properties": {
+        "sourcetype": { "enum": ["o365:graph:messagetrace", "o365:reporting:messagetrace"] },
+        "MessageTraceId": { "type": "string" },
+        "MessageId": { "type": "string", "description": "Internet Message-ID header." },
+        "Received": { "type": "string", "format": "date-time" },
+        "receivedDateTime": { "type": "string", "format": "date-time" },
+        "SenderAddress": { "type": "string" },
+        "RecipientAddress": { "type": "string" },
+        "Subject": { "type": "string" },
+        "Status": { "type": "string", "description": "e.g. Delivered, Failed, Pending, Expanded, Quarantined, FilteredAsSpam, etc. -- not an exhaustive enum." },
+        "Size": { "type": "integer" },
+        "FromIP": { "type": "string" },
+        "ToIP": { "type": "string" },
+        "Organization": { "type": "string", "description": "Tenant domain." },
+        "StartDate": { "type": "string", "format": "date-time", "description": "Query window (RWS style)." },
+        "EndDate": { "type": "string", "format": "date-time", "description": "Query window (RWS style)." },
+        "eventActions": { "type": "array", "items": { "type": "string" }, "description": "Event-level actions when expanded, e.g. Receive, Deliver, Fail, Defer, etc. -- not an exhaustive enum." },
+        "recipientCount": { "type": "integer", "description": "CIM-enriched by the TA." },
+        "recipientDomain": { "type": "string", "description": "CIM-enriched by the TA." }
+      }
+    }
+  }
+}

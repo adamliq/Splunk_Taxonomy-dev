@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://adamliq.github.io/splunk-taxonomy/schemas/o365-usage-reports.schema.json",
   "title": "Microsoft 365 Usage Reports & Service Health",
-  "description": "Splunk Add-on for Microsoft Office 365 (splunk_ta_o365) -- Graph Reporting modular input (11 usage reports, all under sourcetype o365:graph:api) plus the 2 Service Health inputs (each with its own dedicated sourcetype). Unlike o365:metadata's @odata.type, this dictionary gives no reliable single field that names which of the 11 reports a given o365:graph:api event belongs to -- its own search tip uses 'source, report_*' rather than one fixed field/value. The root schema is therefore a permissive catch-all for o365:graph:api plus the 2 cleanly-discriminated Service Health branches; the 11 report shapes are documented as individually addressable *ReportEvent definitions under $defs rather than enforced via a root oneOf. Sections described only in prose (OneDriveActivityUserCounts, most of OneDriveUsageStorage, SharePointSiteUsageFileCounts, TeamsUserActivityCounts, and part of the two Yammer reports) are deliberately left permissive rather than asserting exact field names not actually given; sections with clear Title Case field labels (which match the real Microsoft Graph usage-report CSV/JSON column naming) are schematized property-by-property, spaces and all.",
+  "description": "Splunk Add-on for Microsoft Office 365 (splunk_ta_o365) -- Graph Reporting modular input (13 usage reports, all under sourcetype o365:graph:api) plus the 2 Service Health inputs (each with its own dedicated sourcetype). Unlike o365:metadata's @odata.type, this dictionary gives no reliable single field that names which report a given o365:graph:api event belongs to -- its own search tip uses 'source, report_*' rather than one fixed field/value. The root schema is therefore a permissive catch-all for o365:graph:api plus the 2 cleanly-discriminated Service Health branches; each report's shape is documented as an individually addressable *ReportEvent/*Event definition under $defs rather than enforced via a root oneOf. Sections described only in prose (OneDriveActivityUserCounts, most of OneDriveUsageStorage, SharePointSiteUsageFileCounts, TeamsUserActivityCounts, and part of the two Yammer reports) are deliberately left permissive rather than asserting exact field names not actually given; sections with clear Title Case field labels (which match the real Microsoft Graph usage-report CSV/JSON column naming) are schematized property-by-property, spaces and all. MailboxUsageDetail and MailboxUsageMailboxCounts were added from a follow-up Mailbox Usage Reports dictionary, reusing the same reportCommonFields/o365GraphApiReportEvent registry since they share the same sourcetype family.",
   "x-input-name": "Graph Reporting modular input + Service Health inputs",
   "x-permissions-required": "Reports.Read.All (Application) for usage reports; ServiceHealth.Read.All for health.",
   "x-search-tip": "sourcetype=o365:graph:api | stats count by source, report_*",
@@ -20,7 +20,9 @@
     { "requestedReport": "Service Health", "graphContent": "Graph Service Health / Communications", "typicalPeriod": "Real-time", "notes": "o365:service:healthIssue" },
     { "requestedReport": "Service Update Messages", "graphContent": "Service Communications", "typicalPeriod": "Real-time", "notes": "o365:service:updateMessage" },
     { "requestedReport": "Yammer Groups Activity Details", "graphContent": "getYammerGroupsActivityDetail", "typicalPeriod": "Period-based", "notes": "Per-group activity" },
-    { "requestedReport": "Yammer Groups Activity Group Counts", "graphContent": "getYammerGroupsActivityGroupCounts", "typicalPeriod": "Period-based", "notes": "Group counts" }
+    { "requestedReport": "Yammer Groups Activity Group Counts", "graphContent": "getYammerGroupsActivityGroupCounts", "typicalPeriod": "Period-based", "notes": "Group counts" },
+    { "requestedReport": "MailboxUsageDetail", "graphContent": "getMailboxUsageDetail", "typicalPeriod": "D7/D30/D90/D180", "notes": "Per-mailbox usage" },
+    { "requestedReport": "MailboxUsageMailboxCounts", "graphContent": "getMailboxUsageMailboxCounts", "typicalPeriod": "Period-based", "notes": "Total/active mailbox counts" }
   ],
   "type": "object",
   "oneOf": [
@@ -200,6 +202,42 @@
         "Total Groups": { "type": "integer" },
         "Active Groups": { "type": "integer" }
       }
+    },
+    "mailboxUsageDetailFields": {
+      "type": "object",
+      "properties": {
+        "User Principal Name": { "type": "string", "description": "Mailbox owner UPN." },
+        "Display Name": { "type": "string" },
+        "Is Deleted": { "type": "boolean" },
+        "Deleted Date": { "type": "string", "format": "date-time" },
+        "Created Date": { "type": "string", "format": "date-time" },
+        "Last Activity Date": { "type": "string", "format": "date-time", "description": "Last send/read activity." },
+        "Item Count": { "type": "integer", "description": "Total items in the mailbox (messages, calendar, tasks, etc.)." },
+        "Storage Used (Byte)": { "type": "integer" },
+        "Issue Warning Quota (Byte)": { "type": "integer" },
+        "Prohibit Send Quota (Byte)": { "type": "integer" },
+        "Prohibit Send/Receive Quota (Byte)": { "type": "integer" },
+        "Deleted Item Count": { "type": "integer", "description": "Items in Recoverable Items." },
+        "Deleted Item Size (Byte)": { "type": "integer" },
+        "Deleted Item Quota (Byte)": { "type": "integer" },
+        "Has Archive": { "type": "boolean", "description": "Whether an archive mailbox exists." }
+      }
+    },
+    "mailboxUsageMailboxCountsFields": {
+      "type": "object",
+      "properties": {
+        "Total": { "type": "integer", "description": "Total user mailboxes." },
+        "Active": { "type": "integer", "description": "Active mailboxes (user sent or read email) in the period." },
+        "Report Date": { "type": "string", "format": "date-time", "description": "Specific day in the trend." }
+      }
+    },
+    "mailboxUsageDetailEvent": {
+      "description": "MailboxUsageDetail report -- per-mailbox usage. Sourcetype o365:graph:api. Graph API: getMailboxUsageDetail. Period: D7/D30/D90/D180.",
+      "allOf": [{ "$ref": "#/$defs/reportCommonFields" }, { "$ref": "#/$defs/mailboxUsageDetailFields" }, { "type": "object", "required": ["sourcetype"], "properties": { "sourcetype": { "const": "o365:graph:api" } } }]
+    },
+    "mailboxUsageMailboxCountsEvent": {
+      "description": "MailboxUsageMailboxCounts report -- total/active mailbox counts. Sourcetype o365:graph:api. Graph API: getMailboxUsageMailboxCounts.",
+      "allOf": [{ "$ref": "#/$defs/reportCommonFields" }, { "$ref": "#/$defs/mailboxUsageMailboxCountsFields" }, { "type": "object", "required": ["sourcetype"], "properties": { "sourcetype": { "const": "o365:graph:api" } } }]
     },
     "office365GroupsActivityDetailEvent": {
       "description": "Office365GroupsActivityDetail report -- per-group activity. Sourcetype o365:graph:api.",
