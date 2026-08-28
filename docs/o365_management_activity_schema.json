@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adamliq.github.io/splunk-taxonomy/schemas/o365-management-activity.schema.json",
+  "title": "Microsoft Office 365 Management Activity (o365:management:activity) Event",
+  "description": "Splunk Add-on for Microsoft Office 365 (splunk_ta_o365) -- events from the Office 365 Management Activity API, ingested into sourcetype o365:management:activity. Content types (Audit.AzureActiveDirectory, Audit.Exchange, Audit.SharePoint, Audit.General, DLP.All) all share the Common Schema and then extend it with service-specific properties. This root schema defines the Common Schema plus the CIM-normalized fields the TA adds; the five content-type-specific field sets and composite event schemas live under $defs and are additive layers, not a strict discriminated union -- content_type is not guaranteed to be exposed by every modular input configuration, Workload does not map 1:1 to content type for Audit.General (a catch-all spanning many workloads), and DLP.All can appear under multiple workloads. Field presence, especially for Audit.General, varies significantly by Workload and Operation; this schema covers the commonly used/documented fields, not every nested complex type -- for the complete authoritative list refer to the official Microsoft documentation (Office 365 Management Activity API schema).",
+  "x-input-name": "Management Activity",
+  "x-content-types": ["Audit.AzureActiveDirectory", "Audit.Exchange", "Audit.SharePoint", "Audit.General", "DLP.All"],
+  "x-default-sourcetype": "o365:management:activity",
+  "x-common-filter-examples": [
+    "sourcetype=o365:management:activity Workload=AzureActiveDirectory",
+    "sourcetype=o365:management:activity content_type=\"Audit.AzureActiveDirectory\"  # if the modular input exposes it"
+  ],
+  "x-workload-to-content-type": [
+    { "contentType": "Audit.AzureActiveDirectory", "primaryWorkloads": ["AzureActiveDirectory"], "typicalUseCases": "Sign-ins, user/group/app/role management, consent" },
+    { "contentType": "Audit.Exchange", "primaryWorkloads": ["Exchange"], "typicalUseCases": "Mailbox access, admin cmdlets, transport rules" },
+    { "contentType": "Audit.SharePoint", "primaryWorkloads": ["SharePoint", "OneDrive"], "typicalUseCases": "File/folder operations, sharing, site changes" },
+    { "contentType": "Audit.General", "primaryWorkloads": ["MicrosoftTeams", "SecurityComplianceCenter", "PowerBI", "MicrosoftForms", "Yammer", "Stream", "Dynamics365", "Project", "Planner", "..."], "typicalUseCases": "Everything else (catch-all)" },
+    { "contentType": "DLP.All", "primaryWorkloads": ["Exchange", "SharePoint", "OneDrive", "Endpoint", "..."], "typicalUseCases": "DLP rule matches, overrides, incidents" }
+  ],
+  "x-recommended-searches": [
+    "index=* sourcetype=o365:management:activity Workload=AzureActiveDirectory | stats count by Operation, ResultStatus",
+    "index=* sourcetype=o365:management:activity Workload=Exchange Operation=MailItemsAccessed",
+    "index=* sourcetype=o365:management:activity (Workload=SharePoint OR Workload=OneDrive) Operation=FileDownloaded",
+    "index=* sourcetype=o365:management:activity Operation=DlpRuleMatch"
+  ],
+  "x-references": ["Office 365 Management Activity API schema (Microsoft docs)"],
+  "type": "object",
+  "required": ["Id", "RecordType", "CreationTime", "Operation", "OrganizationId", "UserType", "UserKey", "Workload"],
+  "additionalProperties": true,
+  "properties": {
+    "Id": { "type": "string", "description": "Unique identifier of the audit record (GUID)." },
+    "RecordType": {
+      "type": "integer",
+      "description": "Type of operation. Not an exhaustive enum here -- see Microsoft's AuditLogRecordType reference for the full list. Values commonly seen for DLP.All: 11 = ComplianceDLPSharePoint, 13 = ComplianceDLPExchange, 33 = ComplianceDLPSharePointClassification, plus endpoint and on-premises scanner types."
+    },
+    "CreationTime": { "type": "string", "format": "date-time", "description": "When the audit record was generated (UTC)." },
+    "Operation": { "type": "string", "description": "Name of the activity or cmdlet." },
+    "OrganizationId": { "type": "string", "description": "Tenant GUID." },
+    "UserType": {
+      "type": "integer",
+      "description": "Type of user. Documented values: 0=Regular, 1=Reserved, 2=Admin, 3=DcAdmin, 4=System, 5=Application, 6=ServicePrincipal, 7=CustomPolicy, 8=SystemPolicy, etc. -- not necessarily exhaustive."
+    },
+    "UserKey": { "type": "string", "description": "Alternative user ID (often PUID)." },
+    "Workload": { "type": "string", "description": "Service where the activity occurred, e.g. AzureActiveDirectory, Exchange, SharePoint, OneDrive, MicrosoftTeams, SecurityComplianceCenter, PowerBI, etc." },
+    "ResultStatus": { "type": "string", "description": "Succeeded / PartiallySucceeded / Failed (or True/False for some Exchange events)." },
+    "UserId": { "type": "string", "description": "User or actor who performed the operation (UPN or object ID)." },
+    "ClientIP": { "type": "string", "description": "Client IP address." },
+    "ObjectId": { "type": "string", "description": "Object acted upon." },
+    "Version": { "type": "integer", "description": "Schema version." },
+    "content_type": {
+      "type": "string",
+      "enum": ["Audit.AzureActiveDirectory", "Audit.Exchange", "Audit.SharePoint", "Audit.General", "DLP.All"],
+      "description": "Content type label. Present only if the modular input exposes it -- not guaranteed on every event."
+    },
+    "action": { "type": "string", "description": "CIM-normalized action field added by the TA." },
+    "status": { "type": "string", "description": "CIM-normalized status field added by the TA." },
+    "user": { "type": "string", "description": "CIM-normalized user field added by the TA." },
+    "src_user": { "type": "string", "description": "CIM-normalized src_user field added by the TA." },
+    "src": { "type": "string", "description": "CIM-normalized src field added by the TA." },
+    "src_ip": { "type": "string", "description": "CIM-normalized src_ip field added by the TA." },
+    "object": { "type": "string", "description": "CIM-normalized object field added by the TA." },
+    "object_id": { "type": "string", "description": "CIM-normalized object_id field added by the TA." },
+    "object_category": { "type": "string", "description": "CIM-normalized object_category field added by the TA." },
+    "change_type": { "type": "string", "description": "CIM-normalized change_type field added by the TA." },
+    "signature": { "type": "string", "description": "CIM-normalized signature field added by the TA." },
+    "app": { "type": "string", "description": "CIM-normalized app field added by the TA." },
+    "app_id": { "type": "string", "description": "CIM-normalized app_id field added by the TA." },
+    "tag": { "type": "array", "items": { "type": "string" }, "description": "CIM-normalized tag field added by the TA." }
+  },
+  "$defs": {
+    "nameValuePair": {
+      "type": "object",
+      "description": "Generic Name/Value pair, as used by ExtendedProperties.",
+      "properties": { "Name": { "type": "string" }, "Value": { "type": "string" } }
+    },
+    "modifiedProperty": {
+      "type": "object",
+      "description": "A single changed property, as used by ModifiedProperties.",
+      "properties": { "Name": { "type": "string" }, "OldValue": { "type": "string" }, "NewValue": { "type": "string" } }
+    },
+    "actorOrTarget": {
+      "type": "object",
+      "description": "An actor or target reference (ID + Type).",
+      "properties": { "ID": { "type": "string" }, "Type": { "type": "integer" } }
+    },
+    "aadFields": {
+      "description": "Additional fields for Audit.AzureActiveDirectory events. Workload is primarily AzureActiveDirectory; main schemas are Microsoft Entra ID Base, Account Logon, Secure STS Logon, and general Entra schema. Typical Operations: UserLoggedIn, UserLoginFailed, Add user., Update user., Delete user., Add member to role., Add service principal., Consent to application., Set company contact information., password-related events, etc. CIM mapping strength: very strong for Authentication and Change / Account_Management.",
+      "type": "object",
+      "properties": {
+        "Actor": { "type": "array", "items": { "$ref": "#/$defs/actorOrTarget" }, "description": "Array of actors (ID + Type) involved in the operation." },
+        "ActorContextId": { "type": "string", "description": "Context ID of the actor." },
+        "ActorIpAddress": { "type": "string", "description": "Actor IP (sometimes used instead of/in addition to ClientIP)." },
+        "Target": { "type": "array", "items": { "$ref": "#/$defs/actorOrTarget" }, "description": "Array of targets (ID + Type)." },
+        "TargetContextId": { "type": "string", "description": "Context ID of the target." },
+        "ApplicationId": { "type": "string", "description": "Application ID." },
+        "AppId": { "type": "string", "description": "Application ID (alternate field name)." },
+        "AzureActiveDirectoryEventType": { "type": "string", "description": "Event category, e.g. AccountLogon, AccountManagement." },
+        "ExtendedProperties": { "type": "array", "items": { "$ref": "#/$defs/nameValuePair" }, "description": "Array of Name/Value pairs (UserAgent, authentication method, error details, etc.)." },
+        "ModifiedProperties": { "type": "array", "items": { "$ref": "#/$defs/modifiedProperty" }, "description": "Array of changed properties." },
+        "InterSystemsId": { "type": "string", "description": "Correlation ID." },
+        "IntraSystemId": { "type": "string", "description": "Correlation ID." },
+        "LoginStatus": { "type": "string", "description": "Login result code (legacy/some events)." },
+        "UserDomain": { "type": "string", "description": "Domain of the user." },
+        "SupportTicketId": { "type": "string", "description": "Support ticket reference (if present)." },
+        "DeviceProperties": { "type": "array", "items": { "type": "object" }, "description": "Array of device-related properties." }
+      }
+    },
+    "exchangeFields": {
+      "description": "Additional fields for Audit.Exchange events. Workload is Exchange; main schemas are Exchange Admin, Exchange Mailbox, OWA Auth, plus some DLP/MIP overlap. Typical Operations: admin cmdlets (New-Mailbox, Set-Mailbox, Add-MailboxPermission, transport rules, etc.) and mailbox operations (MailItemsAccessed, Send, Create, Update, SoftDelete, HardDelete, MoveToDeletedItems, FolderBind, etc.). CIM mapping: strong for Email, Change, and some Data Access.",
+      "type": "object",
+      "properties": {
+        "MailboxOwnerUPN": { "type": "string", "description": "Mailbox identity." },
+        "MailboxOwnerSid": { "type": "string", "description": "Mailbox identity." },
+        "MailboxGuid": { "type": "string", "description": "Mailbox identity." },
+        "LogonType": { "type": "string", "description": "Owner, Admin, Delegate, etc." },
+        "InternalLogonType": { "type": "string", "description": "Internal classification." },
+        "ClientInfoString": { "type": "string", "description": "Client information string." },
+        "ClientIPAddress": { "type": "string", "description": "Client details." },
+        "ClientMachineName": { "type": "string", "description": "Client details." },
+        "ClientProcessName": { "type": "string", "description": "Client details." },
+        "ClientVersion": { "type": "string", "description": "Client details." },
+        "ExternalAccess": { "type": "boolean", "description": "Whether the action was performed by an external user." },
+        "OriginatingServer": { "type": "string", "description": "Server that originated the event." },
+        "Folder": { "type": "object", "description": "Folder details." },
+        "Folders": { "type": "array", "items": { "type": "object" }, "description": "Folder details." },
+        "Item": { "type": "object", "description": "Item details." },
+        "ItemId": { "type": "string", "description": "Item details." },
+        "ItemSubject": { "type": "string", "description": "Item details." },
+        "Attachments": { "type": "array", "items": { "type": "object" }, "description": "Attachment information." },
+        "Parameters": { "type": "array", "items": { "$ref": "#/$defs/nameValuePair" }, "description": "Cmdlet parameters (for admin events)." },
+        "ModifiedObjectResolvedName": { "type": "string", "description": "Resolved name of modified object." },
+        "SendAsUserSmtp": { "type": "string", "description": "Send-As related." },
+        "SendAsUserMailboxGuid": { "type": "string", "description": "Send-As related." },
+        "DestMailboxId": { "type": "string", "description": "Destination for move/copy operations." },
+        "DestFolder": { "type": "string", "description": "Destination for move/copy operations." }
+      }
+    },
+    "sharepointFields": {
+      "description": "Additional fields for Audit.SharePoint events. Workload values are SharePoint and OneDrive; main schemas are SharePoint Base, File Operations, List Operations, Sharing, and general SharePoint schema. Note: ObjectId (from the Common Schema) is often the full path or unique ID of the file/item for this content type. Typical Operations: FileAccessed, FileDownloaded, FileUploaded, FileDeleted, FileRenamed, FileMoved, FileCopied, FolderCreated, SharingSet, SharingRevoked, AnonymousLinkCreated, AccessRequestAccepted, list item operations, site collection admin changes, etc. CIM mapping: strong for Data Access, Change, and some Email (when sharing links are involved).",
+      "type": "object",
+      "properties": {
+        "Site": { "type": "string", "description": "Site / list / item identifiers." },
+        "SiteUrl": { "type": "string", "description": "Site / list / item identifiers." },
+        "WebId": { "type": "string", "description": "Site / list / item identifiers." },
+        "ListId": { "type": "string", "description": "Site / list / item identifiers." },
+        "ListItemUniqueId": { "type": "string", "description": "Site / list / item identifiers." },
+        "SourceFileName": { "type": "string", "description": "Source file details." },
+        "SourceRelativeUrl": { "type": "string", "description": "Source file details." },
+        "SourceFileExtension": { "type": "string", "description": "Source file details." },
+        "DestinationFileName": { "type": "string", "description": "Destination (for copy/move)." },
+        "DestinationRelativeUrl": { "type": "string", "description": "Destination (for copy/move)." },
+        "EventSource": { "type": "string", "enum": ["SharePoint", "ObjectModel"], "description": "SharePoint or ObjectModel." },
+        "UserAgent": { "type": "string", "description": "Client user agent." },
+        "MachineDomainInfo": { "type": "string", "description": "Machine information." },
+        "MachineId": { "type": "string", "description": "Machine information." },
+        "FileSizeBytes": { "type": "integer", "description": "File size." },
+        "FileSize": { "type": "integer", "description": "File size." },
+        "SensitivityLabelEventData": { "type": "object", "description": "Sensitivity label details (when applicable)." },
+        "SharingType": { "type": "string", "description": "Sharing-related." },
+        "TargetUserOrGroupName": { "type": "string", "description": "Sharing-related." },
+        "TargetUserOrGroupType": { "type": "string", "description": "Sharing-related." },
+        "EventData": { "type": ["string", "object"], "description": "Additional event-specific data." },
+        "ApplicationDisplayName": { "type": "string", "description": "Application that performed the action." },
+        "ApplicationId": { "type": "string", "description": "Application that performed the action." },
+        "IsManagedDevice": { "type": "boolean", "description": "Whether the device is managed." }
+      }
+    },
+    "generalFields": {
+      "description": "Audit.General is the catch-all content type for workloads not covered by AzureActiveDirectory, Exchange, or SharePoint -- Workload values seen include MicrosoftTeams, SecurityComplianceCenter, PowerBI, MicrosoftForms, Yammer/Viva Engage, Stream, Dynamics365, Project, Planner, and others. It uses the Common Schema plus workload-specific extensions whose exact field names are not enumerated in the source dictionary this schema was generated from -- field presence varies significantly by Workload and Operation, so always combine with a Workload= filter in searches rather than relying on this schema alone. Useful cross-cutting fields when present: ApplicationId, ClientIP, UserId, ObjectId (all in the Common Schema), workload-specific objects (e.g. Team name, Channel name, Report ID, Policy ID -- exact field names vary by workload), and ExtendedProperties / ModifiedProperties for configuration changes.",
+      "type": "object",
+      "properties": {
+        "ApplicationId": { "type": "string", "description": "Application ID, when present." },
+        "ExtendedProperties": { "type": "array", "items": { "$ref": "#/$defs/nameValuePair" }, "description": "Array of Name/Value pairs, when present." },
+        "ModifiedProperties": { "type": "array", "items": { "$ref": "#/$defs/modifiedProperty" }, "description": "Array of changed properties, when present." }
+      },
+      "additionalProperties": true
+    },
+    "dlpFields": {
+      "description": "Additional fields for DLP.All events. Can appear under multiple workloads (Exchange, SharePoint, OneDrive, Endpoint, etc.); main schema is the DLP schema extending the Common Schema. Special note: UserKey (Common Schema) is typically \"DlpAgent\". Operation is typically one of: DlpRuleMatch, DlpRuleUndo, DlpInfo. CIM mapping: mapped to the Data Loss Prevention data model (DLP_Incidents).",
+      "type": "object",
+      "properties": {
+        "IncidentId": { "type": "string", "description": "Unique incident identifier." },
+        "PolicyDetails": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": { "PolicyId": { "type": "string" }, "PolicyName": { "type": "string" }, "Rules": { "type": "array", "items": { "type": "object" } } },
+            "additionalProperties": true
+          },
+          "description": "Array of matched policy information (PolicyId, PolicyName, Rules, etc.)."
+        },
+        "SensitiveInfoDetectionIsIncluded": { "type": "boolean", "description": "Whether sensitive info details are present." },
+        "SharePointMetaData": {
+          "type": "object",
+          "description": "Metadata for SharePoint/OneDrive documents.",
+          "properties": { "FileOwner": { "type": "string" }, "LastModifier": { "type": "string" }, "SiteCollectionUrl": { "type": "string" }, "FilePath": { "type": "string" } },
+          "additionalProperties": true
+        },
+        "ExchangeMetaData": {
+          "type": "object",
+          "description": "Metadata for email.",
+          "properties": { "From": { "type": "string" }, "To": { "type": "array", "items": { "type": "string" } }, "Subject": { "type": "string" }, "MessageID": { "type": "string" } },
+          "additionalProperties": true
+        },
+        "EndpointMetaData": { "type": "object", "description": "Metadata for endpoint/device events.", "additionalProperties": true },
+        "ExceptionInfo": { "type": "object", "description": "Override / false-positive / exception details.", "additionalProperties": true },
+        "RuleMode": { "type": "string", "description": "Enforce / Audit / etc." },
+        "Severity": { "type": "string", "description": "Policy severity." },
+        "Actions": { "type": "array", "items": { "type": "string" }, "description": "Actions taken (Block, Notify, Encrypt, etc.)." },
+        "MatchedCondition": { "type": "object", "description": "Matched sensitive information types.", "additionalProperties": true },
+        "SensitiveType": { "type": "array", "items": { "type": "string" }, "description": "Matched sensitive information types." }
+      }
+    },
+    "aadEvent": {
+      "description": "A Management Activity event with content_type Audit.AzureActiveDirectory: the Common Schema plus aadFields.",
+      "allOf": [{ "$ref": "#" }, { "$ref": "#/$defs/aadFields" }]
+    },
+    "exchangeEvent": {
+      "description": "A Management Activity event with content_type Audit.Exchange: the Common Schema plus exchangeFields.",
+      "allOf": [{ "$ref": "#" }, { "$ref": "#/$defs/exchangeFields" }]
+    },
+    "sharepointEvent": {
+      "description": "A Management Activity event with content_type Audit.SharePoint: the Common Schema plus sharepointFields.",
+      "allOf": [{ "$ref": "#" }, { "$ref": "#/$defs/sharepointFields" }]
+    },
+    "generalEvent": {
+      "description": "A Management Activity event with content_type Audit.General: the Common Schema plus generalFields. This is the least strictly modeled branch given how much field presence varies by Workload -- see generalFields' description.",
+      "allOf": [{ "$ref": "#" }, { "$ref": "#/$defs/generalFields" }]
+    },
+    "dlpEvent": {
+      "description": "A Management Activity event with content_type DLP.All: the Common Schema plus dlpFields.",
+      "allOf": [{ "$ref": "#" }, { "$ref": "#/$defs/dlpFields" }]
+    }
+  }
+}
