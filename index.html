@@ -14051,7 +14051,7 @@ E. Assumptions and unresolved inputs</pre>
 
       <div id="msCoverageView" class="subpage-view" role="tabpanel" aria-labelledby="showMsCoverageView" hidden>
       <section class="reference-section">
-        <div class="reference-section-heading"><div><h3>Coverage</h3><p>Editable tenant/subscription-level enablement tracking against the 40 Microsoft cloud inputs listed under Inputs. Edits are saved in this browser automatically.</p></div></div>
+        <div class="reference-section-heading"><div><h3>Coverage</h3><p id="msCoverageSubtitle">Editable tenant/subscription-level enablement tracking against the Microsoft cloud inputs listed under Inputs. Edits are saved in this browser automatically.</p></div></div>
 
         <div class="input-coverage-toolbar">
           <button id="inputCoverageAddRow" type="button">+ Add row</button>
@@ -32474,6 +32474,8 @@ function renderMsInputsListView() {
   if (introEl) introEl.textContent = `${inputCoverageInputColumns.length} inputs across four Splunk-maintained Microsoft add-ons. Each input is a distinct, separately-enabled data feed within its TA -- not every tenant/subscription will need every input. Select an input to see its details.`;
   const noteEl = document.getElementById("msInputsListNote");
   if (noteEl) noteEl.innerHTML = `Note: <strong>Azure Metrics</strong> appears under both <code>Splunk_TA_microsoft-cloudservices</code> and <code>TA-MS-AAD</code> -- these are two distinct inputs from two different apps, not a duplicate. See the Coverage tab for tenant/subscription-level enablement tracking against these ${inputCoverageInputColumns.length} inputs.`;
+  const coverageSubtitleEl = document.getElementById("msCoverageSubtitle");
+  if (coverageSubtitleEl) coverageSubtitleEl.textContent = `Editable tenant/subscription-level enablement tracking against the ${inputCoverageInputColumns.length} Microsoft cloud inputs listed under Inputs. Edits are saved in this browser automatically.`;
 }
 renderMsInputsListView();
 
@@ -32565,8 +32567,12 @@ function setInputCoverageStatus(text) {
 }
 
 const INPUT_COVERAGE_COLLAPSE_LS_KEY = "latch_input_coverage_collapsed_v1";
-// App columns start collapsed by default; collapse state is per-tag and persisted independently of row data.
-let inputCoverageCollapsedGroups = new Set(inputCoverageGroups.map(g => g.tag));
+// Pseudo-tag for the 4 free-text tenant/subscription columns, collapsible the same way as the app groups below.
+const INPUT_COVERAGE_TENANT_GROUP_TAG = "__tenant__";
+const inputCoverageCollapsibleTags = () => [INPUT_COVERAGE_TENANT_GROUP_TAG, ...inputCoverageGroups.map(g => g.tag)];
+// App columns and the tenant/subscription columns all start collapsed by default; collapse state is per-tag and
+// persisted independently of row data.
+let inputCoverageCollapsedGroups = new Set(inputCoverageCollapsibleTags());
 
 function loadInputCoverageCollapseState() {
   try {
@@ -32574,13 +32580,14 @@ function loadInputCoverageCollapseState() {
     if (raw !== null) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) {
-        inputCoverageCollapsedGroups = new Set(parsed.filter(tag => inputCoverageGroups.some(g => g.tag === tag)));
+        const validTags = inputCoverageCollapsibleTags();
+        inputCoverageCollapsedGroups = new Set(parsed.filter(tag => validTags.includes(tag)));
         return;
       }
     }
   } catch (e) { /* ignore corrupt/unavailable storage */ }
-  // No saved preference yet -- default is every group collapsed.
-  inputCoverageCollapsedGroups = new Set(inputCoverageGroups.map(g => g.tag));
+  // No saved preference yet -- default is every group (including tenant/subscription) collapsed.
+  inputCoverageCollapsedGroups = new Set(inputCoverageCollapsibleTags());
 }
 
 function saveInputCoverageCollapseState() {
@@ -32599,6 +32606,14 @@ function renderInputCoverageTable() {
   const body = document.getElementById("inputCoverageTableBody");
   if (!head || !body) return;
 
+  const tenantCollapsed = inputCoverageCollapsedGroups.has(INPUT_COVERAGE_TENANT_GROUP_TAG);
+  const tenantSpan = tenantCollapsed ? 1 : inputCoverageTenantColumns.length;
+  const tenantIcon = tenantCollapsed ? "&#9656;" : "&#9662;";
+  const tenantBannerLabel = tenantCollapsed
+    ? `${tenantIcon} Tenant / Subscription (${inputCoverageTenantColumns.length})`
+    : `${tenantIcon} Tenant / Subscription`;
+  const tenantBannerCell = `<th class="ic-group-toggle" colspan="${tenantSpan}" data-toggle-group="${INPUT_COVERAGE_TENANT_GROUP_TAG}" title="Click to ${tenantCollapsed ? "expand" : "collapse"} Tenant / Subscription">${tenantBannerLabel}</th>`;
+
   const groupInputCells = inputCoverageGroups.map(g => {
     const collapsed = inputCoverageCollapsedGroups.has(g.tag);
     const span = collapsed ? 1 : g.inputs.length;
@@ -32606,7 +32621,11 @@ function renderInputCoverageTable() {
     const label = collapsed ? `${icon} [${escapeHtml(g.tag)}] (${g.inputs.length})` : `${icon} [${escapeHtml(g.tag)}]`;
     return `<th class="ic-group-toggle" colspan="${span}" data-toggle-group="${escapeHtml(g.tag)}" title="Click to ${collapsed ? "expand" : "collapse"} ${escapeHtml(g.tag)}">${label}</th>`;
   }).join("");
-  const colHeaderCells = inputCoverageTenantColumns.map(c => `<th class="ic-tenant-col">${escapeHtml(c)}</th>`).join("")
+  const totalDataColumns = tenantSpan + inputCoverageGroups.reduce((sum, g) =>
+    sum + (inputCoverageCollapsedGroups.has(g.tag) ? 1 : g.inputs.length), 0);
+  const colHeaderCells = (tenantCollapsed
+      ? `<th class="ic-group-collapsed-col" data-toggle-group="${INPUT_COVERAGE_TENANT_GROUP_TAG}" title="Click to expand Tenant / Subscription">&#9656;</th>`
+      : inputCoverageTenantColumns.map(c => `<th class="ic-tenant-col">${escapeHtml(c)}</th>`).join(""))
     + inputCoverageGroups.map(g => {
         if (inputCoverageCollapsedGroups.has(g.tag)) {
           return `<th class="ic-group-collapsed-col" data-toggle-group="${escapeHtml(g.tag)}" title="Click to expand ${escapeHtml(g.tag)}">&#9656;</th>`;
@@ -32615,16 +32634,24 @@ function renderInputCoverageTable() {
           .map(c => `<th title="${escapeHtml(inputCoverageColumnTooltip(c))}">${escapeHtml(c.label)}</th>`).join("");
       }).join("")
     + `<th></th>`;
-  head.innerHTML = `<tr class="ic-group-row"><th colspan="${inputCoverageTenantColumns.length}"></th>${groupInputCells}<th></th></tr>`
+  head.innerHTML = `<tr class="ic-group-row">${tenantBannerCell}${groupInputCells}<th></th></tr>`
     + `<tr class="ic-col-row">${colHeaderCells}</tr>`;
 
   if (!inputCoverageRows.length) {
-    body.innerHTML = `<tr class="ic-empty-row"><td colspan="${inputCoverageTenantColumns.length + inputCoverageGroups.length + 1}">No rows yet. Use "+ Add row" or Import CSV to get started.</td></tr>`;
+    body.innerHTML = `<tr class="ic-empty-row"><td colspan="${totalDataColumns + 1}">No rows yet. Use "+ Add row" or Import CSV to get started.</td></tr>`;
   } else {
     body.innerHTML = inputCoverageRows.map((row, rowIndex) => {
-      const tenantCells = inputCoverageTenantColumns.map(col =>
-        `<td class="ic-tenant-cell"><input class="ic-text-input" type="text" data-row="${rowIndex}" data-col="${escapeHtml(col)}" value="${escapeHtml(row[col] || "")}" placeholder="${escapeHtml(col)}" /></td>`
-      ).join("");
+      let tenantCells;
+      if (tenantCollapsed) {
+        const preview = row["Tenant Name"] || row["Tenant ID"] || row["Subscription Name"] || row["Subscription ID"] || "";
+        const filledCount = inputCoverageTenantColumns.filter(col => row[col]).length;
+        const summary = preview ? escapeHtml(preview) : "&mdash;";
+        tenantCells = `<td class="ic-group-collapsed-cell" data-toggle-group="${INPUT_COVERAGE_TENANT_GROUP_TAG}" title="Click to expand Tenant / Subscription -- ${filledCount} of ${inputCoverageTenantColumns.length} fields filled">${summary}</td>`;
+      } else {
+        tenantCells = inputCoverageTenantColumns.map(col =>
+          `<td class="ic-tenant-cell"><input class="ic-text-input" type="text" data-row="${rowIndex}" data-col="${escapeHtml(col)}" value="${escapeHtml(row[col] || "")}" placeholder="${escapeHtml(col)}" /></td>`
+        ).join("");
+      }
       const groupCells = inputCoverageGroups.map(g => {
         const groupCols = inputCoverageInputColumns.filter(c => c.tag === g.tag);
         if (inputCoverageCollapsedGroups.has(g.tag)) {
