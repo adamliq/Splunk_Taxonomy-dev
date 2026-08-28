@@ -32333,8 +32333,8 @@ const inputCoverageGroups = [
   { tag: "Splunk_TA_MS_Security", friendlyName: "Microsoft Defender XDR", description: "Splunk Add-on for Microsoft Security -- collects Microsoft 365 Defender / Defender for Endpoint telemetry: incidents, alerts, attack simulations, threat intelligence datasets and managed machine inventory.", appName: "Splunk Add-on for Microsoft Security", appId: "6207", baseLink: "https://splunkbase.splunk.com/app/6207", inputs: ["Microsoft 365 Defender Incidents", "Microsoft Defender for Endpoint Alerts", "Microsoft Defender Simulations", "Microsoft Defender Event Hub", "Microsoft Defender Threat Intelligence DataSets", "Microsoft Defender Machines"] }
 ];
 // Sourcetype confirmed by the user (2026-08) for the splunk_ta_o365 inputs, sourced from that TA's own
-// input/content-type mapping. Inputs for the other 3 TAs remain unverified -- every column not listed here
-// defaults to "To be confirmed" rather than a guessed value; replace once confirmed against each add-on's docs.
+// input/content-type mapping, and (2026-08) for the other 3 TAs' inputs from the user-supplied mscs_schema.xlsx.
+// Every column not listed here defaults to "To be confirmed" rather than a guessed value.
 const inputCoverageSourcetypes = {
   "Audit Logs:AuditLogs.SignIns [splunk_ta_o365]": "o365:graph:api",
   "Cloud Application Security:Alerts [splunk_ta_o365]": "o365:cas:api",
@@ -32366,7 +32366,35 @@ const inputCoverageSourcetypes = {
   "Service Health & Communications:Service Health [splunk_ta_o365]": "o365:graph:api",
   "Service Health & Communications:Service Update Messages [splunk_ta_o365]": "o365:graph:api",
   "Yammer:Yammer Groups Activity Details [splunk_ta_o365]": "o365:graph:api",
-  "Yammer:Yammer Groups Activity Group Counts [splunk_ta_o365]": "o365:graph:api"
+  "Yammer:Yammer Groups Activity Group Counts [splunk_ta_o365]": "o365:graph:api",
+  "Azure Resource [Splunk_TA_microsoft-cloudservices]": "mscs:resource:generic (specific variants exist, e.g. mscs:resource:disk)",
+  "Azure Storage Table [Splunk_TA_microsoft-cloudservices]": "mscs:storage:table",
+  "Azure Storage Blob [Splunk_TA_microsoft-cloudservices]": "mscs:storage:blob:json or mscs:storage:blob:xml",
+  "Azure Virtual Machine Metrics [Splunk_TA_microsoft-cloudservices]": "mscs:vm:metrics",
+  "Azure Consumption (Billing) [Splunk_TA_microsoft-cloudservices]": "mscs:billing:consumption",
+  "Azure KQL Log Analytics [Splunk_TA_microsoft-cloudservices]": "mscs:kql or mscs:kql:stats",
+  "Azure Metrics [Splunk_TA_microsoft-cloudservices]": "mscs:metrics or mscs:metrics:events",
+  "Azure Event Hub [Splunk_TA_microsoft-cloudservices]": "mscs:azure:eventhub",
+  "Azure Audit [Splunk_TA_microsoft-cloudservices]": "azure:monitor:activity",
+  "Microsoft Entra ID Interactive Sign-ins [TA-MS-AAD]": "azure:aad:signin",
+  "Microsoft Entra ID Users [TA-MS-AAD]": "azure:aad:user",
+  "Microsoft Entra ID Groups [TA-MS-AAD]": "azure:aad:group",
+  "Microsoft Entra ID Applications [TA-MS-AAD]": "azure:aad:application",
+  "Microsoft Entra ID Audit [TA-MS-AAD]": "azure:aad:audit",
+  "Microsoft Entra ID Identity Protection [TA-MS-AAD]": "azure:aad:identity_protection:risk_detection, azure:aad:identity_protection:risky_user",
+  "Microsoft Entra ID Devices [TA-MS-AAD]": "azure:aad:device",
+  "Microsoft Graph Security API [TA-MS-AAD]": "ms:graph:security:alerts",
+  "Azure Metrics [TA-MS-AAD]": "-",
+  "Microsoft Defender for cloud Alerts and Tasks [TA-MS-AAD]": "azure:securityCenter:alert, azure:securityCenter:task",
+  "Resource Graph [TA-MS-AAD]": "-",
+  "Azure Topology Auto [TA-MS-AAD]": "-",
+  "Azure Topology Manual [TA-MS-AAD]": "-",
+  "Microsoft 365 Defender Incidents [Splunk_TA_MS_Security]": "ms365:defender:incident (related alerts map to ms365:defender:incident:alerts)",
+  "Microsoft Defender for Endpoint Alerts [Splunk_TA_MS_Security]": "ms:defender:atp:alerts",
+  "Microsoft Defender Simulations [Splunk_TA_MS_Security]": "ms:defender:simulations",
+  "Microsoft Defender Event Hub [Splunk_TA_MS_Security]": "ms:defender:eventhub",
+  "Microsoft Defender Threat Intelligence DataSets [Splunk_TA_MS_Security]": "ms:defender:ti:articles, ms:defender:ti:article_indicators, ms:defender:ti:certificates, ms:defender:ti:components, ms:defender:ti:cookies, ms:defender:ti:hostpairs, ms:defender:ti:passivedns, ms:defender:ti:subdomains, ms:defender:ti:trackers, ms:defender:ti:whois (varies by dataset)",
+  "Microsoft Defender Machines [Splunk_TA_MS_Security]": "ms:defender:machines"
 };
 // Remaining spreadsheet columns (content_type, entra_id_type, input_category, input_type_sub, Source) confirmed
 // by the user (2026-08) for the splunk_ta_o365 inputs, from the same source as inputCoverageSourcetypes above.
