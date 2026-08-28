@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adamliq.github.io/splunk-taxonomy/schemas/o365-metadata.schema.json",
+  "title": "Microsoft Entra ID Metadata (o365:metadata) Event",
+  "description": "Splunk Add-on for Microsoft Office 365 (splunk_ta_o365) -- Microsoft Entra ID (Azure AD) directory metadata collected via the Microsoft Graph API. Snapshot/inventory-style collection of directory objects (Users, Groups, Applications, Devices), not activity/audit logs. Recommended replacement for similar metadata collection previously available in the older Splunk Add-on for Microsoft Azure. Graph returns open types with many optional properties and extensions; this schema covers the commonly used fields documented for the input and is not an exhaustive representation of every possible Graph property -- refer to the official Microsoft Graph resource docs (user, group, application, device) for the complete property list.",
+  "x-input-name": "Microsoft Entra ID Metadata (splunk_ta_o365_microsoft_entra_id_metadata)",
+  "x-supported-entra-id-types": ["Users", "Groups", "Applications", "Devices"],
+  "x-api": "Microsoft Graph (default version v1.0)",
+  "x-default-interval-seconds": 86400,
+  "x-default-sourcetype": "o365:metadata",
+  "x-cim-data-models": null,
+  "type": "object",
+  "allOf": [
+    { "$ref": "#/$defs/splunkMetadataFields" }
+  ],
+  "oneOf": [
+    { "$ref": "#/$defs/userEvent" },
+    { "$ref": "#/$defs/groupEvent" },
+    { "$ref": "#/$defs/applicationEvent" },
+    { "$ref": "#/$defs/deviceEvent" }
+  ],
+  "$defs": {
+    "splunkMetadataFields": {
+      "description": "Common Splunk indexing metadata fields present on every event regardless of Entra ID type.",
+      "type": "object",
+      "properties": {
+        "_time": { "type": "string", "format": "date-time", "description": "Splunk event timestamp." },
+        "host": { "type": "string", "description": "Splunk host field." },
+        "source": { "type": "string", "description": "Splunk source field. Useful for distinguishing object types when multiple Entra ID types are collected in a single input (e.g. filter by source=*users*, depending on how the modular input sets it)." },
+        "sourcetype": { "type": "string", "const": "o365:metadata" },
+        "index": { "type": "string", "description": "Splunk index field." }
+      }
+    },
+    "directoryObjectCommon": {
+      "description": "Fields inherited from the base Microsoft Graph directoryObject type, present on nearly all objects regardless of Entra ID type.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique object identifier in the directory (GUID)."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name of the object."
+        },
+        "@odata.type": {
+          "type": "string",
+          "description": "Resource type, e.g. #microsoft.graph.user, #microsoft.graph.group, #microsoft.graph.application, #microsoft.graph.device. Some versions/configurations may present this as odata.type (without the leading @) instead.",
+          "enum": [
+            "#microsoft.graph.user",
+            "#microsoft.graph.group",
+            "#microsoft.graph.application",
+            "#microsoft.graph.device"
+          ]
+        },
+        "createdDateTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the object was created (UTC)."
+        },
+        "deletedDateTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the object was deleted, if applicable / soft-deleted (UTC)."
+        }
+      }
+    },
+    "userFields": {
+      "description": "Common and frequently useful properties of the #microsoft.graph.user resource. Many require $select if not returned by default.",
+      "type": "object",
+      "properties": {
+        "userPrincipalName": { "type": "string", "description": "UPN, e.g. user@contoso.com." },
+        "mail": { "type": "string", "description": "Primary SMTP address." },
+        "givenName": { "type": "string", "description": "First name." },
+        "surname": { "type": "string", "description": "Last name." },
+        "accountEnabled": { "type": "boolean", "description": "Whether the account is enabled." },
+        "userType": { "type": "string", "enum": ["Member", "Guest"], "description": "Member / Guest." },
+        "jobTitle": { "type": "string", "description": "Job title." },
+        "department": { "type": "string", "description": "Department." },
+        "companyName": { "type": "string", "description": "Company." },
+        "officeLocation": { "type": "string", "description": "Office location." },
+        "mobilePhone": { "type": "string", "description": "Mobile phone." },
+        "businessPhones": { "type": "array", "items": { "type": "string" }, "description": "Business phone numbers." },
+        "city": { "type": "string", "description": "Address field." },
+        "state": { "type": "string", "description": "Address field." },
+        "country": { "type": "string", "description": "Address field." },
+        "postalCode": { "type": "string", "description": "Address field." },
+        "streetAddress": { "type": "string", "description": "Address field." },
+        "employeeId": { "type": "string", "description": "Employee ID." },
+        "employeeType": { "type": "string", "description": "Employee type." },
+        "employeeHireDate": { "type": "string", "format": "date-time", "description": "Hire date." },
+        "lastPasswordChangeDateTime": { "type": "string", "format": "date-time", "description": "Last password change." },
+        "passwordPolicies": { "type": "string", "description": "Password policy settings." },
+        "onPremisesSamAccountName": { "type": "string", "description": "On-premises SAM account name." },
+        "onPremisesDomainName": { "type": "string", "description": "On-premises domain." },
+        "onPremisesSyncEnabled": { "type": "boolean", "description": "Whether synced from on-premises." },
+        "onPremisesLastSyncDateTime": { "type": "string", "format": "date-time", "description": "Last sync time." },
+        "assignedLicenses": { "type": "array", "items": { "type": "object" }, "description": "Assigned license details." },
+        "assignedPlans": { "type": "array", "items": { "type": "object" }, "description": "Assigned service plans." },
+        "proxyAddresses": { "type": "array", "items": { "type": "string" }, "description": "Proxy / email addresses." },
+        "otherMails": { "type": "array", "items": { "type": "string" }, "description": "Alternate email addresses." },
+        "manager": { "type": "object", "description": "Manager reference (when expanded)." },
+        "memberOf": { "type": "array", "items": { "type": "object" }, "description": "Group memberships (when expanded)." }
+      }
+    },
+    "groupFields": {
+      "description": "Properties of the #microsoft.graph.group resource.",
+      "type": "object",
+      "properties": {
+        "description": { "type": "string", "description": "Group description." },
+        "mail": { "type": "string", "description": "Group email address (if mail-enabled)." },
+        "mailEnabled": { "type": "boolean", "description": "Whether mail-enabled." },
+        "mailNickname": { "type": "string", "description": "Mail nickname." },
+        "securityEnabled": { "type": "boolean", "description": "Whether a security group." },
+        "groupTypes": { "type": "array", "items": { "type": "string" }, "description": "e.g. [\"Unified\"] for Microsoft 365 groups." },
+        "visibility": { "type": "string", "enum": ["Public", "Private", "HiddenMembership"], "description": "Public / Private / HiddenMembership." },
+        "membershipRule": { "type": "string", "description": "Dynamic membership rule (if dynamic)." },
+        "membershipRuleProcessingState": { "type": "string", "enum": ["On", "Paused"], "description": "On / Paused." },
+        "renewedDateTime": { "type": "string", "format": "date-time", "description": "Last renewal." },
+        "expirationDateTime": { "type": "string", "format": "date-time", "description": "Expiration (if applicable)." },
+        "onPremisesSyncEnabled": { "type": "boolean", "description": "Synced from on-premises." },
+        "proxyAddresses": { "type": "array", "items": { "type": "string" }, "description": "Email addresses." },
+        "members": { "type": "array", "items": { "type": "object" }, "description": "Membership (when expanded)." },
+        "memberOf": { "type": "array", "items": { "type": "object" }, "description": "Membership (when expanded)." },
+        "assignedLicenses": { "type": "array", "items": { "type": "object" }, "description": "Licenses assigned to the group." }
+      }
+    },
+    "applicationFields": {
+      "description": "Properties of the #microsoft.graph.application resource.",
+      "type": "object",
+      "properties": {
+        "appId": { "type": "string", "description": "Application (client) ID (GUID)." },
+        "description": { "type": "string", "description": "Description." },
+        "publisherDomain": { "type": "string", "description": "Verified publisher domain." },
+        "signInAudience": {
+          "type": "string",
+          "enum": ["AzureADMyOrg", "AzureADMultipleOrgs", "AzureADandPersonalMicrosoftAccount", "PersonalMicrosoftAccount"],
+          "description": "AzureADMyOrg / AzureADMultipleOrgs / AzureADandPersonalMicrosoftAccount / PersonalMicrosoftAccount."
+        },
+        "identifierUris": { "type": "array", "items": { "type": "string" }, "description": "Application ID URIs." },
+        "web": { "type": "object", "description": "Platform-specific configuration." },
+        "spa": { "type": "object", "description": "Platform-specific configuration." },
+        "publicClient": { "type": "object", "description": "Platform-specific configuration." },
+        "api": { "type": "object", "description": "Platform-specific configuration." },
+        "requiredResourceAccess": { "type": "array", "items": { "type": "object" }, "description": "Required API permissions / scopes." },
+        "passwordCredentials": { "type": "array", "items": { "type": "object" }, "description": "Client secrets (metadata only)." },
+        "keyCredentials": { "type": "array", "items": { "type": "object" }, "description": "Certificates." },
+        "appRoles": { "type": "array", "items": { "type": "object" }, "description": "Defined app roles." },
+        "oauth2PermissionScopes": { "type": "array", "items": { "type": "object" }, "description": "Exposed scopes (delegated permissions)." },
+        "tags": { "type": "array", "items": { "type": "string" }, "description": "Application tags." },
+        "isFallbackPublicClient": { "type": "boolean", "description": "Fallback public client setting." },
+        "groupMembershipClaims": { "type": "string", "description": "Groups claim configuration." }
+      }
+    },
+    "deviceFields": {
+      "description": "Properties of the #microsoft.graph.device resource.",
+      "type": "object",
+      "properties": {
+        "deviceId": { "type": "string", "description": "Device identifier." },
+        "accountEnabled": { "type": "boolean", "description": "Whether the device account is enabled." },
+        "operatingSystem": { "type": "string", "description": "OS name." },
+        "operatingSystemVersion": { "type": "string", "description": "OS version." },
+        "deviceVersion": { "type": "integer", "description": "Internal device version." },
+        "approximateLastSignInDateTime": { "type": "string", "format": "date-time", "description": "Approximate last sign-in." },
+        "complianceExpirationDateTime": { "type": "string", "format": "date-time", "description": "Compliance expiration." },
+        "deviceOwnership": { "type": "string", "enum": ["Company", "Personal", "Unknown"], "description": "Company / Personal / Unknown." },
+        "enrollmentType": { "type": "string", "description": "Enrollment method." },
+        "enrollmentProfileName": { "type": "string", "description": "Enrollment profile." },
+        "isCompliant": { "type": "boolean", "description": "Compliance status." },
+        "isManaged": { "type": "boolean", "description": "Management status." },
+        "trustType": { "type": "string", "enum": ["AzureAd", "ServerAd", "Workplace"], "description": "AzureAd / ServerAd / Workplace." },
+        "profileType": { "type": "string", "enum": ["RegisteredDevice", "SecureVM", "Printer", "Shared", "IoT"], "description": "RegisteredDevice / SecureVM / Printer / Shared / IoT." },
+        "manufacturer": { "type": "string", "description": "Hardware info." },
+        "model": { "type": "string", "description": "Hardware info." },
+        "onPremisesSyncEnabled": { "type": "boolean", "description": "Synced from on-premises." },
+        "alternativeSecurityIds": { "type": "array", "items": { "type": "object" }, "description": "Alternative security IDs." },
+        "extensionAttributes": { "type": "object", "description": "Extension attributes." }
+      }
+    },
+    "userEvent": {
+      "description": "A Microsoft Entra ID Metadata event for a Users object (#microsoft.graph.user).",
+      "allOf": [
+        { "$ref": "#/$defs/directoryObjectCommon" },
+        { "$ref": "#/$defs/userFields" },
+        {
+          "properties": { "@odata.type": { "const": "#microsoft.graph.user" } },
+          "required": ["@odata.type"]
+        }
+      ]
+    },
+    "groupEvent": {
+      "description": "A Microsoft Entra ID Metadata event for a Groups object (#microsoft.graph.group).",
+      "allOf": [
+        { "$ref": "#/$defs/directoryObjectCommon" },
+        { "$ref": "#/$defs/groupFields" },
+        {
+          "properties": { "@odata.type": { "const": "#microsoft.graph.group" } },
+          "required": ["@odata.type"]
+        }
+      ]
+    },
+    "applicationEvent": {
+      "description": "A Microsoft Entra ID Metadata event for an Applications object (#microsoft.graph.application).",
+      "allOf": [
+        { "$ref": "#/$defs/directoryObjectCommon" },
+        { "$ref": "#/$defs/applicationFields" },
+        {
+          "properties": { "@odata.type": { "const": "#microsoft.graph.application" } },
+          "required": ["@odata.type"]
+        }
+      ]
+    },
+    "deviceEvent": {
+      "description": "A Microsoft Entra ID Metadata event for a Devices object (#microsoft.graph.device).",
+      "allOf": [
+        { "$ref": "#/$defs/directoryObjectCommon" },
+        { "$ref": "#/$defs/deviceFields" },
+        {
+          "properties": { "@odata.type": { "const": "#microsoft.graph.device" } },
+          "required": ["@odata.type"]
+        }
+      ]
+    }
+  },
+  "x-usage-notes": [
+    "No native CIM mapping -- treat this as inventory / enrichment data. Correlate with o365:management:activity (or Azure AD sign-in/audit logs) using id, userPrincipalName, appId, deviceId, etc.",
+    "Volume -- full directory pulls can be large. Use query_parameters (especially $select and $filter) and a sensible interval to control size.",
+    "Permissions required -- application permissions such as User.Read.All, Group.Read.All, Application.Read.All, Device.Read.All (or broader Directory.Read.All) with admin consent.",
+    "Source field -- when multiple Entra ID types are collected in one input, use source to filter (e.g. source=*users* or similar, depending on how the modular input sets the source)."
+  ],
+  "x-references": [
+    "Add-on input docs: Configure Microsoft Entra ID Metadata Input",
+    "Microsoft Graph resource docs: user, group, application, device"
+  ]
+}
