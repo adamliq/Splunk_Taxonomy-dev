@@ -968,6 +968,9 @@
     .pattern-table tbody tr:nth-child(even) td { background: #f8fafc; }
     .pattern-table tbody tr:hover td { background: #eff6ff; }
     .pattern-table td.requirement-cell { color: #334155; font-size: 12px; }
+    #metricsPage tr.metric-row { cursor: pointer; }
+    #metricsPage tr.metric-row:hover, #metricsPage tr.metric-row:focus-visible { background: var(--primary-light); }
+    #metricsPage tr.metric-row:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
     .pattern-id-button {
       padding: 0;
       border: 0;
@@ -14462,6 +14465,22 @@ E. Assumptions and unresolved inputs</pre>
     </div>
     <div class="modal-body">
       <dl class="input-detail-grid" id="schemaFieldGrid"></dl>
+    </div>
+  </div>
+</div>
+
+<div id="metricDetailModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="metricDetailTitle" aria-hidden="true">
+  <div class="modal-dialog input-detail-dialog">
+    <div class="modal-header">
+      <div>
+        <p class="modal-eyebrow" id="metricDetailEyebrow">SOC Metrics Taxonomy</p>
+        <h2 id="metricDetailTitle" class="modal-title">&mdash;</h2>
+        <p class="modal-subtitle" id="metricDetailSubtitle"></p>
+      </div>
+      <button id="closeMetricDetail" class="modal-close" type="button" aria-label="Close metric details">×</button>
+    </div>
+    <div class="modal-body">
+      <dl class="input-detail-grid" id="metricDetailGrid"></dl>
     </div>
   </div>
 </div>
@@ -33577,10 +33596,58 @@ function renderSocMetricsTable() {
     socMetricsTableBody.innerHTML = `<tr><td class="patterns-empty" colspan="${socMetricsTableColumns.length}">No metrics match the current filters.</td></tr>`;
     return;
   }
-  socMetricsTableBody.innerHTML = visibleSocMetricsRows.map(row =>
-    `<tr>${socMetricsTableColumns.map(column => `<td>${escapeHtml(row[column])}</td>`).join("")}</tr>`
+  socMetricsTableBody.innerHTML = visibleSocMetricsRows.map((row, i) =>
+    `<tr class="metric-row" data-row-index="${i}" tabindex="0">${socMetricsTableColumns.map(column => `<td>${escapeHtml(row[column])}</td>`).join("")}</tr>`
   ).join("");
 }
+
+function openMetricDetail(row, trigger) {
+  if (!metricDetailModal) return;
+  lastMetricDetailTrigger = trigger || document.activeElement;
+  document.getElementById("metricDetailEyebrow").textContent = `${row["Top-Level Capability Family"]} · ${row["Domain"]}`;
+  document.getElementById("metricDetailTitle").textContent = row["Metric"];
+  document.getElementById("metricDetailSubtitle").textContent = row["What it measures"];
+  const rows = [
+    ["Capability Family", row["Top-Level Capability Family"]],
+    ["Domain", row["Domain"]],
+    ["Dimension", row["Dimension"]],
+    ["Indicator Timing", row["Indicator Timing"]],
+    ["Management Level", row["Management Level"]],
+    ["Indicator Type", row["Indicator Type"]],
+    ["What it measures", row["What it measures"]]
+  ];
+  document.getElementById("metricDetailGrid").innerHTML = rows.map(([k, v]) => `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join("");
+  metricDetailModal.classList.add("open");
+  metricDetailModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  document.getElementById("closeMetricDetail").focus();
+}
+function closeMetricDetail() {
+  if (!metricDetailModal) return;
+  metricDetailModal.classList.remove("open");
+  metricDetailModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+  if (lastMetricDetailTrigger && typeof lastMetricDetailTrigger.focus === "function") lastMetricDetailTrigger.focus();
+}
+const metricDetailModal = document.getElementById("metricDetailModal");
+let lastMetricDetailTrigger = null;
+document.getElementById("closeMetricDetail").addEventListener("click", closeMetricDetail);
+metricDetailModal.addEventListener("click", event => { if (event.target === metricDetailModal) closeMetricDetail(); });
+document.addEventListener("keydown", event => { if (event.key === "Escape" && metricDetailModal.classList.contains("open")) closeMetricDetail(); });
+socMetricsTableBody.addEventListener("click", event => {
+  const tr = event.target.closest("tr.metric-row");
+  if (!tr) return;
+  const row = visibleSocMetricsRows[Number(tr.dataset.rowIndex)];
+  if (row) openMetricDetail(row, tr);
+});
+socMetricsTableBody.addEventListener("keydown", event => {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  const tr = event.target.closest("tr.metric-row");
+  if (!tr) return;
+  event.preventDefault();
+  const row = visibleSocMetricsRows[Number(tr.dataset.rowIndex)];
+  if (row) openMetricDetail(row, tr);
+});
 
 function exportVisibleSocMetrics(event) {
   const lines = [
