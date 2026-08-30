@@ -757,6 +757,13 @@
       color: #fff;
       box-shadow: none;
     }
+    .side-sub .side-ref-jump {
+      padding-left: 22px;
+      font-weight: 500;
+      font-size: 12px;
+      color: rgba(255,255,255,.58);
+    }
+    .side-sub .side-ref-jump:hover { color: #fff; }
     .page-view[hidden] { display: none !important; }
 
     /* Input coverage page: secondary (sub-menu) tab bar within a page */
@@ -3600,6 +3607,15 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <button type="button" class="side-group-trigger" aria-expanded="false"><span>Reference</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
       <div class="side-sub">
         <button id="showReferencePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="referencePage">Reference</button>
+        <button type="button" class="page-tab side-ref-jump" data-ref-section="frameworkOverview">Framework overview</button>
+        <button type="button" class="page-tab side-ref-jump" data-ref-section="conceptDefinitions">Concepts &amp; definitions</button>
+        <button type="button" class="page-tab side-ref-jump" data-ref-section="assessmentMethods">Assessment methodologies</button>
+        <button type="button" class="page-tab side-ref-jump" data-ref-section="standardsReferences">Standards &amp; references</button>
+        <button type="button" class="page-tab side-ref-jump" data-ref-section="configFileReferences">Configuration file reference</button>
+        <button type="button" class="page-tab side-ref-jump" data-ref-section="networkReferenceSection">Network reference</button>
+        <button type="button" class="page-tab side-ref-jump" data-ref-section="rolesSection">Roles</button>
+        <button type="button" class="page-tab side-ref-jump" data-ref-section="splunkBinSection">Splunk bin</button>
+        <button type="button" class="page-tab side-ref-jump" data-ref-section="questionsSection">Questions</button>
         <button id="showPromptLibraryPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="promptLibraryPage">Prompt library</button>
         <button id="showCmeiPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cmeiPage">Framework</button>
         <button id="showCataloguePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cataloguePage">Data source catalogue</button>
@@ -23512,6 +23528,12 @@ document.querySelectorAll("[data-reference-jump]").forEach(button=>button.addEve
   const id = button.dataset.referenceJump;
   expandReferenceSection(id);
   document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});
+}));
+document.querySelectorAll(".app-sidebar .side-ref-jump").forEach(button => button.addEventListener("click", () => {
+  const id = button.dataset.refSection;
+  setActivePage("reference");
+  expandReferenceSection(id);
+  requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }));
 }));
 document.querySelectorAll("[data-open-reference-detail]").forEach(button=>button.addEventListener("click",()=>showReferenceDetail(button.dataset.openReferenceDetail)));
 document.querySelectorAll("[data-open-prompt-panel]").forEach(button=>button.addEventListener("click",()=>{
