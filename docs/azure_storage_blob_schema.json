@@ -1,0 +1,368 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adamliq.github.io/Splunk_Taxonomy-dev/docs/azure_storage_blob_schema.json",
+  "title": "Azure Storage Blob (mscs:storage:blob*) events",
+  "description": "Field schema for the Splunk Add-on for Microsoft Cloud Services Azure Blob Storage input, covering the base blob-metadata sourcetype and its JSON/XML content-extraction variants.",
+  "$defs": {
+    "blobEvent": {
+      "title": "Azure Storage Blob -- mscs:storage:blob",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services Azure Blob Storage event, sourcetype mscs:storage:blob. Generic blob metadata event -- one event per blob object polled from the container.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Blob name (path within the container)"
+        },
+        "container": {
+          "type": "string",
+          "description": "Container name that holds the blob"
+        },
+        "url": {
+          "type": "string",
+          "description": "Full URL to the blob"
+        },
+        "contentType": {
+          "type": "string",
+          "description": "MIME content type of the blob"
+        },
+        "contentLength": {
+          "type": "integer",
+          "description": "Size of the blob in bytes"
+        },
+        "contentEncoding": {
+          "type": "string",
+          "description": "Content encoding (e.g. gzip) if set"
+        },
+        "contentLanguage": {
+          "type": "string",
+          "description": "Content language if set"
+        },
+        "contentMD5": {
+          "type": "string",
+          "description": "MD5 hash of the blob content"
+        },
+        "lastModified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last modified timestamp of the blob"
+        },
+        "etag": {
+          "type": "string",
+          "description": "Entity tag for the blob"
+        },
+        "blobType": {
+          "type": "string",
+          "description": "Blob type (BlockBlob PageBlob AppendBlob)"
+        },
+        "leaseStatus": {
+          "type": "string",
+          "description": "Lease status (locked unlocked)"
+        },
+        "leaseState": {
+          "type": "string",
+          "description": "Lease state (available leased expired breaking broken)"
+        },
+        "leaseDuration": {
+          "type": "string",
+          "description": "Lease duration (infinite fixed) if leased"
+        },
+        "serverEncrypted": {
+          "type": "boolean",
+          "description": "Whether the blob is encrypted at rest by the service"
+        },
+        "accessTier": {
+          "type": "string",
+          "description": "Access tier (Hot Cool Archive Cold) if applicable"
+        },
+        "accessTierInferred": {
+          "type": "boolean",
+          "description": "Whether the access tier was inferred"
+        },
+        "accessTierChangeTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Time the access tier was last changed"
+        },
+        "archiveStatus": {
+          "type": "string",
+          "description": "Archive rehydrate status if applicable"
+        },
+        "creationTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Blob creation timestamp"
+        },
+        "deleted": {
+          "type": "boolean",
+          "description": "Whether the blob is soft-deleted"
+        },
+        "deletedTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Soft-delete timestamp if applicable"
+        },
+        "remainingRetentionDays": {
+          "type": "integer",
+          "description": "Days remaining until permanent deletion (soft-delete)"
+        },
+        "metadata{}": {
+          "type": "object",
+          "description": "User-defined metadata key-value pairs on the blob"
+        },
+        "AccountName": {
+          "type": "string",
+          "description": "Azure Storage account name (add-on metadata)"
+        },
+        "ContainerName": {
+          "type": "string",
+          "description": "Container name (add-on metadata - may mirror container field)"
+        }
+      },
+      "required": [
+        "name",
+        "container"
+      ],
+      "additionalProperties": true
+    },
+    "blobJsonEvent": {
+      "title": "Azure Storage Blob -- mscs:storage:blob:json",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services Azure Blob Storage event, sourcetype mscs:storage:blob:json. Blob metadata event for a JSON-content blob. When sourcetype is mscs:storage:blob:json all top-level and nested keys from the JSON blob content are extracted as fields",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Blob name (path within the container)"
+        },
+        "container": {
+          "type": "string",
+          "description": "Container name that holds the blob"
+        },
+        "url": {
+          "type": "string",
+          "description": "Full URL to the blob"
+        },
+        "contentType": {
+          "type": "string",
+          "description": "MIME content type of the blob"
+        },
+        "contentLength": {
+          "type": "integer",
+          "description": "Size of the blob in bytes"
+        },
+        "contentEncoding": {
+          "type": "string",
+          "description": "Content encoding (e.g. gzip) if set"
+        },
+        "contentLanguage": {
+          "type": "string",
+          "description": "Content language if set"
+        },
+        "contentMD5": {
+          "type": "string",
+          "description": "MD5 hash of the blob content"
+        },
+        "lastModified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last modified timestamp of the blob"
+        },
+        "etag": {
+          "type": "string",
+          "description": "Entity tag for the blob"
+        },
+        "blobType": {
+          "type": "string",
+          "description": "Blob type (BlockBlob PageBlob AppendBlob)"
+        },
+        "leaseStatus": {
+          "type": "string",
+          "description": "Lease status (locked unlocked)"
+        },
+        "leaseState": {
+          "type": "string",
+          "description": "Lease state (available leased expired breaking broken)"
+        },
+        "leaseDuration": {
+          "type": "string",
+          "description": "Lease duration (infinite fixed) if leased"
+        },
+        "serverEncrypted": {
+          "type": "boolean",
+          "description": "Whether the blob is encrypted at rest by the service"
+        },
+        "accessTier": {
+          "type": "string",
+          "description": "Access tier (Hot Cool Archive Cold) if applicable"
+        },
+        "accessTierInferred": {
+          "type": "boolean",
+          "description": "Whether the access tier was inferred"
+        },
+        "accessTierChangeTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Time the access tier was last changed"
+        },
+        "archiveStatus": {
+          "type": "string",
+          "description": "Archive rehydrate status if applicable"
+        },
+        "creationTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Blob creation timestamp"
+        },
+        "deleted": {
+          "type": "boolean",
+          "description": "Whether the blob is soft-deleted"
+        },
+        "deletedTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Soft-delete timestamp if applicable"
+        },
+        "remainingRetentionDays": {
+          "type": "integer",
+          "description": "Days remaining until permanent deletion (soft-delete)"
+        },
+        "metadata{}": {
+          "type": "object",
+          "description": "User-defined metadata key-value pairs on the blob"
+        },
+        "AccountName": {
+          "type": "string",
+          "description": "Azure Storage account name (add-on metadata)"
+        },
+        "ContainerName": {
+          "type": "string",
+          "description": "Container name (add-on metadata - may mirror container field)"
+        }
+      },
+      "required": [
+        "name",
+        "container"
+      ],
+      "additionalProperties": true
+    },
+    "blobXmlEvent": {
+      "title": "Azure Storage Blob -- mscs:storage:blob:xml",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services Azure Blob Storage event, sourcetype mscs:storage:blob:xml. Blob metadata event for an XML-content blob. When sourcetype is mscs:storage:blob:xml XML elements and attributes are extracted as fields (configurable via props.conf)",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Blob name (path within the container)"
+        },
+        "container": {
+          "type": "string",
+          "description": "Container name that holds the blob"
+        },
+        "url": {
+          "type": "string",
+          "description": "Full URL to the blob"
+        },
+        "contentType": {
+          "type": "string",
+          "description": "MIME content type of the blob"
+        },
+        "contentLength": {
+          "type": "integer",
+          "description": "Size of the blob in bytes"
+        },
+        "contentEncoding": {
+          "type": "string",
+          "description": "Content encoding (e.g. gzip) if set"
+        },
+        "contentLanguage": {
+          "type": "string",
+          "description": "Content language if set"
+        },
+        "contentMD5": {
+          "type": "string",
+          "description": "MD5 hash of the blob content"
+        },
+        "lastModified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last modified timestamp of the blob"
+        },
+        "etag": {
+          "type": "string",
+          "description": "Entity tag for the blob"
+        },
+        "blobType": {
+          "type": "string",
+          "description": "Blob type (BlockBlob PageBlob AppendBlob)"
+        },
+        "leaseStatus": {
+          "type": "string",
+          "description": "Lease status (locked unlocked)"
+        },
+        "leaseState": {
+          "type": "string",
+          "description": "Lease state (available leased expired breaking broken)"
+        },
+        "leaseDuration": {
+          "type": "string",
+          "description": "Lease duration (infinite fixed) if leased"
+        },
+        "serverEncrypted": {
+          "type": "boolean",
+          "description": "Whether the blob is encrypted at rest by the service"
+        },
+        "accessTier": {
+          "type": "string",
+          "description": "Access tier (Hot Cool Archive Cold) if applicable"
+        },
+        "accessTierInferred": {
+          "type": "boolean",
+          "description": "Whether the access tier was inferred"
+        },
+        "accessTierChangeTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Time the access tier was last changed"
+        },
+        "archiveStatus": {
+          "type": "string",
+          "description": "Archive rehydrate status if applicable"
+        },
+        "creationTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Blob creation timestamp"
+        },
+        "deleted": {
+          "type": "boolean",
+          "description": "Whether the blob is soft-deleted"
+        },
+        "deletedTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Soft-delete timestamp if applicable"
+        },
+        "remainingRetentionDays": {
+          "type": "integer",
+          "description": "Days remaining until permanent deletion (soft-delete)"
+        },
+        "metadata{}": {
+          "type": "object",
+          "description": "User-defined metadata key-value pairs on the blob"
+        },
+        "AccountName": {
+          "type": "string",
+          "description": "Azure Storage account name (add-on metadata)"
+        },
+        "ContainerName": {
+          "type": "string",
+          "description": "Container name (add-on metadata - may mirror container field)"
+        }
+      },
+      "required": [
+        "name",
+        "container"
+      ],
+      "additionalProperties": true
+    }
+  }
+}

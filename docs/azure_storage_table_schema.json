@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adamliq.github.io/Splunk_Taxonomy-dev/docs/azure_storage_table_schema.json",
+  "title": "Azure Storage Table (mscs:storage:table / mscs:vm:metrics) events",
+  "description": "Field schema for the Splunk Add-on for Microsoft Cloud Services Azure Table Storage input, covering the generic table-entity sourcetype and its VM Metrics (WAD) variant.",
+  "$defs": {
+    "tableEntityEvent": {
+      "title": "Azure Storage Table -- storage:table",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services Azure Table Storage event, sourcetype mscs:storage:table. Any user-defined columns present in the table schema appear as top-level fields with their native types (string integer boolean datetime binary guid etc.)",
+      "properties": {
+        "PartitionKey": {
+          "type": "string",
+          "description": "Partition key of the table entity (system property)"
+        },
+        "RowKey": {
+          "type": "string",
+          "description": "Row key of the table entity (system property - unique within partition)"
+        },
+        "Timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last updated timestamp of the entity (system property)"
+        },
+        "odata.type": {
+          "type": "string",
+          "description": "OData type annotation for the entity"
+        },
+        "odata.etag": {
+          "type": "string",
+          "description": "Entity tag for concurrency control"
+        },
+        "odata.id": {
+          "type": "string",
+          "description": "OData entity ID URI"
+        },
+        "odata.editLink": {
+          "type": "string",
+          "description": "OData edit link for the entity"
+        },
+        "AccountName": {
+          "type": "string",
+          "description": "Azure Storage account name (add-on metadata)"
+        },
+        "TableName": {
+          "type": "string",
+          "description": "Name of the Azure Table being queried (add-on metadata)"
+        }
+      },
+      "required": [
+        "PartitionKey",
+        "RowKey"
+      ],
+      "additionalProperties": true
+    },
+    "vmMetricsTableEvent": {
+      "title": "Azure Storage Table -- vm:metrics",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services Azure Table Storage event, sourcetype mscs:vm:metrics. Field set also verified against the separate Azure Virtual Machine Metrics input, which polls the same mscs:vm:metrics sourcetype.",
+      "properties": {
+        "CounterName": {
+          "type": "string",
+          "description": "Performance counter name (e.g. \\Processor(_Total)\\% Processor Time)"
+        },
+        "Average": {
+          "type": "number",
+          "description": "Average value of the counter in the sample interval"
+        },
+        "Minimum": {
+          "type": "number",
+          "description": "Minimum value of the counter in the sample interval"
+        },
+        "Maximum": {
+          "type": "number",
+          "description": "Maximum value of the counter in the sample interval"
+        },
+        "Total": {
+          "type": "number",
+          "description": "Total/sum value of the counter in the sample interval"
+        },
+        "Count": {
+          "type": "integer",
+          "description": "Number of samples collected in the interval"
+        },
+        "TIMESTAMP": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Sample timestamp from WAD metrics table"
+        },
+        "DeploymentId": {
+          "type": "string",
+          "description": "Cloud service or deployment identifier"
+        },
+        "Role": {
+          "type": "string",
+          "description": "Role name within the deployment"
+        },
+        "RoleInstance": {
+          "type": "string",
+          "description": "Specific VM instance name"
+        },
+        "PartitionKey": {
+          "type": "string",
+          "description": "Partition key (often encodes date/time or deployment)"
+        },
+        "RowKey": {
+          "type": "string",
+          "description": "Row key (often encodes counter and instance)"
+        },
+        "Timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Entity last-updated timestamp (Azure Table system property)."
+        },
+        "AccountName": {
+          "type": "string",
+          "description": "Azure Storage account name holding the WAD metrics tables (add-on metadata)."
+        },
+        "TableName": {
+          "type": "string",
+          "description": "WAD metrics table name (e.g. WADMetricsPT1MPxx) (add-on metadata)."
+        },
+        "odata.etag": {
+          "type": "string",
+          "description": "Entity tag for concurrency control."
+        },
+        "odata.type": {
+          "type": "string",
+          "description": "OData type annotation for the entity."
+        }
+      },
+      "required": [
+        "PartitionKey",
+        "RowKey"
+      ],
+      "additionalProperties": true
+    }
+  }
+}

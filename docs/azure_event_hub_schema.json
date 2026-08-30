@@ -1,0 +1,514 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adamliq.github.io/Splunk_Taxonomy-dev/docs/azure_event_hub_schema.json",
+  "title": "Azure Event Hub events",
+  "description": "Field schema for the Splunk Add-on for Microsoft Cloud Services Event Hub input, covering the generic Event Hub sourcetype and the Azure Monitor / Entra ID / security-alert content variants commonly streamed through it. Every branch also carries the Event Hub transport metadata fields (EventHub, ConsumerGroup, PartitionId, Offset / SequenceNumber) the add-on attaches regardless of payload content.",
+  "$defs": {
+    "eventHubEvent": {
+      "title": "Azure Event Hub -- mscs:azure:eventhub",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services Event Hub-delivered event, sourcetype mscs:azure:eventhub. Generic Event Hub-delivered event using only the common Azure Monitor-style envelope fields.",
+      "properties": {
+        "time / timeGenerated / TimeGenerated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Event timestamp (UTC)"
+        },
+        "resourceId / _ResourceId": {
+          "type": "string",
+          "description": "Full ARM resource ID associated with the event"
+        },
+        "operationName": {
+          "type": "string",
+          "description": "Name of the operation that generated the event"
+        },
+        "category": {
+          "type": "string",
+          "description": "Log category (e.g. Administrative Security AuditLogs SignInLogs)"
+        },
+        "resultType / Level / status": {
+          "type": "string",
+          "description": "Result or severity (Success Failure Critical Error Warning Informational)"
+        },
+        "resultDescription / ResultDescription": {
+          "type": "string",
+          "description": "Text description of the result"
+        },
+        "callerIpAddress / CallerIpAddress": {
+          "type": "string",
+          "description": "Source IP address of the caller"
+        },
+        "correlationId / CorrelationId": {
+          "type": "string",
+          "description": "Correlation identifier linking related events"
+        },
+        "identity / identity.claims": {
+          "type": "object",
+          "description": "Identity that performed the operation (claims principalId etc.)"
+        },
+        "properties": {
+          "type": "object",
+          "description": "Category-specific detailed properties payload"
+        },
+        "durationMs": {
+          "type": "integer",
+          "description": "Duration of the operation in milliseconds when present"
+        },
+        "location / Location": {
+          "type": "string",
+          "description": "Azure region or geographic location"
+        },
+        "tenantId / TenantId": {
+          "type": "string",
+          "description": "Entra ID tenant ID when present"
+        },
+        "subscriptionId": {
+          "type": "string",
+          "description": "Subscription ID parsed from resourceId or event"
+        },
+        "resourceGroup": {
+          "type": "string",
+          "description": "Resource group parsed from resourceId when available"
+        },
+        "EventHub": {
+          "type": "string",
+          "description": "Event Hub name (add-on / system metadata)"
+        },
+        "ConsumerGroup": {
+          "type": "string",
+          "description": "Consumer group used for ingestion"
+        },
+        "PartitionId": {
+          "type": "string",
+          "description": "Event Hub partition ID"
+        },
+        "Offset / SequenceNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "description": "Event position within the partition"
+        }
+      },
+      "required": [],
+      "additionalProperties": true
+    },
+    "activityLogEvent": {
+      "title": "Azure Event Hub -- azure:monitor:activity",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services Event Hub-delivered event, sourcetype azure:monitor:activity. Azure Activity Log (subscription-level control-plane operations) delivered via Event Hub.",
+      "properties": {
+        "time / timeGenerated / TimeGenerated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Event timestamp (UTC)"
+        },
+        "resourceId / _ResourceId": {
+          "type": "string",
+          "description": "Full ARM resource ID associated with the event"
+        },
+        "operationName": {
+          "type": "string",
+          "description": "Name of the operation that generated the event"
+        },
+        "category": {
+          "type": "string",
+          "description": "Log category (e.g. Administrative Security AuditLogs SignInLogs)"
+        },
+        "resultType / Level / status": {
+          "type": "string",
+          "description": "Result or severity (Success Failure Critical Error Warning Informational)"
+        },
+        "resultDescription / ResultDescription": {
+          "type": "string",
+          "description": "Text description of the result"
+        },
+        "callerIpAddress / CallerIpAddress": {
+          "type": "string",
+          "description": "Source IP address of the caller"
+        },
+        "correlationId / CorrelationId": {
+          "type": "string",
+          "description": "Correlation identifier linking related events"
+        },
+        "identity / identity.claims": {
+          "type": "object",
+          "description": "Identity that performed the operation (claims principalId etc.)"
+        },
+        "properties": {
+          "type": "object",
+          "description": "Category-specific detailed properties payload"
+        },
+        "durationMs": {
+          "type": "integer",
+          "description": "Duration of the operation in milliseconds when present"
+        },
+        "location / Location": {
+          "type": "string",
+          "description": "Azure region or geographic location"
+        },
+        "tenantId / TenantId": {
+          "type": "string",
+          "description": "Entra ID tenant ID when present"
+        },
+        "subscriptionId": {
+          "type": "string",
+          "description": "Subscription ID parsed from resourceId or event"
+        },
+        "resourceGroup": {
+          "type": "string",
+          "description": "Resource group parsed from resourceId when available"
+        },
+        "eventTimestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Activity log event time"
+        },
+        "operationName.value": {
+          "type": "string",
+          "description": "Fully qualified operation name"
+        },
+        "status.value": {
+          "type": "string",
+          "description": "Operation status (Succeeded Failed etc.)"
+        },
+        "caller": {
+          "type": "string",
+          "description": "Caller identity (UPN or application ID)"
+        },
+        "eventDataId": {
+          "type": "string",
+          "description": "Unique activity log event ID"
+        },
+        "level": {
+          "type": "string",
+          "description": "Event level"
+        },
+        "subStatus": {
+          "type": "string",
+          "description": "Sub-status code or message"
+        },
+        "EventHub": {
+          "type": "string",
+          "description": "Event Hub name (add-on / system metadata)"
+        },
+        "ConsumerGroup": {
+          "type": "string",
+          "description": "Consumer group used for ingestion"
+        },
+        "PartitionId": {
+          "type": "string",
+          "description": "Event Hub partition ID"
+        },
+        "Offset / SequenceNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "description": "Event position within the partition"
+        }
+      },
+      "required": [],
+      "additionalProperties": true
+    },
+    "aadEvent": {
+      "title": "Azure Event Hub -- azure:monitor:aad",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services Event Hub-delivered event, sourcetype azure:monitor:aad. Entra ID (Azure AD) sign-in/audit event delivered via Event Hub.",
+      "properties": {
+        "time / timeGenerated / TimeGenerated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Event timestamp (UTC)"
+        },
+        "resourceId / _ResourceId": {
+          "type": "string",
+          "description": "Full ARM resource ID associated with the event"
+        },
+        "operationName": {
+          "type": "string",
+          "description": "Sign-in or audit operation name"
+        },
+        "category": {
+          "type": "string",
+          "description": "Log category (e.g. Administrative Security AuditLogs SignInLogs)"
+        },
+        "resultType / Level / status": {
+          "type": "string",
+          "description": "Result or severity (Success Failure Critical Error Warning Informational)"
+        },
+        "resultDescription / ResultDescription": {
+          "type": "string",
+          "description": "Text description of the result"
+        },
+        "callerIpAddress / CallerIpAddress": {
+          "type": "string",
+          "description": "Source IP address of the caller"
+        },
+        "correlationId / CorrelationId": {
+          "type": "string",
+          "description": "Correlation identifier linking related events"
+        },
+        "identity / identity.claims": {
+          "type": "object",
+          "description": "Identity that performed the operation (claims principalId etc.)"
+        },
+        "properties": {
+          "type": "object",
+          "description": "Category-specific detailed properties payload"
+        },
+        "durationMs": {
+          "type": "integer",
+          "description": "Duration of the operation in milliseconds when present"
+        },
+        "location / Location": {
+          "type": "string",
+          "description": "Azure region or geographic location"
+        },
+        "tenantId / TenantId": {
+          "type": "string",
+          "description": "Entra ID tenant ID when present"
+        },
+        "subscriptionId": {
+          "type": "string",
+          "description": "Subscription ID parsed from resourceId or event"
+        },
+        "resourceGroup": {
+          "type": "string",
+          "description": "Resource group parsed from resourceId when available"
+        },
+        "userPrincipalName / userDisplayName": {
+          "type": "string",
+          "description": "User identity"
+        },
+        "appId / appDisplayName": {
+          "type": "string",
+          "description": "Application ID and display name"
+        },
+        "ipAddress": {
+          "type": "string",
+          "description": "Client IP address"
+        },
+        "location": {
+          "type": "object",
+          "description": "Geographic location of the sign-in"
+        },
+        "status": {
+          "type": "object",
+          "description": "Sign-in status (errorCode failureReason)"
+        },
+        "deviceDetail": {
+          "type": "object",
+          "description": "Device information"
+        },
+        "clientAppUsed": {
+          "type": "string",
+          "description": "Client application used"
+        },
+        "conditionalAccessStatus": {
+          "type": "string",
+          "description": "Conditional Access result"
+        },
+        "riskDetail / riskLevelAggregated / riskLevelDuringSignIn": {
+          "type": "string",
+          "description": "Identity Protection risk signals"
+        },
+        "EventHub": {
+          "type": "string",
+          "description": "Event Hub name (add-on / system metadata)"
+        },
+        "ConsumerGroup": {
+          "type": "string",
+          "description": "Consumer group used for ingestion"
+        },
+        "PartitionId": {
+          "type": "string",
+          "description": "Event Hub partition ID"
+        },
+        "Offset / SequenceNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "description": "Event position within the partition"
+        }
+      },
+      "required": [],
+      "additionalProperties": true
+    },
+    "resourceLogEvent": {
+      "title": "Azure Event Hub -- azure:monitor:resource",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services Event Hub-delivered event, sourcetype azure:monitor:resource. Resource-provider diagnostic log delivered via Event Hub.",
+      "properties": {
+        "time / timeGenerated / TimeGenerated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Event timestamp (UTC)"
+        },
+        "resourceId / _ResourceId": {
+          "type": "string",
+          "description": "Full ARM resource ID associated with the event"
+        },
+        "operationName": {
+          "type": "string",
+          "description": "Name of the operation that generated the event"
+        },
+        "category": {
+          "type": "string",
+          "description": "Resource log category specific to the resource provider"
+        },
+        "resultType / Level / status": {
+          "type": "string",
+          "description": "Result or severity (Success Failure Critical Error Warning Informational)"
+        },
+        "resultDescription / ResultDescription": {
+          "type": "string",
+          "description": "Text description of the result"
+        },
+        "callerIpAddress / CallerIpAddress": {
+          "type": "string",
+          "description": "Source IP address of the caller"
+        },
+        "correlationId / CorrelationId": {
+          "type": "string",
+          "description": "Correlation identifier linking related events"
+        },
+        "identity / identity.claims": {
+          "type": "object",
+          "description": "Identity that performed the operation (claims principalId etc.)"
+        },
+        "properties": {
+          "type": "object",
+          "description": "Provider-specific log details"
+        },
+        "durationMs": {
+          "type": "integer",
+          "description": "Duration of the operation in milliseconds when present"
+        },
+        "location / Location": {
+          "type": "string",
+          "description": "Azure region or geographic location"
+        },
+        "tenantId / TenantId": {
+          "type": "string",
+          "description": "Entra ID tenant ID when present"
+        },
+        "subscriptionId": {
+          "type": "string",
+          "description": "Subscription ID parsed from resourceId or event"
+        },
+        "resourceGroup": {
+          "type": "string",
+          "description": "Resource group parsed from resourceId when available"
+        },
+        "EventHub": {
+          "type": "string",
+          "description": "Event Hub name (add-on / system metadata)"
+        },
+        "ConsumerGroup": {
+          "type": "string",
+          "description": "Consumer group used for ingestion"
+        },
+        "PartitionId": {
+          "type": "string",
+          "description": "Event Hub partition ID"
+        },
+        "Offset / SequenceNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "description": "Event position within the partition"
+        }
+      },
+      "required": [],
+      "additionalProperties": true
+    },
+    "securityAlertEvent": {
+      "title": "Azure Event Hub -- mscs:azure:security:alert",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services Event Hub-delivered event, sourcetype mscs:azure:security:alert. Microsoft Defender for Cloud security alert delivered via Event Hub; does not use the azure:monitor:* common envelope fields since it is a distinct sourcetype family.",
+      "properties": {
+        "alertDisplayName": {
+          "type": "string",
+          "description": "Human-readable alert title"
+        },
+        "severity": {
+          "type": "string",
+          "description": "Alert severity (High Medium Low Informational)"
+        },
+        "status": {
+          "type": "string",
+          "description": "Alert status"
+        },
+        "compromisedEntity": {
+          "type": "string",
+          "description": "Primary compromised entity"
+        },
+        "entities": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Related entities (hosts accounts files IPs)"
+        },
+        "remediationSteps": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Recommended remediation actions"
+        },
+        "EventHub": {
+          "type": "string",
+          "description": "Event Hub name (add-on / system metadata)"
+        },
+        "ConsumerGroup": {
+          "type": "string",
+          "description": "Consumer group used for ingestion"
+        },
+        "PartitionId": {
+          "type": "string",
+          "description": "Event Hub partition ID"
+        },
+        "Offset / SequenceNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "description": "Event position within the partition"
+        }
+      },
+      "required": [],
+      "additionalProperties": true
+    }
+  }
+}

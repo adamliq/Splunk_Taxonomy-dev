@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adamliq.github.io/Splunk_Taxonomy-dev/docs/azure_kql_log_analytics_schema.json",
+  "title": "Azure KQL Log Analytics (mscs:kql / mscs:kql:stats) events",
+  "description": "Field schema for the Splunk Add-on for Microsoft Cloud Services Log Analytics KQL input. Field sets are entirely query-dependent -- properties here are the common/well-known columns Log Analytics tables typically carry, not a fixed contract; additionalProperties is true throughout.",
+  "$defs": {
+    "kqlEvent": {
+      "title": "Azure KQL Log Analytics -- mscs:kql",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services Log Analytics KQL query result, sourcetype mscs:kql. All columns returned by the configured KQL query become top-level fields. Schema is entirely query-dependent.",
+      "properties": {
+        "TimeGenerated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Event generation time in the Log Analytics workspace (very common in most tables)"
+        },
+        "Type": {
+          "type": "string",
+          "description": "Log Analytics table name that produced the row (e.g. SecurityEvent Heartbeat AzureActivity)"
+        },
+        "_ResourceId": {
+          "type": "string",
+          "description": "Full ARM resource ID associated with the record"
+        },
+        "ResourceId": {
+          "type": "string",
+          "description": "Resource ID (often same as or related to _ResourceId)"
+        },
+        "Computer": {
+          "type": "string",
+          "description": "Computer / host name (common in agent-based tables)"
+        },
+        "TenantId": {
+          "type": "string",
+          "description": "Log Analytics workspace / tenant identifier"
+        },
+        "SourceSystem": {
+          "type": "string",
+          "description": "Source system that collected the data (e.g. OpsManager Azure Device)"
+        },
+        "_SubscriptionId": {
+          "type": "string",
+          "description": "Subscription ID extracted from resource context"
+        },
+        "_ResourceGroup": {
+          "type": "string",
+          "description": "Resource group extracted from resource context"
+        },
+        "_ItemId": {
+          "type": "string",
+          "description": "Unique item identifier within the workspace"
+        },
+        "MG": {
+          "type": "string",
+          "description": "Management group or workspace-related identifier when present"
+        },
+        "WorkspaceId / WorkspaceName": {
+          "type": "string",
+          "description": "Log Analytics workspace identifier or name (add-on or query context)"
+        },
+        "Category": {
+          "type": "string",
+          "description": "Log category when present in the source table"
+        },
+        "OperationName": {
+          "type": "string",
+          "description": "Operation name when present (common in AzureActivity ActivityLog tables)"
+        },
+        "ResultType / ResultDescription": {
+          "type": "string",
+          "description": "Result status and description when present"
+        },
+        "CallerIpAddress": {
+          "type": "string",
+          "description": "Caller IP when present"
+        },
+        "CorrelationId": {
+          "type": "string",
+          "description": "Correlation identifier when present"
+        },
+        "Level": {
+          "type": "string",
+          "description": "Severity or level when present"
+        }
+      },
+      "required": [
+        "TimeGenerated"
+      ],
+      "additionalProperties": true
+    },
+    "kqlStatsEvent": {
+      "title": "Azure KQL Log Analytics -- mscs:kql:stats",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services Log Analytics KQL stats/aggregation query result, sourcetype mscs:kql:stats. All columns returned by the configured KQL query become top-level fields. Schema is entirely query-dependent. When using stats-style queries columns such as count dcount avg min max sum percentile etc. appear according to the KQL summarize/extend statements",
+      "properties": {
+        "TimeGenerated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Event generation time in the Log Analytics workspace (very common in most tables)"
+        },
+        "Type": {
+          "type": "string",
+          "description": "Log Analytics table name that produced the row (e.g. SecurityEvent Heartbeat AzureActivity)"
+        },
+        "_ResourceId": {
+          "type": "string",
+          "description": "Full ARM resource ID associated with the record"
+        },
+        "ResourceId": {
+          "type": "string",
+          "description": "Resource ID (often same as or related to _ResourceId)"
+        },
+        "Computer": {
+          "type": "string",
+          "description": "Computer / host name (common in agent-based tables)"
+        },
+        "TenantId": {
+          "type": "string",
+          "description": "Log Analytics workspace / tenant identifier"
+        },
+        "SourceSystem": {
+          "type": "string",
+          "description": "Source system that collected the data (e.g. OpsManager Azure Device)"
+        },
+        "_SubscriptionId": {
+          "type": "string",
+          "description": "Subscription ID extracted from resource context"
+        },
+        "_ResourceGroup": {
+          "type": "string",
+          "description": "Resource group extracted from resource context"
+        },
+        "_ItemId": {
+          "type": "string",
+          "description": "Unique item identifier within the workspace"
+        },
+        "MG": {
+          "type": "string",
+          "description": "Management group or workspace-related identifier when present"
+        },
+        "WorkspaceId / WorkspaceName": {
+          "type": "string",
+          "description": "Log Analytics workspace identifier or name (add-on or query context)"
+        }
+      },
+      "required": [],
+      "additionalProperties": true
+    }
+  }
+}

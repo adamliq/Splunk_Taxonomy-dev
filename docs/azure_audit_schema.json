@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adamliq.github.io/Splunk_Taxonomy-dev/docs/azure_audit_schema.json",
+  "title": "Azure Audit (mscs:azure:audit) events",
+  "description": "Field schema for the Splunk Add-on for Microsoft Cloud Services Azure Audit input.",
+  "$defs": {
+    "auditEvent": {
+      "title": "Azure Audit -- mscs:azure:audit",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services Azure Activity/audit log event, sourcetype mscs:azure:audit -- subscription-level control-plane operations (ARM writes, role assignments, etc.), including the nested operationName/status/category value-and-localizedValue pairs and properties.* / authorization.* / httpRequest.* detail fields Azure emits for these events.",
+      "properties": {
+        "eventTimestamp / time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Time the management event occurred (UTC)"
+        },
+        "operationName / operationName.value": {
+          "type": "string",
+          "description": "Fully qualified operation name (e.g. Microsoft.Compute/virtualMachines/write)"
+        },
+        "operationName.localizedValue": {
+          "type": "string",
+          "description": "Localized/display name of the operation"
+        },
+        "resourceId": {
+          "type": "string",
+          "description": "Full ARM resource ID of the target resource"
+        },
+        "resourceGroupName / resourceGroup": {
+          "type": "string",
+          "description": "Resource group of the target resource"
+        },
+        "subscriptionId": {
+          "type": "string",
+          "description": "Subscription ID where the event occurred"
+        },
+        "tenantId": {
+          "type": "string",
+          "description": "Entra ID tenant ID when present"
+        },
+        "status / status.value": {
+          "type": "string",
+          "description": "Result status of the operation (Succeeded Failed Started Accepted etc.)"
+        },
+        "status.localizedValue": {
+          "type": "string",
+          "description": "Localized status text"
+        },
+        "subStatus / subStatus.value": {
+          "type": "string",
+          "description": "Sub-status code or additional status detail"
+        },
+        "caller": {
+          "type": "string",
+          "description": "Identity that performed the operation (user UPN service principal or application ID)"
+        },
+        "callerIpAddress": {
+          "type": "string",
+          "description": "Source IP address of the caller"
+        },
+        "category / category.value": {
+          "type": "string",
+          "description": "Event category (Administrative Security ServiceHealth Alert Policy Recommendation etc.)"
+        },
+        "category.localizedValue": {
+          "type": "string",
+          "description": "Localized category name"
+        },
+        "correlationId": {
+          "type": "string",
+          "description": "Correlation identifier linking related events"
+        },
+        "level": {
+          "type": "string",
+          "description": "Severity level (Critical Error Warning Informational Verbose)"
+        },
+        "eventDataId": {
+          "type": "string",
+          "description": "Unique identifier of the activity log event"
+        },
+        "description / eventName": {
+          "type": "string",
+          "description": "Description or name of the event"
+        },
+        "properties": {
+          "type": "object",
+          "description": "Operation-specific detail payload (varies by operation)"
+        },
+        "properties.statusCode": {
+          "type": "string",
+          "description": "HTTP or operation status code when present"
+        },
+        "properties.statusMessage": {
+          "type": "string",
+          "description": "Status message when present"
+        },
+        "properties.responseBody": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object"
+            }
+          ],
+          "description": "Response body snippet when captured"
+        },
+        "properties.eventCategory": {
+          "type": "string",
+          "description": "Additional event category detail when present"
+        },
+        "properties.entity": {
+          "type": "string",
+          "description": "Entity affected by the operation when present"
+        },
+        "properties.message": {
+          "type": "string",
+          "description": "Human-readable message when present"
+        },
+        "relatedEvents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Related event identifiers when present"
+        },
+        "authorization / authorization.action": {
+          "type": "string",
+          "description": "Authorization action attempted"
+        },
+        "authorization.scope": {
+          "type": "string",
+          "description": "Authorization scope"
+        },
+        "authorization.role": {
+          "type": "string",
+          "description": "Role used for authorization when present"
+        },
+        "authorization.roleDefinitionId": {
+          "type": "string",
+          "description": "Role definition ID when present"
+        },
+        "claims": {
+          "type": "object",
+          "description": "Claims from the caller token when present"
+        },
+        "httpRequest": {
+          "type": "object",
+          "description": "HTTP request details (method clientRequestId url) when present"
+        },
+        "httpRequest.method": {
+          "type": "string",
+          "description": "HTTP method (GET PUT POST DELETE etc.)"
+        },
+        "httpRequest.clientRequestId": {
+          "type": "string",
+          "description": "Client request identifier"
+        },
+        "httpRequest.url": {
+          "type": "string",
+          "description": "Request URL"
+        },
+        "resourceProviderName / resourceProviderName.value": {
+          "type": "string",
+          "description": "Resource provider namespace (e.g. Microsoft.Compute)"
+        },
+        "resourceType / resourceType.value": {
+          "type": "string",
+          "description": "Type of the target resource"
+        },
+        "eventChannels": {
+          "type": "string",
+          "description": "Event channels (Admin Operational etc.) when present"
+        },
+        "eventSource": {
+          "type": "string",
+          "description": "Source of the event when present"
+        },
+        "submissionTimestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Time the event was submitted to the activity log"
+        }
+      },
+      "required": [
+        "eventTimestamp / time",
+        "operationName / operationName.value"
+      ],
+      "additionalProperties": true
+    }
+  }
+}
