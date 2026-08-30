@@ -56,7 +56,7 @@
     "vmMetricsTableEvent": {
       "title": "Azure Storage Table -- vm:metrics",
       "type": "object",
-      "description": "Splunk Add-on for Microsoft Cloud Services Azure Table Storage event, sourcetype mscs:vm:metrics.",
+      "description": "Splunk Add-on for Microsoft Cloud Services Azure Table Storage event, sourcetype mscs:vm:metrics. Field set also verified against the separate Azure Virtual Machine Metrics input, which polls the same mscs:vm:metrics sourcetype.",
       "properties": {
         "CounterName": {
           "type": "string",
@@ -106,6 +106,27 @@
         "RowKey": {
           "type": "string",
           "description": "Row key (often encodes counter and instance)"
+        },
+        "Timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Entity last-updated timestamp (Azure Table system property)."
+        },
+        "AccountName": {
+          "type": "string",
+          "description": "Azure Storage account name holding the WAD metrics tables (add-on metadata)."
+        },
+        "TableName": {
+          "type": "string",
+          "description": "WAD metrics table name (e.g. WADMetricsPT1MPxx) (add-on metadata)."
+        },
+        "odata.etag": {
+          "type": "string",
+          "description": "Entity tag for concurrency control."
+        },
+        "odata.type": {
+          "type": "string",
+          "description": "OData type annotation for the entity."
         }
       },
       "required": [
