@@ -631,67 +631,131 @@
 
 
     /* Selectable page views */
-    .page-navigation {
-      position: relative;
+    .app-shell {
+      width: min(1800px, calc(100% - 24px));
+      margin: 22px auto 18px;
       display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-      margin: 22px 0 18px;
-      padding: 38px 10px 10px;
+      align-items: flex-start;
+      gap: 24px;
+    }
+    .app-sidebar {
+      position: sticky;
+      top: 16px;
+      z-index: 2;
+      flex: 0 0 252px;
+      width: 252px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 36px 10px 14px;
       border: 1px solid rgba(169, 200, 234, .34);
       border-radius: 16px;
-      background: linear-gradient(135deg, #0f2034 0%, #173a5c 58%, #1f4e78 100%);
+      background: linear-gradient(160deg, #0f2034 0%, #173a5c 55%, #1f4e78 100%);
       box-shadow: 0 10px 28px rgba(15, 32, 52, .22);
       overflow: hidden;
     }
-    .page-navigation::before {
+    .app-sidebar::before {
       content: "MAIN MENU";
       position: absolute;
       top: 11px;
-      left: 16px;
+      left: 20px;
       color: rgba(255,255,255,.72);
       font-size: 10px;
       font-weight: 900;
       letter-spacing: .14em;
       text-transform: uppercase;
     }
-    .page-navigation::after {
+    .app-sidebar::after {
       content: "";
       position: absolute;
       inset: 0;
       pointer-events: none;
-      background: radial-gradient(circle at 92% 10%, rgba(112,48,160,.22), transparent 34%);
+      background: radial-gradient(circle at 92% 6%, rgba(112,48,160,.22), transparent 34%);
     }
-    .page-tab {
-      position: relative;
-      z-index: 1;
-      flex: 1 1 170px;
-      min-width: 160px;
+    .app-content { flex: 1 1 auto; min-width: 0; }
+    .side-item { position: relative; z-index: 1; }
+    .side-item + .side-item { margin-top: 2px; }
+    .side-group-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
       border: 1px solid rgba(255,255,255,.16);
       background: rgba(255,255,255,.07);
       color: rgba(255,255,255,.9);
-      padding: 12px 16px;
+      padding: 11px 14px;
       border-radius: 10px;
       font-weight: 800;
-      text-align: center;
+      font-size: 13px;
+      text-align: left;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .16s ease, border-color .16s ease, color .16s ease;
+    }
+    .side-group-trigger:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.34); color: #fff; }
+    .side-group-trigger:focus-visible { outline: 3px solid rgba(169,200,234,.5); outline-offset: 2px; }
+    .side-chev { font-size: 9px; opacity: .7; flex-shrink: 0; transition: transform .15s ease; }
+    .side-item.open > .side-group-trigger { background: rgba(255,255,255,.13); border-color: rgba(255,255,255,.32); color: #fff; }
+    .side-item.open > .side-group-trigger .side-chev { transform: rotate(180deg); opacity: 1; }
+    .side-item.has-active > .side-group-trigger { box-shadow: inset 3px 0 0 #fff; }
+    .side-sub {
+      display: none;
+      flex-direction: column;
+      gap: 1px;
+      padding: 3px 0 5px 10px;
+      margin: 2px 0 0;
+      border-left: 2px solid rgba(255,255,255,.14);
+    }
+    .side-item.open .side-sub { display: flex; }
+    .app-sidebar .page-tab {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: 100%;
+      flex: none;
+      min-width: 0;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.07);
+      color: rgba(255,255,255,.9);
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 13px;
+      text-align: left;
       transition: background .16s ease, border-color .16s ease, transform .16s ease, box-shadow .16s ease;
     }
-    .page-tab:hover {
-      transform: translateY(-1px);
+    .app-sidebar .page-tab:hover {
       border-color: rgba(255,255,255,.34);
       background: rgba(255,255,255,.14);
       color: #fff;
+      transform: none;
     }
-    .page-tab:focus-visible {
+    .app-sidebar .page-tab:focus-visible {
       outline: 3px solid rgba(169,200,234,.5);
       outline-offset: 2px;
     }
-    .page-tab.active {
+    .app-sidebar .page-tab.active {
       border-color: rgba(255,255,255,.72);
       background: #ffffff;
       color: #0f2034;
       box-shadow: 0 6px 18px rgba(0,0,0,.22);
+    }
+    .side-sub .page-tab {
+      border: none;
+      background: transparent;
+      padding: 8px 12px;
+      font-weight: 600;
+      font-size: 12.5px;
+      border-radius: 7px;
+      color: rgba(255,255,255,.74);
+    }
+    .side-sub .page-tab:hover { background: rgba(255,255,255,.09); color: #fff; }
+    .side-sub .page-tab.active {
+      background: rgba(255,255,255,.16);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: none;
     }
     .page-view[hidden] { display: none !important; }
 
@@ -1007,9 +1071,12 @@
       .patterns-hero-actions { justify-content: flex-start; margin-top: 14px; }
       .pattern-table-shell { max-height: none; }
     }
+    @media (max-width: 900px) {
+      .app-shell { flex-direction: column; }
+      .app-sidebar { position: static; width: 100%; flex-basis: auto; }
+    }
     @media (max-width: 620px) {
-      .page-navigation { display: grid; grid-template-columns: 1fr; padding: 38px 8px 8px; }
-      .page-tab { width: 100%; min-width: 0; }
+      .app-sidebar { padding: 34px 8px 10px; }
       .patterns-toolbar { grid-template-columns: 1fr; }
       .patterns-hero { padding: 17px; }
     }
@@ -3508,26 +3575,51 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
     </div>
   </div>
 </header>
-<main class="wrap">
-  <nav class="page-navigation" aria-label="Splunk taxonomy pages">
-    <button id="showInfoPage" class="page-tab active" type="button" role="tab" aria-selected="true" aria-controls="infoPage">Info</button>
-    <button id="showOnboardingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="onboardingPage">Onboarding flow</button>
-    <button id="showTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="taxonomyPage">Onboard Taxonomy</button>
-    <button id="showObjectTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="objectTaxonomyPage">Splunk Taxonomy</button>
-    <button id="showAssessmentsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentsPage">Assessments</button>
-    <button id="showSizingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="sizingCalculatorPage">Sizing calculator</button>
-    <button id="showS3CalcPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="s3CalcPage">S3 cost calculator</button>
-    <button id="showReferencePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="referencePage">Reference</button>
-    <button id="showPromptLibraryPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="promptLibraryPage">Prompt library</button>
-    <button id="showCmeiPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cmeiPage">Framework</button>
-    <button id="showCataloguePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cataloguePage">Data source catalogue</button>
-    <button id="showPatternsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="patternsPage">Logging patterns table</button>
-    <button id="showHealthChecksPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="healthChecksPage">Health checks table</button>
-    <button id="showPortsMatrixPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="portsMatrixPage">Ports matrix</button>
-    <button id="showExternalToolsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="externalToolsPage">Companion tools</button>
-    <button id="showInputCoveragePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="inputCoveragePage">Input coverage</button>
-    <button id="showMetricsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="metricsPage">Metrics</button>
+<main class="app-shell">
+  <nav class="app-sidebar" aria-label="Splunk taxonomy pages">
+    <div class="side-item side-single">
+      <button id="showInfoPage" class="page-tab active" type="button" role="tab" aria-selected="true" aria-controls="infoPage">Info</button>
+    </div>
+    <div class="side-item" data-group="onboarding">
+      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Onboarding</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
+      <div class="side-sub">
+        <button id="showOnboardingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="onboardingPage">Onboarding flow</button>
+        <button id="showTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="taxonomyPage">Onboard Taxonomy</button>
+        <button id="showObjectTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="objectTaxonomyPage">Splunk Taxonomy</button>
+        <button id="showAssessmentsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentsPage">Assessments</button>
+      </div>
+    </div>
+    <div class="side-item" data-group="calculators">
+      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Calculators</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
+      <div class="side-sub">
+        <button id="showSizingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="sizingCalculatorPage">Sizing calculator</button>
+        <button id="showS3CalcPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="s3CalcPage">S3 cost calculator</button>
+      </div>
+    </div>
+    <div class="side-item" data-group="reference">
+      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Reference</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
+      <div class="side-sub">
+        <button id="showReferencePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="referencePage">Reference</button>
+        <button id="showPromptLibraryPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="promptLibraryPage">Prompt library</button>
+        <button id="showCmeiPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cmeiPage">Framework</button>
+        <button id="showCataloguePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cataloguePage">Data source catalogue</button>
+        <button id="showPatternsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="patternsPage">Logging patterns table</button>
+        <button id="showHealthChecksPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="healthChecksPage">Health checks table</button>
+        <button id="showPortsMatrixPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="portsMatrixPage">Ports matrix</button>
+      </div>
+    </div>
+    <div class="side-item" data-group="coverage">
+      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Coverage &amp; Metrics</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
+      <div class="side-sub">
+        <button id="showInputCoveragePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="inputCoveragePage">Input coverage</button>
+        <button id="showMetricsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="metricsPage">Metrics</button>
+      </div>
+    </div>
+    <div class="side-item side-single">
+      <button id="showExternalToolsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="externalToolsPage">Companion tools</button>
+    </div>
   </nav>
+  <div class="app-content">
 
 
   <section id="infoPage" class="page-view info-page" role="tabpanel" aria-labelledby="showInfoPage">
@@ -14292,6 +14384,7 @@ E. Assumptions and unresolved inputs</pre>
     </section>
     </div>
   </section>
+  </div>
 
 </main>
 
@@ -21209,6 +21302,35 @@ const pageViews = {
   inputCoverage: document.getElementById("inputCoveragePage"),
   metrics: document.getElementById("metricsPage")
 };
+
+const SIDEBAR_GROUP_MAP = {
+  onboarding: "onboarding", taxonomy: "onboarding", objectTaxonomy: "onboarding", assessments: "onboarding",
+  sizing: "calculators", s3calc: "calculators",
+  reference: "reference", prompts: "reference", cmei: "reference", catalogue: "reference", patterns: "reference", health: "reference", portsMatrix: "reference",
+  inputCoverage: "coverage", metrics: "coverage"
+};
+function setSidebarGroupOpen(groupKey, open) {
+  const item = document.querySelector('.app-sidebar .side-item[data-group="' + groupKey + '"]');
+  if (!item) return;
+  item.classList.toggle("open", open);
+  const trigger = item.querySelector(".side-group-trigger");
+  if (trigger) trigger.setAttribute("aria-expanded", String(open));
+}
+function saveSidebarOpenGroups() {
+  try {
+    const open = Array.from(document.querySelectorAll('.app-sidebar .side-item.open[data-group]')).map(el => el.dataset.group);
+    localStorage.setItem("latchSidebarOpenGroups", JSON.stringify(open));
+  } catch (e) { /* localStorage unavailable */ }
+}
+function restoreSidebarGroups() {
+  let saved = null;
+  try {
+    const raw = localStorage.getItem("latchSidebarOpenGroups");
+    saved = raw ? JSON.parse(raw) : null;
+  } catch (e) { saved = null; }
+  if (Array.isArray(saved)) saved.forEach(g => setSidebarGroupOpen(g, true));
+}
+
 const patternTableBody = document.getElementById("patternTableBody");
 const patternTableSearch = document.getElementById("patternTableSearch");
 const patternCategoryFilter = document.getElementById("patternCategoryFilter");
@@ -22749,6 +22871,11 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
     tab.setAttribute("aria-selected", String(active));
     tab.tabIndex = active ? 0 : -1;
   });
+  const activeSidebarGroup = SIDEBAR_GROUP_MAP[selected];
+  document.querySelectorAll(".app-sidebar .side-item[data-group]").forEach(item => {
+    item.classList.toggle("has-active", item.dataset.group === activeSidebarGroup);
+  });
+  if (activeSidebarGroup) setSidebarGroupOpen(activeSidebarGroup, true);
   if (selected === "assurance") renderAssurancePage();
   if (selected === "viability") renderViabilityPage();
   if (selected === "catalogue") renderSourceCataloguePage();
@@ -32548,6 +32675,16 @@ initPortsMatrixCellModal();
 Object.entries(pageTabs).forEach(([name, tab]) => {
   if (tab) tab.addEventListener("click", () => setActivePage(name));
 });
+
+document.querySelectorAll(".app-sidebar .side-group-trigger").forEach(trigger => {
+  trigger.addEventListener("click", () => {
+    const item = trigger.closest(".side-item");
+    if (!item) return;
+    setSidebarGroupOpen(item.dataset.group, !item.classList.contains("open"));
+    saveSidebarOpenGroups();
+  });
+});
+restoreSidebarGroups();
 
 const inputCoverageSubtabs = document.querySelectorAll("#inputCoveragePage > .page-subnav:not(.level-3) .page-subtab");
 function setActiveInputCoverageSubpage(subpageName) {
