@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adamliq.github.io/Splunk_Taxonomy-dev/docs/azure_metrics_schema.json",
+  "title": "Azure Metrics (mscs:metrics / mscs:metrics:events) events",
+  "description": "Field schema for the Splunk Add-on for Microsoft Cloud Services Azure Monitor metrics input, covering the standard event-index form and the Splunk metrics-index form (metric_index_flag=yes).",
+  "$defs": {
+    "metricsEvent": {
+      "title": "Azure Metrics -- mscs:metrics / mscs:metrics:events",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services Azure Monitor metrics event, sourcetype mscs:metrics or mscs:metrics:events (event-index format).",
+      "properties": {
+        "metricName": {
+          "type": "string",
+          "description": "Name of the metric (e.g. Percentage CPU Available Memory Bytes)"
+        },
+        "namespace": {
+          "type": "string",
+          "description": "Metric namespace (e.g. Microsoft.Compute/virtualMachines Microsoft.Storage/storageAccounts)"
+        },
+        "resourceId / _ResourceId": {
+          "type": "string",
+          "description": "Full ARM resource ID the metric belongs to"
+        },
+        "average": {
+          "type": "number",
+          "description": "Average value of the metric in the time grain"
+        },
+        "minimum": {
+          "type": "number",
+          "description": "Minimum value of the metric in the time grain"
+        },
+        "maximum": {
+          "type": "number",
+          "description": "Maximum value of the metric in the time grain"
+        },
+        "total": {
+          "type": "number",
+          "description": "Total/sum value of the metric in the time grain"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of samples collected in the time grain"
+        },
+        "timestamp / time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the metric sample"
+        },
+        "timeGrain / interval": {
+          "type": "string",
+          "description": "Aggregation interval (e.g. PT1M PT5M PT1H)"
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unit of the metric (e.g. Percent Bytes Count Seconds)"
+        },
+        "subscriptionId": {
+          "type": "string",
+          "description": "Subscription ID of the resource"
+        },
+        "resourceGroup": {
+          "type": "string",
+          "description": "Resource group name of the resource"
+        },
+        "location / resourceLocation": {
+          "type": "string",
+          "description": "Azure region of the resource"
+        },
+        "resourceName": {
+          "type": "string",
+          "description": "Name of the resource (parsed from resourceId when available)"
+        },
+        "resourceType": {
+          "type": "string",
+          "description": "Type of the resource (parsed from resourceId when available)"
+        },
+        "metric_statistics": {
+          "type": "string",
+          "description": "Requested statistic(s) configured in the input (Average Minimum Maximum Total Count)"
+        },
+        "dimensions{}": {
+          "type": "object",
+          "description": "Dimension name-value pairs for multi-dimensional metrics (resource-specific)"
+        }
+      },
+      "required": [
+        "metricName",
+        "resourceId / _ResourceId"
+      ],
+      "additionalProperties": true
+    },
+    "metricsIndexEvent": {
+      "title": "Azure Metrics -- mscs:metrics (metric_index_flag=yes)",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services Azure Monitor metrics event written to a Splunk metrics index (sourcetype mscs:metrics with metric_index_flag=yes), adding the Splunk metrics-index-format fields (metric_name, _value, _dims) alongside the same resource-context fields as the event-index form.",
+      "properties": {
+        "metricName": {
+          "type": "string",
+          "description": "Name of the metric (e.g. Percentage CPU Available Memory Bytes)"
+        },
+        "namespace": {
+          "type": "string",
+          "description": "Metric namespace (e.g. Microsoft.Compute/virtualMachines Microsoft.Storage/storageAccounts)"
+        },
+        "resourceId / _ResourceId": {
+          "type": "string",
+          "description": "Full ARM resource ID the metric belongs to"
+        },
+        "average": {
+          "type": "number",
+          "description": "Average value of the metric in the time grain"
+        },
+        "minimum": {
+          "type": "number",
+          "description": "Minimum value of the metric in the time grain"
+        },
+        "maximum": {
+          "type": "number",
+          "description": "Maximum value of the metric in the time grain"
+        },
+        "total": {
+          "type": "number",
+          "description": "Total/sum value of the metric in the time grain"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of samples collected in the time grain"
+        },
+        "timestamp / time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the metric sample"
+        },
+        "timeGrain / interval": {
+          "type": "string",
+          "description": "Aggregation interval (e.g. PT1M PT5M PT1H)"
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unit of the metric (e.g. Percent Bytes Count Seconds)"
+        },
+        "subscriptionId": {
+          "type": "string",
+          "description": "Subscription ID of the resource"
+        },
+        "resourceGroup": {
+          "type": "string",
+          "description": "Resource group name of the resource"
+        },
+        "location / resourceLocation": {
+          "type": "string",
+          "description": "Azure region of the resource"
+        },
+        "resourceName": {
+          "type": "string",
+          "description": "Name of the resource (parsed from resourceId when available)"
+        },
+        "resourceType": {
+          "type": "string",
+          "description": "Type of the resource (parsed from resourceId when available)"
+        },
+        "metric_statistics": {
+          "type": "string",
+          "description": "Requested statistic(s) configured in the input (Average Minimum Maximum Total Count)"
+        },
+        "dimensions{}": {
+          "type": "object",
+          "description": "Dimension name-value pairs for multi-dimensional metrics (resource-specific)"
+        },
+        "metric_name": {
+          "type": "string",
+          "description": "Metric name in Splunk metrics index format (when metric_index_flag=yes)"
+        },
+        "_value": {
+          "type": "number",
+          "description": "Metric value in Splunk metrics index format"
+        },
+        "_dims": {
+          "type": "object",
+          "description": "Dimensions in Splunk metrics index format"
+        }
+      },
+      "required": [
+        "metric_name",
+        "_value"
+      ],
+      "additionalProperties": true
+    }
+  }
+}
