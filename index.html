@@ -3577,44 +3577,15 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
 </header>
 <main class="app-shell">
   <nav class="app-sidebar" aria-label="Splunk taxonomy pages">
-    <div class="side-item side-single">
-      <button id="showInfoPage" class="page-tab active" type="button" role="tab" aria-selected="true" aria-controls="infoPage">Info</button>
-    </div>
-    <div class="side-item" data-group="onboarding">
-      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Onboarding</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
-      <div class="side-sub">
-        <button id="showOnboardingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="onboardingPage">Onboarding flow</button>
-        <button id="showTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="taxonomyPage">Onboard Taxonomy</button>
-        <button id="showObjectTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="objectTaxonomyPage">Splunk Taxonomy</button>
-        <button id="showAssessmentsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentsPage">Assessments</button>
-      </div>
-    </div>
     <div class="side-item" data-group="calculators">
       <button type="button" class="side-group-trigger" aria-expanded="false"><span>Calculators</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
       <div class="side-sub">
-        <button id="showSizingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="sizingCalculatorPage">Sizing calculator</button>
         <button id="showS3CalcPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="s3CalcPage">S3 cost calculator</button>
+        <button id="showSizingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="sizingCalculatorPage">Sizing calculator</button>
       </div>
     </div>
-    <div class="side-item" data-group="reference">
-      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Reference</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
-      <div class="side-sub">
-        <button id="showFrameworkOverviewPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="frameworkOverview">Framework overview</button>
-        <button id="showConceptDefinitionsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="conceptDefinitions">Concepts &amp; definitions</button>
-        <button id="showAssessmentMethodsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentMethods">Assessment methodologies</button>
-        <button id="showStandardsReferencesPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="standardsReferences">Standards &amp; references</button>
-        <button id="showConfigFileReferencesPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="configFileReferences">Configuration file reference</button>
-        <button id="showNetworkReferencePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="networkReferenceSection">Network reference</button>
-        <button id="showRolesPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="rolesSection">Roles</button>
-        <button id="showSplunkBinPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="splunkBinSection">Splunk bin</button>
-        <button id="showQuestionsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="questionsSection">Questions</button>
-        <button id="showPromptLibraryPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="promptLibraryPage">Prompt library</button>
-        <button id="showCmeiPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cmeiPage">Framework</button>
-        <button id="showCataloguePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cataloguePage">Data source catalogue</button>
-        <button id="showPatternsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="patternsPage">Logging patterns table</button>
-        <button id="showHealthChecksPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="healthChecksPage">Health checks table</button>
-        <button id="showPortsMatrixPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="portsMatrixPage">Ports matrix</button>
-      </div>
+    <div class="side-item side-single">
+      <button id="showExternalToolsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="externalToolsPage">Companion tools</button>
     </div>
     <div class="side-item" data-group="coverage">
       <button type="button" class="side-group-trigger" aria-expanded="false"><span>Coverage &amp; Metrics</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
@@ -3624,7 +3595,36 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
     </div>
     <div class="side-item side-single">
-      <button id="showExternalToolsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="externalToolsPage">Companion tools</button>
+      <button id="showInfoPage" class="page-tab active" type="button" role="tab" aria-selected="true" aria-controls="infoPage">Info</button>
+    </div>
+    <div class="side-item" data-group="onboarding">
+      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Onboarding</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
+      <div class="side-sub">
+        <button id="showAssessmentsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentsPage">Assessments</button>
+        <button id="showTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="taxonomyPage">Onboard Taxonomy</button>
+        <button id="showOnboardingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="onboardingPage">Onboarding flow</button>
+        <button id="showObjectTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="objectTaxonomyPage">Splunk Taxonomy</button>
+      </div>
+    </div>
+    <div class="side-item" data-group="reference">
+      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Reference</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
+      <div class="side-sub">
+        <button id="showAssessmentMethodsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentMethods">Assessment methodologies</button>
+        <button id="showConceptDefinitionsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="conceptDefinitions">Concepts &amp; definitions</button>
+        <button id="showConfigFileReferencesPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="configFileReferences">Configuration file reference</button>
+        <button id="showCataloguePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cataloguePage">Data source catalogue</button>
+        <button id="showCmeiPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cmeiPage">Framework</button>
+        <button id="showFrameworkOverviewPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="frameworkOverview">Framework overview</button>
+        <button id="showHealthChecksPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="healthChecksPage">Health checks table</button>
+        <button id="showPatternsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="patternsPage">Logging patterns table</button>
+        <button id="showNetworkReferencePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="networkReferenceSection">Network reference</button>
+        <button id="showPortsMatrixPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="portsMatrixPage">Ports matrix</button>
+        <button id="showPromptLibraryPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="promptLibraryPage">Prompt library</button>
+        <button id="showQuestionsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="questionsSection">Questions</button>
+        <button id="showRolesPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="rolesSection">Roles</button>
+        <button id="showSplunkBinPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="splunkBinSection">Splunk bin</button>
+        <button id="showStandardsReferencesPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="standardsReferences">Standards &amp; references</button>
+      </div>
     </div>
   </nav>
   <div class="app-content">
