@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adamliq.github.io/Splunk_Taxonomy-dev/docs/azure_consumption_billing_schema.json",
+  "title": "Azure Consumption / Billing events",
+  "description": "Field schema for the Splunk Add-on for Microsoft Cloud Services consumption and billing input, covering usage/cost line items and reservation purchase recommendations.",
+  "$defs": {
+    "billingConsumptionEvent": {
+      "title": "Azure Consumption -- mscs:consumption:billing",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services consumption/billing event, sourcetype mscs:consumption:billing.",
+      "properties": {
+        "subscriptionId": {
+          "type": "string",
+          "description": "Subscription ID that incurred the charge"
+        },
+        "subscriptionName": {
+          "type": "string",
+          "description": "Display name of the subscription"
+        },
+        "resourceGroup": {
+          "type": "string",
+          "description": "Resource group name of the consumed resource"
+        },
+        "resourceId": {
+          "type": "string",
+          "description": "Full ARM resource ID of the consumed resource"
+        },
+        "resourceName": {
+          "type": "string",
+          "description": "Name of the consumed resource"
+        },
+        "resourceType": {
+          "type": "string",
+          "description": "Type of the consumed resource"
+        },
+        "resourceLocation": {
+          "type": "string",
+          "description": "Azure region of the resource"
+        },
+        "meterId": {
+          "type": "string",
+          "description": "Unique identifier of the billing meter"
+        },
+        "meterName": {
+          "type": "string",
+          "description": "Display name of the meter"
+        },
+        "meterCategory": {
+          "type": "string",
+          "description": "High-level category of the meter (e.g. Virtual Machines Storage)"
+        },
+        "meterSubCategory": {
+          "type": "string",
+          "description": "Sub-category of the meter"
+        },
+        "meterRegion": {
+          "type": "string",
+          "description": "Region associated with the meter if applicable"
+        },
+        "quantity": {
+          "type": "number",
+          "description": "Consumed quantity for the period"
+        },
+        "unitOfMeasure": {
+          "type": "string",
+          "description": "Unit of measure for the quantity (e.g. Hours GB)"
+        },
+        "cost": {
+          "type": "number",
+          "description": "Cost amount for the usage"
+        },
+        "effectivePrice": {
+          "type": "number",
+          "description": "Effective unit price after discounts"
+        },
+        "unitPrice": {
+          "type": "number",
+          "description": "List unit price before discounts"
+        },
+        "billingCurrency": {
+          "type": "string",
+          "description": "Currency code of the billed amount (e.g. USD)"
+        },
+        "chargeType": {
+          "type": "string",
+          "description": "Type of charge (Usage Purchase Reservation etc.)"
+        },
+        "pricingModel": {
+          "type": "string",
+          "description": "Pricing model (OnDemand Reservation Spot etc.)"
+        },
+        "usageStart": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Start of the usage period"
+        },
+        "usageEnd": {
+          "type": "string",
+          "format": "date-time",
+          "description": "End of the usage period"
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Usage date (often derived from usage period)"
+        },
+        "product": {
+          "type": "string",
+          "description": "Product or offer name"
+        },
+        "productOrderId": {
+          "type": "string",
+          "description": "Product order identifier if applicable"
+        },
+        "productOrderName": {
+          "type": "string",
+          "description": "Product order name if applicable"
+        },
+        "serviceInfo1": {
+          "type": "string",
+          "description": "Additional service information field 1"
+        },
+        "serviceInfo2": {
+          "type": "string",
+          "description": "Additional service information field 2"
+        },
+        "publisherType": {
+          "type": "string",
+          "description": "Publisher type (Microsoft Marketplace etc.)"
+        },
+        "publisherName": {
+          "type": "string",
+          "description": "Publisher name"
+        },
+        "reservationId": {
+          "type": "string",
+          "description": "Reservation order ID if the usage is covered by a reservation"
+        },
+        "reservationName": {
+          "type": "string",
+          "description": "Reservation name if applicable"
+        },
+        "frequency": {
+          "type": "string",
+          "description": "Billing frequency if applicable"
+        },
+        "tags{}": {
+          "type": "object",
+          "description": "Resource tags associated with the usage"
+        },
+        "additionalInfo": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Additional provider-specific information"
+        },
+        "billingAccountId": {
+          "type": "string",
+          "description": "Billing account identifier"
+        },
+        "billingAccountName": {
+          "type": "string",
+          "description": "Billing account name"
+        },
+        "billingProfileId": {
+          "type": "string",
+          "description": "Billing profile identifier"
+        },
+        "billingProfileName": {
+          "type": "string",
+          "description": "Billing profile name"
+        },
+        "invoiceSectionId": {
+          "type": "string",
+          "description": "Invoice section identifier"
+        },
+        "invoiceSectionName": {
+          "type": "string",
+          "description": "Invoice section name"
+        }
+      },
+      "required": [
+        "subscriptionId",
+        "resourceType"
+      ],
+      "additionalProperties": true
+    },
+    "reservationRecommendationEvent": {
+      "title": "Azure Consumption -- mscs:consumption:reservation:recommendation",
+      "type": "object",
+      "description": "Splunk Add-on for Microsoft Cloud Services consumption/billing event, sourcetype mscs:consumption:reservation:recommendation.",
+      "properties": {
+        "subscriptionId": {
+          "type": "string",
+          "description": "Subscription ID for the recommendation"
+        },
+        "resourceType": {
+          "type": "string",
+          "description": "Resource type the recommendation applies to"
+        },
+        "sku": {
+          "type": "string",
+          "description": "Recommended SKU"
+        },
+        "location": {
+          "type": "string",
+          "description": "Azure region for the recommendation"
+        },
+        "term": {
+          "type": "string",
+          "description": "Recommended reservation term (e.g. P1Y P3Y)"
+        },
+        "lookBackPeriod": {
+          "type": "string",
+          "description": "Look-back period used for the recommendation"
+        },
+        "recommendedQuantity": {
+          "type": "number",
+          "description": "Recommended number of reservation instances"
+        },
+        "totalCost": {
+          "type": "number",
+          "description": "Estimated total cost without reservation"
+        },
+        "costWithReservedInstances": {
+          "type": "number",
+          "description": "Estimated cost with the recommended reservation"
+        },
+        "potentialSavings": {
+          "type": "number",
+          "description": "Estimated savings from purchasing the reservation"
+        },
+        "scope": {
+          "type": "string",
+          "description": "Reservation scope (Single Shared ManagementGroup etc.)"
+        }
+      },
+      "required": [
+        "subscriptionId",
+        "resourceType",
+        "sku"
+      ],
+      "additionalProperties": true
+    }
+  }
+}
