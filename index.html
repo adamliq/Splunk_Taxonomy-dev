@@ -757,12 +757,6 @@
       color: #fff;
       box-shadow: none;
     }
-    .side-sub .side-ref-jump {
-      font-weight: 500;
-      font-size: 12px;
-      color: rgba(255,255,255,.58);
-    }
-    .side-sub .side-ref-jump:hover { color: #fff; }
     .page-view[hidden] { display: none !important; }
 
     /* Input coverage page: secondary (sub-menu) tab bar within a page */
@@ -3606,15 +3600,15 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <button type="button" class="side-group-trigger" aria-expanded="false"><span>Reference</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
       <div class="side-sub">
         <button id="showReferencePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="referencePage">Reference</button>
-        <button type="button" class="page-tab side-ref-jump" data-ref-section="frameworkOverview">Framework overview</button>
-        <button type="button" class="page-tab side-ref-jump" data-ref-section="conceptDefinitions">Concepts &amp; definitions</button>
-        <button type="button" class="page-tab side-ref-jump" data-ref-section="assessmentMethods">Assessment methodologies</button>
-        <button type="button" class="page-tab side-ref-jump" data-ref-section="standardsReferences">Standards &amp; references</button>
-        <button type="button" class="page-tab side-ref-jump" data-ref-section="configFileReferences">Configuration file reference</button>
-        <button type="button" class="page-tab side-ref-jump" data-ref-section="networkReferenceSection">Network reference</button>
-        <button type="button" class="page-tab side-ref-jump" data-ref-section="rolesSection">Roles</button>
-        <button type="button" class="page-tab side-ref-jump" data-ref-section="splunkBinSection">Splunk bin</button>
-        <button type="button" class="page-tab side-ref-jump" data-ref-section="questionsSection">Questions</button>
+        <button id="showFrameworkOverviewPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="frameworkOverview">Framework overview</button>
+        <button id="showConceptDefinitionsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="conceptDefinitions">Concepts &amp; definitions</button>
+        <button id="showAssessmentMethodsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentMethods">Assessment methodologies</button>
+        <button id="showStandardsReferencesPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="standardsReferences">Standards &amp; references</button>
+        <button id="showConfigFileReferencesPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="configFileReferences">Configuration file reference</button>
+        <button id="showNetworkReferencePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="networkReferenceSection">Network reference</button>
+        <button id="showRolesPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="rolesSection">Roles</button>
+        <button id="showSplunkBinPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="splunkBinSection">Splunk bin</button>
+        <button id="showQuestionsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="questionsSection">Questions</button>
         <button id="showPromptLibraryPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="promptLibraryPage">Prompt library</button>
         <button id="showCmeiPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cmeiPage">Framework</button>
         <button id="showCataloguePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cataloguePage">Data source catalogue</button>
@@ -4054,431 +4048,23 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
     </div>
 
-    <section id="frameworkOverview" class="reference-section">
-      <div class="reference-section-heading"><div><h3>Framework overview</h3><p>The intended path from source identification through operational assurance.</p></div></div>
-      <div class="framework-flow">
-        <article class="framework-step"><b>1</b><strong>Taxonomy</strong><span>Describe the system, ownership, collection design, event structure, use and lifecycle.</span></article>
-        <article class="framework-step"><b>2</b><strong>Viability</strong><span>Decide whether onboarding is feasible, supportable and proportionate.</span></article>
-        <article class="framework-step"><b>3</b><strong>Pattern &amp; topology</strong><span>Select an approved reference pattern and record the actual implemented path.</span></article>
-        <article class="framework-step"><b>4</b><strong>Data quality</strong><span>Assess timestamps, log format, schema, fields, timeliness and consistency.</span></article>
-        <article class="framework-step"><b>5</b><strong>Cyber value</strong><span>Measure novelty, pivots, semantics, coverage and value relative to volume.</span></article>
-        <article class="framework-step"><b>6</b><strong>Assurance</strong><span>Validate health, coverage, ownership, evidence and ongoing operational fitness.</span></article>
-      </div>
-    </section>
+    
 
-    <section id="conceptDefinitions" class="reference-section">
-      <div class="reference-section-heading"><div><h3>Concepts &amp; definitions</h3><p>Authoritative short definitions for terms introduced by the framework.</p></div></div>
-      <div class="concept-toolbar">
-        <input id="conceptSearch" type="search" placeholder="Search concepts, methodologies, standards…" aria-label="Search the whole reference page" />
-        <select id="conceptCategoryFilter" aria-label="Filter concept category"><option value="">All categories</option><option>Collection</option><option>Data quality</option><option>Cyber value</option><option>Governance</option><option>Assurance</option></select>
-      </div>
-      <p class="reference-search-scope">Also searches Assessment methodologies and Standards &amp; references below.</p>
-      <div id="conceptGrid" class="concept-grid"></div>
-      <div id="conceptEmpty" class="reference-empty" hidden>No concepts match the current search.</div>
-    </section>
+    
 
-    <section id="assessmentMethods" class="reference-section">
-      <div class="reference-section-heading"><div><h3>Assessment methodologies</h3><p>Purpose, inputs, outputs and interpretation for each scoring tool.</p></div></div>
-      <div id="assessmentMethodsGrid" class="method-grid">
-        <article class="method-card"><h4>Log Onboarding Viability</h4><p>Determines whether engineering should proceed and how complex the engagement is likely to be.</p><ul class="method-list"><li>Security value</li><li>Technical readiness</li><li>Operational assurance</li><li>Engagement complexity</li></ul><div class="method-actions"><button type="button" data-assessment-page="viability">Open assessment</button></div></article>
-        <article class="method-card"><h4>Timestamp Quality</h4><p>Scores consistency, timezone, precision, completeness, event-time reliability and Splunk parsing complexity.</p><ul class="method-list"><li>Six criteria scored 0–4</li><li>Total score out of 24</li><li>Exceptional to Fail rating</li></ul><div class="method-actions"><button type="button" data-quality-assessment="timestamp">Open calculator</button><button type="button" data-open-reference-detail="timestamp-quality">Open detailed reference</button><button type="button" data-open-prompt-panel="promptTimestampQuality">Open AI prompt</button></div></article>
-        <article class="method-card"><h4>Log Format Quality</h4><p>Measures how consistently and reliably events can be separated, parsed and normalised.</p><ul class="method-list"><li>Structure and delimiters</li><li>Schema and event boundaries</li><li>Encoding and parsing complexity</li></ul><div class="method-actions"><button type="button" data-quality-assessment="format">Open calculator</button><button type="button" data-open-reference-detail="log-format-quality">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLogFormatQuality">Open AI prompt</button></div></article>
-        <article class="method-card"><h4>Investigative Context Density (ICD)</h4><p>Measures the breadth of distinct investigative context types present across individual events and a representative file.</p><ul class="method-list"><li>Distinct context types per event</li><li>Average ICD across the file</li><li>Signal, noise and minimum-threshold compliance</li></ul><div class="method-actions"><button type="button" data-icd-assessment="open">Open calculator</button></div></article>
-        <article class="method-card"><h4>Context Dimension Coverage (CDC)</h4><p>Measures how many of the seven investigative context dimensions are represented in each event and across a representative file.</p><ul class="method-list"><li>When, Who, Where, What, Outcome, Impact and Correlation</li><li>Average dimensions and average CDC for the file</li><li>Minimum-threshold compliance and noise percentage</li></ul><div class="method-actions"><button type="button" data-cdc-assessment="open">Open calculator</button></div></article>
+    
 
-        <article class="method-card"><h4>Investigative Noise Percentage (INP)</h4><p>Measures the proportion of valid events that fail an approved minimum investigative-value threshold.</p><ul class="method-list"><li>Noise and signal event counts</li><li>Noise percentage and signal percentage</li><li>Configurable metric, threshold and comparison rule</li></ul><div class="method-actions"><button type="button" data-inp-assessment="open">Open calculator</button></div></article>
-        <article class="method-card"><h4>Identity Diversity (IDS)</h4><p>Measures the breadth, quality and investigative usefulness of identities represented in a log source without rewarding repeated activity from the same identity.</p><ul class="method-list"><li>Human, privileged, service, machine, application and federated identities</li><li>Identity-type breadth and population spread</li><li>Dominance, anonymity and identity-quality penalties</li><li>Score normalised to 0–100</li></ul><div class="method-actions"><button type="button" data-open-prompt-panel="promptIdentityDiversity">Open AI prompt</button></div></article>
-        <article class="method-card"><h4>Investigation Breadth (IBS)</h4><p>Measures the range of investigative questions, entities, timelines and response paths supported by a log source.</p><ul class="method-list"><li>Identity, asset and activity investigations</li><li>Timeline reconstruction, outcomes and impact analysis</li><li>Correlation and pivot-enabled investigation routes</li><li>Score normalised to 0–100 without rewarding repetition</li></ul><div class="method-actions"><button type="button" data-open-prompt-panel="promptInvestigationBreadth">Open AI prompt</button></div></article>
-        <article class="method-card"><h4>Log Source Cyber Value</h4><p>Measures incremental cyber value and value density after minimum data-quality gates pass.</p><ul class="method-list"><li>Marginal novelty</li><li>Pivot density and breadth</li><li>Semantic value, entity coverage, identity diversity and investigation breadth</li><li><strong>Detection Value</strong>: correlation, alerting, anomaly detection, threat hunting, control validation and triage usefulness</li><li>90-day realised-value review</li></ul><div class="method-actions"><button type="button" data-open-cyber-value>Open calculator</button></div></article>
-        <article class="method-card"><h4>Data Source Assurance</h4><p>Measures whether an implemented source remains complete, healthy, governed and useful.</p><ul class="method-list"><li>Collection health</li><li>Data quality</li><li>CIM and detection coverage</li><li>Ownership and evidence</li></ul><div class="method-actions"><button type="button" data-assessment-page="assurance">Open assessment</button></div></article>
-      </div>
-      <div id="assessmentMethodsEmpty" class="reference-empty" hidden>No assessment methodologies match the current search.</div>
-    </section>
+    
 
-    <section id="standardsReferences" class="reference-section">
-      <div class="reference-section-heading"><div><h3>Standards &amp; references</h3><p>Record the authoritative sources used to define local requirements and scoring.</p></div></div>
-      <div id="standardsReferencesGrid" class="method-grid">
-        <article class="method-card"><h4>Transport Delivery Patterns</h4><p>Comparison reference for the four Transport Delivery Pattern (TAX-03.02.07) children -- positioning, best fit, use cases, strengths, risks, validation focus, and operational characteristics (timeliness, encryption, reliability, resilience, replay, provenance, change management) for each.</p><ul class="method-list"><li>Event-Driven Delivery</li><li>Managed Retrieval or Polling</li><li>Local Buffering and Store-and-Forward</li><li>Direct Point-to-Point Integration</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="transport-delivery-patterns">Open detailed reference</button></div></article><article class="method-card"><h4>Splunk configuration and CIM</h4><p>Use Splunk product documentation, Common Information Model guidance, validated add-on documentation and deployment requirements as implementation references.</p></article>
-        <article class="method-card"><h4>Types of Search Commands</h4><p>The six broad categorisations almost every SPL command falls into -- distributable streaming, centralized streaming, transforming, generating, orchestrating and dataset processing -- and why the distinction determines whether a search runs on the indexers or the search head.</p><ul class="method-list"><li>Streaming vs. non-streaming</li><li>Processing-attribute comparison table</li><li>Worked pipeline example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="search-command-types">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Datetime Format</h4><p>Defines the timestamp representation used by the source event, including the literal layout, date standard, precision, timezone expression and example value.</p><ul class="method-list"><li>Raw timestamp example</li><li>Named standard or vendor format</li><li>Timezone and precision</li><li>Equivalent Splunk <code>strptime</code> pattern</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="datetime-format">Open detailed reference</button><button type="button" data-open-prompt-panel="promptDatetimeStandardProps">Open AI prompt</button></div></article>
-        <article class="method-card"><h4>Datetime Parse</h4><p>Defines how Splunk locates, interprets and assigns event time for a sourcetype using timestamp parsing settings.</p><ul class="method-list"><li><code>TIME_PREFIX</code></li><li><code>TIME_FORMAT</code></li><li><code>MAX_TIMESTAMP_LOOKAHEAD</code></li><li><code>TZ</code></li></ul><div class="method-actions"><button type="button" data-open-reference-detail="datetime-parse">Open detailed reference</button><button type="button" data-open-prompt-panel="promptDatetimeStandardProps">Open AI prompt</button></div></article>
-        <article class="method-card"><h4>Username / Principal Format</h4><p>Catalogues how identity values appear across sources -- SAML NameIDs, cloud IAM identifiers, internet/messaging URIs, Windows/AD and Entra forms, database and directory identifiers, Kerberos principals and social/fediverse handles -- so a username-shaped field can be classified from its value.</p><ul class="method-list"><li>37 formats across 13 categories</li><li>Template shape and detection regex</li><li>Formats sharing an identical regex (ambiguous by value alone)</li><li>Detector precedence order</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="username-format">Open detailed reference</button><button type="button" data-open-prompt-panel="promptUsernameFormat">Open AI prompt</button></div></article>
-<article class="method-card"><h4>Line Break</h4><p>Defines how Splunk separates the incoming data stream into individual events for a sourcetype.</p><ul class="method-list"><li><code>SHOULD_LINEMERGE</code></li><li><code>LINE_BREAKER</code></li><li>Single-line and multiline behaviour</li><li>Boundary validation</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="line-break">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLineBreakProps">Open AI prompt</button></div></article>
-<article class="method-card"><h4>Field Extraction</h4><p>Documents how a field is pulled from raw event data and, critically, at which pipeline stage -- search time or index time -- that extraction happens.</p><ul class="method-list"><li><code>EXTRACT-*</code> / <code>REPORT-*</code> / <code>KV_MODE</code> / <code>DELIMS</code></li><li><code>INDEXED_EXTRACTIONS</code></li><li>Custom indexed fields (<code>WRITE_META</code>)</li><li><code>INGEST_EVAL</code></li></ul><div class="method-actions"><button type="button" data-open-reference-detail="field-extraction">Open detailed reference</button><button type="button" data-open-prompt-panel="promptFieldExtraction">Open AI prompt</button></div></article>
-<article class="method-card"><h4>Field Normalisation</h4><p>Documents how a sourcetype's extracted fields are mapped onto standard names, data types and common data models such as CIM or ECS.</p><ul class="method-list"><li>CIM data model catalogue</li><li><code>FIELDALIAS-*</code>, <code>EVAL-*</code>, <code>LOOKUP-*</code></li><li>CIM compliance workflow</li><li>CIM vs. ECS mapping</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="field-normalisation">Open detailed reference</button><button type="button" data-open-prompt-panel="promptFieldNormalisation">Open AI prompt</button></div></article>
-<article class="method-card"><h4>Retention Policy</h4><p>Documents the Splunk bucket lifecycle and <code>indexes.conf</code> settings that enforce a data source's approved retention period, plus what genuinely secure deletion requires.</p><ul class="method-list"><li>Hot / warm / cold / frozen / thawed bucket lifecycle</li><li><code>maxHotSpanSecs</code>, <code>frozenTimePeriodInSecs</code>, <code>coldToFrozenDir</code></li><li>Deleted vs. archived on freeze</li><li>Secure deletion: bucket aging, <code>delete</code>, overwrite, physical destruction, encryption at rest</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="retention-policy">Open detailed reference</button><button type="button" data-open-prompt-panel="promptRetentionPolicy">Open AI prompt</button></div></article>
-<article class="method-card"><h4>Access Control</h4><p>Documents predefined and custom Splunk roles, the capability model, and how LDAP/SAML authentication maps external identities onto Splunk roles.</p><ul class="method-list"><li>Predefined roles: <code>admin</code>, <code>power</code>, <code>user</code>, <code>can_delete</code></li><li><code>authorize.conf</code>: capabilities, <code>importRoles</code>, <code>srchIndexesAllowed</code></li><li>LDAP / SAML group-to-role mapping</li><li>Mapping drift and review-cadence risk</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="access-control">Open detailed reference</button><button type="button" data-open-prompt-panel="promptAccessControl">Open AI prompt</button></div></article>
-<article class="method-card"><h4>File Monitoring Profile</h4><p>A twelve-branch checklist for the file-level mechanics of a <code>monitor://</code> or <code>batch://</code> input -- identification, lifecycle, access, characteristics, size, parsing, collection behaviour, identity/duplicate handling, metadata, security and assurance.</p><ul class="method-list"><li>File lifecycle, access &amp; locking, filesystem</li><li>CRC / Fishbucket identity &amp; duplicate-ingestion risk</li><li>File size vs. event size, assessed separately</li><li>Mapped against both the Onboard and Splunk Taxonomies</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="file-monitoring-profile">Open detailed reference</button></div></article>
-<article class="method-card"><h4>REST API Collection Profile</h4><p>A twelve-branch checklist for a Splunk collector that polls a REST API -- endpoint identification, authentication, request construction, pagination, polling/checkpointing, rate limiting, response handling, reliability, identity/duplicate handling, metadata, security and assurance.</p><ul class="method-list"><li>OAuth / API key / certificate authentication</li><li>Pagination, rate limiting &amp; checkpoint state</li><li>Companion to the File Monitoring Profile</li><li>Mapped against both the Onboard and Splunk Taxonomies</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="rest-api-collection-profile">Open detailed reference</button></div></article>
-<article class="method-card"><h4>Line Length</h4><p>Measures whether event sizes are safe, consistent and suitable for Splunk ingestion without truncation or accidental merging.</p><ul class="method-list"><li><code>TRUNCATE</code> sizing</li><li>UTF-8 byte length analysis</li><li>Boundary-integrity checks</li><li>Line Length Quality Score</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="line-length">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLineLength">Open AI prompt</button></div></article>
-<article class="method-card"><h4>Log Format Detection & Parsing</h4><p>Defines how Splunk interprets CSV, TSV, JSON, XML, structured, semi-structured and unstructured events after line breaking and timestamp recognition.</p><ul class="method-list"><li>Format detection</li><li>Index-time versus search-time extraction</li><li><code>props.conf</code></li><li>Optional <code>transforms.conf</code></li></ul><div class="method-actions"><button type="button" data-open-reference-detail="log-format-parse">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLogFormatParse">Open AI prompt</button></div></article>
-<article class="method-card"><h4>Log Assessment Framework</h4><p>Reusable line-by-line and event-level procedure for deriving structural conformance from a raw log file using a self-calibrating majority baseline, feeding Timestamp Quality, Log Format Quality and the pre-ingest schema-stability gate.</p><ul class="method-list"><li>Physical line vs logical event</li><li>Per-line dimension extraction</li><li>Majority baseline &amp; conformance scoring, reported by percentage, bytes and event count</li><li>Structural fingerprinting -- count distinct record types</li><li>Common pitfalls checklist</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="log-assessment-framework">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLogAssessmentFramework">Open AI prompt</button></div></article>
-        <article class="method-card"><h4>Exploratory Data Analysis &amp; Field Correlation Playbook</h4><p>A full fourteen-phase, source-agnostic procedure for onboarding and investigating an undocumented source -- parse health, profiling, data quality, temporal rhythm, correlation, outliers, entity discovery, field relationships, CIM readiness, sensitive-data exposure, enrichment validation, and value-space blind correlation for when field names can't be trusted at all.</p><ul class="method-list"><li>Parse health, source profiling &amp; data quality scorecards</li><li>Temporal, correlation &amp; outlier analysis</li><li>Entity discovery, field relationships &amp; CIM readiness</li><li>Sensitive-data discovery, enrichment validation &amp; blind correlation</li><li>Quick reference, onboarding template &amp; detection-readiness checklist</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="eda-playbook">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Security and logging obligations</h4><p>Map applicable organisational policy, ACSC guidance, ISM controls, incident-response requirements and retention obligations to TAX-02 and TAX-05 records.</p></article>
-        <article class="method-card"><h4>Local scoring rubrics</h4><p>Assessment thresholds and weights must carry a rubric version, owner, approval status, calibration date and evidence source. Locally defined scoring should not be presented as an external standard.</p></article>
-      </div>
-      <div id="standardsReferencesEmpty" class="reference-empty" hidden>No standards &amp; references match the current search.</div>
-    </section>
+    
 
-    <section id="configFileReferences" class="reference-section">
-      <div class="reference-section-heading"><div><h3>Configuration file reference</h3><p>Stanzas and settings for individual Splunk .conf files, mapped onto the Splunk Taxonomy objects they configure.</p></div></div>
-      <div class="config-setting-toolbar"><input id="configSettingSearch" type="search" placeholder="Search individual settings across every .conf file (e.g. srchIndexesAllowed, TIME_PREFIX, allowedDomainList)…" aria-label="Search configuration settings" /></div>
-      <div id="configSettingResults" class="config-setting-results" hidden></div>
-      <div id="configFileReferencesGrid" class="method-grid">
-        <article class="method-card"><h4>Alert Actions Configuration</h4><p>The global alert-action defaults <code>alert_actions.conf</code> defines -- email, RSS, script, lookup, summary index, webhook, and custom alert actions -- overridden per saved search via <code>action.&lt;name&gt;.*</code> settings in <code>savedsearches.conf</code>.</p><ul class="method-list"><li><code>[email]</code> SMTP, TLS &amp; PDF rendering settings</li><li><code>allowedDomainList</code> &amp; webhook <code>allowlist.&lt;name&gt;</code> hardening</li><li><code>[script]</code>, <code>[lookup]</code> &amp; <code>[summary_index]</code> actions</li><li>Worked <code>alert_actions.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="alert-actions-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>App Configuration</h4><p>The per-app <code>app.conf</code> stanzas covering identity/launcher metadata, install/upgrade behaviour, custom-conf reload triggers, UI visibility, search head cluster deployment mode, and legacy credential verification.</p><ul class="method-list"><li><code>[install]</code> state, build &amp; upgrade settings</li><li><code>[triggers]</code> conf-level &amp; stanza-level reload</li><li><code>[shclustering]</code> deployer push modes</li><li>Worked <code>app.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="app-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Audit Trail Configuration</h4><p>The <code>[auditTrail]</code> and <code>[auditconfig:/path]</code> stanzas <code>audit.conf</code> uses to route audit events into the index pipeline, choose the audittrail log format, and control which REST-path audit actions are logged, including sampling.</p><ul class="method-list"><li><code>queueing</code> &amp; <code>logging_format</code> (v1/v2/both)</li><li>Per-path <code>enabled</code>/<code>disabled</code> audit action control</li><li><code>sampling.&lt;action&gt;</code> &amp; protected-action enforcement</li><li>Worked <code>audit.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="audit-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Authentication Configuration</h4><p>Every authentication mechanism <code>authentication.conf</code> configures -- native password policy, LDAP, scripted auth, SAML SSO, ProxySSO, Duo/RSA multifactor authentication, OAuth2 token validation, and secret storage.</p><ul class="method-list"><li>LDAP directory &amp; group-mapping settings</li><li>SAML signing, security &amp; role-mapping mechanics</li><li>Duo/RSA MFA &amp; OAuth2 external IdP configuration</li><li>Worked <code>authentication.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="authentication-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Authorization Configuration</h4><p>The role and capability catalog <code>authorize.conf</code> defines -- capability grants, search filtering, search-time/resource quotas, index access control, federated search &amp; KV Store permissions, and deployment-wide token authorization settings.</p><ul class="method-list"><li><code>[role_&lt;roleName&gt;]</code> capability grants &amp; <code>importRoles</code></li><li><code>srchFilter</code>, <code>srchIndexesAllowed/Default/Disallowed</code></li><li><code>srchTimeWin</code>, <code>srchJobsQuota</code> &amp; other resource limits</li><li>Worked <code>authorize.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="authorize-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Custom Search Commands Configuration</h4><p>The <code>[&lt;STANZA_NAME&gt;]</code> stanzas <code>commands.conf</code> uses to register a custom SPL command -- its script, streaming/execution-model characteristics, and chunked-protocol limits.</p><ul class="method-list"><li><code>streaming</code>/<code>generating</code>/<code>retainsevents</code> execution model</li><li><code>chunked</code> protocol &amp; its restricted setting list</li><li><code>required_fields</code> &amp; <code>maxinputs</code>/<code>perf_warn_limit</code></li><li>Worked <code>commands.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="commands-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Data Inputs Configuration</h4><p>The stanzas and settings <code>inputs.conf</code> accepts -- global defaults, file &amp; directory monitoring, network inputs, scripted/HEC inputs, and Windows inputs -- mapped onto the corresponding Splunk Taxonomy objects.</p><ul class="method-list"><li><code>[monitor://]</code> / <code>[batch://]</code> file inputs</li><li><code>[tcp://]</code> / <code>[udp://]</code> network inputs</li><li><code>[script://]</code> and HEC <code>[http://&lt;token&gt;]</code></li><li>Worked <code>inputs.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="inputs-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Data Models Configuration</h4><p>The <code>[&lt;datamodel_name&gt;]</code> stanzas <code>datamodels.conf</code> uses to configure automatic acceleration -- retention/backfill window, scheduling &amp; workload, cross-instance summary sharing -- plus dataset-editor internals and search-time defaults.</p><ul class="method-list"><li><code>acceleration.earliest_time</code>/<code>backfill_time</code> retention</li><li><code>acceleration.cron_schedule</code>, <code>allow_skew</code> &amp; <code>schedule_priority</code></li><li><code>acceleration.source_guid</code> cross-instance summary sharing</li><li>Worked <code>datamodels.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="datamodels-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>DB Connect Connection Types Configuration</h4><p>The JDBC driver template stanzas <code>db_connection_types.conf</code> accepts -- driver class, connection URL formats, and pooling defaults -- that a named Database Connection selects from, rather than restating.</p><ul class="method-list"><li><code>jdbcUrlFormat</code> &amp; <code>serviceClass</code></li><li>HikariCP-based connection pooling settings</li><li><code>deprecated</code> connection-type lifecycle</li><li>Worked <code>db_connection_types.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="db-connection-types-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>DB Connect Database Inputs Configuration</h4><p>The stanzas and settings <code>db_inputs.conf</code> accepts -- scheduling, connection &amp; query, rising-mode checkpointing, and timestamp handling -- for the Splunk DB Connect app-specific input file, distinct from core <code>inputs.conf</code>.</p><ul class="method-list"><li><code>connection</code>, <code>mode</code>, <code>query</code> settings</li><li>Rising-mode checkpoint columns</li><li><code>index_time_mode</code> &amp; timestamp parsing</li><li>Worked <code>db_inputs.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="db-inputs-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>DB Connect Database Outputs Configuration</h4><p>The stanzas and settings <code>db_outputs.conf</code> accepts -- search source, target table &amp; upsert behaviour, and timeouts/retry -- for the Splunk DB Connect app-specific output file, distinct from core <code>outputs.conf</code> forwarding.</p><ul class="method-list"><li><code>search</code>, <code>table_name</code>, <code>using_upsert</code> settings</li><li><code>customized_mappings</code> field-to-column mapping</li><li><code>retry_attempts</code> &amp; <code>retry_delay</code></li><li>Worked <code>db_outputs.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="db-outputs-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>DB Connect Identities Configuration</h4><p>The stanzas and settings <code>identities.conf</code> accepts -- credential storage, CyberArk integration, and HashiCorp Vault integration -- kept separately from Splunk's core <code>passwords.conf</code>.</p><ul class="method-list"><li><code>identity_type</code>: normal / CyberArk / HashiCorp / token</li><li>CyberArk Safe &amp; Central Credential Provider settings</li><li>HashiCorp Vault secrets engine settings</li><li>Worked <code>identities.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="db-identities-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>DB Connect Settings Configuration</h4><p>The instance-wide operational stanzas <code>dbx_settings.conf</code> accepts -- Java runtime, per-component log levels, HEC delivery tuning, and security/synchronization -- generated by DB Connect itself, not meant for direct editing.</p><ul class="method-list"><li><code>[loglevel]</code> per-component logging</li><li><code>[hec]</code> retry &amp; delivery tuning</li><li><code>[security]</code> denylist &amp; <code>[synchronizer]</code></li><li>Worked <code>dbx_settings.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="dbx-settings-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Deployment Client Configuration</h4><p>The client-side counterpart to <code>serverclass.conf</code> -- how <code>deploymentclient.conf</code> points an instance at a Deployment Server and controls polling frequency, content location, and endpoint delivery policy.</p><ul class="method-list"><li><code>repositoryLocation</code> &amp; server-location trust policy</li><li>Phone-home, handshake &amp; resync timing</li><li>SSL/TLS settings with server.conf fallback</li><li>Worked <code>deploymentclient.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="deploymentclient-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Distributed Search Configuration</h4><p>The <code>[distributedSearch]</code>/<code>[replicationSettings]</code> stanzas <code>distsearch.conf</code> uses to configure search peers, distributed-search key pairs, and knowledge bundle replication -- classic, cascading, RFS, or mounted.</p><ul class="method-list"><li><code>servers</code>/<code>disabled_servers</code>/<code>quarantined_servers</code> peer lists</li><li><code>replicationPolicy</code>: classic, cascading, rfs, mounted</li><li><code>replicationAllowlist</code>/<code>Denylist</code> &amp; bundle enforcer lists</li><li>Worked <code>distsearch.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="distsearch-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Event Types Configuration</h4><p>The <code>eventtypes.conf</code> settings for named, search-based event classifications applied at search time -- including the field-substitution template naming pattern and why event types shouldn't reference a report.</p><ul class="method-list"><li><code>search</code> restrictions (no pipe, subsearch, or report reference)</li><li><code>%field%</code> template stanza naming</li><li><code>priority</code> &amp; the fixed <code>color</code> palette</li><li>Worked <code>eventtypes.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="eventtypes-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Federated Search Configuration</h4><p>The <code>[provider://&lt;name&gt;]</code> and <code>[general]</code> stanzas <code>federated.conf</code> uses to register remote federated providers and tune heartbeat monitoring, RBAC, search optimization, and blocked SPL commands for federated search.</p><ul class="method-list"><li><code>mode</code>: standard vs. transparent &amp; knowledge-object sourcing</li><li><code>fedSrchIndexesAllowed</code> index-based provider filtering</li><li><code>[s2s_*_unsupported_command:&lt;cmd&gt;]</code> command blocking</li><li>Worked <code>federated.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="federated-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Fields Configuration</h4><p>The <code>fields.conf</code> settings for multivalue tokenization and index-time vs. raw-text field behaviour, including metadata-scoped wildcard stanzas for bulk-indexing structured-data fields.</p><ul class="method-list"><li><code>TOKENIZER</code> multivalue field extraction</li><li><code>INDEXED</code>/<code>INDEXED_VALUE</code> and the LISPY substitution form</li><li>Metadata-scoped wildcard stanzas (<code>sourcetype::...::data*</code>)</li><li>Worked <code>fields.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="fields-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Forwarder Outputs Configuration</h4><p>The stanzas and settings <code>outputs.conf</code> accepts -- global defaults, named forwarding groups, the servers listed inside a group, and syslog-format output -- mapped onto the four corresponding Splunk Taxonomy objects.</p><ul class="method-list"><li><code>[tcpout]</code> global defaults</li><li><code>[tcpout:&lt;group&gt;]</code> and <code>server=</code></li><li><code>[syslog:&lt;name&gt;]</code> settings</li><li>Worked <code>outputs.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="outputs-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Indexes Configuration</h4><p>The global, per-index, volume, and remote-storage stanzas <code>indexes.conf</code> uses to configure Splunk's indexes -- storage paths, bucket rolling &amp; retention, freezing/archiving, shared volumes, SmartStore, and metric indexes.</p><ul class="method-list"><li><code>homePath</code>/<code>coldPath</code>/<code>thawedPath</code> &amp; bucket lifecycle</li><li><code>[volume:&lt;name&gt;]</code> &amp; remote-storage-enabled indexes</li><li><code>datatype = metric</code> metric index settings</li><li>Worked <code>indexes.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="indexes-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Instance Configuration</h4><p>The single <code>[general]</code>/<code>guid</code> setting <code>instance.cfg</code> holds -- the instance's unique GUID, generated at first startup and explicitly not meant to be hand-edited.</p><ul class="method-list"><li>Auto-generated all-uppercase GUID</li><li><code>server.conf</code>/<code>instance.cfg</code> GUID reconciliation at startup</li><li><code>splunk clone-prep-clear-config</code> for mass-cloned installs</li><li>Worked <code>instance.cfg</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="instance-cfg-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>KV Store Collections Configuration</h4><p>The <code>[&lt;collection-name&gt;]</code> stanzas <code>collections.conf</code> uses to define a KV Store collection's field typing, acceleration indexes, replication, and profiling.</p><ul class="method-list"><li><code>field.&lt;name&gt;</code> typing &amp; <code>enforceTypes</code></li><li><code>accelerated_fields.&lt;name&gt;</code> compound acceleration</li><li><code>replicate</code> &amp; replication dump strategy</li><li>Worked <code>collections.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="collections-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Passwords Configuration</h4><p>The single <code>[credential:&lt;realm&gt;:&lt;username&gt;:]</code> stanza <code>passwords.conf</code> uses to store an encrypted secret -- a file that doesn't even exist until the first credential is stored via the REST endpoint.</p><ul class="method-list"><li>No shipped default file</li><li>Realm-scoped vs. realm-less credentials</li><li>Always-encrypted-on-save behaviour</li><li>Worked <code>passwords.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="passwords-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Props Configuration</h4><p>The central per-sourcetype/source/host processing file <code>props.conf</code> covers -- line breaking, encoding, timestamp extraction, structured data parsing, index-time and search-time field extraction, masking, segmentation, and sourcetype classification learning.</p><ul class="method-list"><li><code>[&lt;spec&gt;]</code> stanza precedence &amp; collision resolution</li><li><code>TRANSFORMS</code>/<code>REPORT</code>/<code>EXTRACT</code> field extraction</li><li><code>FIELDALIAS</code>, <code>EVAL</code>, <code>LOOKUP</code>, <code>SEDCMD</code></li><li>Worked <code>props.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="props-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Saved Searches Configuration</h4><p>Every Report and Alert setting <code>savedsearches.conf</code> accepts -- scheduling, workload management, the five alert-action namespaces, dispatch/durable-search options, auto-summarization, alert suppression, and UI display formatting.</p><ul class="method-list"><li>Scheduling: cron, skew, priority &amp; workload pools</li><li>Email/script/lookup/summary-index/populate-lookup actions</li><li>Durable search &amp; auto-summarization tuning</li><li>Worked <code>savedsearches.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="savedsearches-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Server Class Configuration</h4><p>The three-level <code>[global]</code> &rarr; <code>[serverClass:&lt;name&gt;]</code> &rarr; <code>[serverClass:&lt;name&gt;:app:&lt;appName&gt;]</code> hierarchy <code>serverclass.conf</code> uses to decide which deployment clients get which apps -- and the atomic-override pitfalls that trip up filter changes at a child level.</p><ul class="method-list"><li><code>filterType</code> whitelist/blacklist truth tables</li><li>Atomic override: whitelist/blacklist pairs &amp; <code>machineTypesFilter</code></li><li>Allow/deny list import from a CSV file</li><li>Worked <code>serverclass.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="serverclass-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Sourcetype Classification Models</h4><p>The machine-generated <code>sourcetypes.conf</code> document models Splunk's file classifier uses to auto-recognize new files -- and the only two attributes (<code>_sourcetype</code>, <code>_source</code>) actually meant to be hand-edited.</p><ul class="method-list"><li>Per-file learning-example stanzas</li><li>Which attributes are safe to edit vs. opaque</li><li>Distinct from the technical sourcetype definition (props.conf)</li><li>Worked <code>sourcetypes.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="sourcetypes-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Splunk Web Configuration</h4><p>The <code>web.conf</code> settings behind Splunk Web itself -- HTTPS/TLS, host/origin allow-listing, insecure-toggle hardening, dashboard HTML/PDF sandboxing, CORS, ProxySSO header-based SSO, session timeout, login-page branding, and custom REST endpoint registration.</p><ul class="method-list"><li><code>allowedSplunkWebClientNetlocList</code> host/origin validation</li><li><code>SSOMode</code>/<code>trustedIP</code>/<code>remoteUser</code>/<code>remoteGroups</code></li><li><code>dashboard_html_injection_mode</code> XSS hardening</li><li>Worked <code>web.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="web-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Tags Configuration</h4><p>The two-level <code>[&lt;fieldname&gt;=&lt;value&gt;]</code> stanza and <code>&lt;tag&gt; = enabled&#124;disabled</code> setting <code>tags.conf</code> uses to attach one or more named tags to a specific field/value pair.</p><ul class="method-list"><li>One field/value pair per stanza</li><li>Multiple tags per stanza, one per line</li><li>Enabling vs. explicitly disabling a tag</li><li>Worked <code>tags.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="tags-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Transforms Configuration</h4><p>The multi-purpose stanzas <code>transforms.conf</code> accepts -- index-time and search-time field extraction, host/source/index routing, sensitive-data masking, lookup table definitions, and log-to-metrics conversion -- almost always invoked by a matching <code>props.conf</code> setting.</p><ul class="method-list"><li><code>REGEX</code>/<code>FORMAT</code>, index-time vs. search-time settings</li><li><code>DEST_KEY</code>/<code>SOURCE_KEY</code> and the full KEYS reference</li><li>Lookup table settings: temporal, KV Store, external</li><li>Worked <code>transforms.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="transforms-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>User Preferences Configuration</h4><p>The per-user Splunk Web preference settings <code>user-prefs.conf</code> accepts -- default app, timezone, language, search-bar behavior, and theme -- plus deployment-wide and role-scoped defaults.</p><ul class="method-list"><li><code>default_namespace</code>, <code>tz</code>, <code>lang</code> per-user settings</li><li><code>[general_default]</code> deployment-wide defaults</li><li><code>[role_&lt;name&gt;]</code> role-scoped defaults &amp; precedence</li><li>Worked <code>user-prefs.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="user-prefs-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Web Feature Flag Configuration</h4><p>The <code>[feature:&lt;name&gt;]</code> stanzas <code>web-features.conf</code> uses to toggle Splunk Web UI capabilities -- dashboard CSP/trusted domains, Dashboard Studio internals, React page-migration flags, and app-server hardening.</p><ul class="method-list"><li>Dashboards Trusted Domains List &amp; CSP restriction</li><li><code>enable_&lt;area&gt;_vnext</code> React page-migration flags</li><li><code>appserver_security</code> Mako/CherryPy hardening</li><li>Worked <code>web-features.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="web-features-conf">Open detailed reference</button></div></article>
-        <article class="method-card"><h4>Workflow Actions Configuration</h4><p>The <code>link</code>/<code>search</code> action types and field-value substitution syntax <code>workflow_actions.conf</code> uses to attach clickable event/field actions in search results.</p><ul class="method-list"><li><code>$field$</code> and <code>$@field_name$</code>/<code>$@field_value$</code> substitution</li><li><code>link.uri</code>/<code>link.postargs</code> GET &amp; POST construction</li><li><code>search.search_string</code> follow-up search construction</li><li>Worked <code>workflow_actions.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="workflow-actions-conf">Open detailed reference</button></div></article>
-      </div>
-      <div id="configFileReferencesEmpty" class="reference-empty" hidden>No configuration file references match the current search.</div>
-    </section>
+    
 
-    <section id="networkReferenceSection" class="reference-section">
-  <div class="view-tabs" role="tablist">
-    <button type="button" id="netRefShowPortsView" class="active" role="tab" aria-selected="true" aria-controls="netRefPortsPanel">Ports</button>
-    <button type="button" id="netRefShowFlowsView" role="tab" aria-selected="false" aria-controls="netRefFlowsPanel">Flow Matrix</button>
-  </div>
-  <section id="netRefPortsPanel" class="view-panel active" role="tabpanel" aria-labelledby="netRefShowPortsView">
-    <div class="patterns-hero">
-      <div>
-        <div class="eyebrow">Network reference</div>
-        <h2>Splunk Ports</h2>
-        <p><strong>What is a Default Port?</strong> A port is considered to be default when the software sets it automatically, when the community uses it as a default, and when admins cannot change the port. Essentially, these are all the possible ways to define a default port, even though they are all very different. Three labels are used in the Type column below: <strong>Default</strong> -- the port is set without the user specifying it (e.g. Splunk Web on-prem runs on port 8000 by default -- the user does not choose it, but can change it if they wish). <strong>Convention</strong> -- ports used so often that they feel like default ports; the admin sets the port and can select any other one (e.g. the Splunk forwarding port of 9997 is not a default for Splunk Enterprise, yet almost every environment uses it). <strong>Default -- Immutable</strong> -- a default port the user cannot modify, found mostly in managed services such as Splunk Cloud.</p>
-        <p><strong>What is a Port in Splunk?</strong> In Splunk, ports are communication endpoints. When processes or applications exchange information over a network, they use a port to segment the data. Unless a row below states otherwise, ports refer specifically to the Transmission Control Protocol (TCP) communications standard.</p>
-      </div>
-    </div>
+    
 
-    <div class="patterns-toolbar">
-      <input id="splunkPortsTableSearch" type="search" placeholder="Search all port fields…" aria-label="Search Splunk ports" />
-      <select id="splunkPortsProductFilter" aria-label="Filter by Splunk product">
-        <option value="">All products</option>
-      </select>
-      <select id="splunkPortsTypeFilter" aria-label="Filter by port type">
-        <option value="">All types</option>
-      </select>
-      <div class="button-group">
-        <button id="resetSplunkPortsTable" type="button">Reset</button>
-        <button id="exportSplunkPortsTable" class="primary-button" type="button">Export visible CSV</button>
-      </div>
-    </div>
+    
 
-    <div class="patterns-stats" aria-live="polite">
-      <span class="patterns-stat"><strong id="splunkPortsVisibleCount">45</strong> visible ports</span>
-      <span class="patterns-stat"><strong id="splunkPortsProductCount">4</strong> Splunk products</span>
-    </div>
-
-    <div class="eccs-table-wrap" role="region" aria-label="Scrollable Splunk ports table" tabindex="0">
-      <table class="eccs-matrix">
-        <thead><tr><th scope="col">Port(s)</th><th scope="col">Product</th><th scope="col">Component</th><th scope="col">Type</th><th scope="col">Description</th></tr></thead>
-        <tbody id="splunkPortsTableBody"></tbody>
-      </table>
-    </div>
-    <p class="eccs-note" style="margin-top:14px">Disclaimer: The ports above are current as of May 2024. Most of these ports have been static through the years but may change to support new services and offerings. It is essential to regularly review the Splunk documentation and consult with your organization's Splunk Administrator for the most up-to-date information on network ports and their usage in your environment.</p>
-  </section>
-
-  <section id="netRefFlowsPanel" class="view-panel" role="tabpanel" aria-labelledby="netRefShowFlowsView">
-    <div class="patterns-hero">
-      <div>
-        <div class="eyebrow">Network reference</div>
-        <h2>Network Flow Matrix</h2>
-        <p>A Splunk network source-to-destination matrix suitable as the basis for firewall rules, architecture documentation, or a Splunk network taxonomy -- who initiates a connection to whom, over which protocol and port, and why. Complements the Splunk ports table: ports lists what each component listens on; this matrix lists the actual flows between components.</p>
-        <p><strong>Important:</strong> ports such as 9997, 8088, 8089, 8000 and 9887 are common/default Splunk ports, but most can be changed. Treat this as a reference architecture and validate the configured ports on each Splunk environment.</p>
-      </div>
-    </div>
-
-    <div class="patterns-toolbar">
-      <input id="networkFlowsTableSearch" type="search" placeholder="Search all flow fields…" aria-label="Search network flows" />
-      <select id="networkFlowsSectionFilter" aria-label="Filter by architecture section">
-        <option value="">All sections</option>
-      </select>
-      <select id="networkFlowsProtocolFilter" aria-label="Filter by protocol">
-        <option value="">All protocols</option>
-      </select>
-      <div class="button-group">
-        <button id="resetNetworkFlowsTable" type="button">Reset</button>
-        <button id="exportNetworkFlowsTable" class="primary-button" type="button">Export visible CSV</button>
-      </div>
-    </div>
-
-    <div class="patterns-stats" aria-live="polite">
-      <span class="patterns-stat"><strong id="networkFlowsVisibleCount">91</strong> visible flows</span>
-      <span class="patterns-stat"><strong id="networkFlowsSectionCount">11</strong> architecture sections</span>
-    </div>
-
-    <div class="eccs-table-wrap" role="region" aria-label="Scrollable network flow matrix" tabindex="0">
-      <table class="eccs-matrix">
-        <thead><tr><th scope="col">Section</th><th scope="col">Source</th><th scope="col">Destination</th><th scope="col">Protocol</th><th scope="col">Port</th><th scope="col">Purpose</th></tr></thead>
-        <tbody id="networkFlowsTableBody"></tbody>
-      </table>
-    </div>
-
-    <div class="eccs-note" style="margin-top:14px">
-      <strong>Operational notes</strong>
-      <ul class="method-list">
-        <li>The Indexer cluster peer-to-peer bucket-replication port and the Search Head Cluster artifact-replication port are both selected/configured per environment -- 9887 is a common convention, not a guaranteed default; confirm the configured value before writing a firewall rule.</li>
-        <li>A stateful firewall for Deployment Server normally only needs the deployment client &rarr; Deployment Server connection initiated on TCP 8089; the return traffic does not need its own rule.</li>
-        <li>For Splunk Cloud, use the stack-specific allowlist/endpoints Splunk provides rather than building firewall rules solely from generic port numbers.</li>
-        <li>Splunk Enterprise Security does not require its own network tier -- it runs on the search head / search head cluster; the ES rows above are its external integrations (SOAR, threat intelligence, TAXII, enrichment APIs).</li>
-        <li>Ingest Processor / Edge ingestion is a modern, largely Splunk Cloud-managed architecture whose exact data-plane connections vary considerably by the specific ingestion product in use.</li>
-      </ul>
-    </div>
-
-    <div class="eccs-examples" style="margin-top:14px">
-      <details><summary>Consolidated flow overview (ASCII diagram)</summary><div class="eccs-example-body"><pre class="eccs-event-example">ENDPOINT / SERVER
-     |
-     | TCP/TLS 9997
-     v
-UNIVERSAL FORWARDER
-     |
-     +------------------ TCP/TLS 9997 ------------------+
-     |                                                   |
-     v                                                   v
-HEAVY FORWARDER                                      INDEXER
-     |                                                   ^
-     | TCP/TLS 9997                                      |
-     +----------------------------------------------------+
-UF / HF
- |
- | HTTPS 8089
- v
-DEPLOYMENT SERVER
-
-APPLICATION / API / FUNCTION
- |
- | HTTPS 8088 / 443
- v
-HEC
- |
- v
-INDEXER
-
-SEARCH HEAD
- |
- | HTTPS 8089
- v
-INDEXERS
-
-CLUSTER MANAGER
- |
- | HTTPS 8089
- v
-INDEXER PEERS
-
-INDEXER PEER
- |
- | TCP/TLS replication port (commonly 9887)
- v
-INDEXER PEER
-
-SEARCH HEAD CLUSTER MEMBER
- |
- | 8089 + configured replication port
- v
-SEARCH HEAD CLUSTER MEMBER
-
-USER
- |
- | HTTPS 443
- v
-LOAD BALANCER
- |
- | HTTPS / configured Splunk Web port
- v
-SEARCH HEAD
-
-SPLUNK ES
- |
- +---- HTTPS 443 ----> SOAR
- +---- HTTPS 443 ----> TAXII
- +---- HTTPS 443 ----> Threat Intelligence
- +---- HTTPS 443 ----> Enrichment APIs
-
-SOURCE SYSTEM
- |
- | HTTPS 443
- v
-INGEST PROCESSOR
- |
- +----> SPLUNK CLOUD
- |
- +----> AWS S3</pre></div></details>
-    </div>
-  </section>
-  </section>
-
-    <section id="rolesSection" class="reference-section">
-    <div class="patterns-hero">
-      <div>
-        <div class="eyebrow">Access &amp; Capability reference</div>
-        <h2>Roles &amp; Assigned Capabilities</h2>
-        <p>Every Splunk role and the individual capabilities assigned to it, derived from the uploaded role/capability matrix. Click a role below, or use search and the filters, to see exactly which capabilities a role carries, what each capability lets you do, whether it is flagged as a privileged capability, and where the mapping came from.</p>
-        <p><strong>Note:</strong> the source file also lists three roles with no capabilities assigned in this matrix -- <code>mc_analyst</code>, <code>mc_analyst_reader</code>, <code>mc_soar_automation</code> -- they carry nothing to list in the table below and so do not appear in the Role filter.</p>
-        <p><strong>Platform:</strong> derived from each role's naming convention and the source file's Mission Control Roles tab -- <code>Sc_admin</code> is Splunk Cloud-specific; <code>User</code>/<code>Power</code>/<code>Admin</code> are the base roles (shown as Splunk On-premises, since Sc_admin is the file's distinct Splunk Cloud counterpart to Admin); <code>ess_*</code> and the non-SOAR <code>mc_*</code> Mission Control/incident-review roles are Splunk ES; the <code>mc_soar_*</code> roles are Splunk SOAR.</p>
-      </div>
-    </div>
-
-    <div class="patterns-toolbar" style="grid-template-columns: minmax(220px, 1fr) minmax(170px, 200px) minmax(170px, 200px) minmax(190px, 230px) minmax(140px, 170px) auto;">
-      <input id="rolesTableSearch" type="search" placeholder="Search role, capability or description…" aria-label="Search roles and capabilities" />
-      <select id="rolesRoleFilter" aria-label="Filter by role">
-        <option value="">All roles</option>
-      </select>
-      <select id="rolesPlatformFilter" aria-label="Filter by platform">
-        <option value="">All platforms</option>
-      </select>
-      <select id="rolesCapabilityFilter" aria-label="Filter by capability">
-        <option value="">All capabilities</option>
-      </select>
-      <select id="rolesPrivFilter" aria-label="Filter by privileged capability">
-        <option value="">All</option>
-      </select>
-      <div class="button-group">
-        <button id="resetRolesTable" type="button">Reset</button>
-        <button id="exportRolesTable" class="primary-button" type="button">Export visible CSV</button>
-      </div>
-    </div>
-
-    <div class="patterns-stats" aria-live="polite">
-      <span class="patterns-stat"><strong id="rolesVisibleCount">580</strong> visible assignments</span>
-      <span class="patterns-stat"><strong id="rolesRoleCount">21</strong> roles with capabilities</span>
-    </div>
-
-    <div class="eccs-table-wrap" role="region" aria-label="Scrollable roles and capabilities table" tabindex="0">
-      <table class="eccs-matrix">
-        <thead><tr><th scope="col">Role</th><th scope="col">Platform</th><th scope="col">Capability</th><th scope="col">What it lets you do</th><th scope="col">Priv</th><th scope="col">Source / Notes</th></tr></thead>
-        <tbody id="rolesTableBody"></tbody>
-      </table>
-    </div>
-  </section>
-
-    <section id="splunkBinSection" class="reference-section">
-    <div class="patterns-hero">
-      <div>
-        <div class="eyebrow">Operational reference</div>
-        <h2>Splunk bin CLI Commands</h2>
-        <p>The full <code>splunk</code> command-line verb catalogue, run from the platform's <code>bin/</code> directory.</p>
-        <p><strong>Note:</strong> commands shown with a placeholder in angle brackets (for example <code>&lt;name&gt;</code>) require a real value substituted in; run with <code>-auth &lt;user&gt;:&lt;password&gt;</code> or an active login session as appropriate for the instance.</p>
-      </div>
-    </div>
-
-    <div class="eccs-examples" style="margin-top:16px">
-      <details>
-        <summary>Complete CLI command reference (all verbs &amp; objects)</summary>
-        <div class="eccs-example-body">
-          <p>The full <code>splunk</code> command-line verb catalogue -- every top-level command, the objects it operates on, and worked examples.</p>
-          <div class="eccs-table-wrap" role="region" aria-label="Complete Splunk CLI command reference" tabindex="0"><table class="eccs-matrix" style="min-width:1100px"><thead><tr><th style="width:14%">Command</th><th style="width:28%">Objects</th><th>Examples</th></tr></thead><tbody>
-            <tr><td><code>add</code></td><td>exec, forward-server, index, licenser-pools, licenses, manager, monitor, oneshot, saved-search, search-server, tcp, udp, user</td><td>1. Adds monitor directory and file inputs to source /var/log.<br><code>./splunk add monitor /var/log/</code><br>2. Adds another indexer cluster manager node to the list of instances the search head searches across.<br><code>./splunk add cluster-manager https://127.0.0.1:8089 -secret testsecret -multisite false</code></td></tr>
-            <tr><td><code>anonymize</code></td><td>source</td><td>1. Replaces identifying data, such as usernames and IP addresses, in the file located at /tmp/messages.<br><code>./splunk anonymize file -source /tmp/messages</code><br>2. Anonymizes Mynames.txt using name-terms, a file containing a list of common English personal names.<br><code>./splunk anonymize file -source /tmp/messages -name_terms $SPLUNK_HOME/bin/Mynames.txt</code></td></tr>
-            <tr><td><code>apply</code></td><td>cluster-bundle, shcluster-bundle</td><td>1. Makes validated bundle active on peers.<br><code>./splunk apply cluster-bundle</code><br>2. Skip-validation is an optional argument to skip bundle validation on the indexer cluster manager and peers.<br><code>./splunk apply cluster-bundle --skip-validation</code><br>3. For shcluster-bundle examples, see Deploy a configuration bundle in the Distributed Search manual.</td></tr>
-            <tr><td><code>check-integrity</code></td><td>NONE</td><td>1. Verifies the integrity of an index with the optional parameter verbose.<br><code>./splunk check-integrity -index $SPLUNK_HOME/var/lib/splunk/defaultdb/ [-&lt;verbose&gt;]</code><br>2. Verifies the integrity of a bucket with the optional parameter verbose.<br><code>./splunk check-integrity -bucketPath $SPLUNK_HOME/var/lib/splunk/defaultdb/db/ [-&lt;verbose&gt;]</code></td></tr>
-            <tr><td><code>clean</code></td><td>all, eventdata, globaldata, inputdata, userdata, kvstore</td><td>1. Removes data from Splunk installation. eventdata refers to exported events indexed as raw log files.<br><code>./splunk clean eventdata</code><br>2. globaldata refers to host tags and source type aliases.<br><code>./splunk clean globaldata</code></td></tr>
-            <tr><td><code>cluster-manager-redundancy</code></td><td>NONE</td><td>1. Shows status of all the cluster managers in redundancy mode.<br><code>./splunk cluster-manager-redundancy -show-status</code><br>2. Switches HA mode of a cluster manager from standby to active.<br><code>./splunk cluster-manager-redundancy -switch-mode active</code><br>3. Switches HA mode of a cluster manager from active to standby. Consequently, another, currently standby cluster manager gets switched to active automatically.<br><code>./splunk cluster-manager-redundancy -switch-mode standby</code></td></tr>
-            <tr><td><code>cmd</code></td><td>btprobe, classify, locktest, locktool, pcregextest, searchtest, signtool, toCsv, toSrs, tsidxprobe, walklex</td><td>1. Displays the contents in the $SPLUNK_HOME/bin directory.<br><code>./splunk cmd /bin/ls</code><br>2. Runs the chosen command from the $SPLUNK_HOME/bin directory with the environment variables set. Run <code>splunk envvars</code> to see which environment variables are set.<br><code>./splunk cmd locktest</code></td></tr>
-            <tr><td><code>create</code></td><td>app</td><td>1. Builds myNewApp from a template.<br><code>./splunk create app myNewApp -template sample_app</code></td></tr>
-            <tr><td><code>createssl</code></td><td>NONE</td><td>&mdash;</td></tr>
-            <tr><td><code>diag</code></td><td>NONE</td><td>&mdash;</td></tr>
-            <tr><td><code>disable</code></td><td>app, boot-start, deploy-client, deploy-server, dist-search, index, listen, local-index, maintenance-mode, perfmon, webserver, web-ssl, wmi</td><td>1. Disables the maintenance mode on peers in indexer clustering. Must be invoked on the manager node.<br><code>./splunk disable maintenance-mode</code><br>2. Disables the logs1 collection.<br><code>./splunk disable eventlog logs1</code></td></tr>
-            <tr><td><code>display</code></td><td>app, boot-start, deploy-client, deploy-server, dist-search, jobs, listen, local-index</td><td>1. Displays status information, such as enabled/disabled, for all apps.<br><code>./splunk display app</code><br>2. Displays status information for the unix app.<br><code>./splunk display app unix</code></td></tr>
-            <tr><td><code>edit</code></td><td>app, cluster-config, shcluster-config, exec, index, licenser-localpeer, licenser-groups, monitor, saved-search, search-server, tcp, udp, user</td><td>1. Edits the current clustering configuration.<br><code>./splunk edit cluster-config -mode peer -site site2</code><br>2. Edits monitored directory inputs in /var/log and only reads from the end of this file.<br><code>./splunk edit monitor /var/log -follow-only true</code></td></tr>
-            <tr><td><code>enable</code></td><td>app, boot-start, deploy-client, deploy-server, dist-search, index, listen, local-index, maintenance-mode, perfmon, webserver, web-ssl, wmi</td><td>1. Sets the maintenance mode on peers in indexer clustering. Must be invoked on the manager node.<br><code>./splunk enable maintenance-mode</code><br>2. Enables the col1 collection.<br><code>./splunk enable perfmon col1</code></td></tr>
-            <tr><td><code>export</code></td><td>eventdata, user data</td><td>1. Exports data out of your Splunk server into /tmp/apache_raw_404_logs.<br><code>./splunk export eventdata -index my_apache_data -dir /tmp/apache_raw_404_logs -host localhost -terms "404 html"</code></td></tr>
-            <tr><td><code>fsck</code></td><td>repair, scan, clear-bloomfilter</td><td>&mdash;</td></tr>
-            <tr><td><code>help</code></td><td>NONE</td><td>&mdash;</td></tr>
-            <tr><td><code>import</code></td><td>userdata</td><td>1. Imports user accounts data from directory /tmp/export.dat.<br><code>./splunk import userdata -dir /tmp/export.dat</code></td></tr>
-            <tr><td><code>install</code></td><td>app</td><td>1. Installs the app from foo.tar to the local Splunk server.<br><code>./splunk install app foo.tar</code><br>2. Installs the app from foo.tgz to the local Splunk server.<br><code>./splunk install app foo.tgz</code></td></tr>
-            <tr><td><code>list</code></td><td>cluster-buckets, cluster-config, cluster-generation, cluster-peers, deploy-clients, excess-buckets, exec, forward-server, index, inputstatus, licenser-groups, licenser-localpeer, licenser-messages, licenser-pools, licenser-peers, licenser-stacks, licenses, jobs, manager-info, monitor, peer-info, peer-buckets, perfmon, saved-search, search-server, tcp, udp, user, wmi</td><td>1. Lists all active monitored directory and file inputs. This displays files and directories currently or recently monitored by splunkd for change.<br><code>./splunk list monitor</code><br>2. Lists all licenses across all stacks.<br><code>./splunk list licenses</code></td></tr>
-            <tr><td><code>login</code>, <code>logout</code></td><td>NONE</td><td>&mdash;</td></tr>
-            <tr><td><code>migrate</code></td><td>kvstore-storage-engine</td><td>1. Migrates the KV store to the target storage engine.<br><code>./splunk migrate kvstore-storage-engine --target-engine wiredTiger</code></td></tr>
-            <tr><td><code>offline</code></td><td>NONE</td><td>1. Used to shut down the peer in a way that does not affect existing searches. The manager node rearranges the primary peers for buckets, and fixes up the cluster state in case the enforce-counts flag is set.<br><code>./splunk offline</code><br>2. Because the --enforce-counts flag is used, the cluster is completely fixed up before this peer is taken down.<br><code>./splunk offline --enforce-counts</code></td></tr>
-            <tr><td><code>package</code></td><td>app</td><td>1. Packages the app "stubby" and returns the package location.<br><code>./splunk package app stubby</code><br><em>The package command includes local.meta by default. If your app package already contains local.meta, this fails AppInspect app validation -- use -merge-local-meta or -exclude-local-meta to avoid it.</em><br>2. When packaging the app, merges local.meta to default.meta and packages the resulting default.meta.<br><code>./splunk package app stubby -merge-local-meta true</code><br>3. When packaging the app, excludes local.meta from the app package.<br><code>./splunk package app stubby -exclude-local-meta true</code></td></tr>
-            <tr><td><code>rebalance</code></td><td>cluster-data</td><td>1. Rebalances data for all indexes.<br><code>./splunk rebalance cluster-data -action start</code><br>2. Rebalances data for a single index using the optional -index parameter.<br><code>./splunk rebalance cluster-data -action start -index _internal</code><br>3. Rebalances data using the optional -max_runtime parameter to limit the rebalancing activity to 5 minutes.<br><code>./splunk rebalance cluster-data -action start -max_runtime 5</code></td></tr>
-            <tr><td><code>rebuild</code></td><td>NONE</td><td>&mdash;</td></tr>
-            <tr><td><code>reload</code></td><td>ad, auth, deploy-server, exec, index, listen, monitor, registry, tcp, udp, perfmon, wmi</td><td>1. Reloads your deployment server, in entirety or by server class.<br><code>./splunk reload deploy-server</code><br>2. Reloads my_serverclass.<br><code>./splunk reload deploy-server -class my_serverclass</code><br>3. Reloads a specific index configuration. To reload all indexes, do not include an index name.<br><code>./splunk reload index [index_name]</code></td></tr>
-            <tr><td><code>remove</code></td><td>app, cluster-peers, cluster-manager, excess-buckets, exec, forward-server, index, jobs, licenser-pools, licenses, monitor, saved-search, search-server, tcp, udp, user</td><td>1. Removes the cluster manager node from the list of instances the search head searches across. Uses testsecret as the secret/pass4SymmKey.<br><code>./splunk remove cluster-manager https://127.0.0.1:8089 -secret testsecret</code><br>2. Removes the Unix app.<br><code>./splunk remove app unix</code></td></tr>
-            <tr><td><code>rollback</code></td><td>cluster-bundle</td><td>Rolls back your Splunk Web configuration bundle to your previous version. Run from the manager node:<br><code>./splunk rollback cluster-bundle</code></td></tr>
-            <tr><td><code>rolling-restart</code></td><td>cluster-peers, shcluster-members</td><td>&mdash;</td></tr>
-            <tr><td><code>rtsearch</code></td><td>app, batch, detach, earliest_time, header, id, index_earliest, index_latest, max_time, maxout, output, preview, rt_id, timeout, uri, wrap</td><td>1. Runs a real-time search that does not line-wrap for individual lines.<br><code>./splunk rtsearch 'error' -wrap false</code><br>2. Runs a real-time search. Use rtsearch exactly as you use the traditional search command.<br><code>./splunk rtsearch 'eventtype=webaccess error | top clientip'</code></td></tr>
-            <tr><td><code>search</code></td><td>app, batch, detach, earliest_time, header, id, index_earliest, index_latest, latest_time, max_time, maxout, output, preview, timeout, uri, wrap</td><td>1. Uses the wildcard as the search object. Triggers an asynchronous search and displays the job id and ttl for the search.<br><code>./splunk search '*' -detach true</code><br>2. Uses eventtype=webaccess error as the search object. Does not line wrap for individual lines longer than the terminal width.<br><code>./splunk search 'eventtype=webaccess error' -wrap 0</code></td></tr>
-            <tr><td><code>set</code></td><td>datastore-dir, deploy-poll, default-hostname, default-index, indexing-ready, minfreemb, servername, server-type, splunkd-port, web-port, kvstore-port</td><td>1. Sets the force indexing ready bit.<br><code>./splunk set indexing-ready</code><br>2. Sets bologna:1234 as the deployment server to poll updates from.<br><code>./splunk set deploy-poll bologna:1234</code></td></tr>
-            <tr><td><code>show</code></td><td>config, cluster-bundle-status, datastore-dir, deploy-poll, default-hostname, default-index, jobs, minfreemb, servername, splunkd-port, web-port, kvstore-port, kvstore-status, shcluster-kvmigration-status</td><td>1. Shows current logging levels.<br><code>./splunk show log-level</code><br>2. Shows which deployment server Splunk Enterprise is configured to poll from.<br><code>./splunk show deploy-poll</code></td></tr>
-            <tr><td><code>spool</code></td><td>NONE</td><td>&mdash;</td></tr>
-            <tr><td><code>start-shcluster-migration</code></td><td>kvstore</td><td>1. Migrate the KV store to the target storage engine in a clustered environment.<br><code>./splunk start-shcluster-migration kvstore -storageEngine wiredTiger</code><br>2. Check to see if the KV store is ready to migrate to the target storage engine.<br><code>./splunk start-shcluster-migration kvstore -storageEngine wiredTiger -isDryRun</code></td></tr>
-            <tr><td><code>start</code>, <code>stop</code>, <code>restart</code></td><td>splunkd, splunkweb</td><td>&mdash;</td></tr>
-            <tr><td><code>status</code></td><td>splunkd, splunkweb</td><td>Checks if splunkd is running and shows the PID.</td></tr>
-            <tr><td><code>validate</code></td><td>index, files, cluster-bundle</td><td>1. Validates the main index and verifies the index paths specified in indexes.conf.<br><code>./splunk validate index main</code><br>2. For files examples, see Check the integrity of your Splunk software files.<br>3. For cluster-bundle examples, see Update common peer configurations and apps in the Managing Indexers and Clusters of Indexers manual.</td></tr>
-          </tbody></table></div>
-        </div>
-      </details>
-    </div>
-  </section>
-
-    <section id="questionsSection" class="reference-section">
-    <div class="patterns-hero">
-      <div>
-        <div class="eyebrow">Reference</div>
-        <h2>Questions</h2>
-        <p>Every question-form sentence extracted from <code>logging-reference-architecture.md</code> (the CISA Logging Reference Architecture, converted for AI processing), traceable back to the section it appears under, the taxonomy node it is most relevant to, and the onboarding phase it applies to. Sourced from <code>questions.json</code> in this repository -- an extensible catalogue additional questions can be appended to, regardless of source document.</p>
-      </div>
-    </div>
-
-    <div class="patterns-toolbar">
-      <input id="questionsTableSearch" type="search" placeholder="Search all question fields…" aria-label="Search extracted questions" />
-      <select id="questionsSectionFilter" aria-label="Filter by source section">
-        <option value="">All sections</option>
-      </select>
-      <select id="questionsPhaseFilter" aria-label="Filter by onboarding phase">
-        <option value="">All onboarding phases</option>
-        <option>Log Viability</option>
-        <option>Worthiness &amp; Implementation</option>
-        <option>Cyber Value Gates</option>
-        <option>Log Sustainment</option>
-      </select>
-      <div class="button-group">
-        <button id="resetQuestionsTable" type="button">Reset</button>
-        <button id="exportQuestionsTable" class="primary-button" type="button">Export visible CSV</button>
-      </div>
-    </div>
-
-    <div class="patterns-stats" aria-live="polite">
-      <span class="patterns-stat"><strong id="questionsVisibleCount">0</strong> visible questions</span>
-      <span class="patterns-stat"><strong id="questionsSectionCount">0</strong> source sections</span>
-    </div>
-
-    <div class="eccs-table-wrap" role="region" aria-label="Scrollable extracted-questions table" tabindex="0">
-      <table class="eccs-matrix">
-        <thead><tr><th scope="col" style="width:16%">Section</th><th scope="col" style="width:18%">Subsection</th><th scope="col">Question</th><th scope="col" style="width:16%">Taxonomy</th><th scope="col" style="width:13%">Onboarding Phase</th></tr></thead>
-        <tbody id="questionsTableBody"></tbody>
-      </table>
-    </div>
-    </section>
+    
 
     </div>
 
@@ -8414,6 +8000,424 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
       </section>
     </article>
   </section>
+<section id="frameworkOverview" class="page-view reference-page" role="tabpanel" aria-labelledby="showFrameworkOverviewPage" hidden>
+      <div class="reference-section-heading"><div><h3>Framework overview</h3><p>The intended path from source identification through operational assurance.</p></div></div>
+      <div class="framework-flow">
+        <article class="framework-step"><b>1</b><strong>Taxonomy</strong><span>Describe the system, ownership, collection design, event structure, use and lifecycle.</span></article>
+        <article class="framework-step"><b>2</b><strong>Viability</strong><span>Decide whether onboarding is feasible, supportable and proportionate.</span></article>
+        <article class="framework-step"><b>3</b><strong>Pattern &amp; topology</strong><span>Select an approved reference pattern and record the actual implemented path.</span></article>
+        <article class="framework-step"><b>4</b><strong>Data quality</strong><span>Assess timestamps, log format, schema, fields, timeliness and consistency.</span></article>
+        <article class="framework-step"><b>5</b><strong>Cyber value</strong><span>Measure novelty, pivots, semantics, coverage and value relative to volume.</span></article>
+        <article class="framework-step"><b>6</b><strong>Assurance</strong><span>Validate health, coverage, ownership, evidence and ongoing operational fitness.</span></article>
+      </div>
+    </section>
+<section id="conceptDefinitions" class="page-view reference-page" role="tabpanel" aria-labelledby="showConceptDefinitionsPage" hidden>
+      <div class="reference-section-heading"><div><h3>Concepts &amp; definitions</h3><p>Authoritative short definitions for terms introduced by the framework.</p></div></div>
+      <div class="concept-toolbar">
+        <input id="conceptSearch" type="search" placeholder="Search concepts, methodologies, standards…" aria-label="Search the whole reference page" />
+        <select id="conceptCategoryFilter" aria-label="Filter concept category"><option value="">All categories</option><option>Collection</option><option>Data quality</option><option>Cyber value</option><option>Governance</option><option>Assurance</option></select>
+      </div>
+      <p class="reference-search-scope">Also searches Assessment methodologies and Standards &amp; references below.</p>
+      <div id="conceptGrid" class="concept-grid"></div>
+      <div id="conceptEmpty" class="reference-empty" hidden>No concepts match the current search.</div>
+    </section>
+<section id="assessmentMethods" class="page-view reference-page" role="tabpanel" aria-labelledby="showAssessmentMethodsPage" hidden>
+      <div class="reference-section-heading"><div><h3>Assessment methodologies</h3><p>Purpose, inputs, outputs and interpretation for each scoring tool.</p></div></div>
+      <div id="assessmentMethodsGrid" class="method-grid">
+        <article class="method-card"><h4>Log Onboarding Viability</h4><p>Determines whether engineering should proceed and how complex the engagement is likely to be.</p><ul class="method-list"><li>Security value</li><li>Technical readiness</li><li>Operational assurance</li><li>Engagement complexity</li></ul><div class="method-actions"><button type="button" data-assessment-page="viability">Open assessment</button></div></article>
+        <article class="method-card"><h4>Timestamp Quality</h4><p>Scores consistency, timezone, precision, completeness, event-time reliability and Splunk parsing complexity.</p><ul class="method-list"><li>Six criteria scored 0–4</li><li>Total score out of 24</li><li>Exceptional to Fail rating</li></ul><div class="method-actions"><button type="button" data-quality-assessment="timestamp">Open calculator</button><button type="button" data-open-reference-detail="timestamp-quality">Open detailed reference</button><button type="button" data-open-prompt-panel="promptTimestampQuality">Open AI prompt</button></div></article>
+        <article class="method-card"><h4>Log Format Quality</h4><p>Measures how consistently and reliably events can be separated, parsed and normalised.</p><ul class="method-list"><li>Structure and delimiters</li><li>Schema and event boundaries</li><li>Encoding and parsing complexity</li></ul><div class="method-actions"><button type="button" data-quality-assessment="format">Open calculator</button><button type="button" data-open-reference-detail="log-format-quality">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLogFormatQuality">Open AI prompt</button></div></article>
+        <article class="method-card"><h4>Investigative Context Density (ICD)</h4><p>Measures the breadth of distinct investigative context types present across individual events and a representative file.</p><ul class="method-list"><li>Distinct context types per event</li><li>Average ICD across the file</li><li>Signal, noise and minimum-threshold compliance</li></ul><div class="method-actions"><button type="button" data-icd-assessment="open">Open calculator</button></div></article>
+        <article class="method-card"><h4>Context Dimension Coverage (CDC)</h4><p>Measures how many of the seven investigative context dimensions are represented in each event and across a representative file.</p><ul class="method-list"><li>When, Who, Where, What, Outcome, Impact and Correlation</li><li>Average dimensions and average CDC for the file</li><li>Minimum-threshold compliance and noise percentage</li></ul><div class="method-actions"><button type="button" data-cdc-assessment="open">Open calculator</button></div></article>
+
+        <article class="method-card"><h4>Investigative Noise Percentage (INP)</h4><p>Measures the proportion of valid events that fail an approved minimum investigative-value threshold.</p><ul class="method-list"><li>Noise and signal event counts</li><li>Noise percentage and signal percentage</li><li>Configurable metric, threshold and comparison rule</li></ul><div class="method-actions"><button type="button" data-inp-assessment="open">Open calculator</button></div></article>
+        <article class="method-card"><h4>Identity Diversity (IDS)</h4><p>Measures the breadth, quality and investigative usefulness of identities represented in a log source without rewarding repeated activity from the same identity.</p><ul class="method-list"><li>Human, privileged, service, machine, application and federated identities</li><li>Identity-type breadth and population spread</li><li>Dominance, anonymity and identity-quality penalties</li><li>Score normalised to 0–100</li></ul><div class="method-actions"><button type="button" data-open-prompt-panel="promptIdentityDiversity">Open AI prompt</button></div></article>
+        <article class="method-card"><h4>Investigation Breadth (IBS)</h4><p>Measures the range of investigative questions, entities, timelines and response paths supported by a log source.</p><ul class="method-list"><li>Identity, asset and activity investigations</li><li>Timeline reconstruction, outcomes and impact analysis</li><li>Correlation and pivot-enabled investigation routes</li><li>Score normalised to 0–100 without rewarding repetition</li></ul><div class="method-actions"><button type="button" data-open-prompt-panel="promptInvestigationBreadth">Open AI prompt</button></div></article>
+        <article class="method-card"><h4>Log Source Cyber Value</h4><p>Measures incremental cyber value and value density after minimum data-quality gates pass.</p><ul class="method-list"><li>Marginal novelty</li><li>Pivot density and breadth</li><li>Semantic value, entity coverage, identity diversity and investigation breadth</li><li><strong>Detection Value</strong>: correlation, alerting, anomaly detection, threat hunting, control validation and triage usefulness</li><li>90-day realised-value review</li></ul><div class="method-actions"><button type="button" data-open-cyber-value>Open calculator</button></div></article>
+        <article class="method-card"><h4>Data Source Assurance</h4><p>Measures whether an implemented source remains complete, healthy, governed and useful.</p><ul class="method-list"><li>Collection health</li><li>Data quality</li><li>CIM and detection coverage</li><li>Ownership and evidence</li></ul><div class="method-actions"><button type="button" data-assessment-page="assurance">Open assessment</button></div></article>
+      </div>
+      <div id="assessmentMethodsEmpty" class="reference-empty" hidden>No assessment methodologies match the current search.</div>
+    </section>
+<section id="standardsReferences" class="page-view reference-page" role="tabpanel" aria-labelledby="showStandardsReferencesPage" hidden>
+      <div class="reference-section-heading"><div><h3>Standards &amp; references</h3><p>Record the authoritative sources used to define local requirements and scoring.</p></div></div>
+      <div id="standardsReferencesGrid" class="method-grid">
+        <article class="method-card"><h4>Transport Delivery Patterns</h4><p>Comparison reference for the four Transport Delivery Pattern (TAX-03.02.07) children -- positioning, best fit, use cases, strengths, risks, validation focus, and operational characteristics (timeliness, encryption, reliability, resilience, replay, provenance, change management) for each.</p><ul class="method-list"><li>Event-Driven Delivery</li><li>Managed Retrieval or Polling</li><li>Local Buffering and Store-and-Forward</li><li>Direct Point-to-Point Integration</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="transport-delivery-patterns">Open detailed reference</button></div></article><article class="method-card"><h4>Splunk configuration and CIM</h4><p>Use Splunk product documentation, Common Information Model guidance, validated add-on documentation and deployment requirements as implementation references.</p></article>
+        <article class="method-card"><h4>Types of Search Commands</h4><p>The six broad categorisations almost every SPL command falls into -- distributable streaming, centralized streaming, transforming, generating, orchestrating and dataset processing -- and why the distinction determines whether a search runs on the indexers or the search head.</p><ul class="method-list"><li>Streaming vs. non-streaming</li><li>Processing-attribute comparison table</li><li>Worked pipeline example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="search-command-types">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Datetime Format</h4><p>Defines the timestamp representation used by the source event, including the literal layout, date standard, precision, timezone expression and example value.</p><ul class="method-list"><li>Raw timestamp example</li><li>Named standard or vendor format</li><li>Timezone and precision</li><li>Equivalent Splunk <code>strptime</code> pattern</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="datetime-format">Open detailed reference</button><button type="button" data-open-prompt-panel="promptDatetimeStandardProps">Open AI prompt</button></div></article>
+        <article class="method-card"><h4>Datetime Parse</h4><p>Defines how Splunk locates, interprets and assigns event time for a sourcetype using timestamp parsing settings.</p><ul class="method-list"><li><code>TIME_PREFIX</code></li><li><code>TIME_FORMAT</code></li><li><code>MAX_TIMESTAMP_LOOKAHEAD</code></li><li><code>TZ</code></li></ul><div class="method-actions"><button type="button" data-open-reference-detail="datetime-parse">Open detailed reference</button><button type="button" data-open-prompt-panel="promptDatetimeStandardProps">Open AI prompt</button></div></article>
+        <article class="method-card"><h4>Username / Principal Format</h4><p>Catalogues how identity values appear across sources -- SAML NameIDs, cloud IAM identifiers, internet/messaging URIs, Windows/AD and Entra forms, database and directory identifiers, Kerberos principals and social/fediverse handles -- so a username-shaped field can be classified from its value.</p><ul class="method-list"><li>37 formats across 13 categories</li><li>Template shape and detection regex</li><li>Formats sharing an identical regex (ambiguous by value alone)</li><li>Detector precedence order</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="username-format">Open detailed reference</button><button type="button" data-open-prompt-panel="promptUsernameFormat">Open AI prompt</button></div></article>
+<article class="method-card"><h4>Line Break</h4><p>Defines how Splunk separates the incoming data stream into individual events for a sourcetype.</p><ul class="method-list"><li><code>SHOULD_LINEMERGE</code></li><li><code>LINE_BREAKER</code></li><li>Single-line and multiline behaviour</li><li>Boundary validation</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="line-break">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLineBreakProps">Open AI prompt</button></div></article>
+<article class="method-card"><h4>Field Extraction</h4><p>Documents how a field is pulled from raw event data and, critically, at which pipeline stage -- search time or index time -- that extraction happens.</p><ul class="method-list"><li><code>EXTRACT-*</code> / <code>REPORT-*</code> / <code>KV_MODE</code> / <code>DELIMS</code></li><li><code>INDEXED_EXTRACTIONS</code></li><li>Custom indexed fields (<code>WRITE_META</code>)</li><li><code>INGEST_EVAL</code></li></ul><div class="method-actions"><button type="button" data-open-reference-detail="field-extraction">Open detailed reference</button><button type="button" data-open-prompt-panel="promptFieldExtraction">Open AI prompt</button></div></article>
+<article class="method-card"><h4>Field Normalisation</h4><p>Documents how a sourcetype's extracted fields are mapped onto standard names, data types and common data models such as CIM or ECS.</p><ul class="method-list"><li>CIM data model catalogue</li><li><code>FIELDALIAS-*</code>, <code>EVAL-*</code>, <code>LOOKUP-*</code></li><li>CIM compliance workflow</li><li>CIM vs. ECS mapping</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="field-normalisation">Open detailed reference</button><button type="button" data-open-prompt-panel="promptFieldNormalisation">Open AI prompt</button></div></article>
+<article class="method-card"><h4>Retention Policy</h4><p>Documents the Splunk bucket lifecycle and <code>indexes.conf</code> settings that enforce a data source's approved retention period, plus what genuinely secure deletion requires.</p><ul class="method-list"><li>Hot / warm / cold / frozen / thawed bucket lifecycle</li><li><code>maxHotSpanSecs</code>, <code>frozenTimePeriodInSecs</code>, <code>coldToFrozenDir</code></li><li>Deleted vs. archived on freeze</li><li>Secure deletion: bucket aging, <code>delete</code>, overwrite, physical destruction, encryption at rest</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="retention-policy">Open detailed reference</button><button type="button" data-open-prompt-panel="promptRetentionPolicy">Open AI prompt</button></div></article>
+<article class="method-card"><h4>Access Control</h4><p>Documents predefined and custom Splunk roles, the capability model, and how LDAP/SAML authentication maps external identities onto Splunk roles.</p><ul class="method-list"><li>Predefined roles: <code>admin</code>, <code>power</code>, <code>user</code>, <code>can_delete</code></li><li><code>authorize.conf</code>: capabilities, <code>importRoles</code>, <code>srchIndexesAllowed</code></li><li>LDAP / SAML group-to-role mapping</li><li>Mapping drift and review-cadence risk</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="access-control">Open detailed reference</button><button type="button" data-open-prompt-panel="promptAccessControl">Open AI prompt</button></div></article>
+<article class="method-card"><h4>File Monitoring Profile</h4><p>A twelve-branch checklist for the file-level mechanics of a <code>monitor://</code> or <code>batch://</code> input -- identification, lifecycle, access, characteristics, size, parsing, collection behaviour, identity/duplicate handling, metadata, security and assurance.</p><ul class="method-list"><li>File lifecycle, access &amp; locking, filesystem</li><li>CRC / Fishbucket identity &amp; duplicate-ingestion risk</li><li>File size vs. event size, assessed separately</li><li>Mapped against both the Onboard and Splunk Taxonomies</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="file-monitoring-profile">Open detailed reference</button></div></article>
+<article class="method-card"><h4>REST API Collection Profile</h4><p>A twelve-branch checklist for a Splunk collector that polls a REST API -- endpoint identification, authentication, request construction, pagination, polling/checkpointing, rate limiting, response handling, reliability, identity/duplicate handling, metadata, security and assurance.</p><ul class="method-list"><li>OAuth / API key / certificate authentication</li><li>Pagination, rate limiting &amp; checkpoint state</li><li>Companion to the File Monitoring Profile</li><li>Mapped against both the Onboard and Splunk Taxonomies</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="rest-api-collection-profile">Open detailed reference</button></div></article>
+<article class="method-card"><h4>Line Length</h4><p>Measures whether event sizes are safe, consistent and suitable for Splunk ingestion without truncation or accidental merging.</p><ul class="method-list"><li><code>TRUNCATE</code> sizing</li><li>UTF-8 byte length analysis</li><li>Boundary-integrity checks</li><li>Line Length Quality Score</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="line-length">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLineLength">Open AI prompt</button></div></article>
+<article class="method-card"><h4>Log Format Detection & Parsing</h4><p>Defines how Splunk interprets CSV, TSV, JSON, XML, structured, semi-structured and unstructured events after line breaking and timestamp recognition.</p><ul class="method-list"><li>Format detection</li><li>Index-time versus search-time extraction</li><li><code>props.conf</code></li><li>Optional <code>transforms.conf</code></li></ul><div class="method-actions"><button type="button" data-open-reference-detail="log-format-parse">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLogFormatParse">Open AI prompt</button></div></article>
+<article class="method-card"><h4>Log Assessment Framework</h4><p>Reusable line-by-line and event-level procedure for deriving structural conformance from a raw log file using a self-calibrating majority baseline, feeding Timestamp Quality, Log Format Quality and the pre-ingest schema-stability gate.</p><ul class="method-list"><li>Physical line vs logical event</li><li>Per-line dimension extraction</li><li>Majority baseline &amp; conformance scoring, reported by percentage, bytes and event count</li><li>Structural fingerprinting -- count distinct record types</li><li>Common pitfalls checklist</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="log-assessment-framework">Open detailed reference</button><button type="button" data-open-prompt-panel="promptLogAssessmentFramework">Open AI prompt</button></div></article>
+        <article class="method-card"><h4>Exploratory Data Analysis &amp; Field Correlation Playbook</h4><p>A full fourteen-phase, source-agnostic procedure for onboarding and investigating an undocumented source -- parse health, profiling, data quality, temporal rhythm, correlation, outliers, entity discovery, field relationships, CIM readiness, sensitive-data exposure, enrichment validation, and value-space blind correlation for when field names can't be trusted at all.</p><ul class="method-list"><li>Parse health, source profiling &amp; data quality scorecards</li><li>Temporal, correlation &amp; outlier analysis</li><li>Entity discovery, field relationships &amp; CIM readiness</li><li>Sensitive-data discovery, enrichment validation &amp; blind correlation</li><li>Quick reference, onboarding template &amp; detection-readiness checklist</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="eda-playbook">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Security and logging obligations</h4><p>Map applicable organisational policy, ACSC guidance, ISM controls, incident-response requirements and retention obligations to TAX-02 and TAX-05 records.</p></article>
+        <article class="method-card"><h4>Local scoring rubrics</h4><p>Assessment thresholds and weights must carry a rubric version, owner, approval status, calibration date and evidence source. Locally defined scoring should not be presented as an external standard.</p></article>
+      </div>
+      <div id="standardsReferencesEmpty" class="reference-empty" hidden>No standards &amp; references match the current search.</div>
+    </section>
+<section id="configFileReferences" class="page-view reference-page" role="tabpanel" aria-labelledby="showConfigFileReferencesPage" hidden>
+      <div class="reference-section-heading"><div><h3>Configuration file reference</h3><p>Stanzas and settings for individual Splunk .conf files, mapped onto the Splunk Taxonomy objects they configure.</p></div></div>
+      <div class="config-setting-toolbar"><input id="configSettingSearch" type="search" placeholder="Search individual settings across every .conf file (e.g. srchIndexesAllowed, TIME_PREFIX, allowedDomainList)…" aria-label="Search configuration settings" /></div>
+      <div id="configSettingResults" class="config-setting-results" hidden></div>
+      <div id="configFileReferencesGrid" class="method-grid">
+        <article class="method-card"><h4>Alert Actions Configuration</h4><p>The global alert-action defaults <code>alert_actions.conf</code> defines -- email, RSS, script, lookup, summary index, webhook, and custom alert actions -- overridden per saved search via <code>action.&lt;name&gt;.*</code> settings in <code>savedsearches.conf</code>.</p><ul class="method-list"><li><code>[email]</code> SMTP, TLS &amp; PDF rendering settings</li><li><code>allowedDomainList</code> &amp; webhook <code>allowlist.&lt;name&gt;</code> hardening</li><li><code>[script]</code>, <code>[lookup]</code> &amp; <code>[summary_index]</code> actions</li><li>Worked <code>alert_actions.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="alert-actions-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>App Configuration</h4><p>The per-app <code>app.conf</code> stanzas covering identity/launcher metadata, install/upgrade behaviour, custom-conf reload triggers, UI visibility, search head cluster deployment mode, and legacy credential verification.</p><ul class="method-list"><li><code>[install]</code> state, build &amp; upgrade settings</li><li><code>[triggers]</code> conf-level &amp; stanza-level reload</li><li><code>[shclustering]</code> deployer push modes</li><li>Worked <code>app.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="app-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Audit Trail Configuration</h4><p>The <code>[auditTrail]</code> and <code>[auditconfig:/path]</code> stanzas <code>audit.conf</code> uses to route audit events into the index pipeline, choose the audittrail log format, and control which REST-path audit actions are logged, including sampling.</p><ul class="method-list"><li><code>queueing</code> &amp; <code>logging_format</code> (v1/v2/both)</li><li>Per-path <code>enabled</code>/<code>disabled</code> audit action control</li><li><code>sampling.&lt;action&gt;</code> &amp; protected-action enforcement</li><li>Worked <code>audit.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="audit-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Authentication Configuration</h4><p>Every authentication mechanism <code>authentication.conf</code> configures -- native password policy, LDAP, scripted auth, SAML SSO, ProxySSO, Duo/RSA multifactor authentication, OAuth2 token validation, and secret storage.</p><ul class="method-list"><li>LDAP directory &amp; group-mapping settings</li><li>SAML signing, security &amp; role-mapping mechanics</li><li>Duo/RSA MFA &amp; OAuth2 external IdP configuration</li><li>Worked <code>authentication.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="authentication-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Authorization Configuration</h4><p>The role and capability catalog <code>authorize.conf</code> defines -- capability grants, search filtering, search-time/resource quotas, index access control, federated search &amp; KV Store permissions, and deployment-wide token authorization settings.</p><ul class="method-list"><li><code>[role_&lt;roleName&gt;]</code> capability grants &amp; <code>importRoles</code></li><li><code>srchFilter</code>, <code>srchIndexesAllowed/Default/Disallowed</code></li><li><code>srchTimeWin</code>, <code>srchJobsQuota</code> &amp; other resource limits</li><li>Worked <code>authorize.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="authorize-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Custom Search Commands Configuration</h4><p>The <code>[&lt;STANZA_NAME&gt;]</code> stanzas <code>commands.conf</code> uses to register a custom SPL command -- its script, streaming/execution-model characteristics, and chunked-protocol limits.</p><ul class="method-list"><li><code>streaming</code>/<code>generating</code>/<code>retainsevents</code> execution model</li><li><code>chunked</code> protocol &amp; its restricted setting list</li><li><code>required_fields</code> &amp; <code>maxinputs</code>/<code>perf_warn_limit</code></li><li>Worked <code>commands.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="commands-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Data Inputs Configuration</h4><p>The stanzas and settings <code>inputs.conf</code> accepts -- global defaults, file &amp; directory monitoring, network inputs, scripted/HEC inputs, and Windows inputs -- mapped onto the corresponding Splunk Taxonomy objects.</p><ul class="method-list"><li><code>[monitor://]</code> / <code>[batch://]</code> file inputs</li><li><code>[tcp://]</code> / <code>[udp://]</code> network inputs</li><li><code>[script://]</code> and HEC <code>[http://&lt;token&gt;]</code></li><li>Worked <code>inputs.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="inputs-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Data Models Configuration</h4><p>The <code>[&lt;datamodel_name&gt;]</code> stanzas <code>datamodels.conf</code> uses to configure automatic acceleration -- retention/backfill window, scheduling &amp; workload, cross-instance summary sharing -- plus dataset-editor internals and search-time defaults.</p><ul class="method-list"><li><code>acceleration.earliest_time</code>/<code>backfill_time</code> retention</li><li><code>acceleration.cron_schedule</code>, <code>allow_skew</code> &amp; <code>schedule_priority</code></li><li><code>acceleration.source_guid</code> cross-instance summary sharing</li><li>Worked <code>datamodels.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="datamodels-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>DB Connect Connection Types Configuration</h4><p>The JDBC driver template stanzas <code>db_connection_types.conf</code> accepts -- driver class, connection URL formats, and pooling defaults -- that a named Database Connection selects from, rather than restating.</p><ul class="method-list"><li><code>jdbcUrlFormat</code> &amp; <code>serviceClass</code></li><li>HikariCP-based connection pooling settings</li><li><code>deprecated</code> connection-type lifecycle</li><li>Worked <code>db_connection_types.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="db-connection-types-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>DB Connect Database Inputs Configuration</h4><p>The stanzas and settings <code>db_inputs.conf</code> accepts -- scheduling, connection &amp; query, rising-mode checkpointing, and timestamp handling -- for the Splunk DB Connect app-specific input file, distinct from core <code>inputs.conf</code>.</p><ul class="method-list"><li><code>connection</code>, <code>mode</code>, <code>query</code> settings</li><li>Rising-mode checkpoint columns</li><li><code>index_time_mode</code> &amp; timestamp parsing</li><li>Worked <code>db_inputs.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="db-inputs-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>DB Connect Database Outputs Configuration</h4><p>The stanzas and settings <code>db_outputs.conf</code> accepts -- search source, target table &amp; upsert behaviour, and timeouts/retry -- for the Splunk DB Connect app-specific output file, distinct from core <code>outputs.conf</code> forwarding.</p><ul class="method-list"><li><code>search</code>, <code>table_name</code>, <code>using_upsert</code> settings</li><li><code>customized_mappings</code> field-to-column mapping</li><li><code>retry_attempts</code> &amp; <code>retry_delay</code></li><li>Worked <code>db_outputs.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="db-outputs-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>DB Connect Identities Configuration</h4><p>The stanzas and settings <code>identities.conf</code> accepts -- credential storage, CyberArk integration, and HashiCorp Vault integration -- kept separately from Splunk's core <code>passwords.conf</code>.</p><ul class="method-list"><li><code>identity_type</code>: normal / CyberArk / HashiCorp / token</li><li>CyberArk Safe &amp; Central Credential Provider settings</li><li>HashiCorp Vault secrets engine settings</li><li>Worked <code>identities.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="db-identities-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>DB Connect Settings Configuration</h4><p>The instance-wide operational stanzas <code>dbx_settings.conf</code> accepts -- Java runtime, per-component log levels, HEC delivery tuning, and security/synchronization -- generated by DB Connect itself, not meant for direct editing.</p><ul class="method-list"><li><code>[loglevel]</code> per-component logging</li><li><code>[hec]</code> retry &amp; delivery tuning</li><li><code>[security]</code> denylist &amp; <code>[synchronizer]</code></li><li>Worked <code>dbx_settings.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="dbx-settings-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Deployment Client Configuration</h4><p>The client-side counterpart to <code>serverclass.conf</code> -- how <code>deploymentclient.conf</code> points an instance at a Deployment Server and controls polling frequency, content location, and endpoint delivery policy.</p><ul class="method-list"><li><code>repositoryLocation</code> &amp; server-location trust policy</li><li>Phone-home, handshake &amp; resync timing</li><li>SSL/TLS settings with server.conf fallback</li><li>Worked <code>deploymentclient.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="deploymentclient-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Distributed Search Configuration</h4><p>The <code>[distributedSearch]</code>/<code>[replicationSettings]</code> stanzas <code>distsearch.conf</code> uses to configure search peers, distributed-search key pairs, and knowledge bundle replication -- classic, cascading, RFS, or mounted.</p><ul class="method-list"><li><code>servers</code>/<code>disabled_servers</code>/<code>quarantined_servers</code> peer lists</li><li><code>replicationPolicy</code>: classic, cascading, rfs, mounted</li><li><code>replicationAllowlist</code>/<code>Denylist</code> &amp; bundle enforcer lists</li><li>Worked <code>distsearch.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="distsearch-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Event Types Configuration</h4><p>The <code>eventtypes.conf</code> settings for named, search-based event classifications applied at search time -- including the field-substitution template naming pattern and why event types shouldn't reference a report.</p><ul class="method-list"><li><code>search</code> restrictions (no pipe, subsearch, or report reference)</li><li><code>%field%</code> template stanza naming</li><li><code>priority</code> &amp; the fixed <code>color</code> palette</li><li>Worked <code>eventtypes.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="eventtypes-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Federated Search Configuration</h4><p>The <code>[provider://&lt;name&gt;]</code> and <code>[general]</code> stanzas <code>federated.conf</code> uses to register remote federated providers and tune heartbeat monitoring, RBAC, search optimization, and blocked SPL commands for federated search.</p><ul class="method-list"><li><code>mode</code>: standard vs. transparent &amp; knowledge-object sourcing</li><li><code>fedSrchIndexesAllowed</code> index-based provider filtering</li><li><code>[s2s_*_unsupported_command:&lt;cmd&gt;]</code> command blocking</li><li>Worked <code>federated.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="federated-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Fields Configuration</h4><p>The <code>fields.conf</code> settings for multivalue tokenization and index-time vs. raw-text field behaviour, including metadata-scoped wildcard stanzas for bulk-indexing structured-data fields.</p><ul class="method-list"><li><code>TOKENIZER</code> multivalue field extraction</li><li><code>INDEXED</code>/<code>INDEXED_VALUE</code> and the LISPY substitution form</li><li>Metadata-scoped wildcard stanzas (<code>sourcetype::...::data*</code>)</li><li>Worked <code>fields.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="fields-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Forwarder Outputs Configuration</h4><p>The stanzas and settings <code>outputs.conf</code> accepts -- global defaults, named forwarding groups, the servers listed inside a group, and syslog-format output -- mapped onto the four corresponding Splunk Taxonomy objects.</p><ul class="method-list"><li><code>[tcpout]</code> global defaults</li><li><code>[tcpout:&lt;group&gt;]</code> and <code>server=</code></li><li><code>[syslog:&lt;name&gt;]</code> settings</li><li>Worked <code>outputs.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="outputs-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Indexes Configuration</h4><p>The global, per-index, volume, and remote-storage stanzas <code>indexes.conf</code> uses to configure Splunk's indexes -- storage paths, bucket rolling &amp; retention, freezing/archiving, shared volumes, SmartStore, and metric indexes.</p><ul class="method-list"><li><code>homePath</code>/<code>coldPath</code>/<code>thawedPath</code> &amp; bucket lifecycle</li><li><code>[volume:&lt;name&gt;]</code> &amp; remote-storage-enabled indexes</li><li><code>datatype = metric</code> metric index settings</li><li>Worked <code>indexes.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="indexes-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Instance Configuration</h4><p>The single <code>[general]</code>/<code>guid</code> setting <code>instance.cfg</code> holds -- the instance's unique GUID, generated at first startup and explicitly not meant to be hand-edited.</p><ul class="method-list"><li>Auto-generated all-uppercase GUID</li><li><code>server.conf</code>/<code>instance.cfg</code> GUID reconciliation at startup</li><li><code>splunk clone-prep-clear-config</code> for mass-cloned installs</li><li>Worked <code>instance.cfg</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="instance-cfg-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>KV Store Collections Configuration</h4><p>The <code>[&lt;collection-name&gt;]</code> stanzas <code>collections.conf</code> uses to define a KV Store collection's field typing, acceleration indexes, replication, and profiling.</p><ul class="method-list"><li><code>field.&lt;name&gt;</code> typing &amp; <code>enforceTypes</code></li><li><code>accelerated_fields.&lt;name&gt;</code> compound acceleration</li><li><code>replicate</code> &amp; replication dump strategy</li><li>Worked <code>collections.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="collections-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Passwords Configuration</h4><p>The single <code>[credential:&lt;realm&gt;:&lt;username&gt;:]</code> stanza <code>passwords.conf</code> uses to store an encrypted secret -- a file that doesn't even exist until the first credential is stored via the REST endpoint.</p><ul class="method-list"><li>No shipped default file</li><li>Realm-scoped vs. realm-less credentials</li><li>Always-encrypted-on-save behaviour</li><li>Worked <code>passwords.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="passwords-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Props Configuration</h4><p>The central per-sourcetype/source/host processing file <code>props.conf</code> covers -- line breaking, encoding, timestamp extraction, structured data parsing, index-time and search-time field extraction, masking, segmentation, and sourcetype classification learning.</p><ul class="method-list"><li><code>[&lt;spec&gt;]</code> stanza precedence &amp; collision resolution</li><li><code>TRANSFORMS</code>/<code>REPORT</code>/<code>EXTRACT</code> field extraction</li><li><code>FIELDALIAS</code>, <code>EVAL</code>, <code>LOOKUP</code>, <code>SEDCMD</code></li><li>Worked <code>props.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="props-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Saved Searches Configuration</h4><p>Every Report and Alert setting <code>savedsearches.conf</code> accepts -- scheduling, workload management, the five alert-action namespaces, dispatch/durable-search options, auto-summarization, alert suppression, and UI display formatting.</p><ul class="method-list"><li>Scheduling: cron, skew, priority &amp; workload pools</li><li>Email/script/lookup/summary-index/populate-lookup actions</li><li>Durable search &amp; auto-summarization tuning</li><li>Worked <code>savedsearches.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="savedsearches-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Server Class Configuration</h4><p>The three-level <code>[global]</code> &rarr; <code>[serverClass:&lt;name&gt;]</code> &rarr; <code>[serverClass:&lt;name&gt;:app:&lt;appName&gt;]</code> hierarchy <code>serverclass.conf</code> uses to decide which deployment clients get which apps -- and the atomic-override pitfalls that trip up filter changes at a child level.</p><ul class="method-list"><li><code>filterType</code> whitelist/blacklist truth tables</li><li>Atomic override: whitelist/blacklist pairs &amp; <code>machineTypesFilter</code></li><li>Allow/deny list import from a CSV file</li><li>Worked <code>serverclass.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="serverclass-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Sourcetype Classification Models</h4><p>The machine-generated <code>sourcetypes.conf</code> document models Splunk's file classifier uses to auto-recognize new files -- and the only two attributes (<code>_sourcetype</code>, <code>_source</code>) actually meant to be hand-edited.</p><ul class="method-list"><li>Per-file learning-example stanzas</li><li>Which attributes are safe to edit vs. opaque</li><li>Distinct from the technical sourcetype definition (props.conf)</li><li>Worked <code>sourcetypes.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="sourcetypes-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Splunk Web Configuration</h4><p>The <code>web.conf</code> settings behind Splunk Web itself -- HTTPS/TLS, host/origin allow-listing, insecure-toggle hardening, dashboard HTML/PDF sandboxing, CORS, ProxySSO header-based SSO, session timeout, login-page branding, and custom REST endpoint registration.</p><ul class="method-list"><li><code>allowedSplunkWebClientNetlocList</code> host/origin validation</li><li><code>SSOMode</code>/<code>trustedIP</code>/<code>remoteUser</code>/<code>remoteGroups</code></li><li><code>dashboard_html_injection_mode</code> XSS hardening</li><li>Worked <code>web.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="web-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Tags Configuration</h4><p>The two-level <code>[&lt;fieldname&gt;=&lt;value&gt;]</code> stanza and <code>&lt;tag&gt; = enabled&#124;disabled</code> setting <code>tags.conf</code> uses to attach one or more named tags to a specific field/value pair.</p><ul class="method-list"><li>One field/value pair per stanza</li><li>Multiple tags per stanza, one per line</li><li>Enabling vs. explicitly disabling a tag</li><li>Worked <code>tags.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="tags-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Transforms Configuration</h4><p>The multi-purpose stanzas <code>transforms.conf</code> accepts -- index-time and search-time field extraction, host/source/index routing, sensitive-data masking, lookup table definitions, and log-to-metrics conversion -- almost always invoked by a matching <code>props.conf</code> setting.</p><ul class="method-list"><li><code>REGEX</code>/<code>FORMAT</code>, index-time vs. search-time settings</li><li><code>DEST_KEY</code>/<code>SOURCE_KEY</code> and the full KEYS reference</li><li>Lookup table settings: temporal, KV Store, external</li><li>Worked <code>transforms.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="transforms-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>User Preferences Configuration</h4><p>The per-user Splunk Web preference settings <code>user-prefs.conf</code> accepts -- default app, timezone, language, search-bar behavior, and theme -- plus deployment-wide and role-scoped defaults.</p><ul class="method-list"><li><code>default_namespace</code>, <code>tz</code>, <code>lang</code> per-user settings</li><li><code>[general_default]</code> deployment-wide defaults</li><li><code>[role_&lt;name&gt;]</code> role-scoped defaults &amp; precedence</li><li>Worked <code>user-prefs.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="user-prefs-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Web Feature Flag Configuration</h4><p>The <code>[feature:&lt;name&gt;]</code> stanzas <code>web-features.conf</code> uses to toggle Splunk Web UI capabilities -- dashboard CSP/trusted domains, Dashboard Studio internals, React page-migration flags, and app-server hardening.</p><ul class="method-list"><li>Dashboards Trusted Domains List &amp; CSP restriction</li><li><code>enable_&lt;area&gt;_vnext</code> React page-migration flags</li><li><code>appserver_security</code> Mako/CherryPy hardening</li><li>Worked <code>web-features.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="web-features-conf">Open detailed reference</button></div></article>
+        <article class="method-card"><h4>Workflow Actions Configuration</h4><p>The <code>link</code>/<code>search</code> action types and field-value substitution syntax <code>workflow_actions.conf</code> uses to attach clickable event/field actions in search results.</p><ul class="method-list"><li><code>$field$</code> and <code>$@field_name$</code>/<code>$@field_value$</code> substitution</li><li><code>link.uri</code>/<code>link.postargs</code> GET &amp; POST construction</li><li><code>search.search_string</code> follow-up search construction</li><li>Worked <code>workflow_actions.conf</code> example</li></ul><div class="method-actions"><button type="button" data-open-reference-detail="workflow-actions-conf">Open detailed reference</button></div></article>
+      </div>
+      <div id="configFileReferencesEmpty" class="reference-empty" hidden>No configuration file references match the current search.</div>
+    </section>
+<section id="networkReferenceSection" class="page-view reference-page" role="tabpanel" aria-labelledby="showNetworkReferencePage" hidden>
+  <div class="view-tabs" role="tablist">
+    <button type="button" id="netRefShowPortsView" class="active" role="tab" aria-selected="true" aria-controls="netRefPortsPanel">Ports</button>
+    <button type="button" id="netRefShowFlowsView" role="tab" aria-selected="false" aria-controls="netRefFlowsPanel">Flow Matrix</button>
+  </div>
+  <section id="netRefPortsPanel" class="view-panel active" role="tabpanel" aria-labelledby="netRefShowPortsView">
+    <div class="patterns-hero">
+      <div>
+        <div class="eyebrow">Network reference</div>
+        <h2>Splunk Ports</h2>
+        <p><strong>What is a Default Port?</strong> A port is considered to be default when the software sets it automatically, when the community uses it as a default, and when admins cannot change the port. Essentially, these are all the possible ways to define a default port, even though they are all very different. Three labels are used in the Type column below: <strong>Default</strong> -- the port is set without the user specifying it (e.g. Splunk Web on-prem runs on port 8000 by default -- the user does not choose it, but can change it if they wish). <strong>Convention</strong> -- ports used so often that they feel like default ports; the admin sets the port and can select any other one (e.g. the Splunk forwarding port of 9997 is not a default for Splunk Enterprise, yet almost every environment uses it). <strong>Default -- Immutable</strong> -- a default port the user cannot modify, found mostly in managed services such as Splunk Cloud.</p>
+        <p><strong>What is a Port in Splunk?</strong> In Splunk, ports are communication endpoints. When processes or applications exchange information over a network, they use a port to segment the data. Unless a row below states otherwise, ports refer specifically to the Transmission Control Protocol (TCP) communications standard.</p>
+      </div>
+    </div>
+
+    <div class="patterns-toolbar">
+      <input id="splunkPortsTableSearch" type="search" placeholder="Search all port fields…" aria-label="Search Splunk ports" />
+      <select id="splunkPortsProductFilter" aria-label="Filter by Splunk product">
+        <option value="">All products</option>
+      </select>
+      <select id="splunkPortsTypeFilter" aria-label="Filter by port type">
+        <option value="">All types</option>
+      </select>
+      <div class="button-group">
+        <button id="resetSplunkPortsTable" type="button">Reset</button>
+        <button id="exportSplunkPortsTable" class="primary-button" type="button">Export visible CSV</button>
+      </div>
+    </div>
+
+    <div class="patterns-stats" aria-live="polite">
+      <span class="patterns-stat"><strong id="splunkPortsVisibleCount">45</strong> visible ports</span>
+      <span class="patterns-stat"><strong id="splunkPortsProductCount">4</strong> Splunk products</span>
+    </div>
+
+    <div class="eccs-table-wrap" role="region" aria-label="Scrollable Splunk ports table" tabindex="0">
+      <table class="eccs-matrix">
+        <thead><tr><th scope="col">Port(s)</th><th scope="col">Product</th><th scope="col">Component</th><th scope="col">Type</th><th scope="col">Description</th></tr></thead>
+        <tbody id="splunkPortsTableBody"></tbody>
+      </table>
+    </div>
+    <p class="eccs-note" style="margin-top:14px">Disclaimer: The ports above are current as of May 2024. Most of these ports have been static through the years but may change to support new services and offerings. It is essential to regularly review the Splunk documentation and consult with your organization's Splunk Administrator for the most up-to-date information on network ports and their usage in your environment.</p>
+  </section>
+
+  <section id="netRefFlowsPanel" class="view-panel" role="tabpanel" aria-labelledby="netRefShowFlowsView">
+    <div class="patterns-hero">
+      <div>
+        <div class="eyebrow">Network reference</div>
+        <h2>Network Flow Matrix</h2>
+        <p>A Splunk network source-to-destination matrix suitable as the basis for firewall rules, architecture documentation, or a Splunk network taxonomy -- who initiates a connection to whom, over which protocol and port, and why. Complements the Splunk ports table: ports lists what each component listens on; this matrix lists the actual flows between components.</p>
+        <p><strong>Important:</strong> ports such as 9997, 8088, 8089, 8000 and 9887 are common/default Splunk ports, but most can be changed. Treat this as a reference architecture and validate the configured ports on each Splunk environment.</p>
+      </div>
+    </div>
+
+    <div class="patterns-toolbar">
+      <input id="networkFlowsTableSearch" type="search" placeholder="Search all flow fields…" aria-label="Search network flows" />
+      <select id="networkFlowsSectionFilter" aria-label="Filter by architecture section">
+        <option value="">All sections</option>
+      </select>
+      <select id="networkFlowsProtocolFilter" aria-label="Filter by protocol">
+        <option value="">All protocols</option>
+      </select>
+      <div class="button-group">
+        <button id="resetNetworkFlowsTable" type="button">Reset</button>
+        <button id="exportNetworkFlowsTable" class="primary-button" type="button">Export visible CSV</button>
+      </div>
+    </div>
+
+    <div class="patterns-stats" aria-live="polite">
+      <span class="patterns-stat"><strong id="networkFlowsVisibleCount">91</strong> visible flows</span>
+      <span class="patterns-stat"><strong id="networkFlowsSectionCount">11</strong> architecture sections</span>
+    </div>
+
+    <div class="eccs-table-wrap" role="region" aria-label="Scrollable network flow matrix" tabindex="0">
+      <table class="eccs-matrix">
+        <thead><tr><th scope="col">Section</th><th scope="col">Source</th><th scope="col">Destination</th><th scope="col">Protocol</th><th scope="col">Port</th><th scope="col">Purpose</th></tr></thead>
+        <tbody id="networkFlowsTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="eccs-note" style="margin-top:14px">
+      <strong>Operational notes</strong>
+      <ul class="method-list">
+        <li>The Indexer cluster peer-to-peer bucket-replication port and the Search Head Cluster artifact-replication port are both selected/configured per environment -- 9887 is a common convention, not a guaranteed default; confirm the configured value before writing a firewall rule.</li>
+        <li>A stateful firewall for Deployment Server normally only needs the deployment client &rarr; Deployment Server connection initiated on TCP 8089; the return traffic does not need its own rule.</li>
+        <li>For Splunk Cloud, use the stack-specific allowlist/endpoints Splunk provides rather than building firewall rules solely from generic port numbers.</li>
+        <li>Splunk Enterprise Security does not require its own network tier -- it runs on the search head / search head cluster; the ES rows above are its external integrations (SOAR, threat intelligence, TAXII, enrichment APIs).</li>
+        <li>Ingest Processor / Edge ingestion is a modern, largely Splunk Cloud-managed architecture whose exact data-plane connections vary considerably by the specific ingestion product in use.</li>
+      </ul>
+    </div>
+
+    <div class="eccs-examples" style="margin-top:14px">
+      <details><summary>Consolidated flow overview (ASCII diagram)</summary><div class="eccs-example-body"><pre class="eccs-event-example">ENDPOINT / SERVER
+     |
+     | TCP/TLS 9997
+     v
+UNIVERSAL FORWARDER
+     |
+     +------------------ TCP/TLS 9997 ------------------+
+     |                                                   |
+     v                                                   v
+HEAVY FORWARDER                                      INDEXER
+     |                                                   ^
+     | TCP/TLS 9997                                      |
+     +----------------------------------------------------+
+UF / HF
+ |
+ | HTTPS 8089
+ v
+DEPLOYMENT SERVER
+
+APPLICATION / API / FUNCTION
+ |
+ | HTTPS 8088 / 443
+ v
+HEC
+ |
+ v
+INDEXER
+
+SEARCH HEAD
+ |
+ | HTTPS 8089
+ v
+INDEXERS
+
+CLUSTER MANAGER
+ |
+ | HTTPS 8089
+ v
+INDEXER PEERS
+
+INDEXER PEER
+ |
+ | TCP/TLS replication port (commonly 9887)
+ v
+INDEXER PEER
+
+SEARCH HEAD CLUSTER MEMBER
+ |
+ | 8089 + configured replication port
+ v
+SEARCH HEAD CLUSTER MEMBER
+
+USER
+ |
+ | HTTPS 443
+ v
+LOAD BALANCER
+ |
+ | HTTPS / configured Splunk Web port
+ v
+SEARCH HEAD
+
+SPLUNK ES
+ |
+ +---- HTTPS 443 ----> SOAR
+ +---- HTTPS 443 ----> TAXII
+ +---- HTTPS 443 ----> Threat Intelligence
+ +---- HTTPS 443 ----> Enrichment APIs
+
+SOURCE SYSTEM
+ |
+ | HTTPS 443
+ v
+INGEST PROCESSOR
+ |
+ +----> SPLUNK CLOUD
+ |
+ +----> AWS S3</pre></div></details>
+    </div>
+  </section>
+  </section>
+<section id="rolesSection" class="page-view reference-page" role="tabpanel" aria-labelledby="showRolesPage" hidden>
+    <div class="patterns-hero">
+      <div>
+        <div class="eyebrow">Access &amp; Capability reference</div>
+        <h2>Roles &amp; Assigned Capabilities</h2>
+        <p>Every Splunk role and the individual capabilities assigned to it, derived from the uploaded role/capability matrix. Click a role below, or use search and the filters, to see exactly which capabilities a role carries, what each capability lets you do, whether it is flagged as a privileged capability, and where the mapping came from.</p>
+        <p><strong>Note:</strong> the source file also lists three roles with no capabilities assigned in this matrix -- <code>mc_analyst</code>, <code>mc_analyst_reader</code>, <code>mc_soar_automation</code> -- they carry nothing to list in the table below and so do not appear in the Role filter.</p>
+        <p><strong>Platform:</strong> derived from each role's naming convention and the source file's Mission Control Roles tab -- <code>Sc_admin</code> is Splunk Cloud-specific; <code>User</code>/<code>Power</code>/<code>Admin</code> are the base roles (shown as Splunk On-premises, since Sc_admin is the file's distinct Splunk Cloud counterpart to Admin); <code>ess_*</code> and the non-SOAR <code>mc_*</code> Mission Control/incident-review roles are Splunk ES; the <code>mc_soar_*</code> roles are Splunk SOAR.</p>
+      </div>
+    </div>
+
+    <div class="patterns-toolbar" style="grid-template-columns: minmax(220px, 1fr) minmax(170px, 200px) minmax(170px, 200px) minmax(190px, 230px) minmax(140px, 170px) auto;">
+      <input id="rolesTableSearch" type="search" placeholder="Search role, capability or description…" aria-label="Search roles and capabilities" />
+      <select id="rolesRoleFilter" aria-label="Filter by role">
+        <option value="">All roles</option>
+      </select>
+      <select id="rolesPlatformFilter" aria-label="Filter by platform">
+        <option value="">All platforms</option>
+      </select>
+      <select id="rolesCapabilityFilter" aria-label="Filter by capability">
+        <option value="">All capabilities</option>
+      </select>
+      <select id="rolesPrivFilter" aria-label="Filter by privileged capability">
+        <option value="">All</option>
+      </select>
+      <div class="button-group">
+        <button id="resetRolesTable" type="button">Reset</button>
+        <button id="exportRolesTable" class="primary-button" type="button">Export visible CSV</button>
+      </div>
+    </div>
+
+    <div class="patterns-stats" aria-live="polite">
+      <span class="patterns-stat"><strong id="rolesVisibleCount">580</strong> visible assignments</span>
+      <span class="patterns-stat"><strong id="rolesRoleCount">21</strong> roles with capabilities</span>
+    </div>
+
+    <div class="eccs-table-wrap" role="region" aria-label="Scrollable roles and capabilities table" tabindex="0">
+      <table class="eccs-matrix">
+        <thead><tr><th scope="col">Role</th><th scope="col">Platform</th><th scope="col">Capability</th><th scope="col">What it lets you do</th><th scope="col">Priv</th><th scope="col">Source / Notes</th></tr></thead>
+        <tbody id="rolesTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+<section id="splunkBinSection" class="page-view reference-page" role="tabpanel" aria-labelledby="showSplunkBinPage" hidden>
+    <div class="patterns-hero">
+      <div>
+        <div class="eyebrow">Operational reference</div>
+        <h2>Splunk bin CLI Commands</h2>
+        <p>The full <code>splunk</code> command-line verb catalogue, run from the platform's <code>bin/</code> directory.</p>
+        <p><strong>Note:</strong> commands shown with a placeholder in angle brackets (for example <code>&lt;name&gt;</code>) require a real value substituted in; run with <code>-auth &lt;user&gt;:&lt;password&gt;</code> or an active login session as appropriate for the instance.</p>
+      </div>
+    </div>
+
+    <div class="eccs-examples" style="margin-top:16px">
+      <details>
+        <summary>Complete CLI command reference (all verbs &amp; objects)</summary>
+        <div class="eccs-example-body">
+          <p>The full <code>splunk</code> command-line verb catalogue -- every top-level command, the objects it operates on, and worked examples.</p>
+          <div class="eccs-table-wrap" role="region" aria-label="Complete Splunk CLI command reference" tabindex="0"><table class="eccs-matrix" style="min-width:1100px"><thead><tr><th style="width:14%">Command</th><th style="width:28%">Objects</th><th>Examples</th></tr></thead><tbody>
+            <tr><td><code>add</code></td><td>exec, forward-server, index, licenser-pools, licenses, manager, monitor, oneshot, saved-search, search-server, tcp, udp, user</td><td>1. Adds monitor directory and file inputs to source /var/log.<br><code>./splunk add monitor /var/log/</code><br>2. Adds another indexer cluster manager node to the list of instances the search head searches across.<br><code>./splunk add cluster-manager https://127.0.0.1:8089 -secret testsecret -multisite false</code></td></tr>
+            <tr><td><code>anonymize</code></td><td>source</td><td>1. Replaces identifying data, such as usernames and IP addresses, in the file located at /tmp/messages.<br><code>./splunk anonymize file -source /tmp/messages</code><br>2. Anonymizes Mynames.txt using name-terms, a file containing a list of common English personal names.<br><code>./splunk anonymize file -source /tmp/messages -name_terms $SPLUNK_HOME/bin/Mynames.txt</code></td></tr>
+            <tr><td><code>apply</code></td><td>cluster-bundle, shcluster-bundle</td><td>1. Makes validated bundle active on peers.<br><code>./splunk apply cluster-bundle</code><br>2. Skip-validation is an optional argument to skip bundle validation on the indexer cluster manager and peers.<br><code>./splunk apply cluster-bundle --skip-validation</code><br>3. For shcluster-bundle examples, see Deploy a configuration bundle in the Distributed Search manual.</td></tr>
+            <tr><td><code>check-integrity</code></td><td>NONE</td><td>1. Verifies the integrity of an index with the optional parameter verbose.<br><code>./splunk check-integrity -index $SPLUNK_HOME/var/lib/splunk/defaultdb/ [-&lt;verbose&gt;]</code><br>2. Verifies the integrity of a bucket with the optional parameter verbose.<br><code>./splunk check-integrity -bucketPath $SPLUNK_HOME/var/lib/splunk/defaultdb/db/ [-&lt;verbose&gt;]</code></td></tr>
+            <tr><td><code>clean</code></td><td>all, eventdata, globaldata, inputdata, userdata, kvstore</td><td>1. Removes data from Splunk installation. eventdata refers to exported events indexed as raw log files.<br><code>./splunk clean eventdata</code><br>2. globaldata refers to host tags and source type aliases.<br><code>./splunk clean globaldata</code></td></tr>
+            <tr><td><code>cluster-manager-redundancy</code></td><td>NONE</td><td>1. Shows status of all the cluster managers in redundancy mode.<br><code>./splunk cluster-manager-redundancy -show-status</code><br>2. Switches HA mode of a cluster manager from standby to active.<br><code>./splunk cluster-manager-redundancy -switch-mode active</code><br>3. Switches HA mode of a cluster manager from active to standby. Consequently, another, currently standby cluster manager gets switched to active automatically.<br><code>./splunk cluster-manager-redundancy -switch-mode standby</code></td></tr>
+            <tr><td><code>cmd</code></td><td>btprobe, classify, locktest, locktool, pcregextest, searchtest, signtool, toCsv, toSrs, tsidxprobe, walklex</td><td>1. Displays the contents in the $SPLUNK_HOME/bin directory.<br><code>./splunk cmd /bin/ls</code><br>2. Runs the chosen command from the $SPLUNK_HOME/bin directory with the environment variables set. Run <code>splunk envvars</code> to see which environment variables are set.<br><code>./splunk cmd locktest</code></td></tr>
+            <tr><td><code>create</code></td><td>app</td><td>1. Builds myNewApp from a template.<br><code>./splunk create app myNewApp -template sample_app</code></td></tr>
+            <tr><td><code>createssl</code></td><td>NONE</td><td>&mdash;</td></tr>
+            <tr><td><code>diag</code></td><td>NONE</td><td>&mdash;</td></tr>
+            <tr><td><code>disable</code></td><td>app, boot-start, deploy-client, deploy-server, dist-search, index, listen, local-index, maintenance-mode, perfmon, webserver, web-ssl, wmi</td><td>1. Disables the maintenance mode on peers in indexer clustering. Must be invoked on the manager node.<br><code>./splunk disable maintenance-mode</code><br>2. Disables the logs1 collection.<br><code>./splunk disable eventlog logs1</code></td></tr>
+            <tr><td><code>display</code></td><td>app, boot-start, deploy-client, deploy-server, dist-search, jobs, listen, local-index</td><td>1. Displays status information, such as enabled/disabled, for all apps.<br><code>./splunk display app</code><br>2. Displays status information for the unix app.<br><code>./splunk display app unix</code></td></tr>
+            <tr><td><code>edit</code></td><td>app, cluster-config, shcluster-config, exec, index, licenser-localpeer, licenser-groups, monitor, saved-search, search-server, tcp, udp, user</td><td>1. Edits the current clustering configuration.<br><code>./splunk edit cluster-config -mode peer -site site2</code><br>2. Edits monitored directory inputs in /var/log and only reads from the end of this file.<br><code>./splunk edit monitor /var/log -follow-only true</code></td></tr>
+            <tr><td><code>enable</code></td><td>app, boot-start, deploy-client, deploy-server, dist-search, index, listen, local-index, maintenance-mode, perfmon, webserver, web-ssl, wmi</td><td>1. Sets the maintenance mode on peers in indexer clustering. Must be invoked on the manager node.<br><code>./splunk enable maintenance-mode</code><br>2. Enables the col1 collection.<br><code>./splunk enable perfmon col1</code></td></tr>
+            <tr><td><code>export</code></td><td>eventdata, user data</td><td>1. Exports data out of your Splunk server into /tmp/apache_raw_404_logs.<br><code>./splunk export eventdata -index my_apache_data -dir /tmp/apache_raw_404_logs -host localhost -terms "404 html"</code></td></tr>
+            <tr><td><code>fsck</code></td><td>repair, scan, clear-bloomfilter</td><td>&mdash;</td></tr>
+            <tr><td><code>help</code></td><td>NONE</td><td>&mdash;</td></tr>
+            <tr><td><code>import</code></td><td>userdata</td><td>1. Imports user accounts data from directory /tmp/export.dat.<br><code>./splunk import userdata -dir /tmp/export.dat</code></td></tr>
+            <tr><td><code>install</code></td><td>app</td><td>1. Installs the app from foo.tar to the local Splunk server.<br><code>./splunk install app foo.tar</code><br>2. Installs the app from foo.tgz to the local Splunk server.<br><code>./splunk install app foo.tgz</code></td></tr>
+            <tr><td><code>list</code></td><td>cluster-buckets, cluster-config, cluster-generation, cluster-peers, deploy-clients, excess-buckets, exec, forward-server, index, inputstatus, licenser-groups, licenser-localpeer, licenser-messages, licenser-pools, licenser-peers, licenser-stacks, licenses, jobs, manager-info, monitor, peer-info, peer-buckets, perfmon, saved-search, search-server, tcp, udp, user, wmi</td><td>1. Lists all active monitored directory and file inputs. This displays files and directories currently or recently monitored by splunkd for change.<br><code>./splunk list monitor</code><br>2. Lists all licenses across all stacks.<br><code>./splunk list licenses</code></td></tr>
+            <tr><td><code>login</code>, <code>logout</code></td><td>NONE</td><td>&mdash;</td></tr>
+            <tr><td><code>migrate</code></td><td>kvstore-storage-engine</td><td>1. Migrates the KV store to the target storage engine.<br><code>./splunk migrate kvstore-storage-engine --target-engine wiredTiger</code></td></tr>
+            <tr><td><code>offline</code></td><td>NONE</td><td>1. Used to shut down the peer in a way that does not affect existing searches. The manager node rearranges the primary peers for buckets, and fixes up the cluster state in case the enforce-counts flag is set.<br><code>./splunk offline</code><br>2. Because the --enforce-counts flag is used, the cluster is completely fixed up before this peer is taken down.<br><code>./splunk offline --enforce-counts</code></td></tr>
+            <tr><td><code>package</code></td><td>app</td><td>1. Packages the app "stubby" and returns the package location.<br><code>./splunk package app stubby</code><br><em>The package command includes local.meta by default. If your app package already contains local.meta, this fails AppInspect app validation -- use -merge-local-meta or -exclude-local-meta to avoid it.</em><br>2. When packaging the app, merges local.meta to default.meta and packages the resulting default.meta.<br><code>./splunk package app stubby -merge-local-meta true</code><br>3. When packaging the app, excludes local.meta from the app package.<br><code>./splunk package app stubby -exclude-local-meta true</code></td></tr>
+            <tr><td><code>rebalance</code></td><td>cluster-data</td><td>1. Rebalances data for all indexes.<br><code>./splunk rebalance cluster-data -action start</code><br>2. Rebalances data for a single index using the optional -index parameter.<br><code>./splunk rebalance cluster-data -action start -index _internal</code><br>3. Rebalances data using the optional -max_runtime parameter to limit the rebalancing activity to 5 minutes.<br><code>./splunk rebalance cluster-data -action start -max_runtime 5</code></td></tr>
+            <tr><td><code>rebuild</code></td><td>NONE</td><td>&mdash;</td></tr>
+            <tr><td><code>reload</code></td><td>ad, auth, deploy-server, exec, index, listen, monitor, registry, tcp, udp, perfmon, wmi</td><td>1. Reloads your deployment server, in entirety or by server class.<br><code>./splunk reload deploy-server</code><br>2. Reloads my_serverclass.<br><code>./splunk reload deploy-server -class my_serverclass</code><br>3. Reloads a specific index configuration. To reload all indexes, do not include an index name.<br><code>./splunk reload index [index_name]</code></td></tr>
+            <tr><td><code>remove</code></td><td>app, cluster-peers, cluster-manager, excess-buckets, exec, forward-server, index, jobs, licenser-pools, licenses, monitor, saved-search, search-server, tcp, udp, user</td><td>1. Removes the cluster manager node from the list of instances the search head searches across. Uses testsecret as the secret/pass4SymmKey.<br><code>./splunk remove cluster-manager https://127.0.0.1:8089 -secret testsecret</code><br>2. Removes the Unix app.<br><code>./splunk remove app unix</code></td></tr>
+            <tr><td><code>rollback</code></td><td>cluster-bundle</td><td>Rolls back your Splunk Web configuration bundle to your previous version. Run from the manager node:<br><code>./splunk rollback cluster-bundle</code></td></tr>
+            <tr><td><code>rolling-restart</code></td><td>cluster-peers, shcluster-members</td><td>&mdash;</td></tr>
+            <tr><td><code>rtsearch</code></td><td>app, batch, detach, earliest_time, header, id, index_earliest, index_latest, max_time, maxout, output, preview, rt_id, timeout, uri, wrap</td><td>1. Runs a real-time search that does not line-wrap for individual lines.<br><code>./splunk rtsearch 'error' -wrap false</code><br>2. Runs a real-time search. Use rtsearch exactly as you use the traditional search command.<br><code>./splunk rtsearch 'eventtype=webaccess error | top clientip'</code></td></tr>
+            <tr><td><code>search</code></td><td>app, batch, detach, earliest_time, header, id, index_earliest, index_latest, latest_time, max_time, maxout, output, preview, timeout, uri, wrap</td><td>1. Uses the wildcard as the search object. Triggers an asynchronous search and displays the job id and ttl for the search.<br><code>./splunk search '*' -detach true</code><br>2. Uses eventtype=webaccess error as the search object. Does not line wrap for individual lines longer than the terminal width.<br><code>./splunk search 'eventtype=webaccess error' -wrap 0</code></td></tr>
+            <tr><td><code>set</code></td><td>datastore-dir, deploy-poll, default-hostname, default-index, indexing-ready, minfreemb, servername, server-type, splunkd-port, web-port, kvstore-port</td><td>1. Sets the force indexing ready bit.<br><code>./splunk set indexing-ready</code><br>2. Sets bologna:1234 as the deployment server to poll updates from.<br><code>./splunk set deploy-poll bologna:1234</code></td></tr>
+            <tr><td><code>show</code></td><td>config, cluster-bundle-status, datastore-dir, deploy-poll, default-hostname, default-index, jobs, minfreemb, servername, splunkd-port, web-port, kvstore-port, kvstore-status, shcluster-kvmigration-status</td><td>1. Shows current logging levels.<br><code>./splunk show log-level</code><br>2. Shows which deployment server Splunk Enterprise is configured to poll from.<br><code>./splunk show deploy-poll</code></td></tr>
+            <tr><td><code>spool</code></td><td>NONE</td><td>&mdash;</td></tr>
+            <tr><td><code>start-shcluster-migration</code></td><td>kvstore</td><td>1. Migrate the KV store to the target storage engine in a clustered environment.<br><code>./splunk start-shcluster-migration kvstore -storageEngine wiredTiger</code><br>2. Check to see if the KV store is ready to migrate to the target storage engine.<br><code>./splunk start-shcluster-migration kvstore -storageEngine wiredTiger -isDryRun</code></td></tr>
+            <tr><td><code>start</code>, <code>stop</code>, <code>restart</code></td><td>splunkd, splunkweb</td><td>&mdash;</td></tr>
+            <tr><td><code>status</code></td><td>splunkd, splunkweb</td><td>Checks if splunkd is running and shows the PID.</td></tr>
+            <tr><td><code>validate</code></td><td>index, files, cluster-bundle</td><td>1. Validates the main index and verifies the index paths specified in indexes.conf.<br><code>./splunk validate index main</code><br>2. For files examples, see Check the integrity of your Splunk software files.<br>3. For cluster-bundle examples, see Update common peer configurations and apps in the Managing Indexers and Clusters of Indexers manual.</td></tr>
+          </tbody></table></div>
+        </div>
+      </details>
+    </div>
+  </section>
+<section id="questionsSection" class="page-view reference-page" role="tabpanel" aria-labelledby="showQuestionsPage" hidden>
+    <div class="patterns-hero">
+      <div>
+        <div class="eyebrow">Reference</div>
+        <h2>Questions</h2>
+        <p>Every question-form sentence extracted from <code>logging-reference-architecture.md</code> (the CISA Logging Reference Architecture, converted for AI processing), traceable back to the section it appears under, the taxonomy node it is most relevant to, and the onboarding phase it applies to. Sourced from <code>questions.json</code> in this repository -- an extensible catalogue additional questions can be appended to, regardless of source document.</p>
+      </div>
+    </div>
+
+    <div class="patterns-toolbar">
+      <input id="questionsTableSearch" type="search" placeholder="Search all question fields…" aria-label="Search extracted questions" />
+      <select id="questionsSectionFilter" aria-label="Filter by source section">
+        <option value="">All sections</option>
+      </select>
+      <select id="questionsPhaseFilter" aria-label="Filter by onboarding phase">
+        <option value="">All onboarding phases</option>
+        <option>Log Viability</option>
+        <option>Worthiness &amp; Implementation</option>
+        <option>Cyber Value Gates</option>
+        <option>Log Sustainment</option>
+      </select>
+      <div class="button-group">
+        <button id="resetQuestionsTable" type="button">Reset</button>
+        <button id="exportQuestionsTable" class="primary-button" type="button">Export visible CSV</button>
+      </div>
+    </div>
+
+    <div class="patterns-stats" aria-live="polite">
+      <span class="patterns-stat"><strong id="questionsVisibleCount">0</strong> visible questions</span>
+      <span class="patterns-stat"><strong id="questionsSectionCount">0</strong> source sections</span>
+    </div>
+
+    <div class="eccs-table-wrap" role="region" aria-label="Scrollable extracted-questions table" tabindex="0">
+      <table class="eccs-matrix">
+        <thead><tr><th scope="col" style="width:16%">Section</th><th scope="col" style="width:18%">Subsection</th><th scope="col">Question</th><th scope="col" style="width:16%">Taxonomy</th><th scope="col" style="width:13%">Onboarding Phase</th></tr></thead>
+        <tbody id="questionsTableBody"></tbody>
+      </table>
+    </div>
+    </section>
+
 
 
   <section id="assessmentsPage" class="page-view assessments-page" role="tabpanel" aria-labelledby="showAssessmentsPage" hidden>
@@ -21286,6 +21290,15 @@ const pageTabs = {
   sizing: document.getElementById("showSizingPage"),
   s3calc: document.getElementById("showS3CalcPage"),
   reference: document.getElementById("showReferencePage"),
+  refFrameworkOverview: document.getElementById("showFrameworkOverviewPage"),
+  refConceptDefinitions: document.getElementById("showConceptDefinitionsPage"),
+  refAssessmentMethods: document.getElementById("showAssessmentMethodsPage"),
+  refStandardsReferences: document.getElementById("showStandardsReferencesPage"),
+  refConfigFileReferences: document.getElementById("showConfigFileReferencesPage"),
+  refNetworkReference: document.getElementById("showNetworkReferencePage"),
+  refRoles: document.getElementById("showRolesPage"),
+  refSplunkBin: document.getElementById("showSplunkBinPage"),
+  refQuestions: document.getElementById("showQuestionsPage"),
   prompts: document.getElementById("showPromptLibraryPage"),
   cmei: document.getElementById("showCmeiPage"),
   catalogue: document.getElementById("showCataloguePage"),
@@ -21305,6 +21318,15 @@ const pageViews = {
   sizing: document.getElementById("sizingCalculatorPage"),
   s3calc: document.getElementById("s3CalcPage"),
   reference: document.getElementById("referencePage"),
+  refFrameworkOverview: document.getElementById("frameworkOverview"),
+  refConceptDefinitions: document.getElementById("conceptDefinitions"),
+  refAssessmentMethods: document.getElementById("assessmentMethods"),
+  refStandardsReferences: document.getElementById("standardsReferences"),
+  refConfigFileReferences: document.getElementById("configFileReferences"),
+  refNetworkReference: document.getElementById("networkReferenceSection"),
+  refRoles: document.getElementById("rolesSection"),
+  refSplunkBin: document.getElementById("splunkBinSection"),
+  refQuestions: document.getElementById("questionsSection"),
   prompts: document.getElementById("promptLibraryPage"),
   cmei: document.getElementById("cmeiPage"),
   assurance: document.getElementById("assurancePage"),
@@ -21321,7 +21343,8 @@ const pageViews = {
 const SIDEBAR_GROUP_MAP = {
   onboarding: "onboarding", taxonomy: "onboarding", objectTaxonomy: "onboarding", assessments: "onboarding",
   sizing: "calculators", s3calc: "calculators",
-  reference: "reference", prompts: "reference", cmei: "reference", catalogue: "reference", patterns: "reference", health: "reference", portsMatrix: "reference",
+  reference: "reference", refFrameworkOverview: "reference", refConceptDefinitions: "reference", refAssessmentMethods: "reference", refStandardsReferences: "reference", refConfigFileReferences: "reference", refNetworkReference: "reference", refRoles: "reference", refSplunkBin: "reference", refQuestions: "reference",
+  prompts: "reference", cmei: "reference", catalogue: "reference", patterns: "reference", health: "reference", portsMatrix: "reference",
   inputCoverage: "coverage", metrics: "coverage"
 };
 function setSidebarGroupOpen(groupKey, open) {
@@ -22875,7 +22898,7 @@ function exportViabilityCalculator(event) {
 }
 
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "portsMatrix", "externalTools", "inputCoverage", "metrics"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "refFrameworkOverview", "refConceptDefinitions", "refAssessmentMethods", "refStandardsReferences", "refConfigFileReferences", "refNetworkReference", "refRoles", "refSplunkBin", "refQuestions", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "portsMatrix", "externalTools", "inputCoverage", "metrics"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#file-mon-/.test(location.hash) ? "file-monitoring-profile" : /^#rest-api-/.test(location.hash) ? "rest-api-collection-profile" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : /^#eda-/.test(location.hash) ? "eda-playbook" : "");
   
@@ -22897,11 +22920,9 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
   if (selected === "patterns") renderLoggingPatternTable();
   if (selected === "health") renderHealthCheckTable();
   if (selected === "metrics") { renderSocMetricsTable(); renderSocMetricsPivot(); }
-  if (selected === "reference") {
-    if (location.hash === "#network-flows") { expandReferenceSection("networkReferenceSection"); setActiveNetRefView("flows"); }
-    else if (location.hash === "#splunk-ports" || location.hash === "#network-reference") { expandReferenceSection("networkReferenceSection"); setActiveNetRefView("ports"); }
-    else if (location.hash === "#roles") expandReferenceSection("rolesSection");
-    else if (location.hash === "#splunk-bin") expandReferenceSection("splunkBinSection");
+  if (selected === "refNetworkReference") {
+    if (location.hash === "#network-flows") setActiveNetRefView("flows");
+    else setActiveNetRefView("ports");
   }
   if (updateHash && history.replaceState) {
     const hash = selected === "info"
@@ -22916,6 +22937,24 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
           ? "#s3-calculator"
         : selected === "reference"
           ? "#reference"
+        : selected === "refFrameworkOverview"
+          ? "#framework-overview"
+        : selected === "refConceptDefinitions"
+          ? "#concept-definitions"
+        : selected === "refAssessmentMethods"
+          ? "#assessment-methodologies"
+        : selected === "refStandardsReferences"
+          ? "#standards-references"
+        : selected === "refConfigFileReferences"
+          ? "#config-file-reference"
+        : selected === "refNetworkReference"
+          ? "#network-reference"
+        : selected === "refRoles"
+          ? "#roles"
+        : selected === "refSplunkBin"
+          ? "#splunk-bin"
+        : selected === "refQuestions"
+          ? "#questions"
         : selected === "prompts"
           ? "#prompt-library"
         : selected === "cmei"
@@ -23277,17 +23316,10 @@ function openReferenceConcept(term){
 }
 document.getElementById("conceptSearch")?.addEventListener("input",renderFrameworkConcepts);
 document.getElementById("conceptCategoryFilter")?.addEventListener("change",renderFrameworkConcepts);
-const REFERENCE_COLLAPSIBLE_SECTIONS = [
-  { id: "frameworkOverview", title: "Framework overview" },
-  { id: "conceptDefinitions", title: "Concepts & definitions" },
-  { id: "assessmentMethods", title: "Assessment methodologies" },
-  { id: "standardsReferences", title: "Standards & references" },
-  { id: "configFileReferences", title: "Configuration file reference" },
-  { id: "networkReferenceSection", title: "Network reference" },
-  { id: "rolesSection", title: "Roles" },
-  { id: "splunkBinSection", title: "Splunk bin" },
-  { id: "questionsSection", title: "Questions" },
-];
+// These 9 sections were promoted to their own top-level pages (see the
+// sidebar's Reference group); they're no longer collapsible sub-sections
+// of the Reference page, so nothing is registered here any more.
+const REFERENCE_COLLAPSIBLE_SECTIONS = [];
 function initCollapsibleReferenceSections() {
   REFERENCE_COLLAPSIBLE_SECTIONS.forEach(({ id, title }) => {
     const section = document.getElementById(id);
@@ -23523,16 +23555,21 @@ function initOnboardingFlowMap() {
     jumpTo(node.dataset.jump);
   });
 }
+const REFERENCE_JUMP_PAGE_KEYS = {
+  frameworkOverview: "refFrameworkOverview",
+  conceptDefinitions: "refConceptDefinitions",
+  assessmentMethods: "refAssessmentMethods",
+  standardsReferences: "refStandardsReferences",
+  configFileReferences: "refConfigFileReferences",
+  networkReferenceSection: "refNetworkReference",
+  rolesSection: "refRoles",
+  splunkBinSection: "refSplunkBin",
+  questionsSection: "refQuestions"
+};
 document.querySelectorAll("[data-reference-jump]").forEach(button=>button.addEventListener("click",()=>{
   const id = button.dataset.referenceJump;
-  expandReferenceSection(id);
-  document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});
-}));
-document.querySelectorAll(".app-sidebar .side-ref-jump").forEach(button => button.addEventListener("click", () => {
-  const id = button.dataset.refSection;
-  setActivePage("reference");
-  expandReferenceSection(id);
-  requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  const key = REFERENCE_JUMP_PAGE_KEYS[id];
+  if (key) setActivePage(key);
 }));
 document.querySelectorAll("[data-open-reference-detail]").forEach(button=>button.addEventListener("click",()=>showReferenceDetail(button.dataset.openReferenceDetail)));
 document.querySelectorAll("[data-open-prompt-panel]").forEach(button=>button.addEventListener("click",()=>{
@@ -23614,11 +23651,17 @@ function pageNameFromHash() {
   if (location.hash === "#my-tools") return "externalTools";
   if (location.hash === "#input-coverage") return "inputCoverage";
   if (location.hash === "#metrics" || location.hash === "#metrics-pivot") return "metrics";
-  if (location.hash === "#network-reference") return "reference";
-  if (location.hash === "#splunk-ports") return "reference";
-  if (location.hash === "#network-flows") return "reference";
-  if (location.hash === "#roles") return "reference";
-  if (location.hash === "#splunk-bin") return "reference";
+  if (location.hash === "#framework-overview") return "refFrameworkOverview";
+  if (location.hash === "#concept-definitions") return "refConceptDefinitions";
+  if (location.hash === "#assessment-methodologies") return "refAssessmentMethods";
+  if (location.hash === "#standards-references") return "refStandardsReferences";
+  if (location.hash === "#config-file-reference") return "refConfigFileReferences";
+  if (location.hash === "#network-reference") return "refNetworkReference";
+  if (location.hash === "#splunk-ports") return "refNetworkReference";
+  if (location.hash === "#network-flows") return "refNetworkReference";
+  if (location.hash === "#roles") return "refRoles";
+  if (location.hash === "#splunk-bin") return "refSplunkBin";
+  if (location.hash === "#questions") return "refQuestions";
   return "info";
 }
 
