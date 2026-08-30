@@ -127,6 +127,9 @@
       display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
     }
     .gs-empty { padding: 18px 14px; text-align: center; color: var(--muted); font-size: 13px; }
+    .gs-fuzzy-notice { padding: 8px 14px 4px; font-size: 11.5px; color: var(--muted); font-style: italic; }
+    .gs-show-more { text-align: center; color: var(--accent); font-weight: 700; font-size: 12.5px; }
+    .gs-show-more:hover { text-decoration: underline; }
     @media (max-width: 640px) {
       .global-search-bar { padding: 8px 0; }
       .global-search-hint { display: none; }
@@ -38981,14 +38984,68 @@ function gsHighlightCard(el, tag) {
   requestAnimationFrame(() => el.scrollIntoView({ behavior: "smooth", block: "center" }));
 }
 
-function gsSearchDomain(domain, query) {
+const GS_RESULT_CAP = 6;
+const GS_RESULT_CAP_EXPANDED = 40;
+const GS_FUZZY_CAP = 5;
+let gsExpandedDomains = new Set();
+
+function gsSearchDomain(domain, query, limit) {
   const out = [];
+  let more = false;
   for (const item of domain.getItems()) {
     if (!item) continue; // defensive: tolerate sparse-array holes in a source array
     const hay = (domain.text(item) || "").toLowerCase();
     if (hay.indexOf(query) !== -1) {
+      if (out.length < limit) out.push(item);
+      else { more = true; break; }
+    }
+  }
+  return { matches: out, more };
+}
+
+// Levenshtein edit distance -- classic single-row DP, used only as a fallback
+// (see gsRunSearch) when a query's exact substring search comes up empty
+// everywhere, so a typo doesn't just return "no matches".
+function gsLevenshtein(a, b) {
+  const m = a.length, n = b.length;
+  if (m === 0) return n;
+  if (n === 0) return m;
+  let prev = new Array(n + 1);
+  let curr = new Array(n + 1);
+  for (let j = 0; j <= n; j++) prev[j] = j;
+  for (let i = 1; i <= m; i++) {
+    curr[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      curr[j] = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + cost);
+    }
+    [prev, curr] = [curr, prev];
+  }
+  return prev[n];
+}
+function gsFuzzyThreshold(len) {
+  if (len <= 4) return 1;
+  if (len <= 8) return 2;
+  return 3;
+}
+// A word-level fuzzy match: every word in the query must be within edit
+// distance of *some* word in the haystack. Deliberately word-level rather
+// than substring-level -- keeps the cost bounded and avoids the false
+// positives a whole-string fuzzy compare would produce on long definitions.
+function gsFuzzyTextMatch(hayWords, queryWords) {
+  return queryWords.every(qw => {
+    const threshold = gsFuzzyThreshold(qw.length);
+    return hayWords.some(hw => Math.abs(hw.length - qw.length) <= threshold + 1 && gsLevenshtein(hw, qw) <= threshold);
+  });
+}
+function gsSearchDomainFuzzy(domain, queryWords, limit) {
+  const out = [];
+  for (const item of domain.getItems()) {
+    if (!item) continue;
+    const hayWords = (domain.text(item) || "").toLowerCase().match(/[a-z0-9]+/g);
+    if (hayWords && gsFuzzyTextMatch(hayWords, queryWords)) {
       out.push(item);
-      if (out.length >= 6) break;
+      if (out.length >= limit) break;
     }
   }
   return out;
@@ -39006,6 +39063,40 @@ function gsHighlight(text, query) {
 let gsFlatResults = [];
 let gsActiveIndex = -1;
 
+function gsBuildDomainGroups(query, useFuzzy) {
+  const groups = [];
+  const queryWords = useFuzzy ? query.match(/[a-z0-9]+/g) || [] : null;
+  GLOBAL_SEARCH_DOMAINS.forEach(domain => {
+    let rows;
+    if (useFuzzy) {
+      if (!queryWords.length) return;
+      const matches = gsSearchDomainFuzzy(domain, queryWords, GS_FUZZY_CAP);
+      if (!matches.length) return;
+      rows = matches.map(item => ({
+        title: domain.title(item), subtitle: domain.subtitle(item), snippet: domain.snippet(item),
+        go: () => domain.go(item)
+      }));
+    } else {
+      const limit = gsExpandedDomains.has(domain.id) ? GS_RESULT_CAP_EXPANDED : GS_RESULT_CAP;
+      const { matches, more } = gsSearchDomain(domain, query, limit);
+      if (!matches.length) return;
+      rows = matches.map(item => ({
+        title: domain.title(item), subtitle: domain.subtitle(item), snippet: domain.snippet(item),
+        go: () => domain.go(item)
+      }));
+      if (more) {
+        rows.push({
+          isShowMore: true, keepOpen: true,
+          title: `Show more ${domain.label} results…`,
+          go: () => { gsExpandedDomains.add(domain.id); gsRunSearch(gsInput.value); }
+        });
+      }
+    }
+    groups.push({ label: domain.label, rows });
+  });
+  return groups;
+}
+
 function gsRunSearch(rawQuery) {
   const query = rawQuery.trim().toLowerCase();
   if (query.length < 2) { gsRenderResults([], query); return; }
@@ -39018,21 +39109,18 @@ function gsRunSearch(rawQuery) {
       rows: pageMatches.map(p => ({ title: p.label, subtitle: "", snippet: "", go: () => setActivePage(p.key) }))
     });
   }
-  GLOBAL_SEARCH_DOMAINS.forEach(domain => {
-    const matches = gsSearchDomain(domain, query);
-    if (!matches.length) return;
-    groups.push({
-      label: domain.label,
-      rows: matches.map(item => ({
-        title: domain.title(item), subtitle: domain.subtitle(item), snippet: domain.snippet(item),
-        go: () => domain.go(item)
-      }))
-    });
-  });
-  gsRenderResults(groups, query);
+  groups.push(...gsBuildDomainGroups(query, false));
+
+  if (groups.length) { gsRenderResults(groups, query, false); return; }
+
+  // Nothing matched exactly anywhere -- try a typo-tolerant fallback before
+  // declaring "no matches". Rare path: only reached when the exact pass is
+  // already empty, so the extra Levenshtein work never runs on a normal keystroke.
+  const fuzzyGroups = gsBuildDomainGroups(query, true);
+  gsRenderResults(fuzzyGroups, query, fuzzyGroups.length > 0);
 }
 
-function gsRenderResults(groups, query) {
+function gsRenderResults(groups, query, isFuzzy) {
   gsActiveIndex = -1;
   gsFlatResults = [];
   if (!groups.length) {
@@ -39042,17 +39130,21 @@ function gsRenderResults(groups, query) {
     gsInput.setAttribute("aria-expanded", String(!!hasQuery));
     return;
   }
-  let html = "";
+  let html = isFuzzy ? `<div class="gs-fuzzy-notice">No exact matches -- showing close matches for "${escapeHtml(gsInput.value.trim())}"</div>` : "";
   let flatIdx = 0;
   groups.forEach(group => {
     html += `<div class="gs-group-label">${escapeHtml(group.label)}</div>`;
     group.rows.forEach(row => {
       gsFlatResults.push(row);
-      html += `<button type="button" class="gs-result" data-idx="${flatIdx}" role="option" aria-selected="false">
-        <div class="gs-result-title">${gsHighlight(row.title, query)}</div>
-        ${row.subtitle ? `<div class="gs-result-subtitle">${escapeHtml(row.subtitle)}</div>` : ""}
-        ${row.snippet ? `<div class="gs-result-snippet">${escapeHtml(row.snippet)}</div>` : ""}
-      </button>`;
+      if (row.isShowMore) {
+        html += `<button type="button" class="gs-result gs-show-more" data-idx="${flatIdx}" role="option" aria-selected="false">${escapeHtml(row.title)}</button>`;
+      } else {
+        html += `<button type="button" class="gs-result" data-idx="${flatIdx}" role="option" aria-selected="false">
+          <div class="gs-result-title">${isFuzzy ? escapeHtml(row.title) : gsHighlight(row.title, query)}</div>
+          ${row.subtitle ? `<div class="gs-result-subtitle">${escapeHtml(row.subtitle)}</div>` : ""}
+          ${row.snippet ? `<div class="gs-result-snippet">${escapeHtml(row.snippet)}</div>` : ""}
+        </button>`;
+      }
       flatIdx++;
     });
   });
@@ -39068,8 +39160,10 @@ function gsActivateResult(idx) {
   const row = gsFlatResults[idx];
   if (!row) return;
   row.go();
-  gsCloseResults();
-  gsInput.blur();
+  if (!row.keepOpen) {
+    gsCloseResults();
+    gsInput.blur();
+  }
 }
 
 function gsCloseResults() {
@@ -39092,6 +39186,7 @@ function gsUpdateActiveClass() {
 
 let gsDebounceTimer = null;
 gsInput.addEventListener("input", () => {
+  gsExpandedDomains = new Set(); // new typing supersedes any "show more" expansion from the previous query
   clearTimeout(gsDebounceTimer);
   gsDebounceTimer = setTimeout(() => gsRunSearch(gsInput.value), 100);
 });
@@ -39119,7 +39214,14 @@ gsInput.addEventListener("keydown", event => {
   }
 });
 document.addEventListener("click", event => {
-  if (!event.target.closest(".global-search-wrap")) gsCloseResults();
+  // composedPath() is captured at dispatch time, so this stays correct even
+  // when a click's own handler (e.g. "show more") has already replaced the
+  // results dropdown's DOM before this listener runs -- event.target itself
+  // would be detached by then and .closest() on it would false-positive as
+  // "click landed outside".
+  const path = typeof event.composedPath === "function" ? event.composedPath() : [event.target];
+  const insideSearch = path.some(el => el.classList && el.classList.contains("global-search-wrap"));
+  if (!insideSearch) gsCloseResults();
 });
 document.addEventListener("keydown", event => {
   if ((event.key === "k" || event.key === "K") && (event.metaKey || event.ctrlKey)) {
