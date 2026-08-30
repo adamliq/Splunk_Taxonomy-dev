@@ -2978,7 +2978,8 @@
     .concept-toolbar { display:grid; grid-template-columns:minmax(260px,1fr) minmax(190px,260px); gap:10px; margin-bottom:12px; }
     .concept-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:12px; }
     .concept-card { scroll-margin-top:20px; padding:16px; border:1px solid var(--border); border-radius:14px; background:#fff; box-shadow:0 5px 15px rgba(15,23,42,.04); }
-    .concept-card.highlight { border-color:#7030a0; box-shadow:0 0 0 3px rgba(112,48,160,.14),0 8px 22px rgba(15,23,42,.08); }
+    .concept-card.highlight, .method-card.highlight, .cmei-index-card.highlight { border-color:#7030a0; box-shadow:0 0 0 3px rgba(112,48,160,.14),0 8px 22px rgba(15,23,42,.08); }
+    .eccs-matrix tr.highlight td { background:rgba(112,48,160,.14); }
     .concept-card header { padding:0; background:none; color:inherit; overflow:visible; }
     .concept-category { display:inline-flex; padding:3px 7px; border-radius:999px; background:#eef2ff; color:#4338ca; font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.05em; }
     .concept-card h4 { margin:9px 0 0; font-size:16px; }
@@ -37575,7 +37576,6 @@ const SOT_OBJECTS = [
     def: "The Splunk Success Framework's Program Management activity for unlocking, discovering, and demonstrating the value of the Splunk investment.",
     notes: "Foundational: establish a use case registry, establish success metrics, and demonstrate value to users. Standard: everything in Foundational, plus establishing a log that measures the positive effect of use cases over time, publishing use case success stories, and demonstrating value to departments. Intermediate: everything in Standard, plus assessing and optimizing the input from data sources, establishing dashboards that demonstrate use case effectiveness, and demonstrating value to business units. Advanced: everything in Intermediate, plus establishing a showback plan and value realization cycle. Source: Splunk Success Framework, 'Program management overview' (Splunk Lantern, dated 2026-08-16).",
     deps: [], feeds: [], sotCode: "SOT-14.10.06", instanceId: "SSFPROG-VALUE-001", objectClass: "Platform Object", product: "Splunk Success Framework", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
-,
 { name: "Table Dataset", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "Private / App / Global", config: "REST endpoint data/datasets/collections; datamodels.conf under the hood", def: "A named, reusable, editable table of search results defined declaratively (row/column filters, sort, edits) via Settings > Datasets, distinct from a hierarchical Data Model but managed through the same Datasets listing.", notes: "Complements Data Model Dataset (SOT-01.04.02) -- both are dataset types surfaced together in the platform's Datasets UI, but a Table Dataset has no object hierarchy.", deps: [], feeds: ["Report", "Dashboard Datasource"], sotCode: "SOT-01.04.04", instanceId: "TDS-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/datasets/collections/{name}" },
 { name: "Lookup Dataset", domain: "SOT-02 — Data Interpretation & Normalisation Objects", type: "Knowledge Object", scope: "Private / App / Global", config: "REST endpoint data/datasets/collections; transforms.conf under the hood", def: "A lookup table file or KV Store collection surfaced and editable as a dataset through Settings > Datasets, giving it the same browse/edit/permission workflow as Table and Data Model Datasets.", notes: "Distinct from the underlying Lookup Table File (SOT-02.05.02) and KV Store Lookup (SOT-02.05.04) objects it wraps -- this is the Datasets-UI presentation layer over them.", deps: ["Lookup Table File", "KV Store Lookup"], feeds: ["Lookup Definition"], sotCode: "SOT-02.05.06", instanceId: "LKD-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/datasets/collections/{name}" },
 { name: "Splunk Data Manager", domain: "SOT-05 — Data Collection, Ingestion & Processing Objects", type: "Platform Object", scope: "N/A (Splunk Cloud Platform service)", config: "N/A -- guided UI workflow within Splunk Cloud Platform, generates the underlying input/props/transforms configuration", def: "A guided, self-service data-onboarding experience in Splunk Cloud Platform that walks an admin through connecting a supported cloud data source (e.g. AWS, Azure, GCP) without hand-editing configuration files.", notes: "Complements the manual Getting Data In guidance already catalogued under SOT-05.08 (e.g. SOT-05.08.04/05/06) by providing a UI-driven onboarding path for the same cloud sources.", deps: [], feeds: ["Data Input (General)"], sotCode: "SOT-05.08.07", instanceId: "DMGR-001", objectClass: "Platform Object", product: "Splunk Cloud Platform", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
@@ -38891,12 +38891,100 @@ const GLOBAL_SEARCH_DOMAINS = [
       gsClearFilters(["catalogueCategoryFilter", "cataloguePriorityFilter", "catalogueCoverageFilter"]);
       gsSetSearchAndFire(catalogueSearch, r.dataSource);
     }
+  },
+  {
+    id: "concepts", label: "Concepts & definitions",
+    getItems: () => frameworkConcepts,
+    text: c => [c.term, c.category, c.definition, c.example].join(" "),
+    title: c => c.term, subtitle: c => c.category, snippet: c => c.definition || "",
+    go: c => {
+      setActivePage("refConceptDefinitions");
+      const filter = document.getElementById("conceptCategoryFilter"); if (filter) filter.value = "";
+      gsSetSearchAndFire(document.getElementById("conceptSearch"), c.term);
+      // renderFrameworkConcepts (triggered above) also cross-filters the method-card
+      // grids on other, currently-hidden reference pages by the same query text; undo
+      // that here so navigating to one of those pages afterwards isn't left showing a
+      // stale filtered subset with no visible way to reset it.
+      filterReferenceMethodCards("assessmentMethodsGrid", "assessmentMethodsEmpty", "");
+      filterReferenceMethodCards("standardsReferencesGrid", "standardsReferencesEmpty", "");
+      filterReferenceMethodCards("configFileReferencesGrid", "configFileReferencesEmpty", "");
+    }
+  },
+  {
+    id: "assessmentMethods", label: "Assessment methodologies",
+    getItems: () => Array.from(document.querySelectorAll("#assessmentMethodsGrid .method-card")).map(el => ({
+      el, title: el.querySelector("h4")?.textContent || "", snippet: el.querySelector("p")?.textContent || "", text: el.textContent
+    })),
+    text: c => c.text, title: c => c.title, subtitle: () => "", snippet: c => c.snippet,
+    go: c => { setActivePage("refAssessmentMethods"); gsHighlightCard(c.el); }
+  },
+  {
+    id: "standards", label: "Standards & references",
+    getItems: () => Array.from(document.querySelectorAll("#standardsReferencesGrid .method-card")).map(el => ({
+      el, title: el.querySelector("h4")?.textContent || "", snippet: el.querySelector("p")?.textContent || "", text: el.textContent
+    })),
+    text: c => c.text, title: c => c.title, subtitle: () => "", snippet: c => c.snippet,
+    go: c => { setActivePage("refStandardsReferences"); gsHighlightCard(c.el); }
+  },
+  {
+    id: "config", label: "Configuration file reference",
+    getItems: () => buildConfigSettingIndex(),
+    text: e => [e.settingText, e.descText, e.fileTitle, e.sectionTitle].join(" "),
+    title: e => e.settingText, subtitle: e => e.fileTitle + (e.sectionTitle ? " — " + e.sectionTitle : ""), snippet: e => e.descText || "",
+    go: e => jumpToConfigSetting(e)
+  },
+  {
+    id: "splunkbin", label: "Splunk bin CLI commands",
+    getItems: () => Array.from(document.querySelectorAll("#splunkBinSection table.eccs-matrix tbody tr")).map(row => {
+      const cells = row.querySelectorAll("td");
+      return { row, command: cells[0]?.textContent.trim() || "", objects: cells[1]?.textContent.trim() || "", examples: cells[2]?.textContent || "" };
+    }),
+    text: c => [c.command, c.objects, c.examples].join(" "),
+    title: c => c.command, subtitle: c => c.objects, snippet: c => c.examples.replace(/\s+/g, " ").trim().slice(0, 140),
+    go: c => {
+      setActivePage("refSplunkBin");
+      const details = c.row.closest("details"); if (details) details.open = true;
+      gsHighlightCard(c.row, "tr");
+    }
+  },
+  {
+    id: "cmei", label: "Framework indices",
+    getItems: () => Array.from(document.querySelectorAll(".cmei-index-card")).map(el => ({
+      el, code: el.querySelector(".cmei-index-code")?.textContent || "", title: el.querySelector("h3")?.textContent || "", snippet: el.querySelector("p")?.textContent || "", text: el.textContent
+    })),
+    text: c => c.text, title: c => `${c.code} — ${c.title}`, subtitle: () => "", snippet: c => c.snippet,
+    go: c => { setActivePage("cmei"); gsHighlightCard(c.el); }
+  },
+  {
+    id: "prompts", label: "Prompt library",
+    getItems: () => Array.from(document.querySelectorAll(".prompt-submenu-button[data-prompt-target]")).map(btn => ({
+      target: btn.dataset.promptTarget, title: btn.textContent.trim()
+    })),
+    text: p => p.title, title: p => p.title, subtitle: () => "", snippet: () => "",
+    go: p => { setActivePage("prompts"); selectPromptLibraryItem(p.target); }
+  },
+  {
+    id: "sot", label: "Splunk Object Taxonomy",
+    getItems: () => SOT_OBJECTS,
+    text: o => [o.name, o.domain, o.type, o.scope, o.def, o.notes, o.sotCode, o.instanceId].join(" "),
+    title: o => o.name, subtitle: o => o.sotCode || o.domain, snippet: o => o.def || "",
+    go: o => { setActivePage("objectTaxonomy"); selectByName(o.name); }
   }
 ];
+
+function gsHighlightCard(el, tag) {
+  if (!el) return;
+  const scope = tag === "tr" ? (el.closest("table") || document.body) : document.body;
+  const selector = tag === "tr" ? "tr.highlight" : ".highlight";
+  scope.querySelectorAll(selector).forEach(x => x.classList.remove("highlight"));
+  el.classList.add("highlight");
+  requestAnimationFrame(() => el.scrollIntoView({ behavior: "smooth", block: "center" }));
+}
 
 function gsSearchDomain(domain, query) {
   const out = [];
   for (const item of domain.getItems()) {
+    if (!item) continue; // defensive: tolerate sparse-array holes in a source array
     const hay = (domain.text(item) || "").toLowerCase();
     if (hay.indexOf(query) !== -1) {
       out.push(item);
