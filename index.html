@@ -3599,7 +3599,6 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
     <div class="side-item" data-group="reference">
       <button type="button" class="side-group-trigger" aria-expanded="false"><span>Reference</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
       <div class="side-sub">
-        <button id="showReferencePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="referencePage">Reference</button>
         <button id="showFrameworkOverviewPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="frameworkOverview">Framework overview</button>
         <button id="showConceptDefinitionsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="conceptDefinitions">Concepts &amp; definitions</button>
         <button id="showAssessmentMethodsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentMethods">Assessment methodologies</button>
@@ -4029,23 +4028,12 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
   </section>
 
 
-  <section id="referencePage" class="page-view reference-page" role="tabpanel" aria-labelledby="showReferencePage" hidden>
+  <section id="referencePage" class="page-view reference-page" role="tabpanel" aria-label="Detailed reference" hidden>
     <div id="referenceIndexView">
     <div class="reference-hero">
       <div class="eyebrow">Framework reference</div>
       <h2>Concepts, methodologies and terminology</h2>
-      <p>Use this area to understand how LATCH fits together, what specialised terms mean, and how each assessment reaches its score or decision. The taxonomy remains the canonical data model; this page explains the concepts behind it.</p>
-      <div class="reference-jump">
-        <button type="button" data-reference-jump="frameworkOverview">Framework overview</button>
-        <button type="button" data-reference-jump="conceptDefinitions">Concepts &amp; definitions</button>
-        <button type="button" data-reference-jump="assessmentMethods">Assessment methodologies</button>
-        <button type="button" data-reference-jump="standardsReferences">Standards &amp; references</button>
-        <button type="button" data-reference-jump="configFileReferences">Configuration file reference</button>
-        <button type="button" data-reference-jump="networkReferenceSection">Network reference</button>
-        <button type="button" data-reference-jump="rolesSection">Roles</button>
-        <button type="button" data-reference-jump="splunkBinSection">Splunk bin</button>
-        <button type="button" data-reference-jump="questionsSection">Questions</button>
-      </div>
+      <p>Use this area to understand how LATCH fits together, what specialised terms mean, and how each assessment reaches its score or decision. The taxonomy remains the canonical data model; this page explains the concepts behind it. Framework overview, Concepts &amp; definitions, Assessment methodologies, Standards &amp; references, Configuration file reference, Network reference, Roles, Splunk bin and Questions all live in the Reference group of the main menu.</p>
     </div>
 
     
@@ -21289,7 +21277,6 @@ const pageTabs = {
   assessments: document.getElementById("showAssessmentsPage"),
   sizing: document.getElementById("showSizingPage"),
   s3calc: document.getElementById("showS3CalcPage"),
-  reference: document.getElementById("showReferencePage"),
   refFrameworkOverview: document.getElementById("showFrameworkOverviewPage"),
   refConceptDefinitions: document.getElementById("showConceptDefinitionsPage"),
   refAssessmentMethods: document.getElementById("showAssessmentMethodsPage"),
@@ -23555,22 +23542,6 @@ function initOnboardingFlowMap() {
     jumpTo(node.dataset.jump);
   });
 }
-const REFERENCE_JUMP_PAGE_KEYS = {
-  frameworkOverview: "refFrameworkOverview",
-  conceptDefinitions: "refConceptDefinitions",
-  assessmentMethods: "refAssessmentMethods",
-  standardsReferences: "refStandardsReferences",
-  configFileReferences: "refConfigFileReferences",
-  networkReferenceSection: "refNetworkReference",
-  rolesSection: "refRoles",
-  splunkBinSection: "refSplunkBin",
-  questionsSection: "refQuestions"
-};
-document.querySelectorAll("[data-reference-jump]").forEach(button=>button.addEventListener("click",()=>{
-  const id = button.dataset.referenceJump;
-  const key = REFERENCE_JUMP_PAGE_KEYS[id];
-  if (key) setActivePage(key);
-}));
 document.querySelectorAll("[data-open-reference-detail]").forEach(button=>button.addEventListener("click",()=>showReferenceDetail(button.dataset.openReferenceDetail)));
 document.querySelectorAll("[data-open-prompt-panel]").forEach(button=>button.addEventListener("click",()=>{
   setActivePage("prompts");
