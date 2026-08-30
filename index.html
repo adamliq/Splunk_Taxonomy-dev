@@ -878,6 +878,9 @@
     .se-type-chip { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 11.5px; color: var(--muted); white-space: nowrap; }
     .se-col-desc { color: var(--muted); max-width: 340px; }
     .se-empty { padding: 40px 16px; text-align: center; color: var(--muted); font-size: 13.5px; }
+    .se-load-more-row { display: flex; justify-content: center; margin-top: 14px; }
+    .se-load-more { border: 1px solid var(--border); background: var(--surface); color: var(--primary); font-weight: 700; font-size: 13px; padding: 9px 18px; border-radius: 9px; cursor: pointer; }
+    .se-load-more:hover { background: var(--primary-light); border-color: var(--accent); }
 
     .se-explore-list { display: flex; flex-direction: column; gap: 8px; }
     .se-input-card { border: 1px solid var(--border); border-radius: 12px; background: var(--surface); overflow: hidden; }
@@ -14322,6 +14325,9 @@ E. Assumptions and unresolved inputs</pre>
                   </thead>
                   <tbody id="seFieldsBody"></tbody>
                 </table>
+              </div>
+              <div class="se-load-more-row">
+                <button id="seLoadMoreBtn" class="se-load-more" type="button" hidden></button>
               </div>
             </div>
 
@@ -33059,7 +33065,8 @@ function seTypeKey(t) {
 }
 const SE_TYPE_LABELS = { string: "string / date-time", number: "integer / number", boolean: "boolean", array: "array", object: "object", default: "other" };
 
-let seState = { mode: "search", query: "", app: "all", sortKey: "app", sortDir: "asc" };
+const SE_PAGE_SIZE = 150;
+let seState = { mode: "search", query: "", app: "all", sortKey: "app", sortDir: "asc", visibleLimit: SE_PAGE_SIZE };
 
 function seFriendlyAppName(tag) {
   const g = inputCoverageGroups.find(g => g.tag === tag);
@@ -33098,7 +33105,7 @@ function renderSeAppList() {
     html += `<button type="button" class="se-app-chip ${seState.app === g.tag ? "active" : ""}" data-app="${escapeHtml(g.tag)}"><span>${escapeHtml(g.friendlyName)}</span><span class="n">${counts[g.tag]}</span></button>`;
   });
   el.innerHTML = html;
-  el.querySelectorAll(".se-app-chip").forEach(btn => btn.addEventListener("click", () => { seState.app = btn.dataset.app; renderSeAll(); }));
+  el.querySelectorAll(".se-app-chip").forEach(btn => btn.addEventListener("click", () => { seState.app = btn.dataset.app; seState.visibleLimit = SE_PAGE_SIZE; renderSeAll(); }));
 }
 
 function renderSeTypeLegend() {
@@ -33127,20 +33134,28 @@ function renderSeSearchView() {
     const hay = [seFriendlyAppName(r.app), r.label, r.sourcetype, r.name, r.description].join(" ").toLowerCase();
     return hay.includes(q);
   });
+  const total = rows.length;
   const countEl = document.getElementById("seResultCount");
-  if (countEl) countEl.textContent = `${rows.length.toLocaleString()} field${rows.length === 1 ? "" : "s"}`;
+  if (countEl) {
+    countEl.textContent = total > seState.visibleLimit
+      ? `Showing ${seState.visibleLimit.toLocaleString()} of ${total.toLocaleString()} fields`
+      : `${total.toLocaleString()} field${total === 1 ? "" : "s"}`;
+  }
   rows = seSortRows(rows);
   document.querySelectorAll("table.se-table th[data-sort]").forEach(th => {
     th.classList.toggle("se-sorted", th.dataset.sort === seState.sortKey);
     th.classList.toggle("se-asc", th.dataset.sort === seState.sortKey && seState.sortDir === "asc");
   });
   const body = document.getElementById("seFieldsBody");
+  const loadMoreBtn = document.getElementById("seLoadMoreBtn");
   if (!body) return;
   if (!rows.length) {
     body.innerHTML = `<tr><td colspan="5"><div class="se-empty">No fields match &ldquo;${escapeHtml(seState.query)}&rdquo;. Try a different app or term.</div></td></tr>`;
+    if (loadMoreBtn) loadMoreBtn.hidden = true;
     return;
   }
-  body.innerHTML = rows.map(r => {
+  const visibleRows = rows.slice(0, seState.visibleLimit);
+  body.innerHTML = visibleRows.map(r => {
     const tk = seTypeKey(r.type);
     return `<tr data-app="${escapeHtml(r.app)}" data-label="${escapeHtml(r.label)}" data-name="${escapeHtml(r.name)}">
       <td class="se-col-app">${escapeHtml(seFriendlyAppName(r.app))}</td>
@@ -33156,6 +33171,15 @@ function renderSeSearchView() {
       if (row) openSchemaFieldDrawer(row);
     });
   });
+  if (loadMoreBtn) {
+    const remaining = total - visibleRows.length;
+    if (remaining > 0) {
+      loadMoreBtn.hidden = false;
+      loadMoreBtn.textContent = `Show ${Math.min(remaining, SE_PAGE_SIZE).toLocaleString()} more field${Math.min(remaining, SE_PAGE_SIZE) === 1 ? "" : "s"} (${remaining.toLocaleString()} remaining)`;
+    } else {
+      loadMoreBtn.hidden = true;
+    }
+  }
 }
 
 function renderSeExploreView() {
@@ -33251,9 +33275,11 @@ renderSeStats();
 renderSeTypeLegend();
 renderSeAll();
 
-document.getElementById("seSearchBox").addEventListener("input", e => { seState.query = e.target.value; renderSeAll(); });
+document.getElementById("seSearchBox").addEventListener("input", e => { seState.query = e.target.value; seState.visibleLimit = SE_PAGE_SIZE; renderSeAll(); });
+document.getElementById("seLoadMoreBtn").addEventListener("click", () => { seState.visibleLimit += SE_PAGE_SIZE; renderSeSearchView(); });
 document.getElementById("seModeSearchBtn").addEventListener("click", () => {
   seState.mode = "search";
+  seState.visibleLimit = SE_PAGE_SIZE;
   document.getElementById("seModeSearchBtn").classList.add("active");
   document.getElementById("seModeExploreBtn").classList.remove("active");
   document.getElementById("seSearchView").hidden = false;
