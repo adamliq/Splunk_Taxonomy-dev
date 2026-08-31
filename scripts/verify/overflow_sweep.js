@@ -37,8 +37,16 @@ async function sweepViewport(chromium, htmlPath, launchOpts, viewport) {
 
   const tabCount = await page.$$eval('.app-sidebar .page-tab', els => els.length);
   const offenders = [];
+  const isMobileDrawer = viewport.width <= 900; // matches the .app-sidebar hamburger-drawer breakpoint
 
   for (let i = 0; i < tabCount; i++) {
+    if (isMobileDrawer) {
+      // Below the breakpoint the sidebar is hidden behind a hamburger toggle,
+      // and closes itself again after every navigation -- so it has to be
+      // reopened before each tab is clickable, not just once up front.
+      const toggle = await page.$('#appNavToggle');
+      if (toggle) { await toggle.click(); await page.waitForTimeout(100); }
+    }
     const tabs = await page.$$('.app-sidebar .page-tab');
     const tab = tabs[i];
     const txt = (await tab.textContent() || '').trim();
