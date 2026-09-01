@@ -3787,6 +3787,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
         <button id="showFrameworkOverviewPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="frameworkOverview">Framework overview</button>
         <button id="showHealthChecksPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="healthChecksPage">Health checks table</button>
         <button id="showPatternsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="patternsPage">Logging patterns table</button>
+        <button id="showNamingConventionPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="namingConventionSection">Naming convention</button>
         <button id="showNetworkReferencePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="networkReferenceSection">Network reference</button>
         <button id="showPortsMatrixPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="portsMatrixPage">Ports matrix</button>
         <button id="showPromptLibraryPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="promptLibraryPage">Prompt library</button>
@@ -13230,7 +13231,6 @@ E. Assumptions and unresolved inputs</pre>
       <button id="collapseAll" type="button">Collapse all</button>
       <button id="exportTaxonomy" type="button">Export TAX records</button>
       <button id="openAdvisor" class="advisor-button" type="button">Suggest logging pattern</button>
-      <button id="openNaming" class="primary-button" type="button">Naming convention</button>
     </div>
   </div>
   <div class="stats">
@@ -14564,6 +14564,173 @@ E. Assumptions and unresolved inputs</pre>
     </section>
     </div>
   </section>
+<section id="namingConventionSection" class="page-view reference-page" role="tabpanel" aria-labelledby="showNamingConventionPage" hidden>
+    <div class="patterns-hero">
+      <div>
+        <div class="eyebrow">Governance &amp; Compliance &middot; TAX-02.06.01</div>
+        <h2>Naming Convention</h2>
+        <p>A single standard for taxonomy registry IDs, Splunk object names, event-health checks, detection content, analytical assets, and cloud storage Connections/Datasets.</p>
+      </div>
+    </div>
+      <div class="naming-lead">
+        <section class="naming-card" aria-labelledby="technicalPatternTitle">
+          <h3 id="technicalPatternTitle">Technical-name pattern</h3>
+          <p>Use this structure where a technical object needs platform, dataset, purpose and environment context.</p>
+          <div class="token-pattern" aria-label="domain platform component purpose environment">
+            <span class="name-token">&lt;domain&gt;</span><span class="name-separator">_</span>
+            <span class="name-token">&lt;platform&gt;</span><span class="name-separator">_</span>
+            <span class="name-token">&lt;component&gt;</span><span class="name-separator">_</span>
+            <span class="name-token">&lt;purpose&gt;</span><span class="name-separator">_</span>
+            <span class="name-token">&lt;environment&gt;</span>
+          </div>
+          <div class="example-line"><strong>Example</strong><code>sec_azure_entra_signin_prod</code><span class="valid-pill">Valid structure</span></div>
+          <div class="grandfather-note"><strong>Grandfathering:</strong> existing production indexes and sourcetypes do not need to be renamed solely for style. Record exceptions and apply the standard to new or materially changed objects.</div>
+        </section>
+        <section class="naming-card" aria-labelledby="validatorTitle">
+          <h3 id="validatorTitle">Name validator</h3>
+          <p>Check a proposed name against the selected governed pattern.</p>
+          <div class="validator-grid">
+            <label for="namingPatternType">Object type</label>
+            <select id="namingPatternType"></select>
+            <label for="namingValue">Proposed name</label>
+            <input id="namingValue" type="text" value="PLT-001" autocomplete="off" spellcheck="false" />
+            <div id="namingValidationResult" class="validation-result" aria-live="polite"></div>
+          </div>
+        </section>
+      </div>
+
+      <section class="naming-section" aria-labelledby="catalogueTitle">
+        <h3 id="catalogueTitle">Pattern catalogue</h3>
+        <p>Registry identifiers align with the current taxonomy and workbook records; technical patterns define how new Splunk content should be named.</p>
+        <div class="naming-table-wrap">
+          <table class="naming-table">
+            <thead><tr><th>Object</th><th>Pattern</th><th>Example</th><th>Separator / case</th><th>Scope</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Platform ID</strong></td><td><code>PLT-###</code></td><td><code>PLT-003</code></td><td>Hyphen / uppercase</td><td>Registry</td></tr>
+              <tr><td><strong>Source Family ID</strong></td><td><code>SRC-###</code></td><td><code>SRC-001</code></td><td>Hyphen / uppercase</td><td>Reference catalogue</td></tr>
+              <tr><td><strong>Governance Profile ID</strong></td><td><code>GOV-###</code></td><td><code>GOV-003</code></td><td>Hyphen / uppercase</td><td>Registry</td></tr>
+              <tr><td><strong>Logging Pattern ID</strong></td><td><code>LP-###</code></td><td><code>LP-006</code></td><td>Hyphen / uppercase</td><td>Registry</td></tr>
+              <tr><td><strong>Input Component ID</strong></td><td><code>IC-###</code></td><td><code>IC-011</code></td><td>Hyphen / uppercase</td><td>Registry</td></tr>
+              <tr><td><strong>Collector ID</strong></td><td><code>COL-###</code></td><td><code>COL-005</code></td><td>Hyphen / uppercase</td><td>Registry</td></tr>
+              <tr><td><strong>App / TA ID</strong></td><td><code>APP-###</code></td><td><code>APP-003</code></td><td>Hyphen / uppercase</td><td>Registry</td></tr>
+              <tr><td><strong>Stanza ID</strong></td><td><code>STZ-###</code></td><td><code>STZ-021</code></td><td>Hyphen / uppercase</td><td>Registry</td></tr>
+              <tr><td><strong>Health Test ID</strong></td><td><code>TC-&lt;TYPE&gt;-###</code></td><td><code>TC-HEC-004</code></td><td>Hyphen / uppercase</td><td>Assurance</td></tr>
+              <tr><td><strong>Dependency ID</strong></td><td><code>DEP-###</code></td><td><code>DEP-007</code></td><td>Hyphen / uppercase</td><td>Lineage</td></tr>
+              <tr><td><strong>Onboarding ID</strong></td><td><code>ONB-###</code></td><td><code>ONB-005</code></td><td>Hyphen / uppercase</td><td>Workflow</td></tr>
+              <tr><td><strong>Viability Assessment ID</strong></td><td><code>VIA-###</code></td><td><code>VIA-001</code></td><td>Hyphen / uppercase</td><td>Workflow / phase gate</td></tr>
+              <tr><td><strong>Change Record ID</strong></td><td><code>CCR-###</code></td><td><code>CCR-002</code></td><td>Hyphen / uppercase</td><td>Assurance</td></tr>
+              <tr><td><strong>Business Impact Level ID</strong></td><td><code>BIL-###</code></td><td><code>BIL-002</code></td><td>Hyphen / uppercase</td><td>Governance</td></tr>
+              <tr><td><strong>SOAR Integration ID</strong></td><td><code>SOAR-###</code></td><td><code>SOAR-002</code></td><td>Hyphen / uppercase</td><td>Lineage</td></tr>
+              <tr><td><strong>Required SIEM Event Type ID</strong></td><td><code>SRC-###-EVT-###-##</code></td><td><code>SRC-010-EVT-004-01</code></td><td>Hyphen / uppercase</td><td>Reference catalogue</td></tr>
+              <tr><td><strong>Index</strong></td><td><code>&lt;domain_or_platform&gt;[_&lt;dataset&gt;]</code></td><td><code>aws_cloudtrail</code></td><td>Underscore / lowercase</td><td>Splunk</td></tr>
+              <tr><td><strong>Sourcetype</strong></td><td><code>&lt;vendor&gt;:&lt;product&gt;:&lt;dataset&gt;</code></td><td><code>azure:aad:signin</code></td><td>Colon / lowercase preferred</td><td>Splunk</td></tr>
+              <tr><td><strong>Event Health Check</strong></td><td><code>HC_&lt;platform&gt;_&lt;source&gt;_&lt;check&gt;</code></td><td><code>HC_entra_signin_freshness</code></td><td>Underscore / lowercase</td><td>Assurance</td></tr>
+              <tr><td><strong>Detection Use Case ID</strong></td><td><code>DET-&lt;DOMAIN&gt;-###</code></td><td><code>DET-IDM-012</code></td><td>Hyphen / uppercase</td><td>Detection</td></tr>
+              <tr><td><strong>Detection Search</strong></td><td><code>&lt;Domain&gt; - &lt;Platform&gt; - &lt;Behaviour&gt;</code></td><td><code>Identity - Entra ID - Repeated MFA Denial</code></td><td>Title case / spaced hyphen</td><td>Detection</td></tr>
+              <tr><td><strong>Dashboard</strong></td><td><code>&lt;Domain&gt; - &lt;Platform&gt; - &lt;Audience&gt;</code></td><td><code>Security - Entra ID - Operations</code></td><td>Title case / spaced hyphen</td><td>Analytics</td></tr>
+              <tr><td><strong>Cloud Storage Connection</strong></td><td><code>&lt;Org&gt;_&lt;storage&gt;_&lt;account&gt;</code></td><td><code>acme_s3_123456789012</code></td><td>Underscore / lowercase</td><td>S3 / Azure Federated Search</td></tr>
+              <tr><td><strong>Cloud Storage Dataset</strong></td><td><code>&lt;Org&gt;_&lt;storage&gt;_&lt;account&gt;_&lt;content&gt;_&lt;format&gt;_unified</code></td><td><code>acme_azure_prod_windows_security_json_unified</code></td><td>Underscore / lowercase</td><td>S3 / Azure Federated Search</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="naming-section" aria-labelledby="unifiedNamingTitle">
+        <h3 id="unifiedNamingTitle">Cloud storage Connections &amp; Datasets</h3>
+        <p>Applies to Splunk Federated Search / Ingest Actions objects backed by Amazon S3 or Azure Blob Storage / ADLS Gen2. A Connection names the storage account; a Dataset names one content set within it that supports routing, Federated Search, or both.</p>
+        <div class="naming-lead">
+          <section class="naming-card" aria-labelledby="connectionPatternTitle">
+            <h3 id="connectionPatternTitle">Connection</h3>
+            <div class="token-pattern" aria-label="org storage account">
+              <span class="name-token">&lt;Org&gt;</span><span class="name-separator">_</span>
+              <span class="name-token">&lt;storage&gt;</span><span class="name-separator">_</span>
+              <span class="name-token">&lt;account&gt;</span>
+            </div>
+            <div class="example-line"><strong>Example</strong><code>acme_s3_123456789012</code><span class="valid-pill">Valid structure</span></div>
+            <div class="grandfather-note"><strong>Note:</strong> do not include <code>unified</code> on Connections -- that suffix applies to Datasets only.</div>
+          </section>
+          <section class="naming-card" aria-labelledby="datasetPatternTitle">
+            <h3 id="datasetPatternTitle">Dataset</h3>
+            <div class="token-pattern" aria-label="org storage account content format unified">
+              <span class="name-token">&lt;Org&gt;</span><span class="name-separator">_</span>
+              <span class="name-token">&lt;storage&gt;</span><span class="name-separator">_</span>
+              <span class="name-token">&lt;account&gt;</span><span class="name-separator">_</span>
+              <span class="name-token">&lt;content&gt;</span><span class="name-separator">_</span>
+              <span class="name-token">&lt;format&gt;</span><span class="name-separator">_</span>
+              <span class="name-token">unified</span>
+            </div>
+            <div class="example-line"><strong>Example</strong><code>acme_azure_prod_windows_security_json_unified</code><span class="valid-pill">Valid structure</span></div>
+            <div class="grandfather-note"><strong>Note:</strong> include <code>unified</code> only when the dataset supports both data routing and Federated Search.</div>
+          </section>
+        </div>
+
+        <div class="naming-table-wrap">
+          <table class="naming-table">
+            <thead><tr><th>Component</th><th>Meaning</th><th>Example values</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td><code>&lt;Org&gt;</code></td><td>Short organization or company name</td><td><code>acme</code> / <code>contoso</code></td><td></td></tr>
+              <tr><td><code>&lt;storage&gt;</code></td><td>Cloud storage type</td><td><code>s3</code> / <code>azure</code></td><td>s3 = Amazon S3; azure = Microsoft Azure Blob / ADLS Gen2</td></tr>
+              <tr><td><code>&lt;account&gt;</code></td><td>AWS Account ID or Azure account/environment label</td><td><code>123456789012</code> / <code>prod</code> / <code>nonprod</code></td><td></td></tr>
+              <tr><td><code>&lt;content&gt;</code></td><td>Logical data content or source type</td><td><code>windows_security</code> / <code>cloudtrail</code> / <code>vpcflow</code></td><td></td></tr>
+              <tr><td><code>&lt;format&gt;</code></td><td>File format</td><td><code>json</code> / <code>parquet</code></td><td></td></tr>
+              <tr><td><code>unified</code></td><td>Used only on Datasets</td><td></td><td>Indicates support for both data routing and Federated Search. Not used on Connections.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p style="margin:18px 0 8px"><strong>Windows event log examples</strong> -- the same six object types, named consistently across both storage backends.</p>
+        <div class="naming-table-wrap">
+          <table class="naming-table">
+            <thead><tr><th>Object</th><th>Format</th><th>S3 example</th><th>Azure example</th></tr></thead>
+            <tbody>
+              <tr><td>Windows Security Event Logs</td><td>JSON</td><td><code>acme_s3_123456789012_windows_security_json_unified</code></td><td><code>acme_azure_prod_windows_security_json_unified</code></td></tr>
+              <tr><td>Windows Security Event Logs</td><td>Parquet</td><td><code>acme_s3_123456789012_windows_security_parquet_unified</code></td><td><code>acme_azure_prod_windows_security_parquet_unified</code></td></tr>
+              <tr><td>Windows System Event Logs</td><td>JSON</td><td><code>acme_s3_123456789012_windows_system_json_unified</code></td><td><code>acme_azure_prod_windows_system_json_unified</code></td></tr>
+              <tr><td>Windows System Event Logs</td><td>Parquet</td><td><code>acme_s3_123456789012_windows_system_parquet_unified</code></td><td><code>acme_azure_prod_windows_system_parquet_unified</code></td></tr>
+              <tr><td>Windows Application Event Logs</td><td>JSON</td><td><code>acme_s3_123456789012_windows_application_json_unified</code></td><td><code>acme_azure_prod_windows_application_json_unified</code></td></tr>
+              <tr><td>Windows Application Event Logs</td><td>Parquet</td><td><code>acme_s3_123456789012_windows_application_parquet_unified</code></td><td><code>acme_azure_prod_windows_application_parquet_unified</code></td></tr>
+              <tr><td>Windows PowerShell Logs</td><td>JSON</td><td><code>acme_s3_123456789012_windows_powershell_json_unified</code></td><td><code>acme_azure_prod_windows_powershell_json_unified</code></td></tr>
+              <tr><td>Windows PowerShell Logs</td><td>Parquet</td><td><code>acme_s3_123456789012_windows_powershell_parquet_unified</code></td><td><code>acme_azure_prod_windows_powershell_parquet_unified</code></td></tr>
+              <tr><td>Windows Sysmon</td><td>JSON</td><td><code>acme_s3_123456789012_windows_sysmon_json_unified</code></td><td><code>acme_azure_prod_windows_sysmon_json_unified</code></td></tr>
+              <tr><td>Windows Sysmon</td><td>Parquet</td><td><code>acme_s3_123456789012_windows_sysmon_parquet_unified</code></td><td><code>acme_azure_prod_windows_sysmon_parquet_unified</code></td></tr>
+              <tr><td>All Windows Event Logs (mixed)</td><td>JSON</td><td><code>acme_s3_123456789012_windows_eventlogs_json_unified</code></td><td><code>acme_azure_prod_windows_eventlogs_json_unified</code></td></tr>
+              <tr><td>All Windows Event Logs (mixed)</td><td>Parquet</td><td><code>acme_s3_123456789012_windows_eventlogs_parquet_unified</code></td><td><code>acme_azure_prod_windows_eventlogs_parquet_unified</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p style="margin:18px 0 8px"><strong>Additional examples</strong></p>
+        <div class="naming-table-wrap">
+          <table class="naming-table">
+            <thead><tr><th>Object</th><th>Storage / format</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td>CloudTrail</td><td>S3 / JSON</td><td><code>acme_s3_123456789012_cloudtrail_json_unified</code></td></tr>
+              <tr><td>CloudTrail</td><td>S3 / Parquet</td><td><code>acme_s3_123456789012_cloudtrail_parquet_unified</code></td></tr>
+              <tr><td>VPC Flow Logs</td><td>S3 / JSON</td><td><code>acme_s3_123456789012_vpcflow_json_unified</code></td></tr>
+              <tr><td>Azure Activity Logs</td><td>Azure / JSON</td><td><code>acme_azure_prod_activity_logs_json_unified</code></td></tr>
+              <tr><td>Azure NSG Flow Logs</td><td>Azure / Parquet</td><td><code>acme_azure_prod_nsg_flow_parquet_unified</code></td></tr>
+              <tr><td>Security Logs</td><td>S3 / JSON</td><td><code>acme_s3_123456789012_security_logs_json_unified</code></td></tr>
+              <tr><td>Application Logs</td><td>Azure / Parquet</td><td><code>acme_azure_prod_app_logs_parquet_unified</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="naming-section" aria-labelledby="rulesTitle">
+        <h3 id="rulesTitle">Governance rules</h3>
+        <div class="rules-grid">
+          <div class="rule-tile"><span class="rule-number">01</span><strong>Stable identifiers</strong><p>Never reuse an ID after retirement. Display names can change; registry IDs must remain stable.</p></div>
+          <div class="rule-tile"><span class="rule-number">02</span><strong>Controlled separators</strong><p>Use hyphens for registry IDs, underscores for technical names and colons for sourcetype hierarchy.</p></div>
+          <div class="rule-tile"><span class="rule-number">03</span><strong>No embedded secrets</strong><p>Never include tokens, credentials, personal data or sensitive business values in object names.</p></div>
+          <div class="rule-tile"><span class="rule-number">04</span><strong>Environment last</strong><p>When environment is required, use a controlled suffix such as dev, test, uat or prod.</p></div>
+        </div>
+        <div class="example-columns">
+          <div class="example-panel good"><h4>Use</h4><ul><li><code>TC-AWS-002</code></li><li><code>HC_entra_signin_freshness</code></li><li><code>azure:aad:signin</code></li><li><code>Identity - Entra ID - Repeated MFA Denial</code></li></ul></div>
+          <div class="example-panel bad"><h4>Avoid</h4><ul><li><code>new_test_2</code></li><li><code>AzureLogs</code></li><li><code>hec-token-prod-9f2…</code></li><li><code>Critical Alert</code></li></ul></div>
+        </div>
+      </section>
+</section>
+
   </div>
 
 </main>
@@ -14757,95 +14924,6 @@ E. Assumptions and unresolved inputs</pre>
     <div class="modal-body">
       <p class="metric-draft-note"><span class="badge warning">Draft</span> Description and How to calculate are best-effort suggestions authored for review, not sourced from the taxonomy spreadsheet — verify before relying on them operationally.</p>
       <dl class="input-detail-grid" id="metricDetailGrid"></dl>
-    </div>
-  </div>
-</div>
-
-<div id="namingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="namingTitle" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-header">
-      <div>
-        <p class="modal-eyebrow">Governance &amp; Compliance · TAX-02.06.01</p>
-        <h2 id="namingTitle" class="modal-title">Naming Convention</h2>
-        <p class="modal-subtitle">A single standard for taxonomy registry IDs, Splunk object names, event-health checks, detection content and analytical assets.</p>
-      </div>
-      <button id="closeNaming" class="modal-close" type="button" aria-label="Close naming convention">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="naming-lead">
-        <section class="naming-card" aria-labelledby="technicalPatternTitle">
-          <h3 id="technicalPatternTitle">Technical-name pattern</h3>
-          <p>Use this structure where a technical object needs platform, dataset, purpose and environment context.</p>
-          <div class="token-pattern" aria-label="domain platform component purpose environment">
-            <span class="name-token">&lt;domain&gt;</span><span class="name-separator">_</span>
-            <span class="name-token">&lt;platform&gt;</span><span class="name-separator">_</span>
-            <span class="name-token">&lt;component&gt;</span><span class="name-separator">_</span>
-            <span class="name-token">&lt;purpose&gt;</span><span class="name-separator">_</span>
-            <span class="name-token">&lt;environment&gt;</span>
-          </div>
-          <div class="example-line"><strong>Example</strong><code>sec_azure_entra_signin_prod</code><span class="valid-pill">Valid structure</span></div>
-          <div class="grandfather-note"><strong>Grandfathering:</strong> existing production indexes and sourcetypes do not need to be renamed solely for style. Record exceptions and apply the standard to new or materially changed objects.</div>
-        </section>
-        <section class="naming-card" aria-labelledby="validatorTitle">
-          <h3 id="validatorTitle">Name validator</h3>
-          <p>Check a proposed name against the selected governed pattern.</p>
-          <div class="validator-grid">
-            <label for="namingPatternType">Object type</label>
-            <select id="namingPatternType"></select>
-            <label for="namingValue">Proposed name</label>
-            <input id="namingValue" type="text" value="PLT-001" autocomplete="off" spellcheck="false" />
-            <div id="namingValidationResult" class="validation-result" aria-live="polite"></div>
-          </div>
-        </section>
-      </div>
-
-      <section class="naming-section" aria-labelledby="catalogueTitle">
-        <h3 id="catalogueTitle">Pattern catalogue</h3>
-        <p>Registry identifiers align with the current taxonomy and workbook records; technical patterns define how new Splunk content should be named.</p>
-        <div class="naming-table-wrap">
-          <table class="naming-table">
-            <thead><tr><th>Object</th><th>Pattern</th><th>Example</th><th>Separator / case</th><th>Scope</th></tr></thead>
-            <tbody>
-              <tr><td><strong>Platform ID</strong></td><td><code>PLT-###</code></td><td><code>PLT-003</code></td><td>Hyphen / uppercase</td><td>Registry</td></tr>
-              <tr><td><strong>Source Family ID</strong></td><td><code>SRC-###</code></td><td><code>SRC-001</code></td><td>Hyphen / uppercase</td><td>Reference catalogue</td></tr>
-              <tr><td><strong>Governance Profile ID</strong></td><td><code>GOV-###</code></td><td><code>GOV-003</code></td><td>Hyphen / uppercase</td><td>Registry</td></tr>
-              <tr><td><strong>Logging Pattern ID</strong></td><td><code>LP-###</code></td><td><code>LP-006</code></td><td>Hyphen / uppercase</td><td>Registry</td></tr>
-              <tr><td><strong>Input Component ID</strong></td><td><code>IC-###</code></td><td><code>IC-011</code></td><td>Hyphen / uppercase</td><td>Registry</td></tr>
-              <tr><td><strong>Collector ID</strong></td><td><code>COL-###</code></td><td><code>COL-005</code></td><td>Hyphen / uppercase</td><td>Registry</td></tr>
-              <tr><td><strong>App / TA ID</strong></td><td><code>APP-###</code></td><td><code>APP-003</code></td><td>Hyphen / uppercase</td><td>Registry</td></tr>
-              <tr><td><strong>Stanza ID</strong></td><td><code>STZ-###</code></td><td><code>STZ-021</code></td><td>Hyphen / uppercase</td><td>Registry</td></tr>
-              <tr><td><strong>Health Test ID</strong></td><td><code>TC-&lt;TYPE&gt;-###</code></td><td><code>TC-HEC-004</code></td><td>Hyphen / uppercase</td><td>Assurance</td></tr>
-              <tr><td><strong>Dependency ID</strong></td><td><code>DEP-###</code></td><td><code>DEP-007</code></td><td>Hyphen / uppercase</td><td>Lineage</td></tr>
-              <tr><td><strong>Onboarding ID</strong></td><td><code>ONB-###</code></td><td><code>ONB-005</code></td><td>Hyphen / uppercase</td><td>Workflow</td></tr>
-              <tr><td><strong>Viability Assessment ID</strong></td><td><code>VIA-###</code></td><td><code>VIA-001</code></td><td>Hyphen / uppercase</td><td>Workflow / phase gate</td></tr>
-              <tr><td><strong>Change Record ID</strong></td><td><code>CCR-###</code></td><td><code>CCR-002</code></td><td>Hyphen / uppercase</td><td>Assurance</td></tr>
-              <tr><td><strong>Business Impact Level ID</strong></td><td><code>BIL-###</code></td><td><code>BIL-002</code></td><td>Hyphen / uppercase</td><td>Governance</td></tr>
-              <tr><td><strong>SOAR Integration ID</strong></td><td><code>SOAR-###</code></td><td><code>SOAR-002</code></td><td>Hyphen / uppercase</td><td>Lineage</td></tr>
-              <tr><td><strong>Required SIEM Event Type ID</strong></td><td><code>SRC-###-EVT-###-##</code></td><td><code>SRC-010-EVT-004-01</code></td><td>Hyphen / uppercase</td><td>Reference catalogue</td></tr>
-              <tr><td><strong>Index</strong></td><td><code>&lt;domain_or_platform&gt;[_&lt;dataset&gt;]</code></td><td><code>aws_cloudtrail</code></td><td>Underscore / lowercase</td><td>Splunk</td></tr>
-              <tr><td><strong>Sourcetype</strong></td><td><code>&lt;vendor&gt;:&lt;product&gt;:&lt;dataset&gt;</code></td><td><code>azure:aad:signin</code></td><td>Colon / lowercase preferred</td><td>Splunk</td></tr>
-              <tr><td><strong>Event Health Check</strong></td><td><code>HC_&lt;platform&gt;_&lt;source&gt;_&lt;check&gt;</code></td><td><code>HC_entra_signin_freshness</code></td><td>Underscore / lowercase</td><td>Assurance</td></tr>
-              <tr><td><strong>Detection Use Case ID</strong></td><td><code>DET-&lt;DOMAIN&gt;-###</code></td><td><code>DET-IDM-012</code></td><td>Hyphen / uppercase</td><td>Detection</td></tr>
-              <tr><td><strong>Detection Search</strong></td><td><code>&lt;Domain&gt; - &lt;Platform&gt; - &lt;Behaviour&gt;</code></td><td><code>Identity - Entra ID - Repeated MFA Denial</code></td><td>Title case / spaced hyphen</td><td>Detection</td></tr>
-              <tr><td><strong>Dashboard</strong></td><td><code>&lt;Domain&gt; - &lt;Platform&gt; - &lt;Audience&gt;</code></td><td><code>Security - Entra ID - Operations</code></td><td>Title case / spaced hyphen</td><td>Analytics</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="naming-section" aria-labelledby="rulesTitle">
-        <h3 id="rulesTitle">Governance rules</h3>
-        <div class="rules-grid">
-          <div class="rule-tile"><span class="rule-number">01</span><strong>Stable identifiers</strong><p>Never reuse an ID after retirement. Display names can change; registry IDs must remain stable.</p></div>
-          <div class="rule-tile"><span class="rule-number">02</span><strong>Controlled separators</strong><p>Use hyphens for registry IDs, underscores for technical names and colons for sourcetype hierarchy.</p></div>
-          <div class="rule-tile"><span class="rule-number">03</span><strong>No embedded secrets</strong><p>Never include tokens, credentials, personal data or sensitive business values in object names.</p></div>
-          <div class="rule-tile"><span class="rule-number">04</span><strong>Environment last</strong><p>When environment is required, use a controlled suffix such as dev, test, uat or prod.</p></div>
-        </div>
-        <div class="example-columns">
-          <div class="example-panel good"><h4>Use</h4><ul><li><code>TC-AWS-002</code></li><li><code>HC_entra_signin_freshness</code></li><li><code>azure:aad:signin</code></li><li><code>Identity - Entra ID - Repeated MFA Denial</code></li></ul></div>
-          <div class="example-panel bad"><h4>Avoid</h4><ul><li><code>new_test_2</code></li><li><code>AzureLogs</code></li><li><code>hec-token-prod-9f2…</code></li><li><code>Critical Alert</code></li></ul></div>
-        </div>
-      </section>
     </div>
   </div>
 </div>
@@ -15647,14 +15725,14 @@ const namingPatterns = {
   detectionSearch: { label: "Detection Search", example: "Identity - Entra ID - Repeated MFA Denial", regex: /^[A-Z][\w/&()]*(?:\s[A-Z][\w/&()]*)*(?:\s-\s[A-Z][\w/&()]*(?:\s[A-Z][\w/&()]*)*){2}$/, help: "Use Title Case segments separated by ' - ': <Domain> - <Platform> - <Behaviour>." },
   dashboard: { label: "Dashboard", example: "Security - Entra ID - Operations", regex: /^[A-Z][\w/&()]*(?:\s[A-Z][\w/&()]*)*(?:\s-\s[A-Z][\w/&()]*(?:\s[A-Z][\w/&()]*)*){2}$/, help: "Use Title Case segments separated by ' - ': <Domain> - <Platform> - <Audience>." },
   index: { label: "Index", example: "aws_cloudtrail", regex: /^[a-z][a-z0-9_]{0,62}$/, help: "Use lowercase letters, digits and underscores, starting with a letter." },
-  sourcetype: { label: "Sourcetype", example: "azure:aad:signin", regex: /^[A-Za-z][A-Za-z0-9_-]*(?::[A-Za-z0-9_-]+){0,3}$/, help: "Prefer vendor:product:dataset. Existing single-token sourcetypes may remain documented exceptions." }
+  sourcetype: { label: "Sourcetype", example: "azure:aad:signin", regex: /^[A-Za-z][A-Za-z0-9_-]*(?::[A-Za-z0-9_-]+){0,3}$/, help: "Prefer vendor:product:dataset. Existing single-token sourcetypes may remain documented exceptions." },
+  cloudConnection: { label: "Cloud Storage Connection", example: "acme_s3_123456789012", regex: /^[a-z0-9]+_(?:s3|azure)_[a-z0-9]+$/, help: "Use <Org>_<storage>_<account>, lowercase with underscores. storage is s3 or azure. Do not include 'unified' -- that applies to Datasets only." },
+  cloudDataset: { label: "Cloud Storage Dataset", example: "acme_azure_prod_windows_security_json_unified", regex: /^[a-z0-9]+_(?:s3|azure)_[a-z0-9]+_[a-z0-9]+(?:_[a-z0-9]+)*_(?:json|parquet)_unified$/, help: "Use <Org>_<storage>_<account>_<content>_<format>_unified, lowercase with underscores. storage is s3 or azure; format is json or parquet; include 'unified' only when the dataset supports both routing and Federated Search." }
 };
 
-const namingModal = document.getElementById("namingModal");
 const namingSelect = document.getElementById("namingPatternType");
 const namingValue = document.getElementById("namingValue");
 const namingResult = document.getElementById("namingValidationResult");
-let lastNamingTrigger = null;
 
 Object.entries(namingPatterns).forEach(([key, pattern]) => {
   const option = document.createElement("option");
@@ -15676,21 +15754,6 @@ function validateNamingValue() {
   namingResult.innerHTML = valid
     ? `<strong>Valid.</strong> ${escapeHtml(value)} matches the ${escapeHtml(pattern.label)} convention.`
     : `<strong>Not valid.</strong> ${escapeHtml(pattern.help)} Example: <code>${escapeHtml(pattern.example)}</code>`;
-}
-
-function openNamingConvention(trigger) {
-  lastNamingTrigger = trigger || document.activeElement;
-  namingModal.classList.add("open");
-  namingModal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("modal-open");
-  document.getElementById("closeNaming").focus();
-}
-
-function closeNamingConvention() {
-  namingModal.classList.remove("open");
-  namingModal.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("modal-open");
-  if (lastNamingTrigger && typeof lastNamingTrigger.focus === "function") lastNamingTrigger.focus();
 }
 
 function renderNamingConventionDetail(item, colors) {
@@ -15715,13 +15778,9 @@ function renderNamingConventionDetail(item, colors) {
       <div class="detail-row"><div class="detail-label">Mandatory attributes</div><div class="detail-value">${escapeHtml(item.mandatoryAttributes)}</div></div>
       <div class="detail-row"><div class="detail-label">Relationship rule</div><div class="detail-value">${escapeHtml(item.relationshipRule)}</div></div>
     </div>`;
-  document.getElementById("openNamingFromDetail").addEventListener("click", event => openNamingConvention(event.currentTarget));
+  document.getElementById("openNamingFromDetail").addEventListener("click", () => setActivePage("refNamingConvention"));
 }
 
-document.getElementById("openNaming").addEventListener("click", event => openNamingConvention(event.currentTarget));
-document.getElementById("closeNaming").addEventListener("click", closeNamingConvention);
-namingModal.addEventListener("click", event => { if (event.target === namingModal) closeNamingConvention(); });
-document.addEventListener("keydown", event => { if (event.key === "Escape" && namingModal.classList.contains("open")) closeNamingConvention(); });
 namingSelect.addEventListener("change", () => { namingValue.value = namingPatterns[namingSelect.value].example; validateNamingValue(); });
 namingValue.addEventListener("input", validateNamingValue);
 validateNamingValue();
@@ -21459,6 +21518,7 @@ const pageTabs = {
   refRoles: document.getElementById("showRolesPage"),
   refSplunkBin: document.getElementById("showSplunkBinPage"),
   refQuestions: document.getElementById("showQuestionsPage"),
+  refNamingConvention: document.getElementById("showNamingConventionPage"),
   prompts: document.getElementById("showPromptLibraryPage"),
   cmei: document.getElementById("showCmeiPage"),
   catalogue: document.getElementById("showCataloguePage"),
@@ -21487,6 +21547,7 @@ const pageViews = {
   refRoles: document.getElementById("rolesSection"),
   refSplunkBin: document.getElementById("splunkBinSection"),
   refQuestions: document.getElementById("questionsSection"),
+  refNamingConvention: document.getElementById("namingConventionSection"),
   prompts: document.getElementById("promptLibraryPage"),
   cmei: document.getElementById("cmeiPage"),
   assurance: document.getElementById("assurancePage"),
@@ -21503,7 +21564,7 @@ const pageViews = {
 const SIDEBAR_GROUP_MAP = {
   onboarding: "onboarding", taxonomy: "onboarding", objectTaxonomy: "onboarding", assessments: "onboarding",
   sizing: "calculators", s3calc: "calculators",
-  reference: "reference", refFrameworkOverview: "reference", refConceptDefinitions: "reference", refAssessmentMethods: "reference", refStandardsReferences: "reference", refConfigFileReferences: "reference", refNetworkReference: "reference", refRoles: "reference", refSplunkBin: "reference", refQuestions: "reference",
+  reference: "reference", refFrameworkOverview: "reference", refConceptDefinitions: "reference", refAssessmentMethods: "reference", refStandardsReferences: "reference", refConfigFileReferences: "reference", refNetworkReference: "reference", refRoles: "reference", refSplunkBin: "reference", refQuestions: "reference", refNamingConvention: "reference",
   prompts: "reference", cmei: "reference", catalogue: "reference", patterns: "reference", health: "reference", portsMatrix: "reference",
   inputCoverage: "coverage", metrics: "coverage"
 };
@@ -23070,7 +23131,7 @@ function exportViabilityCalculator(event) {
 }
 
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "refFrameworkOverview", "refConceptDefinitions", "refAssessmentMethods", "refStandardsReferences", "refConfigFileReferences", "refNetworkReference", "refRoles", "refSplunkBin", "refQuestions", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "portsMatrix", "externalTools", "inputCoverage", "metrics"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "refFrameworkOverview", "refConceptDefinitions", "refAssessmentMethods", "refStandardsReferences", "refConfigFileReferences", "refNetworkReference", "refRoles", "refSplunkBin", "refQuestions", "refNamingConvention", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "portsMatrix", "externalTools", "inputCoverage", "metrics"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#file-mon-/.test(location.hash) ? "file-monitoring-profile" : /^#rest-api-/.test(location.hash) ? "rest-api-collection-profile" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : /^#eda-/.test(location.hash) ? "eda-playbook" : "");
   
@@ -23127,6 +23188,8 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
           ? "#splunk-bin"
         : selected === "refQuestions"
           ? "#questions"
+        : selected === "refNamingConvention"
+          ? "#naming-convention"
         : selected === "prompts"
           ? "#prompt-library"
         : selected === "cmei"
@@ -23818,6 +23881,7 @@ function pageNameFromHash() {
   if (location.hash === "#roles") return "refRoles";
   if (location.hash === "#splunk-bin") return "refSplunkBin";
   if (location.hash === "#questions") return "refQuestions";
+  if (location.hash === "#naming-convention") return "refNamingConvention";
   return "info";
 }
 
