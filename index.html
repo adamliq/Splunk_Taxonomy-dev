@@ -14767,7 +14767,7 @@ E. Assumptions and unresolved inputs</pre>
       <div>
         <p class="modal-eyebrow">Governance &amp; Compliance · TAX-02.06.01</p>
         <h2 id="namingTitle" class="modal-title">Naming Convention</h2>
-        <p class="modal-subtitle">A single standard for taxonomy registry IDs, Splunk object names, event-health checks, detection content and analytical assets.</p>
+        <p class="modal-subtitle">A single standard for taxonomy registry IDs, Splunk object names, event-health checks, detection content, analytical assets, and cloud storage Connections/Datasets.</p>
       </div>
       <button id="closeNaming" class="modal-close" type="button" aria-label="Close naming convention">×</button>
     </div>
@@ -14828,6 +14828,89 @@ E. Assumptions and unresolved inputs</pre>
               <tr><td><strong>Detection Use Case ID</strong></td><td><code>DET-&lt;DOMAIN&gt;-###</code></td><td><code>DET-IDM-012</code></td><td>Hyphen / uppercase</td><td>Detection</td></tr>
               <tr><td><strong>Detection Search</strong></td><td><code>&lt;Domain&gt; - &lt;Platform&gt; - &lt;Behaviour&gt;</code></td><td><code>Identity - Entra ID - Repeated MFA Denial</code></td><td>Title case / spaced hyphen</td><td>Detection</td></tr>
               <tr><td><strong>Dashboard</strong></td><td><code>&lt;Domain&gt; - &lt;Platform&gt; - &lt;Audience&gt;</code></td><td><code>Security - Entra ID - Operations</code></td><td>Title case / spaced hyphen</td><td>Analytics</td></tr>
+              <tr><td><strong>Cloud Storage Connection</strong></td><td><code>&lt;Org&gt;_&lt;storage&gt;_&lt;account&gt;</code></td><td><code>acme_s3_123456789012</code></td><td>Underscore / lowercase</td><td>S3 / Azure Federated Search</td></tr>
+              <tr><td><strong>Cloud Storage Dataset</strong></td><td><code>&lt;Org&gt;_&lt;storage&gt;_&lt;account&gt;_&lt;content&gt;_&lt;format&gt;_unified</code></td><td><code>acme_azure_prod_windows_security_json_unified</code></td><td>Underscore / lowercase</td><td>S3 / Azure Federated Search</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="naming-section" aria-labelledby="unifiedNamingTitle">
+        <h3 id="unifiedNamingTitle">Cloud storage Connections &amp; Datasets</h3>
+        <p>Applies to Splunk Federated Search / Ingest Actions objects backed by Amazon S3 or Azure Blob Storage / ADLS Gen2. A Connection names the storage account; a Dataset names one content set within it that supports routing, Federated Search, or both.</p>
+        <div class="naming-lead">
+          <section class="naming-card" aria-labelledby="connectionPatternTitle">
+            <h3 id="connectionPatternTitle">Connection</h3>
+            <div class="token-pattern" aria-label="org storage account">
+              <span class="name-token">&lt;Org&gt;</span><span class="name-separator">_</span>
+              <span class="name-token">&lt;storage&gt;</span><span class="name-separator">_</span>
+              <span class="name-token">&lt;account&gt;</span>
+            </div>
+            <div class="example-line"><strong>Example</strong><code>acme_s3_123456789012</code><span class="valid-pill">Valid structure</span></div>
+            <div class="grandfather-note"><strong>Note:</strong> do not include <code>unified</code> on Connections -- that suffix applies to Datasets only.</div>
+          </section>
+          <section class="naming-card" aria-labelledby="datasetPatternTitle">
+            <h3 id="datasetPatternTitle">Dataset</h3>
+            <div class="token-pattern" aria-label="org storage account content format unified">
+              <span class="name-token">&lt;Org&gt;</span><span class="name-separator">_</span>
+              <span class="name-token">&lt;storage&gt;</span><span class="name-separator">_</span>
+              <span class="name-token">&lt;account&gt;</span><span class="name-separator">_</span>
+              <span class="name-token">&lt;content&gt;</span><span class="name-separator">_</span>
+              <span class="name-token">&lt;format&gt;</span><span class="name-separator">_</span>
+              <span class="name-token">unified</span>
+            </div>
+            <div class="example-line"><strong>Example</strong><code>acme_azure_prod_windows_security_json_unified</code><span class="valid-pill">Valid structure</span></div>
+            <div class="grandfather-note"><strong>Note:</strong> include <code>unified</code> only when the dataset supports both data routing and Federated Search.</div>
+          </section>
+        </div>
+
+        <div class="naming-table-wrap">
+          <table class="naming-table">
+            <thead><tr><th>Component</th><th>Meaning</th><th>Example values</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td><code>&lt;Org&gt;</code></td><td>Short organization or company name</td><td><code>acme</code> / <code>contoso</code></td><td></td></tr>
+              <tr><td><code>&lt;storage&gt;</code></td><td>Cloud storage type</td><td><code>s3</code> / <code>azure</code></td><td>s3 = Amazon S3; azure = Microsoft Azure Blob / ADLS Gen2</td></tr>
+              <tr><td><code>&lt;account&gt;</code></td><td>AWS Account ID or Azure account/environment label</td><td><code>123456789012</code> / <code>prod</code> / <code>nonprod</code></td><td></td></tr>
+              <tr><td><code>&lt;content&gt;</code></td><td>Logical data content or source type</td><td><code>windows_security</code> / <code>cloudtrail</code> / <code>vpcflow</code></td><td></td></tr>
+              <tr><td><code>&lt;format&gt;</code></td><td>File format</td><td><code>json</code> / <code>parquet</code></td><td></td></tr>
+              <tr><td><code>unified</code></td><td>Used only on Datasets</td><td></td><td>Indicates support for both data routing and Federated Search. Not used on Connections.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p style="margin:18px 0 8px"><strong>Windows event log examples</strong> -- the same six object types, named consistently across both storage backends.</p>
+        <div class="naming-table-wrap">
+          <table class="naming-table">
+            <thead><tr><th>Object</th><th>Format</th><th>S3 example</th><th>Azure example</th></tr></thead>
+            <tbody>
+              <tr><td>Windows Security Event Logs</td><td>JSON</td><td><code>acme_s3_123456789012_windows_security_json_unified</code></td><td><code>acme_azure_prod_windows_security_json_unified</code></td></tr>
+              <tr><td>Windows Security Event Logs</td><td>Parquet</td><td><code>acme_s3_123456789012_windows_security_parquet_unified</code></td><td><code>acme_azure_prod_windows_security_parquet_unified</code></td></tr>
+              <tr><td>Windows System Event Logs</td><td>JSON</td><td><code>acme_s3_123456789012_windows_system_json_unified</code></td><td><code>acme_azure_prod_windows_system_json_unified</code></td></tr>
+              <tr><td>Windows System Event Logs</td><td>Parquet</td><td><code>acme_s3_123456789012_windows_system_parquet_unified</code></td><td><code>acme_azure_prod_windows_system_parquet_unified</code></td></tr>
+              <tr><td>Windows Application Event Logs</td><td>JSON</td><td><code>acme_s3_123456789012_windows_application_json_unified</code></td><td><code>acme_azure_prod_windows_application_json_unified</code></td></tr>
+              <tr><td>Windows Application Event Logs</td><td>Parquet</td><td><code>acme_s3_123456789012_windows_application_parquet_unified</code></td><td><code>acme_azure_prod_windows_application_parquet_unified</code></td></tr>
+              <tr><td>Windows PowerShell Logs</td><td>JSON</td><td><code>acme_s3_123456789012_windows_powershell_json_unified</code></td><td><code>acme_azure_prod_windows_powershell_json_unified</code></td></tr>
+              <tr><td>Windows PowerShell Logs</td><td>Parquet</td><td><code>acme_s3_123456789012_windows_powershell_parquet_unified</code></td><td><code>acme_azure_prod_windows_powershell_parquet_unified</code></td></tr>
+              <tr><td>Windows Sysmon</td><td>JSON</td><td><code>acme_s3_123456789012_windows_sysmon_json_unified</code></td><td><code>acme_azure_prod_windows_sysmon_json_unified</code></td></tr>
+              <tr><td>Windows Sysmon</td><td>Parquet</td><td><code>acme_s3_123456789012_windows_sysmon_parquet_unified</code></td><td><code>acme_azure_prod_windows_sysmon_parquet_unified</code></td></tr>
+              <tr><td>All Windows Event Logs (mixed)</td><td>JSON</td><td><code>acme_s3_123456789012_windows_eventlogs_json_unified</code></td><td><code>acme_azure_prod_windows_eventlogs_json_unified</code></td></tr>
+              <tr><td>All Windows Event Logs (mixed)</td><td>Parquet</td><td><code>acme_s3_123456789012_windows_eventlogs_parquet_unified</code></td><td><code>acme_azure_prod_windows_eventlogs_parquet_unified</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p style="margin:18px 0 8px"><strong>Additional examples</strong></p>
+        <div class="naming-table-wrap">
+          <table class="naming-table">
+            <thead><tr><th>Object</th><th>Storage / format</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td>CloudTrail</td><td>S3 / JSON</td><td><code>acme_s3_123456789012_cloudtrail_json_unified</code></td></tr>
+              <tr><td>CloudTrail</td><td>S3 / Parquet</td><td><code>acme_s3_123456789012_cloudtrail_parquet_unified</code></td></tr>
+              <tr><td>VPC Flow Logs</td><td>S3 / JSON</td><td><code>acme_s3_123456789012_vpcflow_json_unified</code></td></tr>
+              <tr><td>Azure Activity Logs</td><td>Azure / JSON</td><td><code>acme_azure_prod_activity_logs_json_unified</code></td></tr>
+              <tr><td>Azure NSG Flow Logs</td><td>Azure / Parquet</td><td><code>acme_azure_prod_nsg_flow_parquet_unified</code></td></tr>
+              <tr><td>Security Logs</td><td>S3 / JSON</td><td><code>acme_s3_123456789012_security_logs_json_unified</code></td></tr>
+              <tr><td>Application Logs</td><td>Azure / Parquet</td><td><code>acme_azure_prod_app_logs_parquet_unified</code></td></tr>
             </tbody>
           </table>
         </div>
@@ -15647,7 +15730,9 @@ const namingPatterns = {
   detectionSearch: { label: "Detection Search", example: "Identity - Entra ID - Repeated MFA Denial", regex: /^[A-Z][\w/&()]*(?:\s[A-Z][\w/&()]*)*(?:\s-\s[A-Z][\w/&()]*(?:\s[A-Z][\w/&()]*)*){2}$/, help: "Use Title Case segments separated by ' - ': <Domain> - <Platform> - <Behaviour>." },
   dashboard: { label: "Dashboard", example: "Security - Entra ID - Operations", regex: /^[A-Z][\w/&()]*(?:\s[A-Z][\w/&()]*)*(?:\s-\s[A-Z][\w/&()]*(?:\s[A-Z][\w/&()]*)*){2}$/, help: "Use Title Case segments separated by ' - ': <Domain> - <Platform> - <Audience>." },
   index: { label: "Index", example: "aws_cloudtrail", regex: /^[a-z][a-z0-9_]{0,62}$/, help: "Use lowercase letters, digits and underscores, starting with a letter." },
-  sourcetype: { label: "Sourcetype", example: "azure:aad:signin", regex: /^[A-Za-z][A-Za-z0-9_-]*(?::[A-Za-z0-9_-]+){0,3}$/, help: "Prefer vendor:product:dataset. Existing single-token sourcetypes may remain documented exceptions." }
+  sourcetype: { label: "Sourcetype", example: "azure:aad:signin", regex: /^[A-Za-z][A-Za-z0-9_-]*(?::[A-Za-z0-9_-]+){0,3}$/, help: "Prefer vendor:product:dataset. Existing single-token sourcetypes may remain documented exceptions." },
+  cloudConnection: { label: "Cloud Storage Connection", example: "acme_s3_123456789012", regex: /^[a-z0-9]+_(?:s3|azure)_[a-z0-9]+$/, help: "Use <Org>_<storage>_<account>, lowercase with underscores. storage is s3 or azure. Do not include 'unified' -- that applies to Datasets only." },
+  cloudDataset: { label: "Cloud Storage Dataset", example: "acme_azure_prod_windows_security_json_unified", regex: /^[a-z0-9]+_(?:s3|azure)_[a-z0-9]+_[a-z0-9]+(?:_[a-z0-9]+)*_(?:json|parquet)_unified$/, help: "Use <Org>_<storage>_<account>_<content>_<format>_unified, lowercase with underscores. storage is s3 or azure; format is json or parquet; include 'unified' only when the dataset supports both routing and Federated Search." }
 };
 
 const namingModal = document.getElementById("namingModal");
