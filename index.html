@@ -14394,6 +14394,7 @@ E. Assumptions and unresolved inputs</pre>
     </div>
     <div class="page-subnav" role="tablist" aria-label="Input coverage sections">
       <button id="showMsCloudInputsSubpage" class="page-subtab active" type="button" role="tab" aria-selected="true" aria-controls="msCloudInputsSubpage" data-subpage="msCloudInputs">Microsoft cloud based inputs</button>
+      <button id="showAwsCloudInputsSubpage" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="awsCloudInputsSubpage" data-subpage="awsCloudInputs">Amazon AWS based inputs</button>
     </div>
     <div id="msCloudInputsSubpage" class="subpage-view" role="tabpanel" aria-labelledby="showMsCloudInputsSubpage">
       <div class="page-subnav level-3" role="tablist" aria-label="Microsoft cloud based inputs sections">
@@ -14490,6 +14491,38 @@ E. Assumptions and unresolved inputs</pre>
             <div id="seExploreView" class="se-explore-list" hidden></div>
           </div>
         </div>
+      </section>
+      </div>
+    </div>
+
+    <div id="awsCloudInputsSubpage" class="subpage-view" role="tabpanel" aria-labelledby="showAwsCloudInputsSubpage" hidden>
+      <div class="page-subnav level-3" role="tablist" aria-label="Amazon AWS based inputs sections">
+        <button id="showAwsInputsListView" class="page-subtab active" type="button" role="tab" aria-selected="true" aria-controls="awsInputsListView" data-awsview="awsInputsList">Inputs</button>
+        <button id="showAwsCoverageView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="awsCoverageView" data-awsview="awsCoverage">Coverage</button>
+        <button id="showAwsSchemaView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="awsSchemaView" data-awsview="awsSchema">Schema</button>
+      </div>
+
+      <div id="awsInputsListView" class="subpage-view" role="tabpanel" aria-labelledby="showAwsInputsListView">
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Amazon AWS based inputs</h3><p id="awsInputsListIntro">Inputs across Splunk-maintained AWS add-ons, organised the same way as the Microsoft cloud inputs above. Not yet populated -- see the note below.</p></div></div>
+
+        <div id="awsInputsListGroups"></div>
+
+        <p class="sot-note" id="awsInputsListNote">No AWS TA groups have been documented here yet. This tab mirrors the Microsoft cloud inputs structure (same <code>tag</code>/<code>friendlyName</code>/<code>description</code>/<code>appName</code>/<code>appId</code>/<code>baseLink</code>/<code>inputs</code> shape, populated into <code>awsInputCoverageGroups</code>) so it's ready to fill in from a real AWS TA input/schema reference the same way the Microsoft section was built -- ask for a specific AWS add-on (for example the Splunk Add-on for Amazon Web Services) and supply its input list to populate this view.</p>
+      </section>
+      </div>
+
+      <div id="awsCoverageView" class="subpage-view" role="tabpanel" aria-labelledby="showAwsCoverageView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Coverage</h3><p>Editable account/region-level enablement tracking against the AWS cloud inputs listed under Inputs.</p></div></div>
+        <div class="sot-note">Not yet built. Once AWS TA groups are added under the Inputs tab, this becomes an editable tracker table -- add rows per AWS account/region, mark which inputs are enabled, and import/export as CSV -- following the same pattern as the Microsoft Coverage tab.</div>
+      </section>
+      </div>
+
+      <div id="awsSchemaView" class="subpage-view" role="tabpanel" aria-labelledby="showAwsSchemaView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Schema explorer</h3><p>Search, filter and browse fields documented across linked AWS JSON Schema files.</p></div></div>
+        <div class="sot-note">Not yet built. This becomes searchable once AWS input field schemas (JSON Schema files under <code>docs/</code>, one per input, the same way the Microsoft schemas were supplied) are available to link against inputs added under the Inputs tab.</div>
       </section>
       </div>
     </div>
@@ -33032,6 +33065,21 @@ msCloudInputsViewTabs.forEach(tab => {
   tab.addEventListener("click", () => setActiveMsCloudInputsView(tab.dataset.msview));
 });
 
+const awsCloudInputsViewTabs = document.querySelectorAll("#awsCloudInputsSubpage .page-subnav.level-3 .page-subtab");
+function setActiveAwsCloudInputsView(viewName) {
+  awsCloudInputsViewTabs.forEach(tab => {
+    const active = tab.dataset.awsview === viewName;
+    tab.classList.toggle("active", active);
+    tab.setAttribute("aria-selected", String(active));
+  });
+  document.querySelectorAll("#awsCloudInputsSubpage > .subpage-view").forEach(view => {
+    view.hidden = view.id !== `${viewName}View`;
+  });
+}
+awsCloudInputsViewTabs.forEach(tab => {
+  tab.addEventListener("click", () => setActiveAwsCloudInputsView(tab.dataset.awsview));
+});
+
 /* ---------- Input Coverage: editable Microsoft cloud input tracker ---------- */
 const inputCoverageTenantColumns = ["Tenant ID", "Tenant Name", "Subscription ID", "Subscription Name"];
 // appName/appId/baseLink confirmed by the user against Splunkbase directly (2026-08). sourcetype remains
@@ -33242,7 +33290,7 @@ const inputDetailModal = document.getElementById("inputDetailModal");
 let lastInputDetailTrigger = null;
 
 function openInputDetail(key, trigger) {
-  const c = inputCoverageInputColumns.find(col => col.key === key);
+  const c = inputCoverageInputColumns.find(col => col.key === key) || awsInputCoverageInputColumns.find(col => col.key === key);
   if (!c || !inputDetailModal) return;
   lastInputDetailTrigger = trigger || document.activeElement;
   document.getElementById("inputDetailTitle").textContent = c.label;
@@ -33304,6 +33352,62 @@ document.getElementById("msInputsListGroups").addEventListener("click", event =>
 document.getElementById("closeInputDetail").addEventListener("click", closeInputDetail);
 inputDetailModal.addEventListener("click", event => { if (event.target === inputDetailModal) closeInputDetail(); });
 document.addEventListener("keydown", event => { if (event.key === "Escape" && inputDetailModal.classList.contains("open")) closeInputDetail(); });
+
+/* ---------- Input Coverage: Amazon AWS based inputs -----------------------------------------------------
+ * Same data shape and rendering pattern as the Microsoft cloud inputs above (inputCoverageGroups /
+ * renderMsInputsListView), deliberately kept as its own separate pool rather than merged into
+ * inputCoverageGroups -- "Amazon AWS based inputs" is its own top-level tab, not more Microsoft rows.
+ * Starts empty: no AWS TA/input data has been verified yet, so nothing is fabricated here. Populate
+ * awsInputCoverageGroups (and awsInputCoverageColumnDetails / awsInputCoverageSourcetypes, matching the
+ * Microsoft objects' shape) from a real AWS TA input/schema reference to fill this in, the same way the
+ * Microsoft section was built from user-supplied schema files. ---------------------------------------- */
+const awsInputCoverageGroups = [];
+const awsInputCoverageColumnDetails = {};
+const awsInputCoverageSourcetypes = {};
+const awsInputCoverageInputColumns = awsInputCoverageGroups.flatMap(group =>
+  group.inputs.map(label => {
+    const key = `${label} [${group.tag}]`;
+    const details = awsInputCoverageColumnDetails[key] || {};
+    return {
+      key, label, tag: group.tag,
+      appName: group.appName, appId: group.appId, baseLink: group.baseLink,
+      description: details.description || "To be confirmed",
+      sourcetype: awsInputCoverageSourcetypes[key] || "To be confirmed",
+      inputCategory: details.inputCategory || "To be confirmed",
+      contentType: details.contentType || "To be confirmed",
+      inputTypeSub: details.inputTypeSub || "To be confirmed",
+      source: details.source || "To be confirmed",
+      schema: details.schema || "To be confirmed",
+      fields: details.fields || []
+    };
+  })
+);
+
+function renderAwsInputsListView() {
+  const container = document.getElementById("awsInputsListGroups");
+  if (!container) return;
+  container.innerHTML = awsInputCoverageGroups.map(g => {
+    const items = g.inputs.map(label => {
+      const key = `${label} [${g.tag}]`;
+      return `<li><button type="button" class="input-detail-trigger" data-input-key="${escapeHtml(key)}">${escapeHtml(label)}</button></li>`;
+    }).join("");
+    return `<div class="input-coverage-group">
+      <h4>${escapeHtml(g.friendlyName)} <span class="ta-tag">${escapeHtml(g.tag)}</span></h4>
+      <p>${escapeHtml(g.description)}</p>
+      <ul class="input-coverage-list">${items}</ul>
+    </div>`;
+  }).join("");
+  if (!awsInputCoverageGroups.length) return; // keep the static empty-state intro/note authored in HTML
+  const introEl = document.getElementById("awsInputsListIntro");
+  if (introEl) introEl.textContent = `${awsInputCoverageInputColumns.length} inputs across Splunk-maintained AWS add-ons. Each input is a distinct, separately-enabled data feed within its TA -- not every account/region will need every input. Select an input to see its details.`;
+}
+renderAwsInputsListView();
+
+document.getElementById("awsInputsListGroups").addEventListener("click", event => {
+  const trigger = event.target.closest(".input-detail-trigger");
+  if (!trigger) return;
+  openInputDetail(trigger.dataset.inputKey, trigger);
+});
 
 /* ---------- Schema explorer: search/filter/browse every field across the linked JSON Schema files ---------- */
 // Only columns with a real Schema link belong here -- "To be confirmed" columns have nothing to explore.
