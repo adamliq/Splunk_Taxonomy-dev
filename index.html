@@ -1015,6 +1015,7 @@
     .se-type-chip { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 11.5px; color: var(--muted); white-space: nowrap; }
     .se-col-desc { color: var(--muted); max-width: 340px; }
     .se-empty { padding: 40px 16px; text-align: center; color: var(--muted); font-size: 13.5px; }
+    .se-field-notes { color: var(--muted); font-style: italic; }
     .se-load-more-row { display: flex; justify-content: center; margin-top: 14px; }
     .se-load-more { border: 1px solid var(--border); background: var(--surface); color: var(--primary); font-weight: 700; font-size: 13px; padding: 9px 18px; border-radius: 9px; cursor: pointer; }
     .se-load-more:hover { background: var(--primary-light); border-color: var(--accent); }
@@ -14394,6 +14395,7 @@ E. Assumptions and unresolved inputs</pre>
     </div>
     <div class="page-subnav" role="tablist" aria-label="Input coverage sections">
       <button id="showMsCloudInputsSubpage" class="page-subtab active" type="button" role="tab" aria-selected="true" aria-controls="msCloudInputsSubpage" data-subpage="msCloudInputs">Microsoft cloud based inputs</button>
+      <button id="showAwsCloudInputsSubpage" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="awsCloudInputsSubpage" data-subpage="awsCloudInputs">Amazon AWS based inputs</button>
     </div>
     <div id="msCloudInputsSubpage" class="subpage-view" role="tabpanel" aria-labelledby="showMsCloudInputsSubpage">
       <div class="page-subnav level-3" role="tablist" aria-label="Microsoft cloud based inputs sections">
@@ -14488,6 +14490,77 @@ E. Assumptions and unresolved inputs</pre>
             </div>
 
             <div id="seExploreView" class="se-explore-list" hidden></div>
+          </div>
+        </div>
+      </section>
+      </div>
+    </div>
+
+    <div id="awsCloudInputsSubpage" class="subpage-view" role="tabpanel" aria-labelledby="showAwsCloudInputsSubpage" hidden>
+      <div class="page-subnav level-3" role="tablist" aria-label="Amazon AWS based inputs sections">
+        <button id="showAwsInputsListView" class="page-subtab active" type="button" role="tab" aria-selected="true" aria-controls="awsInputsListView" data-awsview="awsInputsList">Inputs</button>
+        <button id="showAwsCoverageView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="awsCoverageView" data-awsview="awsCoverage">Coverage</button>
+        <button id="showAwsSchemaView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="awsSchemaView" data-awsview="awsSchema">Schema</button>
+      </div>
+
+      <div id="awsInputsListView" class="subpage-view" role="tabpanel" aria-labelledby="showAwsInputsListView">
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Amazon AWS based inputs</h3><p id="awsInputsListIntro">Inputs across Splunk-maintained AWS add-ons, organised the same way as the Microsoft cloud inputs above. Not yet populated -- see the note below.</p></div></div>
+
+        <div id="awsInputsListGroups"></div>
+
+        <p class="sot-note" id="awsInputsListNote">App/Input/Sourcetype data transcribed from a supplied Splunk_TA_aws_sourcetypes.csv. The Splunkbase app name, app ID and base link are not yet confirmed and show as "To be confirmed" in each input's details below -- supply those to complete the entry, the same way Microsoft's were confirmed. See the Schema tab for the AWS field-level schema (transcribed separately from a supplied CSV, organised by sourcetype rather than by these input names).</p>
+      </section>
+      </div>
+
+      <div id="awsCoverageView" class="subpage-view" role="tabpanel" aria-labelledby="showAwsCoverageView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Coverage</h3><p>Editable account/region-level enablement tracking against the AWS cloud inputs listed under Inputs.</p></div></div>
+        <div class="sot-note">Not yet built. Once AWS TA groups are added under the Inputs tab, this becomes an editable tracker table -- add rows per AWS account/region, mark which inputs are enabled, and import/export as CSV -- following the same pattern as the Microsoft Coverage tab.</div>
+      </section>
+      </div>
+
+      <div id="awsSchemaView" class="subpage-view" role="tabpanel" aria-labelledby="showAwsSchemaView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Schema explorer</h3><p>Search, filter and browse field-level schema for AWS sourcetypes -- native TA fields, CIM/OCSF model mappings, and lookup/derived fields.</p></div></div>
+
+        <div class="se-stats" id="awsSchemaStats"></div>
+
+        <div class="se-workspace">
+          <aside class="se-rail">
+            <div class="se-rail-group">
+              <h4>Sourcetype</h4>
+              <div class="se-app-list" id="awsSchemaSourcetypeList"></div>
+            </div>
+            <div class="se-rail-group">
+              <h4>Field category</h4>
+              <div class="se-app-list" id="awsSchemaCategoryList"></div>
+            </div>
+          </aside>
+
+          <div class="se-main">
+            <div class="se-toolbar">
+              <input id="awsSchemaSearchBox" type="search" placeholder="Search sourcetypes, fields, descriptions, CIM models…" aria-label="Search AWS schema fields" />
+              <span class="se-result-count" id="awsSchemaResultCount"></span>
+            </div>
+
+            <div class="se-table-wrap">
+              <table class="se-table">
+                <thead>
+                  <tr>
+                    <th>Sourcetype</th>
+                    <th>Category</th>
+                    <th>Field</th>
+                    <th>CIM model</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody id="awsSchemaFieldsBody"></tbody>
+              </table>
+            </div>
+            <div class="se-load-more-row">
+              <button id="awsSchemaLoadMoreBtn" class="se-load-more" type="button" hidden></button>
+            </div>
           </div>
         </div>
       </section>
@@ -33032,6 +33105,21 @@ msCloudInputsViewTabs.forEach(tab => {
   tab.addEventListener("click", () => setActiveMsCloudInputsView(tab.dataset.msview));
 });
 
+const awsCloudInputsViewTabs = document.querySelectorAll("#awsCloudInputsSubpage .page-subnav.level-3 .page-subtab");
+function setActiveAwsCloudInputsView(viewName) {
+  awsCloudInputsViewTabs.forEach(tab => {
+    const active = tab.dataset.awsview === viewName;
+    tab.classList.toggle("active", active);
+    tab.setAttribute("aria-selected", String(active));
+  });
+  document.querySelectorAll("#awsCloudInputsSubpage > .subpage-view").forEach(view => {
+    view.hidden = view.id !== `${viewName}View`;
+  });
+}
+awsCloudInputsViewTabs.forEach(tab => {
+  tab.addEventListener("click", () => setActiveAwsCloudInputsView(tab.dataset.awsview));
+});
+
 /* ---------- Input Coverage: editable Microsoft cloud input tracker ---------- */
 const inputCoverageTenantColumns = ["Tenant ID", "Tenant Name", "Subscription ID", "Subscription Name"];
 // appName/appId/baseLink confirmed by the user against Splunkbase directly (2026-08). sourcetype remains
@@ -33242,9 +33330,12 @@ const inputDetailModal = document.getElementById("inputDetailModal");
 let lastInputDetailTrigger = null;
 
 function openInputDetail(key, trigger) {
-  const c = inputCoverageInputColumns.find(col => col.key === key);
+  const msCol = inputCoverageInputColumns.find(col => col.key === key);
+  const c = msCol || awsInputCoverageInputColumns.find(col => col.key === key);
   if (!c || !inputDetailModal) return;
   lastInputDetailTrigger = trigger || document.activeElement;
+  const eyebrowEl = document.getElementById("inputDetailEyebrow");
+  if (eyebrowEl) eyebrowEl.textContent = msCol ? "Microsoft cloud based inputs" : "Amazon AWS based inputs";
   document.getElementById("inputDetailTitle").textContent = c.label;
   document.getElementById("inputDetailSubtitle").textContent = `${c.appName} (${c.tag})`;
   const rows = [
@@ -33263,7 +33354,9 @@ function openInputDetail(key, trigger) {
     // Fields is derived from the linked schema, not looked up independently -- its value only makes sense
     // relative to c.schema, so it's handled inline below rather than as its own [k, v] row.
     ["Fields", c.schema === "To be confirmed" ? "To be confirmed" : (c.fields.length ? c.fields : "No individual fields documented in the schema")]
-  ];
+  // "Entra ID type" only applies to Microsoft entries (it's not in the AWS column shape at all, so it's
+  // undefined there) -- drop rows with no value rather than showing an irrelevant blank field.
+  ].filter(([, v]) => v !== undefined && v !== "");
   document.getElementById("inputDetailGrid").innerHTML = rows.map(([k, v]) => {
     const isExternalLink = k === "Splunk app base link" && /^https?:\/\//.test(v);
     let valueHtml;
@@ -33304,6 +33397,730 @@ document.getElementById("msInputsListGroups").addEventListener("click", event =>
 document.getElementById("closeInputDetail").addEventListener("click", closeInputDetail);
 inputDetailModal.addEventListener("click", event => { if (event.target === inputDetailModal) closeInputDetail(); });
 document.addEventListener("keydown", event => { if (event.key === "Escape" && inputDetailModal.classList.contains("open")) closeInputDetail(); });
+
+/* ---------- Input Coverage: Amazon AWS based inputs -----------------------------------------------------
+ * Same data shape and rendering pattern as the Microsoft cloud inputs above (inputCoverageGroups /
+ * renderMsInputsListView), deliberately kept as its own separate pool rather than merged into
+ * inputCoverageGroups -- "Amazon AWS based inputs" is its own top-level tab, not more Microsoft rows.
+ * App/Input/Sourcetype data transcribed verbatim from the supplied Splunk_TA_aws_sourcetypes.csv.
+ * appName/appId/baseLink are not in that file and haven't been confirmed against Splunkbase the way
+ * Microsoft's were, so they're marked "To be confirmed" rather than guessed -- fill them in once
+ * confirmed, the same way Microsoft's were. Per-field schema (fields/schema below) isn't cross-linked
+ * to the Schema tab's data yet -- that CSV is organised by sourcetype, not by this TA's input names, so
+ * linking them is a separate follow-up rather than an assumed 1:1 mapping. ------------------------------ */
+const awsInputCoverageGroups = [
+  { tag: "Splunk_TA_aws", friendlyName: "Amazon Web Services", description: "Splunk Add-on for AWS -- collects CloudTrail, CloudWatch, Config, VPC/Transit Gateway Flow Logs, S3/CloudFront/ELB access logs, Inspector findings, Security Lake and billing/cost data.", appName: "To be confirmed", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["Billing", "CloudTrail", "CloudWatch", "CloudTrail Lake", "CloudFront Access Logs", "Config", "Config Rules", "ELB Access Logs", "Inspector", "Metadata", "S3 Access Logs", "Security Lake", "Transit Gateway Flow Logs", "VPC Flow Logs", "Custom Data Type"] }
+];
+const awsInputCoverageColumnDetails = {};
+const awsInputCoverageSourcetypes = {
+  "Billing [Splunk_TA_aws]": "aws:billing (legacy reports); aws:billing:cur (Cost and Usage Report – preferred/current)",
+  "CloudTrail [Splunk_TA_aws]": "aws:cloudtrail",
+  "CloudWatch [Splunk_TA_aws]": "aws:cloudwatch; aws:cloudwatch:metric (when targeting a metrics index)",
+  "CloudTrail Lake [Splunk_TA_aws]": "aws:cloudtrail:lake",
+  "CloudFront Access Logs [Splunk_TA_aws]": "aws:cloudfront:accesslogs",
+  "Config [Splunk_TA_aws]": "aws:config; aws:config:notification (for change notifications)",
+  "Config Rules [Splunk_TA_aws]": "aws:config:rule",
+  "ELB Access Logs [Splunk_TA_aws]": "aws:elb:accesslogs",
+  "Inspector [Splunk_TA_aws]": "aws:inspector; aws:inspector:v2:findings (Inspector v2)",
+  "Metadata [Splunk_TA_aws]": "aws:metadata; (older versions also used aws:description)",
+  "S3 Access Logs [Splunk_TA_aws]": "aws:s3:accesslogs",
+  "Security Lake [Splunk_TA_aws]": "aws:asl",
+  "Transit Gateway Flow Logs [Splunk_TA_aws]": "aws:transitgateway:flowlogs",
+  "VPC Flow Logs [Splunk_TA_aws]": "aws:cloudwatchlogs:vpcflow; aws:cloudwatchlogs:vpcflow:metric (when using a metrics index)",
+  "Custom Data Type [Splunk_TA_aws]": "User-defined / custom (often falls back to aws:s3 or a decoder-specific type such as aws:s3:csv)"
+};
+const awsInputCoverageInputColumns = awsInputCoverageGroups.flatMap(group =>
+  group.inputs.map(label => {
+    const key = `${label} [${group.tag}]`;
+    const details = awsInputCoverageColumnDetails[key] || {};
+    return {
+      key, label, tag: group.tag,
+      appName: group.appName, appId: group.appId, baseLink: group.baseLink,
+      description: details.description || "To be confirmed",
+      sourcetype: awsInputCoverageSourcetypes[key] || "To be confirmed",
+      inputCategory: details.inputCategory || "To be confirmed",
+      contentType: details.contentType || "To be confirmed",
+      inputTypeSub: details.inputTypeSub || "To be confirmed",
+      source: details.source || "To be confirmed",
+      schema: details.schema || "To be confirmed",
+      fields: details.fields || []
+    };
+  })
+);
+
+function renderAwsInputsListView() {
+  const container = document.getElementById("awsInputsListGroups");
+  if (!container) return;
+  container.innerHTML = awsInputCoverageGroups.map(g => {
+    const items = g.inputs.map(label => {
+      const key = `${label} [${g.tag}]`;
+      return `<li><button type="button" class="input-detail-trigger" data-input-key="${escapeHtml(key)}">${escapeHtml(label)}</button></li>`;
+    }).join("");
+    return `<div class="input-coverage-group">
+      <h4>${escapeHtml(g.friendlyName)} <span class="ta-tag">${escapeHtml(g.tag)}</span></h4>
+      <p>${escapeHtml(g.description)}</p>
+      <ul class="input-coverage-list">${items}</ul>
+    </div>`;
+  }).join("");
+  if (!awsInputCoverageGroups.length) return; // keep the static empty-state intro/note authored in HTML
+  const introEl = document.getElementById("awsInputsListIntro");
+  if (introEl) {
+    const n = awsInputCoverageGroups.length;
+    introEl.textContent = `${awsInputCoverageInputColumns.length} inputs across ${n} Splunk-maintained AWS add-on${n === 1 ? "" : "s"}. Each input is a distinct, separately-enabled data feed within its TA -- not every account/region will need every input. Select an input to see its details.`;
+  }
+}
+renderAwsInputsListView();
+
+document.getElementById("awsInputsListGroups").addEventListener("click", event => {
+  const trigger = event.target.closest(".input-detail-trigger");
+  if (!trigger) return;
+  openInputDetail(trigger.dataset.inputKey, trigger);
+});
+
+const awsSchemaFields = [
+{sourcetype:"aws:cloudtrail",category:"Native",name:"eventVersion",description:"CloudTrail event version",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"eventTime",description:"UTC timestamp of the API call",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"eventSource",description:"AWS service that received the request (e.g. ec2.amazonaws.com)",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"eventName",description:"API action name (e.g. ConsoleLogin RunInstances)",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"awsRegion",description:"AWS region of the request",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"sourceIPAddress",description:"Source IP of the requester",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"userAgent",description:"User agent string of the client",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"errorCode",description:"Error code if the call failed",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"errorMessage",description:"Error message if the call failed",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"requestParameters",description:"JSON object of request parameters",cimModel:"",notes:"Nested"},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"responseElements",description:"JSON object of response elements",cimModel:"",notes:"Nested"},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"additionalEventData",description:"Extra event-specific data",cimModel:"",notes:"Nested"},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"requestID",description:"Unique request ID",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"eventID",description:"Unique event ID",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"eventType",description:"AwsApiCall AwsConsoleSignIn etc.",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"eventCategory",description:"Management Data Insight NetworkActivity",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"recipientAccountId",description:"Account that received the event",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"readOnly",description:"Whether the API call was read-only",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"managementEvent",description:"Whether this is a management event",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"resources{}.ARN",description:"ARN of resources affected",cimModel:"",notes:"MV"},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"resources{}.accountId",description:"Account ID of resources",cimModel:"",notes:"MV"},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"resources{}.type",description:"Resource type",cimModel:"",notes:"MV"},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"userIdentity.type",description:"IAM identity type (IAMUser AssumedRole Root etc.)",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"userIdentity.principalId",description:"Principal ID",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"userIdentity.arn",description:"ARN of the identity",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"userIdentity.accountId",description:"Account ID of the identity",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"userIdentity.accessKeyId",description:"Access key used",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"userIdentity.userName",description:"IAM user name",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"userIdentity.sessionContext.attributes.mfaAuthenticated",description:"MFA used (true/false)",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"userIdentity.sessionContext.attributes.creationDate",description:"Session creation time",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"Native",name:"userIdentity.invokedBy",description:"Service that invoked the call",cimModel:"",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"action",description:"Normalized action (created modified deleted etc.)",cimModel:"Change, Authentication",notes:"Lookup from eventName+errorCode"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"status",description:"success failure",cimModel:"Change, Authentication",notes:"success/failure from lookup"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"change_type",description:"Type of change",cimModel:"Change",notes:"From aws_cloudtrail_changetype lookup on eventSource"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"command",description:"API command",cimModel:"Change",notes:"Typically eventName"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"object",description:"Primary object affected",cimModel:"Change",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"object_id",description:"Object identifier",cimModel:"Change",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"object_category",description:"Object category",cimModel:"Change",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"object_path",description:"Object path/ARN",cimModel:"Change",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"object_attrs",description:"Object attributes",cimModel:"Change",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"user",description:"Normalized user",cimModel:"Authentication, Change",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"user_name",description:"User name",cimModel:"Authentication",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"user_id",description:"User ID",cimModel:"Authentication",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"user_type",description:"User type",cimModel:"Authentication",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"user_role",description:"User role",cimModel:"Authentication",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"user_arn",description:"User ARN",cimModel:"Authentication",notes:"Non-CIM helper often present"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"src_user",description:"Source user",cimModel:"Change",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"src_user_name",description:"Source user name",cimModel:"Change",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"src_user_type",description:"Source user type",cimModel:"Change",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"src",description:"Source",cimModel:"Change",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"src_ip",description:"Source IP",cimModel:"Network",notes:"sourceIPAddress"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"dest",description:"Destination",cimModel:"Change",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"user_agent",description:"User agent",cimModel:"Authentication",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"vendor_account",description:"AWS account ID",cimModel:"All",notes:"recipientAccountId / account"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"vendor_region",description:"AWS region",cimModel:"All",notes:"awsRegion"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"vendor_product",description:"AWS / CloudTrail",cimModel:"All",notes:"From aws_vendor_product lookup"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"app",description:"Application",cimModel:"Authentication",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"authentication_method",description:"Auth method",cimModel:"Authentication",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"result",description:"Result of the action",cimModel:"Change",notes:""},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"reason",description:"Reason/error",cimModel:"Change",notes:"errorMessage"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"signature",description:"Signature/event signature",cimModel:"Change",notes:""},
+{sourcetype:"aws:cloudtrail:lake",category:"Native",name:"Same as aws:cloudtrail",description:"CloudTrail Lake uses same event schema as CloudTrail",cimModel:"",notes:"JSON from event data store"},
+{sourcetype:"aws:cloudwatch",category:"Native",name:"MetricName",description:"Name of the metric",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatch",category:"Native",name:"Namespace",description:"Metric namespace (e.g. AWS/EC2 AWS/S3)",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatch",category:"Native",name:"Timestamp",description:"Metric timestamp",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatch",category:"Native",name:"Unit",description:"Unit of the metric",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatch",category:"Native",name:"Value",description:"Single value",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatch",category:"Native",name:"StatisticValues.Average",description:"Average value",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatch",category:"Native",name:"StatisticValues.Sum",description:"Sum",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatch",category:"Native",name:"StatisticValues.SampleCount",description:"Sample count",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatch",category:"Native",name:"StatisticValues.Maximum",description:"Maximum",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatch",category:"Native",name:"StatisticValues.Minimum",description:"Minimum",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatch",category:"Native",name:"Dimensions{}.Name",description:"Dimension name",cimModel:"",notes:"MV"},
+{sourcetype:"aws:cloudwatch",category:"Native",name:"Dimensions{}.Value",description:"Dimension value",cimModel:"",notes:"MV"},
+{sourcetype:"aws:cloudwatch",category:"Native",name:"Period",description:"Granularity in seconds",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatch",category:"Native",name:"Region",description:"AWS region",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatch",category:"Native",name:"AccountId",description:"AWS account ID",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatch",category:"CIM",name:"dest",description:"Destination resource",cimModel:"Performance",notes:""},
+{sourcetype:"aws:cloudwatch",category:"CIM",name:"metric_name",description:"Metric name",cimModel:"Performance",notes:"Often via tag::metric_name"},
+{sourcetype:"aws:cloudwatch",category:"CIM",name:"vendor_product",description:"AWS CloudWatch",cimModel:"Performance",notes:"AWS CloudWatch"},
+{sourcetype:"aws:cloudwatch",category:"CIM",name:"mem_free",description:"Memory free (when available)",cimModel:"Performance",notes:"When available from memory metrics"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"version",description:"Flow log version",cimModel:"Network Traffic",notes:"Flow log version"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"account_id",description:"AWS account ID",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"interface_id",description:"ENI ID",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"srcaddr",description:"Source IP address",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"dstaddr",description:"Destination IP address",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"srcport",description:"Source port",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"dstport",description:"Destination port",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"protocol",description:"IANA protocol number",cimModel:"Network Traffic",notes:"Mapped from protocol number"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"packets",description:"Number of packets",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"bytes",description:"Number of bytes",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"start",description:"Start time (epoch)",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"end",description:"End time (epoch)",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"action",description:"ACCEPT or REJECT",cimModel:"Network Traffic",notes:"From vpcflow_action via lookup"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"log_status",description:"OK NODATA SKIPDATA",cimModel:"",notes:""},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"vpc_id",description:"VPC ID",cimModel:"",notes:"Custom format"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"subnet_id",description:"Subnet ID",cimModel:"",notes:"Custom format"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"instance_id",description:"EC2 instance ID",cimModel:"",notes:"Custom format"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"tcp_flags",description:"TCP flags bitmask",cimModel:"Network Traffic",notes:"Custom format"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"type",description:"IPv4 or IPv6",cimModel:"Network Traffic",notes:"Custom format"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"pkt_srcaddr",description:"Original packet source IP",cimModel:"",notes:"Custom format"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"pkt_dstaddr",description:"Original packet destination IP",cimModel:"",notes:"Custom format"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"region",description:"AWS region",cimModel:"",notes:"Custom format"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"az_id",description:"Availability Zone ID",cimModel:"",notes:"Custom format"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"flow_direction",description:"ingress or egress",cimModel:"Network Traffic",notes:"Custom format"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"traffic_path",description:"Traffic path code",cimModel:"",notes:"Custom format"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"pkt_src_aws_service",description:"Source AWS service",cimModel:"",notes:"Custom format"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"Native",name:"pkt_dst_aws_service",description:"Destination AWS service",cimModel:"",notes:"Custom format"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"src",description:"Source",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"dest",description:"Destination",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"src_ip",description:"Source IP",cimModel:"Network Traffic",notes:"from srcaddr"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"dest_ip",description:"Destination IP",cimModel:"Network Traffic",notes:"from dstaddr"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"src_port",description:"Source port",cimModel:"Network Traffic",notes:"from srcport"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"dest_port",description:"Destination port",cimModel:"Network Traffic",notes:"from dstport"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"protocol",description:"Protocol name",cimModel:"Network Traffic",notes:"Mapped from protocol number"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"protocol_code",description:"Protocol number",cimModel:"Network Traffic",notes:"Raw IANA number"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"protocol_full_name",description:"Full protocol name",cimModel:"Network Traffic",notes:"Human-readable via lookup"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"transport",description:"Transport protocol",cimModel:"Network Traffic",notes:"tcp/udp/icmp etc."},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"bytes",description:"Bytes transferred",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"packets",description:"Packets transferred",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"action",description:"Normalized action",cimModel:"Network Traffic",notes:"From vpcflow_action via lookup"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"duration",description:"Flow duration",cimModel:"Network Traffic",notes:"end-start"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"dvc",description:"Device",cimModel:"Network Traffic",notes:"interface_id / instance"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"vendor_account",description:"AWS account",cimModel:"Network Traffic",notes:"account_id"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"vendor_product",description:"AWS VPC Flow Logs",cimModel:"Network Traffic",notes:"AWS VPC Flow Logs"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow:metric",category:"Native",name:"Same core as vpcflow",description:"Metric-index variant of VPC Flow",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"version",description:"Flow log version",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"account_id",description:"AWS account ID",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"tgw_id",description:"Transit Gateway ID",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"tgw_attachment_id",description:"TGW attachment ID",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"tgw_src_vpc_id",description:"Source VPC ID",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"tgw_dst_vpc_id",description:"Destination VPC ID",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"tgw_src_subnet_id",description:"Source subnet ID",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"tgw_dst_subnet_id",description:"Destination subnet ID",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"tgw_src_eni",description:"Source ENI",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"tgw_dst_eni",description:"Destination ENI",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"srcaddr",description:"Source IP",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"dstaddr",description:"Destination IP",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"srcport",description:"Source port",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"dstport",description:"Destination port",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"protocol",description:"Protocol number",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"packets",description:"Packet count",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"bytes",description:"Byte count",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"start",description:"Start time",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"end",description:"End time",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"log_status",description:"Log status",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"type",description:"Address type",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"packets_lost_no_route",description:"Packets lost no route",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"packets_lost_blackhole",description:"Packets lost blackhole",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"packets_lost_mtu_exceeded",description:"Packets lost MTU exceeded",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"packets_lost_ttl_expired",description:"Packets lost TTL expired",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"tcp_flags",description:"TCP flags",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"region",description:"Region",cimModel:"",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"Native",name:"flow_direction",description:"Flow direction",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"CIM",name:"src",description:"Source",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"CIM",name:"dest",description:"Destination",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"CIM",name:"src_ip",description:"Source IP",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"CIM",name:"dest_ip",description:"Destination IP",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"CIM",name:"src_port",description:"Source port",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"CIM",name:"dest_port",description:"Destination port",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"CIM",name:"protocol",description:"Protocol",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"CIM",name:"bytes",description:"Bytes",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"CIM",name:"packets",description:"Packets",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"CIM",name:"action",description:"Action",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"CIM",name:"vendor_account",description:"AWS account",cimModel:"Network Traffic",notes:""},
+{sourcetype:"aws:transitgateway:flowlogs",category:"CIM",name:"vendor_product",description:"AWS Transit Gateway",cimModel:"Network Traffic",notes:"AWS Transit Gateway"},
+{sourcetype:"aws:config",category:"Native",name:"accountId",description:"AWS account ID",cimModel:"",notes:""},
+{sourcetype:"aws:config",category:"Native",name:"arn",description:"Resource ARN",cimModel:"",notes:""},
+{sourcetype:"aws:config",category:"Native",name:"awsRegion",description:"AWS region",cimModel:"",notes:""},
+{sourcetype:"aws:config",category:"Native",name:"availabilityZone",description:"Availability Zone",cimModel:"",notes:""},
+{sourcetype:"aws:config",category:"Native",name:"resourceType",description:"Resource type (e.g. AWS::EC2::Instance)",cimModel:"",notes:""},
+{sourcetype:"aws:config",category:"Native",name:"resourceId",description:"Resource ID",cimModel:"",notes:""},
+{sourcetype:"aws:config",category:"Native",name:"resourceName",description:"Resource name",cimModel:"",notes:""},
+{sourcetype:"aws:config",category:"Native",name:"configurationItemCaptureTime",description:"Capture timestamp",cimModel:"",notes:""},
+{sourcetype:"aws:config",category:"Native",name:"configurationItemStatus",description:"OK ResourceDiscovered ResourceDeleted etc.",cimModel:"",notes:""},
+{sourcetype:"aws:config",category:"Native",name:"configurationStateId",description:"Configuration state ID",cimModel:"",notes:""},
+{sourcetype:"aws:config",category:"Native",name:"configuration",description:"Full resource configuration JSON",cimModel:"",notes:"Nested highly variable"},
+{sourcetype:"aws:config",category:"Native",name:"relationships{}",description:"Related resources",cimModel:"",notes:"MV"},
+{sourcetype:"aws:config",category:"Native",name:"tags{}",description:"Resource tags",cimModel:"",notes:"MV"},
+{sourcetype:"aws:config",category:"Native",name:"supplementaryConfiguration{}",description:"Extra config",cimModel:"",notes:"Nested"},
+{sourcetype:"aws:config",category:"Native",name:"configurationItemVersion",description:"CI version",cimModel:"",notes:""},
+{sourcetype:"aws:config",category:"Native",name:"configurationStateMd5Hash",description:"MD5 of configuration state",cimModel:"",notes:""},
+{sourcetype:"aws:config",category:"CIM",name:"object",description:"Object",cimModel:"Change Analysis",notes:""},
+{sourcetype:"aws:config",category:"CIM",name:"object_id",description:"Object ID",cimModel:"Change Analysis",notes:"resourceId"},
+{sourcetype:"aws:config",category:"CIM",name:"object_category",description:"Object category",cimModel:"Change Analysis",notes:"From aws_config_object_category lookup"},
+{sourcetype:"aws:config",category:"CIM",name:"object_path",description:"Object path",cimModel:"Change Analysis",notes:"arn"},
+{sourcetype:"aws:config",category:"CIM",name:"result",description:"Result",cimModel:"Change Analysis",notes:"configurationItemStatus mapped"},
+{sourcetype:"aws:config",category:"CIM",name:"vendor_account",description:"AWS account",cimModel:"Change Analysis",notes:"accountId"},
+{sourcetype:"aws:config",category:"CIM",name:"vendor_product",description:"AWS Config",cimModel:"Change Analysis",notes:"AWS Config"},
+{sourcetype:"aws:config:notification",category:"Native",name:"messageType",description:"ConfigurationItemChangeNotification etc.",cimModel:"",notes:""},
+{sourcetype:"aws:config:notification",category:"Native",name:"configurationItemDiff.changeType",description:"CREATE UPDATE DELETE",cimModel:"",notes:""},
+{sourcetype:"aws:config:notification",category:"Native",name:"configurationItemDiff.changedProperties{}",description:"Changed properties",cimModel:"",notes:"Nested"},
+{sourcetype:"aws:config:notification",category:"Native",name:"Same configurationItem fields as aws:config",description:"Full CI embedded",cimModel:"",notes:""},
+{sourcetype:"aws:config:notification",category:"CIM",name:"object_attrs",description:"Object attributes",cimModel:"Change Analysis",notes:"From configurationItemDiff"},
+{sourcetype:"aws:config:notification",category:"CIM",name:"object_category",description:"Object category",cimModel:"Change Analysis",notes:"Lookup"},
+{sourcetype:"aws:config:notification",category:"CIM",name:"object_id",description:"Object ID",cimModel:"Change Analysis",notes:""},
+{sourcetype:"aws:config:notification",category:"CIM",name:"object_path",description:"Object path",cimModel:"Change Analysis",notes:""},
+{sourcetype:"aws:config:notification",category:"CIM",name:"result",description:"Result",cimModel:"Change Analysis",notes:""},
+{sourcetype:"aws:config:notification",category:"CIM",name:"user",description:"User",cimModel:"Change Analysis",notes:""},
+{sourcetype:"aws:config:notification",category:"CIM",name:"vendor_product",description:"AWS Config",cimModel:"Change Analysis",notes:"AWS Config"},
+{sourcetype:"aws:config:rule",category:"Native",name:"configRuleName",description:"Config rule name",cimModel:"",notes:""},
+{sourcetype:"aws:config:rule",category:"Native",name:"configRuleARN",description:"Config rule ARN",cimModel:"",notes:""},
+{sourcetype:"aws:config:rule",category:"Native",name:"complianceType",description:"COMPLIANT NON_COMPLIANT",cimModel:"",notes:""},
+{sourcetype:"aws:config:rule",category:"Native",name:"resourceType",description:"Evaluated resource type",cimModel:"",notes:""},
+{sourcetype:"aws:config:rule",category:"Native",name:"resourceId",description:"Evaluated resource ID",cimModel:"",notes:""},
+{sourcetype:"aws:config:rule",category:"Native",name:"awsAccountId",description:"AWS account ID",cimModel:"",notes:""},
+{sourcetype:"aws:config:rule",category:"Native",name:"awsRegion",description:"AWS region",cimModel:"",notes:""},
+{sourcetype:"aws:config:rule",category:"Native",name:"evaluationResultIdentifier{}",description:"Evaluation identifier",cimModel:"",notes:"Nested"},
+{sourcetype:"aws:config:rule",category:"Native",name:"annotation",description:"Annotation text",cimModel:"",notes:""},
+{sourcetype:"aws:config:rule",category:"Native",name:"resultRecordedTime",description:"Result recorded time",cimModel:"",notes:""},
+{sourcetype:"aws:config:rule",category:"Native",name:"newEvaluationResult{}",description:"New evaluation result",cimModel:"",notes:"Nested"},
+{sourcetype:"aws:config:rule",category:"Native",name:"oldEvaluationResult{}",description:"Previous evaluation result",cimModel:"",notes:"Nested"},
+{sourcetype:"aws:config:rule",category:"CIM",name:"app",description:"Application",cimModel:"Inventory, Alerts",notes:"configRuleName"},
+{sourcetype:"aws:config:rule",category:"CIM",name:"body",description:"Body/description",cimModel:"Alerts",notes:"annotation / description"},
+{sourcetype:"aws:config:rule",category:"CIM",name:"dest",description:"Destination",cimModel:"Inventory",notes:"resourceId"},
+{sourcetype:"aws:config:rule",category:"CIM",name:"severity",description:"Severity",cimModel:"Alerts",notes:"Derived from compliance"},
+{sourcetype:"aws:config:rule",category:"CIM",name:"signature_id",description:"Signature ID",cimModel:"Alerts",notes:"configRuleName / ARN"},
+{sourcetype:"aws:config:rule",category:"CIM",name:"type",description:"Type",cimModel:"Inventory",notes:"resourceType / complianceType"},
+{sourcetype:"aws:config:rule",category:"CIM",name:"vendor_product",description:"AWS Config Rules",cimModel:"Inventory, Alerts",notes:"AWS Config Rules"},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"bucket_owner",description:"Canonical user ID of bucket owner",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"bucket",description:"Bucket name",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"time",description:"Request time",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"remote_ip",description:"Requester IP",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"requester",description:"Requester (ARN or Anonymous)",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"request_id",description:"Request ID",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"operation",description:"S3 operation (REST.GET.OBJECT etc.)",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"key",description:"Object key",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"request_uri",description:"Full request URI",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"http_status",description:"HTTP status code",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"error_code",description:"S3 error code",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"bytes_sent",description:"Bytes sent",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"object_size",description:"Object size",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"total_time",description:"Total time ms",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"turn_around_time",description:"Turn-around time ms",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"referer",description:"HTTP referer",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"user_agent",description:"User agent",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"version_id",description:"Object version ID",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"host_id",description:"Host ID",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"signature_version",description:"SigV2 or SigV4",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"cipher_suite",description:"TLS cipher suite",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"authentication_type",description:"AuthHeader or QueryString",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"host_header",description:"Host header",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"tls_version",description:"TLS version",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"access_point_arn",description:"Access point ARN",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"Native",name:"acl_required",description:"ACL required flag",cimModel:"",notes:""},
+{sourcetype:"aws:s3:accesslogs",category:"CIM",name:"src",description:"Source",cimModel:"Web",notes:"remote_ip"},
+{sourcetype:"aws:s3:accesslogs",category:"CIM",name:"src_ip",description:"Source IP",cimModel:"Web",notes:"remote_ip"},
+{sourcetype:"aws:s3:accesslogs",category:"CIM",name:"http_method",description:"HTTP method",cimModel:"Web",notes:"From operation / request_uri"},
+{sourcetype:"aws:s3:accesslogs",category:"CIM",name:"url",description:"URL",cimModel:"Web",notes:"request_uri / key"},
+{sourcetype:"aws:s3:accesslogs",category:"CIM",name:"status",description:"HTTP status",cimModel:"Web",notes:"http_status"},
+{sourcetype:"aws:s3:accesslogs",category:"CIM",name:"bytes",description:"Bytes",cimModel:"Web",notes:"bytes_sent"},
+{sourcetype:"aws:s3:accesslogs",category:"CIM",name:"http_user_agent",description:"User agent",cimModel:"Web",notes:"user_agent"},
+{sourcetype:"aws:s3:accesslogs",category:"CIM",name:"http_referrer",description:"Referrer",cimModel:"Web",notes:"referer"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"date",description:"Date of the request",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"time",description:"Time of the request",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"x_edge_location",description:"Edge location code",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"sc_bytes",description:"Bytes sent by server",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"c_ip",description:"Client IP",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"cs_method",description:"HTTP method",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"cs(Host)",description:"Host header",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"cs_uri_stem",description:"URI stem",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"sc_status",description:"HTTP status code",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"cs(Referer)",description:"Referer",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"cs(User-Agent)",description:"User agent",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"cs_uri_query",description:"URI query string",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"cs(Cookie)",description:"Cookie",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"x_edge_result_type",description:"Result type (Hit Miss etc.)",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"x_edge_request_id",description:"Request ID",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"x_host_header",description:"Host header value",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"cs_protocol",description:"Protocol (http https)",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"cs_bytes",description:"Bytes received from client",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"time_taken",description:"Time taken seconds",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"x_forwarded_for",description:"X-Forwarded-For",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"ssl_protocol",description:"SSL/TLS protocol",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"ssl_cipher",description:"SSL cipher",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"x_edge_response_result_type",description:"Response result type",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"cs_protocol_version",description:"HTTP protocol version",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"fle_status",description:"Field-level encryption status",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"fle_encrypted_fields",description:"Encrypted fields",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"c_port",description:"Client port",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Native",name:"time_to_first_byte",description:"Time to first byte",cimModel:"",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"src",description:"Source",cimModel:"Web",notes:"c_ip"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"src_ip",description:"Source IP",cimModel:"Web",notes:"c_ip"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"src_port",description:"Source port",cimModel:"Web",notes:"c_port"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"dest",description:"Destination",cimModel:"Web",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"http_method",description:"HTTP method",cimModel:"Web",notes:"cs_method"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"url",description:"Full URL",cimModel:"Web",notes:""},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"uri_path",description:"URI path",cimModel:"Web",notes:"cs_uri_stem"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"uri_query",description:"URI query",cimModel:"Web",notes:"cs_uri_query"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"status",description:"HTTP status",cimModel:"Web",notes:"sc_status"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"bytes",description:"Bytes",cimModel:"Web",notes:"sc_bytes"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"bytes_in",description:"Bytes in",cimModel:"Web",notes:"cs_bytes"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"bytes_out",description:"Bytes out",cimModel:"Web",notes:"sc_bytes"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"http_user_agent",description:"User agent",cimModel:"Web",notes:"cs(User-Agent)"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"http_referrer",description:"Referrer",cimModel:"Web",notes:"cs(Referer)"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"duration",description:"Duration",cimModel:"Web",notes:"time_taken"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"cached",description:"Cache hit indicator",cimModel:"Web",notes:"x_edge_result_type"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"vendor_product",description:"AWS CloudFront",cimModel:"Web",notes:"AWS CloudFront"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"Lookup",name:"edge_location_name",description:"Human-readable edge location",cimModel:"",notes:"cloudfront_edge_location_lookup"},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"type",description:"Request type (http https h2 etc.)",cimModel:"ALB",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"timestamp / time",description:"Request timestamp",cimModel:"",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"elb",description:"Load balancer name/ID",cimModel:"",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"client:port",description:"Client IP:port",cimModel:"",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"target:port / backend:port",description:"Target IP:port",cimModel:"",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"request_processing_time",description:"Request processing time",cimModel:"",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"target_processing_time / backend_processing_time",description:"Target processing time",cimModel:"",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"response_processing_time",description:"Response processing time",cimModel:"",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"elb_status_code",description:"ELB status code",cimModel:"",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"target_status_code / backend_status_code",description:"Target status code",cimModel:"",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"received_bytes",description:"Bytes received",cimModel:"",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"sent_bytes",description:"Bytes sent",cimModel:"",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"request",description:"Full request line",cimModel:"",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"user_agent",description:"User agent",cimModel:"",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"ssl_cipher",description:"SSL cipher",cimModel:"",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"ssl_protocol",description:"SSL protocol",cimModel:"",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"request_creation_time",description:"Request creation time",cimModel:"ALB",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"actions_executed",description:"Actions executed",cimModel:"ALB",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"redirect_url",description:"Redirect URL",cimModel:"ALB",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"error_reason",description:"Error reason",cimModel:"ALB",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"target_group_arn",description:"Target group ARN",cimModel:"ALB",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"trace_id",description:"Trace ID",cimModel:"ALB",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"domain_name",description:"Domain name",cimModel:"ALB",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"Native",name:"chosen_cert_arn",description:"Chosen certificate ARN",cimModel:"ALB",notes:""},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"src",description:"Source",cimModel:"Web",notes:"client IP"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"src_ip",description:"Source IP",cimModel:"Web",notes:"From client:port"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"src_port",description:"Source port",cimModel:"Web",notes:"From client:port"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"dest",description:"Destination",cimModel:"Web",notes:"elb / target"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"dest_ip",description:"Destination IP",cimModel:"Web",notes:"From target:port"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"dest_port",description:"Destination port",cimModel:"Web",notes:"From target:port"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"http_method",description:"HTTP method",cimModel:"Web",notes:"From request field"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"url",description:"URL",cimModel:"Web",notes:"From request field"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"status",description:"Status",cimModel:"Web",notes:"elb_status_code / target_status_code"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"bytes_in",description:"Bytes in",cimModel:"Web",notes:"received_bytes"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"bytes_out",description:"Bytes out",cimModel:"Web",notes:"sent_bytes"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"duration",description:"Duration",cimModel:"Web",notes:"Sum of processing times"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"http_user_agent",description:"User agent",cimModel:"Web",notes:"user_agent"},
+{sourcetype:"aws:inspector",category:"Native",name:"arn",description:"Finding or assessment ARN",cimModel:"",notes:""},
+{sourcetype:"aws:inspector",category:"Native",name:"assessmentRunArn",description:"Assessment run ARN",cimModel:"",notes:""},
+{sourcetype:"aws:inspector",category:"Native",name:"severity",description:"Severity",cimModel:"Alerts, Vulnerabilities",notes:""},
+{sourcetype:"aws:inspector",category:"Native",name:"status",description:"Status",cimModel:"",notes:""},
+{sourcetype:"aws:inspector",category:"Native",name:"title",description:"Finding title",cimModel:"",notes:""},
+{sourcetype:"aws:inspector",category:"Native",name:"description",description:"Description",cimModel:"",notes:""},
+{sourcetype:"aws:inspector",category:"Native",name:"recommendation",description:"Recommendation",cimModel:"",notes:""},
+{sourcetype:"aws:inspector",category:"Native",name:"createdAt",description:"Created timestamp",cimModel:"",notes:""},
+{sourcetype:"aws:inspector",category:"Native",name:"updatedAt",description:"Updated timestamp",cimModel:"",notes:""},
+{sourcetype:"aws:inspector",category:"Native",name:"numericSeverity",description:"Numeric severity",cimModel:"",notes:""},
+{sourcetype:"aws:inspector",category:"Native",name:"assetAttributes{}",description:"Asset attributes",cimModel:"",notes:"Nested"},
+{sourcetype:"aws:inspector",category:"Native",name:"serviceAttributes{}",description:"Service attributes",cimModel:"",notes:"Nested"},
+{sourcetype:"aws:inspector:v2:findings",category:"Native",name:"findingArn",description:"Finding ARN",cimModel:"",notes:""},
+{sourcetype:"aws:inspector:v2:findings",category:"Native",name:"findingType",description:"Finding type",cimModel:"",notes:""},
+{sourcetype:"aws:inspector:v2:findings",category:"Native",name:"packageVulnerabilityDetails{}",description:"Package vulnerability details",cimModel:"",notes:"Nested"},
+{sourcetype:"aws:inspector:v2:findings",category:"Native",name:"networkReachabilityDetails{}",description:"Network reachability details",cimModel:"",notes:"Nested"},
+{sourcetype:"aws:inspector:v2:findings",category:"Native",name:"resources{}",description:"Affected resources",cimModel:"",notes:"MV"},
+{sourcetype:"aws:inspector",category:"CIM",name:"severity",description:"Severity",cimModel:"Alerts, Vulnerabilities",notes:""},
+{sourcetype:"aws:inspector",category:"CIM",name:"signature",description:"Signature",cimModel:"Alerts, Vulnerabilities",notes:"title / finding type"},
+{sourcetype:"aws:inspector",category:"CIM",name:"dest",description:"Destination",cimModel:"Inventory, Alerts",notes:"Affected resource"},
+{sourcetype:"aws:inspector",category:"CIM",name:"body",description:"Body",cimModel:"Alerts",notes:"description"},
+{sourcetype:"aws:inspector",category:"CIM",name:"vendor_product",description:"Amazon Inspector",cimModel:"Inventory, Alerts, Vulnerabilities",notes:"Amazon Inspector"},
+{sourcetype:"aws:metadata",category:"Native",name:"InstanceId",description:"EC2 instance ID",cimModel:"",notes:""},
+{sourcetype:"aws:metadata",category:"Native",name:"InstanceType",description:"Instance type",cimModel:"",notes:""},
+{sourcetype:"aws:metadata",category:"Native",name:"ImageId",description:"AMI ID",cimModel:"",notes:""},
+{sourcetype:"aws:metadata",category:"Native",name:"State.Name",description:"Instance state",cimModel:"",notes:""},
+{sourcetype:"aws:metadata",category:"Native",name:"LaunchTime",description:"Launch time",cimModel:"",notes:""},
+{sourcetype:"aws:metadata",category:"Native",name:"Placement.AvailabilityZone",description:"Availability Zone",cimModel:"",notes:""},
+{sourcetype:"aws:metadata",category:"Native",name:"PrivateIpAddress",description:"Private IP",cimModel:"",notes:""},
+{sourcetype:"aws:metadata",category:"Native",name:"PublicIpAddress",description:"Public IP",cimModel:"",notes:""},
+{sourcetype:"aws:metadata",category:"Native",name:"NetworkInterfaces{}.PrivateIpAddress",description:"ENI private IPs",cimModel:"",notes:"MV"},
+{sourcetype:"aws:metadata",category:"Native",name:"NetworkInterfaces{}.MacAddress",description:"MAC addresses",cimModel:"",notes:"MV"},
+{sourcetype:"aws:metadata",category:"Native",name:"NetworkInterfaces{}.SubnetId",description:"Subnet IDs",cimModel:"",notes:"MV"},
+{sourcetype:"aws:metadata",category:"Native",name:"NetworkInterfaces{}.VpcId",description:"VPC IDs",cimModel:"",notes:"MV"},
+{sourcetype:"aws:metadata",category:"Native",name:"SecurityGroups{}.GroupId",description:"Security group IDs",cimModel:"",notes:"MV"},
+{sourcetype:"aws:metadata",category:"Native",name:"SecurityGroups{}.GroupName",description:"Security group names",cimModel:"",notes:"MV"},
+{sourcetype:"aws:metadata",category:"Native",name:"Tags{}.Key",description:"Tag keys",cimModel:"",notes:"MV"},
+{sourcetype:"aws:metadata",category:"Native",name:"Tags{}.Value",description:"Tag values",cimModel:"",notes:"MV"},
+{sourcetype:"aws:metadata",category:"Native",name:"Hypervisor",description:"Hypervisor type",cimModel:"",notes:""},
+{sourcetype:"aws:metadata",category:"Native",name:"Architecture",description:"Architecture",cimModel:"",notes:""},
+{sourcetype:"aws:metadata",category:"Native",name:"RootDeviceType",description:"Root device type",cimModel:"",notes:""},
+{sourcetype:"aws:metadata",category:"Lookup",name:"cpu_cores",description:"CPU cores from instance type",cimModel:"Performance, Inventory",notes:"aws_vm_size_to_resources lookup"},
+{sourcetype:"aws:metadata",category:"Lookup",name:"mem_capacity",description:"Memory capacity",cimModel:"Performance, Inventory",notes:"aws_vm_size_to_resources lookup"},
+{sourcetype:"aws:metadata",category:"ES/ITSI",name:"ip",description:"IP for asset lookup",cimModel:"Assets (ES Custom)",notes:"For ES Asset framework"},
+{sourcetype:"aws:metadata",category:"ES/ITSI",name:"mac",description:"MAC for asset lookup",cimModel:"Assets (ES Custom)",notes:"For ES Asset framework"},
+{sourcetype:"aws:metadata",category:"ES/ITSI",name:"nt_host",description:"Hostname",cimModel:"Assets (ES Custom)",notes:"Hostname"},
+{sourcetype:"aws:metadata",category:"ES/ITSI",name:"dns",description:"DNS name",cimModel:"Inventory",notes:"Public/Private DNS"},
+{sourcetype:"aws:billing",category:"Native",name:"Bill/InvoiceID",description:"Invoice ID",cimModel:"",notes:"Legacy/CUR variable"},
+{sourcetype:"aws:billing",category:"Native",name:"Bill/BillingPeriodStartDate",description:"Billing period start",cimModel:"",notes:""},
+{sourcetype:"aws:billing",category:"Native",name:"Bill/BillingPeriodEndDate",description:"Billing period end",cimModel:"",notes:""},
+{sourcetype:"aws:billing:cur",category:"Native",name:"lineItem/UsageAccountId",description:"Usage account ID",cimModel:"",notes:"CUR"},
+{sourcetype:"aws:billing:cur",category:"Native",name:"lineItem/ProductCode",description:"Product code",cimModel:"",notes:"CUR"},
+{sourcetype:"aws:billing:cur",category:"Native",name:"lineItem/UsageType",description:"Usage type",cimModel:"",notes:"CUR"},
+{sourcetype:"aws:billing:cur",category:"Native",name:"lineItem/Operation",description:"Operation",cimModel:"",notes:"CUR"},
+{sourcetype:"aws:billing:cur",category:"Native",name:"lineItem/UsageAmount",description:"Usage amount",cimModel:"",notes:"CUR"},
+{sourcetype:"aws:billing:cur",category:"Native",name:"lineItem/UnblendedCost",description:"Unblended cost",cimModel:"",notes:"CUR"},
+{sourcetype:"aws:billing:cur",category:"Native",name:"lineItem/BlendedCost",description:"Blended cost",cimModel:"",notes:"CUR"},
+{sourcetype:"aws:billing:cur",category:"Native",name:"lineItem/CurrencyCode",description:"Currency",cimModel:"",notes:"CUR"},
+{sourcetype:"aws:billing:cur",category:"Native",name:"lineItem/ResourceId",description:"Resource ID",cimModel:"",notes:"CUR"},
+{sourcetype:"aws:billing:cur",category:"Native",name:"product/ProductName",description:"Product name",cimModel:"",notes:"CUR"},
+{sourcetype:"aws:billing:cur",category:"Native",name:"product/region",description:"Region",cimModel:"",notes:"CUR"},
+{sourcetype:"aws:billing:cur",category:"Native",name:"product/instanceType",description:"Instance type",cimModel:"",notes:"CUR"},
+{sourcetype:"aws:billing:cur",category:"Native",name:"pricing/publicOnDemandRate",description:"On-demand rate",cimModel:"",notes:"CUR"},
+{sourcetype:"aws:billing:cur",category:"Native",name:"identity/LineItemId",description:"Line item ID",cimModel:"",notes:"CUR"},
+{sourcetype:"aws:billing:cur",category:"Native",name:"identity/TimeInterval",description:"Time interval",cimModel:"",notes:"CUR"},
+{sourcetype:"aws:billing",category:"CIM",name:"(none)",description:"No standard CIM mapping",cimModel:"None",notes:""},
+{sourcetype:"aws:asl",category:"OCSF",name:"class_uid",description:"OCSF class UID",cimModel:"",notes:""},
+{sourcetype:"aws:asl",category:"OCSF",name:"class_name",description:"OCSF class name (API Activity Network Activity etc.)",cimModel:"Varies (OCSF)",notes:"API Activity -> Change/Auth; Network Activity -> Network Traffic; Finding -> Alerts"},
+{sourcetype:"aws:asl",category:"OCSF",name:"category_uid",description:"OCSF category UID",cimModel:"",notes:""},
+{sourcetype:"aws:asl",category:"OCSF",name:"category_name",description:"OCSF category (Application Activity Network Activity Findings etc.)",cimModel:"Varies (OCSF)",notes:""},
+{sourcetype:"aws:asl",category:"OCSF",name:"activity_id",description:"Activity ID",cimModel:"",notes:""},
+{sourcetype:"aws:asl",category:"OCSF",name:"activity_name",description:"Activity name",cimModel:"",notes:""},
+{sourcetype:"aws:asl",category:"OCSF",name:"time",description:"Event time",cimModel:"",notes:""},
+{sourcetype:"aws:asl",category:"OCSF",name:"metadata.product.name",description:"Product name (CloudTrail Amazon VPC etc.)",cimModel:"",notes:""},
+{sourcetype:"aws:asl",category:"OCSF",name:"metadata.product.vendor_name",description:"Vendor (AWS)",cimModel:"",notes:""},
+{sourcetype:"aws:asl",category:"OCSF",name:"metadata.version",description:"OCSF version",cimModel:"",notes:""},
+{sourcetype:"aws:asl",category:"OCSF",name:"cloud.account.uid",description:"AWS account UID",cimModel:"",notes:""},
+{sourcetype:"aws:asl",category:"OCSF",name:"cloud.region",description:"AWS region",cimModel:"",notes:""},
+{sourcetype:"aws:asl",category:"OCSF",name:"src_endpoint.ip",description:"Source endpoint IP",cimModel:"Network Traffic (OCSF)",notes:"Maps toward Network Traffic concepts"},
+{sourcetype:"aws:asl",category:"OCSF",name:"dst_endpoint.ip",description:"Destination endpoint IP",cimModel:"Network Traffic (OCSF)",notes:""},
+{sourcetype:"aws:asl",category:"OCSF",name:"actor.user.uid",description:"Actor user UID",cimModel:"Authentication (OCSF)",notes:""},
+{sourcetype:"aws:asl",category:"OCSF",name:"http_request.*",description:"HTTP request fields",cimModel:"",notes:"Nested"},
+{sourcetype:"aws:asl",category:"OCSF",name:"finding_info.*",description:"Finding information",cimModel:"",notes:"Nested"},
+{sourcetype:"aws:asl",category:"OCSF",name:"resources[]",description:"Affected resources",cimModel:"",notes:"MV"},
+{sourcetype:"aws:asl",category:"OCSF",name:"unmapped{}",description:"Unmapped original fields",cimModel:"",notes:"Nested"},
+{sourcetype:"Custom Data Type",category:"Variable",name:"Depends on decoder/sourcetype",description:"User-defined or aws:s3 / aws:s3:csv etc.",cimModel:"",notes:"No fixed schema"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"src_user_id",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Change",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"src_user_role",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Change",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"result_id",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Change",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"rule_action",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Change",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"protocol",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"eventtype",description:"CIM field mapped by Splunk TA for AWS",cimModel:"All",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"tag",description:"CIM field mapped by Splunk TA for AWS",cimModel:"All",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"image_id",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Change",notes:"EC2-related events"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"instance_type",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Change",notes:"EC2-related events"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"direction",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"src_ip_range",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"dest_ip_range",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"src_port_range",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail",category:"CIM",name:"dest_port_range",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail:lake",category:"CIM",name:"action",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Change, Authentication",notes:"Same mappings as aws:cloudtrail"},
+{sourcetype:"aws:cloudtrail:lake",category:"CIM",name:"status",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Change, Authentication",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail:lake",category:"CIM",name:"change_type",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Change",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail:lake",category:"CIM",name:"user",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Authentication, Change",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail:lake",category:"CIM",name:"src_ip",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail:lake",category:"CIM",name:"vendor_account",description:"CIM field mapped by Splunk TA for AWS",cimModel:"All",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail:lake",category:"CIM",name:"vendor_region",description:"CIM field mapped by Splunk TA for AWS",cimModel:"All",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudtrail:lake",category:"CIM",name:"vendor_product",description:"CIM field mapped by Splunk TA for AWS",cimModel:"All",notes:"AWS CloudTrail Lake"},
+{sourcetype:"aws:cloudwatch",category:"CIM",name:"tag",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Performance",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"app",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network Traffic",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"user_id",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network Traffic",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow",category:"CIM",name:"start_time",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network Traffic",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow:metric",category:"CIM",name:"action",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network Traffic",notes:"Metric-index variant"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow:metric",category:"CIM",name:"src_ip",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network Traffic",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow:metric",category:"CIM",name:"dest_ip",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network Traffic",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow:metric",category:"CIM",name:"bytes",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network Traffic",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow:metric",category:"CIM",name:"packets",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network Traffic",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow:metric",category:"CIM",name:"vendor_account",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network Traffic",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudwatchlogs:vpcflow:metric",category:"CIM",name:"vendor_product",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network Traffic",notes:"AWS VPC Flow Logs"},
+{sourcetype:"aws:transitgateway:flowlogs",category:"CIM",name:"protocol_code",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network Traffic",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:transitgateway:flowlogs",category:"CIM",name:"transport",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Network Traffic",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:config",category:"CIM",name:"action",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Change Analysis",notes:"Lookup from status"},
+{sourcetype:"aws:config",category:"CIM",name:"vendor_region",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Change Analysis",notes:"awsRegion"},
+{sourcetype:"aws:config:notification",category:"CIM",name:"object",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Change Analysis",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:config:notification",category:"CIM",name:"action",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Change Analysis",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:config:notification",category:"CIM",name:"vendor_account",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Change Analysis",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:config:rule",category:"CIM",name:"signature",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Alerts",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:config:rule",category:"CIM",name:"status",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"complianceType"},
+{sourcetype:"aws:config:rule",category:"CIM",name:"vendor_account",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"awsAccountId"},
+{sourcetype:"aws:config:rule",category:"CIM",name:"tag",description:"CIM field mapped by Splunk TA for AWS",cimModel:"All",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:s3:accesslogs",category:"CIM",name:"uri_path",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:s3:accesslogs",category:"CIM",name:"bytes_out",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"bytes_sent"},
+{sourcetype:"aws:s3:accesslogs",category:"CIM",name:"duration",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"total_time"},
+{sourcetype:"aws:s3:accesslogs",category:"CIM",name:"user",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"requester"},
+{sourcetype:"aws:s3:accesslogs",category:"CIM",name:"action",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:s3:accesslogs",category:"CIM",name:"app",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"S3"},
+{sourcetype:"aws:s3:accesslogs",category:"CIM",name:"vendor_product",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"AWS S3"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"action",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"app",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"CloudFront"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"http_referrer_domain",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"http_user_agent_length",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"response_time",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"time_taken"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"url_domain",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"x_host_header"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"url_length",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"cookie",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"cs(Cookie)"},
+{sourcetype:"aws:cloudfront:accesslogs",category:"CIM",name:"category",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"uri_path",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"bytes",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"action",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"app",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"ELB/ALB"},
+{sourcetype:"aws:elb:accesslogs",category:"CIM",name:"vendor_product",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Web",notes:"AWS Elastic Load Balancing"},
+{sourcetype:"aws:inspector",category:"CIM",name:"severity_id",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Alerts",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector",category:"CIM",name:"signature_id",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Alerts",notes:"arn"},
+{sourcetype:"aws:inspector",category:"CIM",name:"category",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Alerts",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector",category:"CIM",name:"ids_type",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Alerts",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector",category:"CIM",name:"resource_type",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector",category:"CIM",name:"user",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector",category:"CIM",name:"vendor_account",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory, Alerts",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector",category:"CIM",name:"vendor_region",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector",category:"CIM",name:"app",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector",category:"CIM",name:"type",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector",category:"CIM",name:"tag",description:"CIM field mapped by Splunk TA for AWS",cimModel:"All",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector:v2:findings",category:"CIM",name:"severity",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Alerts, Vulnerabilities",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector:v2:findings",category:"CIM",name:"signature",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Alerts, Vulnerabilities",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector:v2:findings",category:"CIM",name:"signature_id",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Alerts",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector:v2:findings",category:"CIM",name:"dest",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory, Alerts",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector:v2:findings",category:"CIM",name:"body",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Alerts",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector:v2:findings",category:"CIM",name:"category",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Alerts",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:inspector:v2:findings",category:"CIM",name:"type",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Vulnerabilities",notes:"findingType"},
+{sourcetype:"aws:inspector:v2:findings",category:"CIM",name:"vendor_product",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory, Alerts, Vulnerabilities",notes:"Amazon Inspector"},
+{sourcetype:"aws:inspector:v2:findings",category:"CIM",name:"vendor_account",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:metadata",category:"CIM",name:"dest",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"InstanceId / resource"},
+{sourcetype:"aws:metadata",category:"CIM",name:"status",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"State.Name"},
+{sourcetype:"aws:metadata",category:"CIM",name:"type",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"InstanceType"},
+{sourcetype:"aws:metadata",category:"CIM",name:"description",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:metadata",category:"CIM",name:"enabled",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:metadata",category:"CIM",name:"vendor_account",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:metadata",category:"CIM",name:"vendor_region",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:metadata",category:"CIM",name:"vendor_product",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"AWS Metadata"},
+{sourcetype:"aws:metadata",category:"CIM",name:"user_id",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:metadata",category:"CIM",name:"user_name",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Inventory",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:metadata",category:"CIM",name:"category",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Assets (ES Custom)",notes:"ES Asset framework"},
+{sourcetype:"aws:asl",category:"CIM",name:"severity",description:"CIM field mapped by Splunk TA for AWS",cimModel:"Alerts (when Finding)",notes:"Derived/extracted by TA"},
+{sourcetype:"aws:asl",category:"CIM",name:"vendor_product",description:"CIM field mapped by Splunk TA for AWS",cimModel:"All",notes:"metadata.product.name"}
+];
+
+/* ---------- AWS Schema browser: search/filter/browse field-level schema for AWS sourcetypes -----------
+ * Supplied directly as a sourcetype -> field CSV (Splunk_TA_aws_field_schema.csv), not as per-input JSON
+ * Schema files like the Microsoft side, so this is organised by sourcetype/category rather than forced
+ * through the TA-input "c.fields" shape that assumes a JSON Schema file per input. Every row here is
+ * transcribed verbatim from that CSV -- nothing added or inferred. ------------------------------------- */
+const AWS_SCHEMA_PAGE_SIZE = 150;
+let awsSchemaState = { query: "", sourcetype: "all", category: "all", visibleLimit: AWS_SCHEMA_PAGE_SIZE };
+
+const awsSchemaSourcetypes = [...new Set(awsSchemaFields.map(f => f.sourcetype))];
+const awsSchemaCategories = [...new Set(awsSchemaFields.map(f => f.category))];
+
+function awsSchemaFilteredRows() {
+  const q = awsSchemaState.query.trim().toLowerCase();
+  return awsSchemaFields.filter(f => {
+    if (awsSchemaState.sourcetype !== "all" && f.sourcetype !== awsSchemaState.sourcetype) return false;
+    if (awsSchemaState.category !== "all" && f.category !== awsSchemaState.category) return false;
+    if (!q) return true;
+    return `${f.sourcetype} ${f.category} ${f.name} ${f.description} ${f.cimModel} ${f.notes}`.toLowerCase().includes(q);
+  });
+}
+
+function renderAwsSchemaSourcetypeList() {
+  const el = document.getElementById("awsSchemaSourcetypeList");
+  if (!el) return;
+  const counts = {};
+  awsSchemaFields.forEach(f => { counts[f.sourcetype] = (counts[f.sourcetype] || 0) + 1; });
+  const allBtn = `<button type="button" class="se-app-chip${awsSchemaState.sourcetype === "all" ? " active" : ""}" data-sourcetype="all">All sourcetypes <span class="n">${awsSchemaFields.length}</span></button>`;
+  const rows = awsSchemaSourcetypes.map(st => `<button type="button" class="se-app-chip${awsSchemaState.sourcetype === st ? " active" : ""}" data-sourcetype="${escapeHtml(st)}">${escapeHtml(st)} <span class="n">${counts[st] || 0}</span></button>`);
+  el.innerHTML = [allBtn, ...rows].join("");
+  el.querySelectorAll("[data-sourcetype]").forEach(btn => btn.addEventListener("click", () => {
+    awsSchemaState.sourcetype = btn.dataset.sourcetype;
+    awsSchemaState.visibleLimit = AWS_SCHEMA_PAGE_SIZE;
+    renderAwsSchemaAll();
+  }));
+}
+
+function renderAwsSchemaCategoryList() {
+  const el = document.getElementById("awsSchemaCategoryList");
+  if (!el) return;
+  const counts = {};
+  awsSchemaFields.forEach(f => { counts[f.category] = (counts[f.category] || 0) + 1; });
+  const allBtn = `<button type="button" class="se-app-chip${awsSchemaState.category === "all" ? " active" : ""}" data-category="all">All categories <span class="n">${awsSchemaFields.length}</span></button>`;
+  const rows = awsSchemaCategories.map(cat => `<button type="button" class="se-app-chip${awsSchemaState.category === cat ? " active" : ""}" data-category="${escapeHtml(cat)}">${escapeHtml(cat)} <span class="n">${counts[cat] || 0}</span></button>`);
+  el.innerHTML = [allBtn, ...rows].join("");
+  el.querySelectorAll("[data-category]").forEach(btn => btn.addEventListener("click", () => {
+    awsSchemaState.category = btn.dataset.category;
+    awsSchemaState.visibleLimit = AWS_SCHEMA_PAGE_SIZE;
+    renderAwsSchemaAll();
+  }));
+}
+
+function renderAwsSchemaTable() {
+  const rows = awsSchemaFilteredRows();
+  const total = rows.length;
+  const countEl = document.getElementById("awsSchemaResultCount");
+  if (countEl) {
+    countEl.textContent = total > awsSchemaState.visibleLimit
+      ? `Showing ${awsSchemaState.visibleLimit.toLocaleString()} of ${total.toLocaleString()} fields`
+      : `${total.toLocaleString()} field${total === 1 ? "" : "s"}`;
+  }
+  const body = document.getElementById("awsSchemaFieldsBody");
+  const loadMoreBtn = document.getElementById("awsSchemaLoadMoreBtn");
+  if (!body) return;
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="5" class="se-empty">No fields match the current search/filters.</td></tr>`;
+    if (loadMoreBtn) loadMoreBtn.hidden = true;
+    return;
+  }
+  const visibleRows = rows.slice(0, awsSchemaState.visibleLimit);
+  body.innerHTML = visibleRows.map(f => `<tr>
+    <td><code>${escapeHtml(f.sourcetype)}</code></td>
+    <td>${escapeHtml(f.category)}</td>
+    <td><code>${escapeHtml(f.name)}</code></td>
+    <td>${escapeHtml(f.cimModel) || "&ndash;"}</td>
+    <td>${escapeHtml(f.description)}${f.notes ? ` <span class="se-field-notes">(${escapeHtml(f.notes)})</span>` : ""}</td>
+  </tr>`).join("");
+  if (loadMoreBtn) {
+    const remaining = total - visibleRows.length;
+    if (remaining > 0) {
+      loadMoreBtn.hidden = false;
+      loadMoreBtn.textContent = `Show ${Math.min(remaining, AWS_SCHEMA_PAGE_SIZE).toLocaleString()} more field${Math.min(remaining, AWS_SCHEMA_PAGE_SIZE) === 1 ? "" : "s"} (${remaining.toLocaleString()} remaining)`;
+    } else {
+      loadMoreBtn.hidden = true;
+    }
+  }
+}
+
+function renderAwsSchemaAll() {
+  renderAwsSchemaSourcetypeList();
+  renderAwsSchemaCategoryList();
+  renderAwsSchemaTable();
+}
+
+const awsSchemaStatsEl = document.getElementById("awsSchemaStats");
+if (awsSchemaStatsEl) {
+  const cimMappedCount = awsSchemaFields.filter(f => f.cimModel).length;
+  const stats = [
+    { n: awsSchemaFields.length.toLocaleString(), l: "Total fields" },
+    { n: awsSchemaSourcetypes.length, l: "Sourcetypes" },
+    { n: awsSchemaCategories.length, l: "Field categories" },
+    { n: cimMappedCount.toLocaleString(), l: "With a CIM model" }
+  ];
+  awsSchemaStatsEl.innerHTML = stats.map(s => `<div class="se-stat"><span class="n">${s.n}</span><span class="l">${s.l}</span></div>`).join("");
+}
+
+const awsSchemaSearchBox = document.getElementById("awsSchemaSearchBox");
+if (awsSchemaSearchBox) {
+  awsSchemaSearchBox.addEventListener("input", e => {
+    awsSchemaState.query = e.target.value;
+    awsSchemaState.visibleLimit = AWS_SCHEMA_PAGE_SIZE;
+    renderAwsSchemaTable();
+  });
+}
+const awsSchemaLoadMoreBtn = document.getElementById("awsSchemaLoadMoreBtn");
+if (awsSchemaLoadMoreBtn) {
+  awsSchemaLoadMoreBtn.addEventListener("click", () => {
+    awsSchemaState.visibleLimit += AWS_SCHEMA_PAGE_SIZE;
+    renderAwsSchemaTable();
+  });
+}
+renderAwsSchemaAll();
 
 /* ---------- Schema explorer: search/filter/browse every field across the linked JSON Schema files ---------- */
 // Only columns with a real Schema link belong here -- "To be confirmed" columns have nothing to explore.
@@ -38975,6 +39792,23 @@ const GLOBAL_SEARCH_DOMAINS = [
       setActiveInputCoverageSubpage("msCloudInputs");
       setActiveMsCloudInputsView("schemaExplorer");
       openSchemaFieldDrawer(r);
+    }
+  },
+  {
+    id: "awsSchema", label: "AWS schema fields",
+    getItems: () => awsSchemaFields,
+    text: f => [f.sourcetype, f.category, f.name, f.description, f.cimModel, f.notes].join(" "),
+    title: f => f.name, subtitle: f => `${f.sourcetype} · ${f.category}`, snippet: f => f.description || "",
+    go: f => {
+      setActivePage("inputCoverage");
+      setActiveInputCoverageSubpage("awsCloudInputs");
+      setActiveAwsCloudInputsView("awsSchema");
+      awsSchemaState.sourcetype = "all";
+      awsSchemaState.category = "all";
+      awsSchemaState.visibleLimit = AWS_SCHEMA_PAGE_SIZE;
+      renderAwsSchemaSourcetypeList();
+      renderAwsSchemaCategoryList();
+      gsSetSearchAndFire(document.getElementById("awsSchemaSearchBox"), f.name);
     }
   },
   {
