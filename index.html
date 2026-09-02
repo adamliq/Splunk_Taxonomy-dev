@@ -14509,7 +14509,7 @@ E. Assumptions and unresolved inputs</pre>
 
         <div id="awsInputsListGroups"></div>
 
-        <p class="sot-note" id="awsInputsListNote">No AWS TA groups have been documented here yet. This tab mirrors the Microsoft cloud inputs structure (same <code>tag</code>/<code>friendlyName</code>/<code>description</code>/<code>appName</code>/<code>appId</code>/<code>baseLink</code>/<code>inputs</code> shape, populated into <code>awsInputCoverageGroups</code>) so it's ready to fill in from a real AWS TA input/schema reference the same way the Microsoft section was built -- ask for a specific AWS add-on (for example the Splunk Add-on for Amazon Web Services) and supply its input list to populate this view.</p>
+        <p class="sot-note" id="awsInputsListNote">App/Input/Sourcetype data transcribed from a supplied Splunk_TA_aws_sourcetypes.csv. The Splunkbase app name, app ID and base link are not yet confirmed and show as "To be confirmed" in each input's details below -- supply those to complete the entry, the same way Microsoft's were confirmed. See the Schema tab for the AWS field-level schema (transcribed separately from a supplied CSV, organised by sourcetype rather than by these input names).</p>
       </section>
       </div>
 
@@ -33330,9 +33330,12 @@ const inputDetailModal = document.getElementById("inputDetailModal");
 let lastInputDetailTrigger = null;
 
 function openInputDetail(key, trigger) {
-  const c = inputCoverageInputColumns.find(col => col.key === key) || awsInputCoverageInputColumns.find(col => col.key === key);
+  const msCol = inputCoverageInputColumns.find(col => col.key === key);
+  const c = msCol || awsInputCoverageInputColumns.find(col => col.key === key);
   if (!c || !inputDetailModal) return;
   lastInputDetailTrigger = trigger || document.activeElement;
+  const eyebrowEl = document.getElementById("inputDetailEyebrow");
+  if (eyebrowEl) eyebrowEl.textContent = msCol ? "Microsoft cloud based inputs" : "Amazon AWS based inputs";
   document.getElementById("inputDetailTitle").textContent = c.label;
   document.getElementById("inputDetailSubtitle").textContent = `${c.appName} (${c.tag})`;
   const rows = [
@@ -33351,7 +33354,9 @@ function openInputDetail(key, trigger) {
     // Fields is derived from the linked schema, not looked up independently -- its value only makes sense
     // relative to c.schema, so it's handled inline below rather than as its own [k, v] row.
     ["Fields", c.schema === "To be confirmed" ? "To be confirmed" : (c.fields.length ? c.fields : "No individual fields documented in the schema")]
-  ];
+  // "Entra ID type" only applies to Microsoft entries (it's not in the AWS column shape at all, so it's
+  // undefined there) -- drop rows with no value rather than showing an irrelevant blank field.
+  ].filter(([, v]) => v !== undefined && v !== "");
   document.getElementById("inputDetailGrid").innerHTML = rows.map(([k, v]) => {
     const isExternalLink = k === "Splunk app base link" && /^https?:\/\//.test(v);
     let valueHtml;
@@ -33397,13 +33402,33 @@ document.addEventListener("keydown", event => { if (event.key === "Escape" && in
  * Same data shape and rendering pattern as the Microsoft cloud inputs above (inputCoverageGroups /
  * renderMsInputsListView), deliberately kept as its own separate pool rather than merged into
  * inputCoverageGroups -- "Amazon AWS based inputs" is its own top-level tab, not more Microsoft rows.
- * Starts empty: no AWS TA/input data has been verified yet, so nothing is fabricated here. Populate
- * awsInputCoverageGroups (and awsInputCoverageColumnDetails / awsInputCoverageSourcetypes, matching the
- * Microsoft objects' shape) from a real AWS TA input/schema reference to fill this in, the same way the
- * Microsoft section was built from user-supplied schema files. ---------------------------------------- */
-const awsInputCoverageGroups = [];
+ * App/Input/Sourcetype data transcribed verbatim from the supplied Splunk_TA_aws_sourcetypes.csv.
+ * appName/appId/baseLink are not in that file and haven't been confirmed against Splunkbase the way
+ * Microsoft's were, so they're marked "To be confirmed" rather than guessed -- fill them in once
+ * confirmed, the same way Microsoft's were. Per-field schema (fields/schema below) isn't cross-linked
+ * to the Schema tab's data yet -- that CSV is organised by sourcetype, not by this TA's input names, so
+ * linking them is a separate follow-up rather than an assumed 1:1 mapping. ------------------------------ */
+const awsInputCoverageGroups = [
+  { tag: "Splunk_TA_aws", friendlyName: "Amazon Web Services", description: "Splunk Add-on for AWS -- collects CloudTrail, CloudWatch, Config, VPC/Transit Gateway Flow Logs, S3/CloudFront/ELB access logs, Inspector findings, Security Lake and billing/cost data.", appName: "To be confirmed", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["Billing", "CloudTrail", "CloudWatch", "CloudTrail Lake", "CloudFront Access Logs", "Config", "Config Rules", "ELB Access Logs", "Inspector", "Metadata", "S3 Access Logs", "Security Lake", "Transit Gateway Flow Logs", "VPC Flow Logs", "Custom Data Type"] }
+];
 const awsInputCoverageColumnDetails = {};
-const awsInputCoverageSourcetypes = {};
+const awsInputCoverageSourcetypes = {
+  "Billing [Splunk_TA_aws]": "aws:billing (legacy reports); aws:billing:cur (Cost and Usage Report – preferred/current)",
+  "CloudTrail [Splunk_TA_aws]": "aws:cloudtrail",
+  "CloudWatch [Splunk_TA_aws]": "aws:cloudwatch; aws:cloudwatch:metric (when targeting a metrics index)",
+  "CloudTrail Lake [Splunk_TA_aws]": "aws:cloudtrail:lake",
+  "CloudFront Access Logs [Splunk_TA_aws]": "aws:cloudfront:accesslogs",
+  "Config [Splunk_TA_aws]": "aws:config; aws:config:notification (for change notifications)",
+  "Config Rules [Splunk_TA_aws]": "aws:config:rule",
+  "ELB Access Logs [Splunk_TA_aws]": "aws:elb:accesslogs",
+  "Inspector [Splunk_TA_aws]": "aws:inspector; aws:inspector:v2:findings (Inspector v2)",
+  "Metadata [Splunk_TA_aws]": "aws:metadata; (older versions also used aws:description)",
+  "S3 Access Logs [Splunk_TA_aws]": "aws:s3:accesslogs",
+  "Security Lake [Splunk_TA_aws]": "aws:asl",
+  "Transit Gateway Flow Logs [Splunk_TA_aws]": "aws:transitgateway:flowlogs",
+  "VPC Flow Logs [Splunk_TA_aws]": "aws:cloudwatchlogs:vpcflow; aws:cloudwatchlogs:vpcflow:metric (when using a metrics index)",
+  "Custom Data Type [Splunk_TA_aws]": "User-defined / custom (often falls back to aws:s3 or a decoder-specific type such as aws:s3:csv)"
+};
 const awsInputCoverageInputColumns = awsInputCoverageGroups.flatMap(group =>
   group.inputs.map(label => {
     const key = `${label} [${group.tag}]`;
@@ -33439,7 +33464,10 @@ function renderAwsInputsListView() {
   }).join("");
   if (!awsInputCoverageGroups.length) return; // keep the static empty-state intro/note authored in HTML
   const introEl = document.getElementById("awsInputsListIntro");
-  if (introEl) introEl.textContent = `${awsInputCoverageInputColumns.length} inputs across Splunk-maintained AWS add-ons. Each input is a distinct, separately-enabled data feed within its TA -- not every account/region will need every input. Select an input to see its details.`;
+  if (introEl) {
+    const n = awsInputCoverageGroups.length;
+    introEl.textContent = `${awsInputCoverageInputColumns.length} inputs across ${n} Splunk-maintained AWS add-on${n === 1 ? "" : "s"}. Each input is a distinct, separately-enabled data feed within its TA -- not every account/region will need every input. Select an input to see its details.`;
+  }
 }
 renderAwsInputsListView();
 
