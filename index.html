@@ -33213,13 +33213,13 @@ const inputCoverageSourcetypes = {
 // input is recorded against that sourcetype.
 const o365ApiEndpointDetails = {
   "o365:cas:api": { dataset: "n/a", description: "All service policies, alerts and entities visible through the Microsoft cloud application security portal.", cimDataModels: "n/a", apiFamily: "Microsoft Defender for Cloud Apps / Cloud App Security API", endpoint: "Policies alerts entities from the Cloud App Security portal" },
-  "o365:graph:api": { dataset: "n/a", description: "All audit events and reports visible through the Microsoft Graph API endpoints. This includes all log events and reports visible through the Microsoft Graph API.", cimDataModels: "n/a", apiFamily: "Microsoft Graph", endpoint: "Audit logs / Sign-ins + Graph usage reports (Mailbox, OneDrive, SharePoint, Teams, Yammer, Office 365 services, etc.)" },
+  "o365:graph:api": { dataset: "n/a", description: "All audit events and reports visible through the Microsoft Graph API endpoints. This includes all log events and reports visible through the Microsoft Graph API.", cimDataModels: "n/a", apiFamily: "Microsoft Graph", endpoint: "Audit logs / Sign-ins + Graph usage reports (Mailbox, OneDrive, SharePoint, Teams, Yammer, Office 365 services, etc.)", baseUrl: "https://graph.microsoft.com" },
   "o365:management:activity": { dataset: "Authentication, Alerts, All_Changes.Account_Management, All_Changes, Data_Access, DLP_Incidents, All_Email.Filtering", description: "All audit events visible through the Office 365 Management Activity API", cimDataModels: "Authentication, Alerts, Change, Data Access, Data Loss Prevention, Email", apiFamily: "Office 365 Management Activity API", endpoint: "Audit.AzureActiveDirectory, Audit.Exchange, Audit.SharePoint, Audit.General, DLP.All" },
-  "o365:service:healthIssue": { dataset: "n/a", description: "All service status events visible through the Microsoft Graph API for Service health and communications. For more information on this API, see the Overview for accessing service health and communications in Microsoft Graph topic in the Microsoft’s Graph API documentation. For more information on Microsoft’s throttling limits for this API, see the “Service Communications service limits” section of the Microsoft Graph throttling guidance topic in the Microsoft Graph API documentation.", cimDataModels: "n/a", apiFamily: "Microsoft Graph", endpoint: "Service Health & Communications – health issues" },
-  "o365:service:updateMessage": { dataset: "n/a", description: "All service message events visible through the Microsoft Graph API for Service health and communications. For more information on this API, see the Overview for accessing service health and communications in Microsoft Graph topic in the Microsoft’s Graph API documentation. For more information on Microsoft’s throttling limits for this API, see the “Service Communications service limits” section of the Microsoft Graph throttling guidance topic in the Microsoft Graph API documentation.", cimDataModels: "n/a", apiFamily: "Microsoft Graph", endpoint: "Service Health & Communications – update messages" },
-  "o365:graph:messagetrace": { dataset: "n/a", description: "All Message Trace events collected through Microsoft Graph Message Trace API endpoints.", cimDataModels: "Email", apiFamily: "Microsoft Graph", endpoint: "Message Trace (Worldwide / commercial tenants)" },
+  "o365:service:healthIssue": { dataset: "n/a", description: "All service status events visible through the Microsoft Graph API for Service health and communications. For more information on this API, see the Overview for accessing service health and communications in Microsoft Graph topic in the Microsoft’s Graph API documentation. For more information on Microsoft’s throttling limits for this API, see the “Service Communications service limits” section of the Microsoft Graph throttling guidance topic in the Microsoft Graph API documentation.", cimDataModels: "n/a", apiFamily: "Microsoft Graph", endpoint: "Service Health & Communications – health issues", baseUrl: "https://graph.microsoft.com" },
+  "o365:service:updateMessage": { dataset: "n/a", description: "All service message events visible through the Microsoft Graph API for Service health and communications. For more information on this API, see the Overview for accessing service health and communications in Microsoft Graph topic in the Microsoft’s Graph API documentation. For more information on Microsoft’s throttling limits for this API, see the “Service Communications service limits” section of the Microsoft Graph throttling guidance topic in the Microsoft Graph API documentation.", cimDataModels: "n/a", apiFamily: "Microsoft Graph", endpoint: "Service Health & Communications – update messages", baseUrl: "https://graph.microsoft.com" },
+  "o365:graph:messagetrace": { dataset: "n/a", description: "All Message Trace events collected through Microsoft Graph Message Trace API endpoints.", cimDataModels: "Email", apiFamily: "Microsoft Graph", endpoint: "Message Trace (Worldwide / commercial tenants)", baseUrl: "https://graph.microsoft.com" },
   "o365:reporting:messagetrace": { dataset: "n/a", description: "Message Trace events collected through the Exchange Online Reporting Web Service (RWS) API. Used for USGovGCC and USGovGCCHigh tenants, for which the Graph Message Trace API is not available.", cimDataModels: "Email", apiFamily: "Exchange Online Reporting Web Service (RWS)", endpoint: "Message Trace (USGovGCC / USGovGCCHigh tenants only)" },
-  "o365:metadata": { dataset: "n/a", description: "All Microsoft Entra ID Metadata events visible through the Graph API.", cimDataModels: "n/a", apiFamily: "Microsoft Graph", endpoint: "Entra ID metadata (Users Groups Applications Devices)" },
+  "o365:metadata": { dataset: "n/a", description: "All Microsoft Entra ID Metadata events visible through the Graph API.", cimDataModels: "n/a", apiFamily: "Microsoft Graph", endpoint: "Entra ID metadata (Users Groups Applications Devices)", baseUrl: "https://graph.microsoft.com" },
   "splunk:ta:o365:log": { dataset: "n/a", description: "All log events generated by the Splunk Add-on for Microsoft Office 365.", cimDataModels: "n/a", apiFamily: "Internal (add-on logs)", endpoint: "Logs generated by the add-on itself" },
 };
 // Looks up o365ApiEndpointDetails for a given sourcetype string -- exact match first, then (for compound
@@ -33240,12 +33240,12 @@ function lookupO365ApiEndpoint(sourcetype) {
 // pending confirmation, so it isn't overwritten here on inference alone -- flagged separately rather than
 // guessed.
 const taMsAadApiEndpointDetails = {
-  "azure:aad:signin": { apiFamily: "Microsoft Graph", endpoint: "/auditLogs/signIns (v1.0 or beta)" },
-  "azure:aad:user": { apiFamily: "Microsoft Graph", endpoint: "/users (v1.0 or beta)" },
-  "azure:aad:group": { apiFamily: "Microsoft Graph", endpoint: "/groups (v1.0 or beta)" },
-  "azure:aad:audit": { apiFamily: "Microsoft Graph", endpoint: "/auditLogs/directoryAudits (v1.0 or beta)" },
-  "azure:aad:risk:detection": { apiFamily: "Microsoft Graph", endpoint: "/identityProtection/riskDetections + /identityProtection/riskyUsers" },
-  "azure:aad:device": { apiFamily: "Microsoft Graph", endpoint: "/devices (v1.0 or beta)" },
+  "azure:aad:signin": { apiFamily: "Microsoft Graph", endpoint: "/auditLogs/signIns (v1.0 or beta)", baseUrl: "https://graph.microsoft.com" },
+  "azure:aad:user": { apiFamily: "Microsoft Graph", endpoint: "/users (v1.0 or beta)", baseUrl: "https://graph.microsoft.com" },
+  "azure:aad:group": { apiFamily: "Microsoft Graph", endpoint: "/groups (v1.0 or beta)", baseUrl: "https://graph.microsoft.com" },
+  "azure:aad:audit": { apiFamily: "Microsoft Graph", endpoint: "/auditLogs/directoryAudits (v1.0 or beta)", baseUrl: "https://graph.microsoft.com" },
+  "azure:aad:risk:detection": { apiFamily: "Microsoft Graph", endpoint: "/identityProtection/riskDetections + /identityProtection/riskyUsers", baseUrl: "https://graph.microsoft.com" },
+  "azure:aad:device": { apiFamily: "Microsoft Graph", endpoint: "/devices (v1.0 or beta)", baseUrl: "https://graph.microsoft.com" },
   "azure:metrics": { apiFamily: "Azure Monitor", endpoint: "Metrics List" },
   "azure:securityCenter:alert": { apiFamily: "Azure Security Center", endpoint: "Alerts List" },
   "azure:securityCenter:task": { apiFamily: "Azure Security Center", endpoint: "Tasks List" },
@@ -33279,7 +33279,8 @@ function lookupApiEndpointFromTable(sourcetype, table) {
   if (!matches.length) return undefined;
   const apiFamily = [...new Set(matches.map(m => m.apiFamily))].join("; ");
   const endpoint = matches.map(m => m.endpoint).join("; ");
-  return { apiFamily, endpoint };
+  const baseUrl = [...new Set(matches.map(m => m.baseUrl).filter(Boolean))].join("; ") || undefined;
+  return { apiFamily, endpoint, baseUrl };
 }
 function lookupAzureAadApiEndpoint(sourcetype) {
   return lookupApiEndpointFromTable(sourcetype, taMsAadApiEndpointDetails);
@@ -33463,7 +33464,12 @@ const inputCoverageInputColumns = inputCoverageGroups.flatMap(group =>
       // o365ApiEndpointDetails / taMsAadApiEndpointDetails / mscsApiEndpointDetails /
       // msSecurityApiEndpointDetails (disjoint sourcetype namespaces), so this is never lossy.
       apiFamily: (apiEndpoint && apiEndpoint.apiFamily) || (azureApiEndpoint && azureApiEndpoint.apiFamily) || (mscsApiEndpoint && mscsApiEndpoint.apiFamily) || (msSecurityApiEndpoint && msSecurityApiEndpoint.apiFamily) || undefined,
-      apiEndpointSpecific: (apiEndpoint && apiEndpoint.endpoint) || (azureApiEndpoint && azureApiEndpoint.endpoint) || (mscsApiEndpoint && mscsApiEndpoint.endpoint) || (msSecurityApiEndpoint && msSecurityApiEndpoint.endpoint) || undefined
+      apiEndpointSpecific: (apiEndpoint && apiEndpoint.endpoint) || (azureApiEndpoint && azureApiEndpoint.endpoint) || (mscsApiEndpoint && mscsApiEndpoint.endpoint) || (msSecurityApiEndpoint && msSecurityApiEndpoint.endpoint) || undefined,
+      // Only set on entries whose API family is exactly "Microsoft Graph" (all Graph-backed sourcetypes in
+      // o365ApiEndpointDetails and taMsAadApiEndpointDetails) -- not on compound families that merely mention
+      // Graph alongside another distinct API (e.g. msSecurityApiEndpointDetails' "Microsoft Graph / Microsoft
+      // 365 Defender API"), since those weren't confirmed to share this same base URL.
+      apiBaseUrl: (apiEndpoint && apiEndpoint.baseUrl) || (azureApiEndpoint && azureApiEndpoint.baseUrl) || (mscsApiEndpoint && mscsApiEndpoint.baseUrl) || (msSecurityApiEndpoint && msSecurityApiEndpoint.baseUrl) || undefined
     };
   })
 );
@@ -33535,6 +33541,7 @@ function openInputDetail(key, trigger) {
     ["API endpoint dataset(s)", c.apiEndpointDataset],
     ["API endpoint CIM data model(s)", c.apiEndpointCimDataModels],
     ["API family", c.apiFamily],
+    ["API base URL", c.apiBaseUrl],
     ["Specific API endpoint", c.apiEndpointSpecific],
     ["Schema", c.schema],
     // Fields is derived from the linked schema, not looked up independently -- its value only makes sense
@@ -33542,12 +33549,12 @@ function openInputDetail(key, trigger) {
     ["Fields", c.schema === "To be confirmed" ? "To be confirmed" : (c.fields.length ? c.fields : "No individual fields documented in the schema")]
   // "Entra ID type" only applies to Microsoft entries (it's not in the AWS column shape at all, so it's
   // undefined there) -- the "API endpoint ..." rows only apply to splunk_ta_o365 inputs whose sourcetype
-  // matches o365ApiEndpointDetails, and "API family"/"Specific API endpoint" apply to any input whose
-  // sourcetype matches either o365ApiEndpointDetails or taMsAadApiEndpointDetails -- drop rows with no
-  // value rather than showing an irrelevant blank field.
+  // matches o365ApiEndpointDetails, "API family"/"Specific API endpoint" apply to any input whose sourcetype
+  // matches any of the four lookup tables, and "API base URL" only to the subset of those whose API family
+  // is exactly "Microsoft Graph" -- drop rows with no value rather than showing an irrelevant blank field.
   ].filter(([, v]) => v !== undefined && v !== "");
   document.getElementById("inputDetailGrid").innerHTML = rows.map(([k, v]) => {
-    const isExternalLink = k === "Splunk app base link" && /^https?:\/\//.test(v);
+    const isExternalLink = (k === "Splunk app base link" || k === "API base URL") && /^https?:\/\//.test(v);
     let valueHtml;
     if (isExternalLink) {
       valueHtml = `<a href="${escapeHtml(v)}" target="_blank" rel="noopener">${escapeHtml(v)}</a>`;
