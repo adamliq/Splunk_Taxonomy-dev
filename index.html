@@ -33614,13 +33614,12 @@ document.addEventListener("keydown", event => { if (event.key === "Escape" && in
  * renderMsInputsListView), deliberately kept as its own separate pool rather than merged into
  * inputCoverageGroups -- "Amazon AWS based inputs" is its own top-level tab, not more Microsoft rows.
  * App/Input/Sourcetype data transcribed verbatim from the supplied Splunk_TA_aws_sourcetypes.csv.
- * appName/appId/baseLink are not in that file and haven't been confirmed against Splunkbase the way
- * Microsoft's were, so they're marked "To be confirmed" rather than guessed -- fill them in once
- * confirmed, the same way Microsoft's were. Per-field schema (fields/schema below) isn't cross-linked
- * to the Schema tab's data yet -- that CSV is organised by sourcetype, not by this TA's input names, so
- * linking them is a separate follow-up rather than an assumed 1:1 mapping. ------------------------------ */
+ * appName/appId/baseLink confirmed by the user against Splunkbase directly (2026-09). Per-field schema
+ * (fields/schema below) isn't cross-linked to the Schema tab's data yet -- that CSV is organised by
+ * sourcetype, not by this TA's input names, so linking them is a separate follow-up rather than an
+ * assumed 1:1 mapping. ------------------------------------------------------------------------------- */
 const awsInputCoverageGroups = [
-  { tag: "Splunk_TA_aws", friendlyName: "Amazon Web Services", description: "Splunk Add-on for AWS -- collects CloudTrail, CloudWatch, Config, VPC/Transit Gateway Flow Logs, S3/CloudFront/ELB access logs, Inspector findings, Security Lake and billing/cost data.", appName: "To be confirmed", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["Billing", "CloudTrail", "CloudWatch", "CloudTrail Lake", "CloudFront Access Logs", "Config", "Config Rules", "ELB Access Logs", "Inspector", "Metadata", "S3 Access Logs", "Security Lake", "Transit Gateway Flow Logs", "VPC Flow Logs", "Custom Data Type"] }
+  { tag: "Splunk_TA_aws", friendlyName: "Amazon Web Services", description: "Splunk Add-on for AWS -- collects CloudTrail, CloudWatch, Config, VPC/Transit Gateway Flow Logs, S3/CloudFront/ELB access logs, Inspector findings, Security Lake and billing/cost data.", appName: "Splunk Add-on for Amazon Web Services (AWS)", appId: "1876", baseLink: "https://splunkbase.splunk.com/app/1876", inputs: ["Billing", "CloudTrail", "CloudWatch", "CloudTrail Lake", "CloudFront Access Logs", "Config", "Config Rules", "ELB Access Logs", "Inspector", "Metadata", "S3 Access Logs", "Security Lake", "Transit Gateway Flow Logs", "VPC Flow Logs", "Custom Data Type"] }
 ];
 const awsInputCoverageColumnDetails = {
   "Billing [Splunk_TA_aws]": { collectionMethod: "Its own input type: uses the AWS Legacy Cost and Usage API, then pulls the report AWS delivers to an S3 bucket, checking ETags to detect updated reports." },
