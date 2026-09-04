@@ -33228,6 +33228,51 @@ function lookupO365ApiEndpoint(sourcetype) {
   const base = sourcetype.replace(/:[^:]+$/, "");
   return o365ApiEndpointDetails[base];
 }
+// API endpoint reference for TA-MS-AAD sourcetypes -- Sourcetype/API Family/Specific Endpoint transcribed
+// verbatim from the user-supplied reference table (2026-09). Keyed by the exact sourcetype string. Several
+// rows here (azure:subscriptions, azure:resource:group, azure:vnet*, azure:compute*, azure:billing,
+// azure:reservation:recommendation) have no input currently recorded against that exact sourcetype -- the
+// TA-MS-AAD inputs they most plausibly belong to (Azure Metrics, Resource Graph, Azure Topology Auto/Manual)
+// are currently recorded with sourcetype "-", a value the user previously confirmed rather than a filler
+// pending confirmation, so it isn't overwritten here on inference alone -- flagged separately rather than
+// guessed.
+const taMsAadApiEndpointDetails = {
+  "azure:aad:signin": { apiFamily: "Microsoft Graph", endpoint: "/auditLogs/signIns (v1.0 or beta)" },
+  "azure:aad:user": { apiFamily: "Microsoft Graph", endpoint: "/users (v1.0 or beta)" },
+  "azure:aad:group": { apiFamily: "Microsoft Graph", endpoint: "/groups (v1.0 or beta)" },
+  "azure:aad:audit": { apiFamily: "Microsoft Graph", endpoint: "/auditLogs/directoryAudits (v1.0 or beta)" },
+  "azure:aad:risk:detection": { apiFamily: "Microsoft Graph", endpoint: "/identityProtection/riskDetections + /identityProtection/riskyUsers" },
+  "azure:aad:device": { apiFamily: "Microsoft Graph", endpoint: "/devices (v1.0 or beta)" },
+  "azure:metrics": { apiFamily: "Azure Monitor", endpoint: "Metrics List" },
+  "azure:securityCenter:alert": { apiFamily: "Azure Security Center", endpoint: "Alerts List" },
+  "azure:securityCenter:task": { apiFamily: "Azure Security Center", endpoint: "Tasks List" },
+  "azure:subscriptions": { apiFamily: "Azure Resource Manager", endpoint: "Subscriptions List" },
+  "azure:resource:group": { apiFamily: "Azure Resource Manager", endpoint: "Resource Groups List" },
+  "azure:vnet": { apiFamily: "Azure Virtual Network", endpoint: "Virtual Networks – List All" },
+  "azure:vnet:nic": { apiFamily: "Azure Virtual Network", endpoint: "Network Interfaces – List All" },
+  "azure:vnet:nsg": { apiFamily: "Azure Virtual Network", endpoint: "Network Security Groups – List All" },
+  "azure:vnet:ip:public": { apiFamily: "Azure Virtual Network", endpoint: "Public IP Addresses – List All" },
+  "azure:compute:vm": { apiFamily: "Azure Compute", endpoint: "Virtual Machines – List All" },
+  "azure:compute:disk": { apiFamily: "Azure Compute", endpoint: "Disks – List" },
+  "azure:compute:image": { apiFamily: "Azure Compute", endpoint: "Images – List" },
+  "azure:compute:snapshot": { apiFamily: "Azure Compute", endpoint: "Snapshots – List" },
+  "azure:billing": { apiFamily: "Azure Consumption", endpoint: "Usage Details – List" },
+  "azure:reservation:recommendation": { apiFamily: "Azure Consumption", endpoint: "Reservation Recommendations – List" },
+  "azure:resourcegraph": { apiFamily: "Azure Resource Graph", endpoint: "Resources query" },
+  "azure:topology": { apiFamily: "Azure Network Watcher", endpoint: "Get Topology (+ related Network Watcher / Resource Groups calls)" },
+};
+// Resolves a stored input sourcetype against taMsAadApiEndpointDetails. A stored sourcetype field can be a
+// single value or a comma-separated list (e.g. two sourcetypes sharing one input, as with Defender for
+// cloud Alerts and Tasks) -- each comma-separated token is exact-matched independently, and matched entries
+// are combined (deduping identical API families) rather than requiring the whole field to match one row.
+function lookupAzureAadApiEndpoint(sourcetype) {
+  if (!sourcetype) return undefined;
+  const matches = sourcetype.split(",").map(t => t.trim()).map(t => taMsAadApiEndpointDetails[t]).filter(Boolean);
+  if (!matches.length) return undefined;
+  const apiFamily = [...new Set(matches.map(m => m.apiFamily))].join("; ");
+  const endpoint = matches.map(m => m.endpoint).join("; ");
+  return { apiFamily, endpoint };
+}
 // Remaining spreadsheet columns (content_type, entra_id_type, input_category, input_type_sub, Source) confirmed
 // by the user (2026-08) for the splunk_ta_o365 inputs, from the same source as inputCoverageSourcetypes above.
 // Inputs for the other 3 TAs have no equivalent breakdown -- every field not listed here defaults to
@@ -33308,6 +33353,7 @@ const inputCoverageInputColumns = inputCoverageGroups.flatMap(group =>
     const details = inputCoverageColumnDetails[key] || {};
     const sourcetype = inputCoverageSourcetypes[key] || "To be confirmed";
     const apiEndpoint = lookupO365ApiEndpoint(sourcetype);
+    const azureApiEndpoint = lookupAzureAadApiEndpoint(sourcetype);
     return {
       key, label, tag: group.tag,
       appName: group.appName, appId: group.appId, baseLink: group.baseLink,
@@ -33322,7 +33368,9 @@ const inputCoverageInputColumns = inputCoverageGroups.flatMap(group =>
       fields: details.fields || [],
       apiEndpointDataset: apiEndpoint ? apiEndpoint.dataset : undefined,
       apiEndpointDescription: apiEndpoint ? apiEndpoint.description : undefined,
-      apiEndpointCimDataModels: apiEndpoint ? apiEndpoint.cimDataModels : undefined
+      apiEndpointCimDataModels: apiEndpoint ? apiEndpoint.cimDataModels : undefined,
+      azureApiFamily: azureApiEndpoint ? azureApiEndpoint.apiFamily : undefined,
+      azureApiEndpoint: azureApiEndpoint ? azureApiEndpoint.endpoint : undefined
     };
   })
 );
@@ -33393,13 +33441,17 @@ function openInputDetail(key, trigger) {
     ["API endpoint description", c.apiEndpointDescription],
     ["API endpoint dataset(s)", c.apiEndpointDataset],
     ["API endpoint CIM data model(s)", c.apiEndpointCimDataModels],
+    ["API family", c.azureApiFamily],
+    ["Specific API endpoint", c.azureApiEndpoint],
     ["Schema", c.schema],
     // Fields is derived from the linked schema, not looked up independently -- its value only makes sense
     // relative to c.schema, so it's handled inline below rather than as its own [k, v] row.
     ["Fields", c.schema === "To be confirmed" ? "To be confirmed" : (c.fields.length ? c.fields : "No individual fields documented in the schema")]
   // "Entra ID type" only applies to Microsoft entries (it's not in the AWS column shape at all, so it's
-  // undefined there) -- the API endpoint rows only apply to splunk_ta_o365 inputs whose sourcetype matches
-  // o365ApiEndpointDetails -- drop rows with no value rather than showing an irrelevant blank field.
+  // undefined there) -- the "API endpoint ..." rows only apply to splunk_ta_o365 inputs whose sourcetype
+  // matches o365ApiEndpointDetails, and "API family"/"Specific API endpoint" only to TA-MS-AAD inputs whose
+  // sourcetype matches taMsAadApiEndpointDetails -- drop rows with no value rather than showing an
+  // irrelevant blank field.
   ].filter(([, v]) => v !== undefined && v !== "");
   document.getElementById("inputDetailGrid").innerHTML = rows.map(([k, v]) => {
     const isExternalLink = k === "Splunk app base link" && /^https?:\/\//.test(v);
