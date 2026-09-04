@@ -450,6 +450,11 @@
       color: #fff;
       background: linear-gradient(135deg, #4c1d68, #7030a0 60%, #2f75b5);
     }
+    /* Flex children default to min-width:auto, which refuses to shrink below an unbreakable child's
+       intrinsic width -- a modal-title with no whitespace (e.g. "Mailbox:MailboxUsageMailboxCounts") would
+       otherwise force this wrapper, .modal-header, and the whole dialog wider than a narrow viewport instead
+       of wrapping, which then auto-scrolls horizontally when the close button receives focus. */
+    .modal-header > div { min-width: 0; }
     .modal-eyebrow {
       margin: 0 0 5px;
       font-size: 11px;
@@ -458,8 +463,8 @@
       text-transform: uppercase;
       opacity: .78;
     }
-    .modal-title { margin: 0; font-size: clamp(24px, 4vw, 34px); }
-    .modal-subtitle { max-width: 760px; margin: 8px 0 0; line-height: 1.5; opacity: .88; }
+    .modal-title { margin: 0; font-size: clamp(24px, 4vw, 34px); overflow-wrap: break-word; word-break: break-word; }
+    .modal-subtitle { max-width: 760px; margin: 8px 0 0; line-height: 1.5; opacity: .88; overflow-wrap: break-word; }
     .modal-close {
       width: 42px;
       height: 42px;
