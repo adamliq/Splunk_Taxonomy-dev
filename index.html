@@ -33264,17 +33264,102 @@ const taMsAadApiEndpointDetails = {
   "azure:resourcegraph": { apiFamily: "Azure Resource Graph", endpoint: "Resources query" },
   "azure:topology": { apiFamily: "Azure Network Watcher", endpoint: "Get Topology (+ related Network Watcher / Resource Groups calls)" },
 };
-// Resolves a stored input sourcetype against taMsAadApiEndpointDetails. A stored sourcetype field can be a
-// single value or a comma-separated list (e.g. two sourcetypes sharing one input, as with Defender for
-// cloud Alerts and Tasks) -- each comma-separated token is exact-matched independently, and matched entries
-// are combined (deduping identical API families) rather than requiring the whole field to match one row.
-function lookupAzureAadApiEndpoint(sourcetype) {
+// Generic sourcetype-token matcher shared by the TA-MS-AAD/mscs/MS Security endpoint tables. A stored
+// sourcetype field can carry a plain comma-separated list, an " or "-separated list (e.g. "mscs:kql or
+// mscs:kql:stats"), and/or a single trailing "(...)" annotation that's parenthetical context on the whole
+// field rather than part of any individual token (e.g. "ms365:defender:incident (related alerts map to
+// ms365:defender:incident:alerts)", or the TI dataset list's trailing "(varies by dataset)"). Each token is
+// exact-matched independently against the given table; matched entries are combined (API families deduped,
+// endpoints joined with "; ") rather than requiring the whole field to match one row verbatim.
+function lookupApiEndpointFromTable(sourcetype, table) {
   if (!sourcetype) return undefined;
-  const matches = sourcetype.split(",").map(t => t.trim()).map(t => taMsAadApiEndpointDetails[t]).filter(Boolean);
+  const stripped = sourcetype.replace(/\s*\([^()]*\)\s*$/, "");
+  const tokens = stripped.split(/\s*,\s*|\s+or\s+/).map(t => t.trim()).filter(Boolean);
+  const matches = tokens.map(t => table[t]).filter(Boolean);
   if (!matches.length) return undefined;
   const apiFamily = [...new Set(matches.map(m => m.apiFamily))].join("; ");
   const endpoint = matches.map(m => m.endpoint).join("; ");
   return { apiFamily, endpoint };
+}
+function lookupAzureAadApiEndpoint(sourcetype) {
+  return lookupApiEndpointFromTable(sourcetype, taMsAadApiEndpointDetails);
+}
+// API endpoint reference for Splunk_TA_microsoft-cloudservices sourcetypes -- Sourcetype/API Family/Specific
+// Endpoint transcribed verbatim from the user-supplied reference table (2026-09). Keyed by the exact
+// sourcetype string. Several rows here don't textually match any input's CURRENT stored sourcetype, though
+// most correspond conceptually to an existing input whose stored sourcetype is itself a "generic" placeholder
+// rather than an enumerated list: the ten mscs:resource:* rows match "Azure Resource"'s documented ten
+// variants (see its columnDetails description) but its stored sourcetype is the single string
+// "mscs:resource:generic (specific variants exist, e.g. mscs:resource:disk)"; mscs:azure:security:alert/
+// recommendation and azure:monitor:aad/resource match "Azure Event Hub"'s documented content variants but its
+// stored sourcetype is only the single default "mscs:azure:eventhub"; and mscs:consumption:billing doesn't
+// match "Azure Consumption (Billing)"'s stored "mscs:billing:consumption" (token order differs) or
+// mscs:consumption:reservation:recommendation at all. None of these are silently reconciled -- the previously
+// user-confirmed sourcetype values are left untouched rather than corrected on inference.
+const mscsApiEndpointDetails = {
+  "mscs:azure:eventhub": { apiFamily: "Azure Event Hubs", endpoint: "Generic Event Hub (default)" },
+  "mscs:azure:security:alert": { apiFamily: "Azure Event Hubs", endpoint: "Security Center alerts via Event Hub" },
+  "mscs:azure:security:recommendation": { apiFamily: "Azure Event Hubs", endpoint: "Security Center recommendations via Event Hub" },
+  "azure:monitor:aad": { apiFamily: "Azure Event Hubs", endpoint: "Entra ID / AAD logs (sign-ins audit etc.) via Event Hub" },
+  "azure:monitor:resource": { apiFamily: "Azure Event Hubs", endpoint: "Azure resource logs via Event Hub" },
+  "azure:monitor:activity": { apiFamily: "Azure Event Hubs", endpoint: "Azure Activity logs via Event Hub" },
+  "mscs:resource:virtualMachine": { apiFamily: "Azure Compute REST", endpoint: "VMs – List / Get" },
+  "mscs:resource:networkInterfaceCard": { apiFamily: "Azure Network REST", endpoint: "Network Interfaces – List" },
+  "mscs:resource:publicIPAddress": { apiFamily: "Azure Network REST", endpoint: "Public IP Addresses – List" },
+  "mscs:resource:virtualNetwork": { apiFamily: "Azure Network REST", endpoint: "Virtual Networks – List" },
+  "mscs:resource:disk": { apiFamily: "Azure Compute REST", endpoint: "Disks" },
+  "mscs:resource:image": { apiFamily: "Azure Compute REST", endpoint: "Images" },
+  "mscs:resource:snapshot": { apiFamily: "Azure Compute REST", endpoint: "Snapshots" },
+  "mscs:resource:resourceGroup": { apiFamily: "Azure Resource Manager", endpoint: "Resource Groups" },
+  "mscs:resource:subscriptions": { apiFamily: "Azure Resource Manager", endpoint: "Subscriptions" },
+  "mscs:resource:securityGroup": { apiFamily: "Azure Network REST", endpoint: "Network Security Groups" },
+  "mscs:azure:audit": { apiFamily: "Azure Insights / Activity Log REST", endpoint: "List events for a subscription" },
+  "mscs:storage:table": { apiFamily: "Azure Storage (Table)", endpoint: "Azure SDK – Table Storage" },
+  "mscs:storage:blob": { apiFamily: "Azure Storage (Blob)", endpoint: "Azure SDK – Blob Storage" },
+  "mscs:storage:blob:json": { apiFamily: "Azure Storage (Blob)", endpoint: "Blob content parsed as JSON" },
+  "mscs:storage:blob:xml": { apiFamily: "Azure Storage (Blob)", endpoint: "Blob content parsed as XML" },
+  "mscs:vm:metrics": { apiFamily: "Azure Storage (Table)", endpoint: "VM metrics via Storage Table" },
+  "mscs:metrics": { apiFamily: "Azure Monitor Metrics", endpoint: "Metrics data" },
+  "mscs:metrics:events": { apiFamily: "Azure Monitor Metrics", endpoint: "Metrics events" },
+  "mscs:kql": { apiFamily: "Azure Log Analytics / KQL", endpoint: "KQL query results" },
+  "mscs:kql:stats": { apiFamily: "Azure Log Analytics / KQL", endpoint: "KQL statistics" },
+  "mscs:consumption:billing": { apiFamily: "Azure Consumption", endpoint: "Usage Details / Billing" },
+  "mscs:consumption:reservation:recommendation": { apiFamily: "Azure Consumption", endpoint: "Reservation Recommendations" },
+  "ms:o365:management": { apiFamily: "Office 365 Management Activity API (legacy)", endpoint: "Backward compatibility only (prefer o365:management:activity from the O365 TA)" },
+};
+function lookupMscsApiEndpoint(sourcetype) {
+  return lookupApiEndpointFromTable(sourcetype, mscsApiEndpointDetails);
+}
+// API endpoint reference for Splunk_TA_MS_Security sourcetypes -- Sourcetype/API Family/Specific Endpoint
+// transcribed verbatim from the user-supplied reference table (2026-09). Keyed by the exact sourcetype
+// string. All 6 inputs in this group match: "Microsoft 365 Defender Incidents"' stored sourcetype
+// "ms365:defender:incident (related alerts map to ms365:defender:incident:alerts)" resolves via the trailing-
+// parenthetical strip in lookupApiEndpointFromTable, and "Microsoft Defender Threat Intelligence DataSets"'
+// ten-sourcetype comma list (with its own trailing "(varies by dataset)" annotation) resolves the same way,
+// each of its ten tokens matching one row here. ms365:defender:incident:alerts and
+// m365:defender:incident:advanced_hunting have no input currently recorded against that exact sourcetype, so
+// they're kept for completeness but won't surface in any input's detail view yet.
+const msSecurityApiEndpointDetails = {
+  "ms:defender:atp:alerts": { apiFamily: "Microsoft Graph / Microsoft 365 Defender API", endpoint: "Alerts (Alert.Read.All / SecurityAlert.Read.All)" },
+  "ms365:defender:incident": { apiFamily: "Microsoft Graph / Microsoft 365 Defender API", endpoint: "Incidents (Incident.Read.All / SecurityIncident.Read.All)" },
+  "ms365:defender:incident:alerts": { apiFamily: "Microsoft Graph / Microsoft 365 Defender API", endpoint: "Alerts associated with incidents (split at index time)" },
+  "m365:defender:incident:advanced_hunting": { apiFamily: "Microsoft Graph / Microsoft 365 Defender API", endpoint: "Advanced Hunting query results (alert actions; AdvancedHunting.Read.All)" },
+  "ms:defender:simulations": { apiFamily: "Microsoft Graph / Attack Simulation API", endpoint: "Phishing / attack simulation reports (AttackSimulation.Read.All)" },
+  "ms:defender:eventhub": { apiFamily: "Azure Event Hubs", endpoint: "Advanced Hunting events streamed in real time from Defender portal" },
+  "ms:defender:machines": { apiFamily: "Microsoft Defender for Endpoint API", endpoint: "Device inventory (List Machines)" },
+  "ms:defender:ti:articles": { apiFamily: "Microsoft Defender Threat Intelligence API", endpoint: "TI articles (ThreatIntelligence.Read.All)" },
+  "ms:defender:ti:article_indicators": { apiFamily: "Microsoft Defender Threat Intelligence API", endpoint: "TI article indicators" },
+  "ms:defender:ti:certificates": { apiFamily: "Microsoft Defender Threat Intelligence API", endpoint: "Host certificates" },
+  "ms:defender:ti:components": { apiFamily: "Microsoft Defender Threat Intelligence API", endpoint: "Host components" },
+  "ms:defender:ti:cookies": { apiFamily: "Microsoft Defender Threat Intelligence API", endpoint: "Host cookies" },
+  "ms:defender:ti:hostpairs": { apiFamily: "Microsoft Defender Threat Intelligence API", endpoint: "Host pairs" },
+  "ms:defender:ti:passivedns": { apiFamily: "Microsoft Defender Threat Intelligence API", endpoint: "Passive DNS records" },
+  "ms:defender:ti:subdomains": { apiFamily: "Microsoft Defender Threat Intelligence API", endpoint: "Subdomains" },
+  "ms:defender:ti:trackers": { apiFamily: "Microsoft Defender Threat Intelligence API", endpoint: "Trackers" },
+  "ms:defender:ti:whois": { apiFamily: "Microsoft Defender Threat Intelligence API", endpoint: "WHOIS data" },
+};
+function lookupMsSecurityApiEndpoint(sourcetype) {
+  return lookupApiEndpointFromTable(sourcetype, msSecurityApiEndpointDetails);
 }
 // Remaining spreadsheet columns (content_type, entra_id_type, input_category, input_type_sub, Source) confirmed
 // by the user (2026-08) for the splunk_ta_o365 inputs, from the same source as inputCoverageSourcetypes above.
@@ -33357,6 +33442,8 @@ const inputCoverageInputColumns = inputCoverageGroups.flatMap(group =>
     const sourcetype = inputCoverageSourcetypes[key] || "To be confirmed";
     const apiEndpoint = lookupO365ApiEndpoint(sourcetype);
     const azureApiEndpoint = lookupAzureAadApiEndpoint(sourcetype);
+    const mscsApiEndpoint = lookupMscsApiEndpoint(sourcetype);
+    const msSecurityApiEndpoint = lookupMsSecurityApiEndpoint(sourcetype);
     return {
       key, label, tag: group.tag,
       appName: group.appName, appId: group.appId, baseLink: group.baseLink,
@@ -33372,10 +33459,11 @@ const inputCoverageInputColumns = inputCoverageGroups.flatMap(group =>
       apiEndpointDataset: apiEndpoint ? apiEndpoint.dataset : undefined,
       apiEndpointDescription: apiEndpoint ? apiEndpoint.description : undefined,
       apiEndpointCimDataModels: apiEndpoint ? apiEndpoint.cimDataModels : undefined,
-      // Unified across both lookup tables -- an input's sourcetype can match o365ApiEndpointDetails or
-      // taMsAadApiEndpointDetails but never both (disjoint sourcetype namespaces), so this is never lossy.
-      apiFamily: (apiEndpoint && apiEndpoint.apiFamily) || (azureApiEndpoint && azureApiEndpoint.apiFamily) || undefined,
-      apiEndpointSpecific: (apiEndpoint && apiEndpoint.endpoint) || (azureApiEndpoint && azureApiEndpoint.endpoint) || undefined
+      // Unified across all four lookup tables -- an input's sourcetype can match at most one of
+      // o365ApiEndpointDetails / taMsAadApiEndpointDetails / mscsApiEndpointDetails /
+      // msSecurityApiEndpointDetails (disjoint sourcetype namespaces), so this is never lossy.
+      apiFamily: (apiEndpoint && apiEndpoint.apiFamily) || (azureApiEndpoint && azureApiEndpoint.apiFamily) || (mscsApiEndpoint && mscsApiEndpoint.apiFamily) || (msSecurityApiEndpoint && msSecurityApiEndpoint.apiFamily) || undefined,
+      apiEndpointSpecific: (apiEndpoint && apiEndpoint.endpoint) || (azureApiEndpoint && azureApiEndpoint.endpoint) || (mscsApiEndpoint && mscsApiEndpoint.endpoint) || (msSecurityApiEndpoint && msSecurityApiEndpoint.endpoint) || undefined
     };
   })
 );
