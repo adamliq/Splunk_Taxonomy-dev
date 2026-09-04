@@ -33557,6 +33557,7 @@ function openInputDetail(key, trigger) {
     ["API endpoint CIM data model(s)", c.apiEndpointCimDataModels],
     ["API family", c.apiFamily],
     ["API base URL", c.apiBaseUrl],
+    ["API base URL pattern", c.apiBaseUrlPattern],
     ["Specific API endpoint", c.apiEndpointSpecific],
     ["Schema", c.schema],
     // Fields is derived from the linked schema, not looked up independently -- its value only makes sense
@@ -33564,9 +33565,11 @@ function openInputDetail(key, trigger) {
     ["Fields", c.schema === "To be confirmed" ? "To be confirmed" : (c.fields.length ? c.fields : "No individual fields documented in the schema")]
   // "Entra ID type" only applies to Microsoft entries (it's not in the AWS column shape at all, so it's
   // undefined there) -- the "API endpoint ..." rows only apply to splunk_ta_o365 inputs whose sourcetype
-  // matches o365ApiEndpointDetails, and "API family"/"API base URL"/"Specific API endpoint" apply to any
-  // input whose sourcetype matches any of the four lookup tables -- drop rows with no value rather than
-  // showing an irrelevant blank field.
+  // matches o365ApiEndpointDetails, "API family"/"API base URL"/"Specific API endpoint" apply to any
+  // Microsoft input whose sourcetype matches any of the four lookup tables, and "API base URL pattern" only
+  // to AWS inputs (AWS reuses "API family" but has its own distinct base-URL row -- see
+  // awsInputCoverageInputColumns above) -- drop rows with no value rather than showing an irrelevant blank
+  // field.
   ].filter(([, v]) => v !== undefined && v !== "");
   document.getElementById("inputDetailGrid").innerHTML = rows.map(([k, v]) => {
     const isExternalLink = (k === "Splunk app base link" || k === "API base URL") && /^https?:\/\//.test(v);
@@ -33622,22 +33625,28 @@ const awsInputCoverageGroups = [
   { tag: "Splunk_TA_aws", friendlyName: "Amazon Web Services", description: "Splunk Add-on for AWS -- collects CloudTrail, CloudWatch, Config, VPC/Transit Gateway Flow Logs, S3/CloudFront/ELB access logs, Inspector findings, Security Lake and billing/cost data.", appName: "Splunk Add-on for Amazon Web Services (AWS)", appId: "1876", baseLink: "https://splunkbase.splunk.com/app/1876", inputs: ["Billing", "CloudTrail", "CloudWatch", "CloudTrail Lake", "CloudFront Access Logs", "Config", "Config Rules", "ELB Access Logs", "Inspector", "Metadata", "S3 Access Logs", "Security Lake", "Transit Gateway Flow Logs", "VPC Flow Logs", "Custom Data Type"] }
 ];
 const awsInputCoverageColumnDetails = {
-  "Billing [Splunk_TA_aws]": { collectionMethod: "Its own input type: uses the AWS Legacy Cost and Usage API, then pulls the report AWS delivers to an S3 bucket, checking ETags to detect updated reports." },
-  "CloudTrail [Splunk_TA_aws]": { collectionMethod: "Three options: the legacy CloudTrail input (SNS → SQS → S3), or the recommended SQS-Based S3 input (more fault-tolerant/higher-performing), or Generic S3 (direct bucket read)." },
-  "CloudWatch [Splunk_TA_aws]": { collectionMethod: "Pull-based API polling of the CloudWatch Metrics API, on a configurable polling_interval." },
-  "CloudTrail Lake [Splunk_TA_aws]": { collectionMethod: "SQL-based query against a CloudTrail Lake event data store (not S3-based) -- uses query_window_size/delay_throttle to chunk queries." },
-  "CloudFront Access Logs [Splunk_TA_aws]": { collectionMethod: "Not a distinct input -- collected as a data type via the S3-family inputs: Generic S3, Incremental S3, or SQS-Based S3." },
-  "Config [Splunk_TA_aws]": { collectionMethod: "Primarily SQS-Based S3 -- an SQS queue receives S3 delivery notifications for config snapshots, history, and change notifications." },
-  "Config Rules [Splunk_TA_aws]": { collectionMethod: "Pull-based API polling -- calls DescribeConfigRules, DescribeConfigRuleEvaluationStatus, GetComplianceDetailsByConfigRule, and GetComplianceSummaryByConfigRule on an interval (default 300s)." },
-  "ELB Access Logs [Splunk_TA_aws]": { collectionMethod: "S3-family: Generic S3, Incremental S3, or SQS-Based S3." },
-  "Inspector [Splunk_TA_aws]": { collectionMethod: "Pull-based API polling (also has a separate \"Inspector v2\" input for the newer Inspector service)." },
-  "Metadata [Splunk_TA_aws]": { collectionMethod: "Listed in docs nav as \"Description\" -- pull-based API polling of AWS Describe* calls (EC2, EBS, RDS, ELB, Lambda, S3, etc.) on a per-API interval." },
-  "S3 Access Logs [Splunk_TA_aws]": { collectionMethod: "S3-family: SQS-Based S3 (recommended default), Generic S3, or Incremental S3." },
-  "Security Lake [Splunk_TA_aws]": { collectionMethod: "SQS-Based S3 -- configured via a Security Lake subscriber with S3 as the data collection method and an SQS queue for notifications." },
-  "Transit Gateway Flow Logs [Splunk_TA_aws]": { collectionMethod: "SQS-Based S3 (docs point directly to the SQS-Based S3 input guide for this)." },
-  "VPC Flow Logs [Splunk_TA_aws]": { collectionMethod: "Three options: SQS-Based S3, CloudWatch Logs, or Kinesis Data Stream." },
-  "Custom Data Type [Splunk_TA_aws]": { collectionMethod: "Whichever underlying mechanism matches how the source publishes data: Generic S3, SQS-Based S3, CloudWatch Logs, Kinesis, or SQS." }
+  "Billing [Splunk_TA_aws]": { collectionMethod: "Its own input type: uses the AWS Legacy Cost and Usage API, then pulls the report AWS delivers to an S3 bucket, checking ETags to detect updated reports.", awsServices: "S3 (Cost & Usage Reports)", baseUrlPattern: "https://s3.<region>.amazonaws.com; https://s3.amazonaws.com" },
+  "CloudTrail [Splunk_TA_aws]": { collectionMethod: "Three options: the legacy CloudTrail input (SNS → SQS → S3), or the recommended SQS-Based S3 input (more fault-tolerant/higher-performing), or Generic S3 (direct bucket read).", awsServices: "CloudTrail + SQS + S3", baseUrlPattern: "https://cloudtrail.<region>.amazonaws.com; https://sqs.<region>.amazonaws.com; https://s3.<region>.amazonaws.com" },
+  "CloudWatch [Splunk_TA_aws]": { collectionMethod: "Pull-based API polling of the CloudWatch Metrics API, on a configurable polling_interval.", awsServices: "CloudWatch Metrics", baseUrlPattern: "https://monitoring.<region>.amazonaws.com" },
+  "CloudTrail Lake [Splunk_TA_aws]": { collectionMethod: "SQL-based query against a CloudTrail Lake event data store (not S3-based) -- uses query_window_size/delay_throttle to chunk queries.", awsServices: "CloudTrail Data / Lake", baseUrlPattern: "https://cloudtrail-data.<region>.amazonaws.com; https://cloudtrail.<region>.amazonaws.com" },
+  "CloudFront Access Logs [Splunk_TA_aws]": { collectionMethod: "Not a distinct input -- collected as a data type via the S3-family inputs: Generic S3, Incremental S3, or SQS-Based S3.", awsServices: "S3", baseUrlPattern: "https://s3.<region>.amazonaws.com" },
+  "Config [Splunk_TA_aws]": { collectionMethod: "Primarily SQS-Based S3 -- an SQS queue receives S3 delivery notifications for config snapshots, history, and change notifications.", awsServices: "Config + SQS + S3", baseUrlPattern: "https://config.<region>.amazonaws.com; https://sqs.<region>.amazonaws.com; https://s3.<region>.amazonaws.com" },
+  "Config Rules [Splunk_TA_aws]": { collectionMethod: "Pull-based API polling -- calls DescribeConfigRules, DescribeConfigRuleEvaluationStatus, GetComplianceDetailsByConfigRule, and GetComplianceSummaryByConfigRule on an interval (default 300s).", awsServices: "Config", baseUrlPattern: "https://config.<region>.amazonaws.com" },
+  "ELB Access Logs [Splunk_TA_aws]": { collectionMethod: "S3-family: Generic S3, Incremental S3, or SQS-Based S3.", awsServices: "S3", baseUrlPattern: "https://s3.<region>.amazonaws.com" },
+  "Inspector [Splunk_TA_aws]": { collectionMethod: "Pull-based API polling (also has a separate \"Inspector v2\" input for the newer Inspector service).", awsServices: "Inspector / Inspector2", baseUrlPattern: "https://inspector.<region>.amazonaws.com; https://inspector2.<region>.amazonaws.com" },
+  "Metadata [Splunk_TA_aws]": { collectionMethod: "Listed in docs nav as \"Description\" -- pull-based API polling of AWS Describe* calls (EC2, EBS, RDS, ELB, Lambda, S3, etc.) on a per-API interval.", awsServices: "EC2 + other describe APIs", baseUrlPattern: "https://ec2.<region>.amazonaws.com (+ related service endpoints)" },
+  "S3 Access Logs [Splunk_TA_aws]": { collectionMethod: "S3-family: SQS-Based S3 (recommended default), Generic S3, or Incremental S3.", awsServices: "S3", baseUrlPattern: "https://s3.<region>.amazonaws.com" },
+  "Security Lake [Splunk_TA_aws]": { collectionMethod: "SQS-Based S3 -- configured via a Security Lake subscriber with S3 as the data collection method and an SQS queue for notifications.", awsServices: "Security Lake + S3", baseUrlPattern: "https://securitylake.<region>.amazonaws.com; https://s3.<region>.amazonaws.com" },
+  "Transit Gateway Flow Logs [Splunk_TA_aws]": { collectionMethod: "SQS-Based S3 (docs point directly to the SQS-Based S3 input guide for this).", awsServices: "S3", baseUrlPattern: "https://s3.<region>.amazonaws.com" },
+  "VPC Flow Logs [Splunk_TA_aws]": { collectionMethod: "Three options: SQS-Based S3, CloudWatch Logs, or Kinesis Data Stream.", awsServices: "CloudWatch Logs / Kinesis / S3", baseUrlPattern: "https://logs.<region>.amazonaws.com; https://kinesis.<region>.amazonaws.com; https://s3.<region>.amazonaws.com" },
+  "Custom Data Type [Splunk_TA_aws]": { collectionMethod: "Whichever underlying mechanism matches how the source publishes data: Generic S3, SQS-Based S3, CloudWatch Logs, Kinesis, or SQS.", awsServices: "S3 (usually)", baseUrlPattern: "https://s3.<region>.amazonaws.com" }
 };
+// AWS Service(s)/Base URL Pattern transcribed verbatim from a user-supplied reference table (2026-09), keyed
+// by input label -- unlike the Microsoft tables, this one already matches inputs 1:1 by name, so no separate
+// sourcetype-lookup table/matching function was needed. Three additional rows from that table (STS
+// (authentication), SQS, S3) describe shared/supporting AWS infrastructure used across multiple inputs rather
+// than a distinct catalogued input -- they had no "Sourcetype(s)" value in the source table either, confirming
+// they're general notes, not inputs -- so they're not attached anywhere rather than inventing an input for them.
 const awsInputCoverageSourcetypes = {
   "Billing [Splunk_TA_aws]": "aws:billing (legacy reports); aws:billing:cur (Cost and Usage Report – preferred/current)",
   "CloudTrail [Splunk_TA_aws]": "aws:cloudtrail",
@@ -33669,6 +33678,14 @@ const awsInputCoverageInputColumns = awsInputCoverageGroups.flatMap(group =>
       inputTypeSub: details.inputTypeSub || "To be confirmed",
       source: details.source || "To be confirmed",
       collectionMethod: details.collectionMethod || "To be confirmed",
+      // Reuses the same "API family" row the Microsoft inputs populate (see inputCoverageInputColumns
+      // above) -- both describe which service/API family produced the sourcetype, just AWS-shaped text
+      // instead of Microsoft-shaped text. apiBaseUrlPattern is AWS-only and deliberately NOT named
+      // apiBaseUrl/reusing that row: AWS's base URLs are region-templated (<region>) and often more than
+      // one per input joined with "; ", so rendering it as a single clickable link (like the Microsoft
+      // apiBaseUrl row does) would produce a broken/misleading href -- it renders as plain text instead.
+      apiFamily: details.awsServices || undefined,
+      apiBaseUrlPattern: details.baseUrlPattern || undefined,
       schema: details.schema || "To be confirmed",
       fields: details.fields || []
     };
