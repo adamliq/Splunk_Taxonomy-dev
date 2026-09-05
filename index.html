@@ -14625,12 +14625,12 @@ E. Assumptions and unresolved inputs</pre>
 
         <div class="eccs-table-wrap" role="region" aria-label="Scrollable S3 IAM permissions matrix" tabindex="0">
           <table class="eccs-matrix" id="awsPermissionsTable">
-            <thead><tr><th scope="col">Capability / Feature</th><th scope="col"><code>s3:GetBucketLocation</code></th><th scope="col"><code>s3:ListBucket</code></th><th scope="col"><code>s3:GetObject</code></th><th scope="col"><code>s3:GetObject*</code></th><th scope="col"><code>s3:PutObject</code></th><th scope="col"><code>s3:AbortMultipartUpload</code></th><th scope="col"><code>sqs:ReceiveMessage</code></th><th scope="col"><code>sqs:DeleteMessage</code></th><th scope="col"><code>sqs:GetQueueAttributes</code></th><th scope="col"><code>sqs:GetQueueUrl</code></th><th scope="col"><code>kms:Decrypt</code></th></tr></thead>
+            <thead><tr><th scope="col">App</th><th scope="col">Capability / Feature</th><th scope="col"><code>s3:GetBucketLocation</code></th><th scope="col"><code>s3:ListBucket</code></th><th scope="col"><code>s3:GetObject</code></th><th scope="col"><code>s3:GetObject*</code></th><th scope="col"><code>s3:PutObject</code></th><th scope="col"><code>s3:AbortMultipartUpload</code></th><th scope="col"><code>sqs:ReceiveMessage</code></th><th scope="col"><code>sqs:DeleteMessage</code></th><th scope="col"><code>sqs:GetQueueAttributes</code></th><th scope="col"><code>sqs:GetQueueUrl</code></th><th scope="col"><code>kms:Decrypt</code></th></tr></thead>
             <tbody>
-              <tr><th scope="row">Federated Search only + Splunk-native catalog</th><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Not needed</td><td>Not needed</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td></tr>
-              <tr><th scope="row">Data Routing + Federated Search + Splunk-native catalog</th><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td></tr>
-              <tr><th scope="row">Catalog auto-sync (SQS) for Splunk-native catalog</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Required</td><td>Required</td><td>Required</td><td>Optional</td><td>&mdash;</td></tr>
-              <tr><th scope="row">SSE-KMS encryption</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Required</td></tr>
+              <tr><td>Splunk_TA_aws</td><th scope="row">Federated Search only + Splunk-native catalog</th><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Not needed</td><td>Not needed</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td></tr>
+              <tr><td>Splunk_TA_aws</td><th scope="row">Data Routing + Federated Search + Splunk-native catalog</th><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td></tr>
+              <tr><td>Splunk_TA_aws</td><th scope="row">Catalog auto-sync (SQS) for Splunk-native catalog</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Required</td><td>Required</td><td>Required</td><td>Optional</td><td>&mdash;</td></tr>
+              <tr><td>Splunk_TA_aws</td><th scope="row">SSE-KMS encryption</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Required</td></tr>
             </tbody>
           </table>
         </div>
@@ -35344,11 +35344,18 @@ const MS_PERMISSIONS_FAMILY_SHORT_LABEL = {
   "Beyond the Azure app - Azure side": "Azure-side"
 };
 
+// Every row in msPermissionsData traces back to the same Splunk app -- the source file
+// (splunk_o365_permissions.csv) and its content (Office 365 Management + Microsoft Graph scopes backing
+// splunk_ta_o365's own inputs, plus that same add-on's Splunk/Azure-side deployment prerequisites) are all
+// specific to the Splunk Add-on for Microsoft Office 365. The CSV itself carries no separate App column, so
+// this is asserted here rather than looked up per row.
+const MS_PERMISSIONS_APP_TAG = "splunk_ta_o365";
+
 function renderMsPermissionsTable() {
   const head = document.getElementById("msPermissionsTableHead");
   const body = document.getElementById("msPermissionsTableBody");
   if (!head || !body) return;
-  head.innerHTML = `<tr><th scope="col">Input</th>${msPermissionsActions.map(a => `<th scope="col">${escapeHtml(a)}</th>`).join("")}</tr>`;
+  head.innerHTML = `<tr><th scope="col">App</th><th scope="col">Input</th>${msPermissionsActions.map(a => `<th scope="col">${escapeHtml(a)}</th>`).join("")}</tr>`;
   body.innerHTML = msPermissionsInputs.map(input => {
     const cells = msPermissionsActions.map(action => {
       const entry = msPermissionsByKey.get(`${input} ||| ${action}`);
@@ -35357,7 +35364,7 @@ function renderMsPermissionsTable() {
       const shortLabel = MS_PERMISSIONS_FAMILY_SHORT_LABEL[entry.family] || entry.family;
       return `<td><button type="button" class="perm-mark ${cls}" data-perm-input="${escapeHtml(input)}" data-perm-action="${escapeHtml(action)}">${escapeHtml(shortLabel)}</button></td>`;
     }).join("");
-    return `<tr><th scope="row">${escapeHtml(input)}</th>${cells}</tr>`;
+    return `<tr><td>${escapeHtml(MS_PERMISSIONS_APP_TAG)}</td><th scope="row">${escapeHtml(input)}</th>${cells}</tr>`;
   }).join("");
 }
 renderMsPermissionsTable();
