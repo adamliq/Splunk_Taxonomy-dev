@@ -3098,6 +3098,10 @@
     .perm-mark.perm-optional { background:#e0e7ff; color:#3730a3; }
     .perm-mark.perm-splunk-side { background:#f1f5f9; color:#334155; }
     .perm-mark.perm-azure-side { background:#fef3c7; color:#92400e; }
+    .perm-mark.perm-armmonitor { background:#dbeafe; color:#1e3a8a; }
+    .perm-mark.perm-storage { background:#ede9fe; color:#5b21b6; }
+    .perm-mark.perm-eventhub { background:#ffedd5; color:#9a3412; }
+    .perm-mark.perm-moved { background:#fee2e2; color:#991b1b; }
     .ports-pattern-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:14px 0 10px; }
     .ports-pattern-toolbar label { font-weight:800; font-size:13px; color:#0f172a; }
     .ports-pattern-toolbar select { flex:1 1 340px; min-width:240px; padding:9px 11px; border-radius:10px; border:1px solid var(--border); font-size:13px; font-family:inherit; background:#fff; }
@@ -14526,7 +14530,7 @@ E. Assumptions and unresolved inputs</pre>
           </table>
         </div>
 
-        <p class="sot-note">Transcribed verbatim from a supplied <code>splunk_o365_permissions.csv</code>. Rows are the distinct <code>Input</code> values from that file, columns the distinct <code>Actions</code> values -- a marked cell means that row's input requires that column's action (per its <code>Input Family</code>); some inputs (e.g. <strong>Message Trace</strong>, <strong>All inputs</strong>) require more than one action and so have multiple marked cells. &mdash; means not applicable.</p>
+        <p class="sot-note">Transcribed verbatim from two supplied CSVs, one per Splunk app: <code>splunk_o365_permissions.csv</code> (<code>splunk_ta_o365</code>) and <code>splunk_cloudservices_permissions.csv</code> (<code>Splunk_TA_microsoft-cloudservices</code>). Rows are the distinct App+Input combinations across both files, columns the distinct <code>Actions</code> values -- a marked cell means that row's input requires that column's action (per its <code>Input Family</code>); some inputs (e.g. <strong>Message Trace</strong>, <strong>All inputs</strong> in either app, <strong>All ARM-backed inputs</strong>) require more than one action and so have multiple marked cells. Both apps happen to use the literal input name "All inputs" for their own Splunk/Azure-side prerequisites -- these are kept as separate rows (one per app), not merged. &mdash; means not applicable.</p>
       </section>
       </div>
     </div>
@@ -35299,72 +35303,102 @@ document.getElementById("awsInputCoverageImportFile").addEventListener("change",
 
 /* ---------- Input Coverage: Microsoft cloud inputs Permissions matrix -------------------------------------
  * Same visual style as the AWS Permissions tab (eccs-table-wrap/eccs-matrix), but this data is inherently a
- * sparse matrix rather than a dense one -- each of the 18 source rows pairs exactly one Input with exactly
- * one Actions value (no Actions value repeats across rows), so most (Input, Action) cells have nothing to
- * show. Rows/columns are the distinct Input/Actions values in first-seen (CSV) order; a marked cell opens a
- * dedicated detail modal (msPermissionDetailModal) with that row's Family/Service/Purpose/Notes, following
- * the same open/close/backdrop/Escape pattern as schemaFieldModal above -- not the shared openInputDetail
- * modal, since this data has a different shape (Family/Action/Purpose/Notes, not Splunk-app/schema fields).
- * "Message Trace" and "All inputs" each appear against more than one Action and so get multiple marked cells. */
+ * sparse matrix rather than a dense one. Rows are (App, Input) pairs rather than bare Input strings: two
+ * source files feed this table (splunk_o365_permissions.csv for splunk_ta_o365, then
+ * splunk_cloudservices_permissions.csv for Splunk_TA_microsoft-cloudservices), and both happen to use the
+ * literal Input value "All inputs" for their own app's Splunk/Azure-side prerequisites -- keying rows by
+ * Input alone would incorrectly merge those two apps' "All inputs" rows into one. Neither file has its own
+ * App column, so app is asserted per source block below rather than looked up. Columns are the distinct
+ * Actions values across both files, in first-seen order (no Actions string repeats across the two files,
+ * though several repeat *within* the cloudservices file -- "Baseline app + Reader" backs 6 different inputs
+ * there, each still a distinct (App, Input, Action) cell). A marked cell opens a dedicated detail modal
+ * (msPermissionDetailModal) with that row's App/Family/Service/Purpose/Notes, following the same open/close/
+ * backdrop/Escape pattern as schemaFieldModal above -- not the shared openInputDetail modal, since this data
+ * has a different shape (Family/Action/Purpose/Notes, not Splunk-app/schema fields). Several inputs (e.g.
+ * "Message Trace", "All inputs" in both apps, "All ARM-backed inputs") require more than one action and so
+ * get multiple marked cells. */
 const msPermissionsData = [
-  { family: "Required permissions", input: "Management Activity", service: "Office 365 Management", action: "ActivityFeed.Read", purpose: "Core Office 365 audit/activity log stream" },
-  { family: "Required permissions", input: "Audit Log", service: "Microsoft Graph", action: "AuditLog.Read.All", purpose: "Azure AD audit logs and sign-in event collection" },
-  { family: "Required permissions", input: "Usage Reports", service: "Microsoft Graph", action: "Reports.Read.All", purpose: "Office 365 usage report inputs" },
-  { family: "Required permissions", input: "Message Trace", service: "Microsoft Graph", action: "ExchangeMessageTrace.Read.All", purpose: "Message Trace input for commercial/worldwide tenants", notes: "Replaced by ReportingWebService.Read.All in GCC High/DoD tenants" },
-  { family: "Required permissions", input: "Service Health", service: "Microsoft Graph", action: "ServiceHealth.Read.All", purpose: "Service Health input" },
-  { family: "Required permissions", input: "Service Communications", service: "Microsoft Graph", action: "ServiceMessage.Read.All", purpose: "Service Communications / Message Center input" },
-  { family: "Required permissions", input: "Azure AD Users", service: "Microsoft Graph", action: "User.Read.All", purpose: "Azure AD user object collection" },
-  { family: "Required permissions", input: "Azure AD Groups", service: "Microsoft Graph", action: "Group.Read.All", purpose: "Azure AD group object collection" },
-  { family: "Required permissions", input: "Azure AD Directory", service: "Microsoft Graph", action: "Directory.Read.All", purpose: "General directory object collection backing the user/group inputs" },
-  { family: "Required permissions (GCC substitute)", input: "Message Trace (US Gov)", service: "Exchange Online", action: "ReportingWebService.Read.All", purpose: "Message Trace input in GCC High/DoD tenants", notes: "Used instead of ExchangeMessageTrace.Read.All in US Government tenants" },
-  { family: "Optional permissions", input: "DLP Events", service: "Office 365 Management", action: "ActivityFeed.ReadDlp", purpose: "Data loss prevention policy event input", notes: "Only needed if the DLP input is enabled" },
-  { family: "Optional permissions", input: "Information Protection", service: "Microsoft Graph", action: "InformationProtectionPolicy.Read.All", purpose: "Sensitivity label and information-protection policy data", notes: "Only needed if that input is enabled" },
-  { family: "Optional permissions", input: "Message Trace auto-provisioning", service: "Microsoft Graph", action: "Application.ReadWrite.All", purpose: "Lets the add-on auto-provision the Message Trace service principal", notes: "Alternative to provisioning it manually in Exchange Online" },
-  { family: "Optional permissions", input: "Group Membership Management", service: "Microsoft Graph", action: "GroupMember.ReadWrite.All", purpose: "Group membership management from within Splunk", notes: "Only needed if that feature is used" },
-  { family: "Beyond the Azure app - Splunk side", input: "All inputs", service: "Splunk platform", action: "Deployment target: heavy forwarder or search head", purpose: "Universal forwarders are unsupported", notes: "Modular inputs need Python and the Splunk REST handler" },
-  { family: "Beyond the Azure app - Splunk side", input: "All inputs", service: "Splunk platform", action: "admin role", purpose: "Typically required to configure accounts and inputs", notes: "Credentials are stored encrypted via the REST handler" },
-  { family: "Beyond the Azure app - Azure side", input: "All inputs", service: "Azure AD", action: "Admin consent (Global Administrator or Privileged Role Administrator)", purpose: "Required to grant the Application-type permissions above", notes: "All listed permissions are app-only - a regular user can't consent to them" },
-  { family: "Beyond the Azure app - Azure side", input: "Message Trace", service: "Exchange Online", action: "Service principal provisioning", purpose: "A service principal must exist in Exchange Online for Message Trace", notes: "Created manually or automatically via Application.ReadWrite.All" },
+  // -- splunk_ta_o365 (Splunk Add-on for Microsoft Office 365) --
+  { app: "splunk_ta_o365", family: "Required permissions", input: "Management Activity", service: "Office 365 Management", action: "ActivityFeed.Read", purpose: "Core Office 365 audit/activity log stream" },
+  { app: "splunk_ta_o365", family: "Required permissions", input: "Audit Log", service: "Microsoft Graph", action: "AuditLog.Read.All", purpose: "Azure AD audit logs and sign-in event collection" },
+  { app: "splunk_ta_o365", family: "Required permissions", input: "Usage Reports", service: "Microsoft Graph", action: "Reports.Read.All", purpose: "Office 365 usage report inputs" },
+  { app: "splunk_ta_o365", family: "Required permissions", input: "Message Trace", service: "Microsoft Graph", action: "ExchangeMessageTrace.Read.All", purpose: "Message Trace input for commercial/worldwide tenants", notes: "Replaced by ReportingWebService.Read.All in GCC High/DoD tenants" },
+  { app: "splunk_ta_o365", family: "Required permissions", input: "Service Health", service: "Microsoft Graph", action: "ServiceHealth.Read.All", purpose: "Service Health input" },
+  { app: "splunk_ta_o365", family: "Required permissions", input: "Service Communications", service: "Microsoft Graph", action: "ServiceMessage.Read.All", purpose: "Service Communications / Message Center input" },
+  { app: "splunk_ta_o365", family: "Required permissions", input: "Azure AD Users", service: "Microsoft Graph", action: "User.Read.All", purpose: "Azure AD user object collection" },
+  { app: "splunk_ta_o365", family: "Required permissions", input: "Azure AD Groups", service: "Microsoft Graph", action: "Group.Read.All", purpose: "Azure AD group object collection" },
+  { app: "splunk_ta_o365", family: "Required permissions", input: "Azure AD Directory", service: "Microsoft Graph", action: "Directory.Read.All", purpose: "General directory object collection backing the user/group inputs" },
+  { app: "splunk_ta_o365", family: "Required permissions (GCC substitute)", input: "Message Trace (US Gov)", service: "Exchange Online", action: "ReportingWebService.Read.All", purpose: "Message Trace input in GCC High/DoD tenants", notes: "Used instead of ExchangeMessageTrace.Read.All in US Government tenants" },
+  { app: "splunk_ta_o365", family: "Optional permissions", input: "DLP Events", service: "Office 365 Management", action: "ActivityFeed.ReadDlp", purpose: "Data loss prevention policy event input", notes: "Only needed if the DLP input is enabled" },
+  { app: "splunk_ta_o365", family: "Optional permissions", input: "Information Protection", service: "Microsoft Graph", action: "InformationProtectionPolicy.Read.All", purpose: "Sensitivity label and information-protection policy data", notes: "Only needed if that input is enabled" },
+  { app: "splunk_ta_o365", family: "Optional permissions", input: "Message Trace auto-provisioning", service: "Microsoft Graph", action: "Application.ReadWrite.All", purpose: "Lets the add-on auto-provision the Message Trace service principal", notes: "Alternative to provisioning it manually in Exchange Online" },
+  { app: "splunk_ta_o365", family: "Optional permissions", input: "Group Membership Management", service: "Microsoft Graph", action: "GroupMember.ReadWrite.All", purpose: "Group membership management from within Splunk", notes: "Only needed if that feature is used" },
+  { app: "splunk_ta_o365", family: "Beyond the Azure app - Splunk side", input: "All inputs", service: "Splunk platform", action: "Deployment target: heavy forwarder or search head", purpose: "Universal forwarders are unsupported", notes: "Modular inputs need Python and the Splunk REST handler" },
+  { app: "splunk_ta_o365", family: "Beyond the Azure app - Splunk side", input: "All inputs", service: "Splunk platform", action: "admin role", purpose: "Typically required to configure accounts and inputs", notes: "Credentials are stored encrypted via the REST handler" },
+  { app: "splunk_ta_o365", family: "Beyond the Azure app - Azure side", input: "All inputs", service: "Azure AD", action: "Admin consent (Global Administrator or Privileged Role Administrator)", purpose: "Required to grant the Application-type permissions above", notes: "All listed permissions are app-only - a regular user can't consent to them" },
+  { app: "splunk_ta_o365", family: "Beyond the Azure app - Azure side", input: "Message Trace", service: "Exchange Online", action: "Service principal provisioning", purpose: "A service principal must exist in Exchange Online for Message Trace", notes: "Created manually or automatically via Application.ReadWrite.All" },
+  // -- Splunk_TA_microsoft-cloudservices (Splunk Add-on for Microsoft Cloud Services) --
+  { app: "Splunk_TA_microsoft-cloudservices", family: "Baseline (Entra ID app)", input: "All ARM-backed inputs", service: "Windows Azure Service Management API", action: "Access Azure Service Management as organization", purpose: "Lets the app call Azure Resource Manager on the organization's behalf", notes: "Delegated permission on the Entra ID app registration" },
+  { app: "Splunk_TA_microsoft-cloudservices", family: "Baseline (Entra ID app)", input: "All ARM-backed inputs", service: "Azure RBAC", action: "Reader", purpose: "Read access to resource metadata activity/audit data and metrics across the subscription", notes: "Assign to the app's service principal under subscription Access control (IAM) - not on the app registration itself" },
+  { app: "Splunk_TA_microsoft-cloudservices", family: "Resource Manager & Monitor inputs", input: "Azure Resource", service: "Azure Resource Manager", action: "Baseline app + Reader", purpose: "Resource group / resource inventory metadata", notes: "Docs do not specify a distinct scope beyond the baseline" },
+  { app: "Splunk_TA_microsoft-cloudservices", family: "Storage inputs", input: "Azure Storage Table", service: "Azure Storage", action: "Storage account access key or SAS token", purpose: "Read table entities directly from the storage account", notes: "No Azure RBAC role or Entra ID app permission applies" },
+  { app: "Splunk_TA_microsoft-cloudservices", family: "Storage inputs", input: "Azure Storage Blob", service: "Azure Storage", action: "Storage account access key or SAS token", purpose: "Read blob container contents directly from the storage account", notes: "No Azure RBAC role or Entra ID app permission applies" },
+  { app: "Splunk_TA_microsoft-cloudservices", family: "Resource Manager & Monitor inputs", input: "Azure Virtual Machine Metrics", service: "Azure Monitor", action: "Baseline app + Reader", purpose: "Virtual machine performance metrics", notes: "Docs do not specify a distinct scope beyond the baseline" },
+  { app: "Splunk_TA_microsoft-cloudservices", family: "Resource Manager & Monitor inputs", input: "Azure Consumption (Billing)", service: "Azure Billing/Consumption", action: "Baseline app + Reader", purpose: "Subscription cost / consumption data", notes: "Docs do not specify a distinct scope beyond the baseline" },
+  { app: "Splunk_TA_microsoft-cloudservices", family: "Resource Manager & Monitor inputs", input: "Azure KQL Log Analytics", service: "Log Analytics", action: "Baseline app + Reader", purpose: "Kusto queries against a Log Analytics workspace", notes: "Docs point back to the same Entra ID app + Reader prerequisite" },
+  { app: "Splunk_TA_microsoft-cloudservices", family: "Resource Manager & Monitor inputs", input: "Azure Metrics", service: "Azure Monitor", action: "Baseline app + Reader", purpose: "Resource-level Azure Monitor metrics", notes: "Docs do not specify a distinct scope beyond the baseline" },
+  { app: "Splunk_TA_microsoft-cloudservices", family: "Event Hub input", input: "Azure Event Hub", service: "Azure Event Hubs", action: "Azure Event Hubs Data Receiver", purpose: "Lets the app consume events from the hub", notes: "RBAC role assigned on the Event Hub namespace/instance - separate from the subscription-level Reader role" },
+  { app: "Splunk_TA_microsoft-cloudservices", family: "Resource Manager & Monitor inputs", input: "Azure Audit", service: "Azure Monitor (Activity Log)", action: "Baseline app + Reader", purpose: "Subscription Activity Log (audit) events", notes: "Docs do not specify a distinct scope beyond the baseline" },
+  { app: "Splunk_TA_microsoft-cloudservices", family: "Beyond permissions - Splunk side", input: "All inputs", service: "Splunk platform", action: "admin or sc_admin role", purpose: "Required to add or configure accounts and inputs", notes: "Deployment architecture (forwarder tier) is flexible per the docs" },
+  { app: "Splunk_TA_microsoft-cloudservices", family: "Beyond permissions - Azure side", input: "All inputs", service: "Microsoft Entra ID", action: "Global Administrator consent (or Azure AD Premium P1+ for self-service)", purpose: "Required to grant the API permission and assign the Reader role", notes: "Premium P1 or higher needed for self-service role assignment operations" },
+  { app: "Splunk_TA_microsoft-cloudservices", family: "Beyond permissions - moved input", input: "Office 365 Management APIs (legacy)", service: "Office 365 Management", action: "Migrated to the Splunk Add-on for Microsoft Office 365", purpose: "This input has moved to its own add-on", notes: "See the separate Splunk Add-on for Microsoft Office 365 permissions table; a certificate/private-key auth option remains here only as a legacy path" },
 ];
-const msPermissionsInputs = [...new Set(msPermissionsData.map(r => r.input))];
+const msPermissionsRows = [...new Map(msPermissionsData.map(r => [`${r.app} ||| ${r.input}`, { app: r.app, input: r.input }])).values()];
 const msPermissionsActions = [...new Set(msPermissionsData.map(r => r.action))];
-const msPermissionsByKey = new Map(msPermissionsData.map(r => [`${r.input} ||| ${r.action}`, r]));
+const msPermissionsByKey = new Map(msPermissionsData.map(r => [`${r.app} ||| ${r.input} ||| ${r.action}`, r]));
 const MS_PERMISSIONS_FAMILY_CLASS = {
   "Required permissions": "perm-required",
   "Required permissions (GCC substitute)": "perm-required-gcc",
   "Optional permissions": "perm-optional",
   "Beyond the Azure app - Splunk side": "perm-splunk-side",
-  "Beyond the Azure app - Azure side": "perm-azure-side"
+  "Beyond the Azure app - Azure side": "perm-azure-side",
+  "Baseline (Entra ID app)": "perm-required",
+  "Resource Manager & Monitor inputs": "perm-armmonitor",
+  "Storage inputs": "perm-storage",
+  "Event Hub input": "perm-eventhub",
+  "Beyond permissions - Splunk side": "perm-splunk-side",
+  "Beyond permissions - Azure side": "perm-azure-side",
+  "Beyond permissions - moved input": "perm-moved"
 };
 const MS_PERMISSIONS_FAMILY_SHORT_LABEL = {
   "Required permissions": "Required",
   "Required permissions (GCC substitute)": "GCC substitute",
   "Optional permissions": "Optional",
   "Beyond the Azure app - Splunk side": "Splunk-side",
-  "Beyond the Azure app - Azure side": "Azure-side"
+  "Beyond the Azure app - Azure side": "Azure-side",
+  "Baseline (Entra ID app)": "Baseline",
+  "Resource Manager & Monitor inputs": "ARM/Monitor",
+  "Storage inputs": "Storage",
+  "Event Hub input": "Event Hub",
+  "Beyond permissions - Splunk side": "Splunk-side",
+  "Beyond permissions - Azure side": "Azure-side",
+  "Beyond permissions - moved input": "Moved"
 };
-
-// Every row in msPermissionsData traces back to the same Splunk app -- the source file
-// (splunk_o365_permissions.csv) and its content (Office 365 Management + Microsoft Graph scopes backing
-// splunk_ta_o365's own inputs, plus that same add-on's Splunk/Azure-side deployment prerequisites) are all
-// specific to the Splunk Add-on for Microsoft Office 365. The CSV itself carries no separate App column, so
-// this is asserted here rather than looked up per row.
-const MS_PERMISSIONS_APP_TAG = "splunk_ta_o365";
 
 function renderMsPermissionsTable() {
   const head = document.getElementById("msPermissionsTableHead");
   const body = document.getElementById("msPermissionsTableBody");
   if (!head || !body) return;
   head.innerHTML = `<tr><th scope="col">App</th><th scope="col">Input</th>${msPermissionsActions.map(a => `<th scope="col">${escapeHtml(a)}</th>`).join("")}</tr>`;
-  body.innerHTML = msPermissionsInputs.map(input => {
+  body.innerHTML = msPermissionsRows.map(({ app, input }) => {
     const cells = msPermissionsActions.map(action => {
-      const entry = msPermissionsByKey.get(`${input} ||| ${action}`);
+      const entry = msPermissionsByKey.get(`${app} ||| ${input} ||| ${action}`);
       if (!entry) return "<td>&mdash;</td>";
       const cls = MS_PERMISSIONS_FAMILY_CLASS[entry.family] || "perm-required";
       const shortLabel = MS_PERMISSIONS_FAMILY_SHORT_LABEL[entry.family] || entry.family;
-      return `<td><button type="button" class="perm-mark ${cls}" data-perm-input="${escapeHtml(input)}" data-perm-action="${escapeHtml(action)}">${escapeHtml(shortLabel)}</button></td>`;
+      return `<td><button type="button" class="perm-mark ${cls}" data-perm-app="${escapeHtml(app)}" data-perm-input="${escapeHtml(input)}" data-perm-action="${escapeHtml(action)}">${escapeHtml(shortLabel)}</button></td>`;
     }).join("");
-    return `<tr><td>${escapeHtml(MS_PERMISSIONS_APP_TAG)}</td><th scope="row">${escapeHtml(input)}</th>${cells}</tr>`;
+    return `<tr><td>${escapeHtml(app)}</td><th scope="row">${escapeHtml(input)}</th>${cells}</tr>`;
   }).join("");
 }
 renderMsPermissionsTable();
@@ -35377,6 +35411,7 @@ function openMsPermissionDetail(entry, trigger) {
   document.getElementById("msPermissionDetailTitle").textContent = entry.input;
   document.getElementById("msPermissionDetailSubtitle").textContent = entry.action;
   const rows = [
+    ["App", entry.app],
     ["Input family", entry.family],
     ["Service", entry.service],
     ["Action", entry.action],
@@ -35399,7 +35434,7 @@ function closeMsPermissionDetail() {
 document.getElementById("msPermissionsTableBody").addEventListener("click", event => {
   const trigger = event.target.closest(".perm-mark");
   if (!trigger) return;
-  const entry = msPermissionsByKey.get(`${trigger.dataset.permInput} ||| ${trigger.dataset.permAction}`);
+  const entry = msPermissionsByKey.get(`${trigger.dataset.permApp} ||| ${trigger.dataset.permInput} ||| ${trigger.dataset.permAction}`);
   if (entry) openMsPermissionDetail(entry, trigger);
 });
 document.getElementById("closeMsPermissionDetail").addEventListener("click", closeMsPermissionDetail);
