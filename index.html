@@ -1048,7 +1048,7 @@
     .se-no-fields-note { font-size: 12px; color: var(--muted); font-style: italic; }
 
     /* ---------- SOC Metrics: pivot explorer (reuses .se-toolbar for its Rows/Columns controls) ---------- */
-    .se-toolbar label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+    .se-toolbar label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); white-space: nowrap; flex: 0 0 auto; }
     .se-toolbar select { padding: 7px 9px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; font-family: inherit; color: var(--text); }
     .pivot-matrix-table { width: auto; min-width: 100%; border-collapse: separate; border-spacing: 0; table-layout: auto; }
     #socMetricsPivotTable th, #socMetricsPivotTable td { padding: 10px 16px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -14543,6 +14543,8 @@ E. Assumptions and unresolved inputs</pre>
           <select id="msPermAppFilter" aria-label="Filter by app">
             <option value="">All apps</option>
           </select>
+          <label><input type="checkbox" id="msPermHideBlankCols" /> Hide blank columns</label>
+          <button id="msPermExportBtn" class="primary-button" type="button">Export visible CSV</button>
           <span class="se-result-count" id="msPermResultCount"></span>
         </div>
 
@@ -35734,7 +35736,7 @@ msPermissionsData.forEach(r => {
   const hay = [r.app, r.input, r.family, r.service, r.action, r.purpose, r.notes].filter(Boolean).join(" ").toLowerCase();
   msPermissionsRowHaystack.set(key, `${msPermissionsRowHaystack.get(key) || ""} ${hay}`);
 });
-let msPermState = { query: "", app: "", sortKey: "app", sortDir: "asc" };
+let msPermState = { query: "", app: "", sortKey: "app", sortDir: "asc", hideBlankCols: false };
 function msPermFilteredSortedRows() {
   const q = msPermState.query.trim().toLowerCase();
   let rows = msPermissionsRows.filter(({ app, input }) => {
@@ -35746,28 +35748,43 @@ function msPermFilteredSortedRows() {
   const keyFn = msPermState.sortKey === "input" ? r => r.input : r => r.app;
   return rows.slice().sort((a, b) => keyFn(a).localeCompare(keyFn(b)) * dir || a.app.localeCompare(b.app) || a.input.localeCompare(b.input));
 }
+// Actions (columns) actually used by the given rows -- when "Hide blank columns" is on, a column with
+// nothing but "--" for every one of those rows is dropped from both the rendered table and the CSV export,
+// so filtering to e.g. one app doesn't leave the reader scrolling through a hundred all-blank columns.
+function msPermVisibleActions(rows) {
+  if (!msPermState.hideBlankCols) return msPermissionsActions;
+  const rowKeySet = new Set(rows.map(r => `${r.app} ||| ${r.input}`));
+  const usedActions = new Set();
+  msPermissionsData.forEach(entry => {
+    if (rowKeySet.has(`${entry.app} ||| ${entry.input}`)) usedActions.add(entry.action);
+  });
+  return msPermissionsActions.filter(a => usedActions.has(a));
+}
 function renderMsPermissionsTable() {
   const head = document.getElementById("msPermissionsTableHead");
   const body = document.getElementById("msPermissionsTableBody");
   if (!head || !body) return;
-  head.innerHTML = `<tr><th scope="col" data-sort="app">App</th><th scope="col" data-sort="input">Input</th>${msPermissionsActions.map(a => `<th scope="col">${escapeHtml(a)}</th>`).join("")}</tr>`;
+  const rows = msPermFilteredSortedRows();
+  const actions = msPermVisibleActions(rows);
+  head.innerHTML = `<tr><th scope="col" data-sort="app">App</th><th scope="col" data-sort="input">Input</th>${actions.map(a => `<th scope="col">${escapeHtml(a)}</th>`).join("")}</tr>`;
   head.querySelectorAll("th[data-sort]").forEach(th => {
     th.classList.toggle("se-sorted", th.dataset.sort === msPermState.sortKey);
     th.classList.toggle("se-asc", th.dataset.sort === msPermState.sortKey && msPermState.sortDir === "asc");
   });
-  const rows = msPermFilteredSortedRows();
   const countEl = document.getElementById("msPermResultCount");
   if (countEl) {
-    countEl.textContent = rows.length === msPermissionsRows.length
+    const rowText = rows.length === msPermissionsRows.length
       ? `${rows.length} row${rows.length === 1 ? "" : "s"}`
       : `Showing ${rows.length} of ${msPermissionsRows.length} rows`;
+    const colText = msPermState.hideBlankCols ? ` &middot; ${actions.length} of ${msPermissionsActions.length} columns` : "";
+    countEl.innerHTML = rowText + colText;
   }
   if (!rows.length) {
-    body.innerHTML = `<tr><td colspan="${msPermissionsActions.length + 2}"><div class="se-empty">No rows match the current search/filter.</div></td></tr>`;
+    body.innerHTML = `<tr><td colspan="${actions.length + 2}"><div class="se-empty">No rows match the current search/filter.</div></td></tr>`;
     return;
   }
   body.innerHTML = rows.map(({ app, input }) => {
-    const cells = msPermissionsActions.map(action => {
+    const cells = actions.map(action => {
       const entry = msPermissionsByKey.get(`${app} ||| ${input} ||| ${action}`);
       if (!entry) return "<td>&mdash;</td>";
       const cls = MS_PERMISSIONS_FAMILY_CLASS[entry.family] || "perm-required";
@@ -35778,6 +35795,35 @@ function renderMsPermissionsTable() {
   }).join("");
 }
 renderMsPermissionsTable();
+
+function exportMsPermissionsCsv(event) {
+  const rows = msPermFilteredSortedRows();
+  const actions = msPermVisibleActions(rows);
+  const lines = [["App", "Input", ...actions].map(csvValue).join(",")];
+  rows.forEach(({ app, input }) => {
+    const cells = actions.map(action => {
+      const entry = msPermissionsByKey.get(`${app} ||| ${input} ||| ${action}`);
+      return entry ? (MS_PERMISSIONS_FAMILY_SHORT_LABEL[entry.family] || entry.family) : "";
+    });
+    lines.push([app, input, ...cells].map(csvValue).join(","));
+  });
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Microsoft-Cloud-Permissions-Matrix.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  // Capture the button synchronously -- event.currentTarget is nulled out once dispatch finishes, so reading
+  // it from inside the setTimeout below would always see null and the label would never revert.
+  const btn = event && event.currentTarget;
+  if (btn) {
+    const original = btn.textContent;
+    btn.textContent = "Exported";
+    setTimeout(() => { btn.textContent = original; }, 1400);
+  }
+}
 
 const msPermAppFilterSelect = document.getElementById("msPermAppFilter");
 if (msPermAppFilterSelect) {
@@ -35791,6 +35837,10 @@ if (msPermAppFilterSelect) {
 }
 const msPermSearchBoxEl = document.getElementById("msPermSearchBox");
 if (msPermSearchBoxEl) msPermSearchBoxEl.addEventListener("input", e => { msPermState.query = e.target.value; renderMsPermissionsTable(); });
+const msPermHideBlankColsEl = document.getElementById("msPermHideBlankCols");
+if (msPermHideBlankColsEl) msPermHideBlankColsEl.addEventListener("change", e => { msPermState.hideBlankCols = e.target.checked; renderMsPermissionsTable(); });
+const msPermExportBtnEl = document.getElementById("msPermExportBtn");
+if (msPermExportBtnEl) msPermExportBtnEl.addEventListener("click", exportMsPermissionsCsv);
 document.getElementById("msPermissionsTableHead").addEventListener("click", event => {
   const th = event.target.closest("th[data-sort]");
   if (!th) return;
