@@ -14434,6 +14434,7 @@ E. Assumptions and unresolved inputs</pre>
     <div class="page-subnav" role="tablist" aria-label="Input coverage sections">
       <button id="showMsCloudInputsSubpage" class="page-subtab active" type="button" role="tab" aria-selected="true" aria-controls="msCloudInputsSubpage" data-subpage="msCloudInputs">Microsoft cloud based inputs</button>
       <button id="showAwsCloudInputsSubpage" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="awsCloudInputsSubpage" data-subpage="awsCloudInputs">Amazon AWS based inputs</button>
+      <button id="showZscalerCloudInputsSubpage" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerCloudInputsSubpage" data-subpage="zscalerCloudInputs">Zscaler based inputs</button>
     </div>
     <div id="msCloudInputsSubpage" class="subpage-view" role="tabpanel" aria-labelledby="showMsCloudInputsSubpage">
       <div class="page-subnav level-3" role="tablist" aria-label="Microsoft cloud based inputs sections">
@@ -14670,6 +14671,120 @@ E. Assumptions and unresolved inputs</pre>
         </div>
 
         <p class="sot-note">Transcribed verbatim from two supplied CSVs: the original <code>splunk_s3_permissions.csv</code> (the four Required/Optional/Not-needed capability rows, now expressed as this table's own <strong>Required</strong>/<strong>Optional</strong> pill families -- a "Not needed" or "--" cell simply has no entry) and <code>splunk_ta_aws_inputs_permissions.csv</code> (per-modular-input permissions for CloudTrail, Config, CloudWatch, Billing, Metadata and more). Rows are the distinct App+Input combinations across both files, columns the distinct individual actions -- a marked cell means that row's input requires that column's action (per its <code>Input Family</code>); a source row whose own Actions cell listed several scopes required together (e.g. CloudTrail's "sqs:GetQueueAttributes; sqs:ListQueues; sqs:ReceiveMessage; ...") was split into one marked cell per scope, reusing whichever column that scope already has -- <code>s3:GetObject*</code> denotes the family of versioned/tagging read actions (e.g. <code>s3:GetObjectVersion</code>) alongside the base <code>s3:GetObject</code> action, distinct from the newer CSV's own <code>s3:Get*</code>/<code>s3:List*</code>/<code>s3:Delete*</code> wildcard actions. Three rows (<strong>Custom Data Type</strong>, <strong>VPC Flow Logs</strong>, <strong>Transit Gateway Flow Logs</strong>) don't list concrete IAM actions at all -- their Actions cell is a cross-reference to another input's policy ("Same as...", "Depends on...") -- so that text is kept as a single one-off column rather than fabricating scopes. <strong>Metadata</strong>'s Actions cell mixes a framing sentence ("modular, one permission block per AWS service") with a single concrete EC2/RDS example block; only that example's 11 actions are marked here, with the framing preserved in the Purpose field since the other eleven services the source lists aren't enumerated there. &mdash; means not applicable.</p>
+      </section>
+      </div>
+    </div>
+
+    <div id="zscalerCloudInputsSubpage" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerCloudInputsSubpage" hidden>
+      <div class="page-subnav level-3" role="tablist" aria-label="Zscaler based inputs sections">
+        <button id="showZscalerInputsListView" class="page-subtab active" type="button" role="tab" aria-selected="true" aria-controls="zscalerInputsListView" data-zscalerview="zscalerInputsList">Inputs</button>
+        <button id="showZscalerCoverageView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerCoverageView" data-zscalerview="zscalerCoverage">Coverage</button>
+        <button id="showZscalerSchemaView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerSchemaView" data-zscalerview="zscalerSchema">Schema</button>
+        <button id="showZscalerPermissionsView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerPermissionsView" data-zscalerview="zscalerPermissions">Permissions</button>
+      </div>
+
+      <div id="zscalerInputsListView" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerInputsListView">
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Zscaler based inputs</h3><p id="zscalerInputsListIntro">No Zscaler inputs have been documented yet. This section is structured the same way as the Microsoft and AWS tabs above, ready to receive the same input-list/sourcetype CSV format once it's supplied.</p></div></div>
+
+        <div id="zscalerInputsListGroups"></div>
+
+        <p class="sot-note" id="zscalerInputsListNote">Awaiting source data: no Zscaler input-list/sourcetype CSV has been supplied yet. Once provided, inputs will appear here the same way the Microsoft and AWS ones do, with Coverage-tab enablement tracking and Schema-tab field-level detail.</p>
+      </section>
+      </div>
+
+      <div id="zscalerCoverageView" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerCoverageView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Coverage</h3><p id="zscalerCoverageSubtitle">Editable Zscaler tenant-level enablement tracking against the Zscaler cloud inputs listed under Inputs. Edits are saved in this browser automatically.</p></div></div>
+
+        <div class="input-coverage-toolbar">
+          <button id="zscalerInputCoverageAddRow" type="button">+ Add row</button>
+          <button id="zscalerInputCoverageImportBtn" type="button">Import CSV</button>
+          <input id="zscalerInputCoverageImportFile" type="file" accept=".csv,text/csv" hidden />
+          <button id="zscalerInputCoverageExportBtn" class="primary-button" type="button">Export CSV</button>
+          <button id="zscalerInputCoverageClearBtn" type="button">Clear all rows</button>
+          <span id="zscalerInputCoverageStatus" class="input-coverage-status" role="status" aria-live="polite"></span>
+        </div>
+
+        <div id="zscalerInputCoverageTableWrap" class="input-coverage-table-wrap">
+          <table id="zscalerInputCoverageTable" class="input-coverage-table">
+            <thead id="zscalerInputCoverageTableHead"></thead>
+            <tbody id="zscalerInputCoverageTableBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note" id="zscalerCoverageColumnNote">No Zscaler inputs are documented yet, so this tracker currently has just the tenant identifier column -- one Y/N column per input will appear here once the Inputs tab has real data.</p>
+      </section>
+      </div>
+
+      <div id="zscalerSchemaView" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerSchemaView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Schema explorer</h3><p>Search, filter and browse field-level schema for Zscaler sourcetypes, once supplied -- native TA fields, CIM/OCSF model mappings, and lookup/derived fields.</p></div></div>
+
+        <div class="se-stats" id="zscalerSchemaStats"></div>
+
+        <div class="se-workspace">
+          <aside class="se-rail">
+            <div class="se-rail-group">
+              <h4>Sourcetype</h4>
+              <div class="se-app-list" id="zscalerSchemaSourcetypeList"></div>
+            </div>
+            <div class="se-rail-group">
+              <h4>Field category</h4>
+              <div class="se-app-list" id="zscalerSchemaCategoryList"></div>
+            </div>
+          </aside>
+
+          <div class="se-main">
+            <div class="se-toolbar">
+              <input id="zscalerSchemaSearchBox" type="search" placeholder="Search sourcetypes, fields, descriptions, CIM models…" aria-label="Search Zscaler schema fields" />
+              <span class="se-result-count" id="zscalerSchemaResultCount"></span>
+            </div>
+
+            <div class="se-table-wrap">
+              <table class="se-table">
+                <thead>
+                  <tr>
+                    <th>Sourcetype</th>
+                    <th>Category</th>
+                    <th>Field</th>
+                    <th>CIM model</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody id="zscalerSchemaFieldsBody"></tbody>
+              </table>
+            </div>
+            <div class="se-load-more-row">
+              <button id="zscalerSchemaLoadMoreBtn" class="se-load-more" type="button" hidden></button>
+            </div>
+          </div>
+        </div>
+      </section>
+      </div>
+
+      <div id="zscalerPermissionsView" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerPermissionsView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Permissions</h3><p>Permissions required per Zscaler input, once supplied. Select a marked cell for the full detail (service, purpose, notes).</p></div></div>
+
+        <div class="se-toolbar">
+          <input id="zscalerPermSearchBox" type="search" placeholder="Search app, input, service, action, purpose or notes…" aria-label="Search Zscaler permissions matrix" />
+          <select id="zscalerPermAppFilter" aria-label="Filter by app">
+            <option value="">All apps</option>
+          </select>
+          <label><input type="checkbox" id="zscalerPermHideBlankCols" /> Hide blank columns</label>
+          <button id="zscalerPermExportBtn" class="primary-button" type="button">Export visible CSV</button>
+          <span class="se-result-count" id="zscalerPermResultCount"></span>
+        </div>
+
+        <div class="eccs-table-wrap" role="region" aria-label="Scrollable Zscaler permissions matrix" tabindex="0">
+          <table class="eccs-matrix" id="zscalerPermissionsTable">
+            <thead id="zscalerPermissionsTableHead"></thead>
+            <tbody id="zscalerPermissionsTableBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note">Awaiting source data: no Zscaler permissions CSV has been supplied yet. Once provided, this table will follow the same (app, input, action) model as the Microsoft and AWS Permissions tabs -- one marked, colored pill per required action, with click-through detail.</p>
       </section>
       </div>
     </div>
@@ -15119,6 +15234,22 @@ E. Assumptions and unresolved inputs</pre>
     </div>
     <div class="modal-body">
       <dl class="input-detail-grid" id="awsPermissionDetailGrid"></dl>
+    </div>
+  </div>
+</div>
+
+<div id="zscalerPermissionDetailModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="zscalerPermissionDetailTitle" aria-hidden="true">
+  <div class="modal-dialog input-detail-dialog">
+    <div class="modal-header">
+      <div>
+        <p class="modal-eyebrow" id="zscalerPermissionDetailEyebrow">Zscaler based inputs &middot; Permissions</p>
+        <h2 id="zscalerPermissionDetailTitle" class="modal-title">&mdash;</h2>
+        <p class="modal-subtitle" id="zscalerPermissionDetailSubtitle"></p>
+      </div>
+      <button id="closeZscalerPermissionDetail" class="modal-close" type="button" aria-label="Close permission details">×</button>
+    </div>
+    <div class="modal-body">
+      <dl class="input-detail-grid" id="zscalerPermissionDetailGrid"></dl>
     </div>
   </div>
 </div>
@@ -33259,6 +33390,21 @@ awsCloudInputsViewTabs.forEach(tab => {
   tab.addEventListener("click", () => setActiveAwsCloudInputsView(tab.dataset.awsview));
 });
 
+const zscalerCloudInputsViewTabs = document.querySelectorAll("#zscalerCloudInputsSubpage .page-subnav.level-3 .page-subtab");
+function setActiveZscalerCloudInputsView(viewName) {
+  zscalerCloudInputsViewTabs.forEach(tab => {
+    const active = tab.dataset.zscalerview === viewName;
+    tab.classList.toggle("active", active);
+    tab.setAttribute("aria-selected", String(active));
+  });
+  document.querySelectorAll("#zscalerCloudInputsSubpage > .subpage-view").forEach(view => {
+    view.hidden = view.id !== `${viewName}View`;
+  });
+}
+zscalerCloudInputsViewTabs.forEach(tab => {
+  tab.addEventListener("click", () => setActiveZscalerCloudInputsView(tab.dataset.zscalerview));
+});
+
 /* ---------- Input Coverage: editable Microsoft cloud input tracker ---------- */
 const inputCoverageTenantColumns = ["Tenant ID", "Tenant Name", "Subscription ID", "Subscription Name"];
 // appName/appId/baseLink confirmed by the user against Splunkbase directly (2026-08). sourcetype remains
@@ -33865,6 +34011,63 @@ function renderAwsInputsListView() {
 renderAwsInputsListView();
 
 document.getElementById("awsInputsListGroups").addEventListener("click", event => {
+  const trigger = event.target.closest(".input-detail-trigger");
+  if (!trigger) return;
+  openInputDetail(trigger.dataset.inputKey, trigger);
+});
+
+/* ---------- Input Coverage: Zscaler based inputs ---------------------------------------------------------
+ * Scaffold only -- no Zscaler source CSV has been supplied yet. Structured identically to the Microsoft/AWS
+ * pools above (same groups/columns/render shape) so that dropping in a real Splunk_TA_zscaler-style
+ * input-list CSV later is a data change, not a structural one. zscalerInputCoverageGroups starts empty;
+ * renderZscalerInputsListView() (like renderAwsInputsListView() above) already handles an empty groups array
+ * gracefully by leaving the static empty-state intro/note authored in the HTML untouched. Once real inputs
+ * exist here, openInputDetail() (shared by the Microsoft/AWS Inputs tabs) will need a third lookup arm and
+ * eyebrow-text branch for Zscaler -- not added yet since there's nothing for it to look up. ---------------- */
+const zscalerInputCoverageGroups = [];
+const zscalerInputCoverageInputColumns = [];
+// Zscaler's Coverage tab tracks enablement by tenant, not by AWS-style account number or Microsoft-style
+// tenant/subscription pair -- declared here (ahead of renderZscalerInputsListView, which references it
+// immediately below) rather than alongside the rest of the Zscaler coverage table implementation further down.
+const zscalerInputCoverageAccountColumns = ["Zscaler Tenant/Org ID"];
+
+function renderZscalerInputsListView() {
+  const container = document.getElementById("zscalerInputsListGroups");
+  if (!container) return;
+  container.innerHTML = zscalerInputCoverageGroups.map(g => {
+    const items = g.inputs.map(label => {
+      const key = `${label} [${g.tag}]`;
+      return `<li><button type="button" class="input-detail-trigger" data-input-key="${escapeHtml(key)}">${escapeHtml(label)}</button></li>`;
+    }).join("");
+    return `<div class="input-coverage-group">
+      <h4>${escapeHtml(g.friendlyName)} <span class="ta-tag">${escapeHtml(g.tag)}</span></h4>
+      <p>${escapeHtml(g.description)}</p>
+      <ul class="input-coverage-list">${items}</ul>
+    </div>`;
+  }).join("");
+  if (!zscalerInputCoverageGroups.length) return; // keep the static empty-state intro/note authored in HTML
+  const introEl = document.getElementById("zscalerInputsListIntro");
+  if (introEl) {
+    const n = zscalerInputCoverageGroups.length;
+    introEl.textContent = `${zscalerInputCoverageInputColumns.length} inputs across ${n} Splunk-maintained Zscaler add-on${n === 1 ? "" : "s"}. Each input is a distinct, separately-enabled data feed within its TA -- not every tenant will need every input. Select an input to see its details.`;
+  }
+  const noteEl = document.getElementById("zscalerInputsListNote");
+  if (noteEl) noteEl.textContent = `See the Coverage tab for Zscaler tenant-level enablement tracking against these ${zscalerInputCoverageInputColumns.length} inputs, and the Schema tab for the Zscaler field-level schema.`;
+  const coverageSubtitleEl = document.getElementById("zscalerCoverageSubtitle");
+  if (coverageSubtitleEl) coverageSubtitleEl.textContent = `Editable Zscaler tenant-level enablement tracking against the ${zscalerInputCoverageInputColumns.length} Zscaler cloud inputs listed under Inputs. Edits are saved in this browser automatically.`;
+  const columnNoteEl = document.getElementById("zscalerCoverageColumnNote");
+  if (columnNoteEl) {
+    const totalColumns = zscalerInputCoverageAccountColumns.length + zscalerInputCoverageInputColumns.length;
+    const perTaParts = zscalerInputCoverageGroups.map(g => `${g.inputs.length} for <code>${escapeHtml(g.tag)}</code>`);
+    const perTaText = perTaParts.length > 1
+      ? `${perTaParts.slice(0, -1).join(", ")} and ${perTaParts[perTaParts.length - 1]}`
+      : perTaParts.join("");
+    columnNoteEl.innerHTML = `${totalColumns} columns: ${escapeHtml(zscalerInputCoverageAccountColumns[0])} (free text) followed by one Y/N column per input -- ${perTaText}.`;
+  }
+}
+renderZscalerInputsListView();
+
+document.getElementById("zscalerInputsListGroups").addEventListener("click", event => {
   const trigger = event.target.closest(".input-detail-trigger");
   if (!trigger) return;
   openInputDetail(trigger.dataset.inputKey, trigger);
@@ -34514,6 +34717,129 @@ if (awsSchemaLoadMoreBtn) {
   });
 }
 renderAwsSchemaAll();
+
+/* ---------- Zscaler Schema browser: search/filter/browse field-level schema for Zscaler sourcetypes ------
+ * Scaffold only -- no Zscaler field-schema CSV has been supplied yet. Same shape as the AWS Schema browser
+ * above (sourcetype/category rail + searchable table), so it renders correctly (an empty rail, "0 fields",
+ * and the table's own empty-state message) with zero data and needs no structural change once real rows are
+ * added to zscalerSchemaFields. ------------------------------------------------------------------------- */
+const ZSCALER_SCHEMA_PAGE_SIZE = 150;
+let zscalerSchemaState = { query: "", sourcetype: "all", category: "all", visibleLimit: ZSCALER_SCHEMA_PAGE_SIZE };
+const zscalerSchemaFields = [];
+
+const zscalerSchemaSourcetypes = [...new Set(zscalerSchemaFields.map(f => f.sourcetype))];
+const zscalerSchemaCategories = [...new Set(zscalerSchemaFields.map(f => f.category))];
+
+function zscalerSchemaFilteredRows() {
+  const q = zscalerSchemaState.query.trim().toLowerCase();
+  return zscalerSchemaFields.filter(f => {
+    if (zscalerSchemaState.sourcetype !== "all" && f.sourcetype !== zscalerSchemaState.sourcetype) return false;
+    if (zscalerSchemaState.category !== "all" && f.category !== zscalerSchemaState.category) return false;
+    if (!q) return true;
+    return `${f.sourcetype} ${f.category} ${f.name} ${f.description} ${f.cimModel} ${f.notes}`.toLowerCase().includes(q);
+  });
+}
+
+function renderZscalerSchemaSourcetypeList() {
+  const el = document.getElementById("zscalerSchemaSourcetypeList");
+  if (!el) return;
+  const counts = {};
+  zscalerSchemaFields.forEach(f => { counts[f.sourcetype] = (counts[f.sourcetype] || 0) + 1; });
+  const allBtn = `<button type="button" class="se-app-chip${zscalerSchemaState.sourcetype === "all" ? " active" : ""}" data-sourcetype="all">All sourcetypes <span class="n">${zscalerSchemaFields.length}</span></button>`;
+  const rows = zscalerSchemaSourcetypes.map(st => `<button type="button" class="se-app-chip${zscalerSchemaState.sourcetype === st ? " active" : ""}" data-sourcetype="${escapeHtml(st)}">${escapeHtml(st)} <span class="n">${counts[st] || 0}</span></button>`);
+  el.innerHTML = [allBtn, ...rows].join("");
+  el.querySelectorAll("[data-sourcetype]").forEach(btn => btn.addEventListener("click", () => {
+    zscalerSchemaState.sourcetype = btn.dataset.sourcetype;
+    zscalerSchemaState.visibleLimit = ZSCALER_SCHEMA_PAGE_SIZE;
+    renderZscalerSchemaAll();
+  }));
+}
+
+function renderZscalerSchemaCategoryList() {
+  const el = document.getElementById("zscalerSchemaCategoryList");
+  if (!el) return;
+  const counts = {};
+  zscalerSchemaFields.forEach(f => { counts[f.category] = (counts[f.category] || 0) + 1; });
+  const allBtn = `<button type="button" class="se-app-chip${zscalerSchemaState.category === "all" ? " active" : ""}" data-category="all">All categories <span class="n">${zscalerSchemaFields.length}</span></button>`;
+  const rows = zscalerSchemaCategories.map(cat => `<button type="button" class="se-app-chip${zscalerSchemaState.category === cat ? " active" : ""}" data-category="${escapeHtml(cat)}">${escapeHtml(cat)} <span class="n">${counts[cat] || 0}</span></button>`);
+  el.innerHTML = [allBtn, ...rows].join("");
+  el.querySelectorAll("[data-category]").forEach(btn => btn.addEventListener("click", () => {
+    zscalerSchemaState.category = btn.dataset.category;
+    zscalerSchemaState.visibleLimit = ZSCALER_SCHEMA_PAGE_SIZE;
+    renderZscalerSchemaAll();
+  }));
+}
+
+function renderZscalerSchemaTable() {
+  const rows = zscalerSchemaFilteredRows();
+  const total = rows.length;
+  const countEl = document.getElementById("zscalerSchemaResultCount");
+  if (countEl) {
+    countEl.textContent = total > zscalerSchemaState.visibleLimit
+      ? `Showing ${zscalerSchemaState.visibleLimit.toLocaleString()} of ${total.toLocaleString()} fields`
+      : `${total.toLocaleString()} field${total === 1 ? "" : "s"}`;
+  }
+  const body = document.getElementById("zscalerSchemaFieldsBody");
+  const loadMoreBtn = document.getElementById("zscalerSchemaLoadMoreBtn");
+  if (!body) return;
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="5" class="se-empty">No Zscaler schema data has been supplied yet.</td></tr>`;
+    if (loadMoreBtn) loadMoreBtn.hidden = true;
+    return;
+  }
+  const visibleRows = rows.slice(0, zscalerSchemaState.visibleLimit);
+  body.innerHTML = visibleRows.map(f => `<tr>
+    <td><code>${escapeHtml(f.sourcetype)}</code></td>
+    <td>${escapeHtml(f.category)}</td>
+    <td><code>${escapeHtml(f.name)}</code></td>
+    <td>${escapeHtml(f.cimModel) || "&ndash;"}</td>
+    <td>${escapeHtml(f.description)}${f.notes ? ` <span class="se-field-notes">(${escapeHtml(f.notes)})</span>` : ""}</td>
+  </tr>`).join("");
+  if (loadMoreBtn) {
+    const remaining = total - visibleRows.length;
+    if (remaining > 0) {
+      loadMoreBtn.hidden = false;
+      loadMoreBtn.textContent = `Show ${Math.min(remaining, ZSCALER_SCHEMA_PAGE_SIZE).toLocaleString()} more field${Math.min(remaining, ZSCALER_SCHEMA_PAGE_SIZE) === 1 ? "" : "s"} (${remaining.toLocaleString()} remaining)`;
+    } else {
+      loadMoreBtn.hidden = true;
+    }
+  }
+}
+
+function renderZscalerSchemaAll() {
+  renderZscalerSchemaSourcetypeList();
+  renderZscalerSchemaCategoryList();
+  renderZscalerSchemaTable();
+}
+
+const zscalerSchemaStatsEl = document.getElementById("zscalerSchemaStats");
+if (zscalerSchemaStatsEl) {
+  const cimMappedCount = zscalerSchemaFields.filter(f => f.cimModel).length;
+  const stats = [
+    { n: zscalerSchemaFields.length.toLocaleString(), l: "Total fields" },
+    { n: zscalerSchemaSourcetypes.length, l: "Sourcetypes" },
+    { n: zscalerSchemaCategories.length, l: "Field categories" },
+    { n: cimMappedCount.toLocaleString(), l: "With a CIM model" }
+  ];
+  zscalerSchemaStatsEl.innerHTML = stats.map(s => `<div class="se-stat"><span class="n">${s.n}</span><span class="l">${s.l}</span></div>`).join("");
+}
+
+const zscalerSchemaSearchBox = document.getElementById("zscalerSchemaSearchBox");
+if (zscalerSchemaSearchBox) {
+  zscalerSchemaSearchBox.addEventListener("input", e => {
+    zscalerSchemaState.query = e.target.value;
+    zscalerSchemaState.visibleLimit = ZSCALER_SCHEMA_PAGE_SIZE;
+    renderZscalerSchemaTable();
+  });
+}
+const zscalerSchemaLoadMoreBtn = document.getElementById("zscalerSchemaLoadMoreBtn");
+if (zscalerSchemaLoadMoreBtn) {
+  zscalerSchemaLoadMoreBtn.addEventListener("click", () => {
+    zscalerSchemaState.visibleLimit += ZSCALER_SCHEMA_PAGE_SIZE;
+    renderZscalerSchemaTable();
+  });
+}
+renderZscalerSchemaAll();
 
 /* ---------- Schema explorer: search/filter/browse every field across the linked JSON Schema files ---------- */
 // Only columns with a real Schema link belong here -- "To be confirmed" columns have nothing to explore.
@@ -35347,6 +35673,268 @@ document.getElementById("awsInputCoverageImportFile").addEventListener("change",
   event.target.value = "";
 });
 
+/* ---------- Input Coverage: Zscaler Coverage tracker -----------------------------------------------------
+ * Same editable-tracker pattern as the Microsoft/AWS Coverage tabs above, kept as its own separate
+ * implementation per this app's convention. With zscalerInputCoverageGroups/InputColumns both empty (no
+ * source data yet), this renders as a single-column tenant-identifier tracker -- still fully usable (add/
+ * import/export/clear all work), and will pick up per-input Y/N columns automatically once real inputs are
+ * added above, with no changes needed here. parseInputCoverageCsv and normalizeYnValue are the same fully
+ * generic helpers the Microsoft/AWS trackers already reuse. ------------------------------------------------ */
+const zscalerInputCoverageAllColumns = [...zscalerInputCoverageAccountColumns, ...zscalerInputCoverageInputColumns.map(c => c.key)];
+const ZSCALER_INPUT_COVERAGE_LS_KEY = "latch_zscaler_input_coverage_v1";
+
+let zscalerInputCoverageRows = [];
+
+function newZscalerInputCoverageRow() {
+  const row = {};
+  zscalerInputCoverageAllColumns.forEach(col => { row[col] = ""; });
+  return row;
+}
+
+function loadZscalerInputCoverageRows() {
+  try {
+    const raw = localStorage.getItem(ZSCALER_INPUT_COVERAGE_LS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        zscalerInputCoverageRows = parsed.map(saved => {
+          const row = newZscalerInputCoverageRow();
+          zscalerInputCoverageAllColumns.forEach(col => { if (saved && typeof saved[col] === "string") row[col] = saved[col]; });
+          return row;
+        });
+        return;
+      }
+    }
+  } catch (e) { /* ignore corrupt/unavailable storage */ }
+  zscalerInputCoverageRows = [newZscalerInputCoverageRow()];
+}
+
+function saveZscalerInputCoverageRows() {
+  try { localStorage.setItem(ZSCALER_INPUT_COVERAGE_LS_KEY, JSON.stringify(zscalerInputCoverageRows)); } catch (e) { /* ignore quota/unavailable errors */ }
+}
+
+function setZscalerInputCoverageStatus(text) {
+  const el = document.getElementById("zscalerInputCoverageStatus");
+  if (el) el.textContent = text;
+}
+
+const ZSCALER_INPUT_COVERAGE_COLLAPSE_LS_KEY = "latch_zscaler_input_coverage_collapsed_v1";
+const zscalerInputCoverageCollapsibleTags = () => zscalerInputCoverageGroups.map(g => g.tag);
+let zscalerInputCoverageCollapsedGroups = new Set(zscalerInputCoverageCollapsibleTags());
+
+function loadZscalerInputCoverageCollapseState() {
+  try {
+    const raw = localStorage.getItem(ZSCALER_INPUT_COVERAGE_COLLAPSE_LS_KEY);
+    if (raw !== null) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        const validTags = zscalerInputCoverageCollapsibleTags();
+        zscalerInputCoverageCollapsedGroups = new Set(parsed.filter(tag => validTags.includes(tag)));
+        return;
+      }
+    }
+  } catch (e) { /* ignore corrupt/unavailable storage */ }
+  zscalerInputCoverageCollapsedGroups = new Set(zscalerInputCoverageCollapsibleTags());
+}
+
+function saveZscalerInputCoverageCollapseState() {
+  try { localStorage.setItem(ZSCALER_INPUT_COVERAGE_COLLAPSE_LS_KEY, JSON.stringify([...zscalerInputCoverageCollapsedGroups])); } catch (e) { /* ignore */ }
+}
+
+function toggleZscalerInputCoverageGroup(tag) {
+  if (zscalerInputCoverageCollapsedGroups.has(tag)) zscalerInputCoverageCollapsedGroups.delete(tag);
+  else zscalerInputCoverageCollapsedGroups.add(tag);
+  saveZscalerInputCoverageCollapseState();
+  renderZscalerInputCoverageTable();
+}
+
+function renderZscalerInputCoverageTable() {
+  const head = document.getElementById("zscalerInputCoverageTableHead");
+  const body = document.getElementById("zscalerInputCoverageTableBody");
+  if (!head || !body) return;
+
+  const accountHeaderCell = `<th class="ic-tenant-col">${escapeHtml(zscalerInputCoverageAccountColumns[0])}</th>`;
+
+  const groupInputCells = zscalerInputCoverageGroups.map(g => {
+    const collapsed = zscalerInputCoverageCollapsedGroups.has(g.tag);
+    const span = collapsed ? 1 : g.inputs.length;
+    const icon = collapsed ? "&#9656;" : "&#9662;";
+    const label = collapsed ? `${icon} [${escapeHtml(g.tag)}] (${g.inputs.length})` : `${icon} [${escapeHtml(g.tag)}]`;
+    return `<th class="ic-group-toggle" colspan="${span}" data-toggle-group="${escapeHtml(g.tag)}" title="Click to ${collapsed ? "expand" : "collapse"} ${escapeHtml(g.tag)}">${label}</th>`;
+  }).join("");
+  const totalDataColumns = 1 + zscalerInputCoverageGroups.reduce((sum, g) =>
+    sum + (zscalerInputCoverageCollapsedGroups.has(g.tag) ? 1 : g.inputs.length), 0);
+  const colHeaderCells = accountHeaderCell
+    + zscalerInputCoverageGroups.map(g => {
+        if (zscalerInputCoverageCollapsedGroups.has(g.tag)) {
+          return `<th class="ic-group-collapsed-col" data-toggle-group="${escapeHtml(g.tag)}" title="Click to expand ${escapeHtml(g.tag)}">&#9656;</th>`;
+        }
+        return zscalerInputCoverageInputColumns.filter(c => c.tag === g.tag)
+          .map(c => `<th title="${escapeHtml(c.label)}">${escapeHtml(c.label)}</th>`).join("");
+      }).join("")
+    + `<th></th>`;
+  // Account column has no group-level collapse toggle (single column, nothing to collapse), so its cell in
+  // the group-row banner is just a blank spacer matching the Microsoft/AWS table's row-shape.
+  head.innerHTML = `<tr class="ic-group-row"><th></th>${groupInputCells}<th></th></tr>`
+    + `<tr class="ic-col-row">${colHeaderCells}</tr>`;
+
+  if (!zscalerInputCoverageRows.length) {
+    body.innerHTML = `<tr class="ic-empty-row"><td colspan="${totalDataColumns + 1}">No rows yet. Use "+ Add row" or Import CSV to get started.</td></tr>`;
+  } else {
+    body.innerHTML = zscalerInputCoverageRows.map((row, rowIndex) => {
+      const accountCol = zscalerInputCoverageAccountColumns[0];
+      const accountCell = `<td class="ic-tenant-cell"><input class="ic-text-input" type="text" data-row="${rowIndex}" data-col="${escapeHtml(accountCol)}" value="${escapeHtml(row[accountCol] || "")}" placeholder="${escapeHtml(accountCol)}" /></td>`;
+      const groupCells = zscalerInputCoverageGroups.map(g => {
+        const groupCols = zscalerInputCoverageInputColumns.filter(c => c.tag === g.tag);
+        if (zscalerInputCoverageCollapsedGroups.has(g.tag)) {
+          const yesCount = groupCols.filter(c => row[c.key] === "Y").length;
+          const noCount = groupCols.filter(c => row[c.key] === "N").length;
+          const summary = (yesCount || noCount) ? `<span class="ic-count-y">${yesCount}Y</span> &middot; <span class="ic-count-n">${noCount}N</span>` : "&mdash;";
+          return `<td class="ic-group-collapsed-cell" data-toggle-group="${escapeHtml(g.tag)}" title="Click to expand ${escapeHtml(g.tag)} -- ${yesCount} Y, ${noCount} N, ${groupCols.length - yesCount - noCount} unset of ${groupCols.length}">${summary}</td>`;
+        }
+        return groupCols.map(c => {
+          const val = row[c.key] === "Y" || row[c.key] === "N" ? row[c.key] : "";
+          return `<td><select class="ic-yn-select" data-row="${rowIndex}" data-col="${escapeHtml(c.key)}" data-val="${val}">
+            <option value=""${val === "" ? " selected" : ""}>--</option>
+            <option value="Y"${val === "Y" ? " selected" : ""}>Y</option>
+            <option value="N"${val === "N" ? " selected" : ""}>N</option>
+          </select></td>`;
+        }).join("");
+      }).join("");
+      return `<tr>${accountCell}${groupCells}<td><button type="button" class="ic-row-remove" data-remove-row="${rowIndex}" title="Remove row" aria-label="Remove row">&times;</button></td></tr>`;
+    }).join("");
+  }
+  setZscalerInputCoverageStatus(`${zscalerInputCoverageRows.length} row${zscalerInputCoverageRows.length === 1 ? "" : "s"}`);
+}
+
+function exportZscalerInputCoverageCsv(event) {
+  const lines = [
+    zscalerInputCoverageAllColumns.map(csvValue).join(","),
+    ...zscalerInputCoverageRows.map(row => zscalerInputCoverageAllColumns.map(col => csvValue(row[col] || "")).join(","))
+  ];
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Zscaler-Cloud-Input-Coverage.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  const btn = event && event.currentTarget;
+  if (btn) {
+    const original = btn.textContent;
+    btn.textContent = "Exported";
+    setTimeout(() => { btn.textContent = original; }, 1400);
+  }
+}
+
+function importZscalerInputCoverageCsv(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsedRows;
+    try {
+      parsedRows = parseInputCoverageCsv(String(reader.result || ""));
+    } catch (e) {
+      setZscalerInputCoverageStatus("Import failed: could not parse file as CSV.");
+      return;
+    }
+    if (!parsedRows.length) { setZscalerInputCoverageStatus("Import failed: file is empty."); return; }
+    const header = parsedRows[0].map(h => h.trim());
+    const accountCol = zscalerInputCoverageAccountColumns[0];
+    if (!header.includes(accountCol)) {
+      setZscalerInputCoverageStatus(`Import failed: header row must include a "${accountCol}" column.`);
+      return;
+    }
+    if (zscalerInputCoverageRows.length && !confirm(`This will replace the current ${zscalerInputCoverageRows.length} row(s) with the imported file. Continue?`)) {
+      return;
+    }
+    const colIndex = {};
+    header.forEach((h, i) => { colIndex[h] = i; });
+    const imported = parsedRows.slice(1).map(cells => {
+      const row = newZscalerInputCoverageRow();
+      zscalerInputCoverageAccountColumns.forEach(col => {
+        if (colIndex[col] !== undefined) row[col] = cells[colIndex[col]] || "";
+      });
+      zscalerInputCoverageInputColumns.forEach(c => {
+        if (colIndex[c.key] !== undefined) row[c.key] = normalizeYnValue(cells[colIndex[c.key]]);
+      });
+      return row;
+    });
+    zscalerInputCoverageRows = imported.length ? imported : [newZscalerInputCoverageRow()];
+    saveZscalerInputCoverageRows();
+    renderZscalerInputCoverageTable();
+    setZscalerInputCoverageStatus(`Imported ${imported.length} row${imported.length === 1 ? "" : "s"}.`);
+  };
+  reader.onerror = () => setZscalerInputCoverageStatus("Import failed: could not read file.");
+  reader.readAsText(file);
+}
+
+loadZscalerInputCoverageRows();
+loadZscalerInputCoverageCollapseState();
+renderZscalerInputCoverageTable();
+
+document.getElementById("zscalerInputCoverageTableHead").addEventListener("click", event => {
+  const target = event.target.closest("[data-toggle-group]");
+  if (target) toggleZscalerInputCoverageGroup(target.dataset.toggleGroup);
+});
+document.getElementById("zscalerInputCoverageTableBody").addEventListener("click", event => {
+  const toggleTarget = event.target.closest("[data-toggle-group]");
+  if (toggleTarget) { toggleZscalerInputCoverageGroup(toggleTarget.dataset.toggleGroup); return; }
+  const removeBtn = event.target.closest("[data-remove-row]");
+  if (removeBtn) {
+    const rowIndex = Number(removeBtn.dataset.removeRow);
+    zscalerInputCoverageRows.splice(rowIndex, 1);
+    saveZscalerInputCoverageRows();
+    renderZscalerInputCoverageTable();
+  }
+});
+document.getElementById("zscalerInputCoverageTableBody").addEventListener("input", event => {
+  const target = event.target;
+  if (target.classList.contains("ic-text-input")) {
+    const rowIndex = Number(target.dataset.row);
+    const col = target.dataset.col;
+    if (zscalerInputCoverageRows[rowIndex]) {
+      zscalerInputCoverageRows[rowIndex][col] = target.value;
+      saveZscalerInputCoverageRows();
+    }
+  }
+});
+document.getElementById("zscalerInputCoverageTableBody").addEventListener("change", event => {
+  const target = event.target;
+  if (target.classList.contains("ic-yn-select")) {
+    const rowIndex = Number(target.dataset.row);
+    const col = target.dataset.col;
+    if (zscalerInputCoverageRows[rowIndex]) {
+      zscalerInputCoverageRows[rowIndex][col] = target.value;
+      target.dataset.val = target.value;
+      saveZscalerInputCoverageRows();
+    }
+  }
+});
+document.getElementById("zscalerInputCoverageAddRow").addEventListener("click", () => {
+  zscalerInputCoverageRows.push(newZscalerInputCoverageRow());
+  saveZscalerInputCoverageRows();
+  renderZscalerInputCoverageTable();
+  const wrap = document.getElementById("zscalerInputCoverageTableWrap");
+  if (wrap) wrap.scrollTop = wrap.scrollHeight;
+});
+document.getElementById("zscalerInputCoverageClearBtn").addEventListener("click", () => {
+  if (!zscalerInputCoverageRows.length) return;
+  if (!confirm(`Remove all ${zscalerInputCoverageRows.length} row(s)? This cannot be undone.`)) return;
+  zscalerInputCoverageRows = [];
+  saveZscalerInputCoverageRows();
+  renderZscalerInputCoverageTable();
+});
+document.getElementById("zscalerInputCoverageExportBtn").addEventListener("click", exportZscalerInputCoverageCsv);
+document.getElementById("zscalerInputCoverageImportBtn").addEventListener("click", () => {
+  document.getElementById("zscalerInputCoverageImportFile").click();
+});
+document.getElementById("zscalerInputCoverageImportFile").addEventListener("change", event => {
+  const file = event.target.files && event.target.files[0];
+  if (file) importZscalerInputCoverageCsv(file);
+  event.target.value = "";
+});
+
 /* ---------- Input Coverage: Amazon AWS Permissions matrix ------------------------------------------------
  * Rebuilt from a static 4-row/11-column HTML table (its per-cell "Required"/"Optional"/"Not needed" text now
  * expressed as this entry's own family, colored Required/Optional pill -- "Not needed" simply has no entry)
@@ -35649,6 +36237,172 @@ document.getElementById("awsPermissionsTableBody").addEventListener("click", eve
 document.getElementById("closeAwsPermissionDetail").addEventListener("click", closeAwsPermissionDetail);
 awsPermissionDetailModal.addEventListener("click", event => { if (event.target === awsPermissionDetailModal) closeAwsPermissionDetail(); });
 document.addEventListener("keydown", event => { if (event.key === "Escape" && awsPermissionDetailModal.classList.contains("open")) closeAwsPermissionDetail(); });
+
+/* ---------- Input Coverage: Zscaler Permissions matrix ---------------------------------------------------
+ * Scaffold only -- no Zscaler permissions CSV has been supplied yet. Same data-driven (app, input, action)
+ * model, toolbar, and detail-modal pattern as the Microsoft/AWS Permissions matrices above. With
+ * zscalerPermissionsData empty, the table correctly renders its own empty state ("No rows match...") and the
+ * toolbar (search/filter/sort/hide-blanks/export) is fully wired, just inert until real entries exist --
+ * dropping rows into zscalerPermissionsData later needs no other change here. */
+const zscalerPermissionsData = [];
+const zscalerPermissionsRows = [...new Map(zscalerPermissionsData.map(r => [`${r.app} ||| ${r.input}`, { app: r.app, input: r.input }])).values()];
+const zscalerPermissionsActions = [...new Set(zscalerPermissionsData.map(r => r.action))];
+const zscalerPermissionsByKey = new Map(zscalerPermissionsData.map(r => [`${r.app} ||| ${r.input} ||| ${r.action}`, r]));
+const ZSCALER_PERMISSIONS_FAMILY_CLASS = {};
+const ZSCALER_PERMISSIONS_FAMILY_SHORT_LABEL = {};
+
+const zscalerPermissionsRowHaystack = new Map();
+zscalerPermissionsData.forEach(r => {
+  const key = `${r.app} ||| ${r.input}`;
+  const hay = [r.app, r.input, r.family, r.service, r.action, r.purpose, r.notes].filter(Boolean).join(" ").toLowerCase();
+  zscalerPermissionsRowHaystack.set(key, `${zscalerPermissionsRowHaystack.get(key) || ""} ${hay}`);
+});
+let zscalerPermState = { query: "", app: "", sortKey: "app", sortDir: "asc", hideBlankCols: false };
+function zscalerPermFilteredSortedRows() {
+  const q = zscalerPermState.query.trim().toLowerCase();
+  let rows = zscalerPermissionsRows.filter(({ app, input }) => {
+    if (zscalerPermState.app && app !== zscalerPermState.app) return false;
+    if (!q) return true;
+    return (zscalerPermissionsRowHaystack.get(`${app} ||| ${input}`) || "").includes(q);
+  });
+  const dir = zscalerPermState.sortDir === "desc" ? -1 : 1;
+  const keyFn = zscalerPermState.sortKey === "input" ? r => r.input : r => r.app;
+  return rows.slice().sort((a, b) => keyFn(a).localeCompare(keyFn(b)) * dir || a.app.localeCompare(b.app) || a.input.localeCompare(b.input));
+}
+function zscalerPermVisibleActions(rows) {
+  if (!zscalerPermState.hideBlankCols) return zscalerPermissionsActions;
+  const rowKeySet = new Set(rows.map(r => `${r.app} ||| ${r.input}`));
+  const usedActions = new Set();
+  zscalerPermissionsData.forEach(entry => {
+    if (rowKeySet.has(`${entry.app} ||| ${entry.input}`)) usedActions.add(entry.action);
+  });
+  return zscalerPermissionsActions.filter(a => usedActions.has(a));
+}
+function renderZscalerPermissionsTable() {
+  const head = document.getElementById("zscalerPermissionsTableHead");
+  const body = document.getElementById("zscalerPermissionsTableBody");
+  if (!head || !body) return;
+  const rows = zscalerPermFilteredSortedRows();
+  const actions = zscalerPermVisibleActions(rows);
+  head.innerHTML = `<tr><th scope="col" data-sort="app">App</th><th scope="col" data-sort="input">Input</th>${actions.map(a => `<th scope="col">${escapeHtml(a)}</th>`).join("")}</tr>`;
+  head.querySelectorAll("th[data-sort]").forEach(th => {
+    th.classList.toggle("se-sorted", th.dataset.sort === zscalerPermState.sortKey);
+    th.classList.toggle("se-asc", th.dataset.sort === zscalerPermState.sortKey && zscalerPermState.sortDir === "asc");
+  });
+  const countEl = document.getElementById("zscalerPermResultCount");
+  if (countEl) {
+    const rowText = rows.length === zscalerPermissionsRows.length
+      ? `${rows.length} row${rows.length === 1 ? "" : "s"}`
+      : `Showing ${rows.length} of ${zscalerPermissionsRows.length} rows`;
+    const colText = zscalerPermState.hideBlankCols ? ` &middot; ${actions.length} of ${zscalerPermissionsActions.length} columns` : "";
+    countEl.innerHTML = rowText + colText;
+  }
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="${actions.length + 2}"><div class="se-empty">No Zscaler permissions data has been supplied yet.</div></td></tr>`;
+    return;
+  }
+  body.innerHTML = rows.map(({ app, input }) => {
+    const cells = actions.map(action => {
+      const entry = zscalerPermissionsByKey.get(`${app} ||| ${input} ||| ${action}`);
+      if (!entry) return "<td>&mdash;</td>";
+      const cls = ZSCALER_PERMISSIONS_FAMILY_CLASS[entry.family] || "perm-required";
+      const shortLabel = ZSCALER_PERMISSIONS_FAMILY_SHORT_LABEL[entry.family] || entry.family;
+      return `<td><button type="button" class="perm-mark ${cls}" data-perm-app="${escapeHtml(app)}" data-perm-input="${escapeHtml(input)}" data-perm-action="${escapeHtml(action)}">${escapeHtml(shortLabel)}</button></td>`;
+    }).join("");
+    return `<tr><td>${escapeHtml(app)}</td><th scope="row">${escapeHtml(input)}</th>${cells}</tr>`;
+  }).join("");
+}
+renderZscalerPermissionsTable();
+
+function exportZscalerPermissionsCsv(event) {
+  const rows = zscalerPermFilteredSortedRows();
+  const actions = zscalerPermVisibleActions(rows);
+  const lines = [["App", "Input", ...actions].map(csvValue).join(",")];
+  rows.forEach(({ app, input }) => {
+    const cells = actions.map(action => {
+      const entry = zscalerPermissionsByKey.get(`${app} ||| ${input} ||| ${action}`);
+      return entry ? (ZSCALER_PERMISSIONS_FAMILY_SHORT_LABEL[entry.family] || entry.family) : "";
+    });
+    lines.push([app, input, ...cells].map(csvValue).join(","));
+  });
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Zscaler-Cloud-Permissions-Matrix.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  const btn = event && event.currentTarget;
+  if (btn) {
+    const original = btn.textContent;
+    btn.textContent = "Exported";
+    setTimeout(() => { btn.textContent = original; }, 1400);
+  }
+}
+
+const zscalerPermAppFilterSelect = document.getElementById("zscalerPermAppFilter");
+if (zscalerPermAppFilterSelect) {
+  [...new Set(zscalerPermissionsRows.map(r => r.app))].forEach(app => {
+    const opt = document.createElement("option");
+    opt.value = app;
+    opt.textContent = app;
+    zscalerPermAppFilterSelect.appendChild(opt);
+  });
+  zscalerPermAppFilterSelect.addEventListener("change", e => { zscalerPermState.app = e.target.value; renderZscalerPermissionsTable(); });
+}
+const zscalerPermSearchBoxEl = document.getElementById("zscalerPermSearchBox");
+if (zscalerPermSearchBoxEl) zscalerPermSearchBoxEl.addEventListener("input", e => { zscalerPermState.query = e.target.value; renderZscalerPermissionsTable(); });
+const zscalerPermHideBlankColsEl = document.getElementById("zscalerPermHideBlankCols");
+if (zscalerPermHideBlankColsEl) zscalerPermHideBlankColsEl.addEventListener("change", e => { zscalerPermState.hideBlankCols = e.target.checked; renderZscalerPermissionsTable(); });
+const zscalerPermExportBtnEl = document.getElementById("zscalerPermExportBtn");
+if (zscalerPermExportBtnEl) zscalerPermExportBtnEl.addEventListener("click", exportZscalerPermissionsCsv);
+document.getElementById("zscalerPermissionsTableHead").addEventListener("click", event => {
+  const th = event.target.closest("th[data-sort]");
+  if (!th) return;
+  const key = th.dataset.sort;
+  if (zscalerPermState.sortKey === key) zscalerPermState.sortDir = zscalerPermState.sortDir === "asc" ? "desc" : "asc";
+  else { zscalerPermState.sortKey = key; zscalerPermState.sortDir = "asc"; }
+  renderZscalerPermissionsTable();
+});
+
+const zscalerPermissionDetailModal = document.getElementById("zscalerPermissionDetailModal");
+let lastZscalerPermissionDetailTrigger = null;
+function openZscalerPermissionDetail(entry, trigger) {
+  if (!zscalerPermissionDetailModal) return;
+  lastZscalerPermissionDetailTrigger = trigger || document.activeElement;
+  document.getElementById("zscalerPermissionDetailTitle").textContent = entry.input;
+  document.getElementById("zscalerPermissionDetailSubtitle").textContent = entry.action;
+  const rows = [
+    ["App", entry.app],
+    ["Input family", entry.family],
+    ["Service", entry.service],
+    ["Action", entry.action],
+    ["Purpose", entry.purpose],
+    ["Notes", entry.notes]
+  ].filter(([, v]) => v !== undefined && v !== "");
+  document.getElementById("zscalerPermissionDetailGrid").innerHTML = rows.map(([k, v]) => `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join("");
+  zscalerPermissionDetailModal.classList.add("open");
+  zscalerPermissionDetailModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  document.getElementById("closeZscalerPermissionDetail").focus();
+}
+function closeZscalerPermissionDetail() {
+  if (!zscalerPermissionDetailModal) return;
+  zscalerPermissionDetailModal.classList.remove("open");
+  zscalerPermissionDetailModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+  if (lastZscalerPermissionDetailTrigger && typeof lastZscalerPermissionDetailTrigger.focus === "function") lastZscalerPermissionDetailTrigger.focus();
+}
+document.getElementById("zscalerPermissionsTableBody").addEventListener("click", event => {
+  const trigger = event.target.closest(".perm-mark");
+  if (!trigger) return;
+  const entry = zscalerPermissionsByKey.get(`${trigger.dataset.permApp} ||| ${trigger.dataset.permInput} ||| ${trigger.dataset.permAction}`);
+  if (entry) openZscalerPermissionDetail(entry, trigger);
+});
+document.getElementById("closeZscalerPermissionDetail").addEventListener("click", closeZscalerPermissionDetail);
+zscalerPermissionDetailModal.addEventListener("click", event => { if (event.target === zscalerPermissionDetailModal) closeZscalerPermissionDetail(); });
+document.addEventListener("keydown", event => { if (event.key === "Escape" && zscalerPermissionDetailModal.classList.contains("open")) closeZscalerPermissionDetail(); });
 
 /* ---------- Input Coverage: Microsoft cloud inputs Permissions matrix -------------------------------------
  * Same visual style as the AWS Permissions tab (eccs-table-wrap/eccs-matrix), but this data is inherently a
