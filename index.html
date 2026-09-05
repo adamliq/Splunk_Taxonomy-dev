@@ -14650,21 +14650,26 @@ E. Assumptions and unresolved inputs</pre>
 
       <div id="awsPermissionsView" class="subpage-view" role="tabpanel" aria-labelledby="showAwsPermissionsView" hidden>
       <section class="reference-section">
-        <div class="reference-section-heading"><div><h3>Permissions</h3><p>IAM permissions required on the S3 bucket (and, where used, its notification queue/KMS key), by capability/feature -- not every deployment needs every permission below.</p></div></div>
+        <div class="reference-section-heading"><div><h3>Permissions</h3><p>IAM permissions required per Splunk_TA_aws input -- the original S3/SQS/KMS capability tiers plus CloudTrail, Config, CloudWatch, Billing, Metadata and more. Not every deployment needs every permission below -- select a marked cell for the full detail (service, purpose, notes).</p></div></div>
+
+        <div class="se-toolbar">
+          <input id="awsPermSearchBox" type="search" placeholder="Search app, input, service, action, purpose or notes…" aria-label="Search AWS permissions matrix" />
+          <select id="awsPermAppFilter" aria-label="Filter by app">
+            <option value="">All apps</option>
+          </select>
+          <label><input type="checkbox" id="awsPermHideBlankCols" /> Hide blank columns</label>
+          <button id="awsPermExportBtn" class="primary-button" type="button">Export visible CSV</button>
+          <span class="se-result-count" id="awsPermResultCount"></span>
+        </div>
 
         <div class="eccs-table-wrap" role="region" aria-label="Scrollable S3 IAM permissions matrix" tabindex="0">
           <table class="eccs-matrix" id="awsPermissionsTable">
-            <thead><tr><th scope="col">App</th><th scope="col">Capability / Feature</th><th scope="col"><code>s3:GetBucketLocation</code></th><th scope="col"><code>s3:ListBucket</code></th><th scope="col"><code>s3:GetObject</code></th><th scope="col"><code>s3:GetObject*</code></th><th scope="col"><code>s3:PutObject</code></th><th scope="col"><code>s3:AbortMultipartUpload</code></th><th scope="col"><code>sqs:ReceiveMessage</code></th><th scope="col"><code>sqs:DeleteMessage</code></th><th scope="col"><code>sqs:GetQueueAttributes</code></th><th scope="col"><code>sqs:GetQueueUrl</code></th><th scope="col"><code>kms:Decrypt</code></th></tr></thead>
-            <tbody>
-              <tr><td>Splunk_TA_aws</td><th scope="row">Federated Search only + Splunk-native catalog</th><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Not needed</td><td>Not needed</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td></tr>
-              <tr><td>Splunk_TA_aws</td><th scope="row">Data Routing + Federated Search + Splunk-native catalog</th><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td></tr>
-              <tr><td>Splunk_TA_aws</td><th scope="row">Catalog auto-sync (SQS) for Splunk-native catalog</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Required</td><td>Required</td><td>Required</td><td>Optional</td><td>&mdash;</td></tr>
-              <tr><td>Splunk_TA_aws</td><th scope="row">SSE-KMS encryption</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Required</td></tr>
-            </tbody>
+            <thead id="awsPermissionsTableHead"></thead>
+            <tbody id="awsPermissionsTableBody"></tbody>
           </table>
         </div>
 
-        <p class="sot-note">Transcribed verbatim from a supplied <code>splunk_s3_permissions.csv</code>. <code>s3:GetObject*</code> denotes the family of versioned/tagging read actions (e.g. <code>s3:GetObjectVersion</code>) alongside the base <code>s3:GetObject</code> action. &mdash; not applicable to that capability/feature.</p>
+        <p class="sot-note">Transcribed verbatim from two supplied CSVs: the original <code>splunk_s3_permissions.csv</code> (the four Required/Optional/Not-needed capability rows, now expressed as this table's own <strong>Required</strong>/<strong>Optional</strong> pill families -- a "Not needed" or "--" cell simply has no entry) and <code>splunk_ta_aws_inputs_permissions.csv</code> (per-modular-input permissions for CloudTrail, Config, CloudWatch, Billing, Metadata and more). Rows are the distinct App+Input combinations across both files, columns the distinct individual actions -- a marked cell means that row's input requires that column's action (per its <code>Input Family</code>); a source row whose own Actions cell listed several scopes required together (e.g. CloudTrail's "sqs:GetQueueAttributes; sqs:ListQueues; sqs:ReceiveMessage; ...") was split into one marked cell per scope, reusing whichever column that scope already has -- <code>s3:GetObject*</code> denotes the family of versioned/tagging read actions (e.g. <code>s3:GetObjectVersion</code>) alongside the base <code>s3:GetObject</code> action, distinct from the newer CSV's own <code>s3:Get*</code>/<code>s3:List*</code>/<code>s3:Delete*</code> wildcard actions. Three rows (<strong>Custom Data Type</strong>, <strong>VPC Flow Logs</strong>, <strong>Transit Gateway Flow Logs</strong>) don't list concrete IAM actions at all -- their Actions cell is a cross-reference to another input's policy ("Same as...", "Depends on...") -- so that text is kept as a single one-off column rather than fabricating scopes. <strong>Metadata</strong>'s Actions cell mixes a framing sentence ("modular, one permission block per AWS service") with a single concrete EC2/RDS example block; only that example's 11 actions are marked here, with the framing preserved in the Purpose field since the other eleven services the source lists aren't enumerated there. &mdash; means not applicable.</p>
       </section>
       </div>
     </div>
@@ -15098,6 +15103,22 @@ E. Assumptions and unresolved inputs</pre>
     </div>
     <div class="modal-body">
       <dl class="input-detail-grid" id="msPermissionDetailGrid"></dl>
+    </div>
+  </div>
+</div>
+
+<div id="awsPermissionDetailModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="awsPermissionDetailTitle" aria-hidden="true">
+  <div class="modal-dialog input-detail-dialog">
+    <div class="modal-header">
+      <div>
+        <p class="modal-eyebrow" id="awsPermissionDetailEyebrow">Amazon AWS based inputs &middot; Permissions</p>
+        <h2 id="awsPermissionDetailTitle" class="modal-title">&mdash;</h2>
+        <p class="modal-subtitle" id="awsPermissionDetailSubtitle"></p>
+      </div>
+      <button id="closeAwsPermissionDetail" class="modal-close" type="button" aria-label="Close permission details">×</button>
+    </div>
+    <div class="modal-body">
+      <dl class="input-detail-grid" id="awsPermissionDetailGrid"></dl>
     </div>
   </div>
 </div>
@@ -35325,6 +35346,309 @@ document.getElementById("awsInputCoverageImportFile").addEventListener("change",
   if (file) importAwsInputCoverageCsv(file);
   event.target.value = "";
 });
+
+/* ---------- Input Coverage: Amazon AWS Permissions matrix ------------------------------------------------
+ * Rebuilt from a static 4-row/11-column HTML table (its per-cell "Required"/"Optional"/"Not needed" text now
+ * expressed as this entry's own family, colored Required/Optional pill -- "Not needed" simply has no entry)
+ * into the same data-driven (app, input, action) model, toolbar, and detail-modal pattern as the Microsoft
+ * Permissions matrix above, so the two behave identically (search, app filter, sortable App/Input columns,
+ * hide-blank-columns, CSV export). See the sot-note in the HTML for how the newer per-input CSV's AND-split,
+ * cross-reference-only rows (Custom Data Type/VPC Flow Logs/Transit Gateway Flow Logs), and Metadata's
+ * framing-plus-example Actions cell are each handled. */
+const awsPermissionsData = [
+  // -- Legacy static table converted to the data-driven model (original source: splunk_s3_permissions.csv) --
+  { app: "Splunk_TA_aws", family: "Required permissions", input: "Federated Search only + Splunk-native catalog", service: "S3", action: "s3:GetBucketLocation" },
+  { app: "Splunk_TA_aws", family: "Required permissions", input: "Federated Search only + Splunk-native catalog", service: "S3", action: "s3:ListBucket" },
+  { app: "Splunk_TA_aws", family: "Required permissions", input: "Federated Search only + Splunk-native catalog", service: "S3", action: "s3:GetObject" },
+  { app: "Splunk_TA_aws", family: "Required permissions", input: "Federated Search only + Splunk-native catalog", service: "S3", action: "s3:GetObject*", notes: "s3:GetObject* denotes versioned/tagging read actions (e.g. s3:GetObjectVersion) alongside the base s3:GetObject action" },
+  { app: "Splunk_TA_aws", family: "Optional permissions", input: "Federated Search only + Splunk-native catalog", service: "SQS", action: "sqs:ReceiveMessage" },
+  { app: "Splunk_TA_aws", family: "Optional permissions", input: "Federated Search only + Splunk-native catalog", service: "SQS", action: "sqs:DeleteMessage" },
+  { app: "Splunk_TA_aws", family: "Optional permissions", input: "Federated Search only + Splunk-native catalog", service: "SQS", action: "sqs:GetQueueAttributes" },
+  { app: "Splunk_TA_aws", family: "Optional permissions", input: "Federated Search only + Splunk-native catalog", service: "SQS", action: "sqs:GetQueueUrl" },
+  { app: "Splunk_TA_aws", family: "Optional permissions", input: "Federated Search only + Splunk-native catalog", service: "KMS", action: "kms:Decrypt" },
+  { app: "Splunk_TA_aws", family: "Required permissions", input: "Data Routing + Federated Search + Splunk-native catalog", service: "S3", action: "s3:GetBucketLocation" },
+  { app: "Splunk_TA_aws", family: "Required permissions", input: "Data Routing + Federated Search + Splunk-native catalog", service: "S3", action: "s3:ListBucket" },
+  { app: "Splunk_TA_aws", family: "Required permissions", input: "Data Routing + Federated Search + Splunk-native catalog", service: "S3", action: "s3:GetObject" },
+  { app: "Splunk_TA_aws", family: "Required permissions", input: "Data Routing + Federated Search + Splunk-native catalog", service: "S3", action: "s3:GetObject*", notes: "s3:GetObject* denotes versioned/tagging read actions (e.g. s3:GetObjectVersion) alongside the base s3:GetObject action" },
+  { app: "Splunk_TA_aws", family: "Required permissions", input: "Data Routing + Federated Search + Splunk-native catalog", service: "S3", action: "s3:PutObject" },
+  { app: "Splunk_TA_aws", family: "Required permissions", input: "Data Routing + Federated Search + Splunk-native catalog", service: "S3", action: "s3:AbortMultipartUpload" },
+  { app: "Splunk_TA_aws", family: "Optional permissions", input: "Data Routing + Federated Search + Splunk-native catalog", service: "SQS", action: "sqs:ReceiveMessage" },
+  { app: "Splunk_TA_aws", family: "Optional permissions", input: "Data Routing + Federated Search + Splunk-native catalog", service: "SQS", action: "sqs:DeleteMessage" },
+  { app: "Splunk_TA_aws", family: "Optional permissions", input: "Data Routing + Federated Search + Splunk-native catalog", service: "SQS", action: "sqs:GetQueueAttributes" },
+  { app: "Splunk_TA_aws", family: "Optional permissions", input: "Data Routing + Federated Search + Splunk-native catalog", service: "SQS", action: "sqs:GetQueueUrl" },
+  { app: "Splunk_TA_aws", family: "Optional permissions", input: "Data Routing + Federated Search + Splunk-native catalog", service: "KMS", action: "kms:Decrypt" },
+  { app: "Splunk_TA_aws", family: "Required permissions", input: "Catalog auto-sync (SQS) for Splunk-native catalog", service: "SQS", action: "sqs:ReceiveMessage" },
+  { app: "Splunk_TA_aws", family: "Required permissions", input: "Catalog auto-sync (SQS) for Splunk-native catalog", service: "SQS", action: "sqs:DeleteMessage" },
+  { app: "Splunk_TA_aws", family: "Required permissions", input: "Catalog auto-sync (SQS) for Splunk-native catalog", service: "SQS", action: "sqs:GetQueueAttributes" },
+  { app: "Splunk_TA_aws", family: "Optional permissions", input: "Catalog auto-sync (SQS) for Splunk-native catalog", service: "SQS", action: "sqs:GetQueueUrl" },
+  { app: "Splunk_TA_aws", family: "Required permissions", input: "SSE-KMS encryption", service: "KMS", action: "kms:Decrypt" },
+  // -- splunk_ta_aws_inputs_permissions.csv: per-input IAM permissions across the wider set of Splunk_TA_aws
+  // modular inputs, layered onto the legacy S3/SQS/KMS capability rows above. Every row's compound Actions
+  // cell (a semicolon-separated list of concrete IAM actions needed together for that input) is AND-split
+  // into one mark per action, reusing whichever column that action already has -- same convention as the
+  // Microsoft matrix. Three rows (Custom Data Type, VPC Flow Logs, Transit Gateway Flow Logs) don't list
+  // concrete actions at all -- their Actions cell is a cross-reference to another input's policy -- so that
+  // prose is transcribed verbatim as a single one-off column rather than fabricating scopes. Metadata's
+  // Actions cell mixes a framing sentence with one concrete example block (EC2 and RDS); only that example
+  // block's 11 actions are split into marks, with the framing preserved in Purpose.
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "CloudTrail", service: "SQS", action: "sqs:GetQueueAttributes", purpose: "Poll the SQS notification queue and fetch delivered CloudTrail log files", notes: "Drop s3:Delete* if remove_files_when_done is off" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "CloudTrail", service: "SQS", action: "sqs:ListQueues", purpose: "Poll the SQS notification queue and fetch delivered CloudTrail log files", notes: "Drop s3:Delete* if remove_files_when_done is off" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "CloudTrail", service: "SQS", action: "sqs:ReceiveMessage", purpose: "Poll the SQS notification queue and fetch delivered CloudTrail log files", notes: "Drop s3:Delete* if remove_files_when_done is off" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "CloudTrail", service: "SQS", action: "sqs:GetQueueUrl", purpose: "Poll the SQS notification queue and fetch delivered CloudTrail log files", notes: "Drop s3:Delete* if remove_files_when_done is off" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "CloudTrail", service: "SQS", action: "sqs:DeleteMessage", purpose: "Poll the SQS notification queue and fetch delivered CloudTrail log files", notes: "Drop s3:Delete* if remove_files_when_done is off" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "CloudTrail", service: "S3", action: "s3:Get*", purpose: "Poll the SQS notification queue and fetch delivered CloudTrail log files", notes: "Drop s3:Delete* if remove_files_when_done is off" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "CloudTrail", service: "S3", action: "s3:List*", purpose: "Poll the SQS notification queue and fetch delivered CloudTrail log files", notes: "Drop s3:Delete* if remove_files_when_done is off" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "CloudTrail", service: "S3", action: "s3:Delete*", purpose: "Poll the SQS notification queue and fetch delivered CloudTrail log files", notes: "Drop s3:Delete* if remove_files_when_done is off" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config", service: "S3", action: "s3:ListBucket", purpose: "Read delivered AWS Config snapshot files and trigger on-demand delivery" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config", service: "S3", action: "s3:GetObject", purpose: "Read delivered AWS Config snapshot files and trigger on-demand delivery" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config", service: "S3", action: "s3:GetBucketLocation", purpose: "Read delivered AWS Config snapshot files and trigger on-demand delivery" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config", service: "S3", action: "s3:ListAllMyBuckets", purpose: "Read delivered AWS Config snapshot files and trigger on-demand delivery" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config", service: "SQS", action: "sqs:ListQueues", purpose: "Read delivered AWS Config snapshot files and trigger on-demand delivery" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config", service: "SQS", action: "sqs:ReceiveMessage", purpose: "Read delivered AWS Config snapshot files and trigger on-demand delivery" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config", service: "SQS", action: "sqs:GetQueueAttributes", purpose: "Read delivered AWS Config snapshot files and trigger on-demand delivery" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config", service: "SQS", action: "sqs:SendMessage", purpose: "Read delivered AWS Config snapshot files and trigger on-demand delivery" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config", service: "SQS", action: "sqs:GetQueueUrl", purpose: "Read delivered AWS Config snapshot files and trigger on-demand delivery" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config", service: "SQS", action: "sqs:DeleteMessage", purpose: "Read delivered AWS Config snapshot files and trigger on-demand delivery" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config", service: "Config", action: "config:DeliverConfigSnapshot", purpose: "Read delivered AWS Config snapshot files and trigger on-demand delivery" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config", service: "IAM", action: "iam:GetUser", purpose: "Read delivered AWS Config snapshot files and trigger on-demand delivery" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config Rules", service: "Config", action: "config:DescribeConfigRules", purpose: "Pull Config rule definitions and their compliance state" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config Rules", service: "Config", action: "config:DescribeConfigRuleEvaluationStatus", purpose: "Pull Config rule definitions and their compliance state" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config Rules", service: "Config", action: "config:GetComplianceDetailsByConfigRule", purpose: "Pull Config rule definitions and their compliance state" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "Config Rules", service: "Config", action: "config:GetComplianceSummaryByConfigRule", purpose: "Pull Config rule definitions and their compliance state" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "CloudTrail Lake", service: "CloudTrail", action: "cloudtrail:GetQueryResults", purpose: "Run and retrieve results of SQL queries against a CloudTrail Lake event data store", notes: "Pull-based (API) input - not S3/SQS based like the other CloudTrail input" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "CloudTrail Lake", service: "CloudTrail", action: "cloudtrail:StartQuery", purpose: "Run and retrieve results of SQL queries against a CloudTrail Lake event data store", notes: "Pull-based (API) input - not S3/SQS based like the other CloudTrail input" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "CloudTrail Lake", service: "CloudTrail", action: "cloudtrail:ListEventDataStores", purpose: "Run and retrieve results of SQL queries against a CloudTrail Lake event data store", notes: "Pull-based (API) input - not S3/SQS based like the other CloudTrail input" },
+  { app: "Splunk_TA_aws", family: "Log & configuration-history inputs", input: "CloudTrail Lake", service: "CloudTrail", action: "cloudtrail:DescribeQuery", purpose: "Run and retrieve results of SQL queries against a CloudTrail Lake event data store", notes: "Pull-based (API) input - not S3/SQS based like the other CloudTrail input" },
+  { app: "Splunk_TA_aws", family: "Metrics & security findings", input: "CloudWatch", service: "CloudWatch", action: "cloudwatch:List*", purpose: "Resource-level Azure Monitor style metrics and datapoint retrieval across common services" },
+  { app: "Splunk_TA_aws", family: "Metrics & security findings", input: "CloudWatch", service: "CloudWatch", action: "cloudwatch:Get*", purpose: "Resource-level Azure Monitor style metrics and datapoint retrieval across common services" },
+  { app: "Splunk_TA_aws", family: "Metrics & security findings", input: "CloudWatch", service: "Auto Scaling", action: "autoscaling:Describe*", purpose: "Resource-level Azure Monitor style metrics and datapoint retrieval across common services" },
+  { app: "Splunk_TA_aws", family: "Metrics & security findings", input: "CloudWatch", service: "EC2", action: "ec2:Describe*", purpose: "Resource-level Azure Monitor style metrics and datapoint retrieval across common services" },
+  { app: "Splunk_TA_aws", family: "Metrics & security findings", input: "CloudWatch", service: "S3", action: "s3:List*", purpose: "Resource-level Azure Monitor style metrics and datapoint retrieval across common services" },
+  { app: "Splunk_TA_aws", family: "Metrics & security findings", input: "CloudWatch", service: "SQS", action: "sqs:List*", purpose: "Resource-level Azure Monitor style metrics and datapoint retrieval across common services" },
+  { app: "Splunk_TA_aws", family: "Metrics & security findings", input: "CloudWatch", service: "SNS", action: "sns:List*", purpose: "Resource-level Azure Monitor style metrics and datapoint retrieval across common services" },
+  { app: "Splunk_TA_aws", family: "Metrics & security findings", input: "CloudWatch", service: "Lambda", action: "lambda:List*", purpose: "Resource-level Azure Monitor style metrics and datapoint retrieval across common services" },
+  { app: "Splunk_TA_aws", family: "Metrics & security findings", input: "CloudWatch", service: "ELB", action: "elasticloadbalancing:Describe*", purpose: "Resource-level Azure Monitor style metrics and datapoint retrieval across common services" },
+  { app: "Splunk_TA_aws", family: "Metrics & security findings", input: "Inspector", service: "Inspector", action: "inspector:Describe*", purpose: "Read Amazon Inspector assessment runs and findings" },
+  { app: "Splunk_TA_aws", family: "Metrics & security findings", input: "Inspector", service: "Inspector", action: "inspector:List*", purpose: "Read Amazon Inspector assessment runs and findings" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "CloudFront Access Logs", service: "S3", action: "s3:ListBucket", purpose: "Read CloudFront access log objects from the target bucket", notes: "Uses the same Generic S3 input/policy as ELB and S3 Access Logs - only the selected sourcetype differs" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "CloudFront Access Logs", service: "S3", action: "s3:GetObject", purpose: "Read CloudFront access log objects from the target bucket", notes: "Uses the same Generic S3 input/policy as ELB and S3 Access Logs - only the selected sourcetype differs" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "CloudFront Access Logs", service: "S3", action: "s3:ListAllMyBuckets", purpose: "Read CloudFront access log objects from the target bucket", notes: "Uses the same Generic S3 input/policy as ELB and S3 Access Logs - only the selected sourcetype differs" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "CloudFront Access Logs", service: "S3", action: "s3:GetBucketLocation", purpose: "Read CloudFront access log objects from the target bucket", notes: "Uses the same Generic S3 input/policy as ELB and S3 Access Logs - only the selected sourcetype differs" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "CloudFront Access Logs", service: "KMS", action: "kms:Decrypt", purpose: "Read CloudFront access log objects from the target bucket", notes: "Uses the same Generic S3 input/policy as ELB and S3 Access Logs - only the selected sourcetype differs" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "ELB Access Logs", service: "S3", action: "s3:ListBucket", purpose: "Read Elastic Load Balancer access log objects from the target bucket", notes: "Uses the same Generic S3 input/policy as CloudFront and S3 Access Logs - only the selected sourcetype differs" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "ELB Access Logs", service: "S3", action: "s3:GetObject", purpose: "Read Elastic Load Balancer access log objects from the target bucket", notes: "Uses the same Generic S3 input/policy as CloudFront and S3 Access Logs - only the selected sourcetype differs" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "ELB Access Logs", service: "S3", action: "s3:ListAllMyBuckets", purpose: "Read Elastic Load Balancer access log objects from the target bucket", notes: "Uses the same Generic S3 input/policy as CloudFront and S3 Access Logs - only the selected sourcetype differs" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "ELB Access Logs", service: "S3", action: "s3:GetBucketLocation", purpose: "Read Elastic Load Balancer access log objects from the target bucket", notes: "Uses the same Generic S3 input/policy as CloudFront and S3 Access Logs - only the selected sourcetype differs" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "ELB Access Logs", service: "KMS", action: "kms:Decrypt", purpose: "Read Elastic Load Balancer access log objects from the target bucket", notes: "Uses the same Generic S3 input/policy as CloudFront and S3 Access Logs - only the selected sourcetype differs" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "S3 Access Logs", service: "S3", action: "s3:ListBucket", purpose: "Read S3 server access log objects from the target bucket", notes: "Uses the same Generic S3 input/policy as CloudFront and ELB Access Logs - only the selected sourcetype differs" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "S3 Access Logs", service: "S3", action: "s3:GetObject", purpose: "Read S3 server access log objects from the target bucket", notes: "Uses the same Generic S3 input/policy as CloudFront and ELB Access Logs - only the selected sourcetype differs" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "S3 Access Logs", service: "S3", action: "s3:ListAllMyBuckets", purpose: "Read S3 server access log objects from the target bucket", notes: "Uses the same Generic S3 input/policy as CloudFront and ELB Access Logs - only the selected sourcetype differs" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "S3 Access Logs", service: "S3", action: "s3:GetBucketLocation", purpose: "Read S3 server access log objects from the target bucket", notes: "Uses the same Generic S3 input/policy as CloudFront and ELB Access Logs - only the selected sourcetype differs" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "S3 Access Logs", service: "KMS", action: "kms:Decrypt", purpose: "Read S3 server access log objects from the target bucket", notes: "Uses the same Generic S3 input/policy as CloudFront and ELB Access Logs - only the selected sourcetype differs" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "Custom Data Type", service: "S3; SQS (if SQS-based); KMS", action: "Same as Generic S3 or SQS-based S3 depending on which underlying input you configure", purpose: "Ingest any S3-delivered log format under a user-defined sourcetype", notes: "Not a distinct IAM policy - it's the Generic S3 or SQS-based S3 input with a custom sourcetype assigned" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "Security Lake", service: "S3", action: "s3:GetObject", purpose: "Read Parquet-formatted Security Lake data via the SQS queue Security Lake provisions for the subscriber", notes: "An SQS-based S3 input under the hood, using the AmazonSecurityLake file decoder; resource ARNs are scoped to the Security Lake bucket and its provisioned SQS queue" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "Security Lake", service: "S3", action: "s3:GetObjectVersion", purpose: "Read Parquet-formatted Security Lake data via the SQS queue Security Lake provisions for the subscriber", notes: "An SQS-based S3 input under the hood, using the AmazonSecurityLake file decoder; resource ARNs are scoped to the Security Lake bucket and its provisioned SQS queue" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "Security Lake", service: "S3", action: "s3:ListBucket", purpose: "Read Parquet-formatted Security Lake data via the SQS queue Security Lake provisions for the subscriber", notes: "An SQS-based S3 input under the hood, using the AmazonSecurityLake file decoder; resource ARNs are scoped to the Security Lake bucket and its provisioned SQS queue" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "Security Lake", service: "S3", action: "s3:ListBucketVersions", purpose: "Read Parquet-formatted Security Lake data via the SQS queue Security Lake provisions for the subscriber", notes: "An SQS-based S3 input under the hood, using the AmazonSecurityLake file decoder; resource ARNs are scoped to the Security Lake bucket and its provisioned SQS queue" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "Security Lake", service: "SQS", action: "sqs:GetQueueUrl", purpose: "Read Parquet-formatted Security Lake data via the SQS queue Security Lake provisions for the subscriber", notes: "An SQS-based S3 input under the hood, using the AmazonSecurityLake file decoder; resource ARNs are scoped to the Security Lake bucket and its provisioned SQS queue" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "Security Lake", service: "SQS", action: "sqs:ReceiveMessage", purpose: "Read Parquet-formatted Security Lake data via the SQS queue Security Lake provisions for the subscriber", notes: "An SQS-based S3 input under the hood, using the AmazonSecurityLake file decoder; resource ARNs are scoped to the Security Lake bucket and its provisioned SQS queue" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "Security Lake", service: "SQS", action: "sqs:SendMessage", purpose: "Read Parquet-formatted Security Lake data via the SQS queue Security Lake provisions for the subscriber", notes: "An SQS-based S3 input under the hood, using the AmazonSecurityLake file decoder; resource ARNs are scoped to the Security Lake bucket and its provisioned SQS queue" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "Security Lake", service: "SQS", action: "sqs:DeleteMessage", purpose: "Read Parquet-formatted Security Lake data via the SQS queue Security Lake provisions for the subscriber", notes: "An SQS-based S3 input under the hood, using the AmazonSecurityLake file decoder; resource ARNs are scoped to the Security Lake bucket and its provisioned SQS queue" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "Security Lake", service: "SQS", action: "sqs:GetQueueAttributes", purpose: "Read Parquet-formatted Security Lake data via the SQS queue Security Lake provisions for the subscriber", notes: "An SQS-based S3 input under the hood, using the AmazonSecurityLake file decoder; resource ARNs are scoped to the Security Lake bucket and its provisioned SQS queue" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "Security Lake", service: "SQS", action: "sqs:ListQueues", purpose: "Read Parquet-formatted Security Lake data via the SQS queue Security Lake provisions for the subscriber", notes: "An SQS-based S3 input under the hood, using the AmazonSecurityLake file decoder; resource ARNs are scoped to the Security Lake bucket and its provisioned SQS queue" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "Security Lake", service: "SQS", action: "sqs:ChangeMessageVisibility", purpose: "Read Parquet-formatted Security Lake data via the SQS queue Security Lake provisions for the subscriber", notes: "An SQS-based S3 input under the hood, using the AmazonSecurityLake file decoder; resource ARNs are scoped to the Security Lake bucket and its provisioned SQS queue" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "Security Lake", service: "KMS", action: "kms:Decrypt", purpose: "Read Parquet-formatted Security Lake data via the SQS queue Security Lake provisions for the subscriber", notes: "An SQS-based S3 input under the hood, using the AmazonSecurityLake file decoder; resource ARNs are scoped to the Security Lake bucket and its provisioned SQS queue" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "VPC Flow Logs", service: "Kinesis, CloudWatch Logs, or SQS-based S3 (pick one)", action: "Depends on chosen delivery mechanism - see the corresponding input's policy", purpose: "Ingest VPC network flow log records", notes: "Not a single fixed policy - Splunk's docs point to three separate configuration guides depending on how you deliver the flow logs (Kinesis Data Stream, CloudWatch Logs, or SQS-based S3)" },
+  { app: "Splunk_TA_aws", family: "S3-based log inputs", input: "Transit Gateway Flow Logs", service: "SQS; S3", action: "Same as SQS-based S3 input", purpose: "Ingest Transit Gateway flow log records delivered to S3", notes: "Documented as routing through the SQS-based S3 input; no distinct policy of its own" },
+  { app: "Splunk_TA_aws", family: "Billing", input: "Billing", service: "S3", action: "s3:Get*", purpose: "Read Cost and Usage Report (or legacy Billing) files from the designated report bucket", notes: "Legacy Billing input deprecated since 7.6.0 in favor of the Cost and Usage Report input - same underlying S3-read pattern" },
+  { app: "Splunk_TA_aws", family: "Billing", input: "Billing", service: "S3", action: "s3:List*", purpose: "Read Cost and Usage Report (or legacy Billing) files from the designated report bucket", notes: "Legacy Billing input deprecated since 7.6.0 in favor of the Cost and Usage Report input - same underlying S3-read pattern" },
+  { app: "Splunk_TA_aws", family: "Billing", input: "Billing", service: "S3", action: "s3:ListAllMyBuckets", purpose: "Read Cost and Usage Report (or legacy Billing) files from the designated report bucket", notes: "Only if the bucket resource is a wildcard" },
+  { app: "Splunk_TA_aws", family: "Metadata (formerly Description)", input: "Metadata", service: "EC2", action: "ec2:DescribeInstances", purpose: "Inventory/metadata snapshot of AWS resources -- modular, one permission block per AWS service (EC2; RDS; ELB; VPC; CloudFront; Lambda; IAM; Kinesis/Firehose; GuardDuty; WAF/WAFv2; EKS; Network Firewall; Route 53; EMR; ElastiCache in the source); only the EC2/RDS example block given in the source CSV is transcribed here as concrete actions", notes: "Attach only the service modules matching the resource types enabled in the input's configuration - all Describe*/List* reads, no writes" },
+  { app: "Splunk_TA_aws", family: "Metadata (formerly Description)", input: "Metadata", service: "EC2", action: "ec2:DescribeReservedInstances", purpose: "Inventory/metadata snapshot of AWS resources -- modular, one permission block per AWS service (EC2; RDS; ELB; VPC; CloudFront; Lambda; IAM; Kinesis/Firehose; GuardDuty; WAF/WAFv2; EKS; Network Firewall; Route 53; EMR; ElastiCache in the source); only the EC2/RDS example block given in the source CSV is transcribed here as concrete actions", notes: "Attach only the service modules matching the resource types enabled in the input's configuration - all Describe*/List* reads, no writes" },
+  { app: "Splunk_TA_aws", family: "Metadata (formerly Description)", input: "Metadata", service: "EC2", action: "ec2:DescribeSnapshots", purpose: "Inventory/metadata snapshot of AWS resources -- modular, one permission block per AWS service (EC2; RDS; ELB; VPC; CloudFront; Lambda; IAM; Kinesis/Firehose; GuardDuty; WAF/WAFv2; EKS; Network Firewall; Route 53; EMR; ElastiCache in the source); only the EC2/RDS example block given in the source CSV is transcribed here as concrete actions", notes: "Attach only the service modules matching the resource types enabled in the input's configuration - all Describe*/List* reads, no writes" },
+  { app: "Splunk_TA_aws", family: "Metadata (formerly Description)", input: "Metadata", service: "EC2", action: "ec2:DescribeRegions", purpose: "Inventory/metadata snapshot of AWS resources -- modular, one permission block per AWS service (EC2; RDS; ELB; VPC; CloudFront; Lambda; IAM; Kinesis/Firehose; GuardDuty; WAF/WAFv2; EKS; Network Firewall; Route 53; EMR; ElastiCache in the source); only the EC2/RDS example block given in the source CSV is transcribed here as concrete actions", notes: "Attach only the service modules matching the resource types enabled in the input's configuration - all Describe*/List* reads, no writes" },
+  { app: "Splunk_TA_aws", family: "Metadata (formerly Description)", input: "Metadata", service: "EC2", action: "ec2:DescribeKeyPairs", purpose: "Inventory/metadata snapshot of AWS resources -- modular, one permission block per AWS service (EC2; RDS; ELB; VPC; CloudFront; Lambda; IAM; Kinesis/Firehose; GuardDuty; WAF/WAFv2; EKS; Network Firewall; Route 53; EMR; ElastiCache in the source); only the EC2/RDS example block given in the source CSV is transcribed here as concrete actions", notes: "Attach only the service modules matching the resource types enabled in the input's configuration - all Describe*/List* reads, no writes" },
+  { app: "Splunk_TA_aws", family: "Metadata (formerly Description)", input: "Metadata", service: "EC2", action: "ec2:DescribeSecurityGroups", purpose: "Inventory/metadata snapshot of AWS resources -- modular, one permission block per AWS service (EC2; RDS; ELB; VPC; CloudFront; Lambda; IAM; Kinesis/Firehose; GuardDuty; WAF/WAFv2; EKS; Network Firewall; Route 53; EMR; ElastiCache in the source); only the EC2/RDS example block given in the source CSV is transcribed here as concrete actions", notes: "Attach only the service modules matching the resource types enabled in the input's configuration - all Describe*/List* reads, no writes" },
+  { app: "Splunk_TA_aws", family: "Metadata (formerly Description)", input: "Metadata", service: "EC2", action: "ec2:DescribeVolumes", purpose: "Inventory/metadata snapshot of AWS resources -- modular, one permission block per AWS service (EC2; RDS; ELB; VPC; CloudFront; Lambda; IAM; Kinesis/Firehose; GuardDuty; WAF/WAFv2; EKS; Network Firewall; Route 53; EMR; ElastiCache in the source); only the EC2/RDS example block given in the source CSV is transcribed here as concrete actions", notes: "Attach only the service modules matching the resource types enabled in the input's configuration - all Describe*/List* reads, no writes" },
+  { app: "Splunk_TA_aws", family: "Metadata (formerly Description)", input: "Metadata", service: "EC2", action: "ec2:DescribeImages", purpose: "Inventory/metadata snapshot of AWS resources -- modular, one permission block per AWS service (EC2; RDS; ELB; VPC; CloudFront; Lambda; IAM; Kinesis/Firehose; GuardDuty; WAF/WAFv2; EKS; Network Firewall; Route 53; EMR; ElastiCache in the source); only the EC2/RDS example block given in the source CSV is transcribed here as concrete actions", notes: "Attach only the service modules matching the resource types enabled in the input's configuration - all Describe*/List* reads, no writes" },
+  { app: "Splunk_TA_aws", family: "Metadata (formerly Description)", input: "Metadata", service: "EC2", action: "ec2:DescribeAddresses", purpose: "Inventory/metadata snapshot of AWS resources -- modular, one permission block per AWS service (EC2; RDS; ELB; VPC; CloudFront; Lambda; IAM; Kinesis/Firehose; GuardDuty; WAF/WAFv2; EKS; Network Firewall; Route 53; EMR; ElastiCache in the source); only the EC2/RDS example block given in the source CSV is transcribed here as concrete actions", notes: "Attach only the service modules matching the resource types enabled in the input's configuration - all Describe*/List* reads, no writes" },
+  { app: "Splunk_TA_aws", family: "Metadata (formerly Description)", input: "Metadata", service: "RDS", action: "rds:DescribeDBInstances", purpose: "Inventory/metadata snapshot of AWS resources -- modular, one permission block per AWS service (EC2; RDS; ELB; VPC; CloudFront; Lambda; IAM; Kinesis/Firehose; GuardDuty; WAF/WAFv2; EKS; Network Firewall; Route 53; EMR; ElastiCache in the source); only the EC2/RDS example block given in the source CSV is transcribed here as concrete actions", notes: "Attach only the service modules matching the resource types enabled in the input's configuration - all Describe*/List* reads, no writes" },
+  { app: "Splunk_TA_aws", family: "Metadata (formerly Description)", input: "Metadata", service: "RDS", action: "rds:DescribeReservedDBInstances", purpose: "Inventory/metadata snapshot of AWS resources -- modular, one permission block per AWS service (EC2; RDS; ELB; VPC; CloudFront; Lambda; IAM; Kinesis/Firehose; GuardDuty; WAF/WAFv2; EKS; Network Firewall; Route 53; EMR; ElastiCache in the source); only the EC2/RDS example block given in the source CSV is transcribed here as concrete actions", notes: "Attach only the service modules matching the resource types enabled in the input's configuration - all Describe*/List* reads, no writes" },
+];
+const awsPermissionsRows = [...new Map(awsPermissionsData.map(r => [`${r.app} ||| ${r.input}`, { app: r.app, input: r.input }])).values()];
+const awsPermissionsActions = [...new Set(awsPermissionsData.map(r => r.action))];
+const awsPermissionsByKey = new Map(awsPermissionsData.map(r => [`${r.app} ||| ${r.input} ||| ${r.action}`, r]));
+const AWS_PERMISSIONS_FAMILY_CLASS = {
+  "Required permissions": "perm-required",
+  "Optional permissions": "perm-optional",
+  "Log & configuration-history inputs": "perm-required",
+  "Metrics & security findings": "perm-required",
+  "S3-based log inputs": "perm-required",
+  "Billing": "perm-required",
+  "Metadata (formerly Description)": "perm-required"
+};
+const AWS_PERMISSIONS_FAMILY_SHORT_LABEL = {
+  "Required permissions": "Required",
+  "Optional permissions": "Optional",
+  "Log & configuration-history inputs": "Log/Config history",
+  "Metrics & security findings": "Metrics/Security",
+  "S3-based log inputs": "S3-based log",
+  "Billing": "Billing",
+  "Metadata (formerly Description)": "Metadata"
+};
+
+const awsPermissionsRowHaystack = new Map();
+awsPermissionsData.forEach(r => {
+  const key = `${r.app} ||| ${r.input}`;
+  const hay = [r.app, r.input, r.family, r.service, r.action, r.purpose, r.notes].filter(Boolean).join(" ").toLowerCase();
+  awsPermissionsRowHaystack.set(key, `${awsPermissionsRowHaystack.get(key) || ""} ${hay}`);
+});
+let awsPermState = { query: "", app: "", sortKey: "app", sortDir: "asc", hideBlankCols: false };
+function awsPermFilteredSortedRows() {
+  const q = awsPermState.query.trim().toLowerCase();
+  let rows = awsPermissionsRows.filter(({ app, input }) => {
+    if (awsPermState.app && app !== awsPermState.app) return false;
+    if (!q) return true;
+    return (awsPermissionsRowHaystack.get(`${app} ||| ${input}`) || "").includes(q);
+  });
+  const dir = awsPermState.sortDir === "desc" ? -1 : 1;
+  const keyFn = awsPermState.sortKey === "input" ? r => r.input : r => r.app;
+  return rows.slice().sort((a, b) => keyFn(a).localeCompare(keyFn(b)) * dir || a.app.localeCompare(b.app) || a.input.localeCompare(b.input));
+}
+function awsPermVisibleActions(rows) {
+  if (!awsPermState.hideBlankCols) return awsPermissionsActions;
+  const rowKeySet = new Set(rows.map(r => `${r.app} ||| ${r.input}`));
+  const usedActions = new Set();
+  awsPermissionsData.forEach(entry => {
+    if (rowKeySet.has(`${entry.app} ||| ${entry.input}`)) usedActions.add(entry.action);
+  });
+  return awsPermissionsActions.filter(a => usedActions.has(a));
+}
+function renderAwsPermissionsTable() {
+  const head = document.getElementById("awsPermissionsTableHead");
+  const body = document.getElementById("awsPermissionsTableBody");
+  if (!head || !body) return;
+  const rows = awsPermFilteredSortedRows();
+  const actions = awsPermVisibleActions(rows);
+  head.innerHTML = `<tr><th scope="col" data-sort="app">App</th><th scope="col" data-sort="input">Input</th>${actions.map(a => `<th scope="col">${escapeHtml(a)}</th>`).join("")}</tr>`;
+  head.querySelectorAll("th[data-sort]").forEach(th => {
+    th.classList.toggle("se-sorted", th.dataset.sort === awsPermState.sortKey);
+    th.classList.toggle("se-asc", th.dataset.sort === awsPermState.sortKey && awsPermState.sortDir === "asc");
+  });
+  const countEl = document.getElementById("awsPermResultCount");
+  if (countEl) {
+    const rowText = rows.length === awsPermissionsRows.length
+      ? `${rows.length} row${rows.length === 1 ? "" : "s"}`
+      : `Showing ${rows.length} of ${awsPermissionsRows.length} rows`;
+    const colText = awsPermState.hideBlankCols ? ` &middot; ${actions.length} of ${awsPermissionsActions.length} columns` : "";
+    countEl.innerHTML = rowText + colText;
+  }
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="${actions.length + 2}"><div class="se-empty">No rows match the current search/filter.</div></td></tr>`;
+    return;
+  }
+  body.innerHTML = rows.map(({ app, input }) => {
+    const cells = actions.map(action => {
+      const entry = awsPermissionsByKey.get(`${app} ||| ${input} ||| ${action}`);
+      if (!entry) return "<td>&mdash;</td>";
+      const cls = AWS_PERMISSIONS_FAMILY_CLASS[entry.family] || "perm-required";
+      const shortLabel = AWS_PERMISSIONS_FAMILY_SHORT_LABEL[entry.family] || entry.family;
+      return `<td><button type="button" class="perm-mark ${cls}" data-perm-app="${escapeHtml(app)}" data-perm-input="${escapeHtml(input)}" data-perm-action="${escapeHtml(action)}">${escapeHtml(shortLabel)}</button></td>`;
+    }).join("");
+    return `<tr><td>${escapeHtml(app)}</td><th scope="row">${escapeHtml(input)}</th>${cells}</tr>`;
+  }).join("");
+}
+renderAwsPermissionsTable();
+
+function exportAwsPermissionsCsv(event) {
+  const rows = awsPermFilteredSortedRows();
+  const actions = awsPermVisibleActions(rows);
+  const lines = [["App", "Input", ...actions].map(csvValue).join(",")];
+  rows.forEach(({ app, input }) => {
+    const cells = actions.map(action => {
+      const entry = awsPermissionsByKey.get(`${app} ||| ${input} ||| ${action}`);
+      return entry ? (AWS_PERMISSIONS_FAMILY_SHORT_LABEL[entry.family] || entry.family) : "";
+    });
+    lines.push([app, input, ...cells].map(csvValue).join(","));
+  });
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "AWS-Cloud-Permissions-Matrix.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  const btn = event && event.currentTarget;
+  if (btn) {
+    const original = btn.textContent;
+    btn.textContent = "Exported";
+    setTimeout(() => { btn.textContent = original; }, 1400);
+  }
+}
+
+const awsPermAppFilterSelect = document.getElementById("awsPermAppFilter");
+if (awsPermAppFilterSelect) {
+  [...new Set(awsPermissionsRows.map(r => r.app))].forEach(app => {
+    const opt = document.createElement("option");
+    opt.value = app;
+    opt.textContent = app;
+    awsPermAppFilterSelect.appendChild(opt);
+  });
+  awsPermAppFilterSelect.addEventListener("change", e => { awsPermState.app = e.target.value; renderAwsPermissionsTable(); });
+}
+const awsPermSearchBoxEl = document.getElementById("awsPermSearchBox");
+if (awsPermSearchBoxEl) awsPermSearchBoxEl.addEventListener("input", e => { awsPermState.query = e.target.value; renderAwsPermissionsTable(); });
+const awsPermHideBlankColsEl = document.getElementById("awsPermHideBlankCols");
+if (awsPermHideBlankColsEl) awsPermHideBlankColsEl.addEventListener("change", e => { awsPermState.hideBlankCols = e.target.checked; renderAwsPermissionsTable(); });
+const awsPermExportBtnEl = document.getElementById("awsPermExportBtn");
+if (awsPermExportBtnEl) awsPermExportBtnEl.addEventListener("click", exportAwsPermissionsCsv);
+document.getElementById("awsPermissionsTableHead").addEventListener("click", event => {
+  const th = event.target.closest("th[data-sort]");
+  if (!th) return;
+  const key = th.dataset.sort;
+  if (awsPermState.sortKey === key) awsPermState.sortDir = awsPermState.sortDir === "asc" ? "desc" : "asc";
+  else { awsPermState.sortKey = key; awsPermState.sortDir = "asc"; }
+  renderAwsPermissionsTable();
+});
+
+const awsPermissionDetailModal = document.getElementById("awsPermissionDetailModal");
+let lastAwsPermissionDetailTrigger = null;
+function openAwsPermissionDetail(entry, trigger) {
+  if (!awsPermissionDetailModal) return;
+  lastAwsPermissionDetailTrigger = trigger || document.activeElement;
+  document.getElementById("awsPermissionDetailTitle").textContent = entry.input;
+  document.getElementById("awsPermissionDetailSubtitle").textContent = entry.action;
+  const rows = [
+    ["App", entry.app],
+    ["Input family", entry.family],
+    ["Service", entry.service],
+    ["Action", entry.action],
+    ["Purpose", entry.purpose],
+    ["Notes", entry.notes]
+  ].filter(([, v]) => v !== undefined && v !== "");
+  document.getElementById("awsPermissionDetailGrid").innerHTML = rows.map(([k, v]) => `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join("");
+  awsPermissionDetailModal.classList.add("open");
+  awsPermissionDetailModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  document.getElementById("closeAwsPermissionDetail").focus();
+}
+function closeAwsPermissionDetail() {
+  if (!awsPermissionDetailModal) return;
+  awsPermissionDetailModal.classList.remove("open");
+  awsPermissionDetailModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+  if (lastAwsPermissionDetailTrigger && typeof lastAwsPermissionDetailTrigger.focus === "function") lastAwsPermissionDetailTrigger.focus();
+}
+document.getElementById("awsPermissionsTableBody").addEventListener("click", event => {
+  const trigger = event.target.closest(".perm-mark");
+  if (!trigger) return;
+  const entry = awsPermissionsByKey.get(`${trigger.dataset.permApp} ||| ${trigger.dataset.permInput} ||| ${trigger.dataset.permAction}`);
+  if (entry) openAwsPermissionDetail(entry, trigger);
+});
+document.getElementById("closeAwsPermissionDetail").addEventListener("click", closeAwsPermissionDetail);
+awsPermissionDetailModal.addEventListener("click", event => { if (event.target === awsPermissionDetailModal) closeAwsPermissionDetail(); });
+document.addEventListener("keydown", event => { if (event.key === "Escape" && awsPermissionDetailModal.classList.contains("open")) closeAwsPermissionDetail(); });
 
 /* ---------- Input Coverage: Microsoft cloud inputs Permissions matrix -------------------------------------
  * Same visual style as the AWS Permissions tab (eccs-table-wrap/eccs-matrix), but this data is inherently a
