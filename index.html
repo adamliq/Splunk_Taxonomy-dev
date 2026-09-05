@@ -33805,11 +33805,12 @@ let lastInputDetailTrigger = null;
 
 function openInputDetail(key, trigger) {
   const msCol = inputCoverageInputColumns.find(col => col.key === key);
-  const c = msCol || awsInputCoverageInputColumns.find(col => col.key === key);
+  const awsCol = !msCol && awsInputCoverageInputColumns.find(col => col.key === key);
+  const c = msCol || awsCol || zscalerInputCoverageInputColumns.find(col => col.key === key);
   if (!c || !inputDetailModal) return;
   lastInputDetailTrigger = trigger || document.activeElement;
   const eyebrowEl = document.getElementById("inputDetailEyebrow");
-  if (eyebrowEl) eyebrowEl.textContent = msCol ? "Microsoft cloud based inputs" : "Amazon AWS based inputs";
+  if (eyebrowEl) eyebrowEl.textContent = msCol ? "Microsoft cloud based inputs" : (awsCol ? "Amazon AWS based inputs" : "Zscaler based inputs");
   document.getElementById("inputDetailTitle").textContent = c.label;
   document.getElementById("inputDetailSubtitle").textContent = `${c.appName} (${c.tag})`;
   const rows = [
@@ -33825,6 +33826,7 @@ function openInputDetail(key, trigger) {
     ["Source", c.source],
     ["Collection method", c.collectionMethod],
     ["Sourcetype", c.sourcetype],
+    ["Configuration settings", c.configurationSettings],
     ["API endpoint description", c.apiEndpointDescription],
     ["API endpoint dataset(s)", c.apiEndpointDataset],
     ["API endpoint CIM data model(s)", c.apiEndpointCimDataModels],
@@ -33836,13 +33838,14 @@ function openInputDetail(key, trigger) {
     // Fields is derived from the linked schema, not looked up independently -- its value only makes sense
     // relative to c.schema, so it's handled inline below rather than as its own [k, v] row.
     ["Fields", c.schema === "To be confirmed" ? "To be confirmed" : (c.fields.length ? c.fields : "No individual fields documented in the schema")]
-  // "Entra ID type" only applies to Microsoft entries (it's not in the AWS column shape at all, so it's
-  // undefined there) -- the "API endpoint ..." rows only apply to splunk_ta_o365 inputs whose sourcetype
+  // "Entra ID type" only applies to Microsoft entries (it's not in the AWS/Zscaler column shape at all, so
+  // it's undefined there) -- the "API endpoint ..." rows only apply to splunk_ta_o365 inputs whose sourcetype
   // matches o365ApiEndpointDetails, "API family"/"API base URL"/"Specific API endpoint" apply to any
-  // Microsoft input whose sourcetype matches any of the four lookup tables, and "API base URL pattern" only
-  // to AWS inputs (AWS reuses "API family" but has its own distinct base-URL row -- see
-  // awsInputCoverageInputColumns above) -- drop rows with no value rather than showing an irrelevant blank
-  // field.
+  // Microsoft input whose sourcetype matches any of the four lookup tables, "API base URL pattern" only to
+  // AWS inputs (AWS reuses "API family" but has its own distinct base-URL row -- see
+  // awsInputCoverageInputColumns above), and "Configuration settings" only to Zscaler inputs (a multi-line
+  // setup-steps block the supplied JSON gave per input, with no equivalent field on the Microsoft/AWS side) --
+  // drop rows with no value rather than showing an irrelevant blank field.
   ].filter(([, v]) => v !== undefined && v !== "");
   document.getElementById("inputDetailGrid").innerHTML = rows.map(([k, v]) => {
     const isExternalLink = (k === "Splunk app base link" || k === "API base URL") && /^https?:\/\//.test(v);
@@ -33857,6 +33860,10 @@ function openInputDetail(key, trigger) {
       valueHtml = schemaValues.map(sv => sv === "To be confirmed" ? escapeHtml(sv) : `<a href="${escapeHtml(sv)}">${escapeHtml(sv)}</a>`).join(", ");
     } else if (k === "Fields" && Array.isArray(v)) {
       valueHtml = v.map(f => `<code title="${escapeHtml(f.type)}${f.description ? " -- " + escapeHtml(f.description) : ""}">${escapeHtml(f.name)}</code>`).join(", ");
+    } else if (k === "Configuration settings") {
+      // The source data is itself a multi-line bulleted list -- preserve those line breaks rather than
+      // collapsing it to one run-on line, since that's how the setup steps stay readable/orderable.
+      valueHtml = escapeHtml(v).replace(/\n/g, "<br>");
     } else {
       valueHtml = escapeHtml(v);
     }
@@ -34017,15 +34024,57 @@ document.getElementById("awsInputsListGroups").addEventListener("click", event =
 });
 
 /* ---------- Input Coverage: Zscaler based inputs ---------------------------------------------------------
- * Scaffold only -- no Zscaler source CSV has been supplied yet. Structured identically to the Microsoft/AWS
- * pools above (same groups/columns/render shape) so that dropping in a real Splunk_TA_zscaler-style
- * input-list CSV later is a data change, not a structural one. zscalerInputCoverageGroups starts empty;
- * renderZscalerInputsListView() (like renderAwsInputsListView() above) already handles an empty groups array
- * gracefully by leaving the static empty-state intro/note authored in the HTML untouched. Once real inputs
- * exist here, openInputDetail() (shared by the Microsoft/AWS Inputs tabs) will need a third lookup arm and
- * eyebrow-text branch for Zscaler -- not added yet since there's nothing for it to look up. ---------------- */
-const zscalerInputCoverageGroups = [];
-const zscalerInputCoverageInputColumns = [];
+ * Structured identically to the Microsoft/AWS pools above. Input list/detail transcribed verbatim from a
+ * supplied JSON structure (16 inputs across two apps: the official "Zscaler Technical Add-on for Splunk" --
+ * ZIA NSS/API feeds and ZPA LSS feeds -- and the unofficial community "TA-zscaler-api" add-on's two
+ * config/enrichment-object inputs). No separate short technical package tag (e.g. "Splunk_TA_zscaler") was
+ * supplied for either app, so each group's own "app" string doubles as its tag rather than guessing one.
+ * Splunk app ID/base link were not confirmed against Splunkbase/GitHub this round, so both stay "To be
+ * confirmed" per the same convention AWS/Microsoft used before their own Splunkbase links were confirmed.
+ * The supplied "configuration_settings" field is new -- no existing openInputDetail() row fit it -- so a
+ * "Configuration settings" row was added there (see below), rendered with line breaks preserved since the
+ * source text is itself a multi-line bulleted list. */
+const zscalerInputCoverageGroups = [
+  { tag: "Zscaler Technical Add-on for Splunk", friendlyName: "Zscaler Internet Access (ZIA) & Private Access (ZPA)", description: "Official Zscaler-published Splunk add-on -- collects ZIA web/firewall/DNS/tunnel/system-alert NSS feeds, ZIA Admin Audit and Sandbox report API data, and ZPA LSS feeds (app access, authentication, connector health, browser access, web inspection, admin audit).", appName: "Zscaler Technical Add-on for Splunk", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["Web / Proxy logs (ZIA)", "Firewall logs (ZIA)", "DNS logs (ZIA)", "Tunnel logs (ZIA)", "System alerts (ZIA)", "Admin Audit logs (ZIA)", "Sandbox detail reports (ZIA)", "App access logs (ZPA)", "Authentication logs (ZPA)", "App Connector logs (ZPA)", "Browser Access logs (ZPA)", "Web Inspection / AppProtection logs (ZPA)", "Admin Audit logs (ZPA)"] },
+  { tag: "TA-zscaler-api (unofficial community add-on)", friendlyName: "Zscaler config/enrichment objects (unofficial)", description: "Unofficial, community-maintained add-on -- periodic snapshots of ZIA/ZPA policy and config objects (URL categories, app segments, segment groups) for enrichment/lookup use, not event logs. Not supported by Zscaler; review its GitHub docs before deploying.", appName: "TA-zscaler-api (unofficial community add-on)", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["ZIA config objects (URL categories, etc.)", "ZPA config objects (app segments, segment groups)"] }
+];
+const zscalerInputCoverageColumnDetails = {
+  "Web / Proxy logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "All web/HTTP(S) traffic processed by the ZIA proxy — URL, user, category, action, bytes.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-web", configurationSettings: "ZIA Admin Portal > Administration > Nanolog Streaming Service:\n• NSS Server (VM) provisioned and paired to a ZIA Public Service Edge\n• NSS Feed: type=Web; SIEM IP/FQDN + port (SC4S host:514 by default); TCP or SSL/TLS transport\n• Feed output format: default or custom %s{field} template; escape character; duplicate-log/rate-limit option\n• Filters: log type, user/dept/location, action (optional)\nCloud NSS alternative: destination = Splunk HEC URL; HEC token; JSON output; batch interval\nSplunk/SC4S side: listener on 514/tcp (or HEC port 8088); sourcetype override to zscalernss-web; index=netproxy" },
+  "Firewall logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Non-web traffic (any port/protocol) processed by the ZIA cloud firewall — src/dst IP, port, protocol, rule.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-fw", configurationSettings: "Same NSS Server/VM as Web feed, separate NSS Feed object:\n• NSS Feed: type=Firewall; SIEM IP/FQDN + port; TCP/SSL transport\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=fw before the newline so SC4S auto-detects the sourcetype\n• Filters: aggregate vs. session logs, action (allow/block), IPS/threat-only\nSplunk/SC4S side: sourcetype override zscalernss-fw; index=netfw" },
+  "DNS logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "DNS queries/responses routed through Zscaler — queried domain, resolved IP, policy action.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-dns", configurationSettings: "• NSS Feed: type=DNS; SIEM IP/FQDN + port; TCP/SSL transport\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=dns before the newline for SC4S auto-detection\n• Filters: request vs. response logs, category\nSplunk/SC4S side: sourcetype override zscalernss-dns; index=netdns" },
+  "Tunnel logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "GRE/IPSec tunnel lifecycle events between customer edge and Zscaler — up/down, aggregate traffic stats.", collectionMethod: "NSS feed (syslog→SC4S)", sourcetype: "zscalernss-tunnel", configurationSettings: "• NSS Feed: type=Tunnel; SIEM IP/FQDN + port; TCP/SSL transport\n• No Cloud NSS/HEC option in most deployments — syslog only\nSplunk/SC4S side: sourcetype override zscalernss-tunnel; index=netops" },
+  "System alerts (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Operational/system alerts from the ZIA cloud platform itself (service issues), not user traffic.", collectionMethod: "NSS feed (syslog→SC4S)", sourcetype: "zscalernss-alerts", configurationSettings: "• NSS Feed: type=Alert (built on the Web NSS format); SIEM IP/FQDN + port\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=alerts before the newline for SC4S auto-detection\nSplunk/SC4S side: sourcetype override zscalernss-alerts; index=main" },
+  "Admin Audit logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Administrative activity in the ZIA Admin Portal — who changed what policy/config, and when.", collectionMethod: "REST API poll (modular input)", sourcetype: "zscalerapi-zia-audit", configurationSettings: "• API credentials: OAuth2 client via ZIdentity (Client ID, Client Secret, Vanity/Customer Domain) on newer tenants, or legacy ZIA API Key + Admin Username + Password on tenants not yet migrated\n• Base/cloud URL for the ZIA tenant (e.g. https://admin.<cloud>.zscaler.net or the ZIdentity token endpoint)\n• Splunk TA input: polling interval, checkpoint (last record id/timestamp), proxy settings if egress is restricted\n• TLS certificate validation for outbound HTTPS calls" },
+  "Sandbox detail reports (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Full post-detonation malware analysis for files flagged by ZIA Sandbox — behavior, verdict, hashes.", collectionMethod: "REST API poll (modular input)", sourcetype: "zscalerapi-zia-sandbox", configurationSettings: "• Same API credential set as Admin Audit (OAuth2/ZIdentity or legacy API Key + Username + Password)\n• Sandbox Report API is called per file hash after a sandbox verdict fires — mind published request-rate quotas\n• Splunk TA input: polling interval; report detail level (summary vs. full)" },
+  "App access logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Every application access attempt through ZPA — user, app segment, connector used, session outcome/timings. (Zscaler calls this the “User Activity” log.)", collectionMethod: "LSS — JSON stream over TLS, pushed from ZPA to a log receiver", sourcetype: "zscalerlss-zpa-app", configurationSettings: "ZPA Admin Portal > Configuration & Control > Log Streaming Service > Add Log Receiver:\n• App Connector Group(s) in scope\n• Log Type = User Activity\n• Session/Policy filter (optional)\n• TLS certificate for the receiver; destination host:port (Splunk-side listener or SC4S)\n• Output format = JSON" },
+  "Authentication logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "User authentication/session status for ZPA — IdP used, SAML attributes, posture check results, session state. (Zscaler calls this the “User Status” log.)", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-auth", configurationSettings: "Same LSS Log Receiver mechanism as App Access, with:\n• Log Type = User Status\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "App Connector logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Health/status of ZPA App Connectors — CPU/memory, interface stats, session state, connectivity to Service Edge.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-connector", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = App Connector Status\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "Browser Access logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Access to internal apps via ZPA's clientless Browser Access feature — CORS/connection timing detail.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-bba", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = Browser Access\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "Web Inspection / AppProtection logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Inline threat-inspection results for private app traffic (ZPA AppProtection) — detected attacks/signatures.", collectionMethod: "LSS — JSON stream over TLS (where available) or embedded in User Activity logs", sourcetype: "zscalerlss-zpa-web-inspection", configurationSettings: "• Requires AppProtection enabled on the relevant Access Policy / app segments\n• LSS Log Receiver (if your ZPA tenant exposes it as a distinct Log Type) with same TLS/host:port/JSON settings\nNOTE: not independently documented as a distinct LSS log type in current public Zscaler/vendor field references — verify in your own ZPA Admin Portal's Log Streaming Service > Log Type list before building this input." },
+  "Admin Audit logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Administrative activity in the ZPA Admin Portal — object created/changed/deleted, old/new values, admin session.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-audit", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = Audit\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "ZIA config objects (URL categories, etc.) [TA-zscaler-api (unofficial community add-on)]": { description: "Enrichment/lookup data, NOT event logs — periodic snapshot of ZIA policy/config objects (e.g. URL category tables) used to enrich other events.", collectionMethod: "REST API poll (modular input)", sourcetype: "n/a (lookup / KV store, not a log sourcetype)", configurationSettings: "• API credentials: ZIA OAuth2/ZIdentity client or legacy API key\n• Polling interval for each config object type\n• Unofficial add-on — not supported by Zscaler; review its GitHub docs before deploying" },
+  "ZPA config objects (app segments, segment groups) [TA-zscaler-api (unofficial community add-on)]": { description: "Enrichment/lookup data, NOT event logs — periodic snapshot of ZPA app segment/segment group definitions.", collectionMethod: "REST API poll (modular input)", sourcetype: "n/a (lookup / KV store, not a log sourcetype)", configurationSettings: "• API credentials: ZPA OAuth2/ZIdentity client or legacy API key + secret\n• Polling interval for each config object type\n• Unofficial add-on — not supported by Zscaler; review its GitHub docs before deploying" }
+};
+const zscalerInputCoverageInputColumns = zscalerInputCoverageGroups.flatMap(group =>
+  group.inputs.map(label => {
+    const key = `${label} [${group.tag}]`;
+    const details = zscalerInputCoverageColumnDetails[key] || {};
+    return {
+      key, label, tag: group.tag,
+      appName: group.appName, appId: group.appId, baseLink: group.baseLink,
+      description: details.description || "To be confirmed",
+      sourcetype: details.sourcetype || "To be confirmed",
+      inputCategory: details.inputCategory || "To be confirmed",
+      contentType: details.contentType || "To be confirmed",
+      inputTypeSub: details.inputTypeSub || "To be confirmed",
+      source: details.source || "To be confirmed",
+      collectionMethod: details.collectionMethod || "To be confirmed",
+      configurationSettings: details.configurationSettings || undefined,
+      schema: details.schema || "To be confirmed",
+      fields: details.fields || []
+    };
+  })
+);
 // Zscaler's Coverage tab tracks enablement by tenant, not by AWS-style account number or Microsoft-style
 // tenant/subscription pair -- declared here (ahead of renderZscalerInputsListView, which references it
 // immediately below) rather than alongside the rest of the Zscaler coverage table implementation further down.
