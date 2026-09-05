@@ -14513,6 +14513,7 @@ E. Assumptions and unresolved inputs</pre>
         <button id="showAwsInputsListView" class="page-subtab active" type="button" role="tab" aria-selected="true" aria-controls="awsInputsListView" data-awsview="awsInputsList">Inputs</button>
         <button id="showAwsCoverageView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="awsCoverageView" data-awsview="awsCoverage">Coverage</button>
         <button id="showAwsSchemaView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="awsSchemaView" data-awsview="awsSchema">Schema</button>
+        <button id="showAwsPermissionsView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="awsPermissionsView" data-awsview="awsPermissions">Permissions</button>
       </div>
 
       <div id="awsInputsListView" class="subpage-view" role="tabpanel" aria-labelledby="showAwsInputsListView">
@@ -14592,6 +14593,26 @@ E. Assumptions and unresolved inputs</pre>
             </div>
           </div>
         </div>
+      </section>
+      </div>
+
+      <div id="awsPermissionsView" class="subpage-view" role="tabpanel" aria-labelledby="showAwsPermissionsView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Permissions</h3><p>IAM permissions required on the S3 bucket (and, where used, its notification queue/KMS key), by capability/feature -- not every deployment needs every permission below.</p></div></div>
+
+        <div class="eccs-table-wrap" role="region" aria-label="Scrollable S3 IAM permissions matrix" tabindex="0">
+          <table class="eccs-matrix" id="awsPermissionsTable">
+            <thead><tr><th scope="col">Capability / Feature</th><th scope="col"><code>s3:GetBucketLocation</code></th><th scope="col"><code>s3:ListBucket</code></th><th scope="col"><code>s3:GetObject</code></th><th scope="col"><code>s3:GetObject*</code></th><th scope="col"><code>s3:PutObject</code></th><th scope="col"><code>s3:AbortMultipartUpload</code></th><th scope="col"><code>sqs:ReceiveMessage</code></th><th scope="col"><code>sqs:DeleteMessage</code></th><th scope="col"><code>sqs:GetQueueAttributes</code></th><th scope="col"><code>kms:Decrypt</code></th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Federated Search only + Splunk-native catalog</th><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Not needed</td><td>Not needed</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td></tr>
+              <tr><th scope="row">Data Routing + Federated Search + Splunk-native catalog</th><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td></tr>
+              <tr><th scope="row">Catalog auto-sync (SQS) for Splunk-native catalog</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Required</td><td>Required</td><td>Required</td><td>&mdash;</td></tr>
+              <tr><th scope="row">SSE-KMS encryption</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Required</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="sot-note">Transcribed verbatim from a supplied <code>splunk_s3_permissions.csv</code>. <code>s3:GetObject*</code> denotes the family of versioned/tagging read actions (e.g. <code>s3:GetObjectVersion</code>) alongside the base <code>s3:GetObject</code> action. &mdash; not applicable to that capability/feature.</p>
       </section>
       </div>
     </div>
