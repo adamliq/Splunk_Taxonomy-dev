@@ -998,8 +998,14 @@
     .se-type-dot.default { background: #6b7280; }
 
     .se-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
-    #seSearchBox { flex: 1; min-width: 240px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 13px; }
+    #seSearchBox, #msPermSearchBox { flex: 1; min-width: 240px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 13px; }
+    #msPermAppFilter { width: auto; flex: 0 0 auto; min-width: 200px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 13px; }
     .se-result-count { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+
+    table.eccs-matrix th[data-sort] { cursor: pointer; user-select: none; }
+    table.eccs-matrix th[data-sort]:hover { color: var(--primary); }
+    table.eccs-matrix th[data-sort].se-sorted::after { content: " \2193"; color: var(--accent); }
+    table.eccs-matrix th[data-sort].se-sorted.se-asc::after { content: " \2191"; }
 
     .se-table-wrap { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); }
     .se-table-wrap { overflow-x: auto; }
@@ -3109,6 +3115,8 @@
     .perm-mark.perm-simulations { background:#f3e8ff; color:#6b21a8; }
     .perm-mark.perm-threatintel { background:#fecdd3; color:#9f1239; }
     .perm-mark.perm-alertaction { background:#e2e8f0; color:#475569; }
+    .perm-mark.perm-legacybundle { background:#f3f4f6; color:#374151; }
+    .perm-mark.perm-authmethod { background:#fae8ff; color:#86198f; }
     .ports-pattern-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:14px 0 10px; }
     .ports-pattern-toolbar label { font-weight:800; font-size:13px; color:#0f172a; }
     .ports-pattern-toolbar select { flex:1 1 340px; min-width:240px; padding:9px 11px; border-radius:10px; border:1px solid var(--border); font-size:13px; font-family:inherit; background:#fff; }
@@ -14530,6 +14538,14 @@ E. Assumptions and unresolved inputs</pre>
       <section class="reference-section">
         <div class="reference-section-heading"><div><h3>Permissions</h3><p>App-only Microsoft Graph/Office 365 Management permissions required per input, plus deployment-side and Azure-side prerequisites. Not every deployment needs every permission below -- select a marked cell for the full detail (service, purpose, notes).</p></div></div>
 
+        <div class="se-toolbar">
+          <input id="msPermSearchBox" type="search" placeholder="Search app, input, service, action, purpose or notes…" aria-label="Search Microsoft permissions matrix" />
+          <select id="msPermAppFilter" aria-label="Filter by app">
+            <option value="">All apps</option>
+          </select>
+          <span class="se-result-count" id="msPermResultCount"></span>
+        </div>
+
         <div class="eccs-table-wrap" role="region" aria-label="Scrollable Microsoft cloud inputs permissions matrix" tabindex="0">
           <table class="eccs-matrix" id="msPermissionsTable">
             <thead id="msPermissionsTableHead"></thead>
@@ -14537,7 +14553,7 @@ E. Assumptions and unresolved inputs</pre>
           </table>
         </div>
 
-        <p class="sot-note">Transcribed verbatim from four supplied CSVs, one per Splunk app: <code>splunk_o365_permissions.csv</code> (<code>splunk_ta_o365</code>), <code>splunk_cloudservices_permissions.csv</code> (<code>Splunk_TA_microsoft-cloudservices</code>), <code>splunk_aad_permissions.csv</code> (<code>TA-MS-AAD</code>) and <code>splunk_mssecurity_permissions.csv</code> (<code>Splunk_TA_MS_Security</code>). The <code>splunk_ta_o365</code> rows were redone from a newer, more granular version of its source CSV that lists permissions per literal input stanza name (e.g. <strong>Mailbox:MailboxUsageDetail</strong>) grouped by module family, rather than the earlier Required/Optional/GCC-substitute tiering -- its <code>Input Family</code> pills are colored the same as the other apps' baseline "required" pills since this CSV draws no required/optional distinction. Rows are the distinct App+Input combinations across all four files, columns the distinct individual actions -- a marked cell means that row's input requires that column's action (per its <code>Input Family</code>); some inputs (e.g. <strong>Management Activity:DLP.All</strong>, <strong>All inputs</strong> in any of the four apps, <strong>All ARM-backed inputs</strong>, <strong>Microsoft Entra ID Audit</strong>, <strong>Microsoft Entra ID Identity Protection</strong>) require more than one action and so have multiple marked cells -- a source row whose own Actions cell listed two scopes required together (e.g. TA-MS-AAD's "AuditLog.Read.All; Directory.Read.All", or <code>splunk_ta_o365</code>'s "ActivityFeed.Read; ActivityFeed.ReadDlp") was split into one marked cell per scope, reusing whichever column that scope already has. Splunk_TA_MS_Security's Actions cells instead list two equivalent, alternative permission forms ("X (Graph) or Y (Graph Security)") rather than a joint requirement, so those are kept as a single column carrying the full "X or Y" string rather than split. All four apps happen to use the literal input name "All inputs" for their own Splunk/Azure-side prerequisites -- these are kept as separate rows (one per app), not merged. Two Splunk_TA_MS_Security rows are alert-action prerequisites rather than modular inputs (labelled <strong>Alert actions (not inputs)</strong>) and are included for completeness. &mdash; means not applicable.</p>
+        <p class="sot-note">Transcribed verbatim from five supplied CSVs, one per app: <code>splunk_o365_permissions.csv</code> (<code>splunk_ta_o365</code>), <code>splunk_cloudservices_permissions.csv</code> (<code>Splunk_TA_microsoft-cloudservices</code>), <code>splunk_aad_permissions.csv</code> (<code>TA-MS-AAD</code>), <code>splunk_mssecurity_permissions.csv</code> (<code>Splunk_TA_MS_Security</code>) and <code>soar_m365defender_permissions.csv</code> (<strong>Splunk SOAR: Microsoft 365 Defender</strong>). The first four are Splunk Enterprise TAs whose rows are modular inputs; the fifth is a Splunk SOAR connector whose "Input" column is really playbook action names (Test Connectivity, On Poll, List/Get/Update Incidents and Alerts, Run Query) -- no verified internal connector package ID was available so it's tagged with this descriptive label rather than a guessed technical name. The <code>splunk_ta_o365</code> rows were redone from a newer, more granular version of its source CSV that lists permissions per literal input stanza name (e.g. <strong>Mailbox:MailboxUsageDetail</strong>) grouped by module family, rather than the earlier Required/Optional/GCC-substitute tiering -- its <code>Input Family</code> pills are colored the same as the other apps' baseline "required" pills since this CSV draws no required/optional distinction. Rows are the distinct App+Input combinations across all five files, columns the distinct individual actions -- a marked cell means that row's input requires that column's action (per its <code>Input Family</code>); some inputs (e.g. <strong>Management Activity:DLP.All</strong>, <strong>All inputs</strong>/<strong>All actions</strong> in any of the five apps, <strong>All ARM-backed inputs</strong>, <strong>Microsoft Entra ID Audit</strong>, <strong>Microsoft Entra ID Identity Protection</strong>) require more than one action and so have multiple marked cells -- a source row whose own Actions cell listed two scopes required together (e.g. TA-MS-AAD's "AuditLog.Read.All; Directory.Read.All", or <code>splunk_ta_o365</code>'s "ActivityFeed.Read; ActivityFeed.ReadDlp") was split into one marked cell per scope, reusing whichever column that scope already has. Splunk_TA_MS_Security's Actions cells instead list two equivalent, alternative permission forms ("X (Graph) or Y (Graph Security)") rather than a joint requirement, so those are kept as a single column carrying the full "X or Y" string rather than split. Splunk SOAR: Microsoft 365 Defender's two Auth mode rows are a third case: each lists a full bundle of scopes required together for that one auth mode via a semicolon-separated Actions cell, but since Application and Delegated auth are mutually exclusive alternatives (not a joint requirement) and both rows share the literal input "All actions", splitting them would have wrongly read as one combined 11-scope ask -- so each bundle is instead kept as its own single, self-labeled column, same treatment as Splunk_TA_MS_Security's OR-style actions. All five apps happen to use the literal input name "All inputs" or "All actions" for their own Splunk/Azure-side prerequisites -- these are kept as separate rows (one per app), not merged. Two Splunk_TA_MS_Security rows are alert-action prerequisites rather than modular inputs (labelled <strong>Alert actions (not inputs)</strong>) and are included for completeness. A sixth file, <code>soar_azure_connectors_permissions.csv</code>, adds eight more Splunk SOAR connectors at once (<code>azuread</code> -- deprecated, retired Sept 2025, migrate to <code>msadgraph</code> -- <code>msadgraph</code>, <code>azuredevops</code>, <code>msgraphforoffice365</code>, <code>microsoftdefenderforendpoint</code>, <code>microsoftonedrive</code>, <code>microsoftazurecompute</code> and <code>microsoftazuresql</code>) and uses a different shape: a Delegated Permission column and an Application Permission column instead of one combined Actions column. Where both list the identical scope, only one shared column/mark is added; where they differ (even by a suffix, e.g. "Machine.Read" vs "Machine.Read.All") each gets its own column, kept distinct per the no-fuzzy-merge rule above; a placeholder cell with no real scope ("N/A", "Not supported", "Not applicable", or "Same" referring back to the other column) is skipped rather than becoming a column. A handful of rows list several scopes required together for one specific action (joined by "+" or ";") and are AND-split as above; three rows instead describe a full scope bundle for an entire legacy connector or an alternative auth method (<code>azuread</code>'s single row, and two of <code>azuredevops</code>'s three) and are kept as one unsplit column each, the same "alternatives, don't split" treatment as Splunk SOAR: Microsoft 365 Defender's Auth mode rows. This file's own final row is a cross-cutting admin-consent note rather than belonging to one app, so it's expanded into one row per app here, for the six apps the source text says it applies to (it explicitly excludes <code>microsoftazurecompute</code> and <code>microsoftazuresql</code>, which don't use Graph consent at all). <code>microsoftazurecompute</code>'s and <code>microsoftazuresql</code>'s Application-permission values are the source file's own inferred guesses (each labelled "- inferred" since neither connector's README documents a required role) -- transcribed verbatim, inferred label intact. &mdash; means not applicable.</p>
       </section>
       </div>
     </div>
@@ -35426,6 +35442,153 @@ const msPermissionsData = [
   { app: "Splunk_TA_MS_Security", family: "Beyond permissions - Splunk side", input: "All inputs", service: "Splunk platform", action: "admin or sc_admin role", purpose: "Required to add or configure accounts and inputs" },
   { app: "Splunk_TA_MS_Security", family: "Beyond permissions - Azure side", input: "All Graph/Defender-based inputs", service: "Microsoft Entra ID", action: "Global Administrator consent (or Privileged Role Administrator)", purpose: "Required for every Application-type permission on the app registration" },
   { app: "Splunk_TA_MS_Security", family: "Beyond permissions - Azure side", input: "Microsoft Defender Event Hub", service: "Azure RBAC", action: "Role assigned under the Event Hub namespace's Access control (IAM)", purpose: "Separate from Graph/Defender API consent" },
+  // -- Splunk SOAR: Microsoft 365 Defender (a SOAR connector, not a Splunk Enterprise TA -- its "Input" column
+  // is really SOAR playbook action names, not modular inputs; no verified internal connector package ID was
+  // available, so the app is tagged with this descriptive label instead of a fabricated technical name) --
+  // The two Auth mode rows each list a full bundle of scopes required together for that mode via a
+  // semicolon-separated Actions cell, but unlike TA-MS-AAD/o365's AND-split rows, splitting these into
+  // per-scope marks under the shared literal input "All actions" would incorrectly read as one combined
+  // 11-scope requirement -- when Application and Delegated are actually mutually exclusive alternative auth
+  // modes (pick one). So each bundle is kept as a single, self-labeled column carrying its own full scope
+  // list, exactly like Splunk_TA_MS_Security's OR-style compound actions.
+  { app: "Splunk SOAR: Microsoft 365 Defender", family: "Permissions by action", input: "Test Connectivity", service: "Microsoft Graph", action: "SecurityAlert.Read.All", purpose: "Verifies the asset can reach Microsoft Graph" },
+  { app: "Splunk SOAR: Microsoft 365 Defender", family: "Permissions by action", input: "On Poll", service: "Microsoft Graph", action: "SecurityIncident.Read.All", purpose: "Scheduled/manual ingestion of new incidents into SOAR" },
+  { app: "Splunk SOAR: Microsoft 365 Defender", family: "Permissions by action", input: "List Incidents", service: "Microsoft Graph", action: "SecurityIncident.Read.All", purpose: "Enumerate incidents for a playbook or analyst view" },
+  { app: "Splunk SOAR: Microsoft 365 Defender", family: "Permissions by action", input: "Get Incident", service: "Microsoft Graph", action: "SecurityIncident.Read.All", purpose: "Fetch one incident's full detail" },
+  { app: "Splunk SOAR: Microsoft 365 Defender", family: "Permissions by action", input: "Update Incident", service: "Microsoft Graph", action: "SecurityIncident.ReadWrite.All", purpose: "Change incident status classification or assignment from a playbook", notes: "Write action" },
+  { app: "Splunk SOAR: Microsoft 365 Defender", family: "Permissions by action", input: "List Alerts", service: "Microsoft Graph", action: "SecurityAlert.Read.All", purpose: "Enumerate alerts" },
+  { app: "Splunk SOAR: Microsoft 365 Defender", family: "Permissions by action", input: "Get Alert", service: "Microsoft Graph", action: "SecurityAlert.Read.All", purpose: "Fetch one alert's full detail" },
+  { app: "Splunk SOAR: Microsoft 365 Defender", family: "Permissions by action", input: "Update Alert", service: "Microsoft Graph", action: "SecurityAlert.ReadWrite.All", purpose: "Change alert status or assignment from a playbook", notes: "Write action" },
+  { app: "Splunk SOAR: Microsoft 365 Defender", family: "Permissions by action", input: "Run Query", service: "Microsoft Graph", action: "ThreatHunting.Read.All", purpose: "Advanced hunting (KQL) queries against Defender data" },
+  { app: "Splunk SOAR: Microsoft 365 Defender", family: "Auth mode - Application (non-interactive)", input: "All actions", service: "Microsoft Graph (Application)", action: "SecurityAlert.Read.All; SecurityAlert.ReadWrite.All; SecurityIncident.Read.All; SecurityIncident.ReadWrite.All; ThreatHunting.Read.All", purpose: "Runs unattended with a client secret or certificate - no signed-in user required", notes: "Recommended for most deployments" },
+  { app: "Splunk SOAR: Microsoft 365 Defender", family: "Auth mode - Delegated (interactive)", input: "All actions", service: "Microsoft Graph (Delegated)", action: "SecurityAlert.Read.All; SecurityAlert.ReadWrite.All; SecurityIncident.Read.All; SecurityIncident.ReadWrite.All; ThreatHunting.Read.All; offline_access", purpose: "Ties access to a signed-in user's own permissions", notes: "offline_access lets the connector refresh its token without re-prompting the user each time" },
+  { app: "Splunk SOAR: Microsoft 365 Defender", family: "Beyond the permissions - Azure side", input: "All actions", service: "Microsoft Entra ID", action: "Grant admin consent (Global Administrator or Privileged Role Administrator)", purpose: "Required after adding the Microsoft Graph permissions to the app registration" },
+  { app: "Splunk SOAR: Microsoft 365 Defender", family: "Beyond the permissions - Azure side", input: "All actions", service: "Microsoft Entra ID", action: "Tenant ID + Client ID", purpose: "Minimum asset configuration fields" },
+  { app: "Splunk SOAR: Microsoft 365 Defender", family: "Beyond the permissions - Azure side", input: "Non-interactive auth", service: "Microsoft Entra ID", action: "Client Secret or Certificate Thumbprint + private key", purpose: "Credential used for the app-only auth flow" },
+  { app: "Splunk SOAR: Microsoft 365 Defender", family: "Beyond the permissions - Azure side", input: "Interactive auth", service: "Microsoft Entra ID", action: "Redirect URI + ID tokens checkbox on the app registration", purpose: "Required to complete the one-time interactive consent flow" },
+  // -- soar_azure_connectors_permissions.csv: eight more Splunk SOAR connectors in one file, sharing a
+  // different shape than every earlier CSV -- a Delegated Permission column and an Application Permission
+  // column instead of one combined Actions column. Handling used throughout this block:
+  //  - When Delegated and Application list the identical literal string, only ONE entry is added (it becomes
+  //    one shared mark) since both auth modes need the exact same scope; when they differ, each becomes its
+  //    own entry/column (kept distinct per the no-fuzzy-merge rule even where they're almost the same, e.g.
+  //    "Machine.Read" vs "Machine.Read.All").
+  //  - A placeholder value with no real scope ("N/A", "Not supported", "Not applicable", "Same" referring back
+  //    to the other column) is skipped entirely rather than becoming a column.
+  //  - A cell listing several scopes required together for one specific input (joined by "+" or ";") is split
+  //    into one mark per scope, reusing whichever column that scope already has -- same AND-split convention
+  //    as TA-MS-AAD/o365/msadgraph's own CIDR rows below.
+  //  - Three rows (azuread's single "all 16 actions" row, and azuredevops's two multi-scope auth-method rows)
+  //    instead describe a full scope bundle for an entire legacy connector or an alternative auth method --
+  //    kept as one unsplit column each, same "OR/alternative, don't split" treatment as
+  //    Splunk_TA_MS_Security's compound actions and Splunk SOAR: Microsoft 365 Defender's Auth mode rows.
+  //  - The source file's final row ("Beyond permissions - all eight apps") is a cross-cutting note rather than
+  //    belonging to one app, so it's expanded into one entry per app here (per the row's own model of one
+  //    entry per (app, input)) -- for the six apps the row's own text says it applies to (it explicitly
+  //    excludes microsoftazurecompute and microsoftazuresql, which don't use Graph consent at all).
+  //  - azuread is included even though the source marks it "(DEPRECATED)" (retired Sept 2025, migrate to
+  //    msadgraph) -- transcribed as historical reference, not a live recommendation.
+  //  - microsoftazurecompute's and microsoftazuresql's Application-permission values are the source CSV's own
+  //    inferred guesses (each labelled "- inferred" in the source, not from official docs) since these two
+  //    connectors' READMEs don't document required roles -- transcribed verbatim, inferred label intact.
+  { app: "azuread (DEPRECATED)", family: "Scopes (no per-action breakdown)", input: "All 16 actions", service: "Azure AD Graph (legacy - retired Sept 2025)", action: "User.Read; User.Read.All; Directory.ReadWrite.All; Directory.AccessAsUser.All", purpose: "Migrate to msadgraph; interactive OAuth only" },
+  { app: "msadgraph", family: "Identity", input: "Test Connectivity", service: "Microsoft Graph", action: "User.Read", purpose: "Entra ID role: Directory Readers" },
+  { app: "msadgraph", family: "Identity", input: "Test Connectivity", service: "Microsoft Graph", action: "User.Read.All", purpose: "Entra ID role: Directory Readers" },
+  { app: "msadgraph", family: "Identity", input: "List Users", service: "Microsoft Graph", action: "User.Read.All", purpose: "Entra ID role: Directory Readers" },
+  { app: "msadgraph", family: "Identity", input: "Reset Password", service: "Microsoft Graph", action: "User.ReadWrite.All", purpose: "Entra ID role: User Administrator" },
+  { app: "msadgraph", family: "Identity", input: "Reset Password", service: "Microsoft Graph", action: "User-PasswordProfile.ReadWrite.All", purpose: "Entra ID role: User Administrator" },
+  { app: "msadgraph", family: "Identity", input: "Disable Tokens", service: "Microsoft Graph", action: "User.RevokeSessions.All", purpose: "Entra ID role: Directory Readers" },
+  { app: "msadgraph", family: "Identity", input: "Enable / Disable User", service: "Microsoft Graph", action: "User.ReadWrite.All", purpose: "Entra ID role: Privileged Authentication Administrator" },
+  { app: "msadgraph", family: "Identity", input: "List User Devices", service: "Microsoft Graph", action: "User.Read", purpose: "Entra ID role: Directory Readers" },
+  { app: "msadgraph", family: "Identity", input: "List User Devices", service: "Microsoft Graph", action: "Directory.Read.All", purpose: "Entra ID role: Directory Readers" },
+  { app: "msadgraph", family: "Identity", input: "List User Attributes", service: "Microsoft Graph", action: "User.Read.All", purpose: "Entra ID role: Directory Readers" },
+  { app: "msadgraph", family: "Identity", input: "Set User Attribute", service: "Microsoft Graph", action: "User.ReadWrite.All", purpose: "Entra ID role: User Administrator" },
+  { app: "msadgraph", family: "Groups", input: "Add / Remove User (group)", service: "Microsoft Graph", action: "GroupMember.ReadWrite.All", purpose: "Entra ID role: Groups Administrator" },
+  { app: "msadgraph", family: "Groups", input: "List Groups", service: "Microsoft Graph", action: "Group.Read.All", purpose: "Entra ID role: Directory Readers" },
+  { app: "msadgraph", family: "Groups", input: "Get Group", service: "Microsoft Graph", action: "Group.Read.All", purpose: "Entra ID role: Directory Readers" },
+  { app: "msadgraph", family: "Groups", input: "List Group Members", service: "Microsoft Graph", action: "GroupMember.Read.All", purpose: "Entra ID role: Directory Readers" },
+  { app: "msadgraph", family: "Groups", input: "Validate Group", service: "Microsoft Graph", action: "User.Read.All", purpose: "Entra ID role: Directory Readers" },
+  { app: "msadgraph", family: "Directory & policy", input: "List Directory Roles", service: "Microsoft Graph", action: "RoleManagement.Read.Directory", purpose: "Entra ID role: Directory Readers" },
+  { app: "msadgraph", family: "Directory & policy", input: "List Named Locations", service: "Microsoft Graph", action: "Policy.Read.All", purpose: "Entra ID role: Conditional Access Administrator" },
+  { app: "msadgraph", family: "Directory & policy", input: "Add CIDR to Named Location", service: "Microsoft Graph", action: "Policy.Read.All", purpose: "Entra ID role: Conditional Access Administrator" },
+  { app: "msadgraph", family: "Directory & policy", input: "Add CIDR to Named Location", service: "Microsoft Graph", action: "Policy.ReadWrite.ConditionalAccess", purpose: "Entra ID role: Conditional Access Administrator" },
+  { app: "msadgraph", family: "Directory & policy", input: "Remove CIDR from Named Location", service: "Microsoft Graph", action: "Policy.Read.All", purpose: "Entra ID role: Conditional Access Administrator" },
+  { app: "msadgraph", family: "Directory & policy", input: "Remove CIDR from Named Location", service: "Microsoft Graph", action: "Policy.ReadWrite.ConditionalAccess", purpose: "Entra ID role: Conditional Access Administrator" },
+  { app: "azuredevops", family: "Auth method", input: "Personal Access Token (Basic)", service: "Azure DevOps", action: "vso.entitlements; vso.memberentitlementmanagement_write; vso.work_full", purpose: "Simplest setup; takes priority over OAuth if both configured" },
+  { app: "azuredevops", family: "Auth method", input: "Interactive OAuth - legacy Azure DevOps", service: "Azure DevOps", action: "App-specific legacy authorize flow", purpose: "Supported until end-of-life in 2026" },
+  { app: "azuredevops", family: "Auth method", input: "Interactive OAuth - Microsoft Entra ID", service: "Azure DevOps via Entra ID", action: "vso.work; vso.entitlements; vso.memberentitlementmanagement_write; offline_access", purpose: "Recommended for all new integrations as of April 2025" },
+  { app: "msgraphforoffice365", family: "Mail", input: "Test Connectivity", service: "Microsoft Graph", action: "User.Read", purpose: "Required regardless of auth mode" },
+  { app: "msgraphforoffice365", family: "Mail", input: "Test Connectivity", service: "Microsoft Graph", action: "User.Read.All", purpose: "Required regardless of auth mode" },
+  { app: "msgraphforoffice365", family: "Mail", input: "Get Email", service: "Microsoft Graph", action: "Mail.Read" },
+  { app: "msgraphforoffice365", family: "Mail", input: "Get Email Properties", service: "Microsoft Graph", action: "Mail.ReadBasic", purpose: "ReadBasic covers headers only" },
+  { app: "msgraphforoffice365", family: "Mail", input: "Get Email Properties", service: "Microsoft Graph", action: "Mail.Read", purpose: "ReadBasic covers headers only" },
+  { app: "msgraphforoffice365", family: "Mail", input: "Get Mailbox Messages", service: "Microsoft Graph", action: "Mail.Read" },
+  { app: "msgraphforoffice365", family: "Mail", input: "Run Query", service: "Microsoft Graph", action: "Mail.Read", purpose: "Search across mail" },
+  { app: "msgraphforoffice365", family: "Mail", input: "Copy / Move / Delete / Update Email", service: "Microsoft Graph", action: "Mail.ReadWrite" },
+  { app: "msgraphforoffice365", family: "Mail", input: "Send Email", service: "Microsoft Graph", action: "Mail.Send", purpose: "ReadWrite needed only for attachments" },
+  { app: "msgraphforoffice365", family: "Mail", input: "Send Email", service: "Microsoft Graph", action: "Mail.ReadWrite", purpose: "ReadWrite needed only for attachments" },
+  { app: "msgraphforoffice365", family: "Mail", input: "Block / Unblock Sender", service: "Microsoft Graph", action: "Mail.ReadWrite", purpose: "Uses the beta Graph API" },
+  { app: "msgraphforoffice365", family: "Mail", input: "List Folders", service: "Microsoft Graph", action: "Mail.ReadBasic", purpose: "ReadBasic covers folder list only" },
+  { app: "msgraphforoffice365", family: "Mail", input: "List Folders", service: "Microsoft Graph", action: "Mail.Read", purpose: "ReadBasic covers folder list only" },
+  { app: "msgraphforoffice365", family: "Mail", input: "Create Folder", service: "Microsoft Graph", action: "Mail.ReadWrite" },
+  { app: "msgraphforoffice365", family: "Mail", input: "Get Folder ID", service: "Microsoft Graph", action: "Mail.ReadBasic" },
+  { app: "msgraphforoffice365", family: "Mail", input: "Get Folder ID", service: "Microsoft Graph", action: "Mail.Read" },
+  { app: "msgraphforoffice365", family: "Mail", input: "On Poll", service: "Microsoft Graph", action: "Mail.ReadBasic" },
+  { app: "msgraphforoffice365", family: "Mail", input: "On Poll", service: "Microsoft Graph", action: "Mail.Read" },
+  { app: "msgraphforoffice365", family: "Calendar", input: "List Events (user)", service: "Microsoft Graph", action: "Calendars.Read" },
+  { app: "msgraphforoffice365", family: "Calendar", input: "List Events (group)", service: "Microsoft Graph", action: "Group.Read.All", purpose: "Group calendar events are delegated-only" },
+  { app: "msgraphforoffice365", family: "Calendar", input: "Delete Event", service: "Microsoft Graph", action: "Calendars.ReadWrite" },
+  { app: "msgraphforoffice365", family: "Users & groups", input: "List Users", service: "Microsoft Graph", action: "User.ReadBasic.All" },
+  { app: "msgraphforoffice365", family: "Users & groups", input: "List Users", service: "Microsoft Graph", action: "User.Read.All" },
+  { app: "msgraphforoffice365", family: "Users & groups", input: "List Groups", service: "Microsoft Graph", action: "Group.Read.All" },
+  { app: "msgraphforoffice365", family: "Users & groups", input: "List Group Members", service: "Microsoft Graph", action: "GroupMember.Read.All" },
+  { app: "msgraphforoffice365", family: "Users & groups", input: "List Group Members", service: "Microsoft Graph", action: "Group.Read.All" },
+  { app: "msgraphforoffice365", family: "Users & groups", input: "Resolve Name", service: "Microsoft Graph", action: "User.Read" },
+  { app: "msgraphforoffice365", family: "Users & groups", input: "Resolve Name", service: "Microsoft Graph", action: "MailboxSettings.Read" },
+  { app: "msgraphforoffice365", family: "Users & groups", input: "Resolve Name", service: "Microsoft Graph", action: "User.Read.All" },
+  { app: "msgraphforoffice365", family: "Mailbox settings", input: "OOF Check", service: "Microsoft Graph", action: "MailboxSettings.Read", purpose: "Out-of-office status" },
+  { app: "msgraphforoffice365", family: "Mailbox settings", input: "Get / List Rules", service: "Microsoft Graph", action: "MailboxSettings.Read", purpose: "Inbox rules" },
+  { app: "microsoftdefenderforendpoint", family: "Hunting", input: "Run Query", service: "Microsoft Defender for Endpoint", action: "AdvancedQuery.Read", purpose: "Advanced hunting (KQL) queries" },
+  { app: "microsoftdefenderforendpoint", family: "Hunting", input: "Run Query", service: "Microsoft Defender for Endpoint", action: "AdvancedQuery.Read.All", purpose: "Advanced hunting (KQL) queries" },
+  { app: "microsoftdefenderforendpoint", family: "Alerts", input: "List/Get/Create/Update Alert, Get Alert User/Files/IPs/Domains, Get File/Device/User/Domain Alerts", service: "Microsoft Defender for Endpoint", action: "Alert.ReadWrite", purpose: "One scope covers all alert read and write actions" },
+  { app: "microsoftdefenderforendpoint", family: "Alerts", input: "List/Get/Create/Update Alert, Get Alert User/Files/IPs/Domains, Get File/Device/User/Domain Alerts", service: "Microsoft Defender for Endpoint", action: "Alert.ReadWrite.All", purpose: "One scope covers all alert read and write actions" },
+  { app: "microsoftdefenderforendpoint", family: "Files", input: "Get File Info, Get File Devices, File Prevalence, Quarantine File", service: "Microsoft Defender for Endpoint", action: "File.Read.All", purpose: "Same scope for both auth modes" },
+  { app: "microsoftdefenderforendpoint", family: "Network indicators", input: "IP Prevalence, Domain Prevalence, Get Domain Devices/Alerts", service: "Microsoft Defender for Endpoint", action: "Ip.Read.All", purpose: "Same scopes for both auth modes" },
+  { app: "microsoftdefenderforendpoint", family: "Network indicators", input: "IP Prevalence, Domain Prevalence, Get Domain Devices/Alerts", service: "Microsoft Defender for Endpoint", action: "Url.Read.All", purpose: "Same scopes for both auth modes" },
+  { app: "microsoftdefenderforendpoint", family: "Devices & live response", input: "Quarantine/Unquarantine/Scan Device, List Devices, Get Device Details, Update Device Tag, Get File, Put File, Run Script, Cancel Live Response, Get Status, Restrict/Remove App Execution, Collect Investigation Package", service: "Microsoft Defender for Endpoint", action: "Machine.Isolate", purpose: "Application mode adds Machine.CollectForensics, not available as a distinct delegated scope" },
+  { app: "microsoftdefenderforendpoint", family: "Devices & live response", input: "Quarantine/Unquarantine/Scan Device, List Devices, Get Device Details, Update Device Tag, Get File, Put File, Run Script, Cancel Live Response, Get Status, Restrict/Remove App Execution, Collect Investigation Package", service: "Microsoft Defender for Endpoint", action: "Machine.LiveResponse", purpose: "Application mode adds Machine.CollectForensics, not available as a distinct delegated scope" },
+  { app: "microsoftdefenderforendpoint", family: "Devices & live response", input: "Quarantine/Unquarantine/Scan Device, List Devices, Get Device Details, Update Device Tag, Get File, Put File, Run Script, Cancel Live Response, Get Status, Restrict/Remove App Execution, Collect Investigation Package", service: "Microsoft Defender for Endpoint", action: "Machine.Offboard", purpose: "Application mode adds Machine.CollectForensics, not available as a distinct delegated scope" },
+  { app: "microsoftdefenderforendpoint", family: "Devices & live response", input: "Quarantine/Unquarantine/Scan Device, List Devices, Get Device Details, Update Device Tag, Get File, Put File, Run Script, Cancel Live Response, Get Status, Restrict/Remove App Execution, Collect Investigation Package", service: "Microsoft Defender for Endpoint", action: "Machine.Read", purpose: "Application mode adds Machine.CollectForensics, not available as a distinct delegated scope" },
+  { app: "microsoftdefenderforendpoint", family: "Devices & live response", input: "Quarantine/Unquarantine/Scan Device, List Devices, Get Device Details, Update Device Tag, Get File, Put File, Run Script, Cancel Live Response, Get Status, Restrict/Remove App Execution, Collect Investigation Package", service: "Microsoft Defender for Endpoint", action: "Machine.ReadWrite", purpose: "Application mode adds Machine.CollectForensics, not available as a distinct delegated scope" },
+  { app: "microsoftdefenderforendpoint", family: "Devices & live response", input: "Quarantine/Unquarantine/Scan Device, List Devices, Get Device Details, Update Device Tag, Get File, Put File, Run Script, Cancel Live Response, Get Status, Restrict/Remove App Execution, Collect Investigation Package", service: "Microsoft Defender for Endpoint", action: "Machine.RestrictExecution", purpose: "Application mode adds Machine.CollectForensics, not available as a distinct delegated scope" },
+  { app: "microsoftdefenderforendpoint", family: "Devices & live response", input: "Quarantine/Unquarantine/Scan Device, List Devices, Get Device Details, Update Device Tag, Get File, Put File, Run Script, Cancel Live Response, Get Status, Restrict/Remove App Execution, Collect Investigation Package", service: "Microsoft Defender for Endpoint", action: "Machine.Scan", purpose: "Application mode adds Machine.CollectForensics, not available as a distinct delegated scope" },
+  { app: "microsoftdefenderforendpoint", family: "Devices & live response", input: "Quarantine/Unquarantine/Scan Device, List Devices, Get Device Details, Update Device Tag, Get File, Put File, Run Script, Cancel Live Response, Get Status, Restrict/Remove App Execution, Collect Investigation Package", service: "Microsoft Defender for Endpoint", action: "Machine.StopAndQuarantine", purpose: "Application mode adds Machine.CollectForensics, not available as a distinct delegated scope" },
+  { app: "microsoftdefenderforendpoint", family: "Devices & live response", input: "Quarantine/Unquarantine/Scan Device, List Devices, Get Device Details, Update Device Tag, Get File, Put File, Run Script, Cancel Live Response, Get Status, Restrict/Remove App Execution, Collect Investigation Package", service: "Microsoft Defender for Endpoint", action: "Machine.CollectForensics", purpose: "Application mode adds Machine.CollectForensics, not available as a distinct delegated scope" },
+  { app: "microsoftdefenderforendpoint", family: "Devices & live response", input: "Quarantine/Unquarantine/Scan Device, List Devices, Get Device Details, Update Device Tag, Get File, Put File, Run Script, Cancel Live Response, Get Status, Restrict/Remove App Execution, Collect Investigation Package", service: "Microsoft Defender for Endpoint", action: "Machine.Read.All", purpose: "Application mode adds Machine.CollectForensics, not available as a distinct delegated scope" },
+  { app: "microsoftdefenderforendpoint", family: "Devices & live response", input: "Quarantine/Unquarantine/Scan Device, List Devices, Get Device Details, Update Device Tag, Get File, Put File, Run Script, Cancel Live Response, Get Status, Restrict/Remove App Execution, Collect Investigation Package", service: "Microsoft Defender for Endpoint", action: "Machine.ReadWrite.All", purpose: "Application mode adds Machine.CollectForensics, not available as a distinct delegated scope" },
+  { app: "microsoftdefenderforendpoint", family: "Security posture", input: "Get Exposure Score, Get Secure Score", service: "Microsoft Defender for Endpoint", action: "Score.Read" },
+  { app: "microsoftdefenderforendpoint", family: "Security posture", input: "Get Exposure Score, Get Secure Score", service: "Microsoft Defender for Endpoint", action: "Score.Read.All" },
+  { app: "microsoftdefenderforendpoint", family: "Software & vulnerabilities", input: "List Software/Versions/Devices/Vulnerabilities, Get Installed Software, List Device Vulnerabilities, Get Discovered Vulnerabilities, Get Missing KBs, Get Affected Devices", service: "Microsoft Defender for Endpoint", action: "Software.Read", purpose: "Two scopes cover the whole software/vulnerability inventory" },
+  { app: "microsoftdefenderforendpoint", family: "Software & vulnerabilities", input: "List Software/Versions/Devices/Vulnerabilities, Get Installed Software, List Device Vulnerabilities, Get Discovered Vulnerabilities, Get Missing KBs, Get Affected Devices", service: "Microsoft Defender for Endpoint", action: "Vulnerability.Read", purpose: "Two scopes cover the whole software/vulnerability inventory" },
+  { app: "microsoftdefenderforendpoint", family: "Software & vulnerabilities", input: "List Software/Versions/Devices/Vulnerabilities, Get Installed Software, List Device Vulnerabilities, Get Discovered Vulnerabilities, Get Missing KBs, Get Affected Devices", service: "Microsoft Defender for Endpoint", action: "Software.Read.All", purpose: "Two scopes cover the whole software/vulnerability inventory" },
+  { app: "microsoftdefenderforendpoint", family: "Software & vulnerabilities", input: "List Software/Versions/Devices/Vulnerabilities, Get Installed Software, List Device Vulnerabilities, Get Discovered Vulnerabilities, Get Missing KBs, Get Affected Devices", service: "Microsoft Defender for Endpoint", action: "Vulnerability.Read.All", purpose: "Two scopes cover the whole software/vulnerability inventory" },
+  { app: "microsoftdefenderforendpoint", family: "Threat intelligence", input: "List/Get/Submit/Update/Delete Indicator(s)", service: "Microsoft Defender for Endpoint", action: "Ti.ReadWrite" },
+  { app: "microsoftdefenderforendpoint", family: "Threat intelligence", input: "List/Get/Submit/Update/Delete Indicator(s)", service: "Microsoft Defender for Endpoint", action: "Ti.ReadWrite.All" },
+  { app: "microsoftdefenderforendpoint", family: "Users & sessions", input: "Get Active Users, Get User Devices, Get Alert User, List Sessions", service: "Microsoft Defender for Endpoint", action: "User.Read.All", purpose: "Same scope for both auth modes" },
+  { app: "microsoftdefenderforendpoint", family: "Auth", input: "Interactive (Authorization Code Flow) token refresh", service: "Microsoft Graph", action: "offline_access", purpose: "Only needed under the interactive/delegated auth flow" },
+  { app: "microsoftonedrive", family: "Files (delegated)", input: "Get File, List Items, List Drive, Search File, Upload File, Delete File, Delete Folder, Create Folder, Make Request", service: "Microsoft Graph", action: "Files.ReadWrite.All", purpose: "Delegated flow also adds offline_access; User.Read; User.ReadWrite.All; Group.ReadWrite.All with no rationale given in the docs" },
+  { app: "microsoftonedrive", family: "Files (client credentials)", input: "All actions run against a configured target user's drive", service: "Microsoft Graph", action: "Files.ReadWrite.All", purpose: "Client credentials mode needs only this one application permission, with admin consent" },
+  { app: "microsoftazurecompute", family: "VM lifecycle", input: "List VMs, Start/Stop/Deallocate/Delete/Generalize/Redeploy VM, Get System Info", service: "Azure RBAC (ARM)", action: "Contributor or Virtual Machine Contributor (subscription/resource group) - inferred", purpose: "Not documented in the connector's README; inferred from the write-level VM actions it performs" },
+  { app: "microsoftazurecompute", family: "Snapshots & tags", input: "Snapshot VM, List Snapshots, List Tags, Create Tag", service: "Azure RBAC (ARM)", action: "Contributor or Virtual Machine Contributor - inferred", purpose: "Same inferred role as VM lifecycle actions" },
+  { app: "microsoftazurecompute", family: "Networking", input: "List Security Groups, Add Network Group, Add Application Group, List Virtual Networks, List Subnets, Get IP Availability", service: "Azure RBAC (ARM)", action: "Network Contributor (or Contributor) - inferred", purpose: "Not documented; network-object writes typically need Network Contributor specifically" },
+  { app: "microsoftazurecompute", family: "Run Command", input: "Run Command, Get Results", service: "Azure RBAC (ARM)", action: "Virtual Machine Contributor (includes the runCommand action) - inferred", purpose: "Not documented in the README" },
+  { app: "microsoftazuresql", family: "Database access", input: "List Tables, List Columns, Run Query", service: "SQL Server / Azure SQL (native auth)", action: "Username + password (SQL login)", purpose: "No OAuth or Entra ID integration - grant the SQL login only the database role it needs (e.g. db_datareader for List Tables/Columns; broader if Run Query needs writes)" },
+  { app: "azuread (DEPRECATED)", family: "Azure side", input: "Admin consent", service: "Microsoft Entra ID", action: "Global Administrator or Privileged Role Administrator", purpose: "Required to consent to any Application-type Microsoft Graph permission on the app registration (does not apply to microsoftazurecompute or microsoftazuresql, which don't use Graph consent)" },
+  { app: "msadgraph", family: "Azure side", input: "Admin consent", service: "Microsoft Entra ID", action: "Global Administrator or Privileged Role Administrator", purpose: "Required to consent to any Application-type Microsoft Graph permission on the app registration (does not apply to microsoftazurecompute or microsoftazuresql, which don't use Graph consent)" },
+  { app: "azuredevops", family: "Azure side", input: "Admin consent", service: "Microsoft Entra ID", action: "Global Administrator or Privileged Role Administrator", purpose: "Required to consent to any Application-type Microsoft Graph permission on the app registration (does not apply to microsoftazurecompute or microsoftazuresql, which don't use Graph consent)" },
+  { app: "msgraphforoffice365", family: "Azure side", input: "Admin consent", service: "Microsoft Entra ID", action: "Global Administrator or Privileged Role Administrator", purpose: "Required to consent to any Application-type Microsoft Graph permission on the app registration (does not apply to microsoftazurecompute or microsoftazuresql, which don't use Graph consent)" },
+  { app: "microsoftdefenderforendpoint", family: "Azure side", input: "Admin consent", service: "Microsoft Entra ID", action: "Global Administrator or Privileged Role Administrator", purpose: "Required to consent to any Application-type Microsoft Graph permission on the app registration (does not apply to microsoftazurecompute or microsoftazuresql, which don't use Graph consent)" },
+  { app: "microsoftonedrive", family: "Azure side", input: "Admin consent", service: "Microsoft Entra ID", action: "Global Administrator or Privileged Role Administrator", purpose: "Required to consent to any Application-type Microsoft Graph permission on the app registration (does not apply to microsoftazurecompute or microsoftazuresql, which don't use Graph consent)" },
 ];
 const msPermissionsRows = [...new Map(msPermissionsData.map(r => [`${r.app} ||| ${r.input}`, { app: r.app, input: r.input }])).values()];
 const msPermissionsActions = [...new Set(msPermissionsData.map(r => r.action))];
@@ -35463,7 +35626,38 @@ const MS_PERMISSIONS_FAMILY_CLASS = {
   "Share Point": "perm-required",
   "Teams": "perm-required",
   "Service Health & Communications": "perm-required",
-  "Yammer": "perm-required"
+  "Yammer": "perm-required",
+  "Permissions by action": "perm-required",
+  "Auth mode - Application (non-interactive)": "perm-optional",
+  "Auth mode - Delegated (interactive)": "perm-required-gcc",
+  "Beyond the permissions - Azure side": "perm-azure-side",
+  "Scopes (no per-action breakdown)": "perm-legacybundle",
+  "Identity": "perm-required",
+  "Groups": "perm-required",
+  "Directory & policy": "perm-required",
+  "Auth method": "perm-authmethod",
+  "Mail": "perm-required",
+  "Calendar": "perm-required",
+  "Users & groups": "perm-required",
+  "Mailbox settings": "perm-required",
+  "Hunting": "perm-required",
+  "Alerts": "perm-required",
+  "Files": "perm-required",
+  "Network indicators": "perm-required",
+  "Devices & live response": "perm-required",
+  "Security posture": "perm-required",
+  "Software & vulnerabilities": "perm-required",
+  "Threat intelligence": "perm-required",
+  "Users & sessions": "perm-required",
+  "Auth": "perm-required",
+  "Files (delegated)": "perm-required",
+  "Files (client credentials)": "perm-required",
+  "VM lifecycle": "perm-required",
+  "Snapshots & tags": "perm-required",
+  "Networking": "perm-required",
+  "Run Command": "perm-required",
+  "Database access": "perm-required",
+  "Azure side": "perm-azure-side"
 };
 const MS_PERMISSIONS_FAMILY_SHORT_LABEL = {
   "Required permissions": "Required",
@@ -35498,15 +35692,81 @@ const MS_PERMISSIONS_FAMILY_SHORT_LABEL = {
   "Share Point": "SharePoint",
   "Teams": "Teams",
   "Service Health & Communications": "Service Health",
-  "Yammer": "Yammer"
+  "Yammer": "Yammer",
+  "Permissions by action": "Required",
+  "Auth mode - Application (non-interactive)": "App-only auth",
+  "Auth mode - Delegated (interactive)": "Delegated auth",
+  "Beyond the permissions - Azure side": "Azure-side",
+  "Scopes (no per-action breakdown)": "Legacy bundle",
+  "Identity": "Identity",
+  "Groups": "Groups",
+  "Directory & policy": "Directory/Policy",
+  "Auth method": "Auth method",
+  "Mail": "Mail",
+  "Calendar": "Calendar",
+  "Users & groups": "Users/Groups",
+  "Mailbox settings": "Mailbox settings",
+  "Hunting": "Hunting",
+  "Alerts": "Alerts",
+  "Files": "Files",
+  "Network indicators": "Network indicators",
+  "Devices & live response": "Devices/Live response",
+  "Security posture": "Security posture",
+  "Software & vulnerabilities": "Software/Vuln",
+  "Threat intelligence": "Threat intel",
+  "Users & sessions": "Users/Sessions",
+  "Auth": "Auth",
+  "Files (delegated)": "Files (delegated)",
+  "Files (client credentials)": "Files (app-only)",
+  "VM lifecycle": "VM lifecycle",
+  "Snapshots & tags": "Snapshots/Tags",
+  "Networking": "Networking",
+  "Run Command": "Run Command",
+  "Database access": "DB access",
+  "Azure side": "Azure-side"
 };
 
+// Per-(app,input) search haystack, built once from every entry that row carries (not just app/input) so
+// searching e.g. an action name, service, or purpose surfaces the rows that need it.
+const msPermissionsRowHaystack = new Map();
+msPermissionsData.forEach(r => {
+  const key = `${r.app} ||| ${r.input}`;
+  const hay = [r.app, r.input, r.family, r.service, r.action, r.purpose, r.notes].filter(Boolean).join(" ").toLowerCase();
+  msPermissionsRowHaystack.set(key, `${msPermissionsRowHaystack.get(key) || ""} ${hay}`);
+});
+let msPermState = { query: "", app: "", sortKey: "app", sortDir: "asc" };
+function msPermFilteredSortedRows() {
+  const q = msPermState.query.trim().toLowerCase();
+  let rows = msPermissionsRows.filter(({ app, input }) => {
+    if (msPermState.app && app !== msPermState.app) return false;
+    if (!q) return true;
+    return (msPermissionsRowHaystack.get(`${app} ||| ${input}`) || "").includes(q);
+  });
+  const dir = msPermState.sortDir === "desc" ? -1 : 1;
+  const keyFn = msPermState.sortKey === "input" ? r => r.input : r => r.app;
+  return rows.slice().sort((a, b) => keyFn(a).localeCompare(keyFn(b)) * dir || a.app.localeCompare(b.app) || a.input.localeCompare(b.input));
+}
 function renderMsPermissionsTable() {
   const head = document.getElementById("msPermissionsTableHead");
   const body = document.getElementById("msPermissionsTableBody");
   if (!head || !body) return;
-  head.innerHTML = `<tr><th scope="col">App</th><th scope="col">Input</th>${msPermissionsActions.map(a => `<th scope="col">${escapeHtml(a)}</th>`).join("")}</tr>`;
-  body.innerHTML = msPermissionsRows.map(({ app, input }) => {
+  head.innerHTML = `<tr><th scope="col" data-sort="app">App</th><th scope="col" data-sort="input">Input</th>${msPermissionsActions.map(a => `<th scope="col">${escapeHtml(a)}</th>`).join("")}</tr>`;
+  head.querySelectorAll("th[data-sort]").forEach(th => {
+    th.classList.toggle("se-sorted", th.dataset.sort === msPermState.sortKey);
+    th.classList.toggle("se-asc", th.dataset.sort === msPermState.sortKey && msPermState.sortDir === "asc");
+  });
+  const rows = msPermFilteredSortedRows();
+  const countEl = document.getElementById("msPermResultCount");
+  if (countEl) {
+    countEl.textContent = rows.length === msPermissionsRows.length
+      ? `${rows.length} row${rows.length === 1 ? "" : "s"}`
+      : `Showing ${rows.length} of ${msPermissionsRows.length} rows`;
+  }
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="${msPermissionsActions.length + 2}"><div class="se-empty">No rows match the current search/filter.</div></td></tr>`;
+    return;
+  }
+  body.innerHTML = rows.map(({ app, input }) => {
     const cells = msPermissionsActions.map(action => {
       const entry = msPermissionsByKey.get(`${app} ||| ${input} ||| ${action}`);
       if (!entry) return "<td>&mdash;</td>";
@@ -35518,6 +35778,27 @@ function renderMsPermissionsTable() {
   }).join("");
 }
 renderMsPermissionsTable();
+
+const msPermAppFilterSelect = document.getElementById("msPermAppFilter");
+if (msPermAppFilterSelect) {
+  [...new Set(msPermissionsRows.map(r => r.app))].forEach(app => {
+    const opt = document.createElement("option");
+    opt.value = app;
+    opt.textContent = app;
+    msPermAppFilterSelect.appendChild(opt);
+  });
+  msPermAppFilterSelect.addEventListener("change", e => { msPermState.app = e.target.value; renderMsPermissionsTable(); });
+}
+const msPermSearchBoxEl = document.getElementById("msPermSearchBox");
+if (msPermSearchBoxEl) msPermSearchBoxEl.addEventListener("input", e => { msPermState.query = e.target.value; renderMsPermissionsTable(); });
+document.getElementById("msPermissionsTableHead").addEventListener("click", event => {
+  const th = event.target.closest("th[data-sort]");
+  if (!th) return;
+  const key = th.dataset.sort;
+  if (msPermState.sortKey === key) msPermState.sortDir = msPermState.sortDir === "asc" ? "desc" : "asc";
+  else { msPermState.sortKey = key; msPermState.sortDir = "asc"; }
+  renderMsPermissionsTable();
+});
 
 const msPermissionDetailModal = document.getElementById("msPermissionDetailModal");
 let lastMsPermissionDetailTrigger = null;
