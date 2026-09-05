@@ -998,8 +998,14 @@
     .se-type-dot.default { background: #6b7280; }
 
     .se-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
-    #seSearchBox { flex: 1; min-width: 240px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 13px; }
+    #seSearchBox, #msPermSearchBox { flex: 1; min-width: 240px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 13px; }
+    #msPermAppFilter { width: auto; flex: 0 0 auto; min-width: 200px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 13px; }
     .se-result-count { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+
+    table.eccs-matrix th[data-sort] { cursor: pointer; user-select: none; }
+    table.eccs-matrix th[data-sort]:hover { color: var(--primary); }
+    table.eccs-matrix th[data-sort].se-sorted::after { content: " \2193"; color: var(--accent); }
+    table.eccs-matrix th[data-sort].se-sorted.se-asc::after { content: " \2191"; }
 
     .se-table-wrap { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); }
     .se-table-wrap { overflow-x: auto; }
@@ -14529,6 +14535,14 @@ E. Assumptions and unresolved inputs</pre>
       <div id="msPermissionsView" class="subpage-view" role="tabpanel" aria-labelledby="showMsPermissionsView" hidden>
       <section class="reference-section">
         <div class="reference-section-heading"><div><h3>Permissions</h3><p>App-only Microsoft Graph/Office 365 Management permissions required per input, plus deployment-side and Azure-side prerequisites. Not every deployment needs every permission below -- select a marked cell for the full detail (service, purpose, notes).</p></div></div>
+
+        <div class="se-toolbar">
+          <input id="msPermSearchBox" type="search" placeholder="Search app, input, service, action, purpose or notes…" aria-label="Search Microsoft permissions matrix" />
+          <select id="msPermAppFilter" aria-label="Filter by app">
+            <option value="">All apps</option>
+          </select>
+          <span class="se-result-count" id="msPermResultCount"></span>
+        </div>
 
         <div class="eccs-table-wrap" role="region" aria-label="Scrollable Microsoft cloud inputs permissions matrix" tabindex="0">
           <table class="eccs-matrix" id="msPermissionsTable">
@@ -35501,12 +35515,47 @@ const MS_PERMISSIONS_FAMILY_SHORT_LABEL = {
   "Yammer": "Yammer"
 };
 
+// Per-(app,input) search haystack, built once from every entry that row carries (not just app/input) so
+// searching e.g. an action name, service, or purpose surfaces the rows that need it.
+const msPermissionsRowHaystack = new Map();
+msPermissionsData.forEach(r => {
+  const key = `${r.app} ||| ${r.input}`;
+  const hay = [r.app, r.input, r.family, r.service, r.action, r.purpose, r.notes].filter(Boolean).join(" ").toLowerCase();
+  msPermissionsRowHaystack.set(key, `${msPermissionsRowHaystack.get(key) || ""} ${hay}`);
+});
+let msPermState = { query: "", app: "", sortKey: "app", sortDir: "asc" };
+function msPermFilteredSortedRows() {
+  const q = msPermState.query.trim().toLowerCase();
+  let rows = msPermissionsRows.filter(({ app, input }) => {
+    if (msPermState.app && app !== msPermState.app) return false;
+    if (!q) return true;
+    return (msPermissionsRowHaystack.get(`${app} ||| ${input}`) || "").includes(q);
+  });
+  const dir = msPermState.sortDir === "desc" ? -1 : 1;
+  const keyFn = msPermState.sortKey === "input" ? r => r.input : r => r.app;
+  return rows.slice().sort((a, b) => keyFn(a).localeCompare(keyFn(b)) * dir || a.app.localeCompare(b.app) || a.input.localeCompare(b.input));
+}
 function renderMsPermissionsTable() {
   const head = document.getElementById("msPermissionsTableHead");
   const body = document.getElementById("msPermissionsTableBody");
   if (!head || !body) return;
-  head.innerHTML = `<tr><th scope="col">App</th><th scope="col">Input</th>${msPermissionsActions.map(a => `<th scope="col">${escapeHtml(a)}</th>`).join("")}</tr>`;
-  body.innerHTML = msPermissionsRows.map(({ app, input }) => {
+  head.innerHTML = `<tr><th scope="col" data-sort="app">App</th><th scope="col" data-sort="input">Input</th>${msPermissionsActions.map(a => `<th scope="col">${escapeHtml(a)}</th>`).join("")}</tr>`;
+  head.querySelectorAll("th[data-sort]").forEach(th => {
+    th.classList.toggle("se-sorted", th.dataset.sort === msPermState.sortKey);
+    th.classList.toggle("se-asc", th.dataset.sort === msPermState.sortKey && msPermState.sortDir === "asc");
+  });
+  const rows = msPermFilteredSortedRows();
+  const countEl = document.getElementById("msPermResultCount");
+  if (countEl) {
+    countEl.textContent = rows.length === msPermissionsRows.length
+      ? `${rows.length} row${rows.length === 1 ? "" : "s"}`
+      : `Showing ${rows.length} of ${msPermissionsRows.length} rows`;
+  }
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="${msPermissionsActions.length + 2}"><div class="se-empty">No rows match the current search/filter.</div></td></tr>`;
+    return;
+  }
+  body.innerHTML = rows.map(({ app, input }) => {
     const cells = msPermissionsActions.map(action => {
       const entry = msPermissionsByKey.get(`${app} ||| ${input} ||| ${action}`);
       if (!entry) return "<td>&mdash;</td>";
@@ -35518,6 +35567,27 @@ function renderMsPermissionsTable() {
   }).join("");
 }
 renderMsPermissionsTable();
+
+const msPermAppFilterSelect = document.getElementById("msPermAppFilter");
+if (msPermAppFilterSelect) {
+  [...new Set(msPermissionsRows.map(r => r.app))].forEach(app => {
+    const opt = document.createElement("option");
+    opt.value = app;
+    opt.textContent = app;
+    msPermAppFilterSelect.appendChild(opt);
+  });
+  msPermAppFilterSelect.addEventListener("change", e => { msPermState.app = e.target.value; renderMsPermissionsTable(); });
+}
+const msPermSearchBoxEl = document.getElementById("msPermSearchBox");
+if (msPermSearchBoxEl) msPermSearchBoxEl.addEventListener("input", e => { msPermState.query = e.target.value; renderMsPermissionsTable(); });
+document.getElementById("msPermissionsTableHead").addEventListener("click", event => {
+  const th = event.target.closest("th[data-sort]");
+  if (!th) return;
+  const key = th.dataset.sort;
+  if (msPermState.sortKey === key) msPermState.sortDir = msPermState.sortDir === "asc" ? "desc" : "asc";
+  else { msPermState.sortKey = key; msPermState.sortDir = "asc"; }
+  renderMsPermissionsTable();
+});
 
 const msPermissionDetailModal = document.getElementById("msPermissionDetailModal");
 let lastMsPermissionDetailTrigger = null;
