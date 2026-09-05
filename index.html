@@ -3091,6 +3091,13 @@
     .eccs-matrix th.ports-hl-header { background:#fef08a !important; }
     .eccs-matrix td.ports-hl-cell { background:#fde047 !important; box-shadow:inset 0 0 0 2px #ca8a04; font-weight:700; }
     .eccs-matrix .ports-hidden { display:none; }
+    .perm-mark { display:inline-block; padding:3px 9px; border-radius:999px; font-size:10.5px; font-weight:800; letter-spacing:.02em; white-space:nowrap; border:none; cursor:pointer; font-family:inherit; }
+    .perm-mark:hover, .perm-mark:focus-visible { outline:2px solid #7030a0; outline-offset:1px; }
+    .perm-mark.perm-required { background:#dcfce7; color:#166534; }
+    .perm-mark.perm-required-gcc { background:#cffafe; color:#155e75; }
+    .perm-mark.perm-optional { background:#e0e7ff; color:#3730a3; }
+    .perm-mark.perm-splunk-side { background:#f1f5f9; color:#334155; }
+    .perm-mark.perm-azure-side { background:#fef3c7; color:#92400e; }
     .ports-pattern-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:14px 0 10px; }
     .ports-pattern-toolbar label { font-weight:800; font-size:13px; color:#0f172a; }
     .ports-pattern-toolbar select { flex:1 1 340px; min-width:240px; padding:9px 11px; border-radius:10px; border:1px solid var(--border); font-size:13px; font-family:inherit; background:#fff; }
@@ -14414,6 +14421,7 @@ E. Assumptions and unresolved inputs</pre>
         <button id="showMsInputsListView" class="page-subtab active" type="button" role="tab" aria-selected="true" aria-controls="msInputsListView" data-msview="msInputsList">Inputs</button>
         <button id="showMsCoverageView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="msCoverageView" data-msview="msCoverage">Coverage</button>
         <button id="showSchemaExplorerView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="schemaExplorerView" data-msview="schemaExplorer">Schema</button>
+        <button id="showMsPermissionsView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="msPermissionsView" data-msview="msPermissions">Permissions</button>
       </div>
 
       <div id="msInputsListView" class="subpage-view" role="tabpanel" aria-labelledby="showMsInputsListView">
@@ -14506,6 +14514,21 @@ E. Assumptions and unresolved inputs</pre>
         </div>
       </section>
       </div>
+
+      <div id="msPermissionsView" class="subpage-view" role="tabpanel" aria-labelledby="showMsPermissionsView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Permissions</h3><p>App-only Microsoft Graph/Office 365 Management permissions required per input, plus deployment-side and Azure-side prerequisites. Not every deployment needs every permission below -- select a marked cell for the full detail (service, purpose, notes).</p></div></div>
+
+        <div class="eccs-table-wrap" role="region" aria-label="Scrollable Microsoft cloud inputs permissions matrix" tabindex="0">
+          <table class="eccs-matrix" id="msPermissionsTable">
+            <thead id="msPermissionsTableHead"></thead>
+            <tbody id="msPermissionsTableBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note">Transcribed verbatim from a supplied <code>splunk_o365_permissions.csv</code>. Rows are the distinct <code>Input</code> values from that file, columns the distinct <code>Actions</code> values -- a marked cell means that row's input requires that column's action (per its <code>Input Family</code>); some inputs (e.g. <strong>Message Trace</strong>, <strong>All inputs</strong>) require more than one action and so have multiple marked cells. &mdash; means not applicable.</p>
+      </section>
+      </div>
     </div>
 
     <div id="awsCloudInputsSubpage" class="subpage-view" role="tabpanel" aria-labelledby="showAwsCloudInputsSubpage" hidden>
@@ -14513,22 +14536,40 @@ E. Assumptions and unresolved inputs</pre>
         <button id="showAwsInputsListView" class="page-subtab active" type="button" role="tab" aria-selected="true" aria-controls="awsInputsListView" data-awsview="awsInputsList">Inputs</button>
         <button id="showAwsCoverageView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="awsCoverageView" data-awsview="awsCoverage">Coverage</button>
         <button id="showAwsSchemaView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="awsSchemaView" data-awsview="awsSchema">Schema</button>
+        <button id="showAwsPermissionsView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="awsPermissionsView" data-awsview="awsPermissions">Permissions</button>
       </div>
 
       <div id="awsInputsListView" class="subpage-view" role="tabpanel" aria-labelledby="showAwsInputsListView">
       <section class="reference-section">
-        <div class="reference-section-heading"><div><h3>Amazon AWS based inputs</h3><p id="awsInputsListIntro">Inputs across Splunk-maintained AWS add-ons, organised the same way as the Microsoft cloud inputs above. Not yet populated -- see the note below.</p></div></div>
+        <div class="reference-section-heading"><div><h3>Amazon AWS based inputs</h3><p id="awsInputsListIntro">Inputs across Splunk-maintained AWS add-ons, organised the same way as the Microsoft cloud inputs above.</p></div></div>
 
         <div id="awsInputsListGroups"></div>
 
-        <p class="sot-note" id="awsInputsListNote">App/Input/Sourcetype data transcribed from a supplied Splunk_TA_aws_sourcetypes.csv. The Splunkbase app name, app ID and base link are not yet confirmed and show as "To be confirmed" in each input's details below -- supply those to complete the entry, the same way Microsoft's were confirmed. See the Schema tab for the AWS field-level schema (transcribed separately from a supplied CSV, organised by sourcetype rather than by these input names).</p>
+        <p class="sot-note" id="awsInputsListNote">App/Input/Sourcetype data transcribed from a supplied Splunk_TA_aws_sourcetypes.csv; Splunkbase app name/ID/base link confirmed against Splunkbase directly. See the Coverage tab for AWS account-level enablement tracking against these inputs, and the Schema tab for the AWS field-level schema (transcribed separately from a supplied CSV, organised by sourcetype rather than by these input names).</p>
       </section>
       </div>
 
       <div id="awsCoverageView" class="subpage-view" role="tabpanel" aria-labelledby="showAwsCoverageView" hidden>
       <section class="reference-section">
-        <div class="reference-section-heading"><div><h3>Coverage</h3><p>Editable account/region-level enablement tracking against the AWS cloud inputs listed under Inputs.</p></div></div>
-        <div class="sot-note">Not yet built. Once AWS TA groups are added under the Inputs tab, this becomes an editable tracker table -- add rows per AWS account/region, mark which inputs are enabled, and import/export as CSV -- following the same pattern as the Microsoft Coverage tab.</div>
+        <div class="reference-section-heading"><div><h3>Coverage</h3><p id="awsCoverageSubtitle">Editable AWS account-level enablement tracking against the AWS cloud inputs listed under Inputs. Edits are saved in this browser automatically.</p></div></div>
+
+        <div class="input-coverage-toolbar">
+          <button id="awsInputCoverageAddRow" type="button">+ Add row</button>
+          <button id="awsInputCoverageImportBtn" type="button">Import CSV</button>
+          <input id="awsInputCoverageImportFile" type="file" accept=".csv,text/csv" hidden />
+          <button id="awsInputCoverageExportBtn" class="primary-button" type="button">Export CSV</button>
+          <button id="awsInputCoverageClearBtn" type="button">Clear all rows</button>
+          <span id="awsInputCoverageStatus" class="input-coverage-status" role="status" aria-live="polite"></span>
+        </div>
+
+        <div id="awsInputCoverageTableWrap" class="input-coverage-table-wrap">
+          <table id="awsInputCoverageTable" class="input-coverage-table">
+            <thead id="awsInputCoverageTableHead"></thead>
+            <tbody id="awsInputCoverageTableBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note" id="awsCoverageColumnNote"></p>
       </section>
       </div>
 
@@ -14575,6 +14616,26 @@ E. Assumptions and unresolved inputs</pre>
             </div>
           </div>
         </div>
+      </section>
+      </div>
+
+      <div id="awsPermissionsView" class="subpage-view" role="tabpanel" aria-labelledby="showAwsPermissionsView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Permissions</h3><p>IAM permissions required on the S3 bucket (and, where used, its notification queue/KMS key), by capability/feature -- not every deployment needs every permission below.</p></div></div>
+
+        <div class="eccs-table-wrap" role="region" aria-label="Scrollable S3 IAM permissions matrix" tabindex="0">
+          <table class="eccs-matrix" id="awsPermissionsTable">
+            <thead><tr><th scope="col">Capability / Feature</th><th scope="col"><code>s3:GetBucketLocation</code></th><th scope="col"><code>s3:ListBucket</code></th><th scope="col"><code>s3:GetObject</code></th><th scope="col"><code>s3:GetObject*</code></th><th scope="col"><code>s3:PutObject</code></th><th scope="col"><code>s3:AbortMultipartUpload</code></th><th scope="col"><code>sqs:ReceiveMessage</code></th><th scope="col"><code>sqs:DeleteMessage</code></th><th scope="col"><code>sqs:GetQueueAttributes</code></th><th scope="col"><code>sqs:GetQueueUrl</code></th><th scope="col"><code>kms:Decrypt</code></th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Federated Search only + Splunk-native catalog</th><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Not needed</td><td>Not needed</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td></tr>
+              <tr><th scope="row">Data Routing + Federated Search + Splunk-native catalog</th><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Required</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td><td>Optional</td></tr>
+              <tr><th scope="row">Catalog auto-sync (SQS) for Splunk-native catalog</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Required</td><td>Required</td><td>Required</td><td>Optional</td><td>&mdash;</td></tr>
+              <tr><th scope="row">SSE-KMS encryption</th><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>Required</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="sot-note">Transcribed verbatim from a supplied <code>splunk_s3_permissions.csv</code>. <code>s3:GetObject*</code> denotes the family of versioned/tagging read actions (e.g. <code>s3:GetObjectVersion</code>) alongside the base <code>s3:GetObject</code> action. &mdash; not applicable to that capability/feature.</p>
       </section>
       </div>
     </div>
@@ -14992,6 +15053,22 @@ E. Assumptions and unresolved inputs</pre>
     </div>
     <div class="modal-body">
       <dl class="input-detail-grid" id="schemaFieldGrid"></dl>
+    </div>
+  </div>
+</div>
+
+<div id="msPermissionDetailModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="msPermissionDetailTitle" aria-hidden="true">
+  <div class="modal-dialog input-detail-dialog">
+    <div class="modal-header">
+      <div>
+        <p class="modal-eyebrow" id="msPermissionDetailEyebrow">Microsoft cloud based inputs &middot; Permissions</p>
+        <h2 id="msPermissionDetailTitle" class="modal-title">&mdash;</h2>
+        <p class="modal-subtitle" id="msPermissionDetailSubtitle"></p>
+      </div>
+      <button id="closeMsPermissionDetail" class="modal-close" type="button" aria-label="Close permission details">×</button>
+    </div>
+    <div class="modal-body">
+      <dl class="input-detail-grid" id="msPermissionDetailGrid"></dl>
     </div>
   </div>
 </div>
@@ -33691,6 +33768,15 @@ const awsInputCoverageInputColumns = awsInputCoverageGroups.flatMap(group =>
     };
   })
 );
+function awsInputCoverageColumnTooltip(c) {
+  const schemaText = Array.isArray(c.schema) ? c.schema.join(", ") : c.schema;
+  return `Splunk app ID: ${c.appId}\nSplunk app name: ${c.appName}\nSplunk app base link: ${c.baseLink}\nInput category: ${c.inputCategory}\nInput name: ${c.label}\nContent type: ${c.contentType}\nInput type sub: ${c.inputTypeSub}\nSource: ${c.source}\nCollection method: ${c.collectionMethod}\nSourcetype: ${c.sourcetype}\nSchema: ${schemaText}`;
+}
+// Unlike the Microsoft tenant/subscription group (4 free-text columns: Tenant ID/Name, Subscription ID/Name),
+// AWS's Coverage tab tracks enablement by a single account identifier -- declared here (ahead of
+// renderAwsInputsListView, which runs immediately below and references it) rather than alongside the rest of
+// the AWS coverage table implementation further down the script.
+const awsInputCoverageAccountColumns = ["AWS Account Number"];
 
 function renderAwsInputsListView() {
   const container = document.getElementById("awsInputsListGroups");
@@ -33711,6 +33797,19 @@ function renderAwsInputsListView() {
   if (introEl) {
     const n = awsInputCoverageGroups.length;
     introEl.textContent = `${awsInputCoverageInputColumns.length} inputs across ${n} Splunk-maintained AWS add-on${n === 1 ? "" : "s"}. Each input is a distinct, separately-enabled data feed within its TA -- not every account/region will need every input. Select an input to see its details.`;
+  }
+  const noteEl = document.getElementById("awsInputsListNote");
+  if (noteEl) noteEl.innerHTML = `App/Input/Sourcetype data transcribed from a supplied Splunk_TA_aws_sourcetypes.csv; Splunkbase app name/ID/base link confirmed against Splunkbase directly. See the Coverage tab for AWS account-level enablement tracking against these ${awsInputCoverageInputColumns.length} inputs, and the Schema tab for the AWS field-level schema (transcribed separately from a supplied CSV, organised by sourcetype rather than by these input names).`;
+  const coverageSubtitleEl = document.getElementById("awsCoverageSubtitle");
+  if (coverageSubtitleEl) coverageSubtitleEl.textContent = `Editable AWS account-level enablement tracking against the ${awsInputCoverageInputColumns.length} AWS cloud inputs listed under Inputs. Edits are saved in this browser automatically.`;
+  const columnNoteEl = document.getElementById("awsCoverageColumnNote");
+  if (columnNoteEl) {
+    const totalColumns = awsInputCoverageAccountColumns.length + awsInputCoverageInputColumns.length;
+    const perTaParts = awsInputCoverageGroups.map(g => `${g.inputs.length} for <code>${escapeHtml(g.tag)}</code>`);
+    const perTaText = perTaParts.length > 1
+      ? `${perTaParts.slice(0, -1).join(", ")} and ${perTaParts[perTaParts.length - 1]}`
+      : perTaParts.join("");
+    columnNoteEl.innerHTML = `${totalColumns} columns: AWS Account Number (free text) followed by one Y/N column per input -- ${perTaText}.`;
   }
 }
 renderAwsInputsListView();
@@ -34934,6 +35033,371 @@ document.getElementById("inputCoverageImportFile").addEventListener("change", ev
   if (file) importInputCoverageCsv(file);
   event.target.value = "";
 });
+
+/* ---------- Input Coverage: Amazon AWS Coverage tracker --------------------------------------------------
+ * Same editable-tracker pattern as the Microsoft Coverage tab above (renderInputCoverageTable and friends),
+ * kept as its own separate implementation rather than a shared/parameterised one -- consistent with how the
+ * AWS input data itself (awsInputCoverageGroups etc.) is kept deliberately separate from the Microsoft pool.
+ * The only structural difference: Microsoft tracks by a 4-column, collapsible tenant/subscription group;
+ * AWS tracks by a single "AWS Account Number" column (declared earlier, alongside awsInputCoverageInputColumns,
+ * since renderAwsInputsListView references it immediately on load) -- one column needs no collapse toggle, so
+ * only the per-TA input-group columns are collapsible here. parseInputCoverageCsv and normalizeYnValue are
+ * fully generic (no Microsoft-specific data referenced) and are reused as-is rather than duplicated. -------- */
+const awsInputCoverageAllColumns = [...awsInputCoverageAccountColumns, ...awsInputCoverageInputColumns.map(c => c.key)];
+const AWS_INPUT_COVERAGE_LS_KEY = "latch_aws_input_coverage_v1";
+
+let awsInputCoverageRows = [];
+
+function newAwsInputCoverageRow() {
+  const row = {};
+  awsInputCoverageAllColumns.forEach(col => { row[col] = ""; });
+  return row;
+}
+
+function loadAwsInputCoverageRows() {
+  try {
+    const raw = localStorage.getItem(AWS_INPUT_COVERAGE_LS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        awsInputCoverageRows = parsed.map(saved => {
+          const row = newAwsInputCoverageRow();
+          awsInputCoverageAllColumns.forEach(col => { if (saved && typeof saved[col] === "string") row[col] = saved[col]; });
+          return row;
+        });
+        return;
+      }
+    }
+  } catch (e) { /* ignore corrupt/unavailable storage */ }
+  awsInputCoverageRows = [newAwsInputCoverageRow()];
+}
+
+function saveAwsInputCoverageRows() {
+  try { localStorage.setItem(AWS_INPUT_COVERAGE_LS_KEY, JSON.stringify(awsInputCoverageRows)); } catch (e) { /* ignore quota/unavailable errors */ }
+}
+
+function setAwsInputCoverageStatus(text) {
+  const el = document.getElementById("awsInputCoverageStatus");
+  if (el) el.textContent = text;
+}
+
+const AWS_INPUT_COVERAGE_COLLAPSE_LS_KEY = "latch_aws_input_coverage_collapsed_v1";
+const awsInputCoverageCollapsibleTags = () => awsInputCoverageGroups.map(g => g.tag);
+let awsInputCoverageCollapsedGroups = new Set(awsInputCoverageCollapsibleTags());
+
+function loadAwsInputCoverageCollapseState() {
+  try {
+    const raw = localStorage.getItem(AWS_INPUT_COVERAGE_COLLAPSE_LS_KEY);
+    if (raw !== null) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        const validTags = awsInputCoverageCollapsibleTags();
+        awsInputCoverageCollapsedGroups = new Set(parsed.filter(tag => validTags.includes(tag)));
+        return;
+      }
+    }
+  } catch (e) { /* ignore corrupt/unavailable storage */ }
+  awsInputCoverageCollapsedGroups = new Set(awsInputCoverageCollapsibleTags());
+}
+
+function saveAwsInputCoverageCollapseState() {
+  try { localStorage.setItem(AWS_INPUT_COVERAGE_COLLAPSE_LS_KEY, JSON.stringify([...awsInputCoverageCollapsedGroups])); } catch (e) { /* ignore */ }
+}
+
+function toggleAwsInputCoverageGroup(tag) {
+  if (awsInputCoverageCollapsedGroups.has(tag)) awsInputCoverageCollapsedGroups.delete(tag);
+  else awsInputCoverageCollapsedGroups.add(tag);
+  saveAwsInputCoverageCollapseState();
+  renderAwsInputCoverageTable();
+}
+
+function renderAwsInputCoverageTable() {
+  const head = document.getElementById("awsInputCoverageTableHead");
+  const body = document.getElementById("awsInputCoverageTableBody");
+  if (!head || !body) return;
+
+  const accountHeaderCell = `<th class="ic-tenant-col">${escapeHtml(awsInputCoverageAccountColumns[0])}</th>`;
+
+  const groupInputCells = awsInputCoverageGroups.map(g => {
+    const collapsed = awsInputCoverageCollapsedGroups.has(g.tag);
+    const span = collapsed ? 1 : g.inputs.length;
+    const icon = collapsed ? "&#9656;" : "&#9662;";
+    const label = collapsed ? `${icon} [${escapeHtml(g.tag)}] (${g.inputs.length})` : `${icon} [${escapeHtml(g.tag)}]`;
+    return `<th class="ic-group-toggle" colspan="${span}" data-toggle-group="${escapeHtml(g.tag)}" title="Click to ${collapsed ? "expand" : "collapse"} ${escapeHtml(g.tag)}">${label}</th>`;
+  }).join("");
+  const totalDataColumns = 1 + awsInputCoverageGroups.reduce((sum, g) =>
+    sum + (awsInputCoverageCollapsedGroups.has(g.tag) ? 1 : g.inputs.length), 0);
+  const colHeaderCells = accountHeaderCell
+    + awsInputCoverageGroups.map(g => {
+        if (awsInputCoverageCollapsedGroups.has(g.tag)) {
+          return `<th class="ic-group-collapsed-col" data-toggle-group="${escapeHtml(g.tag)}" title="Click to expand ${escapeHtml(g.tag)}">&#9656;</th>`;
+        }
+        return awsInputCoverageInputColumns.filter(c => c.tag === g.tag)
+          .map(c => `<th title="${escapeHtml(awsInputCoverageColumnTooltip(c))}">${escapeHtml(c.label)}</th>`).join("");
+      }).join("")
+    + `<th></th>`;
+  // Account column has no group-level collapse toggle (single column, nothing to collapse), so its cell in
+  // the group-row banner is just a blank spacer matching the Microsoft table's row-shape.
+  head.innerHTML = `<tr class="ic-group-row"><th></th>${groupInputCells}<th></th></tr>`
+    + `<tr class="ic-col-row">${colHeaderCells}</tr>`;
+
+  if (!awsInputCoverageRows.length) {
+    body.innerHTML = `<tr class="ic-empty-row"><td colspan="${totalDataColumns + 1}">No rows yet. Use "+ Add row" or Import CSV to get started.</td></tr>`;
+  } else {
+    body.innerHTML = awsInputCoverageRows.map((row, rowIndex) => {
+      const accountCol = awsInputCoverageAccountColumns[0];
+      const accountCell = `<td class="ic-tenant-cell"><input class="ic-text-input" type="text" data-row="${rowIndex}" data-col="${escapeHtml(accountCol)}" value="${escapeHtml(row[accountCol] || "")}" placeholder="${escapeHtml(accountCol)}" /></td>`;
+      const groupCells = awsInputCoverageGroups.map(g => {
+        const groupCols = awsInputCoverageInputColumns.filter(c => c.tag === g.tag);
+        if (awsInputCoverageCollapsedGroups.has(g.tag)) {
+          const yesCount = groupCols.filter(c => row[c.key] === "Y").length;
+          const noCount = groupCols.filter(c => row[c.key] === "N").length;
+          const summary = (yesCount || noCount) ? `<span class="ic-count-y">${yesCount}Y</span> &middot; <span class="ic-count-n">${noCount}N</span>` : "&mdash;";
+          return `<td class="ic-group-collapsed-cell" data-toggle-group="${escapeHtml(g.tag)}" title="Click to expand ${escapeHtml(g.tag)} -- ${yesCount} Y, ${noCount} N, ${groupCols.length - yesCount - noCount} unset of ${groupCols.length}">${summary}</td>`;
+        }
+        return groupCols.map(c => {
+          const val = row[c.key] === "Y" || row[c.key] === "N" ? row[c.key] : "";
+          return `<td><select class="ic-yn-select" data-row="${rowIndex}" data-col="${escapeHtml(c.key)}" data-val="${val}">
+            <option value=""${val === "" ? " selected" : ""}>--</option>
+            <option value="Y"${val === "Y" ? " selected" : ""}>Y</option>
+            <option value="N"${val === "N" ? " selected" : ""}>N</option>
+          </select></td>`;
+        }).join("");
+      }).join("");
+      return `<tr>${accountCell}${groupCells}<td><button type="button" class="ic-row-remove" data-remove-row="${rowIndex}" title="Remove row" aria-label="Remove row">&times;</button></td></tr>`;
+    }).join("");
+  }
+  setAwsInputCoverageStatus(`${awsInputCoverageRows.length} row${awsInputCoverageRows.length === 1 ? "" : "s"}`);
+}
+
+function exportAwsInputCoverageCsv(event) {
+  const lines = [
+    awsInputCoverageAllColumns.map(csvValue).join(","),
+    ...awsInputCoverageRows.map(row => awsInputCoverageAllColumns.map(col => csvValue(row[col] || "")).join(","))
+  ];
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "AWS-Cloud-Input-Coverage.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  if (event && event.currentTarget) {
+    const original = event.currentTarget.textContent;
+    event.currentTarget.textContent = "Exported";
+    setTimeout(() => { if (event.currentTarget) event.currentTarget.textContent = original; }, 1400);
+  }
+}
+
+function importAwsInputCoverageCsv(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsedRows;
+    try {
+      parsedRows = parseInputCoverageCsv(String(reader.result || ""));
+    } catch (e) {
+      setAwsInputCoverageStatus("Import failed: could not parse file as CSV.");
+      return;
+    }
+    if (!parsedRows.length) { setAwsInputCoverageStatus("Import failed: file is empty."); return; }
+    const header = parsedRows[0].map(h => h.trim());
+    const accountCol = awsInputCoverageAccountColumns[0];
+    if (!header.includes(accountCol)) {
+      setAwsInputCoverageStatus(`Import failed: header row must include a "${accountCol}" column.`);
+      return;
+    }
+    if (awsInputCoverageRows.length && !confirm(`This will replace the current ${awsInputCoverageRows.length} row(s) with the imported file. Continue?`)) {
+      return;
+    }
+    const colIndex = {};
+    header.forEach((h, i) => { colIndex[h] = i; });
+    const imported = parsedRows.slice(1).map(cells => {
+      const row = newAwsInputCoverageRow();
+      awsInputCoverageAccountColumns.forEach(col => {
+        if (colIndex[col] !== undefined) row[col] = cells[colIndex[col]] || "";
+      });
+      awsInputCoverageInputColumns.forEach(c => {
+        if (colIndex[c.key] !== undefined) row[c.key] = normalizeYnValue(cells[colIndex[c.key]]);
+      });
+      return row;
+    });
+    awsInputCoverageRows = imported.length ? imported : [newAwsInputCoverageRow()];
+    saveAwsInputCoverageRows();
+    renderAwsInputCoverageTable();
+    setAwsInputCoverageStatus(`Imported ${imported.length} row${imported.length === 1 ? "" : "s"}.`);
+  };
+  reader.onerror = () => setAwsInputCoverageStatus("Import failed: could not read file.");
+  reader.readAsText(file);
+}
+
+loadAwsInputCoverageRows();
+loadAwsInputCoverageCollapseState();
+renderAwsInputCoverageTable();
+
+document.getElementById("awsInputCoverageTableHead").addEventListener("click", event => {
+  const target = event.target.closest("[data-toggle-group]");
+  if (target) toggleAwsInputCoverageGroup(target.dataset.toggleGroup);
+});
+document.getElementById("awsInputCoverageTableBody").addEventListener("click", event => {
+  const toggleTarget = event.target.closest("[data-toggle-group]");
+  if (toggleTarget) { toggleAwsInputCoverageGroup(toggleTarget.dataset.toggleGroup); return; }
+  const removeBtn = event.target.closest("[data-remove-row]");
+  if (removeBtn) {
+    const rowIndex = Number(removeBtn.dataset.removeRow);
+    awsInputCoverageRows.splice(rowIndex, 1);
+    saveAwsInputCoverageRows();
+    renderAwsInputCoverageTable();
+  }
+});
+document.getElementById("awsInputCoverageTableBody").addEventListener("input", event => {
+  const target = event.target;
+  if (target.classList.contains("ic-text-input")) {
+    const rowIndex = Number(target.dataset.row);
+    const col = target.dataset.col;
+    if (awsInputCoverageRows[rowIndex]) {
+      awsInputCoverageRows[rowIndex][col] = target.value;
+      saveAwsInputCoverageRows();
+    }
+  }
+});
+document.getElementById("awsInputCoverageTableBody").addEventListener("change", event => {
+  const target = event.target;
+  if (target.classList.contains("ic-yn-select")) {
+    const rowIndex = Number(target.dataset.row);
+    const col = target.dataset.col;
+    if (awsInputCoverageRows[rowIndex]) {
+      awsInputCoverageRows[rowIndex][col] = target.value;
+      target.dataset.val = target.value;
+      saveAwsInputCoverageRows();
+    }
+  }
+});
+document.getElementById("awsInputCoverageAddRow").addEventListener("click", () => {
+  awsInputCoverageRows.push(newAwsInputCoverageRow());
+  saveAwsInputCoverageRows();
+  renderAwsInputCoverageTable();
+  const wrap = document.getElementById("awsInputCoverageTableWrap");
+  if (wrap) wrap.scrollTop = wrap.scrollHeight;
+});
+document.getElementById("awsInputCoverageClearBtn").addEventListener("click", () => {
+  if (!awsInputCoverageRows.length) return;
+  if (!confirm(`Remove all ${awsInputCoverageRows.length} row(s)? This cannot be undone.`)) return;
+  awsInputCoverageRows = [];
+  saveAwsInputCoverageRows();
+  renderAwsInputCoverageTable();
+});
+document.getElementById("awsInputCoverageExportBtn").addEventListener("click", exportAwsInputCoverageCsv);
+document.getElementById("awsInputCoverageImportBtn").addEventListener("click", () => {
+  document.getElementById("awsInputCoverageImportFile").click();
+});
+document.getElementById("awsInputCoverageImportFile").addEventListener("change", event => {
+  const file = event.target.files && event.target.files[0];
+  if (file) importAwsInputCoverageCsv(file);
+  event.target.value = "";
+});
+
+/* ---------- Input Coverage: Microsoft cloud inputs Permissions matrix -------------------------------------
+ * Same visual style as the AWS Permissions tab (eccs-table-wrap/eccs-matrix), but this data is inherently a
+ * sparse matrix rather than a dense one -- each of the 18 source rows pairs exactly one Input with exactly
+ * one Actions value (no Actions value repeats across rows), so most (Input, Action) cells have nothing to
+ * show. Rows/columns are the distinct Input/Actions values in first-seen (CSV) order; a marked cell opens a
+ * dedicated detail modal (msPermissionDetailModal) with that row's Family/Service/Purpose/Notes, following
+ * the same open/close/backdrop/Escape pattern as schemaFieldModal above -- not the shared openInputDetail
+ * modal, since this data has a different shape (Family/Action/Purpose/Notes, not Splunk-app/schema fields).
+ * "Message Trace" and "All inputs" each appear against more than one Action and so get multiple marked cells. */
+const msPermissionsData = [
+  { family: "Required permissions", input: "Management Activity", service: "Office 365 Management", action: "ActivityFeed.Read", purpose: "Core Office 365 audit/activity log stream" },
+  { family: "Required permissions", input: "Audit Log", service: "Microsoft Graph", action: "AuditLog.Read.All", purpose: "Azure AD audit logs and sign-in event collection" },
+  { family: "Required permissions", input: "Usage Reports", service: "Microsoft Graph", action: "Reports.Read.All", purpose: "Office 365 usage report inputs" },
+  { family: "Required permissions", input: "Message Trace", service: "Microsoft Graph", action: "ExchangeMessageTrace.Read.All", purpose: "Message Trace input for commercial/worldwide tenants", notes: "Replaced by ReportingWebService.Read.All in GCC High/DoD tenants" },
+  { family: "Required permissions", input: "Service Health", service: "Microsoft Graph", action: "ServiceHealth.Read.All", purpose: "Service Health input" },
+  { family: "Required permissions", input: "Service Communications", service: "Microsoft Graph", action: "ServiceMessage.Read.All", purpose: "Service Communications / Message Center input" },
+  { family: "Required permissions", input: "Azure AD Users", service: "Microsoft Graph", action: "User.Read.All", purpose: "Azure AD user object collection" },
+  { family: "Required permissions", input: "Azure AD Groups", service: "Microsoft Graph", action: "Group.Read.All", purpose: "Azure AD group object collection" },
+  { family: "Required permissions", input: "Azure AD Directory", service: "Microsoft Graph", action: "Directory.Read.All", purpose: "General directory object collection backing the user/group inputs" },
+  { family: "Required permissions (GCC substitute)", input: "Message Trace (US Gov)", service: "Exchange Online", action: "ReportingWebService.Read.All", purpose: "Message Trace input in GCC High/DoD tenants", notes: "Used instead of ExchangeMessageTrace.Read.All in US Government tenants" },
+  { family: "Optional permissions", input: "DLP Events", service: "Office 365 Management", action: "ActivityFeed.ReadDlp", purpose: "Data loss prevention policy event input", notes: "Only needed if the DLP input is enabled" },
+  { family: "Optional permissions", input: "Information Protection", service: "Microsoft Graph", action: "InformationProtectionPolicy.Read.All", purpose: "Sensitivity label and information-protection policy data", notes: "Only needed if that input is enabled" },
+  { family: "Optional permissions", input: "Message Trace auto-provisioning", service: "Microsoft Graph", action: "Application.ReadWrite.All", purpose: "Lets the add-on auto-provision the Message Trace service principal", notes: "Alternative to provisioning it manually in Exchange Online" },
+  { family: "Optional permissions", input: "Group Membership Management", service: "Microsoft Graph", action: "GroupMember.ReadWrite.All", purpose: "Group membership management from within Splunk", notes: "Only needed if that feature is used" },
+  { family: "Beyond the Azure app - Splunk side", input: "All inputs", service: "Splunk platform", action: "Deployment target: heavy forwarder or search head", purpose: "Universal forwarders are unsupported", notes: "Modular inputs need Python and the Splunk REST handler" },
+  { family: "Beyond the Azure app - Splunk side", input: "All inputs", service: "Splunk platform", action: "admin role", purpose: "Typically required to configure accounts and inputs", notes: "Credentials are stored encrypted via the REST handler" },
+  { family: "Beyond the Azure app - Azure side", input: "All inputs", service: "Azure AD", action: "Admin consent (Global Administrator or Privileged Role Administrator)", purpose: "Required to grant the Application-type permissions above", notes: "All listed permissions are app-only - a regular user can't consent to them" },
+  { family: "Beyond the Azure app - Azure side", input: "Message Trace", service: "Exchange Online", action: "Service principal provisioning", purpose: "A service principal must exist in Exchange Online for Message Trace", notes: "Created manually or automatically via Application.ReadWrite.All" },
+];
+const msPermissionsInputs = [...new Set(msPermissionsData.map(r => r.input))];
+const msPermissionsActions = [...new Set(msPermissionsData.map(r => r.action))];
+const msPermissionsByKey = new Map(msPermissionsData.map(r => [`${r.input} ||| ${r.action}`, r]));
+const MS_PERMISSIONS_FAMILY_CLASS = {
+  "Required permissions": "perm-required",
+  "Required permissions (GCC substitute)": "perm-required-gcc",
+  "Optional permissions": "perm-optional",
+  "Beyond the Azure app - Splunk side": "perm-splunk-side",
+  "Beyond the Azure app - Azure side": "perm-azure-side"
+};
+const MS_PERMISSIONS_FAMILY_SHORT_LABEL = {
+  "Required permissions": "Required",
+  "Required permissions (GCC substitute)": "GCC substitute",
+  "Optional permissions": "Optional",
+  "Beyond the Azure app - Splunk side": "Splunk-side",
+  "Beyond the Azure app - Azure side": "Azure-side"
+};
+
+function renderMsPermissionsTable() {
+  const head = document.getElementById("msPermissionsTableHead");
+  const body = document.getElementById("msPermissionsTableBody");
+  if (!head || !body) return;
+  head.innerHTML = `<tr><th scope="col">Input</th>${msPermissionsActions.map(a => `<th scope="col">${escapeHtml(a)}</th>`).join("")}</tr>`;
+  body.innerHTML = msPermissionsInputs.map(input => {
+    const cells = msPermissionsActions.map(action => {
+      const entry = msPermissionsByKey.get(`${input} ||| ${action}`);
+      if (!entry) return "<td>&mdash;</td>";
+      const cls = MS_PERMISSIONS_FAMILY_CLASS[entry.family] || "perm-required";
+      const shortLabel = MS_PERMISSIONS_FAMILY_SHORT_LABEL[entry.family] || entry.family;
+      return `<td><button type="button" class="perm-mark ${cls}" data-perm-input="${escapeHtml(input)}" data-perm-action="${escapeHtml(action)}">${escapeHtml(shortLabel)}</button></td>`;
+    }).join("");
+    return `<tr><th scope="row">${escapeHtml(input)}</th>${cells}</tr>`;
+  }).join("");
+}
+renderMsPermissionsTable();
+
+const msPermissionDetailModal = document.getElementById("msPermissionDetailModal");
+let lastMsPermissionDetailTrigger = null;
+function openMsPermissionDetail(entry, trigger) {
+  if (!msPermissionDetailModal) return;
+  lastMsPermissionDetailTrigger = trigger || document.activeElement;
+  document.getElementById("msPermissionDetailTitle").textContent = entry.input;
+  document.getElementById("msPermissionDetailSubtitle").textContent = entry.action;
+  const rows = [
+    ["Input family", entry.family],
+    ["Service", entry.service],
+    ["Action", entry.action],
+    ["Purpose", entry.purpose],
+    ["Notes", entry.notes]
+  ].filter(([, v]) => v !== undefined && v !== "");
+  document.getElementById("msPermissionDetailGrid").innerHTML = rows.map(([k, v]) => `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join("");
+  msPermissionDetailModal.classList.add("open");
+  msPermissionDetailModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  document.getElementById("closeMsPermissionDetail").focus();
+}
+function closeMsPermissionDetail() {
+  if (!msPermissionDetailModal) return;
+  msPermissionDetailModal.classList.remove("open");
+  msPermissionDetailModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+  if (lastMsPermissionDetailTrigger && typeof lastMsPermissionDetailTrigger.focus === "function") lastMsPermissionDetailTrigger.focus();
+}
+document.getElementById("msPermissionsTableBody").addEventListener("click", event => {
+  const trigger = event.target.closest(".perm-mark");
+  if (!trigger) return;
+  const entry = msPermissionsByKey.get(`${trigger.dataset.permInput} ||| ${trigger.dataset.permAction}`);
+  if (entry) openMsPermissionDetail(entry, trigger);
+});
+document.getElementById("closeMsPermissionDetail").addEventListener("click", closeMsPermissionDetail);
+msPermissionDetailModal.addEventListener("click", event => { if (event.target === msPermissionDetailModal) closeMsPermissionDetail(); });
+document.addEventListener("keydown", event => { if (event.key === "Escape" && msPermissionDetailModal.classList.contains("open")) closeMsPermissionDetail(); });
 
 document.querySelectorAll("[data-info-page]").forEach(button => {
   button.addEventListener("click", () => setActivePage(button.dataset.infoPage || "info"));
