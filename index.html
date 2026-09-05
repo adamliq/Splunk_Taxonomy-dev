@@ -3105,6 +3105,10 @@
     .perm-mark.perm-identity { background:#fce7f3; color:#9d174d; }
     .perm-mark.perm-security { background:#ccfbf1; color:#115e59; }
     .perm-mark.perm-licensing { background:#fef9c3; color:#854d0e; }
+    .perm-mark.perm-incidents { background:#e0f2fe; color:#075985; }
+    .perm-mark.perm-simulations { background:#f3e8ff; color:#6b21a8; }
+    .perm-mark.perm-threatintel { background:#fecdd3; color:#9f1239; }
+    .perm-mark.perm-alertaction { background:#e2e8f0; color:#475569; }
     .ports-pattern-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:14px 0 10px; }
     .ports-pattern-toolbar label { font-weight:800; font-size:13px; color:#0f172a; }
     .ports-pattern-toolbar select { flex:1 1 340px; min-width:240px; padding:9px 11px; border-radius:10px; border:1px solid var(--border); font-size:13px; font-family:inherit; background:#fff; }
@@ -14533,7 +14537,7 @@ E. Assumptions and unresolved inputs</pre>
           </table>
         </div>
 
-        <p class="sot-note">Transcribed verbatim from three supplied CSVs, one per Splunk app: <code>splunk_o365_permissions.csv</code> (<code>splunk_ta_o365</code>), <code>splunk_cloudservices_permissions.csv</code> (<code>Splunk_TA_microsoft-cloudservices</code>) and <code>splunk_aad_permissions.csv</code> (<code>TA-MS-AAD</code>). Rows are the distinct App+Input combinations across all three files, columns the distinct individual actions -- a marked cell means that row's input requires that column's action (per its <code>Input Family</code>); some inputs (e.g. <strong>Message Trace</strong>, <strong>All inputs</strong> in any of the three apps, <strong>All ARM-backed inputs</strong>, <strong>Microsoft Entra ID Audit</strong>, <strong>Microsoft Entra ID Identity Protection</strong>) require more than one action and so have multiple marked cells -- a source row whose own Actions cell listed two scopes together (e.g. "AuditLog.Read.All; Directory.Read.All") was split into one marked cell per scope, reusing whichever column that scope already has. All three apps happen to use the literal input name "All inputs" for their own Splunk/Azure-side prerequisites -- these are kept as separate rows (one per app), not merged. &mdash; means not applicable.</p>
+        <p class="sot-note">Transcribed verbatim from four supplied CSVs, one per Splunk app: <code>splunk_o365_permissions.csv</code> (<code>splunk_ta_o365</code>), <code>splunk_cloudservices_permissions.csv</code> (<code>Splunk_TA_microsoft-cloudservices</code>), <code>splunk_aad_permissions.csv</code> (<code>TA-MS-AAD</code>) and <code>splunk_mssecurity_permissions.csv</code> (<code>Splunk_TA_MS_Security</code>). Rows are the distinct App+Input combinations across all four files, columns the distinct individual actions -- a marked cell means that row's input requires that column's action (per its <code>Input Family</code>); some inputs (e.g. <strong>Message Trace</strong>, <strong>All inputs</strong> in any of the four apps, <strong>All ARM-backed inputs</strong>, <strong>Microsoft Entra ID Audit</strong>, <strong>Microsoft Entra ID Identity Protection</strong>) require more than one action and so have multiple marked cells -- a source row whose own Actions cell listed two scopes required together (e.g. TA-MS-AAD's "AuditLog.Read.All; Directory.Read.All") was split into one marked cell per scope, reusing whichever column that scope already has. Splunk_TA_MS_Security's Actions cells instead list two equivalent, alternative permission forms ("X (Graph) or Y (Graph Security)") rather than a joint requirement, so those are kept as a single column carrying the full "X or Y" string rather than split. All four apps happen to use the literal input name "All inputs" for their own Splunk/Azure-side prerequisites -- these are kept as separate rows (one per app), not merged. Two Splunk_TA_MS_Security rows are alert-action prerequisites rather than modular inputs (labelled <strong>Alert actions (not inputs)</strong>) and are included for completeness. &mdash; means not applicable.</p>
       </section>
       </div>
     </div>
@@ -35379,6 +35383,23 @@ const msPermissionsData = [
   { app: "TA-MS-AAD", family: "Beyond permissions - Splunk side", input: "All inputs", service: "Splunk platform", action: "admin or sc_admin role", purpose: "Required to add or configure accounts and inputs" },
   { app: "TA-MS-AAD", family: "Beyond permissions - Azure side", input: "All Graph-based inputs", service: "Microsoft Entra ID", action: "Global Administrator consent (or Privileged Role Administrator)", purpose: "Required for every Application-type Graph permission", notes: "Adding new scopes to an app already consented for another add-on does not carry consent over automatically" },
   { app: "TA-MS-AAD", family: "Beyond permissions - Azure side", input: "All ARM-based inputs", service: "Azure RBAC", action: "Reader assigned to the app's service principal", purpose: "Grants read access to resource metadata and metrics across the subscription", notes: "Assigned under the subscription's Access control (IAM) - separate from Graph consent" },
+  // -- Splunk_TA_MS_Security (Splunk Add-on for Microsoft Security) --
+  // Unlike TA-MS-AAD's compound Actions cells (which meant "both scopes required together" and were split
+  // into per-scope entries reusing existing columns), every compound Actions cell here means "either form
+  // works, pick one consistently" (per this CSV's own Notes) -- an OR, not an AND. Those are kept as a
+  // single entry with the full "X (Graph) or Y (Graph Security)" string as the action, in its own column,
+  // rather than split into two marked columns (which would misleadingly imply both are required).
+  { app: "Splunk_TA_MS_Security", family: "Incidents & alerts", input: "Microsoft 365 Defender Incidents", service: "Microsoft Graph or Graph Security", action: "Incident.Read.All (Graph) or SecurityIncident.Read.All (Graph Security)", purpose: "Incident and associated-alert data", notes: "Two equivalent permission forms depending on which API surface is used - pick one consistently" },
+  { app: "Splunk_TA_MS_Security", family: "Incidents & alerts", input: "Microsoft Defender for Endpoint Alerts", service: "Defender for Endpoint or Graph Security", action: "Alert.Read.All (Defender for Endpoint) or SecurityAlert.Read.All (Graph Security)", purpose: "Endpoint alert stream", notes: "Two equivalent permission forms - pick one consistently" },
+  { app: "Splunk_TA_MS_Security", family: "Simulations & machines", input: "Microsoft Defender Simulations", service: "Microsoft Graph", action: "AttackSimulation.Read.All", purpose: "Attack simulation training reports from the Microsoft 365 Defender portal" },
+  { app: "Splunk_TA_MS_Security", family: "Simulations & machines", input: "Microsoft Defender Machines", service: "Microsoft Defender for Endpoint", action: "Machine.Read.All", purpose: "Device/machine inventory via the List Machines API" },
+  { app: "Splunk_TA_MS_Security", family: "Event Hub", input: "Microsoft Defender Event Hub", service: "Azure RBAC", action: "Azure Event Hubs Data Receiver", purpose: "Streams Advanced Hunting events out of Azure Event Hub - not through Graph", notes: "RBAC role assigned on the Event Hub namespace, same pattern as TA-MS-AAD's Event Hub input" },
+  { app: "Splunk_TA_MS_Security", family: "Threat Intelligence", input: "Microsoft Defender Threat Intelligence DataSets", service: "Microsoft Defender Threat Intelligence", action: "ThreatIntelligence.Read.All", purpose: "Articles, indicators, passive DNS, WHOIS, certificates, and related host datasets", notes: "Ten sourcetypes ride on this one scope; not yet covered in Splunk's own permissions table - inferred from the underlying API" },
+  { app: "Splunk_TA_MS_Security", family: "Alert actions (not inputs)", input: "Update Incident", service: "Microsoft Graph or Graph Security", action: "Incident.ReadWrite.All (Graph) or SecurityIncident.ReadWrite.All (Graph Security)", purpose: "Write back incident status/assignment from Splunk", notes: "Drives an alert action, not one of the six modular inputs" },
+  { app: "Splunk_TA_MS_Security", family: "Alert actions (not inputs)", input: "Fetch Advanced Hunting Results", service: "Microsoft Graph or Graph Security", action: "AdvancedHunting.Read.All (Graph) or ThreatHunting.Read.All (Graph Security)", purpose: "Run KQL hunting queries on demand from an alert action", notes: "Drives an alert action, not one of the six modular inputs" },
+  { app: "Splunk_TA_MS_Security", family: "Beyond permissions - Splunk side", input: "All inputs", service: "Splunk platform", action: "admin or sc_admin role", purpose: "Required to add or configure accounts and inputs" },
+  { app: "Splunk_TA_MS_Security", family: "Beyond permissions - Azure side", input: "All Graph/Defender-based inputs", service: "Microsoft Entra ID", action: "Global Administrator consent (or Privileged Role Administrator)", purpose: "Required for every Application-type permission on the app registration" },
+  { app: "Splunk_TA_MS_Security", family: "Beyond permissions - Azure side", input: "Microsoft Defender Event Hub", service: "Azure RBAC", action: "Role assigned under the Event Hub namespace's Access control (IAM)", purpose: "Separate from Graph/Defender API consent" },
 ];
 const msPermissionsRows = [...new Map(msPermissionsData.map(r => [`${r.app} ||| ${r.input}`, { app: r.app, input: r.input }])).values()];
 const msPermissionsActions = [...new Set(msPermissionsData.map(r => r.action))];
@@ -35399,7 +35420,12 @@ const MS_PERMISSIONS_FAMILY_CLASS = {
   "Entra ID identity inputs": "perm-identity",
   "Security & posture": "perm-security",
   "ARM & network inputs": "perm-armmonitor",
-  "Beyond permissions - licensing": "perm-licensing"
+  "Beyond permissions - licensing": "perm-licensing",
+  "Incidents & alerts": "perm-incidents",
+  "Simulations & machines": "perm-simulations",
+  "Event Hub": "perm-eventhub",
+  "Threat Intelligence": "perm-threatintel",
+  "Alert actions (not inputs)": "perm-alertaction"
 };
 const MS_PERMISSIONS_FAMILY_SHORT_LABEL = {
   "Required permissions": "Required",
@@ -35417,7 +35443,12 @@ const MS_PERMISSIONS_FAMILY_SHORT_LABEL = {
   "Entra ID identity inputs": "Identity",
   "Security & posture": "Security",
   "ARM & network inputs": "ARM/network",
-  "Beyond permissions - licensing": "Licensing"
+  "Beyond permissions - licensing": "Licensing",
+  "Incidents & alerts": "Incidents",
+  "Simulations & machines": "Simulations",
+  "Event Hub": "Event Hub",
+  "Threat Intelligence": "Threat Intel",
+  "Alert actions (not inputs)": "Alert action"
 };
 
 function renderMsPermissionsTable() {
