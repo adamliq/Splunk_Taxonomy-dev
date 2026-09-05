@@ -3091,6 +3091,13 @@
     .eccs-matrix th.ports-hl-header { background:#fef08a !important; }
     .eccs-matrix td.ports-hl-cell { background:#fde047 !important; box-shadow:inset 0 0 0 2px #ca8a04; font-weight:700; }
     .eccs-matrix .ports-hidden { display:none; }
+    .perm-mark { display:inline-block; padding:3px 9px; border-radius:999px; font-size:10.5px; font-weight:800; letter-spacing:.02em; white-space:nowrap; border:none; cursor:pointer; font-family:inherit; }
+    .perm-mark:hover, .perm-mark:focus-visible { outline:2px solid #7030a0; outline-offset:1px; }
+    .perm-mark.perm-required { background:#dcfce7; color:#166534; }
+    .perm-mark.perm-required-gcc { background:#cffafe; color:#155e75; }
+    .perm-mark.perm-optional { background:#e0e7ff; color:#3730a3; }
+    .perm-mark.perm-splunk-side { background:#f1f5f9; color:#334155; }
+    .perm-mark.perm-azure-side { background:#fef3c7; color:#92400e; }
     .ports-pattern-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:14px 0 10px; }
     .ports-pattern-toolbar label { font-weight:800; font-size:13px; color:#0f172a; }
     .ports-pattern-toolbar select { flex:1 1 340px; min-width:240px; padding:9px 11px; border-radius:10px; border:1px solid var(--border); font-size:13px; font-family:inherit; background:#fff; }
@@ -14414,6 +14421,7 @@ E. Assumptions and unresolved inputs</pre>
         <button id="showMsInputsListView" class="page-subtab active" type="button" role="tab" aria-selected="true" aria-controls="msInputsListView" data-msview="msInputsList">Inputs</button>
         <button id="showMsCoverageView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="msCoverageView" data-msview="msCoverage">Coverage</button>
         <button id="showSchemaExplorerView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="schemaExplorerView" data-msview="schemaExplorer">Schema</button>
+        <button id="showMsPermissionsView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="msPermissionsView" data-msview="msPermissions">Permissions</button>
       </div>
 
       <div id="msInputsListView" class="subpage-view" role="tabpanel" aria-labelledby="showMsInputsListView">
@@ -14504,6 +14512,21 @@ E. Assumptions and unresolved inputs</pre>
             <div id="seExploreView" class="se-explore-list" hidden></div>
           </div>
         </div>
+      </section>
+      </div>
+
+      <div id="msPermissionsView" class="subpage-view" role="tabpanel" aria-labelledby="showMsPermissionsView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Permissions</h3><p>App-only Microsoft Graph/Office 365 Management permissions required per input, plus deployment-side and Azure-side prerequisites. Not every deployment needs every permission below -- select a marked cell for the full detail (service, purpose, notes).</p></div></div>
+
+        <div class="eccs-table-wrap" role="region" aria-label="Scrollable Microsoft cloud inputs permissions matrix" tabindex="0">
+          <table class="eccs-matrix" id="msPermissionsTable">
+            <thead id="msPermissionsTableHead"></thead>
+            <tbody id="msPermissionsTableBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note">Transcribed verbatim from a supplied <code>splunk_o365_permissions.csv</code>. Rows are the distinct <code>Input</code> values from that file, columns the distinct <code>Actions</code> values -- a marked cell means that row's input requires that column's action (per its <code>Input Family</code>); some inputs (e.g. <strong>Message Trace</strong>, <strong>All inputs</strong>) require more than one action and so have multiple marked cells. &mdash; means not applicable.</p>
       </section>
       </div>
     </div>
@@ -15030,6 +15053,22 @@ E. Assumptions and unresolved inputs</pre>
     </div>
     <div class="modal-body">
       <dl class="input-detail-grid" id="schemaFieldGrid"></dl>
+    </div>
+  </div>
+</div>
+
+<div id="msPermissionDetailModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="msPermissionDetailTitle" aria-hidden="true">
+  <div class="modal-dialog input-detail-dialog">
+    <div class="modal-header">
+      <div>
+        <p class="modal-eyebrow" id="msPermissionDetailEyebrow">Microsoft cloud based inputs &middot; Permissions</p>
+        <h2 id="msPermissionDetailTitle" class="modal-title">&mdash;</h2>
+        <p class="modal-subtitle" id="msPermissionDetailSubtitle"></p>
+      </div>
+      <button id="closeMsPermissionDetail" class="modal-close" type="button" aria-label="Close permission details">×</button>
+    </div>
+    <div class="modal-body">
+      <dl class="input-detail-grid" id="msPermissionDetailGrid"></dl>
     </div>
   </div>
 </div>
@@ -35257,6 +35296,108 @@ document.getElementById("awsInputCoverageImportFile").addEventListener("change",
   if (file) importAwsInputCoverageCsv(file);
   event.target.value = "";
 });
+
+/* ---------- Input Coverage: Microsoft cloud inputs Permissions matrix -------------------------------------
+ * Same visual style as the AWS Permissions tab (eccs-table-wrap/eccs-matrix), but this data is inherently a
+ * sparse matrix rather than a dense one -- each of the 18 source rows pairs exactly one Input with exactly
+ * one Actions value (no Actions value repeats across rows), so most (Input, Action) cells have nothing to
+ * show. Rows/columns are the distinct Input/Actions values in first-seen (CSV) order; a marked cell opens a
+ * dedicated detail modal (msPermissionDetailModal) with that row's Family/Service/Purpose/Notes, following
+ * the same open/close/backdrop/Escape pattern as schemaFieldModal above -- not the shared openInputDetail
+ * modal, since this data has a different shape (Family/Action/Purpose/Notes, not Splunk-app/schema fields).
+ * "Message Trace" and "All inputs" each appear against more than one Action and so get multiple marked cells. */
+const msPermissionsData = [
+  { family: "Required permissions", input: "Management Activity", service: "Office 365 Management", action: "ActivityFeed.Read", purpose: "Core Office 365 audit/activity log stream" },
+  { family: "Required permissions", input: "Audit Log", service: "Microsoft Graph", action: "AuditLog.Read.All", purpose: "Azure AD audit logs and sign-in event collection" },
+  { family: "Required permissions", input: "Usage Reports", service: "Microsoft Graph", action: "Reports.Read.All", purpose: "Office 365 usage report inputs" },
+  { family: "Required permissions", input: "Message Trace", service: "Microsoft Graph", action: "ExchangeMessageTrace.Read.All", purpose: "Message Trace input for commercial/worldwide tenants", notes: "Replaced by ReportingWebService.Read.All in GCC High/DoD tenants" },
+  { family: "Required permissions", input: "Service Health", service: "Microsoft Graph", action: "ServiceHealth.Read.All", purpose: "Service Health input" },
+  { family: "Required permissions", input: "Service Communications", service: "Microsoft Graph", action: "ServiceMessage.Read.All", purpose: "Service Communications / Message Center input" },
+  { family: "Required permissions", input: "Azure AD Users", service: "Microsoft Graph", action: "User.Read.All", purpose: "Azure AD user object collection" },
+  { family: "Required permissions", input: "Azure AD Groups", service: "Microsoft Graph", action: "Group.Read.All", purpose: "Azure AD group object collection" },
+  { family: "Required permissions", input: "Azure AD Directory", service: "Microsoft Graph", action: "Directory.Read.All", purpose: "General directory object collection backing the user/group inputs" },
+  { family: "Required permissions (GCC substitute)", input: "Message Trace (US Gov)", service: "Exchange Online", action: "ReportingWebService.Read.All", purpose: "Message Trace input in GCC High/DoD tenants", notes: "Used instead of ExchangeMessageTrace.Read.All in US Government tenants" },
+  { family: "Optional permissions", input: "DLP Events", service: "Office 365 Management", action: "ActivityFeed.ReadDlp", purpose: "Data loss prevention policy event input", notes: "Only needed if the DLP input is enabled" },
+  { family: "Optional permissions", input: "Information Protection", service: "Microsoft Graph", action: "InformationProtectionPolicy.Read.All", purpose: "Sensitivity label and information-protection policy data", notes: "Only needed if that input is enabled" },
+  { family: "Optional permissions", input: "Message Trace auto-provisioning", service: "Microsoft Graph", action: "Application.ReadWrite.All", purpose: "Lets the add-on auto-provision the Message Trace service principal", notes: "Alternative to provisioning it manually in Exchange Online" },
+  { family: "Optional permissions", input: "Group Membership Management", service: "Microsoft Graph", action: "GroupMember.ReadWrite.All", purpose: "Group membership management from within Splunk", notes: "Only needed if that feature is used" },
+  { family: "Beyond the Azure app - Splunk side", input: "All inputs", service: "Splunk platform", action: "Deployment target: heavy forwarder or search head", purpose: "Universal forwarders are unsupported", notes: "Modular inputs need Python and the Splunk REST handler" },
+  { family: "Beyond the Azure app - Splunk side", input: "All inputs", service: "Splunk platform", action: "admin role", purpose: "Typically required to configure accounts and inputs", notes: "Credentials are stored encrypted via the REST handler" },
+  { family: "Beyond the Azure app - Azure side", input: "All inputs", service: "Azure AD", action: "Admin consent (Global Administrator or Privileged Role Administrator)", purpose: "Required to grant the Application-type permissions above", notes: "All listed permissions are app-only - a regular user can't consent to them" },
+  { family: "Beyond the Azure app - Azure side", input: "Message Trace", service: "Exchange Online", action: "Service principal provisioning", purpose: "A service principal must exist in Exchange Online for Message Trace", notes: "Created manually or automatically via Application.ReadWrite.All" },
+];
+const msPermissionsInputs = [...new Set(msPermissionsData.map(r => r.input))];
+const msPermissionsActions = [...new Set(msPermissionsData.map(r => r.action))];
+const msPermissionsByKey = new Map(msPermissionsData.map(r => [`${r.input} ||| ${r.action}`, r]));
+const MS_PERMISSIONS_FAMILY_CLASS = {
+  "Required permissions": "perm-required",
+  "Required permissions (GCC substitute)": "perm-required-gcc",
+  "Optional permissions": "perm-optional",
+  "Beyond the Azure app - Splunk side": "perm-splunk-side",
+  "Beyond the Azure app - Azure side": "perm-azure-side"
+};
+const MS_PERMISSIONS_FAMILY_SHORT_LABEL = {
+  "Required permissions": "Required",
+  "Required permissions (GCC substitute)": "GCC substitute",
+  "Optional permissions": "Optional",
+  "Beyond the Azure app - Splunk side": "Splunk-side",
+  "Beyond the Azure app - Azure side": "Azure-side"
+};
+
+function renderMsPermissionsTable() {
+  const head = document.getElementById("msPermissionsTableHead");
+  const body = document.getElementById("msPermissionsTableBody");
+  if (!head || !body) return;
+  head.innerHTML = `<tr><th scope="col">Input</th>${msPermissionsActions.map(a => `<th scope="col">${escapeHtml(a)}</th>`).join("")}</tr>`;
+  body.innerHTML = msPermissionsInputs.map(input => {
+    const cells = msPermissionsActions.map(action => {
+      const entry = msPermissionsByKey.get(`${input} ||| ${action}`);
+      if (!entry) return "<td>&mdash;</td>";
+      const cls = MS_PERMISSIONS_FAMILY_CLASS[entry.family] || "perm-required";
+      const shortLabel = MS_PERMISSIONS_FAMILY_SHORT_LABEL[entry.family] || entry.family;
+      return `<td><button type="button" class="perm-mark ${cls}" data-perm-input="${escapeHtml(input)}" data-perm-action="${escapeHtml(action)}">${escapeHtml(shortLabel)}</button></td>`;
+    }).join("");
+    return `<tr><th scope="row">${escapeHtml(input)}</th>${cells}</tr>`;
+  }).join("");
+}
+renderMsPermissionsTable();
+
+const msPermissionDetailModal = document.getElementById("msPermissionDetailModal");
+let lastMsPermissionDetailTrigger = null;
+function openMsPermissionDetail(entry, trigger) {
+  if (!msPermissionDetailModal) return;
+  lastMsPermissionDetailTrigger = trigger || document.activeElement;
+  document.getElementById("msPermissionDetailTitle").textContent = entry.input;
+  document.getElementById("msPermissionDetailSubtitle").textContent = entry.action;
+  const rows = [
+    ["Input family", entry.family],
+    ["Service", entry.service],
+    ["Action", entry.action],
+    ["Purpose", entry.purpose],
+    ["Notes", entry.notes]
+  ].filter(([, v]) => v !== undefined && v !== "");
+  document.getElementById("msPermissionDetailGrid").innerHTML = rows.map(([k, v]) => `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join("");
+  msPermissionDetailModal.classList.add("open");
+  msPermissionDetailModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  document.getElementById("closeMsPermissionDetail").focus();
+}
+function closeMsPermissionDetail() {
+  if (!msPermissionDetailModal) return;
+  msPermissionDetailModal.classList.remove("open");
+  msPermissionDetailModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+  if (lastMsPermissionDetailTrigger && typeof lastMsPermissionDetailTrigger.focus === "function") lastMsPermissionDetailTrigger.focus();
+}
+document.getElementById("msPermissionsTableBody").addEventListener("click", event => {
+  const trigger = event.target.closest(".perm-mark");
+  if (!trigger) return;
+  const entry = msPermissionsByKey.get(`${trigger.dataset.permInput} ||| ${trigger.dataset.permAction}`);
+  if (entry) openMsPermissionDetail(entry, trigger);
+});
+document.getElementById("closeMsPermissionDetail").addEventListener("click", closeMsPermissionDetail);
+msPermissionDetailModal.addEventListener("click", event => { if (event.target === msPermissionDetailModal) closeMsPermissionDetail(); });
+document.addEventListener("keydown", event => { if (event.key === "Escape" && msPermissionDetailModal.classList.contains("open")) closeMsPermissionDetail(); });
 
 document.querySelectorAll("[data-info-page]").forEach(button => {
   button.addEventListener("click", () => setActivePage(button.dataset.infoPage || "info"));
