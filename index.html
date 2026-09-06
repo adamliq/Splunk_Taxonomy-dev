@@ -14681,6 +14681,7 @@ E. Assumptions and unresolved inputs</pre>
         <button id="showZscalerCoverageView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerCoverageView" data-zscalerview="zscalerCoverage">Coverage</button>
         <button id="showZscalerSchemaView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerSchemaView" data-zscalerview="zscalerSchema">Schema</button>
         <button id="showZscalerPermissionsView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerPermissionsView" data-zscalerview="zscalerPermissions">Permissions</button>
+        <button id="showZscalerCimCoverageView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerCimCoverageView" data-zscalerview="zscalerCimCoverage">CIM Coverage</button>
       </div>
 
       <div id="zscalerInputsListView" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerInputsListView">
@@ -14719,7 +14720,7 @@ E. Assumptions and unresolved inputs</pre>
 
       <div id="zscalerSchemaView" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerSchemaView" hidden>
       <section class="reference-section">
-        <div class="reference-section-heading"><div><h3>Schema explorer</h3><p>Search, filter and browse field-level schema for the 13 Zscaler log sourcetypes (ZIA and ZPA). Field category (ZIA/ZPA) is derived from each source input; no CIM/OCSF mapping was supplied for this vendor yet.</p></div></div>
+        <div class="reference-section-heading"><div><h3>Schema explorer</h3><p>Search, filter and browse field-level schema for the 13 Zscaler log sourcetypes (ZIA and ZPA). Field category (ZIA/ZPA) is derived from each source input. See the CIM Coverage tab for which of these sourcetypes are wired into a CIM data model, and the confirmed real field names the TA actually extracts.</p></div></div>
 
         <div class="se-stats" id="zscalerSchemaStats"></div>
 
@@ -14787,6 +14788,89 @@ E. Assumptions and unresolved inputs</pre>
         </div>
 
         <p class="sot-note">Awaiting source data: no Zscaler permissions CSV has been supplied yet. Once provided, this table will follow the same (app, input, action) model as the Microsoft and AWS Permissions tabs -- one marked, colored pill per required action, with click-through detail.</p>
+      </section>
+      </div>
+
+      <div id="zscalerCimCoverageView" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerCimCoverageView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>CIM Coverage summary</h3><p>Which of the 18 confirmed Zscaler eventtypes are wired into a Splunk CIM data model in the real TA-Zscaler_CIM v4.1.5 package, and which aren't despite having usable field extractions.</p></div></div>
+
+        <div class="se-toolbar">
+          <input id="zscalerCimCoverageSearchBox" type="search" placeholder="Search input, sourcetype, eventtype, tags, data models or notes…" aria-label="Search Zscaler CIM coverage" />
+          <button id="zscalerCimCoverageExportBtn" class="primary-button" type="button">Export CSV</button>
+          <span class="se-result-count" id="zscalerCimCoverageResultCount"></span>
+        </div>
+
+        <div class="se-table-wrap">
+          <table class="se-table">
+            <thead>
+              <tr>
+                <th>Input</th>
+                <th>Sourcetype</th>
+                <th>Eventtype</th>
+                <th>CIM tags</th>
+                <th>CIM data model(s)</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="zscalerCimCoverageBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note" id="zscalerCimCoverageNote"></p>
+      </section>
+
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>CIM Field Mapping crosswalk</h3><p>The TA's actual <code>props.conf</code> FIELDALIAS/EVAL stanzas, field by field -- what each raw Zscaler field is renamed or computed into, and which CIM data model that target field belongs to.</p></div></div>
+
+        <div class="se-toolbar">
+          <input id="zscalerCimFieldMappingSearchBox" type="search" placeholder="Search sourcetype, raw field, CIM field, data model or notes…" aria-label="Search Zscaler CIM field mapping" />
+          <select id="zscalerCimFieldMappingSourcetypeFilter" aria-label="Filter by sourcetype">
+            <option value="">All sourcetypes</option>
+          </select>
+          <button id="zscalerCimFieldMappingExportBtn" class="primary-button" type="button">Export CSV</button>
+          <span class="se-result-count" id="zscalerCimFieldMappingResultCount"></span>
+        </div>
+
+        <div class="se-table-wrap">
+          <table class="se-table">
+            <thead>
+              <tr>
+                <th>Sourcetype</th>
+                <th>CIM data model</th>
+                <th>Raw field</th>
+                <th>Set via</th>
+                <th>CIM field</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="zscalerCimFieldMappingBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note" id="zscalerCimFieldMappingNote"></p>
+      </section>
+
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>TA extra sourcetypes</h3><p>Sourcetypes confirmed present in the same TA-Zscaler_CIM v4.1.5 package that fall outside this reference's ZIA/ZPA onboarding scope -- listed here for completeness. These also appear as a third input group under the Inputs and Coverage tabs.</p></div></div>
+
+        <div class="se-table-wrap">
+          <table class="se-table">
+            <thead>
+              <tr>
+                <th>Sourcetype</th>
+                <th>Product / feed</th>
+                <th>Eventtype</th>
+                <th>CIM tags</th>
+                <th>CIM data model(s)</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="zscalerTaExtraSourcetypesBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note" id="zscalerTaExtraSourcetypesNote"></p>
       </section>
       </div>
     </div>
@@ -34029,33 +34113,46 @@ document.getElementById("awsInputsListGroups").addEventListener("click", event =
  * Structured identically to the Microsoft/AWS pools above. Input list/detail transcribed verbatim from a
  * supplied JSON structure (16 inputs across two apps: the official "Zscaler Technical Add-on for Splunk" --
  * ZIA NSS/API feeds and ZPA LSS feeds -- and the unofficial community "TA-zscaler-api" add-on's two
- * config/enrichment-object inputs). No separate short technical package tag (e.g. "Splunk_TA_zscaler") was
- * supplied for either app, so each group's own "app" string doubles as its tag rather than guessing one.
- * Splunk app ID/base link were not confirmed against Splunkbase/GitHub this round, so both stay "To be
- * confirmed" per the same convention AWS/Microsoft used before their own Splunkbase links were confirmed.
+ * config/enrichment-object inputs).
+ * App ID/base link CONFIRMED (per user-supplied JSON, sourced directly from the real shipped TA package):
+ * Splunkbase app 3865, technical package/app ID "TA-Zscaler_CIM", version 4.1.5 -- so the group tag now
+ * uses that real technical ID instead of the app's display name, matching how AWS/Microsoft key their own
+ * groups once their Splunkbase links were confirmed.
  * The supplied "configuration_settings" field is new -- no existing openInputDetail() row fit it -- so a
  * "Configuration settings" row was added there (see below), rendered with line breaks preserved since the
  * source text is itself a multi-line bulleted list. */
 const zscalerInputCoverageGroups = [
-  { tag: "Zscaler Technical Add-on for Splunk", friendlyName: "Zscaler Internet Access (ZIA) & Private Access (ZPA)", description: "Official Zscaler-published Splunk add-on -- collects ZIA web/firewall/DNS/tunnel/system-alert NSS feeds, ZIA Admin Audit and Sandbox report API data, and ZPA LSS feeds (app access, authentication, connector health, browser access, web inspection, admin audit).", appName: "Zscaler Technical Add-on for Splunk", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["Web / Proxy logs (ZIA)", "Firewall logs (ZIA)", "DNS logs (ZIA)", "Tunnel logs (ZIA)", "System alerts (ZIA)", "Admin Audit logs (ZIA)", "Sandbox detail reports (ZIA)", "App access logs (ZPA)", "Authentication logs (ZPA)", "App Connector logs (ZPA)", "Browser Access logs (ZPA)", "Web Inspection / AppProtection logs (ZPA)", "Admin Audit logs (ZPA)"] },
-  { tag: "TA-zscaler-api (unofficial community add-on)", friendlyName: "Zscaler config/enrichment objects (unofficial)", description: "Unofficial, community-maintained add-on -- periodic snapshots of ZIA/ZPA policy and config objects (URL categories, app segments, segment groups) for enrichment/lookup use, not event logs. Not supported by Zscaler; review its GitHub docs before deploying.", appName: "TA-zscaler-api (unofficial community add-on)", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["ZIA config objects (URL categories, etc.)", "ZPA config objects (app segments, segment groups)"] }
+  { tag: "TA-Zscaler_CIM", friendlyName: "Zscaler Internet Access (ZIA) & Private Access (ZPA)", description: "Official Zscaler-published Splunk add-on -- collects ZIA web/firewall/DNS/tunnel/system-alert NSS feeds, ZIA Admin Audit and Sandbox report API data, and ZPA LSS feeds (app access, authentication, connector health, browser access, web inspection, admin audit).", appName: "Zscaler Technical Add-on for Splunk", appId: "3865", baseLink: "https://splunkbase.splunk.com/app/3865", inputs: ["Web / Proxy logs (ZIA)", "Firewall logs (ZIA)", "DNS logs (ZIA)", "Tunnel logs (ZIA)", "System alerts (ZIA)", "Admin Audit logs (ZIA)", "Sandbox detail reports (ZIA)", "App access logs (ZPA)", "Authentication logs (ZPA)", "App Connector logs (ZPA)", "Browser Access logs (ZPA)", "Web Inspection / AppProtection logs (ZPA)", "Admin Audit logs (ZPA)"] },
+  { tag: "TA-zscaler-api (unofficial community add-on)", friendlyName: "Zscaler config/enrichment objects (unofficial)", description: "Unofficial, community-maintained add-on -- periodic snapshots of ZIA/ZPA policy and config objects (URL categories, app segments, segment groups) for enrichment/lookup use, not event logs. Not supported by Zscaler; review its GitHub docs before deploying.", appName: "TA-zscaler-api (unofficial community add-on)", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["ZIA config objects (URL categories, etc.)", "ZPA config objects (app segments, segment groups)"] },
+  { tag: "TA-Zscaler_CIM (extra sourcetypes)", friendlyName: "Additional sourcetypes shipped in the TA (outside ZIA/ZPA onboarding scope)", description: "Sourcetypes confirmed present in the real TA-Zscaler_CIM v4.1.5 package that fall outside this reference's original ZIA/ZPA onboarding scope -- SaaS Security/CASB, Workload Segmentation, Deception, DLP Incident Reports, Posture Control, and the separate Cloud & Branch Connector 'NSS for Workloads' feeds. Listed here for completeness since they ship in the same add-on; see the CIM Coverage tab's 'TA Extra Sourcetypes' notes for detail. Uses a distinct group tag (with the real technical package/app ID -- TA-Zscaler_CIM, Splunkbase app 3865 -- still shown as the app identity) purely to keep this Coverage table's columns separate from the ZIA/ZPA group above.", appName: "Zscaler Technical Add-on for Splunk", appId: "3865", baseLink: "https://splunkbase.splunk.com/app/3865", inputs: ["ZIA SaaS Security (CASB) API scanning feed", "Zscaler Workload Segmentation", "Zscaler Deception (formerly Smokescreen)", "DLP Incident Reports", "Zscaler Posture Control alerts (from S3)", "Cloud & Branch Connector — NSS for Workloads: DNS", "Cloud & Branch Connector — NSS for Workloads: Control Plane change events", "Cloud & Branch Connector — NSS for Workloads: DHCP session events", "Cloud & Branch Connector — NSS for Workloads: session events", "Cloud & Branch Connector — NSS for Workloads: metrics", "Cloud & Branch Connector — NSS for Workloads: firewall"] }
 ];
 const zscalerInputCoverageColumnDetails = {
-  "Web / Proxy logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "All web/HTTP(S) traffic processed by the ZIA proxy — URL, user, category, action, bytes.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-web", configurationSettings: "ZIA Admin Portal > Administration > Nanolog Streaming Service:\n• NSS Server (VM) provisioned and paired to a ZIA Public Service Edge\n• NSS Feed: type=Web; SIEM IP/FQDN + port (SC4S host:514 by default); TCP or SSL/TLS transport\n• Feed output format: default or custom %s{field} template; escape character; duplicate-log/rate-limit option\n• Filters: log type, user/dept/location, action (optional)\nCloud NSS alternative: destination = Splunk HEC URL; HEC token; JSON output; batch interval\nSplunk/SC4S side: listener on 514/tcp (or HEC port 8088); sourcetype override to zscalernss-web; index=netproxy" },
-  "Firewall logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Non-web traffic (any port/protocol) processed by the ZIA cloud firewall — src/dst IP, port, protocol, rule.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-fw", configurationSettings: "Same NSS Server/VM as Web feed, separate NSS Feed object:\n• NSS Feed: type=Firewall; SIEM IP/FQDN + port; TCP/SSL transport\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=fw before the newline so SC4S auto-detects the sourcetype\n• Filters: aggregate vs. session logs, action (allow/block), IPS/threat-only\nSplunk/SC4S side: sourcetype override zscalernss-fw; index=netfw" },
-  "DNS logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "DNS queries/responses routed through Zscaler — queried domain, resolved IP, policy action.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-dns", configurationSettings: "• NSS Feed: type=DNS; SIEM IP/FQDN + port; TCP/SSL transport\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=dns before the newline for SC4S auto-detection\n• Filters: request vs. response logs, category\nSplunk/SC4S side: sourcetype override zscalernss-dns; index=netdns" },
-  "Tunnel logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "GRE/IPSec tunnel lifecycle events between customer edge and Zscaler — up/down, aggregate traffic stats.", collectionMethod: "NSS feed (syslog→SC4S)", sourcetype: "zscalernss-tunnel", configurationSettings: "• NSS Feed: type=Tunnel; SIEM IP/FQDN + port; TCP/SSL transport\n• No Cloud NSS/HEC option in most deployments — syslog only\nSplunk/SC4S side: sourcetype override zscalernss-tunnel; index=netops" },
-  "System alerts (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Operational/system alerts from the ZIA cloud platform itself (service issues), not user traffic.", collectionMethod: "NSS feed (syslog→SC4S)", sourcetype: "zscalernss-alerts", configurationSettings: "• NSS Feed: type=Alert (built on the Web NSS format); SIEM IP/FQDN + port\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=alerts before the newline for SC4S auto-detection\nSplunk/SC4S side: sourcetype override zscalernss-alerts; index=main" },
-  "Admin Audit logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Administrative activity in the ZIA Admin Portal — who changed what policy/config, and when.", collectionMethod: "REST API poll (modular input)", sourcetype: "zscalerapi-zia-audit", configurationSettings: "• API credentials: OAuth2 client via ZIdentity (Client ID, Client Secret, Vanity/Customer Domain) on newer tenants, or legacy ZIA API Key + Admin Username + Password on tenants not yet migrated\n• Base/cloud URL for the ZIA tenant (e.g. https://admin.<cloud>.zscaler.net or the ZIdentity token endpoint)\n• Splunk TA input: polling interval, checkpoint (last record id/timestamp), proxy settings if egress is restricted\n• TLS certificate validation for outbound HTTPS calls" },
-  "Sandbox detail reports (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Full post-detonation malware analysis for files flagged by ZIA Sandbox — behavior, verdict, hashes.", collectionMethod: "REST API poll (modular input)", sourcetype: "zscalerapi-zia-sandbox", configurationSettings: "• Same API credential set as Admin Audit (OAuth2/ZIdentity or legacy API Key + Username + Password)\n• Sandbox Report API is called per file hash after a sandbox verdict fires — mind published request-rate quotas\n• Splunk TA input: polling interval; report detail level (summary vs. full)" },
-  "App access logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Every application access attempt through ZPA — user, app segment, connector used, session outcome/timings. (Zscaler calls this the “User Activity” log.)", collectionMethod: "LSS — JSON stream over TLS, pushed from ZPA to a log receiver", sourcetype: "zscalerlss-zpa-app", configurationSettings: "ZPA Admin Portal > Configuration & Control > Log Streaming Service > Add Log Receiver:\n• App Connector Group(s) in scope\n• Log Type = User Activity\n• Session/Policy filter (optional)\n• TLS certificate for the receiver; destination host:port (Splunk-side listener or SC4S)\n• Output format = JSON" },
-  "Authentication logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "User authentication/session status for ZPA — IdP used, SAML attributes, posture check results, session state. (Zscaler calls this the “User Status” log.)", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-auth", configurationSettings: "Same LSS Log Receiver mechanism as App Access, with:\n• Log Type = User Status\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
-  "App Connector logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Health/status of ZPA App Connectors — CPU/memory, interface stats, session state, connectivity to Service Edge.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-connector", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = App Connector Status\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
-  "Browser Access logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Access to internal apps via ZPA's clientless Browser Access feature — CORS/connection timing detail.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-bba", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = Browser Access\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
-  "Web Inspection / AppProtection logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Inline threat-inspection results for private app traffic (ZPA AppProtection) — detected attacks/signatures.", collectionMethod: "LSS — JSON stream over TLS (where available) or embedded in User Activity logs", sourcetype: "zscalerlss-zpa-web-inspection", configurationSettings: "• Requires AppProtection enabled on the relevant Access Policy / app segments\n• LSS Log Receiver (if your ZPA tenant exposes it as a distinct Log Type) with same TLS/host:port/JSON settings\nNOTE: not independently documented as a distinct LSS log type in current public Zscaler/vendor field references — verify in your own ZPA Admin Portal's Log Streaming Service > Log Type list before building this input." },
-  "Admin Audit logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Administrative activity in the ZPA Admin Portal — object created/changed/deleted, old/new values, admin session.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-audit", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = Audit\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "Web / Proxy logs (ZIA) [TA-Zscaler_CIM]": { description: "All web/HTTP(S) traffic processed by the ZIA proxy — URL, user, category, action, bytes.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-web", configurationSettings: "ZIA Admin Portal > Administration > Nanolog Streaming Service:\n• NSS Server (VM) provisioned and paired to a ZIA Public Service Edge\n• NSS Feed: type=Web; SIEM IP/FQDN + port (SC4S host:514 by default); TCP or SSL/TLS transport\n• Feed output format: default or custom %s{field} template; escape character; duplicate-log/rate-limit option\n• Filters: log type, user/dept/location, action (optional)\nCloud NSS alternative: destination = Splunk HEC URL; HEC token; JSON output; batch interval\nSplunk/SC4S side: listener on 514/tcp (or HEC port 8088); sourcetype override to zscalernss-web; index=netproxy" },
+  "Firewall logs (ZIA) [TA-Zscaler_CIM]": { description: "Non-web traffic (any port/protocol) processed by the ZIA cloud firewall — src/dst IP, port, protocol, rule.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-fw", configurationSettings: "Same NSS Server/VM as Web feed, separate NSS Feed object:\n• NSS Feed: type=Firewall; SIEM IP/FQDN + port; TCP/SSL transport\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=fw before the newline so SC4S auto-detects the sourcetype\n• Filters: aggregate vs. session logs, action (allow/block), IPS/threat-only\nSplunk/SC4S side: sourcetype override zscalernss-fw; index=netfw" },
+  "DNS logs (ZIA) [TA-Zscaler_CIM]": { description: "DNS queries/responses routed through Zscaler — queried domain, resolved IP, policy action.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-dns", configurationSettings: "• NSS Feed: type=DNS; SIEM IP/FQDN + port; TCP/SSL transport\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=dns before the newline for SC4S auto-detection\n• Filters: request vs. response logs, category\nSplunk/SC4S side: sourcetype override zscalernss-dns; index=netdns" },
+  "Tunnel logs (ZIA) [TA-Zscaler_CIM]": { description: "GRE/IPSec tunnel lifecycle events between customer edge and Zscaler — up/down, aggregate traffic stats.", collectionMethod: "NSS feed (syslog→SC4S)", sourcetype: "zscalernss-tunnel", configurationSettings: "• NSS Feed: type=Tunnel; SIEM IP/FQDN + port; TCP/SSL transport\n• No Cloud NSS/HEC option in most deployments — syslog only\nSplunk/SC4S side: sourcetype override zscalernss-tunnel; index=netops" },
+  "System alerts (ZIA) [TA-Zscaler_CIM]": { description: "Operational/system alerts from the ZIA cloud platform itself (service issues), not user traffic.", collectionMethod: "NSS feed (syslog→SC4S)", sourcetype: "zscalernss-alerts", configurationSettings: "• NSS Feed: type=Alert (built on the Web NSS format); SIEM IP/FQDN + port\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=alerts before the newline for SC4S auto-detection\nSplunk/SC4S side: sourcetype override zscalernss-alerts; index=main" },
+  "Admin Audit logs (ZIA) [TA-Zscaler_CIM]": { description: "Administrative activity in the ZIA Admin Portal — who changed what policy/config, and when.", collectionMethod: "REST API poll (modular input)", sourcetype: "zscalerapi-zia-audit", configurationSettings: "• API credentials: OAuth2 client via ZIdentity (Client ID, Client Secret, Vanity/Customer Domain) on newer tenants, or legacy ZIA API Key + Admin Username + Password on tenants not yet migrated\n• Base/cloud URL for the ZIA tenant (e.g. https://admin.<cloud>.zscaler.net or the ZIdentity token endpoint)\n• Splunk TA input: polling interval, checkpoint (last record id/timestamp), proxy settings if egress is restricted\n• TLS certificate validation for outbound HTTPS calls" },
+  "Sandbox detail reports (ZIA) [TA-Zscaler_CIM]": { description: "Full post-detonation malware analysis for files flagged by ZIA Sandbox — behavior, verdict, hashes.", collectionMethod: "REST API poll (modular input)", sourcetype: "zscalerapi-zia-sandbox", configurationSettings: "• Same API credential set as Admin Audit (OAuth2/ZIdentity or legacy API Key + Username + Password)\n• Sandbox Report API is called per file hash after a sandbox verdict fires — mind published request-rate quotas\n• Splunk TA input: polling interval; report detail level (summary vs. full)" },
+  "App access logs (ZPA) [TA-Zscaler_CIM]": { description: "Every application access attempt through ZPA — user, app segment, connector used, session outcome/timings. (Zscaler calls this the “User Activity” log.)", collectionMethod: "LSS — JSON stream over TLS, pushed from ZPA to a log receiver", sourcetype: "zscalerlss-zpa-app", configurationSettings: "ZPA Admin Portal > Configuration & Control > Log Streaming Service > Add Log Receiver:\n• App Connector Group(s) in scope\n• Log Type = User Activity\n• Session/Policy filter (optional)\n• TLS certificate for the receiver; destination host:port (Splunk-side listener or SC4S)\n• Output format = JSON" },
+  "Authentication logs (ZPA) [TA-Zscaler_CIM]": { description: "User authentication/session status for ZPA — IdP used, SAML attributes, posture check results, session state. (Zscaler calls this the “User Status” log.)", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-auth", configurationSettings: "Same LSS Log Receiver mechanism as App Access, with:\n• Log Type = User Status\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "App Connector logs (ZPA) [TA-Zscaler_CIM]": { description: "Health/status of ZPA App Connectors — CPU/memory, interface stats, session state, connectivity to Service Edge.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-connector", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = App Connector Status\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "Browser Access logs (ZPA) [TA-Zscaler_CIM]": { description: "Access to internal apps via ZPA's clientless Browser Access feature — CORS/connection timing detail.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-bba", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = Browser Access\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "Web Inspection / AppProtection logs (ZPA) [TA-Zscaler_CIM]": { description: "Inline threat-inspection results for private app traffic (ZPA AppProtection) — detected attacks/signatures.", collectionMethod: "LSS — JSON stream over TLS (where available) or embedded in User Activity logs", sourcetype: "zscalerlss-zpa-web-inspection", configurationSettings: "• Requires AppProtection enabled on the relevant Access Policy / app segments\n• LSS Log Receiver (if your ZPA tenant exposes it as a distinct Log Type) with same TLS/host:port/JSON settings\nNOTE: not independently documented as a distinct LSS log type in current public Zscaler/vendor field references — verify in your own ZPA Admin Portal's Log Streaming Service > Log Type list before building this input." },
+  "Admin Audit logs (ZPA) [TA-Zscaler_CIM]": { description: "Administrative activity in the ZPA Admin Portal — object created/changed/deleted, old/new values, admin session.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-audit", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = Audit\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
   "ZIA config objects (URL categories, etc.) [TA-zscaler-api (unofficial community add-on)]": { description: "Enrichment/lookup data, NOT event logs — periodic snapshot of ZIA policy/config objects (e.g. URL category tables) used to enrich other events.", collectionMethod: "REST API poll (modular input)", sourcetype: "n/a (lookup / KV store, not a log sourcetype)", configurationSettings: "• API credentials: ZIA OAuth2/ZIdentity client or legacy API key\n• Polling interval for each config object type\n• Unofficial add-on — not supported by Zscaler; review its GitHub docs before deploying" },
-  "ZPA config objects (app segments, segment groups) [TA-zscaler-api (unofficial community add-on)]": { description: "Enrichment/lookup data, NOT event logs — periodic snapshot of ZPA app segment/segment group definitions.", collectionMethod: "REST API poll (modular input)", sourcetype: "n/a (lookup / KV store, not a log sourcetype)", configurationSettings: "• API credentials: ZPA OAuth2/ZIdentity client or legacy API key + secret\n• Polling interval for each config object type\n• Unofficial add-on — not supported by Zscaler; review its GitHub docs before deploying" }
+  "ZPA config objects (app segments, segment groups) [TA-zscaler-api (unofficial community add-on)]": { description: "Enrichment/lookup data, NOT event logs — periodic snapshot of ZPA app segment/segment group definitions.", collectionMethod: "REST API poll (modular input)", sourcetype: "n/a (lookup / KV store, not a log sourcetype)", configurationSettings: "• API credentials: ZPA OAuth2/ZIdentity client or legacy API key + secret\n• Polling interval for each config object type\n• Unofficial add-on — not supported by Zscaler; review its GitHub docs before deploying" },
+  "ZIA SaaS Security (CASB) API scanning feed [TA-Zscaler_CIM (extra sourcetypes)]": { description: "Present in the TA's props.conf for line-breaking only; no field extraction or CIM tagging. Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "REST API poll (modular input)", sourcetype: "zscalernss-casb", configurationSettings: "To be confirmed — not covered by this reference; verify against your own ZIA Admin Portal / TA setup." },
+  "Zscaler Workload Segmentation [TA-Zscaler_CIM (extra sourcetypes)]": { description: "JSON ingestion only in this TA version, no CIM wiring. Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "To be confirmed", sourcetype: "zscalerapi-zws", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Zscaler Workload Segmentation / TA setup." },
+  "Zscaler Deception (formerly Smokescreen) [TA-Zscaler_CIM (extra sourcetypes)]": { description: "JSON ingestion only in this TA version, no CIM wiring. Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "To be confirmed", sourcetype: "zscalersmokescreen-events / zscalersmokescreen-audit", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Zscaler Deception / TA setup." },
+  "DLP Incident Reports [TA-Zscaler_CIM (extra sourcetypes)]": { description: "Referenced by the TA's own z-incident macro, but not CIM-tagged. Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "To be confirmed", sourcetype: "zscaler-dlpir", configurationSettings: "To be confirmed — not covered by this reference; verify against your own DLP Incident Receiver / TA setup." },
+  "Zscaler Posture Control alerts (from S3) [TA-Zscaler_CIM (extra sourcetypes)]": { description: "JSON ingestion only in this TA version, no CIM wiring. Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "S3 poll", sourcetype: "zscaler-posturecontrol-alerts", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Posture Control / S3 / TA setup." },
+  "Cloud & Branch Connector — NSS for Workloads: DNS [TA-Zscaler_CIM (extra sourcetypes)]": { description: "A second, separate DNS feed from the Branch/Cloud Connector product line, distinct from ZIA's zscalernss-dns. Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "NSS feed", sourcetype: "zscalernss-workload-dns", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Cloud & Branch Connector / NSS for Workloads / TA setup." },
+  "Cloud & Branch Connector — NSS for Workloads: Control Plane change events [TA-Zscaler_CIM (extra sourcetypes)]": { description: "Filtered on event.event_name=\"Control Plane\". Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "NSS feed", sourcetype: "zscalernss-workload-events (Control Plane subset)", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Cloud & Branch Connector / NSS for Workloads / TA setup." },
+  "Cloud & Branch Connector — NSS for Workloads: DHCP session events [TA-Zscaler_CIM (extra sourcetypes)]": { description: "Filtered on event.event_name=\"DHCP Lease Commit\". Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "NSS feed", sourcetype: "zscalernss-workload-events (DHCP subset)", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Cloud & Branch Connector / NSS for Workloads / TA setup." },
+  "Cloud & Branch Connector — NSS for Workloads: session events [TA-Zscaler_CIM (extra sourcetypes)]": { description: "Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "NSS feed", sourcetype: "zscalernss-workload-session", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Cloud & Branch Connector / NSS for Workloads / TA setup." },
+  "Cloud & Branch Connector — NSS for Workloads: metrics [TA-Zscaler_CIM (extra sourcetypes)]": { description: "Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "NSS feed", sourcetype: "zscalernss-workload-metrics", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Cloud & Branch Connector / NSS for Workloads / TA setup." },
+  "Cloud & Branch Connector — NSS for Workloads: firewall [TA-Zscaler_CIM (extra sourcetypes)]": { description: "Ingestion parsing only in this TA version; no field extraction/tags found despite the sourcetype existing. Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "NSS feed", sourcetype: "zscalernss-workload-fw", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Cloud & Branch Connector / NSS for Workloads / TA setup." }
 };
 const zscalerInputCoverageInputColumns = zscalerInputCoverageGroups.flatMap(group =>
   group.inputs.map(label => {
@@ -34787,12 +34884,12 @@ renderAwsSchemaAll();
 const ZSCALER_SCHEMA_PAGE_SIZE = 150;
 let zscalerSchemaState = { query: "", sourcetype: "all", category: "all", visibleLimit: ZSCALER_SCHEMA_PAGE_SIZE };
 const ZSCALER_SCHEMA_SOURCE_REF = {
-  "zscalernss-web": "Zscaler Help Portal — NSS Feed Output Format: Web Logs (official %s{field} tokens; some low-signal duplicate/rarely-used fields grouped for readability).",
-  "zscalernss-fw": "Elastic ‘Zscaler ZIA’ integration reference (field names as documented there — official Zscaler NSS Firewall format page is JavaScript-rendered and could not be scraped directly; cross-check against your own onboarded data).",
-  "zscalernss-dns": "Elastic ‘Zscaler ZIA’ integration reference (mixes Zscaler's raw NSS token names with Elastic's normalized field names — official Zscaler NSS DNS format page is JavaScript-rendered and could not be scraped directly).",
+  "zscalernss-web": "Zscaler Help Portal — NSS Feed Output Format: Web Logs (official %s{field} tokens; some low-signal duplicate/rarely-used fields grouped for readability). NOTE: the actual Zscaler Technical Add-on for Splunk (confirmed from its real props.conf, v4.1.5) extracts several of these under different internal names, e.g. reqmethod->requestmethod, ua->useragent, urlcat->urlcategory, threatcat->threatcategory, filename stays filename, md5 for file hash. See the CIM Field Mapping tab for the TA's confirmed internal field names.",
+  "zscalernss-fw": "Elastic ‘Zscaler ZIA’ integration reference (field names as documented there — official Zscaler NSS Firewall format page is JavaScript-rendered and could not be scraped directly; cross-check against your own onboarded data). CONFIRMED from the actual TA's props.conf (v4.1.5): csip, csport, cdip, cdport, sdip, sdport, tsip, inbytes, outbytes, proto, locationname, action are the real field names used — see the CIM Field Mapping tab.",
+  "zscalernss-dns": "Elastic ‘Zscaler ZIA’ integration reference (mixes Zscaler's raw NSS token names with Elastic's normalized field names — official Zscaler NSS DNS format page is JavaScript-rendered and could not be scraped directly). CORRECTION — CONFIRMED from the actual TA's props.conf (v4.1.5): the real internal field names are clt_sip, dns_req, dns_reqtype, dns_resp, durationms, srv_dip, srv_dport — quite different from the request.name/response.ip style names below. See the CIM Field Mapping tab for the confirmed names.",
   "zscalernss-tunnel": "Elastic ‘Zscaler ZIA’ integration reference (official Zscaler NSS Tunnel format page is JavaScript-rendered and could not be scraped directly).",
   "zscalernss-alerts": "Elastic ‘Zscaler ZIA’ integration reference. Alerts are built on the Web NSS format, so a superset of Web-log fields can also appear.",
-  "zscalerapi-zia-audit": "Elastic ‘Zscaler ZIA’ integration reference for the Admin Audit API response fields (official Zscaler API reference pages are JavaScript-rendered and could not be scraped directly).",
+  "zscalerapi-zia-audit": "Elastic ‘Zscaler ZIA’ integration reference for the Admin Audit API response fields (official Zscaler API reference pages are JavaScript-rendered and could not be scraped directly). CONFIRMED from the actual TA's props.conf (v4.1.5): raw JSON keys are Title Case with spaces (\"Action\", \"Category\", \"Client IP\", \"Post Action\", \"Pre Action\", \"Resource\", \"Result\", \"Subcategory\", \"Time\", \"User\", \"AA in Cloud\", \"Interface\") and ARE aliased to clean CIM-style names — but see the CIM Coverage tab: despite these clean names, this sourcetype is NOT actually wired into any CIM data model in the shipped tags.conf.",
   "zscalerapi-zia-sandbox": "Elastic ‘Zscaler ZIA’ integration reference for the Sandbox Report API response fields.",
   "zscalerlss-zpa-app": "Elastic ‘Zscaler ZPA’ integration reference — Zscaler calls this the ‘User Activity’ log, LSS port 9018 by default.",
   "zscalerlss-zpa-auth": "Elastic ‘Zscaler ZPA’ integration reference — Zscaler calls this the ‘User Status’ log, LSS port 9019 by default.",
@@ -36706,6 +36803,318 @@ document.getElementById("zscalerPermissionsTableBody").addEventListener("click",
 document.getElementById("closeZscalerPermissionDetail").addEventListener("click", closeZscalerPermissionDetail);
 zscalerPermissionDetailModal.addEventListener("click", event => { if (event.target === zscalerPermissionDetailModal) closeZscalerPermissionDetail(); });
 document.addEventListener("keydown", event => { if (event.key === "Escape" && zscalerPermissionDetailModal.classList.contains("open")) closeZscalerPermissionDetail(); });
+
+/* ---------- Input Coverage: Zscaler CIM Coverage tab ---------------------------------------------------------
+ * All three datasets below (cim_coverage, cim_field_mapping, ta_extra_sourcetypes) were read directly from the
+ * real TA-Zscaler_CIM v4.1.5 package the user supplied -- specifically its default/eventtypes.conf,
+ * default/tags.conf and default/props.conf -- superseding this reference's earlier inferred/conventional CIM
+ * guesses (which are why several rows below say "CORRECTION" against what the Schema tab's own tooltips used
+ * to claim). Kept as three independent tables/arrays rather than one merged shape, per this app's convention
+ * of not force-fitting differently-shaped datasets into a shared structure. */
+const zscalerCimCoverageData = [
+  { input: "Web / Proxy logs (ZIA)", sourcetype: "zscalernss-web", eventtype: "Zscaler_Proxy_General", cimTags: "communicate, end, network, proxy, session, start, web (performance defined but disabled)", cimDataModels: "Web, Network Traffic, Network Sessions", notes: "CONFIRMED from TA v4.1.5 package. Primary eventtype — fires on every web/proxy event." },
+  { input: "Web log — malware-detected subset", sourcetype: "zscalernss-web (filtered: threatname!=\"None\")", eventtype: "Zscaler_Proxy_Malware", cimTags: "attack, ids, malware", cimDataModels: "Intrusion Detection (IDS), Malware", notes: "CONFIRMED from TA v4.1.5 package. Only fires when a threat name is populated on the event." },
+  { input: "Web log — DLP-flagged subset", sourcetype: "zscalernss-web (filtered: ruletype=\"DLP\")", eventtype: "Zscaler_Proxy_DLP", cimTags: "dlp, incident", cimDataModels: "Data Loss Prevention (DLP), Incident Review", notes: "CONFIRMED from TA v4.1.5 package. Only fires when ruletype=DLP." },
+  { input: "Firewall logs (ZIA)", sourcetype: "zscalernss-fw", eventtype: "Zscaler_CFW", cimTags: "communicate, network", cimDataModels: "Network Traffic", notes: "CONFIRMED from TA v4.1.5 package." },
+  { input: "DNS logs (ZIA)", sourcetype: "zscalernss-dns", eventtype: "Zscaler_DNS", cimTags: "dns, network, resolution", cimDataModels: "Network Resolution (DNS)", notes: "CONFIRMED from TA v4.1.5 package." },
+  { input: "Tunnel logs (ZIA)", sourcetype: "zscalernss-tunnel", eventtype: "— none defined —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "CONFIRMED from TA v4.1.5 package. props.conf only parses the raw event (JSON/TSV pipeline) — no FIELDALIAS, EVAL, eventtype, or tag exists for it." },
+  { input: "System alerts (ZIA)", sourcetype: "zscalernss-alerts", eventtype: "— none defined —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "CONFIRMED from TA v4.1.5 package. props.conf stanza carries only category/description metadata, no field extraction at all." },
+  { input: "Admin Audit logs, REST API (ZIA)", sourcetype: "zscalerapi-zia-audit", eventtype: "Zscaler_Audit (defined, search=this sourcetype)", cimTags: "— none — (no tags.conf stanza for this eventtype)", cimDataModels: "NOT CIM-MAPPED", notes: "CONFIRMED from TA v4.1.5 package. SURPRISE FINDING: props.conf gives this sourcetype clean CIM-style FIELDALIASes (action, category, result, user, src_ip, pre_action, post_action, resource, sub_category, interface, time, cloudname) but none of it is wired into any CIM data model via tags.conf — `| datamodel` searches will NOT surface these events despite the field names looking CIM-ready." },
+  { input: "Admin Audit logs, syslog variant (ZIA) — not previously covered", sourcetype: "zscalernss-audit", eventtype: "— none defined —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "CONFIRMED from TA v4.1.5 package. A second delivery path for ZIA admin-audit data (via NSS/syslog instead of the REST API), aliasing adminid/clientip/subcategory etc. into the same audit-style names — also not tagged into any CIM model. The TA's own z-audit macro treats both sourcetypes as one combined 'audit' source." },
+  { input: "Sandbox detail reports (ZIA)", sourcetype: "zscalerapi-zia-sandbox", eventtype: "Zscaler_Sandbox", cimTags: "ids, attack", cimDataModels: "Intrusion Detection (IDS)", notes: "CONFIRMED from TA v4.1.5 package. CORRECTION from this reference's earlier guess: tagged into IDS, NOT the Malware data model, despite being sandbox/malware-detonation content." },
+  { input: "App access logs (ZPA)", sourcetype: "zscalerlss-zpa-app", eventtype: "Zscaler_ZPA_App", cimTags: "network, session, start, end", cimDataModels: "Network Sessions", notes: "CONFIRMED from TA v4.1.5 package. CORRECTION: this is Network Sessions, not Network Traffic as this reference had guessed earlier." },
+  { input: "Authentication logs (ZPA)", sourcetype: "zscalerlss-zpa-auth", eventtype: "Zscaler_ZPA_Auth", cimTags: "authentication", cimDataModels: "Authentication", notes: "CONFIRMED from TA v4.1.5 package." },
+  { input: "App Connector logs (ZPA)", sourcetype: "zscalerlss-zpa-connector", eventtype: "— none defined —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "CONFIRMED from TA v4.1.5 package. props.conf does alias app/dest/dest_port/src_port fields, but no eventtype or tags.conf entry exists for this sourcetype." },
+  { input: "Browser Access logs (ZPA)", sourcetype: "zscalerlss-zpa-bba", eventtype: "Zscaler_ZPA_BBA (filtered: StatusCode!=0, Method!=PROPFIND)", cimTags: "web", cimDataModels: "Web", notes: "CONFIRMED from TA v4.1.5 package. Health-check/PROPFIND noise is excluded from the eventtype definition itself." },
+  { input: "Web Inspection / AppProtection logs (ZPA)", sourcetype: "zscalerlss-zpa-web-inspection", eventtype: "Zscaler_ZPA_Web_Inspection (filtered: StatusCode!=0)", cimTags: "web", cimDataModels: "Web", notes: "CONFIRMED from TA v4.1.5 package. CORRECTION: this sourcetype and eventtype are real and confirmed — this reference had flagged it as unconfirmed earlier." },
+  { input: "Admin Audit logs (ZPA)", sourcetype: "zscalerlss-zpa-audit", eventtype: "Zscaler_ZPA_Audit", cimTags: "account, audit, change", cimDataModels: "Change (Account Management & Auditing datasets)", notes: "CONFIRMED from TA v4.1.5 package. The one ZIA/ZPA admin-audit sourcetype that IS actually CIM-mapped — unlike ZIA's own admin audit above." },
+  { input: "ZPA Private Service Edge logs — not previously covered", sourcetype: "zscalerlss-zpa-pse", eventtype: "— none defined —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "CONFIRMED from TA v4.1.5 package. Aliases app/dest/dest_port/src_port like the Connector sourcetype; also untagged." },
+  { input: "Legacy combined ZPA eventtype (dead code)", sourcetype: "n/a", eventtype: "Zscaler_ZPA (defined in eventtypes.conf, but commented out)", cimTags: "authentication, communicate, end, network, performance, session, start, vpn — all explicitly set to \"disabled\" in the shipped tags.conf", cimDataModels: "NOT ACTIVE", notes: "CONFIRMED from TA v4.1.5 package. This is the old combined-ZPA eventtype that older Splunk Community threads about this add-on still describe; v4.1.5 has replaced it with the five granular Zscaler_ZPA_* eventtypes listed above." },
+];
+const ZSCALER_CIM_COVERAGE_NOTES = "Source: read directly from the real Zscaler Technical Add-on for Splunk package (Splunkbase app 3865, app ID TA-Zscaler_CIM, version 4.1.5) that the user provided — specifically default/eventtypes.conf, default/tags.conf, and default/props.conf. This supersedes every earlier version of this table, which was built from inferred/conventional mapping and a partial Splunk Community quote because the package itself was not yet available. See the 'TA Extra Sourcetypes' tab for additional sourcetypes found in the package that were outside this reference's original ZIA/ZPA scope (SaaS Security/CASB, Workload Segmentation, Deception, DLP Incident Reports, Posture Control, and the separate Cloud & Branch Connector 'NSS for Workloads' feeds — several of which ARE CIM-tagged).";
+
+const zscalerCimFieldMappingData = [
+  { sourcetype: "zscalernss-web", cimDataModel: "Web / Network Traffic", rawField: "appname", setVia: "FIELDALIAS", cimField: "app" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web / Network Traffic", rawField: "ClientIP", setVia: "FIELDALIAS", cimField: "src", notes: "also aliased to src_ip separately" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Network Traffic", rawField: "ClientIP", setVia: "FIELDALIAS", cimField: "src_ip" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Network Traffic", rawField: "protocol", setVia: "FIELDALIAS", cimField: "transport" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "user", setVia: "FIELDALIAS", cimField: "src_user" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Data Loss Prevention (DLP)", rawField: "dlpengine", setVia: "FIELDALIAS", cimField: "severity", notes: "unusual mapping — a DLP engine NAME populates the CIM 'severity' field, not a true severity level" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Malware / Intrusion Detection (IDS)", rawField: "threatname", setVia: "FIELDALIAS", cimField: "signature", notes: "competes with dlpdictionaries->signature below; last FIELDALIAS evaluated wins" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "contenttype", setVia: "FIELDALIAS", cimField: "http_content_type" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web / Network Traffic", rawField: "hostname", setVia: "FIELDALIAS", cimField: "dest" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "responsesize", setVia: "FIELDALIAS", cimField: "bytes_in" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "requestsize", setVia: "FIELDALIAS", cimField: "bytes_out" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Network Traffic", rawField: "clientpublicIP", setVia: "FIELDALIAS", cimField: "src_translated_ip" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "clienttranstime", setVia: "FIELDALIAS", cimField: "response_time" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "department", setVia: "FIELDALIAS", cimField: "src_user_bunit" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Malware / Intrusion Detection (IDS)", rawField: "dlpdictionaries", setVia: "FIELDALIAS", cimField: "signature", notes: "usually empty (\"None\") for non-DLP events; documented Splunk Community bug where this silently overwrote a populated threatname->signature value in ES notables" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Malware", rawField: "filename", setVia: "FIELDALIAS", cimField: "file_name" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Malware", rawField: "md5", setVia: "FIELDALIAS", cimField: "file_hash" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "refererURL", setVia: "FIELDALIAS", cimField: "http_referrer" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "requestmethod", setVia: "FIELDALIAS", cimField: "http_method" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Network Traffic", rawField: "serverip", setVia: "FIELDALIAS", cimField: "dest_ip" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Malware / IDS / Web", rawField: "threatcategory", setVia: "FIELDALIAS", cimField: "category", notes: "competes with urlcategory->category below" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "transactionsize", setVia: "FIELDALIAS", cimField: "bytes" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "urlcategory", setVia: "FIELDALIAS", cimField: "category", notes: "competes with threatcategory->category above" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "useragent", setVia: "FIELDALIAS", cimField: "http_user_agent" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web / Network Traffic", rawField: "action", setVia: "EVAL (computed/literal — see Notes)", cimField: "action", notes: "EVAL-action = lower(action) — normalizes case only" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Data Loss Prevention (DLP)", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "dlp_type", notes: "EVAL-dlp_type = \"Inline Gateway\" — hardcoded literal for every event" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web / Network Sessions", rawField: "clienttranstime + servertranstime", setVia: "EVAL (computed/literal — see Notes)", cimField: "duration", notes: "computed sum of the two raw timing fields" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web / Network Traffic", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "dvc", notes: "EVAL-dvc = \"Zscaler Cloud Proxy\" — hardcoded literal for every event" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Network Traffic", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "dvc_zone", notes: "EVAL-dvc_zone = \"Cloud Proxy\" — hardcoded literal" },
+  { sourcetype: "zscalernss-web", cimDataModel: "all", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "vendor_product", notes: "EVAL-vendor_product = \"Zscaler_ZIA_Proxy\" — hardcoded literal" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "url", setVia: "native field (not aliased)", cimField: "url", notes: "already extracted directly as 'url' by the JSON/TSV parsing pipeline" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "— not aliased —", setVia: "GAP", cimField: "status", notes: "no FIELDALIAS or EVAL maps an HTTP-response-code-style field to CIM's 'status' for this sourcetype" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "csip", setVia: "FIELDALIAS", cimField: "src", notes: "also aliased to src_ip separately" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "csip", setVia: "FIELDALIAS", cimField: "src_ip" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "csport", setVia: "FIELDALIAS", cimField: "src_port", notes: "also aliased to src_translated_port separately" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "csport", setVia: "FIELDALIAS", cimField: "src_translated_port" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "cdip", setVia: "FIELDALIAS", cimField: "dest_ip" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "cdport", setVia: "FIELDALIAS", cimField: "dest_port" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "sdip", setVia: "FIELDALIAS", cimField: "dest", notes: "also aliased to dest_translated_ip separately" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "sdip", setVia: "FIELDALIAS", cimField: "dest_translated_ip" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "sdport", setVia: "FIELDALIAS", cimField: "dest_translated_port" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "tsip", setVia: "FIELDALIAS", cimField: "src_translated_ip" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "inbytes", setVia: "FIELDALIAS", cimField: "bytes_in" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "outbytes", setVia: "FIELDALIAS", cimField: "bytes_out" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "proto", setVia: "FIELDALIAS", cimField: "protocol", notes: "also aliased to transport separately" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "proto", setVia: "FIELDALIAS", cimField: "transport" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "locationname", setVia: "FIELDALIAS", cimField: "src_zone" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "action", setVia: "EVAL (computed/literal — see Notes)", cimField: "action", notes: "EVAL-action = if(like(action,\"%Allow%\"),\"allowed\",action) — normalizes only the allow case" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "app", notes: "EVAL-app = \"Zscaler\" — hardcoded literal, overrides any per-event application name" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "inbytes + outbytes", setVia: "EVAL (computed/literal — see Notes)", cimField: "bytes", notes: "computed sum" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "all", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "vendor_product", notes: "EVAL-vendor_product = \"Zscaler_ZIA_Firewall\" — hardcoded literal" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "clt_sip", setVia: "FIELDALIAS", cimField: "src", notes: "also aliased to src_ip separately" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "clt_sip", setVia: "FIELDALIAS", cimField: "src_ip" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "dns_req", setVia: "FIELDALIAS", cimField: "query" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "dns_reqtype", setVia: "FIELDALIAS", cimField: "record_type" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "dns_resp", setVia: "FIELDALIAS", cimField: "answer" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "durationms", setVia: "FIELDALIAS", cimField: "response_time" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "srv_dip", setVia: "FIELDALIAS", cimField: "dest", notes: "also aliased to dest_ip separately" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "srv_dip", setVia: "FIELDALIAS", cimField: "dest_ip" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "srv_dport", setVia: "FIELDALIAS", cimField: "dest_port" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "all", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "vendor_product", notes: "EVAL-vendor_product = \"Zscaler_ZIA_Firewall\" — NOTE: mislabeled as the Firewall vendor_product on the DNS sourcetype, likely a copy/paste artifact in the TA" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "— not aliased —", setVia: "GAP", cimField: "message_type / query_type / query_count / answer_count", notes: "no aliasing found for these formal DM fields — not populated by this TA version" },
+  { sourcetype: "zscalerapi-zia-sandbox", cimDataModel: "Intrusion Detection (IDS)", rawField: "\"Full Details.Summary.Category\"", setVia: "FIELDALIAS", cimField: "category" },
+  { sourcetype: "zscalerapi-zia-sandbox", cimDataModel: "Intrusion Detection (IDS)", rawField: "\"Full Details.Summary.Duration\"", setVia: "FIELDALIAS", cimField: "duration" },
+  { sourcetype: "zscalerapi-zia-sandbox", cimDataModel: "Intrusion Detection (IDS)", rawField: "\"Full Details.Summary.Status\"", setVia: "FIELDALIAS", cimField: "status" },
+  { sourcetype: "zscalerapi-zia-sandbox", cimDataModel: "Intrusion Detection (IDS) / Malware-style", rawField: "\"Full Details.FileProperties.MD5\"", setVia: "FIELDALIAS", cimField: "file_hash", notes: "same source also aliased to a plain 'md5' field" },
+  { sourcetype: "zscalerapi-zia-sandbox", cimDataModel: "Intrusion Detection (IDS)", rawField: "\"Full Details.SystemSummary{}.Signature\"", setVia: "FIELDALIAS", cimField: "signature" },
+  { sourcetype: "zscalerapi-zia-sandbox", cimDataModel: "custom (non-CIM)", rawField: "many: bypass_risk/sig/sig_source, class_category/detect_mal/score/type, country, exploit_*, file_cert*, file_size, file_type, language, net_*, orig_risk, persist_*, sha1/sha2/sha256, sig_source, ssdeep, start_time, stealth_*", setVia: "FIELDALIAS", cimField: "— none (Zscaler/Sandbox-specific field names, not CIM fields)", notes: "the bulk of this sourcetype's ~35 aliases are Zscaler-specific sandbox-report fields with no corresponding CIM field" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged into any CIM model —", rawField: "\"Action\"", setVia: "FIELDALIAS", cimField: "action", notes: "CIM-style name, but this sourcetype has no tags.conf entry" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Category\"", setVia: "FIELDALIAS", cimField: "category" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"AA in Cloud\"", setVia: "FIELDALIAS", cimField: "cloudname" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Interface\"", setVia: "FIELDALIAS", cimField: "interface" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Post Action\"", setVia: "FIELDALIAS", cimField: "post_action" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Pre Action\"", setVia: "FIELDALIAS", cimField: "pre_action" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Resource\"", setVia: "FIELDALIAS", cimField: "resource" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Result\"", setVia: "FIELDALIAS", cimField: "result" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Client IP\"", setVia: "FIELDALIAS", cimField: "src_ip" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Subcategory\"", setVia: "FIELDALIAS", cimField: "sub_category" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Time\"", setVia: "FIELDALIAS", cimField: "time" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"User\"", setVia: "FIELDALIAS", cimField: "user" },
+  { sourcetype: "zscalernss-audit", cimDataModel: "— not tagged —", rawField: "adminid", setVia: "FIELDALIAS", cimField: "user", notes: "also aliased to a Title-Case \"User\" for display" },
+  { sourcetype: "zscalernss-audit", cimDataModel: "— not tagged —", rawField: "clientip", setVia: "FIELDALIAS", cimField: "src_ip", notes: "also aliased to a Title-Case \"Client IP\" for display" },
+  { sourcetype: "zscalernss-audit", cimDataModel: "— not tagged —", rawField: "action / category / interface / subcategory / time", setVia: "FIELDALIAS", cimField: "Action / Category / Interface / Subcategory / Time", notes: "reverse-direction aliasing — renames its own extracted lowercase fields into Title-Case display names, not into standard CIM fields" },
+  { sourcetype: "zscalernss-audit", cimDataModel: "— not tagged —", rawField: "post_action / pre_action", setVia: "FIELDALIAS", cimField: "postaction / preaction / \"Post Action\" / \"Pre Action\"" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "Application", setVia: "FIELDALIAS", cimField: "app", notes: "OVERRIDDEN: EVAL-app=\"Zscaler\" runs after this alias, so the effective 'app' value is always the literal \"Zscaler\", not the real application name" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "Host", setVia: "FIELDALIAS", cimField: "dest", notes: "also aliased to dest_dns separately" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "Host", setVia: "FIELDALIAS", cimField: "dest_dns" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "ServerIP", setVia: "FIELDALIAS", cimField: "dest_ip" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "ServicePort", setVia: "FIELDALIAS", cimField: "dest_port" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "InternalReason", setVia: "FIELDALIAS", cimField: "signature" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "ClientPublicIP", setVia: "FIELDALIAS", cimField: "src_ip" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "ConnectorPort", setVia: "FIELDALIAS", cimField: "src_port" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "Username", setVia: "FIELDALIAS (ASNEW)", cimField: "user", notes: "ASNEW = only applied if 'user' isn't already set" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "all", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "vendor_product", notes: "EVAL-vendor_product = \"Zscaler_ZPA\"" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "app", notes: "EVAL-app = \"Zscaler\" — see override note above" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "SessionStatus", setVia: "FIELDALIAS", cimField: "action", notes: "OVERRIDDEN: EVAL-action (next row) recomputes this into success/failure" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "SessionStatus", setVia: "EVAL (computed/literal — see Notes)", cimField: "action", notes: "case(): ZPN_STATUS_AUTHENTICATED/CONNECTED/DISCONNECTED -> \"success\"; ZPN_STATUS_AUTH_FAILED -> \"failure\"; else passes SessionStatus through unchanged" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "Application", setVia: "FIELDALIAS", cimField: "app", notes: "OVERRIDDEN: EVAL-app=\"Zscaler\" runs after this alias — effective value is always literal \"Zscaler\"" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "Host", setVia: "FIELDALIAS", cimField: "dest" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "ServicePort", setVia: "FIELDALIAS", cimField: "dest_port" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "PublicIP", setVia: "FIELDALIAS", cimField: "src" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "ConnectorPort", setVia: "FIELDALIAS", cimField: "src_port" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "Username", setVia: "FIELDALIAS", cimField: "user" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "all", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "vendor_product", notes: "EVAL-vendor_product = \"Zscaler_ZPA\"" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "app", notes: "EVAL-app = \"Zscaler\" — see override note above" },
+  { sourcetype: "zscalerlss-zpa-connector", cimDataModel: "— not tagged —", rawField: "Application", setVia: "FIELDALIAS", cimField: "app", notes: "OVERRIDDEN by EVAL-app=\"Zscaler\" literal; also this sourcetype has no eventtype/tags entry at all" },
+  { sourcetype: "zscalerlss-zpa-connector", cimDataModel: "— not tagged —", rawField: "Host", setVia: "FIELDALIAS", cimField: "dest" },
+  { sourcetype: "zscalerlss-zpa-connector", cimDataModel: "— not tagged —", rawField: "ServicePort", setVia: "FIELDALIAS", cimField: "dest_port" },
+  { sourcetype: "zscalerlss-zpa-connector", cimDataModel: "— not tagged —", rawField: "ConnectorPort", setVia: "FIELDALIAS", cimField: "src_port" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "NameID", setVia: "FIELDALIAS (ASNEW)", cimField: "user" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "StatusCode", setVia: "FIELDALIAS (ASNEW)", cimField: "status" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "ClientPublicIp", setVia: "FIELDALIAS (ASNEW)", cimField: "src" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "UserAgent", setVia: "FIELDALIAS (ASNEW)", cimField: "http_user_agent" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "Method", setVia: "FIELDALIAS (ASNEW)", cimField: "http_method" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "ResponseSize", setVia: "FIELDALIAS (ASNEW)", cimField: "bytes_out" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "RequestSize", setVia: "FIELDALIAS (ASNEW)", cimField: "bytes_in" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "ApplicationPort", setVia: "FIELDALIAS (ASNEW)", cimField: "dest_port" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "URL", setVia: "FIELDALIAS (ASNEW)", cimField: "uri_path" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "Host + URL", setVia: "EVAL (computed/literal — see Notes)", cimField: "url", notes: "computed concatenation" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "RequestSize + ResponseSize", setVia: "EVAL (computed/literal — see Notes)", cimField: "bytes", notes: "computed sum" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "all", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "app / vendor_product", notes: "EVAL-app=\"Zscaler\"; EVAL-vendor_product=\"Zscaler_ZPA\"" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "ClientPublicIp", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "src", notes: "aliased twice — once in a combined multi-value FIELDALIAS, once individually" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "Destination", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "dest" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "Domain", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "url_domain" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "Method", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "http_method" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "StatusCode", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "status" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "URL", setVia: "FIELDALIAS (ASNEW)", cimField: "uri_query", notes: "from the combined multi-value alias" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "URL", setVia: "FIELDALIAS (ASNEW)", cimField: "uri_path", notes: "from a SEPARATE individual alias — same source field mapped to two different CIM fields" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "UserAgent", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "http_user_agent" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "UserID", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "user" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "Host + URL", setVia: "EVAL (computed/literal — see Notes)", cimField: "url", notes: "computed concatenation" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "ResponseHdrSize + ResponseBodySize", setVia: "EVAL (computed/literal — see Notes)", cimField: "bytes_out", notes: "computed sum" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "RequestHdrSize + RequestBodySize", setVia: "EVAL (computed/literal — see Notes)", cimField: "bytes_in", notes: "computed sum" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "Request+ResponseHdr/BodySize (all four)", setVia: "EVAL (computed/literal — see Notes)", cimField: "bytes", notes: "computed sum of all four size fields" },
+  { sourcetype: "zscalerlss-zpa-audit", cimDataModel: "Change (Account Mgmt & Auditing)", rawField: "AuditOperationType", setVia: "FIELDALIAS", cimField: "change_type" },
+  { sourcetype: "zscalerlss-zpa-audit", cimDataModel: "Change", rawField: "User", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "user", notes: "also aliased to src_user separately" },
+  { sourcetype: "zscalerlss-zpa-audit", cimDataModel: "Change", rawField: "User", setVia: "FIELDALIAS (ASNEW)", cimField: "src_user" },
+  { sourcetype: "zscalerlss-zpa-audit", cimDataModel: "Change", rawField: "ObjectID", setVia: "FIELDALIAS (ASNEW)", cimField: "object_id" },
+  { sourcetype: "zscalerlss-zpa-audit", cimDataModel: "Change", rawField: "ObjectType", setVia: "FIELDALIAS (ASNEW)", cimField: "object_category" },
+  { sourcetype: "zscalerlss-zpa-audit", cimDataModel: "Change", rawField: "AuditOperationType", setVia: "EVAL (computed/literal — see Notes)", cimField: "action", notes: "case(): Create->created, Delete->deleted, \"Sign Out\"->logoff, Update->updated, \"Account Locked\"->lockout, \"Account Unlocked\"->unlocked; else passes AuditOperationType through" },
+  { sourcetype: "zscalerlss-zpa-audit", cimDataModel: "all", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "vendor_product", notes: "EVAL-vendor_product = \"Zscaler_ZPA\"" },
+  { sourcetype: "zscalerlss-zpa-pse", cimDataModel: "— not tagged —", rawField: "Application", setVia: "FIELDALIAS", cimField: "app", notes: "OVERRIDDEN by EVAL-app=\"Zscaler\" literal; no eventtype/tags entry exists for this sourcetype" },
+  { sourcetype: "zscalerlss-zpa-pse", cimDataModel: "— not tagged —", rawField: "Host", setVia: "FIELDALIAS", cimField: "dest" },
+  { sourcetype: "zscalerlss-zpa-pse", cimDataModel: "— not tagged —", rawField: "ServicePort", setVia: "FIELDALIAS", cimField: "dest_port" },
+  { sourcetype: "zscalerlss-zpa-pse", cimDataModel: "— not tagged —", rawField: "ConnectorPort", setVia: "FIELDALIAS", cimField: "src_port" },
+];
+const ZSCALER_CIM_FIELD_MAPPING_NOTES = "Source: every row above is read directly from the real Zscaler Technical Add-on for Splunk package (Splunkbase app 3865, app ID TA-Zscaler_CIM, version 4.1.5) that the user provided — specifically its default/props.conf FIELDALIAS and EVAL stanzas. This is the exact shipped configuration, not an inferred or conventional mapping, and it supersedes every earlier version of this table. A few things worth internalizing: (1) EVAL directives run after FIELDALIAS and win when both target the same field name — several 'app' fields across ZPA sourcetypes are FIELDALIASed from a real value and then immediately overwritten by a hardcoded EVAL-app=\"Zscaler\" literal, so 'app' is not useful for distinguishing ZPA applications in this TA version; (2) some CIM fields (category, signature) receive two competing FIELDALIAS sources on the same sourcetype (zscalernss-web's threatcategory/urlcategory and threatname/dlpdictionaries) — whichever stanza Splunk evaluates last for a given event wins, which is the root cause of a documented Splunk Community bug; (3) rows marked '— not tagged —' have real, working field aliases but are NOT wired into any CIM data model in this package version, so they will not appear in `| datamodel` searches no matter how CIM-like their field names look. If you're on a different TA version, diff your own props.conf/eventtypes.conf/tags.conf against this table before trusting it verbatim.";
+
+const zscalerTaExtraSourcetypesData = [
+  { sourcetype: "zscalernss-casb", productFeed: "ZIA SaaS Security (CASB) API scanning feed", eventtype: "— none —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "Present in props.conf for line-breaking only; no field extraction or tagging." },
+  { sourcetype: "zscalerapi-zws", productFeed: "Zscaler Workload Segmentation", eventtype: "— none —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "JSON ingestion only, no CIM wiring." },
+  { sourcetype: "zscalersmokescreen-events / zscalersmokescreen-audit", productFeed: "Zscaler Deception (formerly Smokescreen)", eventtype: "— none —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "JSON ingestion only, no CIM wiring." },
+  { sourcetype: "zscaler-dlpir", productFeed: "DLP Incident Reports", eventtype: "— none —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "Referenced by the TA's own z-incident macro, but not CIM-tagged." },
+  { sourcetype: "zscaler-posturecontrol-alerts", productFeed: "Zscaler Posture Control alerts (from S3)", eventtype: "— none —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "JSON ingestion only, no CIM wiring." },
+  { sourcetype: "zscalernss-workload-dns", productFeed: "Cloud & Branch Connector — NSS for Workloads", eventtype: "zscaler-workload-dns", cimTags: "dns", cimDataModels: "Network Resolution (DNS)", notes: "A second, separate DNS feed from the Branch/Cloud Connector product line, distinct from ZIA's zscalernss-dns." },
+  { sourcetype: "zscalernss-workload-events (Control Plane subset)", productFeed: "Cloud & Branch Connector — NSS for Workloads", eventtype: "zscaler-workload-control-plane-change", cimTags: "change", cimDataModels: "Change", notes: "Filtered on event.event_name=\"Control Plane\"." },
+  { sourcetype: "zscalernss-workload-events (DHCP subset)", productFeed: "Cloud & Branch Connector — NSS for Workloads", eventtype: "zscaler-workload-dhcp-session", cimTags: "network, session", cimDataModels: "Network Sessions", notes: "Filtered on event.event_name=\"DHCP Lease Commit\"." },
+  { sourcetype: "zscalernss-workload-session", productFeed: "Cloud & Branch Connector — NSS for Workloads", eventtype: "zscaler-workload-session", cimTags: "network, session", cimDataModels: "Network Sessions" },
+  { sourcetype: "zscalernss-workload-metrics", productFeed: "Cloud & Branch Connector — NSS for Workloads", eventtype: "zscaler-workload-metrics", cimTags: "performance, inventory", cimDataModels: "Performance, Inventory" },
+  { sourcetype: "zscalernss-workload-fw", productFeed: "Cloud & Branch Connector — NSS for Workloads", eventtype: "— none —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "Ingestion parsing only in this TA version; no field extraction/tags found despite the sourcetype existing." },
+];
+const ZSCALER_TA_EXTRA_SOURCETYPES_NOTES = "These sourcetypes were found in the real TA-Zscaler_CIM v4.1.5 package but fall outside this reference's original ZIA/ZPA onboarding scope (Overview, Field Schema, and main CIM tabs). Listed here for completeness since they ship in the same add-on. The 'NSS for Workloads' rows belong to Zscaler's Cloud & Branch Connector product, a different feed from the ZIA/ZPA logs covered elsewhere in this reference.";
+
+let zscalerCimCoverageState = { query: "" };
+function zscalerCimCoverageFilteredRows() {
+  const q = zscalerCimCoverageState.query.trim().toLowerCase();
+  if (!q) return zscalerCimCoverageData;
+  return zscalerCimCoverageData.filter(r =>
+    `${r.input} ${r.sourcetype} ${r.eventtype} ${r.cimTags} ${r.cimDataModels} ${r.notes || ""}`.toLowerCase().includes(q));
+}
+function renderZscalerCimCoverageTable() {
+  const rows = zscalerCimCoverageFilteredRows();
+  const body = document.getElementById("zscalerCimCoverageBody");
+  const countEl = document.getElementById("zscalerCimCoverageResultCount");
+  if (countEl) countEl.textContent = `${rows.length.toLocaleString()} of ${zscalerCimCoverageData.length.toLocaleString()} eventtypes`;
+  if (!body) return;
+  body.innerHTML = rows.length ? rows.map(r => `<tr>
+    <td>${escapeHtml(r.input)}</td>
+    <td><code>${escapeHtml(r.sourcetype)}</code></td>
+    <td>${escapeHtml(r.eventtype)}</td>
+    <td>${escapeHtml(r.cimTags)}</td>
+    <td>${escapeHtml(r.cimDataModels)}</td>
+    <td>${escapeHtml(r.notes || "")}</td>
+  </tr>`).join("") : `<tr><td colspan="6" class="se-empty">No matching rows.</td></tr>`;
+}
+function exportZscalerCimCoverageCsv(event) {
+  const rows = zscalerCimCoverageFilteredRows();
+  const lines = [["Input", "Sourcetype", "Eventtype", "CIM tags", "CIM data model(s)", "Notes"].map(csvValue).join(",")];
+  rows.forEach(r => lines.push([r.input, r.sourcetype, r.eventtype, r.cimTags, r.cimDataModels, r.notes || ""].map(csvValue).join(",")));
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Zscaler-CIM-Coverage.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  const btn = event && event.currentTarget;
+  if (btn) {
+    const original = btn.textContent;
+    btn.textContent = "Exported";
+    setTimeout(() => { btn.textContent = original; }, 1400);
+  }
+}
+document.getElementById("zscalerCimCoverageSearchBox").addEventListener("input", e => { zscalerCimCoverageState.query = e.target.value; renderZscalerCimCoverageTable(); });
+document.getElementById("zscalerCimCoverageExportBtn").addEventListener("click", exportZscalerCimCoverageCsv);
+document.getElementById("zscalerCimCoverageNote").textContent = ZSCALER_CIM_COVERAGE_NOTES;
+renderZscalerCimCoverageTable();
+
+let zscalerCimFieldMappingState = { query: "", sourcetype: "" };
+function zscalerCimFieldMappingFilteredRows() {
+  const q = zscalerCimFieldMappingState.query.trim().toLowerCase();
+  return zscalerCimFieldMappingData.filter(r => {
+    if (zscalerCimFieldMappingState.sourcetype && r.sourcetype !== zscalerCimFieldMappingState.sourcetype) return false;
+    if (!q) return true;
+    return `${r.sourcetype} ${r.cimDataModel} ${r.rawField} ${r.setVia} ${r.cimField} ${r.notes || ""}`.toLowerCase().includes(q);
+  });
+}
+function renderZscalerCimFieldMappingTable() {
+  const rows = zscalerCimFieldMappingFilteredRows();
+  const body = document.getElementById("zscalerCimFieldMappingBody");
+  const countEl = document.getElementById("zscalerCimFieldMappingResultCount");
+  if (countEl) countEl.textContent = `${rows.length.toLocaleString()} of ${zscalerCimFieldMappingData.length.toLocaleString()} field mappings`;
+  if (!body) return;
+  body.innerHTML = rows.length ? rows.map(r => `<tr>
+    <td><code>${escapeHtml(r.sourcetype)}</code></td>
+    <td>${escapeHtml(r.cimDataModel)}</td>
+    <td><code>${escapeHtml(r.rawField)}</code></td>
+    <td>${escapeHtml(r.setVia)}</td>
+    <td><code>${escapeHtml(r.cimField)}</code></td>
+    <td>${escapeHtml(r.notes || "")}</td>
+  </tr>`).join("") : `<tr><td colspan="6" class="se-empty">No matching rows.</td></tr>`;
+}
+function exportZscalerCimFieldMappingCsv(event) {
+  const rows = zscalerCimFieldMappingFilteredRows();
+  const lines = [["Sourcetype", "CIM data model", "Raw field", "Set via", "CIM field", "Notes"].map(csvValue).join(",")];
+  rows.forEach(r => lines.push([r.sourcetype, r.cimDataModel, r.rawField, r.setVia, r.cimField, r.notes || ""].map(csvValue).join(",")));
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Zscaler-CIM-Field-Mapping.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  const btn = event && event.currentTarget;
+  if (btn) {
+    const original = btn.textContent;
+    btn.textContent = "Exported";
+    setTimeout(() => { btn.textContent = original; }, 1400);
+  }
+}
+const zscalerCimFieldMappingSourcetypeFilterEl = document.getElementById("zscalerCimFieldMappingSourcetypeFilter");
+if (zscalerCimFieldMappingSourcetypeFilterEl) {
+  [...new Set(zscalerCimFieldMappingData.map(r => r.sourcetype))].forEach(st => {
+    const opt = document.createElement("option");
+    opt.value = st;
+    opt.textContent = st;
+    zscalerCimFieldMappingSourcetypeFilterEl.appendChild(opt);
+  });
+  zscalerCimFieldMappingSourcetypeFilterEl.addEventListener("change", e => { zscalerCimFieldMappingState.sourcetype = e.target.value; renderZscalerCimFieldMappingTable(); });
+}
+document.getElementById("zscalerCimFieldMappingSearchBox").addEventListener("input", e => { zscalerCimFieldMappingState.query = e.target.value; renderZscalerCimFieldMappingTable(); });
+document.getElementById("zscalerCimFieldMappingExportBtn").addEventListener("click", exportZscalerCimFieldMappingCsv);
+document.getElementById("zscalerCimFieldMappingNote").textContent = ZSCALER_CIM_FIELD_MAPPING_NOTES;
+renderZscalerCimFieldMappingTable();
+
+function renderZscalerTaExtraSourcetypesTable() {
+  const body = document.getElementById("zscalerTaExtraSourcetypesBody");
+  if (!body) return;
+  body.innerHTML = zscalerTaExtraSourcetypesData.map(r => `<tr>
+    <td><code>${escapeHtml(r.sourcetype)}</code></td>
+    <td>${escapeHtml(r.productFeed)}</td>
+    <td>${escapeHtml(r.eventtype)}</td>
+    <td>${escapeHtml(r.cimTags)}</td>
+    <td>${escapeHtml(r.cimDataModels)}</td>
+    <td>${escapeHtml(r.notes || "")}</td>
+  </tr>`).join("");
+}
+document.getElementById("zscalerTaExtraSourcetypesNote").textContent = ZSCALER_TA_EXTRA_SOURCETYPES_NOTES;
+renderZscalerTaExtraSourcetypesTable();
 
 /* ---------- Input Coverage: Microsoft cloud inputs Permissions matrix -------------------------------------
  * Same visual style as the AWS Permissions tab (eccs-table-wrap/eccs-matrix), but this data is inherently a
