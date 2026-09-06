@@ -14434,6 +14434,7 @@ E. Assumptions and unresolved inputs</pre>
     <div class="page-subnav" role="tablist" aria-label="Input coverage sections">
       <button id="showMsCloudInputsSubpage" class="page-subtab active" type="button" role="tab" aria-selected="true" aria-controls="msCloudInputsSubpage" data-subpage="msCloudInputs">Microsoft cloud based inputs</button>
       <button id="showAwsCloudInputsSubpage" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="awsCloudInputsSubpage" data-subpage="awsCloudInputs">Amazon AWS based inputs</button>
+      <button id="showZscalerCloudInputsSubpage" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerCloudInputsSubpage" data-subpage="zscalerCloudInputs">Zscaler based inputs</button>
     </div>
     <div id="msCloudInputsSubpage" class="subpage-view" role="tabpanel" aria-labelledby="showMsCloudInputsSubpage">
       <div class="page-subnav level-3" role="tablist" aria-label="Microsoft cloud based inputs sections">
@@ -14670,6 +14671,122 @@ E. Assumptions and unresolved inputs</pre>
         </div>
 
         <p class="sot-note">Transcribed verbatim from two supplied CSVs: the original <code>splunk_s3_permissions.csv</code> (the four Required/Optional/Not-needed capability rows, now expressed as this table's own <strong>Required</strong>/<strong>Optional</strong> pill families -- a "Not needed" or "--" cell simply has no entry) and <code>splunk_ta_aws_inputs_permissions.csv</code> (per-modular-input permissions for CloudTrail, Config, CloudWatch, Billing, Metadata and more). Rows are the distinct App+Input combinations across both files, columns the distinct individual actions -- a marked cell means that row's input requires that column's action (per its <code>Input Family</code>); a source row whose own Actions cell listed several scopes required together (e.g. CloudTrail's "sqs:GetQueueAttributes; sqs:ListQueues; sqs:ReceiveMessage; ...") was split into one marked cell per scope, reusing whichever column that scope already has -- <code>s3:GetObject*</code> denotes the family of versioned/tagging read actions (e.g. <code>s3:GetObjectVersion</code>) alongside the base <code>s3:GetObject</code> action, distinct from the newer CSV's own <code>s3:Get*</code>/<code>s3:List*</code>/<code>s3:Delete*</code> wildcard actions. Three rows (<strong>Custom Data Type</strong>, <strong>VPC Flow Logs</strong>, <strong>Transit Gateway Flow Logs</strong>) don't list concrete IAM actions at all -- their Actions cell is a cross-reference to another input's policy ("Same as...", "Depends on...") -- so that text is kept as a single one-off column rather than fabricating scopes. <strong>Metadata</strong>'s Actions cell mixes a framing sentence ("modular, one permission block per AWS service") with a single concrete EC2/RDS example block; only that example's 11 actions are marked here, with the framing preserved in the Purpose field since the other eleven services the source lists aren't enumerated there. &mdash; means not applicable.</p>
+      </section>
+      </div>
+    </div>
+
+    <div id="zscalerCloudInputsSubpage" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerCloudInputsSubpage" hidden>
+      <div class="page-subnav level-3" role="tablist" aria-label="Zscaler based inputs sections">
+        <button id="showZscalerInputsListView" class="page-subtab active" type="button" role="tab" aria-selected="true" aria-controls="zscalerInputsListView" data-zscalerview="zscalerInputsList">Inputs</button>
+        <button id="showZscalerCoverageView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerCoverageView" data-zscalerview="zscalerCoverage">Coverage</button>
+        <button id="showZscalerSchemaView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerSchemaView" data-zscalerview="zscalerSchema">Schema</button>
+        <button id="showZscalerPermissionsView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerPermissionsView" data-zscalerview="zscalerPermissions">Permissions</button>
+      </div>
+
+      <div id="zscalerInputsListView" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerInputsListView">
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Zscaler based inputs</h3><p id="zscalerInputsListIntro">No Zscaler inputs have been documented yet. This section is structured the same way as the Microsoft and AWS tabs above, ready to receive the same input-list/sourcetype CSV format once it's supplied.</p></div></div>
+
+        <div id="zscalerInputsListGroups"></div>
+
+        <p class="sot-note" id="zscalerInputsListNote">Awaiting source data: no Zscaler input-list/sourcetype CSV has been supplied yet. Once provided, inputs will appear here the same way the Microsoft and AWS ones do, with Coverage-tab enablement tracking and Schema-tab field-level detail.</p>
+      </section>
+      </div>
+
+      <div id="zscalerCoverageView" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerCoverageView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Coverage</h3><p id="zscalerCoverageSubtitle">Editable Zscaler tenant-level enablement tracking against the Zscaler cloud inputs listed under Inputs. Edits are saved in this browser automatically.</p></div></div>
+
+        <div class="input-coverage-toolbar">
+          <button id="zscalerInputCoverageAddRow" type="button">+ Add row</button>
+          <button id="zscalerInputCoverageImportBtn" type="button">Import CSV</button>
+          <input id="zscalerInputCoverageImportFile" type="file" accept=".csv,text/csv" hidden />
+          <button id="zscalerInputCoverageExportBtn" class="primary-button" type="button">Export CSV</button>
+          <button id="zscalerInputCoverageClearBtn" type="button">Clear all rows</button>
+          <span id="zscalerInputCoverageStatus" class="input-coverage-status" role="status" aria-live="polite"></span>
+        </div>
+
+        <div id="zscalerInputCoverageTableWrap" class="input-coverage-table-wrap">
+          <table id="zscalerInputCoverageTable" class="input-coverage-table">
+            <thead id="zscalerInputCoverageTableHead"></thead>
+            <tbody id="zscalerInputCoverageTableBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note" id="zscalerCoverageColumnNote">No Zscaler inputs are documented yet, so this tracker currently has just the tenant identifier column -- one Y/N column per input will appear here once the Inputs tab has real data.</p>
+      </section>
+      </div>
+
+      <div id="zscalerSchemaView" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerSchemaView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Schema explorer</h3><p>Search, filter and browse field-level schema for the 13 Zscaler log sourcetypes (ZIA and ZPA). Field category (ZIA/ZPA) is derived from each source input; no CIM/OCSF mapping was supplied for this vendor yet.</p></div></div>
+
+        <div class="se-stats" id="zscalerSchemaStats"></div>
+
+        <div class="se-workspace">
+          <aside class="se-rail">
+            <div class="se-rail-group">
+              <h4>Sourcetype</h4>
+              <div class="se-app-list" id="zscalerSchemaSourcetypeList"></div>
+            </div>
+            <div class="se-rail-group">
+              <h4>Field category</h4>
+              <div class="se-app-list" id="zscalerSchemaCategoryList"></div>
+            </div>
+          </aside>
+
+          <div class="se-main">
+            <div class="se-toolbar">
+              <input id="zscalerSchemaSearchBox" type="search" placeholder="Search sourcetypes, fields, descriptions, CIM models…" aria-label="Search Zscaler schema fields" />
+              <span class="se-result-count" id="zscalerSchemaResultCount"></span>
+            </div>
+
+            <div class="se-table-wrap">
+              <table class="se-table">
+                <thead>
+                  <tr>
+                    <th>Sourcetype</th>
+                    <th>Category</th>
+                    <th>Field</th>
+                    <th>CIM model</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody id="zscalerSchemaFieldsBody"></tbody>
+              </table>
+            </div>
+            <div class="se-load-more-row">
+              <button id="zscalerSchemaLoadMoreBtn" class="se-load-more" type="button" hidden></button>
+            </div>
+          </div>
+        </div>
+
+        <p class="sot-note">Transcribed verbatim from the <code>field_schemas</code> block of a supplied <code>Zscaler_Splunk_Onboarding_Reference.json</code> (the same file the Inputs tab's data came from). Field names for the Web log sourcetype come from Zscaler's own official NSS format reference; every other sourcetype's field list is sourced from a third-party (Elastic) integration reference instead, since the corresponding official Zscaler documentation pages are JavaScript-rendered and could not be scraped directly -- hover a Sourcetype filter for its specific source. The source file's own caution applies here too: verify exact field names against your own onboarded data before building dashboards or CIM mappings. ZIA config objects and ZPA config objects (the two config/enrichment inputs) have no field schema here since they're lookup/KV data, not event logs.</p>
+      </section>
+      </div>
+
+      <div id="zscalerPermissionsView" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerPermissionsView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Permissions</h3><p>Permissions required per Zscaler input, once supplied. Select a marked cell for the full detail (service, purpose, notes).</p></div></div>
+
+        <div class="se-toolbar">
+          <input id="zscalerPermSearchBox" type="search" placeholder="Search app, input, service, action, purpose or notes…" aria-label="Search Zscaler permissions matrix" />
+          <select id="zscalerPermAppFilter" aria-label="Filter by app">
+            <option value="">All apps</option>
+          </select>
+          <label><input type="checkbox" id="zscalerPermHideBlankCols" /> Hide blank columns</label>
+          <button id="zscalerPermExportBtn" class="primary-button" type="button">Export visible CSV</button>
+          <span class="se-result-count" id="zscalerPermResultCount"></span>
+        </div>
+
+        <div class="eccs-table-wrap" role="region" aria-label="Scrollable Zscaler permissions matrix" tabindex="0">
+          <table class="eccs-matrix" id="zscalerPermissionsTable">
+            <thead id="zscalerPermissionsTableHead"></thead>
+            <tbody id="zscalerPermissionsTableBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note">Awaiting source data: no Zscaler permissions CSV has been supplied yet. Once provided, this table will follow the same (app, input, action) model as the Microsoft and AWS Permissions tabs -- one marked, colored pill per required action, with click-through detail.</p>
       </section>
       </div>
     </div>
@@ -15119,6 +15236,22 @@ E. Assumptions and unresolved inputs</pre>
     </div>
     <div class="modal-body">
       <dl class="input-detail-grid" id="awsPermissionDetailGrid"></dl>
+    </div>
+  </div>
+</div>
+
+<div id="zscalerPermissionDetailModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="zscalerPermissionDetailTitle" aria-hidden="true">
+  <div class="modal-dialog input-detail-dialog">
+    <div class="modal-header">
+      <div>
+        <p class="modal-eyebrow" id="zscalerPermissionDetailEyebrow">Zscaler based inputs &middot; Permissions</p>
+        <h2 id="zscalerPermissionDetailTitle" class="modal-title">&mdash;</h2>
+        <p class="modal-subtitle" id="zscalerPermissionDetailSubtitle"></p>
+      </div>
+      <button id="closeZscalerPermissionDetail" class="modal-close" type="button" aria-label="Close permission details">×</button>
+    </div>
+    <div class="modal-body">
+      <dl class="input-detail-grid" id="zscalerPermissionDetailGrid"></dl>
     </div>
   </div>
 </div>
@@ -33259,6 +33392,21 @@ awsCloudInputsViewTabs.forEach(tab => {
   tab.addEventListener("click", () => setActiveAwsCloudInputsView(tab.dataset.awsview));
 });
 
+const zscalerCloudInputsViewTabs = document.querySelectorAll("#zscalerCloudInputsSubpage .page-subnav.level-3 .page-subtab");
+function setActiveZscalerCloudInputsView(viewName) {
+  zscalerCloudInputsViewTabs.forEach(tab => {
+    const active = tab.dataset.zscalerview === viewName;
+    tab.classList.toggle("active", active);
+    tab.setAttribute("aria-selected", String(active));
+  });
+  document.querySelectorAll("#zscalerCloudInputsSubpage > .subpage-view").forEach(view => {
+    view.hidden = view.id !== `${viewName}View`;
+  });
+}
+zscalerCloudInputsViewTabs.forEach(tab => {
+  tab.addEventListener("click", () => setActiveZscalerCloudInputsView(tab.dataset.zscalerview));
+});
+
 /* ---------- Input Coverage: editable Microsoft cloud input tracker ---------- */
 const inputCoverageTenantColumns = ["Tenant ID", "Tenant Name", "Subscription ID", "Subscription Name"];
 // appName/appId/baseLink confirmed by the user against Splunkbase directly (2026-08). sourcetype remains
@@ -33659,11 +33807,12 @@ let lastInputDetailTrigger = null;
 
 function openInputDetail(key, trigger) {
   const msCol = inputCoverageInputColumns.find(col => col.key === key);
-  const c = msCol || awsInputCoverageInputColumns.find(col => col.key === key);
+  const awsCol = !msCol && awsInputCoverageInputColumns.find(col => col.key === key);
+  const c = msCol || awsCol || zscalerInputCoverageInputColumns.find(col => col.key === key);
   if (!c || !inputDetailModal) return;
   lastInputDetailTrigger = trigger || document.activeElement;
   const eyebrowEl = document.getElementById("inputDetailEyebrow");
-  if (eyebrowEl) eyebrowEl.textContent = msCol ? "Microsoft cloud based inputs" : "Amazon AWS based inputs";
+  if (eyebrowEl) eyebrowEl.textContent = msCol ? "Microsoft cloud based inputs" : (awsCol ? "Amazon AWS based inputs" : "Zscaler based inputs");
   document.getElementById("inputDetailTitle").textContent = c.label;
   document.getElementById("inputDetailSubtitle").textContent = `${c.appName} (${c.tag})`;
   const rows = [
@@ -33679,6 +33828,7 @@ function openInputDetail(key, trigger) {
     ["Source", c.source],
     ["Collection method", c.collectionMethod],
     ["Sourcetype", c.sourcetype],
+    ["Configuration settings", c.configurationSettings],
     ["API endpoint description", c.apiEndpointDescription],
     ["API endpoint dataset(s)", c.apiEndpointDataset],
     ["API endpoint CIM data model(s)", c.apiEndpointCimDataModels],
@@ -33690,13 +33840,14 @@ function openInputDetail(key, trigger) {
     // Fields is derived from the linked schema, not looked up independently -- its value only makes sense
     // relative to c.schema, so it's handled inline below rather than as its own [k, v] row.
     ["Fields", c.schema === "To be confirmed" ? "To be confirmed" : (c.fields.length ? c.fields : "No individual fields documented in the schema")]
-  // "Entra ID type" only applies to Microsoft entries (it's not in the AWS column shape at all, so it's
-  // undefined there) -- the "API endpoint ..." rows only apply to splunk_ta_o365 inputs whose sourcetype
+  // "Entra ID type" only applies to Microsoft entries (it's not in the AWS/Zscaler column shape at all, so
+  // it's undefined there) -- the "API endpoint ..." rows only apply to splunk_ta_o365 inputs whose sourcetype
   // matches o365ApiEndpointDetails, "API family"/"API base URL"/"Specific API endpoint" apply to any
-  // Microsoft input whose sourcetype matches any of the four lookup tables, and "API base URL pattern" only
-  // to AWS inputs (AWS reuses "API family" but has its own distinct base-URL row -- see
-  // awsInputCoverageInputColumns above) -- drop rows with no value rather than showing an irrelevant blank
-  // field.
+  // Microsoft input whose sourcetype matches any of the four lookup tables, "API base URL pattern" only to
+  // AWS inputs (AWS reuses "API family" but has its own distinct base-URL row -- see
+  // awsInputCoverageInputColumns above), and "Configuration settings" only to Zscaler inputs (a multi-line
+  // setup-steps block the supplied JSON gave per input, with no equivalent field on the Microsoft/AWS side) --
+  // drop rows with no value rather than showing an irrelevant blank field.
   ].filter(([, v]) => v !== undefined && v !== "");
   document.getElementById("inputDetailGrid").innerHTML = rows.map(([k, v]) => {
     const isExternalLink = (k === "Splunk app base link" || k === "API base URL") && /^https?:\/\//.test(v);
@@ -33711,6 +33862,10 @@ function openInputDetail(key, trigger) {
       valueHtml = schemaValues.map(sv => sv === "To be confirmed" ? escapeHtml(sv) : `<a href="${escapeHtml(sv)}">${escapeHtml(sv)}</a>`).join(", ");
     } else if (k === "Fields" && Array.isArray(v)) {
       valueHtml = v.map(f => `<code title="${escapeHtml(f.type)}${f.description ? " -- " + escapeHtml(f.description) : ""}">${escapeHtml(f.name)}</code>`).join(", ");
+    } else if (k === "Configuration settings") {
+      // The source data is itself a multi-line bulleted list -- preserve those line breaks rather than
+      // collapsing it to one run-on line, since that's how the setup steps stay readable/orderable.
+      valueHtml = escapeHtml(v).replace(/\n/g, "<br>");
     } else {
       valueHtml = escapeHtml(v);
     }
@@ -33865,6 +34020,105 @@ function renderAwsInputsListView() {
 renderAwsInputsListView();
 
 document.getElementById("awsInputsListGroups").addEventListener("click", event => {
+  const trigger = event.target.closest(".input-detail-trigger");
+  if (!trigger) return;
+  openInputDetail(trigger.dataset.inputKey, trigger);
+});
+
+/* ---------- Input Coverage: Zscaler based inputs ---------------------------------------------------------
+ * Structured identically to the Microsoft/AWS pools above. Input list/detail transcribed verbatim from a
+ * supplied JSON structure (16 inputs across two apps: the official "Zscaler Technical Add-on for Splunk" --
+ * ZIA NSS/API feeds and ZPA LSS feeds -- and the unofficial community "TA-zscaler-api" add-on's two
+ * config/enrichment-object inputs). No separate short technical package tag (e.g. "Splunk_TA_zscaler") was
+ * supplied for either app, so each group's own "app" string doubles as its tag rather than guessing one.
+ * Splunk app ID/base link were not confirmed against Splunkbase/GitHub this round, so both stay "To be
+ * confirmed" per the same convention AWS/Microsoft used before their own Splunkbase links were confirmed.
+ * The supplied "configuration_settings" field is new -- no existing openInputDetail() row fit it -- so a
+ * "Configuration settings" row was added there (see below), rendered with line breaks preserved since the
+ * source text is itself a multi-line bulleted list. */
+const zscalerInputCoverageGroups = [
+  { tag: "Zscaler Technical Add-on for Splunk", friendlyName: "Zscaler Internet Access (ZIA) & Private Access (ZPA)", description: "Official Zscaler-published Splunk add-on -- collects ZIA web/firewall/DNS/tunnel/system-alert NSS feeds, ZIA Admin Audit and Sandbox report API data, and ZPA LSS feeds (app access, authentication, connector health, browser access, web inspection, admin audit).", appName: "Zscaler Technical Add-on for Splunk", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["Web / Proxy logs (ZIA)", "Firewall logs (ZIA)", "DNS logs (ZIA)", "Tunnel logs (ZIA)", "System alerts (ZIA)", "Admin Audit logs (ZIA)", "Sandbox detail reports (ZIA)", "App access logs (ZPA)", "Authentication logs (ZPA)", "App Connector logs (ZPA)", "Browser Access logs (ZPA)", "Web Inspection / AppProtection logs (ZPA)", "Admin Audit logs (ZPA)"] },
+  { tag: "TA-zscaler-api (unofficial community add-on)", friendlyName: "Zscaler config/enrichment objects (unofficial)", description: "Unofficial, community-maintained add-on -- periodic snapshots of ZIA/ZPA policy and config objects (URL categories, app segments, segment groups) for enrichment/lookup use, not event logs. Not supported by Zscaler; review its GitHub docs before deploying.", appName: "TA-zscaler-api (unofficial community add-on)", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["ZIA config objects (URL categories, etc.)", "ZPA config objects (app segments, segment groups)"] }
+];
+const zscalerInputCoverageColumnDetails = {
+  "Web / Proxy logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "All web/HTTP(S) traffic processed by the ZIA proxy — URL, user, category, action, bytes.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-web", configurationSettings: "ZIA Admin Portal > Administration > Nanolog Streaming Service:\n• NSS Server (VM) provisioned and paired to a ZIA Public Service Edge\n• NSS Feed: type=Web; SIEM IP/FQDN + port (SC4S host:514 by default); TCP or SSL/TLS transport\n• Feed output format: default or custom %s{field} template; escape character; duplicate-log/rate-limit option\n• Filters: log type, user/dept/location, action (optional)\nCloud NSS alternative: destination = Splunk HEC URL; HEC token; JSON output; batch interval\nSplunk/SC4S side: listener on 514/tcp (or HEC port 8088); sourcetype override to zscalernss-web; index=netproxy" },
+  "Firewall logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Non-web traffic (any port/protocol) processed by the ZIA cloud firewall — src/dst IP, port, protocol, rule.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-fw", configurationSettings: "Same NSS Server/VM as Web feed, separate NSS Feed object:\n• NSS Feed: type=Firewall; SIEM IP/FQDN + port; TCP/SSL transport\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=fw before the newline so SC4S auto-detects the sourcetype\n• Filters: aggregate vs. session logs, action (allow/block), IPS/threat-only\nSplunk/SC4S side: sourcetype override zscalernss-fw; index=netfw" },
+  "DNS logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "DNS queries/responses routed through Zscaler — queried domain, resolved IP, policy action.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-dns", configurationSettings: "• NSS Feed: type=DNS; SIEM IP/FQDN + port; TCP/SSL transport\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=dns before the newline for SC4S auto-detection\n• Filters: request vs. response logs, category\nSplunk/SC4S side: sourcetype override zscalernss-dns; index=netdns" },
+  "Tunnel logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "GRE/IPSec tunnel lifecycle events between customer edge and Zscaler — up/down, aggregate traffic stats.", collectionMethod: "NSS feed (syslog→SC4S)", sourcetype: "zscalernss-tunnel", configurationSettings: "• NSS Feed: type=Tunnel; SIEM IP/FQDN + port; TCP/SSL transport\n• No Cloud NSS/HEC option in most deployments — syslog only\nSplunk/SC4S side: sourcetype override zscalernss-tunnel; index=netops" },
+  "System alerts (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Operational/system alerts from the ZIA cloud platform itself (service issues), not user traffic.", collectionMethod: "NSS feed (syslog→SC4S)", sourcetype: "zscalernss-alerts", configurationSettings: "• NSS Feed: type=Alert (built on the Web NSS format); SIEM IP/FQDN + port\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=alerts before the newline for SC4S auto-detection\nSplunk/SC4S side: sourcetype override zscalernss-alerts; index=main" },
+  "Admin Audit logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Administrative activity in the ZIA Admin Portal — who changed what policy/config, and when.", collectionMethod: "REST API poll (modular input)", sourcetype: "zscalerapi-zia-audit", configurationSettings: "• API credentials: OAuth2 client via ZIdentity (Client ID, Client Secret, Vanity/Customer Domain) on newer tenants, or legacy ZIA API Key + Admin Username + Password on tenants not yet migrated\n• Base/cloud URL for the ZIA tenant (e.g. https://admin.<cloud>.zscaler.net or the ZIdentity token endpoint)\n• Splunk TA input: polling interval, checkpoint (last record id/timestamp), proxy settings if egress is restricted\n• TLS certificate validation for outbound HTTPS calls" },
+  "Sandbox detail reports (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Full post-detonation malware analysis for files flagged by ZIA Sandbox — behavior, verdict, hashes.", collectionMethod: "REST API poll (modular input)", sourcetype: "zscalerapi-zia-sandbox", configurationSettings: "• Same API credential set as Admin Audit (OAuth2/ZIdentity or legacy API Key + Username + Password)\n• Sandbox Report API is called per file hash after a sandbox verdict fires — mind published request-rate quotas\n• Splunk TA input: polling interval; report detail level (summary vs. full)" },
+  "App access logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Every application access attempt through ZPA — user, app segment, connector used, session outcome/timings. (Zscaler calls this the “User Activity” log.)", collectionMethod: "LSS — JSON stream over TLS, pushed from ZPA to a log receiver", sourcetype: "zscalerlss-zpa-app", configurationSettings: "ZPA Admin Portal > Configuration & Control > Log Streaming Service > Add Log Receiver:\n• App Connector Group(s) in scope\n• Log Type = User Activity\n• Session/Policy filter (optional)\n• TLS certificate for the receiver; destination host:port (Splunk-side listener or SC4S)\n• Output format = JSON" },
+  "Authentication logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "User authentication/session status for ZPA — IdP used, SAML attributes, posture check results, session state. (Zscaler calls this the “User Status” log.)", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-auth", configurationSettings: "Same LSS Log Receiver mechanism as App Access, with:\n• Log Type = User Status\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "App Connector logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Health/status of ZPA App Connectors — CPU/memory, interface stats, session state, connectivity to Service Edge.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-connector", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = App Connector Status\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "Browser Access logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Access to internal apps via ZPA's clientless Browser Access feature — CORS/connection timing detail.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-bba", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = Browser Access\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "Web Inspection / AppProtection logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Inline threat-inspection results for private app traffic (ZPA AppProtection) — detected attacks/signatures.", collectionMethod: "LSS — JSON stream over TLS (where available) or embedded in User Activity logs", sourcetype: "zscalerlss-zpa-web-inspection", configurationSettings: "• Requires AppProtection enabled on the relevant Access Policy / app segments\n• LSS Log Receiver (if your ZPA tenant exposes it as a distinct Log Type) with same TLS/host:port/JSON settings\nNOTE: not independently documented as a distinct LSS log type in current public Zscaler/vendor field references — verify in your own ZPA Admin Portal's Log Streaming Service > Log Type list before building this input." },
+  "Admin Audit logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Administrative activity in the ZPA Admin Portal — object created/changed/deleted, old/new values, admin session.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-audit", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = Audit\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "ZIA config objects (URL categories, etc.) [TA-zscaler-api (unofficial community add-on)]": { description: "Enrichment/lookup data, NOT event logs — periodic snapshot of ZIA policy/config objects (e.g. URL category tables) used to enrich other events.", collectionMethod: "REST API poll (modular input)", sourcetype: "n/a (lookup / KV store, not a log sourcetype)", configurationSettings: "• API credentials: ZIA OAuth2/ZIdentity client or legacy API key\n• Polling interval for each config object type\n• Unofficial add-on — not supported by Zscaler; review its GitHub docs before deploying" },
+  "ZPA config objects (app segments, segment groups) [TA-zscaler-api (unofficial community add-on)]": { description: "Enrichment/lookup data, NOT event logs — periodic snapshot of ZPA app segment/segment group definitions.", collectionMethod: "REST API poll (modular input)", sourcetype: "n/a (lookup / KV store, not a log sourcetype)", configurationSettings: "• API credentials: ZPA OAuth2/ZIdentity client or legacy API key + secret\n• Polling interval for each config object type\n• Unofficial add-on — not supported by Zscaler; review its GitHub docs before deploying" }
+};
+const zscalerInputCoverageInputColumns = zscalerInputCoverageGroups.flatMap(group =>
+  group.inputs.map(label => {
+    const key = `${label} [${group.tag}]`;
+    const details = zscalerInputCoverageColumnDetails[key] || {};
+    return {
+      key, label, tag: group.tag,
+      appName: group.appName, appId: group.appId, baseLink: group.baseLink,
+      description: details.description || "To be confirmed",
+      sourcetype: details.sourcetype || "To be confirmed",
+      inputCategory: details.inputCategory || "To be confirmed",
+      contentType: details.contentType || "To be confirmed",
+      inputTypeSub: details.inputTypeSub || "To be confirmed",
+      source: details.source || "To be confirmed",
+      collectionMethod: details.collectionMethod || "To be confirmed",
+      configurationSettings: details.configurationSettings || undefined,
+      schema: details.schema || "To be confirmed",
+      fields: details.fields || []
+    };
+  })
+);
+// Zscaler's Coverage tab tracks enablement by tenant, not by AWS-style account number or Microsoft-style
+// tenant/subscription pair -- declared here (ahead of renderZscalerInputsListView, which references it
+// immediately below) rather than alongside the rest of the Zscaler coverage table implementation further down.
+const zscalerInputCoverageAccountColumns = ["Zscaler Tenant/Org ID"];
+
+function renderZscalerInputsListView() {
+  const container = document.getElementById("zscalerInputsListGroups");
+  if (!container) return;
+  container.innerHTML = zscalerInputCoverageGroups.map(g => {
+    const items = g.inputs.map(label => {
+      const key = `${label} [${g.tag}]`;
+      return `<li><button type="button" class="input-detail-trigger" data-input-key="${escapeHtml(key)}">${escapeHtml(label)}</button></li>`;
+    }).join("");
+    return `<div class="input-coverage-group">
+      <h4>${escapeHtml(g.friendlyName)} <span class="ta-tag">${escapeHtml(g.tag)}</span></h4>
+      <p>${escapeHtml(g.description)}</p>
+      <ul class="input-coverage-list">${items}</ul>
+    </div>`;
+  }).join("");
+  if (!zscalerInputCoverageGroups.length) return; // keep the static empty-state intro/note authored in HTML
+  const introEl = document.getElementById("zscalerInputsListIntro");
+  if (introEl) {
+    const n = zscalerInputCoverageGroups.length;
+    introEl.textContent = `${zscalerInputCoverageInputColumns.length} inputs across ${n} Splunk-maintained Zscaler add-on${n === 1 ? "" : "s"}. Each input is a distinct, separately-enabled data feed within its TA -- not every tenant will need every input. Select an input to see its details.`;
+  }
+  const noteEl = document.getElementById("zscalerInputsListNote");
+  if (noteEl) noteEl.textContent = `See the Coverage tab for Zscaler tenant-level enablement tracking against these ${zscalerInputCoverageInputColumns.length} inputs, and the Schema tab for the Zscaler field-level schema.`;
+  const coverageSubtitleEl = document.getElementById("zscalerCoverageSubtitle");
+  if (coverageSubtitleEl) coverageSubtitleEl.textContent = `Editable Zscaler tenant-level enablement tracking against the ${zscalerInputCoverageInputColumns.length} Zscaler cloud inputs listed under Inputs. Edits are saved in this browser automatically.`;
+  const columnNoteEl = document.getElementById("zscalerCoverageColumnNote");
+  if (columnNoteEl) {
+    const totalColumns = zscalerInputCoverageAccountColumns.length + zscalerInputCoverageInputColumns.length;
+    const perTaParts = zscalerInputCoverageGroups.map(g => `${g.inputs.length} for <code>${escapeHtml(g.tag)}</code>`);
+    const perTaText = perTaParts.length > 1
+      ? `${perTaParts.slice(0, -1).join(", ")} and ${perTaParts[perTaParts.length - 1]}`
+      : perTaParts.join("");
+    columnNoteEl.innerHTML = `${totalColumns} columns: ${escapeHtml(zscalerInputCoverageAccountColumns[0])} (free text) followed by one Y/N column per input -- ${perTaText}.`;
+  }
+}
+renderZscalerInputsListView();
+
+document.getElementById("zscalerInputsListGroups").addEventListener("click", event => {
   const trigger = event.target.closest(".input-detail-trigger");
   if (!trigger) return;
   openInputDetail(trigger.dataset.inputKey, trigger);
@@ -34514,6 +34768,381 @@ if (awsSchemaLoadMoreBtn) {
   });
 }
 renderAwsSchemaAll();
+
+/* ---------- Zscaler Schema browser: search/filter/browse field-level schema for Zscaler sourcetypes ------
+ * Transcribed verbatim from the "field_schemas" block of a supplied Zscaler_Splunk_Onboarding_Reference.json
+ * (the same file the Inputs tab's data came from). category is derived from each input's own ZIA/ZPA suffix
+ * (not invented -- every field_schemas key already ends in "(ZIA)" or "(ZPA)"), since the source data has no
+ * separate category dimension of its own (unlike AWS's schema CSV, which distinguished native vs. CIM
+ * fields). No cimModel is set anywhere -- none was supplied. A compound source entry like "ss / mm / hh" or
+ * "inst_level1_type/id/name ... level3" is kept as one verbatim row (one source row = one table row), not
+ * split into individual fields, since the source itself already groups them that way. The two config/
+ * enrichment-object inputs (ZIA/ZPA config objects) have no field_schemas entry at all -- they're lookup/KV
+ * data, not event logs, so there's nothing to add here for them. Per-sourcetype provenance
+ * (ZSCALER_SCHEMA_SOURCE_REF below) is surfaced as a tooltip on each Sourcetype rail button rather than
+ * repeated as a per-field note, since attaching the same paragraph to every one of a sourcetype's field rows
+ * would be far noisier than useful -- several sourcetypes' field lists come from a third-party (Elastic)
+ * integration reference rather than Zscaler's own docs (which are JS-rendered and couldn't be scraped), a
+ * distinction worth surfacing but not on every single row. */
+const ZSCALER_SCHEMA_PAGE_SIZE = 150;
+let zscalerSchemaState = { query: "", sourcetype: "all", category: "all", visibleLimit: ZSCALER_SCHEMA_PAGE_SIZE };
+const ZSCALER_SCHEMA_SOURCE_REF = {
+  "zscalernss-web": "Zscaler Help Portal — NSS Feed Output Format: Web Logs (official %s{field} tokens; some low-signal duplicate/rarely-used fields grouped for readability).",
+  "zscalernss-fw": "Elastic ‘Zscaler ZIA’ integration reference (field names as documented there — official Zscaler NSS Firewall format page is JavaScript-rendered and could not be scraped directly; cross-check against your own onboarded data).",
+  "zscalernss-dns": "Elastic ‘Zscaler ZIA’ integration reference (mixes Zscaler's raw NSS token names with Elastic's normalized field names — official Zscaler NSS DNS format page is JavaScript-rendered and could not be scraped directly).",
+  "zscalernss-tunnel": "Elastic ‘Zscaler ZIA’ integration reference (official Zscaler NSS Tunnel format page is JavaScript-rendered and could not be scraped directly).",
+  "zscalernss-alerts": "Elastic ‘Zscaler ZIA’ integration reference. Alerts are built on the Web NSS format, so a superset of Web-log fields can also appear.",
+  "zscalerapi-zia-audit": "Elastic ‘Zscaler ZIA’ integration reference for the Admin Audit API response fields (official Zscaler API reference pages are JavaScript-rendered and could not be scraped directly).",
+  "zscalerapi-zia-sandbox": "Elastic ‘Zscaler ZIA’ integration reference for the Sandbox Report API response fields.",
+  "zscalerlss-zpa-app": "Elastic ‘Zscaler ZPA’ integration reference — Zscaler calls this the ‘User Activity’ log, LSS port 9018 by default.",
+  "zscalerlss-zpa-auth": "Elastic ‘Zscaler ZPA’ integration reference — Zscaler calls this the ‘User Status’ log, LSS port 9019 by default.",
+  "zscalerlss-zpa-connector": "Elastic ‘Zscaler ZPA’ integration reference — Zscaler calls this ‘App Connector Status’, LSS port 9015 by default.",
+  "zscalerlss-zpa-bba": "Elastic ‘Zscaler ZPA’ integration reference — LSS port 9017 by default.",
+  "zscalerlss-zpa-web-inspection": "Not independently verifiable from current public Zscaler/vendor documentation — flagged rather than guessed.",
+  "zscalerlss-zpa-audit": "Elastic ‘Zscaler ZPA’ integration reference — LSS port 9016 by default."
+};
+const zscalerSchemaFields = [
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "time", description: "Time and date of the transaction (excludes time zone)." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "tz", description: "Time zone configured in the NSS feed." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "ss / mm / hh", description: "Seconds / minutes / hours of the transaction time." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "dd / mth / yyyy", description: "Day / month / year of the transaction date." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "mon / day", description: "Month name / day of week." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "epochtime", description: "Epoch time of the transaction." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "login", description: "User's login name, in email format." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "dept", description: "User's department." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "company", description: "Company name." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "cloudname", description: "Zscaler cloud name." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "throttlereqsize / throttlerespsize", description: "Throttled transaction size (upload/download) in bytes." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "bwthrottle", description: "Whether the transaction was throttled by bandwidth policy." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "bwclassname / bwrulename", description: "Bandwidth class / rule name applied." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "appname / appclass", description: "Cloud application name / category." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "app_risk_score", description: "Computed/assigned risk index for the cloud application (1 = lowest)." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "app_status", description: "Application status: Sanctioned / Unsanctioned / N/A." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "activity", description: "User action performed on the application." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "prompt_req", description: "Prompt entered into a generative-AI application." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "inst_level1_type/id/name ... level3", description: "Cloud application instance hierarchy (e.g. Organization > Project > Resource)." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "datacenter / datacentercity / datacentercountry", description: "Zscaler data center name / city / country that processed the transaction." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "dlpdict / dlpdicthitcount", description: "DLP dictionaries matched / number of hits per dictionary." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "dlpeng", description: "DLP engine matched." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "dlpidentifier", description: "Unique DLP incident identifier." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "dlpmd5", description: "MD5 hash of the transaction content." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "dlprulename / trig_dlprulename / other_dlprulenames / all_dlprulenames", description: "DLP rule(s) applied, triggered, evaluated-and-passed, or all evaluated." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "fileclass / filetype / filename / filesubtype", description: "Class / type / name / extension of a downloaded file." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "upload_fileclass / upload_filetype / upload_filename / upload_filesubtype", description: "Same, for an uploaded file." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "upload_doctypename", description: "Document type for the upload/download." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "unscannabletype", description: "Reason a file could not be scanned (encrypted/password-protected, unscannable)." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "rdr_rulename", description: "Redirect/forwarding policy name." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "fwd_type / fwd_gw_name / fwd_gw_ip", description: "Forwarding method type / gateway name / gateway IP." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "zpa_app_seg_name", description: "ZPA application segment name (when traffic is forwarded to ZPA)." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "reqdatasize / reqhdrsize / reqsize", description: "HTTP request payload / header / total size in bytes." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "respdatasize / resphdrsize / respsize / totalsize", description: "HTTP response payload / header / total size, and overall transaction size." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "reqmethod / reqversion", description: "HTTP request method / version." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "respcode / respversion", description: "HTTP response code sent to client / response version." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "referer / refererhost", description: "HTTP referrer URL / referrer hostname." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "uaclass / ua / ua_token", description: "User-agent class / full user-agent string / user-agent token." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "host / url", description: "Destination hostname / destination URL (excludes protocol)." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "df_hostname / df_hosthead", description: "TLS SNI value / indicator of domain-fronting (SNI vs. Host header mismatch)." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "contenttype", description: "Content-type of the response." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "mobappname / mobappcat / mobdevtype", description: "Mobile app name / category / device type." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "cip / cintip / cpubip", description: "User's IP address / client's NATed public IP / client public IP." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "clt_sport", description: "Client source port." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "srcip_country / dstip_country", description: "Country associated with source / destination IP." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "is_src_cntry_risky / is_dst_cntry_risky", description: "Whether the source / destination country is flagged risky." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "sip / srv_dport", description: "Destination server IP (0.0.0.0 if blocked) / server destination port." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "proto / alpnprotocol", description: "Transaction protocol / ALPN-negotiated protocol." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "trafficredirectmethod", description: "Method used to forward traffic into ZIA." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "location / userlocationname", description: "Gateway location/sub-location / location name for isolation-processed traffic." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "ruletype / rulelabel", description: "Policy type and rule name (Block rules only)." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "action / reason", description: "Action the service took / action-plus-policy explanation." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "urlfilterrulelabel / apprulelabel", description: "URL filter rule name applied / application rule name applied." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "bamd5 / sha256", description: "MD5 / SHA256 hash of a file sent for sandbox analysis." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "ssldecrypted / externalspr / keyprotectiontype", description: "Whether SSL-inspected / SSL policy reason / HSM vs. software CA protection." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "clientsslcipher / clienttlsversion / clientsslsessreuse", description: "Negotiated cipher / TLS version / session reuse, client→Zscaler." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "cltsslfailreason / cltsslfailcount", description: "Client SSL handshake failure reason / count." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "srvsslcipher / srvtlsversion / serversslsessreuse", description: "Negotiated cipher / TLS version / session reuse, Zscaler→server." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "srvocspresult / srvcertchainvalpass / srvwildcardcert / srvcertvalidationtype / srvcertvalidityperiod", description: "Server certificate OCSP result / chain validation / wildcard status / validation method / validity window." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "is_ssluntrustedca / is_sslselfsigned / is_sslexpiredca", description: "Whether server cert is from an untrusted CA / self-signed / expired." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "riskscore / threatseverity / threatname / malwarecat / malwareclass", description: "Destination URL risk score (0–100) / threat severity / threat name / malware category / class." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "urlclass / urlsupercat / urlcat / urlcatmethod", description: "Destination URL classification / super-category / category / how the category was determined." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "devicehostname / devicemodel / devicename / devicetype", description: "Zscaler Client Connector device hostname / model / name / type." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "deviceostype / deviceosversion / deviceowner / deviceappversion", description: "Device OS type / OS version / owner / app version." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "ztunnelversion / external_devid", description: "Z-Tunnel version / external device ID from MDM." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "bypassed_traffic / bypassed_etime", description: "Whether/when traffic bypassed Zscaler Client Connector." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "flow_type", description: "Transaction flow type." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "recordid", description: "Unique record identifier for the log line." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "pcapid", description: "Path to the PCAP file capturing the transaction (if enabled)." },
+  { sourcetype: "zscalernss-web", category: "ZIA", name: "productversion / nsssvcip / eedone", description: "NSS product version / NSS service IP / whether special characters were hex-encoded." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "action", description: "Enforcement decision applied to the session." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "aggregate", description: "Whether the record is an aggregated (vs. per-session) log." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "avgduration / duration / durationms", description: "Average / actual session duration (and in milliseconds)." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "bypassed_session / bypass_time", description: "Count / duration of sessions that bypassed the firewall." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "cltdomain", description: "Client fully-qualified domain name." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "csip / csport", description: "Client source IP / source port." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "cdip / cdport", description: "Client destination IP / destination port." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "sdip / sdport", description: "Server (post-NAT) destination IP / destination port." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "ssip / ssport", description: "Server source IP / source port." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "tsip / tuntype", description: "Tunnel source IP / tunnel type." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "dnat / dnatrulelabel", description: "Whether NAT was applied / NAT rule name." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "rdr_rulename / forward_gateway_name", description: "Redirect rule name / forwarding gateway name." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "proto", description: "Protocol of the transaction." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "nwapp / nwsvc", description: "Network application / network service matched." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "rule / rulelabel", description: "Rule ID / rule name applied." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "stateful", description: "Whether the session used stateful connection tracking." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "threat_name / threatcat / threatname", description: "Detected threat name and category." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "ipcat", description: "IP address reputation/category." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "ips_custom_signature / ipsrulelabel", description: "Whether a custom IPS signature matched / IPS rule name." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "inbytes / outbytes / numsessions", description: "Inbound / outbound byte counts and session count." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "destcountry / srcipcountry", description: "Destination / source country." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "location / locationname", description: "Gateway location ID / name." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "login / dept / user", description: "User login / department / user identifier." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "devicehostname / devicename / devicemodel", description: "Device hostname / name / model (Client Connector)." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "deviceostype / deviceosversion / deviceowner / deviceappversion", description: "Device OS type / version / owner / app version." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "external_deviceid / ztunnelversion / flow_type", description: "External MDM device ID / Z-Tunnel version / flow type." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "datacenter / datacentercity / datacentercountry", description: "Zscaler data center name / city / country." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "zpa_app_seg_name", description: "ZPA application segment name, when relevant." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "recordid", description: "Unique record identifier." },
+  { sourcetype: "zscalernss-fw", category: "ZIA", name: "epochtime / tz / year/month/day/hour/minute/second fields", description: "Transaction timestamp, epoch and broken-out components." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "time / epochtime / tz", description: "Transaction timestamp, human-readable and epoch, plus time zone." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "login / user / dept / company", description: "User login / identifier / department / company." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "client.ip (cip)", description: "User's source IP address." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "cloud.name / datacenter.name/city/country", description: "Zscaler cloud name and the data center that processed the query." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "device.hostname/name/model/type", description: "Client Connector device identity fields." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "device.os.type/version / device.owner / device.appversion", description: "Device OS and ownership detail." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "dns.category", description: "Application/service category associated with the DNS transaction." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "dns.gateway.rule / dns.gateway.server_protocol / dns.gateway.status", description: "DNS gateway rule name, protocol used, and transaction status." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "dns.type", description: "Tunnel/application type for the DNS transaction." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "request.name", description: "The queried fully-qualified domain name." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "request.type / request.action / request.rule.label", description: "DNS query type, action applied, and the rule that applied it." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "response.name / response.ip", description: "Response domain name / resolved IP address." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "response.type / response.action / response.category / response.rule.label", description: "DNS response type, action taken, response FQDN category, and rule applied." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "dom.category", description: "URL category of the queried domain." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "ecs.prefix / ecs.slot", description: "EDNS Client Subnet value and matched ECS rule." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "ednsreq / eedone", description: "Hex-encoded raw DNS request / whether special characters were hex-encoded." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "error / http_code / istcp", description: "DNS error classification / HTTP status if relevant / whether TCP was used." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "loc / location", description: "Gateway (sub-)location and user location." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "protocol / server.ip / server.port", description: "Protocol used and the resolving server's IP/port." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "duration.milliseconds", description: "Time taken to complete the DNS transaction." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "record.id", description: "Unique log record identifier." },
+  { sourcetype: "zscalernss-dns", category: "ZIA", name: "obfuscated.* fields", description: "Masked/obfuscated variants of client IP, device name/owner, domain category, hostname (present when log obfuscation is enabled)." },
+  { sourcetype: "zscalernss-tunnel", category: "ZIA", name: "eventtime / eventreason", description: "Timestamp of the tunnel event and the reason for it." },
+  { sourcetype: "zscalernss-tunnel", category: "ZIA", name: "tunnelactionname / tunneltype / tunnelprotocol", description: "Tunnel action (up/down) / tunnel type / protocol (GRE, IPSec)." },
+  { sourcetype: "zscalernss-tunnel", category: "ZIA", name: "algo / authentication / authtype", description: "Encryption algorithm and authentication method/type used." },
+  { sourcetype: "zscalernss-tunnel", category: "ZIA", name: "ikeversion / spi / spi_in / spi_out", description: "IKE protocol version and Security Parameter Index values." },
+  { sourcetype: "zscalernss-tunnel", category: "ZIA", name: "lifetime / lifebytes", description: "Negotiated session lifetime in seconds / bytes." },
+  { sourcetype: "zscalernss-tunnel", category: "ZIA", name: "dpdrec", description: "Dead Peer Detection record count." },
+  { sourcetype: "zscalernss-tunnel", category: "ZIA", name: "sourceip / sourceport", description: "Tunnel source IP / port." },
+  { sourcetype: "zscalernss-tunnel", category: "ZIA", name: "destinationip / destinationipstart / destinationipend / destinationport / destinationportstart", description: "Tunnel destination IP (and range) / destination port (and range start)." },
+  { sourcetype: "zscalernss-tunnel", category: "ZIA", name: "srcipstart / srcipend", description: "Source IP range start / end (for aggregate records)." },
+  { sourcetype: "zscalernss-tunnel", category: "ZIA", name: "rxbytes / rxpackets / txbytes / txpackets", description: "Bytes/packets received and transmitted through the tunnel." },
+  { sourcetype: "zscalernss-tunnel", category: "ZIA", name: "locationname", description: "Location associated with the tunnel." },
+  { sourcetype: "zscalernss-tunnel", category: "ZIA", name: "user", description: "VPN credential / user identifier associated with the tunnel." },
+  { sourcetype: "zscalernss-tunnel", category: "ZIA", name: "vendorname", description: "Tunnel endpoint vendor/device identifier." },
+  { sourcetype: "zscalernss-tunnel", category: "ZIA", name: "recordid", description: "Unique record identifier." },
+  { sourcetype: "zscalernss-tunnel", category: "ZIA", name: "tz / yyyy/mth/dd/hh/mm/ss / mon/day", description: "Time zone and broken-out timestamp components." },
+  { sourcetype: "zscalernss-alerts", category: "ZIA", name: "timestamp / time", description: "Time the alert was generated." },
+  { sourcetype: "zscalernss-alerts", category: "ZIA", name: "message", description: "Alert text/content." },
+  { sourcetype: "zscalernss-alerts", category: "ZIA", name: "log_feed_name", description: "Name of the NSS feed that generated the alert." },
+  { sourcetype: "zscalernss-alerts", category: "ZIA", name: "log_syslog_priority", description: "Syslog priority value of the alert." },
+  { sourcetype: "zscalernss-alerts", category: "ZIA", name: "connection_lost_minutes", description: "Minutes since server connection was lost (connectivity alerts)." },
+  { sourcetype: "zscalernss-alerts", category: "ZIA", name: "destination.address / destination.ip / destination.port", description: "Target server address/IP/port referenced by the alert, if applicable." },
+  { sourcetype: "zscalerapi-zia-audit", category: "ZIA", name: "time / timezone", description: "Timestamp of the admin action and its time zone." },
+  { sourcetype: "zscalerapi-zia-audit", category: "ZIA", name: "admin_id", description: "Login identifier of the administrator who performed the action." },
+  { sourcetype: "zscalerapi-zia-audit", category: "ZIA", name: "client_ip", description: "Source IP address the admin connected from." },
+  { sourcetype: "zscalerapi-zia-audit", category: "ZIA", name: "interface", description: "Method used to perform the action (Admin Portal UI vs. API)." },
+  { sourcetype: "zscalerapi-zia-audit", category: "ZIA", name: "category / sub_category / resource", description: "Where in the Admin Portal the action occurred, down to the specific resource." },
+  { sourcetype: "zscalerapi-zia-audit", category: "ZIA", name: "action", description: "The operation performed (create/update/delete/login/etc.)." },
+  { sourcetype: "zscalerapi-zia-audit", category: "ZIA", name: "pre_action / post_action", description: "Configuration/policy state before and after the change." },
+  { sourcetype: "zscalerapi-zia-audit", category: "ZIA", name: "result / error_code", description: "Whether the action succeeded, and the failure reason if not." },
+  { sourcetype: "zscalerapi-zia-audit", category: "ZIA", name: "audit_log_type", description: "Category of audit record (e.g. portal audit)." },
+  { sourcetype: "zscalerapi-zia-audit", category: "ZIA", name: "record.id", description: "Unique identifier for the audit log entry." },
+  { sourcetype: "zscalerapi-zia-sandbox", category: "ZIA", name: "event_time / feed_time / analysis_completed_time", description: "When the file was submitted, when the log was generated, and when analysis finished." },
+  { sourcetype: "zscalerapi-zia-sandbox", category: "ZIA", name: "record_id", description: "Unique identifier for the sandbox report entry." },
+  { sourcetype: "zscalerapi-zia-sandbox", category: "ZIA", name: "file.hash.md5 / file.hash.sha256 / file.hash.children_md5", description: "Hashes of the analyzed file, and of any dropped/child files." },
+  { sourcetype: "zscalerapi-zia-sandbox", category: "ZIA", name: "file.extension / file.type_category", description: "File extension and Zscaler's file-type classification." },
+  { sourcetype: "zscalerapi-zia-sandbox", category: "ZIA", name: "file.ba_md5_url", description: "Link to the full behavioral-analysis report." },
+  { sourcetype: "zscalerapi-zia-sandbox", category: "ZIA", name: "verdict", description: "Sandbox determination (e.g. benign, suspicious, malicious)." },
+  { sourcetype: "zscalerapi-zia-sandbox", category: "ZIA", name: "threat.indicator.name", description: "Named threat/indicator associated with the verdict." },
+  { sourcetype: "zscalerapi-zia-sandbox", category: "ZIA", name: "threat.tactic.id / threat.technique.id", description: "MITRE ATT&CK tactic and technique identifiers matched during analysis." },
+  { sourcetype: "zscalerapi-zia-sandbox", category: "ZIA", name: "datacenter.name/city/country", description: "Zscaler data center that performed the analysis." },
+  { sourcetype: "zscalerapi-zia-sandbox", category: "ZIA", name: "company.name", description: "Tenant/organization name." },
+  { sourcetype: "zscalerapi-zia-sandbox", category: "ZIA", name: "tz", description: "Time zone of the reported timestamps." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "application", description: "Name of the application accessed." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "app_group", description: "Application group the application belongs to." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "policy.name", description: "Access/timeout policy rule name applied." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "policy.processing_time", description: "Time (microseconds) to process the access policy." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "connection.id / connection.status", description: "Application connection identifier and its status (Open/Close/Active)." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "connection.setup_time", description: "Time for the App Connector to set up the connection to the app server." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "connector.name / connector.ip / connector.port", description: "App Connector that serviced the request — name, source IP, source port." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "connector_zen_setup_time", description: "Time to set up the connection between the App Connector and the Service Edge." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "client_private_ip", description: "Private IP of the user's Zscaler Client Connector." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "client_to_client", description: "Status of a client-to-client connection, if applicable." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "double_encryption", description: "Whether double encryption was used." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "idp", description: "Identity provider configured in the ZPA Admin Portal." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "internal_reason", description: "Internal reason code for the transaction's status." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "server / server_setup_time / service_port", description: "Server ID handling the request, its connection setup time, and destination port." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "session_id", description: "TLS session identifier." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "ca_processing_time", description: "Time spent processing in the ZPA Central Authority." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "app_learn_time", description: "Time for App Connectors to learn about the requested application." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "timestamp.* (connection/CA/ZEN client & connector)", description: "Set of microsecond-precision timestamps across the connection lifecycle." },
+  { sourcetype: "zscalerlss-zpa-app", category: "ZPA", name: "zen.client.* / zen.connector.*", description: "Bytes sent/received and domain, for the client-side and connector-side Service Edge (ZEN) legs." },
+  { sourcetype: "zscalerlss-zpa-auth", category: "ZPA", name: "client.type", description: "Client type: Client Connector, LSS, or Web Browser." },
+  { sourcetype: "zscalerlss-zpa-auth", category: "ZPA", name: "idp", description: "Identity provider configured in the ZPA Admin Portal." },
+  { sourcetype: "zscalerlss-zpa-auth", category: "ZPA", name: "saml_attributes", description: "List of SAML attributes returned by the IdP." },
+  { sourcetype: "zscalerlss-zpa-auth", category: "ZPA", name: "session.id / session.status", description: "TLS session identifier and its status." },
+  { sourcetype: "zscalerlss-zpa-auth", category: "ZPA", name: "timestamp.authentication / timestamp.unauthentication", description: "When the Client Connector authenticated / de-authenticated (microseconds)." },
+  { sourcetype: "zscalerlss-zpa-auth", category: "ZPA", name: "postures.hit / postures.miss", description: "Device posture profiles verified successfully / failed." },
+  { sourcetype: "zscalerlss-zpa-auth", category: "ZPA", name: "trusted_networks / trusted_networks_names", description: "Trusted network IDs and names the device matched." },
+  { sourcetype: "zscalerlss-zpa-auth", category: "ZPA", name: "fqdn.registered / fqdn.registered_error", description: "Whether the device's hostname registered for client-to-client connections, and any error." },
+  { sourcetype: "zscalerlss-zpa-auth", category: "ZPA", name: "private_ip", description: "Private IP of the Zscaler Client Connector." },
+  { sourcetype: "zscalerlss-zpa-auth", category: "ZPA", name: "total.bytes_rx / total.bytes_tx", description: "Total bytes received / transmitted for the session." },
+  { sourcetype: "zscalerlss-zpa-auth", category: "ZPA", name: "version", description: "Zscaler Client Connector version." },
+  { sourcetype: "zscalerlss-zpa-auth", category: "ZPA", name: "zen.domain", description: "Service Edge (ZEN) selected for the connection." },
+  { sourcetype: "zscalerlss-zpa-connector", category: "ZPA", name: "connector.name / connector.group", description: "App Connector name and the App Connector group it belongs to." },
+  { sourcetype: "zscalerlss-zpa-connector", category: "ZPA", name: "connector_start_time / host_start_time", description: "When the App Connector process started / when the host started." },
+  { sourcetype: "zscalerlss-zpa-connector", category: "ZPA", name: "private_ip / primary_dns_resolver", description: "App Connector's private IP and primary DNS resolver." },
+  { sourcetype: "zscalerlss-zpa-connector", category: "ZPA", name: "interface.name", description: "Name of the interface used for the default route." },
+  { sourcetype: "zscalerlss-zpa-connector", category: "ZPA", name: "interface.received.* / interface.transmitted.*", description: "Bytes, packets, errors, and discards received/transmitted on that interface." },
+  { sourcetype: "zscalerlss-zpa-connector", category: "ZPA", name: "memory.utilization", description: "Memory utilization percentage." },
+  { sourcetype: "zscalerlss-zpa-connector", category: "ZPA", name: "num_of_interfaces", description: "Number of interfaces on the App Connector host." },
+  { sourcetype: "zscalerlss-zpa-connector", category: "ZPA", name: "service.count", description: "Number of services being monitored by this App Connector." },
+  { sourcetype: "zscalerlss-zpa-connector", category: "ZPA", name: "session.id / session.status / session.type", description: "TLS session identifier, status, and type." },
+  { sourcetype: "zscalerlss-zpa-connector", category: "ZPA", name: "timestamp.authentication / timestamp.unauthentication", description: "When the App Connector authenticated / de-authenticated (microseconds)." },
+  { sourcetype: "zscalerlss-zpa-connector", category: "ZPA", name: "zen", description: "TLS session ID associated with the Service Edge (ZEN) connection." },
+  { sourcetype: "zscalerlss-zpa-bba", category: "ZPA", name: "client_private_ip", description: "Private IP address of the user's device." },
+  { sourcetype: "zscalerlss-zpa-bba", category: "ZPA", name: "connection.id / connection.status", description: "Application connection identifier and status." },
+  { sourcetype: "zscalerlss-zpa-bba", category: "ZPA", name: "exporter", description: "Browser Access service instance forwarding to a ZPA Public or Private Service Edge." },
+  { sourcetype: "zscalerlss-zpa-bba", category: "ZPA", name: "origin / cors_token", description: "Browser Access domain that originated the CORS request, and its CORS token." },
+  { sourcetype: "zscalerlss-zpa-bba", category: "ZPA", name: "xff", description: "X-Forwarded-For HTTP header value." },
+  { sourcetype: "zscalerlss-zpa-bba", category: "ZPA", name: "timestamp.request.receive.* / timestamp.request.transmit.*", description: "HTTP request receipt/transmission timing (start, header-finish, finish)." },
+  { sourcetype: "zscalerlss-zpa-bba", category: "ZPA", name: "timestamp.response.receive.* / timestamp.response.transmit.*", description: "HTTP response receipt/transmission timing (start, finish)." },
+  { sourcetype: "zscalerlss-zpa-bba", category: "ZPA", name: "total_time.connection.setup", description: "Time between first byte received and transmission to the web server." },
+  { sourcetype: "zscalerlss-zpa-bba", category: "ZPA", name: "total_time.request.receive / total_time.request.transmit", description: "Time to fully receive / fully transmit the HTTP request." },
+  { sourcetype: "zscalerlss-zpa-bba", category: "ZPA", name: "total_time.response.receive / total_time.response.transmit", description: "Time to fully receive / fully transmit the HTTP response." },
+  { sourcetype: "zscalerlss-zpa-bba", category: "ZPA", name: "total_time.server.response", description: "Time between finishing transmission and receiving the first response byte." },
+  { sourcetype: "zscalerlss-zpa-web-inspection", category: "ZPA", name: "(schema not independently confirmed)", description: "Elastic's current ZPA integration documents only five LSS log types — App Connector Status, Audit, Browser Access, User Activity, and User Status — with no separate AppProtection/Web Inspection field list. AppProtection detections may surface as attributes within the User Activity (App Access) log rather than as a standalone feed. Confirm the exact field set against your own ZPA Admin Portal > Log Streaming Service > Log Type options and a sample of onboarded data before building parsers/CIM mappings for this source." },
+  { sourcetype: "zscalerlss-zpa-audit", category: "ZPA", name: "operation_type", description: "The type of action performed (create, update, delete, sign in, sign out)." },
+  { sourcetype: "zscalerlss-zpa-audit", category: "ZPA", name: "object.type", description: "Location within the ZPA Admin Portal where the action was performed." },
+  { sourcetype: "zscalerlss-zpa-audit", category: "ZPA", name: "object.id / object.name", description: "ID and name of the object acted on (matches ‘Resource Name’ in the Audit Log page)." },
+  { sourcetype: "zscalerlss-zpa-audit", category: "ZPA", name: "value.old / value.new", description: "Previous value (delete/sign-out/update) and new value (create/sign-in/update)." },
+  { sourcetype: "zscalerlss-zpa-audit", category: "ZPA", name: "session.id", description: "Administrator's session ID in the ZPA Admin Portal." },
+  { sourcetype: "zscalerlss-zpa-audit", category: "ZPA", name: "client_audit_update", description: "Flag indicating whether the event is a client-side audit log." }
+];
+
+const zscalerSchemaSourcetypes = [...new Set(zscalerSchemaFields.map(f => f.sourcetype))];
+const zscalerSchemaCategories = [...new Set(zscalerSchemaFields.map(f => f.category))];
+
+function zscalerSchemaFilteredRows() {
+  const q = zscalerSchemaState.query.trim().toLowerCase();
+  return zscalerSchemaFields.filter(f => {
+    if (zscalerSchemaState.sourcetype !== "all" && f.sourcetype !== zscalerSchemaState.sourcetype) return false;
+    if (zscalerSchemaState.category !== "all" && f.category !== zscalerSchemaState.category) return false;
+    if (!q) return true;
+    return `${f.sourcetype} ${f.category} ${f.name} ${f.description} ${f.cimModel} ${f.notes}`.toLowerCase().includes(q);
+  });
+}
+
+function renderZscalerSchemaSourcetypeList() {
+  const el = document.getElementById("zscalerSchemaSourcetypeList");
+  if (!el) return;
+  const counts = {};
+  zscalerSchemaFields.forEach(f => { counts[f.sourcetype] = (counts[f.sourcetype] || 0) + 1; });
+  const allBtn = `<button type="button" class="se-app-chip${zscalerSchemaState.sourcetype === "all" ? " active" : ""}" data-sourcetype="all">All sourcetypes <span class="n">${zscalerSchemaFields.length}</span></button>`;
+  // title = per-sourcetype provenance (ZSCALER_SCHEMA_SOURCE_REF) -- surfaced as a hover tooltip here rather
+  // than repeated on every one of that sourcetype's field rows, which would be far noisier than useful.
+  const rows = zscalerSchemaSourcetypes.map(st => `<button type="button" class="se-app-chip${zscalerSchemaState.sourcetype === st ? " active" : ""}" data-sourcetype="${escapeHtml(st)}" title="${escapeHtml(ZSCALER_SCHEMA_SOURCE_REF[st] || "")}">${escapeHtml(st)} <span class="n">${counts[st] || 0}</span></button>`);
+  el.innerHTML = [allBtn, ...rows].join("");
+  el.querySelectorAll("[data-sourcetype]").forEach(btn => btn.addEventListener("click", () => {
+    zscalerSchemaState.sourcetype = btn.dataset.sourcetype;
+    zscalerSchemaState.visibleLimit = ZSCALER_SCHEMA_PAGE_SIZE;
+    renderZscalerSchemaAll();
+  }));
+}
+
+function renderZscalerSchemaCategoryList() {
+  const el = document.getElementById("zscalerSchemaCategoryList");
+  if (!el) return;
+  const counts = {};
+  zscalerSchemaFields.forEach(f => { counts[f.category] = (counts[f.category] || 0) + 1; });
+  const allBtn = `<button type="button" class="se-app-chip${zscalerSchemaState.category === "all" ? " active" : ""}" data-category="all">All categories <span class="n">${zscalerSchemaFields.length}</span></button>`;
+  const rows = zscalerSchemaCategories.map(cat => `<button type="button" class="se-app-chip${zscalerSchemaState.category === cat ? " active" : ""}" data-category="${escapeHtml(cat)}">${escapeHtml(cat)} <span class="n">${counts[cat] || 0}</span></button>`);
+  el.innerHTML = [allBtn, ...rows].join("");
+  el.querySelectorAll("[data-category]").forEach(btn => btn.addEventListener("click", () => {
+    zscalerSchemaState.category = btn.dataset.category;
+    zscalerSchemaState.visibleLimit = ZSCALER_SCHEMA_PAGE_SIZE;
+    renderZscalerSchemaAll();
+  }));
+}
+
+function renderZscalerSchemaTable() {
+  const rows = zscalerSchemaFilteredRows();
+  const total = rows.length;
+  const countEl = document.getElementById("zscalerSchemaResultCount");
+  if (countEl) {
+    countEl.textContent = total > zscalerSchemaState.visibleLimit
+      ? `Showing ${zscalerSchemaState.visibleLimit.toLocaleString()} of ${total.toLocaleString()} fields`
+      : `${total.toLocaleString()} field${total === 1 ? "" : "s"}`;
+  }
+  const body = document.getElementById("zscalerSchemaFieldsBody");
+  const loadMoreBtn = document.getElementById("zscalerSchemaLoadMoreBtn");
+  if (!body) return;
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="5" class="se-empty">No Zscaler schema data has been supplied yet.</td></tr>`;
+    if (loadMoreBtn) loadMoreBtn.hidden = true;
+    return;
+  }
+  const visibleRows = rows.slice(0, zscalerSchemaState.visibleLimit);
+  body.innerHTML = visibleRows.map(f => `<tr>
+    <td><code>${escapeHtml(f.sourcetype)}</code></td>
+    <td>${escapeHtml(f.category)}</td>
+    <td><code>${escapeHtml(f.name)}</code></td>
+    <td>${escapeHtml(f.cimModel) || "&ndash;"}</td>
+    <td>${escapeHtml(f.description)}${f.notes ? ` <span class="se-field-notes">(${escapeHtml(f.notes)})</span>` : ""}</td>
+  </tr>`).join("");
+  if (loadMoreBtn) {
+    const remaining = total - visibleRows.length;
+    if (remaining > 0) {
+      loadMoreBtn.hidden = false;
+      loadMoreBtn.textContent = `Show ${Math.min(remaining, ZSCALER_SCHEMA_PAGE_SIZE).toLocaleString()} more field${Math.min(remaining, ZSCALER_SCHEMA_PAGE_SIZE) === 1 ? "" : "s"} (${remaining.toLocaleString()} remaining)`;
+    } else {
+      loadMoreBtn.hidden = true;
+    }
+  }
+}
+
+function renderZscalerSchemaAll() {
+  renderZscalerSchemaSourcetypeList();
+  renderZscalerSchemaCategoryList();
+  renderZscalerSchemaTable();
+}
+
+const zscalerSchemaStatsEl = document.getElementById("zscalerSchemaStats");
+if (zscalerSchemaStatsEl) {
+  const cimMappedCount = zscalerSchemaFields.filter(f => f.cimModel).length;
+  const stats = [
+    { n: zscalerSchemaFields.length.toLocaleString(), l: "Total fields" },
+    { n: zscalerSchemaSourcetypes.length, l: "Sourcetypes" },
+    { n: zscalerSchemaCategories.length, l: "Field categories" },
+    { n: cimMappedCount.toLocaleString(), l: "With a CIM model" }
+  ];
+  zscalerSchemaStatsEl.innerHTML = stats.map(s => `<div class="se-stat"><span class="n">${s.n}</span><span class="l">${s.l}</span></div>`).join("");
+}
+
+const zscalerSchemaSearchBox = document.getElementById("zscalerSchemaSearchBox");
+if (zscalerSchemaSearchBox) {
+  zscalerSchemaSearchBox.addEventListener("input", e => {
+    zscalerSchemaState.query = e.target.value;
+    zscalerSchemaState.visibleLimit = ZSCALER_SCHEMA_PAGE_SIZE;
+    renderZscalerSchemaTable();
+  });
+}
+const zscalerSchemaLoadMoreBtn = document.getElementById("zscalerSchemaLoadMoreBtn");
+if (zscalerSchemaLoadMoreBtn) {
+  zscalerSchemaLoadMoreBtn.addEventListener("click", () => {
+    zscalerSchemaState.visibleLimit += ZSCALER_SCHEMA_PAGE_SIZE;
+    renderZscalerSchemaTable();
+  });
+}
+renderZscalerSchemaAll();
 
 /* ---------- Schema explorer: search/filter/browse every field across the linked JSON Schema files ---------- */
 // Only columns with a real Schema link belong here -- "To be confirmed" columns have nothing to explore.
@@ -35347,6 +35976,268 @@ document.getElementById("awsInputCoverageImportFile").addEventListener("change",
   event.target.value = "";
 });
 
+/* ---------- Input Coverage: Zscaler Coverage tracker -----------------------------------------------------
+ * Same editable-tracker pattern as the Microsoft/AWS Coverage tabs above, kept as its own separate
+ * implementation per this app's convention. With zscalerInputCoverageGroups/InputColumns both empty (no
+ * source data yet), this renders as a single-column tenant-identifier tracker -- still fully usable (add/
+ * import/export/clear all work), and will pick up per-input Y/N columns automatically once real inputs are
+ * added above, with no changes needed here. parseInputCoverageCsv and normalizeYnValue are the same fully
+ * generic helpers the Microsoft/AWS trackers already reuse. ------------------------------------------------ */
+const zscalerInputCoverageAllColumns = [...zscalerInputCoverageAccountColumns, ...zscalerInputCoverageInputColumns.map(c => c.key)];
+const ZSCALER_INPUT_COVERAGE_LS_KEY = "latch_zscaler_input_coverage_v1";
+
+let zscalerInputCoverageRows = [];
+
+function newZscalerInputCoverageRow() {
+  const row = {};
+  zscalerInputCoverageAllColumns.forEach(col => { row[col] = ""; });
+  return row;
+}
+
+function loadZscalerInputCoverageRows() {
+  try {
+    const raw = localStorage.getItem(ZSCALER_INPUT_COVERAGE_LS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        zscalerInputCoverageRows = parsed.map(saved => {
+          const row = newZscalerInputCoverageRow();
+          zscalerInputCoverageAllColumns.forEach(col => { if (saved && typeof saved[col] === "string") row[col] = saved[col]; });
+          return row;
+        });
+        return;
+      }
+    }
+  } catch (e) { /* ignore corrupt/unavailable storage */ }
+  zscalerInputCoverageRows = [newZscalerInputCoverageRow()];
+}
+
+function saveZscalerInputCoverageRows() {
+  try { localStorage.setItem(ZSCALER_INPUT_COVERAGE_LS_KEY, JSON.stringify(zscalerInputCoverageRows)); } catch (e) { /* ignore quota/unavailable errors */ }
+}
+
+function setZscalerInputCoverageStatus(text) {
+  const el = document.getElementById("zscalerInputCoverageStatus");
+  if (el) el.textContent = text;
+}
+
+const ZSCALER_INPUT_COVERAGE_COLLAPSE_LS_KEY = "latch_zscaler_input_coverage_collapsed_v1";
+const zscalerInputCoverageCollapsibleTags = () => zscalerInputCoverageGroups.map(g => g.tag);
+let zscalerInputCoverageCollapsedGroups = new Set(zscalerInputCoverageCollapsibleTags());
+
+function loadZscalerInputCoverageCollapseState() {
+  try {
+    const raw = localStorage.getItem(ZSCALER_INPUT_COVERAGE_COLLAPSE_LS_KEY);
+    if (raw !== null) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        const validTags = zscalerInputCoverageCollapsibleTags();
+        zscalerInputCoverageCollapsedGroups = new Set(parsed.filter(tag => validTags.includes(tag)));
+        return;
+      }
+    }
+  } catch (e) { /* ignore corrupt/unavailable storage */ }
+  zscalerInputCoverageCollapsedGroups = new Set(zscalerInputCoverageCollapsibleTags());
+}
+
+function saveZscalerInputCoverageCollapseState() {
+  try { localStorage.setItem(ZSCALER_INPUT_COVERAGE_COLLAPSE_LS_KEY, JSON.stringify([...zscalerInputCoverageCollapsedGroups])); } catch (e) { /* ignore */ }
+}
+
+function toggleZscalerInputCoverageGroup(tag) {
+  if (zscalerInputCoverageCollapsedGroups.has(tag)) zscalerInputCoverageCollapsedGroups.delete(tag);
+  else zscalerInputCoverageCollapsedGroups.add(tag);
+  saveZscalerInputCoverageCollapseState();
+  renderZscalerInputCoverageTable();
+}
+
+function renderZscalerInputCoverageTable() {
+  const head = document.getElementById("zscalerInputCoverageTableHead");
+  const body = document.getElementById("zscalerInputCoverageTableBody");
+  if (!head || !body) return;
+
+  const accountHeaderCell = `<th class="ic-tenant-col">${escapeHtml(zscalerInputCoverageAccountColumns[0])}</th>`;
+
+  const groupInputCells = zscalerInputCoverageGroups.map(g => {
+    const collapsed = zscalerInputCoverageCollapsedGroups.has(g.tag);
+    const span = collapsed ? 1 : g.inputs.length;
+    const icon = collapsed ? "&#9656;" : "&#9662;";
+    const label = collapsed ? `${icon} [${escapeHtml(g.tag)}] (${g.inputs.length})` : `${icon} [${escapeHtml(g.tag)}]`;
+    return `<th class="ic-group-toggle" colspan="${span}" data-toggle-group="${escapeHtml(g.tag)}" title="Click to ${collapsed ? "expand" : "collapse"} ${escapeHtml(g.tag)}">${label}</th>`;
+  }).join("");
+  const totalDataColumns = 1 + zscalerInputCoverageGroups.reduce((sum, g) =>
+    sum + (zscalerInputCoverageCollapsedGroups.has(g.tag) ? 1 : g.inputs.length), 0);
+  const colHeaderCells = accountHeaderCell
+    + zscalerInputCoverageGroups.map(g => {
+        if (zscalerInputCoverageCollapsedGroups.has(g.tag)) {
+          return `<th class="ic-group-collapsed-col" data-toggle-group="${escapeHtml(g.tag)}" title="Click to expand ${escapeHtml(g.tag)}">&#9656;</th>`;
+        }
+        return zscalerInputCoverageInputColumns.filter(c => c.tag === g.tag)
+          .map(c => `<th title="${escapeHtml(c.label)}">${escapeHtml(c.label)}</th>`).join("");
+      }).join("")
+    + `<th></th>`;
+  // Account column has no group-level collapse toggle (single column, nothing to collapse), so its cell in
+  // the group-row banner is just a blank spacer matching the Microsoft/AWS table's row-shape.
+  head.innerHTML = `<tr class="ic-group-row"><th></th>${groupInputCells}<th></th></tr>`
+    + `<tr class="ic-col-row">${colHeaderCells}</tr>`;
+
+  if (!zscalerInputCoverageRows.length) {
+    body.innerHTML = `<tr class="ic-empty-row"><td colspan="${totalDataColumns + 1}">No rows yet. Use "+ Add row" or Import CSV to get started.</td></tr>`;
+  } else {
+    body.innerHTML = zscalerInputCoverageRows.map((row, rowIndex) => {
+      const accountCol = zscalerInputCoverageAccountColumns[0];
+      const accountCell = `<td class="ic-tenant-cell"><input class="ic-text-input" type="text" data-row="${rowIndex}" data-col="${escapeHtml(accountCol)}" value="${escapeHtml(row[accountCol] || "")}" placeholder="${escapeHtml(accountCol)}" /></td>`;
+      const groupCells = zscalerInputCoverageGroups.map(g => {
+        const groupCols = zscalerInputCoverageInputColumns.filter(c => c.tag === g.tag);
+        if (zscalerInputCoverageCollapsedGroups.has(g.tag)) {
+          const yesCount = groupCols.filter(c => row[c.key] === "Y").length;
+          const noCount = groupCols.filter(c => row[c.key] === "N").length;
+          const summary = (yesCount || noCount) ? `<span class="ic-count-y">${yesCount}Y</span> &middot; <span class="ic-count-n">${noCount}N</span>` : "&mdash;";
+          return `<td class="ic-group-collapsed-cell" data-toggle-group="${escapeHtml(g.tag)}" title="Click to expand ${escapeHtml(g.tag)} -- ${yesCount} Y, ${noCount} N, ${groupCols.length - yesCount - noCount} unset of ${groupCols.length}">${summary}</td>`;
+        }
+        return groupCols.map(c => {
+          const val = row[c.key] === "Y" || row[c.key] === "N" ? row[c.key] : "";
+          return `<td><select class="ic-yn-select" data-row="${rowIndex}" data-col="${escapeHtml(c.key)}" data-val="${val}">
+            <option value=""${val === "" ? " selected" : ""}>--</option>
+            <option value="Y"${val === "Y" ? " selected" : ""}>Y</option>
+            <option value="N"${val === "N" ? " selected" : ""}>N</option>
+          </select></td>`;
+        }).join("");
+      }).join("");
+      return `<tr>${accountCell}${groupCells}<td><button type="button" class="ic-row-remove" data-remove-row="${rowIndex}" title="Remove row" aria-label="Remove row">&times;</button></td></tr>`;
+    }).join("");
+  }
+  setZscalerInputCoverageStatus(`${zscalerInputCoverageRows.length} row${zscalerInputCoverageRows.length === 1 ? "" : "s"}`);
+}
+
+function exportZscalerInputCoverageCsv(event) {
+  const lines = [
+    zscalerInputCoverageAllColumns.map(csvValue).join(","),
+    ...zscalerInputCoverageRows.map(row => zscalerInputCoverageAllColumns.map(col => csvValue(row[col] || "")).join(","))
+  ];
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Zscaler-Cloud-Input-Coverage.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  const btn = event && event.currentTarget;
+  if (btn) {
+    const original = btn.textContent;
+    btn.textContent = "Exported";
+    setTimeout(() => { btn.textContent = original; }, 1400);
+  }
+}
+
+function importZscalerInputCoverageCsv(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsedRows;
+    try {
+      parsedRows = parseInputCoverageCsv(String(reader.result || ""));
+    } catch (e) {
+      setZscalerInputCoverageStatus("Import failed: could not parse file as CSV.");
+      return;
+    }
+    if (!parsedRows.length) { setZscalerInputCoverageStatus("Import failed: file is empty."); return; }
+    const header = parsedRows[0].map(h => h.trim());
+    const accountCol = zscalerInputCoverageAccountColumns[0];
+    if (!header.includes(accountCol)) {
+      setZscalerInputCoverageStatus(`Import failed: header row must include a "${accountCol}" column.`);
+      return;
+    }
+    if (zscalerInputCoverageRows.length && !confirm(`This will replace the current ${zscalerInputCoverageRows.length} row(s) with the imported file. Continue?`)) {
+      return;
+    }
+    const colIndex = {};
+    header.forEach((h, i) => { colIndex[h] = i; });
+    const imported = parsedRows.slice(1).map(cells => {
+      const row = newZscalerInputCoverageRow();
+      zscalerInputCoverageAccountColumns.forEach(col => {
+        if (colIndex[col] !== undefined) row[col] = cells[colIndex[col]] || "";
+      });
+      zscalerInputCoverageInputColumns.forEach(c => {
+        if (colIndex[c.key] !== undefined) row[c.key] = normalizeYnValue(cells[colIndex[c.key]]);
+      });
+      return row;
+    });
+    zscalerInputCoverageRows = imported.length ? imported : [newZscalerInputCoverageRow()];
+    saveZscalerInputCoverageRows();
+    renderZscalerInputCoverageTable();
+    setZscalerInputCoverageStatus(`Imported ${imported.length} row${imported.length === 1 ? "" : "s"}.`);
+  };
+  reader.onerror = () => setZscalerInputCoverageStatus("Import failed: could not read file.");
+  reader.readAsText(file);
+}
+
+loadZscalerInputCoverageRows();
+loadZscalerInputCoverageCollapseState();
+renderZscalerInputCoverageTable();
+
+document.getElementById("zscalerInputCoverageTableHead").addEventListener("click", event => {
+  const target = event.target.closest("[data-toggle-group]");
+  if (target) toggleZscalerInputCoverageGroup(target.dataset.toggleGroup);
+});
+document.getElementById("zscalerInputCoverageTableBody").addEventListener("click", event => {
+  const toggleTarget = event.target.closest("[data-toggle-group]");
+  if (toggleTarget) { toggleZscalerInputCoverageGroup(toggleTarget.dataset.toggleGroup); return; }
+  const removeBtn = event.target.closest("[data-remove-row]");
+  if (removeBtn) {
+    const rowIndex = Number(removeBtn.dataset.removeRow);
+    zscalerInputCoverageRows.splice(rowIndex, 1);
+    saveZscalerInputCoverageRows();
+    renderZscalerInputCoverageTable();
+  }
+});
+document.getElementById("zscalerInputCoverageTableBody").addEventListener("input", event => {
+  const target = event.target;
+  if (target.classList.contains("ic-text-input")) {
+    const rowIndex = Number(target.dataset.row);
+    const col = target.dataset.col;
+    if (zscalerInputCoverageRows[rowIndex]) {
+      zscalerInputCoverageRows[rowIndex][col] = target.value;
+      saveZscalerInputCoverageRows();
+    }
+  }
+});
+document.getElementById("zscalerInputCoverageTableBody").addEventListener("change", event => {
+  const target = event.target;
+  if (target.classList.contains("ic-yn-select")) {
+    const rowIndex = Number(target.dataset.row);
+    const col = target.dataset.col;
+    if (zscalerInputCoverageRows[rowIndex]) {
+      zscalerInputCoverageRows[rowIndex][col] = target.value;
+      target.dataset.val = target.value;
+      saveZscalerInputCoverageRows();
+    }
+  }
+});
+document.getElementById("zscalerInputCoverageAddRow").addEventListener("click", () => {
+  zscalerInputCoverageRows.push(newZscalerInputCoverageRow());
+  saveZscalerInputCoverageRows();
+  renderZscalerInputCoverageTable();
+  const wrap = document.getElementById("zscalerInputCoverageTableWrap");
+  if (wrap) wrap.scrollTop = wrap.scrollHeight;
+});
+document.getElementById("zscalerInputCoverageClearBtn").addEventListener("click", () => {
+  if (!zscalerInputCoverageRows.length) return;
+  if (!confirm(`Remove all ${zscalerInputCoverageRows.length} row(s)? This cannot be undone.`)) return;
+  zscalerInputCoverageRows = [];
+  saveZscalerInputCoverageRows();
+  renderZscalerInputCoverageTable();
+});
+document.getElementById("zscalerInputCoverageExportBtn").addEventListener("click", exportZscalerInputCoverageCsv);
+document.getElementById("zscalerInputCoverageImportBtn").addEventListener("click", () => {
+  document.getElementById("zscalerInputCoverageImportFile").click();
+});
+document.getElementById("zscalerInputCoverageImportFile").addEventListener("change", event => {
+  const file = event.target.files && event.target.files[0];
+  if (file) importZscalerInputCoverageCsv(file);
+  event.target.value = "";
+});
+
 /* ---------- Input Coverage: Amazon AWS Permissions matrix ------------------------------------------------
  * Rebuilt from a static 4-row/11-column HTML table (its per-cell "Required"/"Optional"/"Not needed" text now
  * expressed as this entry's own family, colored Required/Optional pill -- "Not needed" simply has no entry)
@@ -35649,6 +36540,172 @@ document.getElementById("awsPermissionsTableBody").addEventListener("click", eve
 document.getElementById("closeAwsPermissionDetail").addEventListener("click", closeAwsPermissionDetail);
 awsPermissionDetailModal.addEventListener("click", event => { if (event.target === awsPermissionDetailModal) closeAwsPermissionDetail(); });
 document.addEventListener("keydown", event => { if (event.key === "Escape" && awsPermissionDetailModal.classList.contains("open")) closeAwsPermissionDetail(); });
+
+/* ---------- Input Coverage: Zscaler Permissions matrix ---------------------------------------------------
+ * Scaffold only -- no Zscaler permissions CSV has been supplied yet. Same data-driven (app, input, action)
+ * model, toolbar, and detail-modal pattern as the Microsoft/AWS Permissions matrices above. With
+ * zscalerPermissionsData empty, the table correctly renders its own empty state ("No rows match...") and the
+ * toolbar (search/filter/sort/hide-blanks/export) is fully wired, just inert until real entries exist --
+ * dropping rows into zscalerPermissionsData later needs no other change here. */
+const zscalerPermissionsData = [];
+const zscalerPermissionsRows = [...new Map(zscalerPermissionsData.map(r => [`${r.app} ||| ${r.input}`, { app: r.app, input: r.input }])).values()];
+const zscalerPermissionsActions = [...new Set(zscalerPermissionsData.map(r => r.action))];
+const zscalerPermissionsByKey = new Map(zscalerPermissionsData.map(r => [`${r.app} ||| ${r.input} ||| ${r.action}`, r]));
+const ZSCALER_PERMISSIONS_FAMILY_CLASS = {};
+const ZSCALER_PERMISSIONS_FAMILY_SHORT_LABEL = {};
+
+const zscalerPermissionsRowHaystack = new Map();
+zscalerPermissionsData.forEach(r => {
+  const key = `${r.app} ||| ${r.input}`;
+  const hay = [r.app, r.input, r.family, r.service, r.action, r.purpose, r.notes].filter(Boolean).join(" ").toLowerCase();
+  zscalerPermissionsRowHaystack.set(key, `${zscalerPermissionsRowHaystack.get(key) || ""} ${hay}`);
+});
+let zscalerPermState = { query: "", app: "", sortKey: "app", sortDir: "asc", hideBlankCols: false };
+function zscalerPermFilteredSortedRows() {
+  const q = zscalerPermState.query.trim().toLowerCase();
+  let rows = zscalerPermissionsRows.filter(({ app, input }) => {
+    if (zscalerPermState.app && app !== zscalerPermState.app) return false;
+    if (!q) return true;
+    return (zscalerPermissionsRowHaystack.get(`${app} ||| ${input}`) || "").includes(q);
+  });
+  const dir = zscalerPermState.sortDir === "desc" ? -1 : 1;
+  const keyFn = zscalerPermState.sortKey === "input" ? r => r.input : r => r.app;
+  return rows.slice().sort((a, b) => keyFn(a).localeCompare(keyFn(b)) * dir || a.app.localeCompare(b.app) || a.input.localeCompare(b.input));
+}
+function zscalerPermVisibleActions(rows) {
+  if (!zscalerPermState.hideBlankCols) return zscalerPermissionsActions;
+  const rowKeySet = new Set(rows.map(r => `${r.app} ||| ${r.input}`));
+  const usedActions = new Set();
+  zscalerPermissionsData.forEach(entry => {
+    if (rowKeySet.has(`${entry.app} ||| ${entry.input}`)) usedActions.add(entry.action);
+  });
+  return zscalerPermissionsActions.filter(a => usedActions.has(a));
+}
+function renderZscalerPermissionsTable() {
+  const head = document.getElementById("zscalerPermissionsTableHead");
+  const body = document.getElementById("zscalerPermissionsTableBody");
+  if (!head || !body) return;
+  const rows = zscalerPermFilteredSortedRows();
+  const actions = zscalerPermVisibleActions(rows);
+  head.innerHTML = `<tr><th scope="col" data-sort="app">App</th><th scope="col" data-sort="input">Input</th>${actions.map(a => `<th scope="col">${escapeHtml(a)}</th>`).join("")}</tr>`;
+  head.querySelectorAll("th[data-sort]").forEach(th => {
+    th.classList.toggle("se-sorted", th.dataset.sort === zscalerPermState.sortKey);
+    th.classList.toggle("se-asc", th.dataset.sort === zscalerPermState.sortKey && zscalerPermState.sortDir === "asc");
+  });
+  const countEl = document.getElementById("zscalerPermResultCount");
+  if (countEl) {
+    const rowText = rows.length === zscalerPermissionsRows.length
+      ? `${rows.length} row${rows.length === 1 ? "" : "s"}`
+      : `Showing ${rows.length} of ${zscalerPermissionsRows.length} rows`;
+    const colText = zscalerPermState.hideBlankCols ? ` &middot; ${actions.length} of ${zscalerPermissionsActions.length} columns` : "";
+    countEl.innerHTML = rowText + colText;
+  }
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="${actions.length + 2}"><div class="se-empty">No Zscaler permissions data has been supplied yet.</div></td></tr>`;
+    return;
+  }
+  body.innerHTML = rows.map(({ app, input }) => {
+    const cells = actions.map(action => {
+      const entry = zscalerPermissionsByKey.get(`${app} ||| ${input} ||| ${action}`);
+      if (!entry) return "<td>&mdash;</td>";
+      const cls = ZSCALER_PERMISSIONS_FAMILY_CLASS[entry.family] || "perm-required";
+      const shortLabel = ZSCALER_PERMISSIONS_FAMILY_SHORT_LABEL[entry.family] || entry.family;
+      return `<td><button type="button" class="perm-mark ${cls}" data-perm-app="${escapeHtml(app)}" data-perm-input="${escapeHtml(input)}" data-perm-action="${escapeHtml(action)}">${escapeHtml(shortLabel)}</button></td>`;
+    }).join("");
+    return `<tr><td>${escapeHtml(app)}</td><th scope="row">${escapeHtml(input)}</th>${cells}</tr>`;
+  }).join("");
+}
+renderZscalerPermissionsTable();
+
+function exportZscalerPermissionsCsv(event) {
+  const rows = zscalerPermFilteredSortedRows();
+  const actions = zscalerPermVisibleActions(rows);
+  const lines = [["App", "Input", ...actions].map(csvValue).join(",")];
+  rows.forEach(({ app, input }) => {
+    const cells = actions.map(action => {
+      const entry = zscalerPermissionsByKey.get(`${app} ||| ${input} ||| ${action}`);
+      return entry ? (ZSCALER_PERMISSIONS_FAMILY_SHORT_LABEL[entry.family] || entry.family) : "";
+    });
+    lines.push([app, input, ...cells].map(csvValue).join(","));
+  });
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Zscaler-Cloud-Permissions-Matrix.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  const btn = event && event.currentTarget;
+  if (btn) {
+    const original = btn.textContent;
+    btn.textContent = "Exported";
+    setTimeout(() => { btn.textContent = original; }, 1400);
+  }
+}
+
+const zscalerPermAppFilterSelect = document.getElementById("zscalerPermAppFilter");
+if (zscalerPermAppFilterSelect) {
+  [...new Set(zscalerPermissionsRows.map(r => r.app))].forEach(app => {
+    const opt = document.createElement("option");
+    opt.value = app;
+    opt.textContent = app;
+    zscalerPermAppFilterSelect.appendChild(opt);
+  });
+  zscalerPermAppFilterSelect.addEventListener("change", e => { zscalerPermState.app = e.target.value; renderZscalerPermissionsTable(); });
+}
+const zscalerPermSearchBoxEl = document.getElementById("zscalerPermSearchBox");
+if (zscalerPermSearchBoxEl) zscalerPermSearchBoxEl.addEventListener("input", e => { zscalerPermState.query = e.target.value; renderZscalerPermissionsTable(); });
+const zscalerPermHideBlankColsEl = document.getElementById("zscalerPermHideBlankCols");
+if (zscalerPermHideBlankColsEl) zscalerPermHideBlankColsEl.addEventListener("change", e => { zscalerPermState.hideBlankCols = e.target.checked; renderZscalerPermissionsTable(); });
+const zscalerPermExportBtnEl = document.getElementById("zscalerPermExportBtn");
+if (zscalerPermExportBtnEl) zscalerPermExportBtnEl.addEventListener("click", exportZscalerPermissionsCsv);
+document.getElementById("zscalerPermissionsTableHead").addEventListener("click", event => {
+  const th = event.target.closest("th[data-sort]");
+  if (!th) return;
+  const key = th.dataset.sort;
+  if (zscalerPermState.sortKey === key) zscalerPermState.sortDir = zscalerPermState.sortDir === "asc" ? "desc" : "asc";
+  else { zscalerPermState.sortKey = key; zscalerPermState.sortDir = "asc"; }
+  renderZscalerPermissionsTable();
+});
+
+const zscalerPermissionDetailModal = document.getElementById("zscalerPermissionDetailModal");
+let lastZscalerPermissionDetailTrigger = null;
+function openZscalerPermissionDetail(entry, trigger) {
+  if (!zscalerPermissionDetailModal) return;
+  lastZscalerPermissionDetailTrigger = trigger || document.activeElement;
+  document.getElementById("zscalerPermissionDetailTitle").textContent = entry.input;
+  document.getElementById("zscalerPermissionDetailSubtitle").textContent = entry.action;
+  const rows = [
+    ["App", entry.app],
+    ["Input family", entry.family],
+    ["Service", entry.service],
+    ["Action", entry.action],
+    ["Purpose", entry.purpose],
+    ["Notes", entry.notes]
+  ].filter(([, v]) => v !== undefined && v !== "");
+  document.getElementById("zscalerPermissionDetailGrid").innerHTML = rows.map(([k, v]) => `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join("");
+  zscalerPermissionDetailModal.classList.add("open");
+  zscalerPermissionDetailModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  document.getElementById("closeZscalerPermissionDetail").focus();
+}
+function closeZscalerPermissionDetail() {
+  if (!zscalerPermissionDetailModal) return;
+  zscalerPermissionDetailModal.classList.remove("open");
+  zscalerPermissionDetailModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+  if (lastZscalerPermissionDetailTrigger && typeof lastZscalerPermissionDetailTrigger.focus === "function") lastZscalerPermissionDetailTrigger.focus();
+}
+document.getElementById("zscalerPermissionsTableBody").addEventListener("click", event => {
+  const trigger = event.target.closest(".perm-mark");
+  if (!trigger) return;
+  const entry = zscalerPermissionsByKey.get(`${trigger.dataset.permApp} ||| ${trigger.dataset.permInput} ||| ${trigger.dataset.permAction}`);
+  if (entry) openZscalerPermissionDetail(entry, trigger);
+});
+document.getElementById("closeZscalerPermissionDetail").addEventListener("click", closeZscalerPermissionDetail);
+zscalerPermissionDetailModal.addEventListener("click", event => { if (event.target === zscalerPermissionDetailModal) closeZscalerPermissionDetail(); });
+document.addEventListener("keydown", event => { if (event.key === "Escape" && zscalerPermissionDetailModal.classList.contains("open")) closeZscalerPermissionDetail(); });
 
 /* ---------- Input Coverage: Microsoft cloud inputs Permissions matrix -------------------------------------
  * Same visual style as the AWS Permissions tab (eccs-table-wrap/eccs-matrix), but this data is inherently a
