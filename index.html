@@ -14435,6 +14435,7 @@ E. Assumptions and unresolved inputs</pre>
       <button id="showMsCloudInputsSubpage" class="page-subtab active" type="button" role="tab" aria-selected="true" aria-controls="msCloudInputsSubpage" data-subpage="msCloudInputs">Microsoft cloud based inputs</button>
       <button id="showAwsCloudInputsSubpage" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="awsCloudInputsSubpage" data-subpage="awsCloudInputs">Amazon AWS based inputs</button>
       <button id="showZscalerCloudInputsSubpage" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerCloudInputsSubpage" data-subpage="zscalerCloudInputs">Zscaler based inputs</button>
+      <button id="showFortinetCloudInputsSubpage" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="fortinetCloudInputsSubpage" data-subpage="fortinetCloudInputs">Fortinet based inputs</button>
     </div>
     <div id="msCloudInputsSubpage" class="subpage-view" role="tabpanel" aria-labelledby="showMsCloudInputsSubpage">
       <div class="page-subnav level-3" role="tablist" aria-label="Microsoft cloud based inputs sections">
@@ -14681,6 +14682,7 @@ E. Assumptions and unresolved inputs</pre>
         <button id="showZscalerCoverageView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerCoverageView" data-zscalerview="zscalerCoverage">Coverage</button>
         <button id="showZscalerSchemaView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerSchemaView" data-zscalerview="zscalerSchema">Schema</button>
         <button id="showZscalerPermissionsView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerPermissionsView" data-zscalerview="zscalerPermissions">Permissions</button>
+        <button id="showZscalerCimCoverageView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="zscalerCimCoverageView" data-zscalerview="zscalerCimCoverage">CIM Coverage</button>
       </div>
 
       <div id="zscalerInputsListView" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerInputsListView">
@@ -14719,7 +14721,7 @@ E. Assumptions and unresolved inputs</pre>
 
       <div id="zscalerSchemaView" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerSchemaView" hidden>
       <section class="reference-section">
-        <div class="reference-section-heading"><div><h3>Schema explorer</h3><p>Search, filter and browse field-level schema for the 13 Zscaler log sourcetypes (ZIA and ZPA). Field category (ZIA/ZPA) is derived from each source input; no CIM/OCSF mapping was supplied for this vendor yet.</p></div></div>
+        <div class="reference-section-heading"><div><h3>Schema explorer</h3><p>Search, filter and browse field-level schema for the 13 Zscaler log sourcetypes (ZIA and ZPA). Field category (ZIA/ZPA) is derived from each source input. See the CIM Coverage tab for which of these sourcetypes are wired into a CIM data model, and the confirmed real field names the TA actually extracts.</p></div></div>
 
         <div class="se-stats" id="zscalerSchemaStats"></div>
 
@@ -14787,6 +14789,218 @@ E. Assumptions and unresolved inputs</pre>
         </div>
 
         <p class="sot-note">Awaiting source data: no Zscaler permissions CSV has been supplied yet. Once provided, this table will follow the same (app, input, action) model as the Microsoft and AWS Permissions tabs -- one marked, colored pill per required action, with click-through detail.</p>
+      </section>
+      </div>
+
+      <div id="zscalerCimCoverageView" class="subpage-view" role="tabpanel" aria-labelledby="showZscalerCimCoverageView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>CIM Coverage summary</h3><p>Which of the 18 confirmed Zscaler eventtypes are wired into a Splunk CIM data model in the real TA-Zscaler_CIM v4.1.5 package, and which aren't despite having usable field extractions.</p></div></div>
+
+        <div class="se-toolbar">
+          <input id="zscalerCimCoverageSearchBox" type="search" placeholder="Search input, sourcetype, eventtype, tags, data models or notes…" aria-label="Search Zscaler CIM coverage" />
+          <button id="zscalerCimCoverageExportBtn" class="primary-button" type="button">Export CSV</button>
+          <span class="se-result-count" id="zscalerCimCoverageResultCount"></span>
+        </div>
+
+        <div class="se-table-wrap">
+          <table class="se-table">
+            <thead>
+              <tr>
+                <th>Input</th>
+                <th>Sourcetype</th>
+                <th>Eventtype</th>
+                <th>CIM tags</th>
+                <th>CIM data model(s)</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="zscalerCimCoverageBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note" id="zscalerCimCoverageNote"></p>
+      </section>
+
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>CIM Field Mapping crosswalk</h3><p>The TA's actual <code>props.conf</code> FIELDALIAS/EVAL stanzas, field by field -- what each raw Zscaler field is renamed or computed into, and which CIM data model that target field belongs to.</p></div></div>
+
+        <div class="se-toolbar">
+          <input id="zscalerCimFieldMappingSearchBox" type="search" placeholder="Search sourcetype, raw field, CIM field, data model or notes…" aria-label="Search Zscaler CIM field mapping" />
+          <select id="zscalerCimFieldMappingSourcetypeFilter" aria-label="Filter by sourcetype">
+            <option value="">All sourcetypes</option>
+          </select>
+          <button id="zscalerCimFieldMappingExportBtn" class="primary-button" type="button">Export CSV</button>
+          <span class="se-result-count" id="zscalerCimFieldMappingResultCount"></span>
+        </div>
+
+        <div class="se-table-wrap">
+          <table class="se-table">
+            <thead>
+              <tr>
+                <th>Sourcetype</th>
+                <th>CIM data model</th>
+                <th>Raw field</th>
+                <th>Set via</th>
+                <th>CIM field</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="zscalerCimFieldMappingBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note" id="zscalerCimFieldMappingNote"></p>
+      </section>
+
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>TA extra sourcetypes</h3><p>Sourcetypes confirmed present in the same TA-Zscaler_CIM v4.1.5 package that fall outside this reference's ZIA/ZPA onboarding scope -- listed here for completeness. These also appear as a third input group under the Inputs and Coverage tabs.</p></div></div>
+
+        <div class="se-table-wrap">
+          <table class="se-table">
+            <thead>
+              <tr>
+                <th>Sourcetype</th>
+                <th>Product / feed</th>
+                <th>Eventtype</th>
+                <th>CIM tags</th>
+                <th>CIM data model(s)</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="zscalerTaExtraSourcetypesBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note" id="zscalerTaExtraSourcetypesNote"></p>
+      </section>
+      </div>
+    </div>
+
+    <div id="fortinetCloudInputsSubpage" class="subpage-view" role="tabpanel" aria-labelledby="showFortinetCloudInputsSubpage" hidden>
+      <div class="page-subnav level-3" role="tablist" aria-label="Fortinet based inputs sections">
+        <button id="showFortinetInputsListView" class="page-subtab active" type="button" role="tab" aria-selected="true" aria-controls="fortinetInputsListView" data-fortinetview="fortinetInputsList">Inputs</button>
+        <button id="showFortinetCoverageView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="fortinetCoverageView" data-fortinetview="fortinetCoverage">Coverage</button>
+        <button id="showFortinetSchemaView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="fortinetSchemaView" data-fortinetview="fortinetSchema">Schema</button>
+        <button id="showFortinetPermissionsView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="fortinetPermissionsView" data-fortinetview="fortinetPermissions">Permissions</button>
+        <button id="showFortinetCimCoverageView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="fortinetCimCoverageView" data-fortinetview="fortinetCimCoverage">CIM Coverage</button>
+      </div>
+
+      <div id="fortinetInputsListView" class="subpage-view" role="tabpanel" aria-labelledby="showFortinetInputsListView">
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Fortinet based inputs</h3><p id="fortinetInputsListIntro">No Fortinet inputs have been documented yet.</p></div></div>
+
+        <div id="fortinetInputsListGroups"></div>
+
+        <p class="sot-note" id="fortinetInputsListNote">Transcribed from the real Fortinet FortiGate Add-on for Splunk package (Splunk_TA_fortinet_fortigate, Splunkbase app 2846, version 1.6.10) the user provided. Unlike the Microsoft/AWS/Zscaler add-ons above, this TA has no modular inputs at all -- FortiGate devices push syslog to a receiver (a Splunk Heavy Forwarder or a syslog relay such as SC4S), and the TA's own <code>TRANSFORMS-force_sourcetype_fortigate</code> stanza inspects each raw event for <code>devid="F..."</code> and <code>type="traffic|utm|event|anomaly"</code> to reclassify it from the generic ingest sourcetype (<code>fortigate_log</code>/<code>fgt_log</code>) into one of the four sourcetypes listed below. Those four sourcetypes are therefore the closest equivalent this vendor has to a discrete, separately-trackable "input."</p>
+      </section>
+      </div>
+
+      <div id="fortinetCoverageView" class="subpage-view" role="tabpanel" aria-labelledby="showFortinetCoverageView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Coverage</h3><p id="fortinetCoverageSubtitle">Editable per-FortiGate-device enablement tracking against the sourcetypes listed under Inputs. Edits are saved in this browser automatically.</p></div></div>
+
+        <div class="input-coverage-toolbar">
+          <button id="fortinetInputCoverageAddRow" type="button">+ Add row</button>
+          <button id="fortinetInputCoverageImportBtn" type="button">Import CSV</button>
+          <input id="fortinetInputCoverageImportFile" type="file" accept=".csv,text/csv" hidden />
+          <button id="fortinetInputCoverageExportBtn" class="primary-button" type="button">Export CSV</button>
+          <button id="fortinetInputCoverageClearBtn" type="button">Clear all rows</button>
+          <span id="fortinetInputCoverageStatus" class="input-coverage-status" role="status" aria-live="polite"></span>
+        </div>
+
+        <div id="fortinetInputCoverageTableWrap" class="input-coverage-table-wrap">
+          <table id="fortinetInputCoverageTable" class="input-coverage-table">
+            <thead id="fortinetInputCoverageTableHead"></thead>
+            <tbody id="fortinetInputCoverageTableBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note" id="fortinetCoverageColumnNote">No Fortinet inputs are documented yet, so this tracker currently has just the device identifier column.</p>
+      </section>
+      </div>
+
+      <div id="fortinetSchemaView" class="subpage-view" role="tabpanel" aria-labelledby="showFortinetSchemaView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Schema explorer</h3><p>Every raw FortiOS log field the TA actually knows about (via FIELDALIAS, EVAL or LOOKUP in its real <code>props.conf</code>) across the 4 sourcetypes, and the CIM field each becomes. There is no separate prose field-schema document for this vendor -- <code>props.conf</code> itself is the schema.</p></div></div>
+
+        <div class="se-stats" id="fortinetSchemaStats"></div>
+
+        <div class="se-workspace">
+          <aside class="se-rail">
+            <div class="se-rail-group">
+              <h4>Sourcetype</h4>
+              <div class="se-app-list" id="fortinetSchemaSourcetypeList"></div>
+            </div>
+            <div class="se-rail-group">
+              <h4>Set via</h4>
+              <div class="se-app-list" id="fortinetSchemaCategoryList"></div>
+            </div>
+          </aside>
+
+          <div class="se-main">
+            <div class="se-toolbar">
+              <input id="fortinetSchemaSearchBox" type="search" placeholder="Search sourcetypes, fields, CIM fields or descriptions…" aria-label="Search Fortinet schema fields" />
+              <span class="se-result-count" id="fortinetSchemaResultCount"></span>
+            </div>
+
+            <div class="se-table-wrap">
+              <table class="se-table">
+                <thead>
+                  <tr>
+                    <th>Sourcetype</th>
+                    <th>Set via</th>
+                    <th>Field</th>
+                    <th>CIM field</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody id="fortinetSchemaFieldsBody"></tbody>
+              </table>
+            </div>
+            <div class="se-load-more-row">
+              <button id="fortinetSchemaLoadMoreBtn" class="se-load-more" type="button" hidden></button>
+            </div>
+          </div>
+        </div>
+
+        <p class="sot-note" id="fortinetSchemaNote"></p>
+      </section>
+      </div>
+
+      <div id="fortinetPermissionsView" class="subpage-view" role="tabpanel" aria-labelledby="showFortinetPermissionsView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Permissions</h3><p>Splunk-side API/IAM permissions, for comparison with the Microsoft/AWS/Zscaler Permissions tabs.</p></div></div>
+
+        <p class="sot-note">Not applicable to this vendor. The Fortinet FortiGate Add-on for Splunk (Splunk_TA_fortinet_fortigate) ships no modular input and calls no API -- confirmed directly from the package, which has no <code>inputs.conf.spec</code> and whose only executable content is parsing/CIM-mapping configuration (<code>props.conf</code>, <code>transforms.conf</code>, <code>eventtypes.conf</code>, <code>tags.conf</code>). There is therefore no Splunk-side IAM role, OAuth scope, or API key for this input, unlike the Microsoft/AWS/Zscaler tabs above. The real prerequisites sit on the other two ends of the pipe instead: on FortiOS, enabling syslog/log delivery (Log &amp; Report &gt; Log Settings) in the TA's native (non-CEF) format so the <code>devid="F..." type="traffic|utm|event|anomaly"</code> pattern its <code>TRANSFORMS-force_sourcetype_fortigate</code> stanza expects is present; and on the receiver side, network reachability from each FortiGate device to whatever is listening (a Splunk Heavy Forwarder, or a syslog relay such as SC4S) on the configured port, with the generic ingest sourcetype set to <code>fortigate_log</code> (or the legacy <code>fgt_log</code>).</p>
+      </section>
+      </div>
+
+      <div id="fortinetCimCoverageView" class="subpage-view" role="tabpanel" aria-labelledby="showFortinetCimCoverageView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>CIM Coverage summary</h3><p>All 35 eventtypes the TA defines, their real CIM tags (or lack thereof) transcribed from <code>tags.conf</code>, and the closest-matching CIM data model this reference derives from those tags.</p></div></div>
+
+        <div class="se-toolbar">
+          <input id="fortinetCimCoverageSearchBox" type="search" placeholder="Search eventtype, tags, data model, search string or notes…" aria-label="Search Fortinet CIM coverage" />
+          <button id="fortinetCimCoverageExportBtn" class="primary-button" type="button">Export CSV</button>
+          <span class="se-result-count" id="fortinetCimCoverageResultCount"></span>
+        </div>
+
+        <div class="se-table-wrap">
+          <table class="se-table">
+            <thead>
+              <tr>
+                <th>Eventtype</th>
+                <th>CIM tags</th>
+                <th>CIM data model</th>
+                <th>Search (verbatim)</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="fortinetCimCoverageBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note" id="fortinetCimCoverageNote"></p>
       </section>
       </div>
     </div>
@@ -33808,11 +34022,12 @@ let lastInputDetailTrigger = null;
 function openInputDetail(key, trigger) {
   const msCol = inputCoverageInputColumns.find(col => col.key === key);
   const awsCol = !msCol && awsInputCoverageInputColumns.find(col => col.key === key);
-  const c = msCol || awsCol || zscalerInputCoverageInputColumns.find(col => col.key === key);
+  const zscalerCol = !msCol && !awsCol && zscalerInputCoverageInputColumns.find(col => col.key === key);
+  const c = msCol || awsCol || zscalerCol || fortinetInputCoverageInputColumns.find(col => col.key === key);
   if (!c || !inputDetailModal) return;
   lastInputDetailTrigger = trigger || document.activeElement;
   const eyebrowEl = document.getElementById("inputDetailEyebrow");
-  if (eyebrowEl) eyebrowEl.textContent = msCol ? "Microsoft cloud based inputs" : (awsCol ? "Amazon AWS based inputs" : "Zscaler based inputs");
+  if (eyebrowEl) eyebrowEl.textContent = msCol ? "Microsoft cloud based inputs" : (awsCol ? "Amazon AWS based inputs" : (zscalerCol ? "Zscaler based inputs" : "Fortinet based inputs"));
   document.getElementById("inputDetailTitle").textContent = c.label;
   document.getElementById("inputDetailSubtitle").textContent = `${c.appName} (${c.tag})`;
   const rows = [
@@ -33840,14 +34055,15 @@ function openInputDetail(key, trigger) {
     // Fields is derived from the linked schema, not looked up independently -- its value only makes sense
     // relative to c.schema, so it's handled inline below rather than as its own [k, v] row.
     ["Fields", c.schema === "To be confirmed" ? "To be confirmed" : (c.fields.length ? c.fields : "No individual fields documented in the schema")]
-  // "Entra ID type" only applies to Microsoft entries (it's not in the AWS/Zscaler column shape at all, so
-  // it's undefined there) -- the "API endpoint ..." rows only apply to splunk_ta_o365 inputs whose sourcetype
-  // matches o365ApiEndpointDetails, "API family"/"API base URL"/"Specific API endpoint" apply to any
-  // Microsoft input whose sourcetype matches any of the four lookup tables, "API base URL pattern" only to
-  // AWS inputs (AWS reuses "API family" but has its own distinct base-URL row -- see
-  // awsInputCoverageInputColumns above), and "Configuration settings" only to Zscaler inputs (a multi-line
-  // setup-steps block the supplied JSON gave per input, with no equivalent field on the Microsoft/AWS side) --
-  // drop rows with no value rather than showing an irrelevant blank field.
+  // "Entra ID type" only applies to Microsoft entries (it's not in the AWS/Zscaler/Fortinet column shape at
+  // all, so it's undefined there) -- the "API endpoint ..." rows only apply to splunk_ta_o365 inputs whose
+  // sourcetype matches o365ApiEndpointDetails, "API family"/"API base URL"/"Specific API endpoint" apply to
+  // any Microsoft input whose sourcetype matches any of the four lookup tables, "API base URL pattern" only
+  // to AWS inputs (AWS reuses "API family" but has its own distinct base-URL row -- see
+  // awsInputCoverageInputColumns above), and "Configuration settings" applies to Zscaler (a multi-line
+  // setup-steps block the supplied JSON gave per input) and Fortinet (this reference's own FortiOS-side
+  // logging/syslog setup notes) but not Microsoft/AWS -- drop rows with no value rather than showing an
+  // irrelevant blank field.
   ].filter(([, v]) => v !== undefined && v !== "");
   document.getElementById("inputDetailGrid").innerHTML = rows.map(([k, v]) => {
     const isExternalLink = (k === "Splunk app base link" || k === "API base URL") && /^https?:\/\//.test(v);
@@ -34029,33 +34245,46 @@ document.getElementById("awsInputsListGroups").addEventListener("click", event =
  * Structured identically to the Microsoft/AWS pools above. Input list/detail transcribed verbatim from a
  * supplied JSON structure (16 inputs across two apps: the official "Zscaler Technical Add-on for Splunk" --
  * ZIA NSS/API feeds and ZPA LSS feeds -- and the unofficial community "TA-zscaler-api" add-on's two
- * config/enrichment-object inputs). No separate short technical package tag (e.g. "Splunk_TA_zscaler") was
- * supplied for either app, so each group's own "app" string doubles as its tag rather than guessing one.
- * Splunk app ID/base link were not confirmed against Splunkbase/GitHub this round, so both stay "To be
- * confirmed" per the same convention AWS/Microsoft used before their own Splunkbase links were confirmed.
+ * config/enrichment-object inputs).
+ * App ID/base link CONFIRMED (per user-supplied JSON, sourced directly from the real shipped TA package):
+ * Splunkbase app 3865, technical package/app ID "TA-Zscaler_CIM", version 4.1.5 -- so the group tag now
+ * uses that real technical ID instead of the app's display name, matching how AWS/Microsoft key their own
+ * groups once their Splunkbase links were confirmed.
  * The supplied "configuration_settings" field is new -- no existing openInputDetail() row fit it -- so a
  * "Configuration settings" row was added there (see below), rendered with line breaks preserved since the
  * source text is itself a multi-line bulleted list. */
 const zscalerInputCoverageGroups = [
-  { tag: "Zscaler Technical Add-on for Splunk", friendlyName: "Zscaler Internet Access (ZIA) & Private Access (ZPA)", description: "Official Zscaler-published Splunk add-on -- collects ZIA web/firewall/DNS/tunnel/system-alert NSS feeds, ZIA Admin Audit and Sandbox report API data, and ZPA LSS feeds (app access, authentication, connector health, browser access, web inspection, admin audit).", appName: "Zscaler Technical Add-on for Splunk", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["Web / Proxy logs (ZIA)", "Firewall logs (ZIA)", "DNS logs (ZIA)", "Tunnel logs (ZIA)", "System alerts (ZIA)", "Admin Audit logs (ZIA)", "Sandbox detail reports (ZIA)", "App access logs (ZPA)", "Authentication logs (ZPA)", "App Connector logs (ZPA)", "Browser Access logs (ZPA)", "Web Inspection / AppProtection logs (ZPA)", "Admin Audit logs (ZPA)"] },
-  { tag: "TA-zscaler-api (unofficial community add-on)", friendlyName: "Zscaler config/enrichment objects (unofficial)", description: "Unofficial, community-maintained add-on -- periodic snapshots of ZIA/ZPA policy and config objects (URL categories, app segments, segment groups) for enrichment/lookup use, not event logs. Not supported by Zscaler; review its GitHub docs before deploying.", appName: "TA-zscaler-api (unofficial community add-on)", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["ZIA config objects (URL categories, etc.)", "ZPA config objects (app segments, segment groups)"] }
+  { tag: "TA-Zscaler_CIM", friendlyName: "Zscaler Internet Access (ZIA) & Private Access (ZPA)", description: "Official Zscaler-published Splunk add-on -- collects ZIA web/firewall/DNS/tunnel/system-alert NSS feeds, ZIA Admin Audit and Sandbox report API data, and ZPA LSS feeds (app access, authentication, connector health, browser access, web inspection, admin audit).", appName: "Zscaler Technical Add-on for Splunk", appId: "3865", baseLink: "https://splunkbase.splunk.com/app/3865", inputs: ["Web / Proxy logs (ZIA)", "Firewall logs (ZIA)", "DNS logs (ZIA)", "Tunnel logs (ZIA)", "System alerts (ZIA)", "Admin Audit logs (ZIA)", "Sandbox detail reports (ZIA)", "App access logs (ZPA)", "Authentication logs (ZPA)", "App Connector logs (ZPA)", "Browser Access logs (ZPA)", "Web Inspection / AppProtection logs (ZPA)", "Admin Audit logs (ZPA)"] },
+  { tag: "TA-zscaler-api (unofficial community add-on)", friendlyName: "Zscaler config/enrichment objects (unofficial)", description: "Unofficial, community-maintained add-on -- periodic snapshots of ZIA/ZPA policy and config objects (URL categories, app segments, segment groups) for enrichment/lookup use, not event logs. Not supported by Zscaler; review its GitHub docs before deploying.", appName: "TA-zscaler-api (unofficial community add-on)", appId: "To be confirmed", baseLink: "To be confirmed", inputs: ["ZIA config objects (URL categories, etc.)", "ZPA config objects (app segments, segment groups)"] },
+  { tag: "TA-Zscaler_CIM (extra sourcetypes)", friendlyName: "Additional sourcetypes shipped in the TA (outside ZIA/ZPA onboarding scope)", description: "Sourcetypes confirmed present in the real TA-Zscaler_CIM v4.1.5 package that fall outside this reference's original ZIA/ZPA onboarding scope -- SaaS Security/CASB, Workload Segmentation, Deception, DLP Incident Reports, Posture Control, and the separate Cloud & Branch Connector 'NSS for Workloads' feeds. Listed here for completeness since they ship in the same add-on; see the CIM Coverage tab's 'TA Extra Sourcetypes' notes for detail. Uses a distinct group tag (with the real technical package/app ID -- TA-Zscaler_CIM, Splunkbase app 3865 -- still shown as the app identity) purely to keep this Coverage table's columns separate from the ZIA/ZPA group above.", appName: "Zscaler Technical Add-on for Splunk", appId: "3865", baseLink: "https://splunkbase.splunk.com/app/3865", inputs: ["ZIA SaaS Security (CASB) API scanning feed", "Zscaler Workload Segmentation", "Zscaler Deception (formerly Smokescreen)", "DLP Incident Reports", "Zscaler Posture Control alerts (from S3)", "Cloud & Branch Connector — NSS for Workloads: DNS", "Cloud & Branch Connector — NSS for Workloads: Control Plane change events", "Cloud & Branch Connector — NSS for Workloads: DHCP session events", "Cloud & Branch Connector — NSS for Workloads: session events", "Cloud & Branch Connector — NSS for Workloads: metrics", "Cloud & Branch Connector — NSS for Workloads: firewall"] }
 ];
 const zscalerInputCoverageColumnDetails = {
-  "Web / Proxy logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "All web/HTTP(S) traffic processed by the ZIA proxy — URL, user, category, action, bytes.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-web", configurationSettings: "ZIA Admin Portal > Administration > Nanolog Streaming Service:\n• NSS Server (VM) provisioned and paired to a ZIA Public Service Edge\n• NSS Feed: type=Web; SIEM IP/FQDN + port (SC4S host:514 by default); TCP or SSL/TLS transport\n• Feed output format: default or custom %s{field} template; escape character; duplicate-log/rate-limit option\n• Filters: log type, user/dept/location, action (optional)\nCloud NSS alternative: destination = Splunk HEC URL; HEC token; JSON output; batch interval\nSplunk/SC4S side: listener on 514/tcp (or HEC port 8088); sourcetype override to zscalernss-web; index=netproxy" },
-  "Firewall logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Non-web traffic (any port/protocol) processed by the ZIA cloud firewall — src/dst IP, port, protocol, rule.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-fw", configurationSettings: "Same NSS Server/VM as Web feed, separate NSS Feed object:\n• NSS Feed: type=Firewall; SIEM IP/FQDN + port; TCP/SSL transport\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=fw before the newline so SC4S auto-detects the sourcetype\n• Filters: aggregate vs. session logs, action (allow/block), IPS/threat-only\nSplunk/SC4S side: sourcetype override zscalernss-fw; index=netfw" },
-  "DNS logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "DNS queries/responses routed through Zscaler — queried domain, resolved IP, policy action.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-dns", configurationSettings: "• NSS Feed: type=DNS; SIEM IP/FQDN + port; TCP/SSL transport\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=dns before the newline for SC4S auto-detection\n• Filters: request vs. response logs, category\nSplunk/SC4S side: sourcetype override zscalernss-dns; index=netdns" },
-  "Tunnel logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "GRE/IPSec tunnel lifecycle events between customer edge and Zscaler — up/down, aggregate traffic stats.", collectionMethod: "NSS feed (syslog→SC4S)", sourcetype: "zscalernss-tunnel", configurationSettings: "• NSS Feed: type=Tunnel; SIEM IP/FQDN + port; TCP/SSL transport\n• No Cloud NSS/HEC option in most deployments — syslog only\nSplunk/SC4S side: sourcetype override zscalernss-tunnel; index=netops" },
-  "System alerts (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Operational/system alerts from the ZIA cloud platform itself (service issues), not user traffic.", collectionMethod: "NSS feed (syslog→SC4S)", sourcetype: "zscalernss-alerts", configurationSettings: "• NSS Feed: type=Alert (built on the Web NSS format); SIEM IP/FQDN + port\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=alerts before the newline for SC4S auto-detection\nSplunk/SC4S side: sourcetype override zscalernss-alerts; index=main" },
-  "Admin Audit logs (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Administrative activity in the ZIA Admin Portal — who changed what policy/config, and when.", collectionMethod: "REST API poll (modular input)", sourcetype: "zscalerapi-zia-audit", configurationSettings: "• API credentials: OAuth2 client via ZIdentity (Client ID, Client Secret, Vanity/Customer Domain) on newer tenants, or legacy ZIA API Key + Admin Username + Password on tenants not yet migrated\n• Base/cloud URL for the ZIA tenant (e.g. https://admin.<cloud>.zscaler.net or the ZIdentity token endpoint)\n• Splunk TA input: polling interval, checkpoint (last record id/timestamp), proxy settings if egress is restricted\n• TLS certificate validation for outbound HTTPS calls" },
-  "Sandbox detail reports (ZIA) [Zscaler Technical Add-on for Splunk]": { description: "Full post-detonation malware analysis for files flagged by ZIA Sandbox — behavior, verdict, hashes.", collectionMethod: "REST API poll (modular input)", sourcetype: "zscalerapi-zia-sandbox", configurationSettings: "• Same API credential set as Admin Audit (OAuth2/ZIdentity or legacy API Key + Username + Password)\n• Sandbox Report API is called per file hash after a sandbox verdict fires — mind published request-rate quotas\n• Splunk TA input: polling interval; report detail level (summary vs. full)" },
-  "App access logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Every application access attempt through ZPA — user, app segment, connector used, session outcome/timings. (Zscaler calls this the “User Activity” log.)", collectionMethod: "LSS — JSON stream over TLS, pushed from ZPA to a log receiver", sourcetype: "zscalerlss-zpa-app", configurationSettings: "ZPA Admin Portal > Configuration & Control > Log Streaming Service > Add Log Receiver:\n• App Connector Group(s) in scope\n• Log Type = User Activity\n• Session/Policy filter (optional)\n• TLS certificate for the receiver; destination host:port (Splunk-side listener or SC4S)\n• Output format = JSON" },
-  "Authentication logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "User authentication/session status for ZPA — IdP used, SAML attributes, posture check results, session state. (Zscaler calls this the “User Status” log.)", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-auth", configurationSettings: "Same LSS Log Receiver mechanism as App Access, with:\n• Log Type = User Status\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
-  "App Connector logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Health/status of ZPA App Connectors — CPU/memory, interface stats, session state, connectivity to Service Edge.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-connector", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = App Connector Status\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
-  "Browser Access logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Access to internal apps via ZPA's clientless Browser Access feature — CORS/connection timing detail.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-bba", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = Browser Access\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
-  "Web Inspection / AppProtection logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Inline threat-inspection results for private app traffic (ZPA AppProtection) — detected attacks/signatures.", collectionMethod: "LSS — JSON stream over TLS (where available) or embedded in User Activity logs", sourcetype: "zscalerlss-zpa-web-inspection", configurationSettings: "• Requires AppProtection enabled on the relevant Access Policy / app segments\n• LSS Log Receiver (if your ZPA tenant exposes it as a distinct Log Type) with same TLS/host:port/JSON settings\nNOTE: not independently documented as a distinct LSS log type in current public Zscaler/vendor field references — verify in your own ZPA Admin Portal's Log Streaming Service > Log Type list before building this input." },
-  "Admin Audit logs (ZPA) [Zscaler Technical Add-on for Splunk]": { description: "Administrative activity in the ZPA Admin Portal — object created/changed/deleted, old/new values, admin session.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-audit", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = Audit\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "Web / Proxy logs (ZIA) [TA-Zscaler_CIM]": { description: "All web/HTTP(S) traffic processed by the ZIA proxy — URL, user, category, action, bytes.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-web", configurationSettings: "ZIA Admin Portal > Administration > Nanolog Streaming Service:\n• NSS Server (VM) provisioned and paired to a ZIA Public Service Edge\n• NSS Feed: type=Web; SIEM IP/FQDN + port (SC4S host:514 by default); TCP or SSL/TLS transport\n• Feed output format: default or custom %s{field} template; escape character; duplicate-log/rate-limit option\n• Filters: log type, user/dept/location, action (optional)\nCloud NSS alternative: destination = Splunk HEC URL; HEC token; JSON output; batch interval\nSplunk/SC4S side: listener on 514/tcp (or HEC port 8088); sourcetype override to zscalernss-web; index=netproxy" },
+  "Firewall logs (ZIA) [TA-Zscaler_CIM]": { description: "Non-web traffic (any port/protocol) processed by the ZIA cloud firewall — src/dst IP, port, protocol, rule.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-fw", configurationSettings: "Same NSS Server/VM as Web feed, separate NSS Feed object:\n• NSS Feed: type=Firewall; SIEM IP/FQDN + port; TCP/SSL transport\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=fw before the newline so SC4S auto-detects the sourcetype\n• Filters: aggregate vs. session logs, action (allow/block), IPS/threat-only\nSplunk/SC4S side: sourcetype override zscalernss-fw; index=netfw" },
+  "DNS logs (ZIA) [TA-Zscaler_CIM]": { description: "DNS queries/responses routed through Zscaler — queried domain, resolved IP, policy action.", collectionMethod: "NSS feed (syslog→SC4S) or Cloud NSS (HTTPS push→Splunk HEC)", sourcetype: "zscalernss-dns", configurationSettings: "• NSS Feed: type=DNS; SIEM IP/FQDN + port; TCP/SSL transport\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=dns before the newline for SC4S auto-detection\n• Filters: request vs. response logs, category\nSplunk/SC4S side: sourcetype override zscalernss-dns; index=netdns" },
+  "Tunnel logs (ZIA) [TA-Zscaler_CIM]": { description: "GRE/IPSec tunnel lifecycle events between customer edge and Zscaler — up/down, aggregate traffic stats.", collectionMethod: "NSS feed (syslog→SC4S)", sourcetype: "zscalernss-tunnel", configurationSettings: "• NSS Feed: type=Tunnel; SIEM IP/FQDN + port; TCP/SSL transport\n• No Cloud NSS/HEC option in most deployments — syslog only\nSplunk/SC4S side: sourcetype override zscalernss-tunnel; index=netops" },
+  "System alerts (ZIA) [TA-Zscaler_CIM]": { description: "Operational/system alerts from the ZIA cloud platform itself (service issues), not user traffic.", collectionMethod: "NSS feed (syslog→SC4S)", sourcetype: "zscalernss-alerts", configurationSettings: "• NSS Feed: type=Alert (built on the Web NSS format); SIEM IP/FQDN + port\n• Custom feed format must append \\tvendor=Zscaler\\tproduct=alerts before the newline for SC4S auto-detection\nSplunk/SC4S side: sourcetype override zscalernss-alerts; index=main" },
+  "Admin Audit logs (ZIA) [TA-Zscaler_CIM]": { description: "Administrative activity in the ZIA Admin Portal — who changed what policy/config, and when.", collectionMethod: "REST API poll (modular input)", sourcetype: "zscalerapi-zia-audit", configurationSettings: "• API credentials: OAuth2 client via ZIdentity (Client ID, Client Secret, Vanity/Customer Domain) on newer tenants, or legacy ZIA API Key + Admin Username + Password on tenants not yet migrated\n• Base/cloud URL for the ZIA tenant (e.g. https://admin.<cloud>.zscaler.net or the ZIdentity token endpoint)\n• Splunk TA input: polling interval, checkpoint (last record id/timestamp), proxy settings if egress is restricted\n• TLS certificate validation for outbound HTTPS calls" },
+  "Sandbox detail reports (ZIA) [TA-Zscaler_CIM]": { description: "Full post-detonation malware analysis for files flagged by ZIA Sandbox — behavior, verdict, hashes.", collectionMethod: "REST API poll (modular input)", sourcetype: "zscalerapi-zia-sandbox", configurationSettings: "• Same API credential set as Admin Audit (OAuth2/ZIdentity or legacy API Key + Username + Password)\n• Sandbox Report API is called per file hash after a sandbox verdict fires — mind published request-rate quotas\n• Splunk TA input: polling interval; report detail level (summary vs. full)" },
+  "App access logs (ZPA) [TA-Zscaler_CIM]": { description: "Every application access attempt through ZPA — user, app segment, connector used, session outcome/timings. (Zscaler calls this the “User Activity” log.)", collectionMethod: "LSS — JSON stream over TLS, pushed from ZPA to a log receiver", sourcetype: "zscalerlss-zpa-app", configurationSettings: "ZPA Admin Portal > Configuration & Control > Log Streaming Service > Add Log Receiver:\n• App Connector Group(s) in scope\n• Log Type = User Activity\n• Session/Policy filter (optional)\n• TLS certificate for the receiver; destination host:port (Splunk-side listener or SC4S)\n• Output format = JSON" },
+  "Authentication logs (ZPA) [TA-Zscaler_CIM]": { description: "User authentication/session status for ZPA — IdP used, SAML attributes, posture check results, session state. (Zscaler calls this the “User Status” log.)", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-auth", configurationSettings: "Same LSS Log Receiver mechanism as App Access, with:\n• Log Type = User Status\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "App Connector logs (ZPA) [TA-Zscaler_CIM]": { description: "Health/status of ZPA App Connectors — CPU/memory, interface stats, session state, connectivity to Service Edge.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-connector", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = App Connector Status\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "Browser Access logs (ZPA) [TA-Zscaler_CIM]": { description: "Access to internal apps via ZPA's clientless Browser Access feature — CORS/connection timing detail.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-bba", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = Browser Access\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
+  "Web Inspection / AppProtection logs (ZPA) [TA-Zscaler_CIM]": { description: "Inline threat-inspection results for private app traffic (ZPA AppProtection) — detected attacks/signatures.", collectionMethod: "LSS — JSON stream over TLS (where available) or embedded in User Activity logs", sourcetype: "zscalerlss-zpa-web-inspection", configurationSettings: "• Requires AppProtection enabled on the relevant Access Policy / app segments\n• LSS Log Receiver (if your ZPA tenant exposes it as a distinct Log Type) with same TLS/host:port/JSON settings\nNOTE: not independently documented as a distinct LSS log type in current public Zscaler/vendor field references — verify in your own ZPA Admin Portal's Log Streaming Service > Log Type list before building this input." },
+  "Admin Audit logs (ZPA) [TA-Zscaler_CIM]": { description: "Administrative activity in the ZPA Admin Portal — object created/changed/deleted, old/new values, admin session.", collectionMethod: "LSS — JSON stream over TLS", sourcetype: "zscalerlss-zpa-audit", configurationSettings: "Same LSS Log Receiver mechanism, with:\n• Log Type = Audit\n• App Connector Group scope, TLS cert, destination host:port, JSON format" },
   "ZIA config objects (URL categories, etc.) [TA-zscaler-api (unofficial community add-on)]": { description: "Enrichment/lookup data, NOT event logs — periodic snapshot of ZIA policy/config objects (e.g. URL category tables) used to enrich other events.", collectionMethod: "REST API poll (modular input)", sourcetype: "n/a (lookup / KV store, not a log sourcetype)", configurationSettings: "• API credentials: ZIA OAuth2/ZIdentity client or legacy API key\n• Polling interval for each config object type\n• Unofficial add-on — not supported by Zscaler; review its GitHub docs before deploying" },
-  "ZPA config objects (app segments, segment groups) [TA-zscaler-api (unofficial community add-on)]": { description: "Enrichment/lookup data, NOT event logs — periodic snapshot of ZPA app segment/segment group definitions.", collectionMethod: "REST API poll (modular input)", sourcetype: "n/a (lookup / KV store, not a log sourcetype)", configurationSettings: "• API credentials: ZPA OAuth2/ZIdentity client or legacy API key + secret\n• Polling interval for each config object type\n• Unofficial add-on — not supported by Zscaler; review its GitHub docs before deploying" }
+  "ZPA config objects (app segments, segment groups) [TA-zscaler-api (unofficial community add-on)]": { description: "Enrichment/lookup data, NOT event logs — periodic snapshot of ZPA app segment/segment group definitions.", collectionMethod: "REST API poll (modular input)", sourcetype: "n/a (lookup / KV store, not a log sourcetype)", configurationSettings: "• API credentials: ZPA OAuth2/ZIdentity client or legacy API key + secret\n• Polling interval for each config object type\n• Unofficial add-on — not supported by Zscaler; review its GitHub docs before deploying" },
+  "ZIA SaaS Security (CASB) API scanning feed [TA-Zscaler_CIM (extra sourcetypes)]": { description: "Present in the TA's props.conf for line-breaking only; no field extraction or CIM tagging. Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "REST API poll (modular input)", sourcetype: "zscalernss-casb", configurationSettings: "To be confirmed — not covered by this reference; verify against your own ZIA Admin Portal / TA setup." },
+  "Zscaler Workload Segmentation [TA-Zscaler_CIM (extra sourcetypes)]": { description: "JSON ingestion only in this TA version, no CIM wiring. Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "To be confirmed", sourcetype: "zscalerapi-zws", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Zscaler Workload Segmentation / TA setup." },
+  "Zscaler Deception (formerly Smokescreen) [TA-Zscaler_CIM (extra sourcetypes)]": { description: "JSON ingestion only in this TA version, no CIM wiring. Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "To be confirmed", sourcetype: "zscalersmokescreen-events / zscalersmokescreen-audit", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Zscaler Deception / TA setup." },
+  "DLP Incident Reports [TA-Zscaler_CIM (extra sourcetypes)]": { description: "Referenced by the TA's own z-incident macro, but not CIM-tagged. Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "To be confirmed", sourcetype: "zscaler-dlpir", configurationSettings: "To be confirmed — not covered by this reference; verify against your own DLP Incident Receiver / TA setup." },
+  "Zscaler Posture Control alerts (from S3) [TA-Zscaler_CIM (extra sourcetypes)]": { description: "JSON ingestion only in this TA version, no CIM wiring. Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "S3 poll", sourcetype: "zscaler-posturecontrol-alerts", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Posture Control / S3 / TA setup." },
+  "Cloud & Branch Connector — NSS for Workloads: DNS [TA-Zscaler_CIM (extra sourcetypes)]": { description: "A second, separate DNS feed from the Branch/Cloud Connector product line, distinct from ZIA's zscalernss-dns. Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "NSS feed", sourcetype: "zscalernss-workload-dns", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Cloud & Branch Connector / NSS for Workloads / TA setup." },
+  "Cloud & Branch Connector — NSS for Workloads: Control Plane change events [TA-Zscaler_CIM (extra sourcetypes)]": { description: "Filtered on event.event_name=\"Control Plane\". Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "NSS feed", sourcetype: "zscalernss-workload-events (Control Plane subset)", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Cloud & Branch Connector / NSS for Workloads / TA setup." },
+  "Cloud & Branch Connector — NSS for Workloads: DHCP session events [TA-Zscaler_CIM (extra sourcetypes)]": { description: "Filtered on event.event_name=\"DHCP Lease Commit\". Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "NSS feed", sourcetype: "zscalernss-workload-events (DHCP subset)", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Cloud & Branch Connector / NSS for Workloads / TA setup." },
+  "Cloud & Branch Connector — NSS for Workloads: session events [TA-Zscaler_CIM (extra sourcetypes)]": { description: "Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "NSS feed", sourcetype: "zscalernss-workload-session", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Cloud & Branch Connector / NSS for Workloads / TA setup." },
+  "Cloud & Branch Connector — NSS for Workloads: metrics [TA-Zscaler_CIM (extra sourcetypes)]": { description: "Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "NSS feed", sourcetype: "zscalernss-workload-metrics", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Cloud & Branch Connector / NSS for Workloads / TA setup." },
+  "Cloud & Branch Connector — NSS for Workloads: firewall [TA-Zscaler_CIM (extra sourcetypes)]": { description: "Ingestion parsing only in this TA version; no field extraction/tags found despite the sourcetype existing. Outside this reference's ZIA/ZPA onboarding scope -- listed for completeness since it ships in the same add-on.", collectionMethod: "NSS feed", sourcetype: "zscalernss-workload-fw", configurationSettings: "To be confirmed — not covered by this reference; verify against your own Cloud & Branch Connector / NSS for Workloads / TA setup." }
 };
 const zscalerInputCoverageInputColumns = zscalerInputCoverageGroups.flatMap(group =>
   group.inputs.map(label => {
@@ -34787,12 +35016,12 @@ renderAwsSchemaAll();
 const ZSCALER_SCHEMA_PAGE_SIZE = 150;
 let zscalerSchemaState = { query: "", sourcetype: "all", category: "all", visibleLimit: ZSCALER_SCHEMA_PAGE_SIZE };
 const ZSCALER_SCHEMA_SOURCE_REF = {
-  "zscalernss-web": "Zscaler Help Portal — NSS Feed Output Format: Web Logs (official %s{field} tokens; some low-signal duplicate/rarely-used fields grouped for readability).",
-  "zscalernss-fw": "Elastic ‘Zscaler ZIA’ integration reference (field names as documented there — official Zscaler NSS Firewall format page is JavaScript-rendered and could not be scraped directly; cross-check against your own onboarded data).",
-  "zscalernss-dns": "Elastic ‘Zscaler ZIA’ integration reference (mixes Zscaler's raw NSS token names with Elastic's normalized field names — official Zscaler NSS DNS format page is JavaScript-rendered and could not be scraped directly).",
+  "zscalernss-web": "Zscaler Help Portal — NSS Feed Output Format: Web Logs (official %s{field} tokens; some low-signal duplicate/rarely-used fields grouped for readability). NOTE: the actual Zscaler Technical Add-on for Splunk (confirmed from its real props.conf, v4.1.5) extracts several of these under different internal names, e.g. reqmethod->requestmethod, ua->useragent, urlcat->urlcategory, threatcat->threatcategory, filename stays filename, md5 for file hash. See the CIM Field Mapping tab for the TA's confirmed internal field names.",
+  "zscalernss-fw": "Elastic ‘Zscaler ZIA’ integration reference (field names as documented there — official Zscaler NSS Firewall format page is JavaScript-rendered and could not be scraped directly; cross-check against your own onboarded data). CONFIRMED from the actual TA's props.conf (v4.1.5): csip, csport, cdip, cdport, sdip, sdport, tsip, inbytes, outbytes, proto, locationname, action are the real field names used — see the CIM Field Mapping tab.",
+  "zscalernss-dns": "Elastic ‘Zscaler ZIA’ integration reference (mixes Zscaler's raw NSS token names with Elastic's normalized field names — official Zscaler NSS DNS format page is JavaScript-rendered and could not be scraped directly). CORRECTION — CONFIRMED from the actual TA's props.conf (v4.1.5): the real internal field names are clt_sip, dns_req, dns_reqtype, dns_resp, durationms, srv_dip, srv_dport — quite different from the request.name/response.ip style names below. See the CIM Field Mapping tab for the confirmed names.",
   "zscalernss-tunnel": "Elastic ‘Zscaler ZIA’ integration reference (official Zscaler NSS Tunnel format page is JavaScript-rendered and could not be scraped directly).",
   "zscalernss-alerts": "Elastic ‘Zscaler ZIA’ integration reference. Alerts are built on the Web NSS format, so a superset of Web-log fields can also appear.",
-  "zscalerapi-zia-audit": "Elastic ‘Zscaler ZIA’ integration reference for the Admin Audit API response fields (official Zscaler API reference pages are JavaScript-rendered and could not be scraped directly).",
+  "zscalerapi-zia-audit": "Elastic ‘Zscaler ZIA’ integration reference for the Admin Audit API response fields (official Zscaler API reference pages are JavaScript-rendered and could not be scraped directly). CONFIRMED from the actual TA's props.conf (v4.1.5): raw JSON keys are Title Case with spaces (\"Action\", \"Category\", \"Client IP\", \"Post Action\", \"Pre Action\", \"Resource\", \"Result\", \"Subcategory\", \"Time\", \"User\", \"AA in Cloud\", \"Interface\") and ARE aliased to clean CIM-style names — but see the CIM Coverage tab: despite these clean names, this sourcetype is NOT actually wired into any CIM data model in the shipped tags.conf.",
   "zscalerapi-zia-sandbox": "Elastic ‘Zscaler ZIA’ integration reference for the Sandbox Report API response fields.",
   "zscalerlss-zpa-app": "Elastic ‘Zscaler ZPA’ integration reference — Zscaler calls this the ‘User Activity’ log, LSS port 9018 by default.",
   "zscalerlss-zpa-auth": "Elastic ‘Zscaler ZPA’ integration reference — Zscaler calls this the ‘User Status’ log, LSS port 9019 by default.",
@@ -36706,6 +36935,1058 @@ document.getElementById("zscalerPermissionsTableBody").addEventListener("click",
 document.getElementById("closeZscalerPermissionDetail").addEventListener("click", closeZscalerPermissionDetail);
 zscalerPermissionDetailModal.addEventListener("click", event => { if (event.target === zscalerPermissionDetailModal) closeZscalerPermissionDetail(); });
 document.addEventListener("keydown", event => { if (event.key === "Escape" && zscalerPermissionDetailModal.classList.contains("open")) closeZscalerPermissionDetail(); });
+
+/* ---------- Input Coverage: Zscaler CIM Coverage tab ---------------------------------------------------------
+ * All three datasets below (cim_coverage, cim_field_mapping, ta_extra_sourcetypes) were read directly from the
+ * real TA-Zscaler_CIM v4.1.5 package the user supplied -- specifically its default/eventtypes.conf,
+ * default/tags.conf and default/props.conf -- superseding this reference's earlier inferred/conventional CIM
+ * guesses (which are why several rows below say "CORRECTION" against what the Schema tab's own tooltips used
+ * to claim). Kept as three independent tables/arrays rather than one merged shape, per this app's convention
+ * of not force-fitting differently-shaped datasets into a shared structure. */
+const zscalerCimCoverageData = [
+  { input: "Web / Proxy logs (ZIA)", sourcetype: "zscalernss-web", eventtype: "Zscaler_Proxy_General", cimTags: "communicate, end, network, proxy, session, start, web (performance defined but disabled)", cimDataModels: "Web, Network Traffic, Network Sessions", notes: "CONFIRMED from TA v4.1.5 package. Primary eventtype — fires on every web/proxy event." },
+  { input: "Web log — malware-detected subset", sourcetype: "zscalernss-web (filtered: threatname!=\"None\")", eventtype: "Zscaler_Proxy_Malware", cimTags: "attack, ids, malware", cimDataModels: "Intrusion Detection (IDS), Malware", notes: "CONFIRMED from TA v4.1.5 package. Only fires when a threat name is populated on the event." },
+  { input: "Web log — DLP-flagged subset", sourcetype: "zscalernss-web (filtered: ruletype=\"DLP\")", eventtype: "Zscaler_Proxy_DLP", cimTags: "dlp, incident", cimDataModels: "Data Loss Prevention (DLP), Incident Review", notes: "CONFIRMED from TA v4.1.5 package. Only fires when ruletype=DLP." },
+  { input: "Firewall logs (ZIA)", sourcetype: "zscalernss-fw", eventtype: "Zscaler_CFW", cimTags: "communicate, network", cimDataModels: "Network Traffic", notes: "CONFIRMED from TA v4.1.5 package." },
+  { input: "DNS logs (ZIA)", sourcetype: "zscalernss-dns", eventtype: "Zscaler_DNS", cimTags: "dns, network, resolution", cimDataModels: "Network Resolution (DNS)", notes: "CONFIRMED from TA v4.1.5 package." },
+  { input: "Tunnel logs (ZIA)", sourcetype: "zscalernss-tunnel", eventtype: "— none defined —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "CONFIRMED from TA v4.1.5 package. props.conf only parses the raw event (JSON/TSV pipeline) — no FIELDALIAS, EVAL, eventtype, or tag exists for it." },
+  { input: "System alerts (ZIA)", sourcetype: "zscalernss-alerts", eventtype: "— none defined —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "CONFIRMED from TA v4.1.5 package. props.conf stanza carries only category/description metadata, no field extraction at all." },
+  { input: "Admin Audit logs, REST API (ZIA)", sourcetype: "zscalerapi-zia-audit", eventtype: "Zscaler_Audit (defined, search=this sourcetype)", cimTags: "— none — (no tags.conf stanza for this eventtype)", cimDataModels: "NOT CIM-MAPPED", notes: "CONFIRMED from TA v4.1.5 package. SURPRISE FINDING: props.conf gives this sourcetype clean CIM-style FIELDALIASes (action, category, result, user, src_ip, pre_action, post_action, resource, sub_category, interface, time, cloudname) but none of it is wired into any CIM data model via tags.conf — `| datamodel` searches will NOT surface these events despite the field names looking CIM-ready." },
+  { input: "Admin Audit logs, syslog variant (ZIA) — not previously covered", sourcetype: "zscalernss-audit", eventtype: "— none defined —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "CONFIRMED from TA v4.1.5 package. A second delivery path for ZIA admin-audit data (via NSS/syslog instead of the REST API), aliasing adminid/clientip/subcategory etc. into the same audit-style names — also not tagged into any CIM model. The TA's own z-audit macro treats both sourcetypes as one combined 'audit' source." },
+  { input: "Sandbox detail reports (ZIA)", sourcetype: "zscalerapi-zia-sandbox", eventtype: "Zscaler_Sandbox", cimTags: "ids, attack", cimDataModels: "Intrusion Detection (IDS)", notes: "CONFIRMED from TA v4.1.5 package. CORRECTION from this reference's earlier guess: tagged into IDS, NOT the Malware data model, despite being sandbox/malware-detonation content." },
+  { input: "App access logs (ZPA)", sourcetype: "zscalerlss-zpa-app", eventtype: "Zscaler_ZPA_App", cimTags: "network, session, start, end", cimDataModels: "Network Sessions", notes: "CONFIRMED from TA v4.1.5 package. CORRECTION: this is Network Sessions, not Network Traffic as this reference had guessed earlier." },
+  { input: "Authentication logs (ZPA)", sourcetype: "zscalerlss-zpa-auth", eventtype: "Zscaler_ZPA_Auth", cimTags: "authentication", cimDataModels: "Authentication", notes: "CONFIRMED from TA v4.1.5 package." },
+  { input: "App Connector logs (ZPA)", sourcetype: "zscalerlss-zpa-connector", eventtype: "— none defined —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "CONFIRMED from TA v4.1.5 package. props.conf does alias app/dest/dest_port/src_port fields, but no eventtype or tags.conf entry exists for this sourcetype." },
+  { input: "Browser Access logs (ZPA)", sourcetype: "zscalerlss-zpa-bba", eventtype: "Zscaler_ZPA_BBA (filtered: StatusCode!=0, Method!=PROPFIND)", cimTags: "web", cimDataModels: "Web", notes: "CONFIRMED from TA v4.1.5 package. Health-check/PROPFIND noise is excluded from the eventtype definition itself." },
+  { input: "Web Inspection / AppProtection logs (ZPA)", sourcetype: "zscalerlss-zpa-web-inspection", eventtype: "Zscaler_ZPA_Web_Inspection (filtered: StatusCode!=0)", cimTags: "web", cimDataModels: "Web", notes: "CONFIRMED from TA v4.1.5 package. CORRECTION: this sourcetype and eventtype are real and confirmed — this reference had flagged it as unconfirmed earlier." },
+  { input: "Admin Audit logs (ZPA)", sourcetype: "zscalerlss-zpa-audit", eventtype: "Zscaler_ZPA_Audit", cimTags: "account, audit, change", cimDataModels: "Change (Account Management & Auditing datasets)", notes: "CONFIRMED from TA v4.1.5 package. The one ZIA/ZPA admin-audit sourcetype that IS actually CIM-mapped — unlike ZIA's own admin audit above." },
+  { input: "ZPA Private Service Edge logs — not previously covered", sourcetype: "zscalerlss-zpa-pse", eventtype: "— none defined —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "CONFIRMED from TA v4.1.5 package. Aliases app/dest/dest_port/src_port like the Connector sourcetype; also untagged." },
+  { input: "Legacy combined ZPA eventtype (dead code)", sourcetype: "n/a", eventtype: "Zscaler_ZPA (defined in eventtypes.conf, but commented out)", cimTags: "authentication, communicate, end, network, performance, session, start, vpn — all explicitly set to \"disabled\" in the shipped tags.conf", cimDataModels: "NOT ACTIVE", notes: "CONFIRMED from TA v4.1.5 package. This is the old combined-ZPA eventtype that older Splunk Community threads about this add-on still describe; v4.1.5 has replaced it with the five granular Zscaler_ZPA_* eventtypes listed above." },
+];
+const ZSCALER_CIM_COVERAGE_NOTES = "Source: read directly from the real Zscaler Technical Add-on for Splunk package (Splunkbase app 3865, app ID TA-Zscaler_CIM, version 4.1.5) that the user provided — specifically default/eventtypes.conf, default/tags.conf, and default/props.conf. This supersedes every earlier version of this table, which was built from inferred/conventional mapping and a partial Splunk Community quote because the package itself was not yet available. See the 'TA Extra Sourcetypes' tab for additional sourcetypes found in the package that were outside this reference's original ZIA/ZPA scope (SaaS Security/CASB, Workload Segmentation, Deception, DLP Incident Reports, Posture Control, and the separate Cloud & Branch Connector 'NSS for Workloads' feeds — several of which ARE CIM-tagged).";
+
+const zscalerCimFieldMappingData = [
+  { sourcetype: "zscalernss-web", cimDataModel: "Web / Network Traffic", rawField: "appname", setVia: "FIELDALIAS", cimField: "app" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web / Network Traffic", rawField: "ClientIP", setVia: "FIELDALIAS", cimField: "src", notes: "also aliased to src_ip separately" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Network Traffic", rawField: "ClientIP", setVia: "FIELDALIAS", cimField: "src_ip" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Network Traffic", rawField: "protocol", setVia: "FIELDALIAS", cimField: "transport" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "user", setVia: "FIELDALIAS", cimField: "src_user" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Data Loss Prevention (DLP)", rawField: "dlpengine", setVia: "FIELDALIAS", cimField: "severity", notes: "unusual mapping — a DLP engine NAME populates the CIM 'severity' field, not a true severity level" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Malware / Intrusion Detection (IDS)", rawField: "threatname", setVia: "FIELDALIAS", cimField: "signature", notes: "competes with dlpdictionaries->signature below; last FIELDALIAS evaluated wins" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "contenttype", setVia: "FIELDALIAS", cimField: "http_content_type" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web / Network Traffic", rawField: "hostname", setVia: "FIELDALIAS", cimField: "dest" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "responsesize", setVia: "FIELDALIAS", cimField: "bytes_in" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "requestsize", setVia: "FIELDALIAS", cimField: "bytes_out" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Network Traffic", rawField: "clientpublicIP", setVia: "FIELDALIAS", cimField: "src_translated_ip" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "clienttranstime", setVia: "FIELDALIAS", cimField: "response_time" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "department", setVia: "FIELDALIAS", cimField: "src_user_bunit" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Malware / Intrusion Detection (IDS)", rawField: "dlpdictionaries", setVia: "FIELDALIAS", cimField: "signature", notes: "usually empty (\"None\") for non-DLP events; documented Splunk Community bug where this silently overwrote a populated threatname->signature value in ES notables" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Malware", rawField: "filename", setVia: "FIELDALIAS", cimField: "file_name" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Malware", rawField: "md5", setVia: "FIELDALIAS", cimField: "file_hash" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "refererURL", setVia: "FIELDALIAS", cimField: "http_referrer" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "requestmethod", setVia: "FIELDALIAS", cimField: "http_method" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Network Traffic", rawField: "serverip", setVia: "FIELDALIAS", cimField: "dest_ip" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Malware / IDS / Web", rawField: "threatcategory", setVia: "FIELDALIAS", cimField: "category", notes: "competes with urlcategory->category below" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "transactionsize", setVia: "FIELDALIAS", cimField: "bytes" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "urlcategory", setVia: "FIELDALIAS", cimField: "category", notes: "competes with threatcategory->category above" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "useragent", setVia: "FIELDALIAS", cimField: "http_user_agent" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web / Network Traffic", rawField: "action", setVia: "EVAL (computed/literal — see Notes)", cimField: "action", notes: "EVAL-action = lower(action) — normalizes case only" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Data Loss Prevention (DLP)", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "dlp_type", notes: "EVAL-dlp_type = \"Inline Gateway\" — hardcoded literal for every event" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web / Network Sessions", rawField: "clienttranstime + servertranstime", setVia: "EVAL (computed/literal — see Notes)", cimField: "duration", notes: "computed sum of the two raw timing fields" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web / Network Traffic", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "dvc", notes: "EVAL-dvc = \"Zscaler Cloud Proxy\" — hardcoded literal for every event" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Network Traffic", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "dvc_zone", notes: "EVAL-dvc_zone = \"Cloud Proxy\" — hardcoded literal" },
+  { sourcetype: "zscalernss-web", cimDataModel: "all", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "vendor_product", notes: "EVAL-vendor_product = \"Zscaler_ZIA_Proxy\" — hardcoded literal" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "url", setVia: "native field (not aliased)", cimField: "url", notes: "already extracted directly as 'url' by the JSON/TSV parsing pipeline" },
+  { sourcetype: "zscalernss-web", cimDataModel: "Web", rawField: "— not aliased —", setVia: "GAP", cimField: "status", notes: "no FIELDALIAS or EVAL maps an HTTP-response-code-style field to CIM's 'status' for this sourcetype" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "csip", setVia: "FIELDALIAS", cimField: "src", notes: "also aliased to src_ip separately" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "csip", setVia: "FIELDALIAS", cimField: "src_ip" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "csport", setVia: "FIELDALIAS", cimField: "src_port", notes: "also aliased to src_translated_port separately" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "csport", setVia: "FIELDALIAS", cimField: "src_translated_port" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "cdip", setVia: "FIELDALIAS", cimField: "dest_ip" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "cdport", setVia: "FIELDALIAS", cimField: "dest_port" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "sdip", setVia: "FIELDALIAS", cimField: "dest", notes: "also aliased to dest_translated_ip separately" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "sdip", setVia: "FIELDALIAS", cimField: "dest_translated_ip" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "sdport", setVia: "FIELDALIAS", cimField: "dest_translated_port" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "tsip", setVia: "FIELDALIAS", cimField: "src_translated_ip" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "inbytes", setVia: "FIELDALIAS", cimField: "bytes_in" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "outbytes", setVia: "FIELDALIAS", cimField: "bytes_out" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "proto", setVia: "FIELDALIAS", cimField: "protocol", notes: "also aliased to transport separately" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "proto", setVia: "FIELDALIAS", cimField: "transport" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "locationname", setVia: "FIELDALIAS", cimField: "src_zone" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "action", setVia: "EVAL (computed/literal — see Notes)", cimField: "action", notes: "EVAL-action = if(like(action,\"%Allow%\"),\"allowed\",action) — normalizes only the allow case" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "app", notes: "EVAL-app = \"Zscaler\" — hardcoded literal, overrides any per-event application name" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "Network Traffic", rawField: "inbytes + outbytes", setVia: "EVAL (computed/literal — see Notes)", cimField: "bytes", notes: "computed sum" },
+  { sourcetype: "zscalernss-fw", cimDataModel: "all", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "vendor_product", notes: "EVAL-vendor_product = \"Zscaler_ZIA_Firewall\" — hardcoded literal" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "clt_sip", setVia: "FIELDALIAS", cimField: "src", notes: "also aliased to src_ip separately" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "clt_sip", setVia: "FIELDALIAS", cimField: "src_ip" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "dns_req", setVia: "FIELDALIAS", cimField: "query" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "dns_reqtype", setVia: "FIELDALIAS", cimField: "record_type" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "dns_resp", setVia: "FIELDALIAS", cimField: "answer" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "durationms", setVia: "FIELDALIAS", cimField: "response_time" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "srv_dip", setVia: "FIELDALIAS", cimField: "dest", notes: "also aliased to dest_ip separately" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "srv_dip", setVia: "FIELDALIAS", cimField: "dest_ip" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "srv_dport", setVia: "FIELDALIAS", cimField: "dest_port" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "all", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "vendor_product", notes: "EVAL-vendor_product = \"Zscaler_ZIA_Firewall\" — NOTE: mislabeled as the Firewall vendor_product on the DNS sourcetype, likely a copy/paste artifact in the TA" },
+  { sourcetype: "zscalernss-dns", cimDataModel: "Network Resolution (DNS)", rawField: "— not aliased —", setVia: "GAP", cimField: "message_type / query_type / query_count / answer_count", notes: "no aliasing found for these formal DM fields — not populated by this TA version" },
+  { sourcetype: "zscalerapi-zia-sandbox", cimDataModel: "Intrusion Detection (IDS)", rawField: "\"Full Details.Summary.Category\"", setVia: "FIELDALIAS", cimField: "category" },
+  { sourcetype: "zscalerapi-zia-sandbox", cimDataModel: "Intrusion Detection (IDS)", rawField: "\"Full Details.Summary.Duration\"", setVia: "FIELDALIAS", cimField: "duration" },
+  { sourcetype: "zscalerapi-zia-sandbox", cimDataModel: "Intrusion Detection (IDS)", rawField: "\"Full Details.Summary.Status\"", setVia: "FIELDALIAS", cimField: "status" },
+  { sourcetype: "zscalerapi-zia-sandbox", cimDataModel: "Intrusion Detection (IDS) / Malware-style", rawField: "\"Full Details.FileProperties.MD5\"", setVia: "FIELDALIAS", cimField: "file_hash", notes: "same source also aliased to a plain 'md5' field" },
+  { sourcetype: "zscalerapi-zia-sandbox", cimDataModel: "Intrusion Detection (IDS)", rawField: "\"Full Details.SystemSummary{}.Signature\"", setVia: "FIELDALIAS", cimField: "signature" },
+  { sourcetype: "zscalerapi-zia-sandbox", cimDataModel: "custom (non-CIM)", rawField: "many: bypass_risk/sig/sig_source, class_category/detect_mal/score/type, country, exploit_*, file_cert*, file_size, file_type, language, net_*, orig_risk, persist_*, sha1/sha2/sha256, sig_source, ssdeep, start_time, stealth_*", setVia: "FIELDALIAS", cimField: "— none (Zscaler/Sandbox-specific field names, not CIM fields)", notes: "the bulk of this sourcetype's ~35 aliases are Zscaler-specific sandbox-report fields with no corresponding CIM field" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged into any CIM model —", rawField: "\"Action\"", setVia: "FIELDALIAS", cimField: "action", notes: "CIM-style name, but this sourcetype has no tags.conf entry" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Category\"", setVia: "FIELDALIAS", cimField: "category" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"AA in Cloud\"", setVia: "FIELDALIAS", cimField: "cloudname" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Interface\"", setVia: "FIELDALIAS", cimField: "interface" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Post Action\"", setVia: "FIELDALIAS", cimField: "post_action" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Pre Action\"", setVia: "FIELDALIAS", cimField: "pre_action" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Resource\"", setVia: "FIELDALIAS", cimField: "resource" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Result\"", setVia: "FIELDALIAS", cimField: "result" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Client IP\"", setVia: "FIELDALIAS", cimField: "src_ip" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Subcategory\"", setVia: "FIELDALIAS", cimField: "sub_category" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"Time\"", setVia: "FIELDALIAS", cimField: "time" },
+  { sourcetype: "zscalerapi-zia-audit", cimDataModel: "— not tagged —", rawField: "\"User\"", setVia: "FIELDALIAS", cimField: "user" },
+  { sourcetype: "zscalernss-audit", cimDataModel: "— not tagged —", rawField: "adminid", setVia: "FIELDALIAS", cimField: "user", notes: "also aliased to a Title-Case \"User\" for display" },
+  { sourcetype: "zscalernss-audit", cimDataModel: "— not tagged —", rawField: "clientip", setVia: "FIELDALIAS", cimField: "src_ip", notes: "also aliased to a Title-Case \"Client IP\" for display" },
+  { sourcetype: "zscalernss-audit", cimDataModel: "— not tagged —", rawField: "action / category / interface / subcategory / time", setVia: "FIELDALIAS", cimField: "Action / Category / Interface / Subcategory / Time", notes: "reverse-direction aliasing — renames its own extracted lowercase fields into Title-Case display names, not into standard CIM fields" },
+  { sourcetype: "zscalernss-audit", cimDataModel: "— not tagged —", rawField: "post_action / pre_action", setVia: "FIELDALIAS", cimField: "postaction / preaction / \"Post Action\" / \"Pre Action\"" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "Application", setVia: "FIELDALIAS", cimField: "app", notes: "OVERRIDDEN: EVAL-app=\"Zscaler\" runs after this alias, so the effective 'app' value is always the literal \"Zscaler\", not the real application name" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "Host", setVia: "FIELDALIAS", cimField: "dest", notes: "also aliased to dest_dns separately" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "Host", setVia: "FIELDALIAS", cimField: "dest_dns" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "ServerIP", setVia: "FIELDALIAS", cimField: "dest_ip" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "ServicePort", setVia: "FIELDALIAS", cimField: "dest_port" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "InternalReason", setVia: "FIELDALIAS", cimField: "signature" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "ClientPublicIP", setVia: "FIELDALIAS", cimField: "src_ip" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "ConnectorPort", setVia: "FIELDALIAS", cimField: "src_port" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "Username", setVia: "FIELDALIAS (ASNEW)", cimField: "user", notes: "ASNEW = only applied if 'user' isn't already set" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "all", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "vendor_product", notes: "EVAL-vendor_product = \"Zscaler_ZPA\"" },
+  { sourcetype: "zscalerlss-zpa-app", cimDataModel: "Network Sessions", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "app", notes: "EVAL-app = \"Zscaler\" — see override note above" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "SessionStatus", setVia: "FIELDALIAS", cimField: "action", notes: "OVERRIDDEN: EVAL-action (next row) recomputes this into success/failure" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "SessionStatus", setVia: "EVAL (computed/literal — see Notes)", cimField: "action", notes: "case(): ZPN_STATUS_AUTHENTICATED/CONNECTED/DISCONNECTED -> \"success\"; ZPN_STATUS_AUTH_FAILED -> \"failure\"; else passes SessionStatus through unchanged" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "Application", setVia: "FIELDALIAS", cimField: "app", notes: "OVERRIDDEN: EVAL-app=\"Zscaler\" runs after this alias — effective value is always literal \"Zscaler\"" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "Host", setVia: "FIELDALIAS", cimField: "dest" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "ServicePort", setVia: "FIELDALIAS", cimField: "dest_port" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "PublicIP", setVia: "FIELDALIAS", cimField: "src" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "ConnectorPort", setVia: "FIELDALIAS", cimField: "src_port" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "Username", setVia: "FIELDALIAS", cimField: "user" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "all", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "vendor_product", notes: "EVAL-vendor_product = \"Zscaler_ZPA\"" },
+  { sourcetype: "zscalerlss-zpa-auth", cimDataModel: "Authentication", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "app", notes: "EVAL-app = \"Zscaler\" — see override note above" },
+  { sourcetype: "zscalerlss-zpa-connector", cimDataModel: "— not tagged —", rawField: "Application", setVia: "FIELDALIAS", cimField: "app", notes: "OVERRIDDEN by EVAL-app=\"Zscaler\" literal; also this sourcetype has no eventtype/tags entry at all" },
+  { sourcetype: "zscalerlss-zpa-connector", cimDataModel: "— not tagged —", rawField: "Host", setVia: "FIELDALIAS", cimField: "dest" },
+  { sourcetype: "zscalerlss-zpa-connector", cimDataModel: "— not tagged —", rawField: "ServicePort", setVia: "FIELDALIAS", cimField: "dest_port" },
+  { sourcetype: "zscalerlss-zpa-connector", cimDataModel: "— not tagged —", rawField: "ConnectorPort", setVia: "FIELDALIAS", cimField: "src_port" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "NameID", setVia: "FIELDALIAS (ASNEW)", cimField: "user" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "StatusCode", setVia: "FIELDALIAS (ASNEW)", cimField: "status" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "ClientPublicIp", setVia: "FIELDALIAS (ASNEW)", cimField: "src" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "UserAgent", setVia: "FIELDALIAS (ASNEW)", cimField: "http_user_agent" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "Method", setVia: "FIELDALIAS (ASNEW)", cimField: "http_method" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "ResponseSize", setVia: "FIELDALIAS (ASNEW)", cimField: "bytes_out" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "RequestSize", setVia: "FIELDALIAS (ASNEW)", cimField: "bytes_in" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "ApplicationPort", setVia: "FIELDALIAS (ASNEW)", cimField: "dest_port" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "URL", setVia: "FIELDALIAS (ASNEW)", cimField: "uri_path" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "Host + URL", setVia: "EVAL (computed/literal — see Notes)", cimField: "url", notes: "computed concatenation" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "Web", rawField: "RequestSize + ResponseSize", setVia: "EVAL (computed/literal — see Notes)", cimField: "bytes", notes: "computed sum" },
+  { sourcetype: "zscalerlss-zpa-bba", cimDataModel: "all", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "app / vendor_product", notes: "EVAL-app=\"Zscaler\"; EVAL-vendor_product=\"Zscaler_ZPA\"" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "ClientPublicIp", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "src", notes: "aliased twice — once in a combined multi-value FIELDALIAS, once individually" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "Destination", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "dest" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "Domain", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "url_domain" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "Method", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "http_method" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "StatusCode", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "status" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "URL", setVia: "FIELDALIAS (ASNEW)", cimField: "uri_query", notes: "from the combined multi-value alias" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "URL", setVia: "FIELDALIAS (ASNEW)", cimField: "uri_path", notes: "from a SEPARATE individual alias — same source field mapped to two different CIM fields" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "UserAgent", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "http_user_agent" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "UserID", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "user" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "Host + URL", setVia: "EVAL (computed/literal — see Notes)", cimField: "url", notes: "computed concatenation" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "ResponseHdrSize + ResponseBodySize", setVia: "EVAL (computed/literal — see Notes)", cimField: "bytes_out", notes: "computed sum" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "RequestHdrSize + RequestBodySize", setVia: "EVAL (computed/literal — see Notes)", cimField: "bytes_in", notes: "computed sum" },
+  { sourcetype: "zscalerlss-zpa-web-inspection", cimDataModel: "Web", rawField: "Request+ResponseHdr/BodySize (all four)", setVia: "EVAL (computed/literal — see Notes)", cimField: "bytes", notes: "computed sum of all four size fields" },
+  { sourcetype: "zscalerlss-zpa-audit", cimDataModel: "Change (Account Mgmt & Auditing)", rawField: "AuditOperationType", setVia: "FIELDALIAS", cimField: "change_type" },
+  { sourcetype: "zscalerlss-zpa-audit", cimDataModel: "Change", rawField: "User", setVia: "FIELDALIAS (ASNEW, x2)", cimField: "user", notes: "also aliased to src_user separately" },
+  { sourcetype: "zscalerlss-zpa-audit", cimDataModel: "Change", rawField: "User", setVia: "FIELDALIAS (ASNEW)", cimField: "src_user" },
+  { sourcetype: "zscalerlss-zpa-audit", cimDataModel: "Change", rawField: "ObjectID", setVia: "FIELDALIAS (ASNEW)", cimField: "object_id" },
+  { sourcetype: "zscalerlss-zpa-audit", cimDataModel: "Change", rawField: "ObjectType", setVia: "FIELDALIAS (ASNEW)", cimField: "object_category" },
+  { sourcetype: "zscalerlss-zpa-audit", cimDataModel: "Change", rawField: "AuditOperationType", setVia: "EVAL (computed/literal — see Notes)", cimField: "action", notes: "case(): Create->created, Delete->deleted, \"Sign Out\"->logoff, Update->updated, \"Account Locked\"->lockout, \"Account Unlocked\"->unlocked; else passes AuditOperationType through" },
+  { sourcetype: "zscalerlss-zpa-audit", cimDataModel: "all", rawField: "(literal)", setVia: "EVAL (computed/literal — see Notes)", cimField: "vendor_product", notes: "EVAL-vendor_product = \"Zscaler_ZPA\"" },
+  { sourcetype: "zscalerlss-zpa-pse", cimDataModel: "— not tagged —", rawField: "Application", setVia: "FIELDALIAS", cimField: "app", notes: "OVERRIDDEN by EVAL-app=\"Zscaler\" literal; no eventtype/tags entry exists for this sourcetype" },
+  { sourcetype: "zscalerlss-zpa-pse", cimDataModel: "— not tagged —", rawField: "Host", setVia: "FIELDALIAS", cimField: "dest" },
+  { sourcetype: "zscalerlss-zpa-pse", cimDataModel: "— not tagged —", rawField: "ServicePort", setVia: "FIELDALIAS", cimField: "dest_port" },
+  { sourcetype: "zscalerlss-zpa-pse", cimDataModel: "— not tagged —", rawField: "ConnectorPort", setVia: "FIELDALIAS", cimField: "src_port" },
+];
+const ZSCALER_CIM_FIELD_MAPPING_NOTES = "Source: every row above is read directly from the real Zscaler Technical Add-on for Splunk package (Splunkbase app 3865, app ID TA-Zscaler_CIM, version 4.1.5) that the user provided — specifically its default/props.conf FIELDALIAS and EVAL stanzas. This is the exact shipped configuration, not an inferred or conventional mapping, and it supersedes every earlier version of this table. A few things worth internalizing: (1) EVAL directives run after FIELDALIAS and win when both target the same field name — several 'app' fields across ZPA sourcetypes are FIELDALIASed from a real value and then immediately overwritten by a hardcoded EVAL-app=\"Zscaler\" literal, so 'app' is not useful for distinguishing ZPA applications in this TA version; (2) some CIM fields (category, signature) receive two competing FIELDALIAS sources on the same sourcetype (zscalernss-web's threatcategory/urlcategory and threatname/dlpdictionaries) — whichever stanza Splunk evaluates last for a given event wins, which is the root cause of a documented Splunk Community bug; (3) rows marked '— not tagged —' have real, working field aliases but are NOT wired into any CIM data model in this package version, so they will not appear in `| datamodel` searches no matter how CIM-like their field names look. If you're on a different TA version, diff your own props.conf/eventtypes.conf/tags.conf against this table before trusting it verbatim.";
+
+const zscalerTaExtraSourcetypesData = [
+  { sourcetype: "zscalernss-casb", productFeed: "ZIA SaaS Security (CASB) API scanning feed", eventtype: "— none —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "Present in props.conf for line-breaking only; no field extraction or tagging." },
+  { sourcetype: "zscalerapi-zws", productFeed: "Zscaler Workload Segmentation", eventtype: "— none —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "JSON ingestion only, no CIM wiring." },
+  { sourcetype: "zscalersmokescreen-events / zscalersmokescreen-audit", productFeed: "Zscaler Deception (formerly Smokescreen)", eventtype: "— none —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "JSON ingestion only, no CIM wiring." },
+  { sourcetype: "zscaler-dlpir", productFeed: "DLP Incident Reports", eventtype: "— none —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "Referenced by the TA's own z-incident macro, but not CIM-tagged." },
+  { sourcetype: "zscaler-posturecontrol-alerts", productFeed: "Zscaler Posture Control alerts (from S3)", eventtype: "— none —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "JSON ingestion only, no CIM wiring." },
+  { sourcetype: "zscalernss-workload-dns", productFeed: "Cloud & Branch Connector — NSS for Workloads", eventtype: "zscaler-workload-dns", cimTags: "dns", cimDataModels: "Network Resolution (DNS)", notes: "A second, separate DNS feed from the Branch/Cloud Connector product line, distinct from ZIA's zscalernss-dns." },
+  { sourcetype: "zscalernss-workload-events (Control Plane subset)", productFeed: "Cloud & Branch Connector — NSS for Workloads", eventtype: "zscaler-workload-control-plane-change", cimTags: "change", cimDataModels: "Change", notes: "Filtered on event.event_name=\"Control Plane\"." },
+  { sourcetype: "zscalernss-workload-events (DHCP subset)", productFeed: "Cloud & Branch Connector — NSS for Workloads", eventtype: "zscaler-workload-dhcp-session", cimTags: "network, session", cimDataModels: "Network Sessions", notes: "Filtered on event.event_name=\"DHCP Lease Commit\"." },
+  { sourcetype: "zscalernss-workload-session", productFeed: "Cloud & Branch Connector — NSS for Workloads", eventtype: "zscaler-workload-session", cimTags: "network, session", cimDataModels: "Network Sessions" },
+  { sourcetype: "zscalernss-workload-metrics", productFeed: "Cloud & Branch Connector — NSS for Workloads", eventtype: "zscaler-workload-metrics", cimTags: "performance, inventory", cimDataModels: "Performance, Inventory" },
+  { sourcetype: "zscalernss-workload-fw", productFeed: "Cloud & Branch Connector — NSS for Workloads", eventtype: "— none —", cimTags: "— none —", cimDataModels: "NOT CIM-MAPPED", notes: "Ingestion parsing only in this TA version; no field extraction/tags found despite the sourcetype existing." },
+];
+const ZSCALER_TA_EXTRA_SOURCETYPES_NOTES = "These sourcetypes were found in the real TA-Zscaler_CIM v4.1.5 package but fall outside this reference's original ZIA/ZPA onboarding scope (Overview, Field Schema, and main CIM tabs). Listed here for completeness since they ship in the same add-on. The 'NSS for Workloads' rows belong to Zscaler's Cloud & Branch Connector product, a different feed from the ZIA/ZPA logs covered elsewhere in this reference.";
+
+let zscalerCimCoverageState = { query: "" };
+function zscalerCimCoverageFilteredRows() {
+  const q = zscalerCimCoverageState.query.trim().toLowerCase();
+  if (!q) return zscalerCimCoverageData;
+  return zscalerCimCoverageData.filter(r =>
+    `${r.input} ${r.sourcetype} ${r.eventtype} ${r.cimTags} ${r.cimDataModels} ${r.notes || ""}`.toLowerCase().includes(q));
+}
+function renderZscalerCimCoverageTable() {
+  const rows = zscalerCimCoverageFilteredRows();
+  const body = document.getElementById("zscalerCimCoverageBody");
+  const countEl = document.getElementById("zscalerCimCoverageResultCount");
+  if (countEl) countEl.textContent = `${rows.length.toLocaleString()} of ${zscalerCimCoverageData.length.toLocaleString()} eventtypes`;
+  if (!body) return;
+  body.innerHTML = rows.length ? rows.map(r => `<tr>
+    <td>${escapeHtml(r.input)}</td>
+    <td><code>${escapeHtml(r.sourcetype)}</code></td>
+    <td>${escapeHtml(r.eventtype)}</td>
+    <td>${escapeHtml(r.cimTags)}</td>
+    <td>${escapeHtml(r.cimDataModels)}</td>
+    <td>${escapeHtml(r.notes || "")}</td>
+  </tr>`).join("") : `<tr><td colspan="6" class="se-empty">No matching rows.</td></tr>`;
+}
+function exportZscalerCimCoverageCsv(event) {
+  const rows = zscalerCimCoverageFilteredRows();
+  const lines = [["Input", "Sourcetype", "Eventtype", "CIM tags", "CIM data model(s)", "Notes"].map(csvValue).join(",")];
+  rows.forEach(r => lines.push([r.input, r.sourcetype, r.eventtype, r.cimTags, r.cimDataModels, r.notes || ""].map(csvValue).join(",")));
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Zscaler-CIM-Coverage.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  const btn = event && event.currentTarget;
+  if (btn) {
+    const original = btn.textContent;
+    btn.textContent = "Exported";
+    setTimeout(() => { btn.textContent = original; }, 1400);
+  }
+}
+document.getElementById("zscalerCimCoverageSearchBox").addEventListener("input", e => { zscalerCimCoverageState.query = e.target.value; renderZscalerCimCoverageTable(); });
+document.getElementById("zscalerCimCoverageExportBtn").addEventListener("click", exportZscalerCimCoverageCsv);
+document.getElementById("zscalerCimCoverageNote").textContent = ZSCALER_CIM_COVERAGE_NOTES;
+renderZscalerCimCoverageTable();
+
+let zscalerCimFieldMappingState = { query: "", sourcetype: "" };
+function zscalerCimFieldMappingFilteredRows() {
+  const q = zscalerCimFieldMappingState.query.trim().toLowerCase();
+  return zscalerCimFieldMappingData.filter(r => {
+    if (zscalerCimFieldMappingState.sourcetype && r.sourcetype !== zscalerCimFieldMappingState.sourcetype) return false;
+    if (!q) return true;
+    return `${r.sourcetype} ${r.cimDataModel} ${r.rawField} ${r.setVia} ${r.cimField} ${r.notes || ""}`.toLowerCase().includes(q);
+  });
+}
+function renderZscalerCimFieldMappingTable() {
+  const rows = zscalerCimFieldMappingFilteredRows();
+  const body = document.getElementById("zscalerCimFieldMappingBody");
+  const countEl = document.getElementById("zscalerCimFieldMappingResultCount");
+  if (countEl) countEl.textContent = `${rows.length.toLocaleString()} of ${zscalerCimFieldMappingData.length.toLocaleString()} field mappings`;
+  if (!body) return;
+  body.innerHTML = rows.length ? rows.map(r => `<tr>
+    <td><code>${escapeHtml(r.sourcetype)}</code></td>
+    <td>${escapeHtml(r.cimDataModel)}</td>
+    <td><code>${escapeHtml(r.rawField)}</code></td>
+    <td>${escapeHtml(r.setVia)}</td>
+    <td><code>${escapeHtml(r.cimField)}</code></td>
+    <td>${escapeHtml(r.notes || "")}</td>
+  </tr>`).join("") : `<tr><td colspan="6" class="se-empty">No matching rows.</td></tr>`;
+}
+function exportZscalerCimFieldMappingCsv(event) {
+  const rows = zscalerCimFieldMappingFilteredRows();
+  const lines = [["Sourcetype", "CIM data model", "Raw field", "Set via", "CIM field", "Notes"].map(csvValue).join(",")];
+  rows.forEach(r => lines.push([r.sourcetype, r.cimDataModel, r.rawField, r.setVia, r.cimField, r.notes || ""].map(csvValue).join(",")));
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Zscaler-CIM-Field-Mapping.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  const btn = event && event.currentTarget;
+  if (btn) {
+    const original = btn.textContent;
+    btn.textContent = "Exported";
+    setTimeout(() => { btn.textContent = original; }, 1400);
+  }
+}
+const zscalerCimFieldMappingSourcetypeFilterEl = document.getElementById("zscalerCimFieldMappingSourcetypeFilter");
+if (zscalerCimFieldMappingSourcetypeFilterEl) {
+  [...new Set(zscalerCimFieldMappingData.map(r => r.sourcetype))].forEach(st => {
+    const opt = document.createElement("option");
+    opt.value = st;
+    opt.textContent = st;
+    zscalerCimFieldMappingSourcetypeFilterEl.appendChild(opt);
+  });
+  zscalerCimFieldMappingSourcetypeFilterEl.addEventListener("change", e => { zscalerCimFieldMappingState.sourcetype = e.target.value; renderZscalerCimFieldMappingTable(); });
+}
+document.getElementById("zscalerCimFieldMappingSearchBox").addEventListener("input", e => { zscalerCimFieldMappingState.query = e.target.value; renderZscalerCimFieldMappingTable(); });
+document.getElementById("zscalerCimFieldMappingExportBtn").addEventListener("click", exportZscalerCimFieldMappingCsv);
+document.getElementById("zscalerCimFieldMappingNote").textContent = ZSCALER_CIM_FIELD_MAPPING_NOTES;
+renderZscalerCimFieldMappingTable();
+
+function renderZscalerTaExtraSourcetypesTable() {
+  const body = document.getElementById("zscalerTaExtraSourcetypesBody");
+  if (!body) return;
+  body.innerHTML = zscalerTaExtraSourcetypesData.map(r => `<tr>
+    <td><code>${escapeHtml(r.sourcetype)}</code></td>
+    <td>${escapeHtml(r.productFeed)}</td>
+    <td>${escapeHtml(r.eventtype)}</td>
+    <td>${escapeHtml(r.cimTags)}</td>
+    <td>${escapeHtml(r.cimDataModels)}</td>
+    <td>${escapeHtml(r.notes || "")}</td>
+  </tr>`).join("");
+}
+document.getElementById("zscalerTaExtraSourcetypesNote").textContent = ZSCALER_TA_EXTRA_SOURCETYPES_NOTES;
+renderZscalerTaExtraSourcetypesTable();
+
+const fortinetSchemaData = [
+  { sourcetype: "fortigate_traffic", field: "(literal)", setVia: "EVAL", cimField: "vendor", description: "Hardcoded literal identifying the log vendor." },
+  { sourcetype: "fortigate_traffic", field: "(literal)", setVia: "EVAL", cimField: "product", description: "Hardcoded literal identifying the CIM product category." },
+  { sourcetype: "fortigate_traffic", field: "(literal)", setVia: "EVAL", cimField: "vendor_product", description: "Hardcoded literal combining vendor and product for the CIM vendor_product field." },
+  { sourcetype: "fortigate_traffic", field: "logver", setVia: "EVAL", cimField: "product_version", description: "FortiOS log-format version number reported in the raw event (logver); falls back to the literal \"50\" for older logs that omit it." },
+  { sourcetype: "fortigate_traffic", field: "devid", setVia: "EVAL", cimField: "devname", description: "Device hostname (devname) if the log carries one, else falls back to the FortiGate's serial number/device ID (devid)." },
+  { sourcetype: "fortigate_traffic", field: "devname", setVia: "FIELDALIAS", cimField: "dvc", description: "Reuses the resolved device name/ID (see devname above) as the CIM device field." },
+  { sourcetype: "fortigate_traffic", field: "eventtype", setVia: "FIELDALIAS", cimField: "vendor_eventtype", description: "FortiOS's own internal eventtype value (only populated on some traffic subtypes, e.g. \"analytics\"); preserved verbatim as the vendor-specific eventtype." },
+  { sourcetype: "fortigate_traffic", field: "transport", setVia: "FIELDALIAS", cimField: "vendor_transport", description: "Raw FortiOS transport string, preserved verbatim before the TA's own protocol lookup runs." },
+  { sourcetype: "fortigate_traffic", field: "action", setVia: "FIELDALIAS", cimField: "vendor_action", description: "Raw FortiOS action string (e.g. accept, close, timeout, deny) before the TA's own action-normalization lookup runs." },
+  { sourcetype: "fortigate_traffic", field: "status", setVia: "FIELDALIAS", cimField: "vendor_status", description: "Raw FortiOS status string (e.g. success, failure), preserved verbatim before CIM's own status is derived." },
+  { sourcetype: "fortigate_traffic", field: "utmaction / vendor_action / vendor_status", setVia: "EVAL", cimField: "ftnt_action", description: "Internal working field the TA computes (from utmaction if present, else the raw action/status) before running it through the action lookup below; not itself a value present in the raw log." },
+  { sourcetype: "fortigate_traffic", field: "lookup: ftnt_action_lookup", setVia: "LOOKUP", description: "Looks the TA's own ftnt_action working field up against the shipped ftnt_action_info.csv (22 rows) to normalize FortiOS's many action synonyms (pass/passthrough/log-only -> allowed, block/blocked -> blocked, monitored/analytics -> deferred, etc.) into CIM's action vocabulary." },
+  { sourcetype: "fortigate_traffic", field: "sentdelta", setVia: "EVAL", cimField: "sentbyte", description: "Bytes sent this reporting interval (sentdelta) for long-running sessions with periodic traffic logging, else the session-total sentbyte." },
+  { sourcetype: "fortigate_traffic", field: "rcvddelta", setVia: "EVAL", cimField: "rcvdbyte", description: "Bytes received this reporting interval (rcvddelta) for long-running sessions with periodic traffic logging, else the session-total rcvdbyte." },
+  { sourcetype: "fortigate_traffic", field: "rcvddelta / sentdelta / rcvdbyte / sentbyte", setVia: "EVAL", cimField: "bytes", description: "Sum of the interval (or session-total) sent and received byte counts." },
+  { sourcetype: "fortigate_traffic", field: "rcvddelta / rcvdbyte", setVia: "EVAL", cimField: "bytes_in", description: "Same expression as the rcvdbyte field above, reused directly as CIM's bytes_in." },
+  { sourcetype: "fortigate_traffic", field: "sentdelta / sentbyte", setVia: "EVAL", cimField: "bytes_out", description: "Same expression as the sentbyte field above, reused directly as CIM's bytes_out." },
+  { sourcetype: "fortigate_traffic", field: "dstip", setVia: "FIELDALIAS", cimField: "dest_ip", description: "Destination IP address of the traffic session." },
+  { sourcetype: "fortigate_traffic", field: "dstip", setVia: "FIELDALIAS", cimField: "dest", description: "Same destination IP, reused as CIM's generic dest field." },
+  { sourcetype: "fortigate_traffic", field: "dstintf", setVia: "FIELDALIAS", cimField: "dest_interface", description: "FortiGate network interface/zone name the session exited through." },
+  { sourcetype: "fortigate_traffic", field: "dstmac", setVia: "FIELDALIAS", cimField: "dest_mac", description: "Destination MAC address, when known (typically only for on-segment/switched traffic)." },
+  { sourcetype: "fortigate_traffic", field: "dstport", setVia: "FIELDALIAS", cimField: "dest_port", description: "Destination TCP/UDP port." },
+  { sourcetype: "fortigate_traffic", field: "tranip", setVia: "FIELDALIAS", cimField: "dest_translated_ip", description: "NAT-translated destination IP address (DNAT), when the policy performs destination NAT." },
+  { sourcetype: "fortigate_traffic", field: "tranport", setVia: "FIELDALIAS", cimField: "dest_translated_port", description: "NAT-translated destination port, when the policy performs destination NAT." },
+  { sourcetype: "fortigate_traffic", field: "rcvdpkt / sentpkt", setVia: "EVAL", cimField: "packets", description: "Sum of received and sent packet counts for the session." },
+  { sourcetype: "fortigate_traffic", field: "srcip / dstip", setVia: "EVAL", cimField: "protocol_version", description: "Derives ipv4/ipv6 by checking whether srcip (or failing that dstip) contains a colon; not a field FortiOS reports directly." },
+  { sourcetype: "fortigate_traffic", field: "radioband", setVia: "EVAL", cimField: "wifi", description: "For wireless traffic, takes the first band listed in radioband (e.g. \"2.4GHz,5GHz\" -> \"2.4GHz\"); null for wired traffic." },
+  { sourcetype: "fortigate_traffic", field: "vendor_action", setVia: "EVAL", cimField: "tcp_flag", description: "Normalizes FortiOS's server-rst/client-rst action values into the literal \"RST\", otherwise passes through the raw tcp_flag field unchanged." },
+  { sourcetype: "fortigate_traffic", field: "rcvdpkt", setVia: "FIELDALIAS", cimField: "packets_in", description: "Packets received during the session." },
+  { sourcetype: "fortigate_traffic", field: "sentpkt", setVia: "FIELDALIAS", cimField: "packets_out", description: "Packets sent during the session." },
+  { sourcetype: "fortigate_traffic", field: "poluuid", setVia: "FIELDALIAS", cimField: "rule", description: "Firewall policy's UUID, used as the CIM rule identifier (a stable ID across policy renumbering)." },
+  { sourcetype: "fortigate_traffic", field: "policyid", setVia: "FIELDALIAS", cimField: "rule_id", description: "Numeric firewall policy ID that matched this session (can change if policies are reordered/renumbered)." },
+  { sourcetype: "fortigate_traffic", field: "sessionid", setVia: "FIELDALIAS", cimField: "session_id", description: "FortiGate's internal session ID/serial number." },
+  { sourcetype: "fortigate_traffic", field: "srcip", setVia: "FIELDALIAS", cimField: "src", description: "Source IP address of the traffic session." },
+  { sourcetype: "fortigate_traffic", field: "srcintf", setVia: "FIELDALIAS", cimField: "src_interface", description: "FortiGate network interface/zone the session entered through." },
+  { sourcetype: "fortigate_traffic", field: "srcip", setVia: "FIELDALIAS", cimField: "src_ip", description: "Same source IP, also aliased to CIM's more specific src_ip field." },
+  { sourcetype: "fortigate_traffic", field: "srcmac", setVia: "FIELDALIAS", cimField: "src_mac", description: "Source MAC address, when known (typically only for on-segment/switched traffic)." },
+  { sourcetype: "fortigate_traffic", field: "srcport", setVia: "FIELDALIAS", cimField: "src_port", description: "Source TCP/UDP port." },
+  { sourcetype: "fortigate_traffic", field: "transip", setVia: "FIELDALIAS", cimField: "src_translated_ip", description: "NAT-translated source IP address (SNAT), when the policy performs source NAT." },
+  { sourcetype: "fortigate_traffic", field: "srcport", setVia: "FIELDALIAS", cimField: "src_translated_port", description: "Reuses the raw srcport as CIM's src_translated_port -- FortiOS's traffic log does not report a distinct post-SNAT source port separately from srcport in this TA version." },
+  { sourcetype: "fortigate_traffic", field: "srcintfrole", setVia: "FIELDALIAS", cimField: "src_zone", description: "FortiGate's configured role/zone for the source interface (e.g. lan, wan, dmz)." },
+  { sourcetype: "fortigate_traffic", field: "dstintfrole", setVia: "FIELDALIAS", cimField: "dest_zone", description: "FortiGate's configured role/zone for the destination interface." },
+  { sourcetype: "fortigate_traffic", field: "srcssid / dstssid", setVia: "EVAL", cimField: "ssid", description: "Wireless SSID associated with the session, from whichever side (source or destination) reports one." },
+  { sourcetype: "fortigate_traffic", field: "lookup: ftnt_protocol_lookup", setVia: "LOOKUP", description: "Looks the raw IANA protocol number (proto) up against the TA's own ftnt_protocol_info.csv (137 rows covering every IANA-assigned protocol number) to produce both a transport (tcp/udp/icmp/...) and a protocol string." },
+  { sourcetype: "fortigate_traffic", field: "service / transport", setVia: "EVAL", cimField: "app", description: "FortiOS's own application-identification result (app) if App Control identified one, else falls back to the configured service object name, else the transport protocol." },
+  { sourcetype: "fortigate_traffic", field: "unauthuser", setVia: "EVAL", cimField: "user", description: "Authenticated username if the session was tied to one, else the unauthenticated-user placeholder FortiOS reports for policies with user identification but no successful auth." },
+  { sourcetype: "fortigate_utm", field: "dstip", setVia: "FIELDALIAS", cimField: "dest_ip", description: "Destination IP address, also aliased to CIM's more specific dest_ip field." },
+  { sourcetype: "fortigate_utm", field: "eventtype", setVia: "FIELDALIAS", cimField: "vendor_eventtype", description: "FortiOS's own internal eventtype value (e.g. signature, ftgd_allow, analytics, urlfilter); preserved verbatim as the vendor-specific eventtype." },
+  { sourcetype: "fortigate_utm", field: "url", setVia: "FIELDALIAS", cimField: "vendor_url", description: "Raw FortiOS url field, preserved verbatim before the TA computes CIM's own url/file_path/url_domain below." },
+  { sourcetype: "fortigate_utm", field: "action", setVia: "FIELDALIAS", cimField: "vendor_action", description: "Raw FortiOS action string (e.g. accept, blocked, passthrough, login, logout, negotiate) before the TA's own action-normalization lookup runs." },
+  { sourcetype: "fortigate_utm", field: "status", setVia: "FIELDALIAS", cimField: "vendor_status", description: "Raw FortiOS status string (e.g. success, failure), preserved verbatim before CIM's own status is derived." },
+  { sourcetype: "fortigate_utm", field: "crlevel / apprisk", setVia: "EVAL", cimField: "severity", description: "Uses whichever severity-style field the specific UTM subtype reports (severity for IPS, crlevel for AV, apprisk for App Control), falling back to the literal \"informational\"." },
+  { sourcetype: "fortigate_utm", field: "(literal)", setVia: "EVAL", cimField: "vendor", description: "Hardcoded literal identifying the log vendor." },
+  { sourcetype: "fortigate_utm", field: "(literal)", setVia: "EVAL", cimField: "product", description: "Hardcoded literal identifying the CIM product category." },
+  { sourcetype: "fortigate_utm", field: "(literal)", setVia: "EVAL", cimField: "vendor_product", description: "Hardcoded literal combining vendor and product for the CIM vendor_product field." },
+  { sourcetype: "fortigate_utm", field: "(literal)", setVia: "EVAL", cimField: "ids_type", description: "Hardcoded literal identifying the CIM Intrusion Detection ids_type as a network-based sensor (FortiGate is inline, not host-based)." },
+  { sourcetype: "fortigate_utm", field: "logver", setVia: "EVAL", cimField: "product_version", description: "FortiOS log-format version number reported in the raw event (logver); falls back to the literal \"50\" for older logs that omit it." },
+  { sourcetype: "fortigate_utm", field: "devid", setVia: "EVAL", cimField: "devname", description: "Device hostname (devname) if the log carries one, else falls back to the FortiGate's serial number/device ID (devid)." },
+  { sourcetype: "fortigate_utm", field: "devname", setVia: "FIELDALIAS", cimField: "dvc", description: "Reuses the resolved device name/ID (see devname above) as the CIM device field." },
+  { sourcetype: "fortigate_utm", field: "vendor_action / vendor_status", setVia: "EVAL", cimField: "ftnt_action", description: "Internal working field combining the raw action/status before the action lookup below; not itself a value present in the raw log." },
+  { sourcetype: "fortigate_utm", field: "srcip / dstip", setVia: "EVAL", cimField: "protocol_version", description: "Derives ipv4/ipv6 by checking whether srcip (or failing that dstip) contains a colon; not a field FortiOS reports directly." },
+  { sourcetype: "fortigate_utm", field: "lookup: ftnt_action_lookup", setVia: "LOOKUP", description: "Looks the TA's own ftnt_action working field up against the shipped ftnt_action_info.csv (22 rows) to normalize FortiOS's many action synonyms (pass/passthrough/log-only -> allowed, block/blocked -> blocked, monitored/analytics -> deferred, etc.) into CIM's action vocabulary." },
+  { sourcetype: "fortigate_utm", field: "policyid", setVia: "FIELDALIAS", cimField: "rule_id", description: "Numeric firewall policy ID that matched this session." },
+  { sourcetype: "fortigate_utm", field: "srcintfrole", setVia: "FIELDALIAS", cimField: "src_zone", description: "FortiGate's configured role/zone for the source interface." },
+  { sourcetype: "fortigate_utm", field: "dstintfrole", setVia: "FIELDALIAS", cimField: "dest_zone", description: "FortiGate's configured role/zone for the destination interface." },
+  { sourcetype: "fortigate_utm", field: "dstintf", setVia: "FIELDALIAS", cimField: "dest_interface", description: "FortiGate network interface/zone the session exited through." },
+  { sourcetype: "fortigate_utm", field: "dstip", setVia: "FIELDALIAS", cimField: "dest", description: "Destination IP address." },
+  { sourcetype: "fortigate_utm", field: "dstport", setVia: "FIELDALIAS", cimField: "dest_port", description: "Destination TCP/UDP port." },
+  { sourcetype: "fortigate_utm", field: "dstmac", setVia: "FIELDALIAS", cimField: "dst_mac", description: "Destination MAC address, when known." },
+  { sourcetype: "fortigate_utm", field: "sessionid", setVia: "FIELDALIAS", cimField: "session_id", description: "FortiGate's internal session ID/serial number." },
+  { sourcetype: "fortigate_utm", field: "srcintf", setVia: "FIELDALIAS", cimField: "src_interface", description: "FortiGate network interface/zone the session entered through." },
+  { sourcetype: "fortigate_utm", field: "srcip", setVia: "FIELDALIAS", cimField: "src_ip", description: "Source IP address." },
+  { sourcetype: "fortigate_utm", field: "srcip", setVia: "FIELDALIAS", cimField: "src", description: "Same source IP, also aliased to CIM's generic src field." },
+  { sourcetype: "fortigate_utm", field: "srcport", setVia: "FIELDALIAS", cimField: "src_port", description: "Source TCP/UDP port." },
+  { sourcetype: "fortigate_utm", field: "srcmac", setVia: "FIELDALIAS", cimField: "src_mac", description: "Source MAC address, when known." },
+  { sourcetype: "fortigate_utm", field: "rcvdbyte / sentbyte", setVia: "EVAL", cimField: "bytes", description: "Sum of received and sent byte counts for the session." },
+  { sourcetype: "fortigate_utm", field: "rcvdbyte", setVia: "FIELDALIAS", cimField: "bytes_in", description: "Bytes received during the session." },
+  { sourcetype: "fortigate_utm", field: "sentbyte", setVia: "FIELDALIAS", cimField: "bytes_out", description: "Bytes sent during the session." },
+  { sourcetype: "fortigate_utm", field: "referralurl", setVia: "FIELDALIAS", cimField: "http_referrer", description: "HTTP Referer header captured by the Web Filter/proxy engine." },
+  { sourcetype: "fortigate_utm", field: "agent", setVia: "FIELDALIAS", cimField: "http_user_agent", description: "HTTP User-Agent header of the client, when captured by the UTM engine." },
+  { sourcetype: "fortigate_utm", field: "hostname", setVia: "FIELDALIAS", cimField: "site", description: "HTTP Host header / requested hostname." },
+  { sourcetype: "fortigate_utm", field: "analyticscksum", setVia: "FIELDALIAS", cimField: "file_hash", description: "Checksum FortiSandbox/analytics computed for a submitted or scanned file." },
+  { sourcetype: "fortigate_utm", field: "filename", setVia: "EVAL", cimField: "file_name", description: "Filename reported by the AV/File Filter engine." },
+  { sourcetype: "fortigate_utm", field: "vendor_url / hostname", setVia: "EVAL", cimField: "file_path", description: "Rebuilds a full file path by prefixing the hostname when the raw url is a relative path (starts with /)." },
+  { sourcetype: "fortigate_utm", field: "vendor_url / hostname", setVia: "EVAL", cimField: "url", description: "Rebuilds a full URL by prefixing the hostname when the raw url is a relative path; otherwise passes the raw url through unchanged." },
+  { sourcetype: "fortigate_utm", field: "hostname", setVia: "EVAL", cimField: "url_domain", description: "Uses the hostname field as the URL's domain unless it is itself a bare IPv4 address, in which case it's left blank." },
+  { sourcetype: "fortigate_utm", field: "attack / attackname / virus", setVia: "EVAL", cimField: "signature", description: "Threat/signature name from whichever UTM engine populated the event (IPS's attack/attackname, or AV's virus)." },
+  { sourcetype: "fortigate_utm", field: "attackid", setVia: "FIELDALIAS", cimField: "signature_id", description: "IPS signature ID (Fortinet's numeric VID, e.g. 17570)." },
+  { sourcetype: "fortigate_utm", field: "attack / attackname / virus / catdesc / dtype / subtype, ...", setVia: "EVAL", cimField: "category", description: "Falls back through several subtype-specific classification fields (IPS attack name, AV virus name, Web Filter category description, App Control category, or DLP dtype) to find the best available category label." },
+  { sourcetype: "fortigate_utm", field: "service", setVia: "EVAL", cimField: "app", description: "FortiOS's own application-identification result (app) if App Control identified one, else the configured service object name." },
+  { sourcetype: "fortigate_utm", field: "lookup: ftnt_protocol_lookup", setVia: "LOOKUP", description: "Looks the raw IANA protocol number (proto) up against the TA's own ftnt_protocol_info.csv (137 rows) to produce both a transport and protocol string." },
+  { sourcetype: "fortigate_anomaly", field: "eventtype", setVia: "FIELDALIAS", cimField: "vendor_eventtype", description: "FortiOS's own internal eventtype value; preserved verbatim as the vendor-specific eventtype." },
+  { sourcetype: "fortigate_anomaly", field: "url", setVia: "FIELDALIAS", cimField: "vendor_url", description: "Raw FortiOS url field, preserved verbatim before the TA computes CIM's own url below." },
+  { sourcetype: "fortigate_anomaly", field: "action", setVia: "FIELDALIAS", cimField: "vendor_action", description: "Raw FortiOS action string (e.g. accept, blocked, passthrough, login, logout, negotiate) before the TA's own action-normalization lookup runs." },
+  { sourcetype: "fortigate_anomaly", field: "status", setVia: "FIELDALIAS", cimField: "vendor_status", description: "Raw FortiOS status string (e.g. success, failure), preserved verbatim before CIM's own status is derived." },
+  { sourcetype: "fortigate_anomaly", field: "crlevel / apprisk", setVia: "EVAL", cimField: "severity", description: "Uses whichever severity-style field the anomaly event reports, falling back to the literal \"informational\"." },
+  { sourcetype: "fortigate_anomaly", field: "(literal)", setVia: "EVAL", cimField: "vendor", description: "Hardcoded literal identifying the log vendor." },
+  { sourcetype: "fortigate_anomaly", field: "(literal)", setVia: "EVAL", cimField: "product", description: "Hardcoded literal identifying the CIM product category." },
+  { sourcetype: "fortigate_anomaly", field: "(literal)", setVia: "EVAL", cimField: "ids_type", description: "Hardcoded literal identifying the CIM Intrusion Detection ids_type as a network-based sensor." },
+  { sourcetype: "fortigate_anomaly", field: "logver", setVia: "EVAL", cimField: "product_version", description: "FortiOS log-format version number reported in the raw event (logver); falls back to the literal \"50\" for older logs that omit it." },
+  { sourcetype: "fortigate_anomaly", field: "devid", setVia: "EVAL", cimField: "devname", description: "Device hostname (devname) if the log carries one, else falls back to the FortiGate's serial number/device ID (devid)." },
+  { sourcetype: "fortigate_anomaly", field: "devname", setVia: "FIELDALIAS", cimField: "dvc", description: "Reuses the resolved device name/ID (see devname above) as the CIM device field." },
+  { sourcetype: "fortigate_anomaly", field: "vendor_action / vendor_status", setVia: "EVAL", cimField: "ftnt_action", description: "Internal working field combining the raw action/status before the action lookup below; not itself a value present in the raw log." },
+  { sourcetype: "fortigate_anomaly", field: "lookup: ftnt_action_lookup", setVia: "LOOKUP", description: "Looks the TA's own ftnt_action working field up against the shipped ftnt_action_info.csv (22 rows) to normalize FortiOS's many action synonyms (pass/passthrough/log-only -> allowed, block/blocked -> blocked, monitored/analytics -> deferred, etc.) into CIM's action vocabulary." },
+  { sourcetype: "fortigate_anomaly", field: "dstintf", setVia: "FIELDALIAS", cimField: "dest_interface", description: "FortiGate network interface/zone the session exited through." },
+  { sourcetype: "fortigate_anomaly", field: "dstip", setVia: "FIELDALIAS", cimField: "dest", description: "Destination IP address." },
+  { sourcetype: "fortigate_anomaly", field: "dstport", setVia: "FIELDALIAS", cimField: "dest_port", description: "Destination TCP/UDP port." },
+  { sourcetype: "fortigate_anomaly", field: "dstmac", setVia: "FIELDALIAS", cimField: "dst_mac", description: "Destination MAC address, when known." },
+  { sourcetype: "fortigate_anomaly", field: "sessionid", setVia: "FIELDALIAS", cimField: "session_id", description: "FortiGate's internal session ID/serial number." },
+  { sourcetype: "fortigate_anomaly", field: "srcintf", setVia: "FIELDALIAS", cimField: "src_interface", description: "FortiGate network interface/zone the session entered through." },
+  { sourcetype: "fortigate_anomaly", field: "srcip", setVia: "FIELDALIAS", cimField: "src", description: "Source IP address." },
+  { sourcetype: "fortigate_anomaly", field: "srcport", setVia: "FIELDALIAS", cimField: "src_port", description: "Source TCP/UDP port." },
+  { sourcetype: "fortigate_anomaly", field: "srcmac", setVia: "FIELDALIAS", cimField: "src_mac", description: "Source MAC address, when known." },
+  { sourcetype: "fortigate_anomaly", field: "rcvdbyte / sentbyte", setVia: "EVAL", cimField: "bytes", description: "Sum of received and sent byte counts for the session." },
+  { sourcetype: "fortigate_anomaly", field: "rcvdbyte", setVia: "FIELDALIAS", cimField: "bytes_in", description: "Bytes received during the session." },
+  { sourcetype: "fortigate_anomaly", field: "sentbyte", setVia: "FIELDALIAS", cimField: "bytes_out", description: "Bytes sent during the session." },
+  { sourcetype: "fortigate_anomaly", field: "reqtype", setVia: "FIELDALIAS", cimField: "http_method", description: "HTTP request type/method captured by the anomaly-detection engine." },
+  { sourcetype: "fortigate_anomaly", field: "referralurl", setVia: "FIELDALIAS", cimField: "http_referrer", description: "HTTP Referer header, when captured." },
+  { sourcetype: "fortigate_anomaly", field: "vendor_action", setVia: "FIELDALIAS", cimField: "status", description: "Reuses the raw action string directly as CIM's status for this sourcetype (no separate status-normalization logic, unlike fortigate_event)." },
+  { sourcetype: "fortigate_anomaly", field: "agent", setVia: "FIELDALIAS", cimField: "http_user_agent", description: "HTTP User-Agent header of the client, when captured." },
+  { sourcetype: "fortigate_anomaly", field: "hostname", setVia: "FIELDALIAS", cimField: "site", description: "HTTP Host header / requested hostname." },
+  { sourcetype: "fortigate_anomaly", field: "analyticscksum", setVia: "FIELDALIAS", cimField: "file_hash", description: "Checksum FortiSandbox/analytics computed for a submitted or scanned file." },
+  { sourcetype: "fortigate_anomaly", field: "filename", setVia: "FIELDALIAS", cimField: "file_name", description: "Filename reported by the detecting engine." },
+  { sourcetype: "fortigate_anomaly", field: "vendor_url", setVia: "FIELDALIAS", cimField: "file_path", description: "Reuses the raw url field directly as CIM's file_path for this sourcetype." },
+  { sourcetype: "fortigate_anomaly", field: "hostname / vendor_url", setVia: "EVAL", cimField: "url", description: "Rebuilds a full URL by concatenating hostname with the raw url, falling back to the raw url alone if hostname is empty." },
+  { sourcetype: "fortigate_anomaly", field: "attack / attackname / virus", setVia: "EVAL", cimField: "signature", description: "Threat/signature name from whichever field the anomaly event populated." },
+  { sourcetype: "fortigate_anomaly", field: "attack / attackname / virus / catdesc / dtype", setVia: "EVAL", cimField: "category", description: "Falls back through several classification fields to find the best available category label." },
+  { sourcetype: "fortigate_event", field: "(literal)", setVia: "EVAL", cimField: "vendor", description: "Hardcoded literal identifying the log vendor." },
+  { sourcetype: "fortigate_event", field: "(literal)", setVia: "EVAL", cimField: "product", description: "Hardcoded literal identifying the CIM product category." },
+  { sourcetype: "fortigate_event", field: "(literal)", setVia: "EVAL", cimField: "vendor_product", description: "Hardcoded literal combining vendor and product for the CIM vendor_product field." },
+  { sourcetype: "fortigate_event", field: "action", setVia: "FIELDALIAS", cimField: "vendor_action", description: "Raw FortiOS action string (e.g. login, logout, negotiate, tunnel-up, Edit) before the TA's event-action lookup below." },
+  { sourcetype: "fortigate_event", field: "status", setVia: "FIELDALIAS", cimField: "vendor_status", description: "Raw FortiOS status string (e.g. success, failure), preserved verbatim before CIM's own status is derived." },
+  { sourcetype: "fortigate_event", field: "(literal)", setVia: "EVAL", cimField: "vendor_status", description: "Falls back to the literal \"unknown\" when the raw event carries no status field at all -- many system/config event logids never report one." },
+  { sourcetype: "fortigate_event", field: "(literal)", setVia: "EVAL", cimField: "status", description: "Hardcodes \"success\" for a fixed list of ~19 logids that report a real outcome but no explicit status field (mostly config-change and wireless-controller events), else falls back to the raw status field." },
+  { sourcetype: "fortigate_event", field: "url", setVia: "FIELDALIAS", cimField: "vendor_url", description: "Raw FortiOS url field, preserved verbatim (populated on some FortiGuard/system logids)." },
+  { sourcetype: "fortigate_event", field: "eventtype", setVia: "FIELDALIAS", cimField: "vendor_eventtype", description: "FortiOS's own internal eventtype value; preserved verbatim as the vendor-specific eventtype." },
+  { sourcetype: "fortigate_event", field: "mem", setVia: "FIELDALIAS", cimField: "mem_used", description: "Memory utilization percentage from performance-statistics logs." },
+  { sourcetype: "fortigate_event", field: "mem_used", setVia: "EVAL", cimField: "mem_free", description: "Derived free-memory percentage; not a field FortiOS reports directly." },
+  { sourcetype: "fortigate_event", field: "many logid-specific branches (also: action) — see description", setVia: "EVAL", cimField: "log_action", description: "Internal working field mapping a fixed set of config/user-management logids to a CRUD-style verb (read/modified/added/etc.), passing the raw action through unchanged for every other logid; feeds the event-action lookup below." },
+  { sourcetype: "fortigate_event", field: "lookup: ftnt_event_action_lookup", setVia: "LOOKUP", description: "Looks the (subtype, vendor_action-as-log_action, vendor_status) triple up against the TA's own ftnt_event_action_info.csv (52 rows) to produce both a normalized CIM action and a change_type (auth/AAA/etc.) for the huge variety of system/user/wireless/VPN event logids." },
+  { sourcetype: "fortigate_event", field: "lookup: ftnt_severity_lookup", setVia: "LOOKUP", description: "Looks the raw FortiOS log level (emergency/alert/critical/error/warning/notice/information/debug) up against the TA's own ftnt_severity_info.csv (8 rows) to produce a CIM severity string and numeric severity_id." },
+  { sourcetype: "fortigate_event", field: "logver", setVia: "EVAL", cimField: "product_version", description: "FortiOS log-format version number reported in the raw event (logver); falls back to the literal \"50\" for older logs that omit it." },
+  { sourcetype: "fortigate_event", field: "devid", setVia: "EVAL", cimField: "devname", description: "Device hostname (devname) if the log carries one, else falls back to the FortiGate's serial number/device ID (devid)." },
+  { sourcetype: "fortigate_event", field: "devname", setVia: "FIELDALIAS", cimField: "dvc", description: "Reuses the resolved device name/ID (see devname above) as the CIM device field." },
+  { sourcetype: "fortigate_event", field: "user_name / xauthuser", setVia: "EVAL", cimField: "user", description: "Falls back from a previously-resolved user_name field to xauthuser (blanking the literal \"N/A\") -- the TA's own extract_cim_fields_for_user REPORT (a DELIMS-based extraction on the raw user field) is what actually populates user_name in the first place." },
+  { sourcetype: "fortigate_event", field: "xauthuser", setVia: "EVAL", cimField: "user_name", description: "Same expression, aliased onto CIM's user_name as well as src_user/user (both EVAL-user and EVAL-user_name use this identical logic in props.conf)." },
+  { sourcetype: "fortigate_event", field: "cpu", setVia: "FIELDALIAS", cimField: "cpu_load_percent", description: "CPU utilization percentage from performance-statistics logs." },
+  { sourcetype: "fortigate_event", field: "many logid-specific branches (also: cfgobj, poolname, name, field, ...) — see description", setVia: "EVAL", cimField: "object", description: "Identifies the CIM Change object (what was changed) per logid -- config object name (cfgobj), pool name, user name, AP name parsed from msg, or a fixed literal like \"FortiGate\"/\"wireless controller\" -- across roughly 20 distinct system/config/wireless/user logids." },
+  { sourcetype: "fortigate_event", field: "cfgattr / vendor_action / configcountry", setVia: "EVAL", cimField: "object_attrs", description: "Identifies the CIM Change object_attrs (what attribute changed) -- the raw cfgattr diff string when present, else a fixed label per wireless-radio action or AV-database/certificate logid." },
+  { sourcetype: "fortigate_event", field: "many logid-specific branches (also: logdesc) — see description", setVia: "EVAL", cimField: "object_category", description: "Classifies each change into CIM's object_category (user/configuration/file) purely from a fixed logid list; a logid outside all three groups (e.g. wireless client auth) is left uncategorized." },
+  { sourcetype: "fortigate_event", field: "cfortigateid / cfgtid / ap / stamac / logdesc / radioid", setVia: "EVAL", cimField: "object_id", description: "Identifies the CIM Change object_id -- FortiGate cluster ID, the config transaction ID (cfgtid), or the specific AP/client/radio identifier for wireless logids." },
+  { sourcetype: "fortigate_event", field: "cfgpath / logdesc / msg", setVia: "EVAL", cimField: "object_path", description: "Identifies the CIM Change object_path -- the raw cfgpath (e.g. \"user.local\") for config-object logids, or the AP name parsed out of msg for wireless-radio logids." },
+  { sourcetype: "fortigate_event", field: "logdesc", setVia: "EVAL", cimField: "result", description: "Uses the raw result field when present (mostly VPN negotiation logids), else falls back to FortiOS's own human-readable logdesc text." },
+  { sourcetype: "fortigate_event", field: "logdesc", setVia: "EVAL", cimField: "user_type", description: "Classifies the acting user as \"Admin\" for admin login/logout logids, or \"Wireless client\" for wireless client-IP-detected events; unset otherwise." },
+  { sourcetype: "fortigate_event", field: "logdesc", setVia: "EVAL", cimField: "src_user_type", description: "same as user_type above, duplicated onto CIM's src_user_type." },
+  { sourcetype: "fortigate_event", field: "vpntunnel / tunnelid", setVia: "EVAL", cimField: "tunnelname", description: "IPsec tunnel name (vpntunnel) if present, else the numeric SSL-VPN tunnel ID." },
+  { sourcetype: "fortigate_event", field: "srcip / remip / src_ip_from_ui / ip", setVia: "EVAL", cimField: "src", description: "Falls back through srcip (user-auth events), remip (VPN peer address), the src_ip_from_ui REPORT (parsed out of the admin ui=ssh(x.x.x.x)/GUI(x.x.x.x) field), and finally the raw ip field for a fixed set of wireless-controller logids." },
+  { sourcetype: "fortigate_event", field: "srcip / remip / src_ip_from_ui / ip", setVia: "EVAL", cimField: "src_ip", description: "Same fallback logic as src above, aliased onto CIM's more specific src_ip." },
+  { sourcetype: "fortigate_event", field: "dstip / locip / ssid / dvc / ip", setVia: "EVAL", cimField: "dest", description: "Falls back through dstip (blanking the literal \"N/A\"), locip (VPN local IP), ssid, and finally the device itself (dvc) for a very large fixed set of system/config/wireless/VPN logids that have no real destination -- so \"dest\" for those rows is really just identifying the FortiGate itself." },
+  { sourcetype: "fortigate_event", field: "dstip / locip / ip", setVia: "EVAL", cimField: "dest_ip", description: "Same fallback pattern as dest above (dstip, then locip, then the DHCP-ack logid's ip field), aliased to CIM's more specific dest_ip." },
+  { sourcetype: "fortigate_event", field: "many logid-specific branches (also: logdesc, tunneltype, subtype, connection_type) — see description", setVia: "EVAL", cimField: "signature", description: "Populates CIM's signature only for a fixed list of alert/VPN-teardown logids, using FortiOS's own logdesc text (or the VPN tunnel type) as the signature string; unset for ordinary traffic/config events." },
+  { sourcetype: "fortigate_event", field: "mac", setVia: "EVAL", cimField: "dest_mac", description: "Uses the client MAC address reported on DHCP-ack events (logid 0100026001) when dest_mac isn't otherwise set." },
+  { sourcetype: "fortigate_event", field: "(literal)", setVia: "EVAL", cimField: "resource_type", description: "Labels performance-statistics logids as resource_type \"system\"." },
+  { sourcetype: "fortigate_event", field: "portbegin / portend", setVia: "EVAL", cimField: "src_port_range", description: "Builds a \"start-end\" port-range string for the two DHCP scope-exhaustion logids from their raw portbegin/portend fields." },
+  { sourcetype: "fortigate_event", field: "saddr", setVia: "EVAL", cimField: "src_ip_range", description: "Populates the DHCP scope's subnet address only for the scope-exhaustion-warning logid." },
+  { sourcetype: "fortigate_event", field: "saddr", setVia: "EVAL", cimField: "dest_ip_range", description: "same expression, aliased to CIM's dest_ip_range." },
+  { sourcetype: "fortigate_event", field: "msg", setVia: "FIELDALIAS", cimField: "body", description: "FortiOS's free-text message string for the event." },
+  { sourcetype: "fortigate_event", field: "logid", setVia: "FIELDALIAS", cimField: "id", description: "FortiOS's own 10-digit log message ID (e.g. 0100032001), which uniquely identifies the specific log message template." },
+  { sourcetype: "fortigate_event", field: "stamac", setVia: "FIELDALIAS", cimField: "src_mac", description: "Wireless client's MAC address (station MAC) on wireless events." },
+  { sourcetype: "fortigate_event", field: "vap", setVia: "FIELDALIAS", cimField: "src_interface", description: "Virtual access point (SSID interface) the wireless client associated to." },
+  { sourcetype: "fortigate_event", field: "lease", setVia: "FIELDALIAS", cimField: "lease_duration", description: "DHCP lease duration in seconds, on DHCP-ack events." },
+  { sourcetype: "fortigate_event", field: "radioband", setVia: "EVAL", cimField: "wifi", description: "For wireless events, takes the first band listed in radioband; null otherwise." },
+  { sourcetype: "fortigate_event", field: "many logid-specific branches (also: tunneltype, authproto, security) — see description", setVia: "EVAL", cimField: "app", description: "Identifies the CIM app/application involved -- a VPN tunnel-type label for two specific VPN-alert logids, else falls back through authproto/tunneltype/security, else a fixed literal (FortiGuard/FortiCloud/system/FortiOS) for a set of alert and admin-login logids." },
+  { sourcetype: "fortigate_event", field: "security", setVia: "FIELDALIAS", cimField: "authentication_service", description: "Authentication method/service name (e.g. RADIUS, LDAP, local) used for the login, when reported." },
+];
+/* ---------- Input Coverage: Fortinet based inputs ---------------------------------------------------------
+ * Transcribed from the real Fortinet FortiGate Add-on for Splunk package (Splunk_TA_fortinet_fortigate,
+ * Splunkbase app 2846, version 1.6.10) the user provided. This vendor's shape differs structurally from
+ * Microsoft/AWS/Zscaler above: it ships no modular input at all (no inputs.conf.spec exists in the package)
+ * -- FortiGate devices push syslog to a receiver, and the TA's own TRANSFORMS-force_sourcetype_fortigate
+ * stanza reclassifies each raw event (by matching devid="F..." and type="traffic|utm|event|anomaly" in the
+ * raw text) from the generic ingest sourcetype into one of four real sourcetypes. Those four sourcetypes are
+ * therefore modeled as this vendor's "inputs" -- the closest equivalent to a discrete, separately-trackable
+ * input this add-on has. Schema and CIM-field-mapping are combined into ONE table (fortinetSchemaData above)
+ * rather than two separate tabs like Zscaler's: unlike Zscaler's JSON, this TA's props.conf IS its own field
+ * schema (there's no separate prose field-schema document to keep distinct from the CIM crosswalk), so
+ * splitting them would just duplicate the same ~174 rows across two tables for no benefit. */
+const fortinetInputCoverageGroups = [
+  { tag: "Splunk_TA_fortinet_fortigate", friendlyName: "FortiGate physical & virtual appliances", description: "Official Fortinet-published Splunk add-on -- reclassifies inbound FortiGate syslog into 4 real sourcetypes (traffic, UTM, anomaly, event) and maps them into 10 CIM data models. No modular input; FortiGate devices push syslog to a receiver (Splunk Heavy Forwarder or a syslog relay such as SC4S).", appName: "Fortinet Fortigate Add-on for Splunk", appId: "2846", baseLink: "https://splunkbase.splunk.com/app/2846", inputs: ["Traffic log (fortigate_traffic)", "UTM log (fortigate_utm)", "Anomaly log (fortigate_anomaly)", "Event log (fortigate_event)"] }
+];
+const fortinetInputCoverageColumnDetails = {
+  "Traffic log (fortigate_traffic) [Splunk_TA_fortinet_fortigate]": { description: "Every traffic session (allowed or denied) the FortiGate firewall/proxy processes -- src/dst IP, port, protocol, policy, application, bytes/packets. The TA's single largest sourcetype by field count (46 FIELDALIAS/EVAL/LOOKUP directives).", collectionMethod: "Syslog push (native FortiOS format) auto-reclassified from fortigate_log/fgt_log by the TA's own TRANSFORMS-force_sourcetype_fortigate regex.", sourcetype: "fortigate_traffic", configurationSettings: "On FortiGate: Log & Report > Log Settings > enable Traffic Log (all sessions, or at minimum policy-level logging with \"Log Allowed Traffic\"); Log & Report > Log Setting > Remote Logging > add a syslog server pointing at the receiver, format = default (native FortiOS key=value), NOT CEF or RFC5424 (the TA's sourcetype-detection regex expects the raw devid=/type= tokens verbatim).\nOn the receiver (Heavy Forwarder or SC4S): listen for syslog on the configured port, set the generic ingest sourcetype to fortigate_log (or legacy fgt_log) so TRANSFORMS-force_sourcetype_fortigate can reclassify it." },
+  "UTM log (fortigate_utm) [Splunk_TA_fortinet_fortigate]": { description: "Unified Threat Management events -- IPS, Antivirus, Web Filter, Application Control, Anti-Spam, and Network Scan, all sharing one sourcetype and disambiguated by the raw subtype field. 45 FIELDALIAS/EVAL/LOOKUP directives; the largest single source of CIM Malware/IDS/Web/Email field mappings.", collectionMethod: "Syslog push (native FortiOS format) auto-reclassified from fortigate_log/fgt_log by the TA's own TRANSFORMS-force_sourcetype_fortigate regex.", sourcetype: "fortigate_utm", configurationSettings: "On FortiGate: enable the relevant UTM profile(s) (IPS, AntiVirus, Web Filter, Application Control, AntiSpam) on the firewall policies in scope, and enable UTM logging (Log & Report > Log Settings > \"Log all UTM events\" or per-profile logging) so these events are actually generated and sent to the same syslog destination as Traffic logs." },
+  "Anomaly log (fortigate_anomaly) [Splunk_TA_fortinet_fortigate]": { description: "DoS-policy/anomaly-sensor detections (traffic-anomaly and protocol-anomaly events) from the FortiGate's built-in anomaly detection engine. A smaller sibling of the UTM sourcetype (36 directives) with substantially overlapping field names.", collectionMethod: "Syslog push (native FortiOS format) auto-reclassified from fortigate_log/fgt_log by the TA's own TRANSFORMS-force_sourcetype_fortigate regex.", sourcetype: "fortigate_anomaly", configurationSettings: "On FortiGate: configure a DoS policy (Policy & Objects > DoS Policy) with the anomaly thresholds/sensors of interest, and ensure its logging is enabled so anomaly events reach the same syslog destination as the other three sourcetypes." },
+  "Event log (fortigate_event) [Splunk_TA_fortinet_fortigate]": { description: "Everything else FortiOS logs as a system-level event -- admin login/logout, VPN (IPsec/SSL) negotiation and teardown, wireless controller/client activity, DHCP, configuration changes, and performance statistics. The TA's most complex sourcetype (47 directives, most of them large logid-gated case() expressions) and the source of every eventtype under System/VPN/Wireless/Auth in the CIM Coverage tab.", collectionMethod: "Syslog push (native FortiOS format) auto-reclassified from fortigate_log/fgt_log by the TA's own TRANSFORMS-force_sourcetype_fortigate regex.", sourcetype: "fortigate_event", configurationSettings: "On FortiGate: Log & Report > Log Settings > enable Event Logging, and select the specific event sub-categories needed (System, VPN, User, Wireless Activity, etc. -- FortiOS groups these under separate checkboxes) so the relevant subtype=... events reach the same syslog destination as the other three sourcetypes." }
+};
+const fortinetSchemaBySourcetype = (() => {
+  const map = {};
+  fortinetSchemaData.forEach(f => { (map[f.sourcetype] = map[f.sourcetype] || []).push(f); });
+  return map;
+})();
+const fortinetInputCoverageInputColumns = fortinetInputCoverageGroups.flatMap(group =>
+  group.inputs.map(label => {
+    const key = `${label} [${group.tag}]`;
+    const details = fortinetInputCoverageColumnDetails[key] || {};
+    const schemaRows = fortinetSchemaBySourcetype[details.sourcetype] || [];
+    return {
+      key, label, tag: group.tag,
+      appName: group.appName, appId: group.appId, baseLink: group.baseLink,
+      description: details.description || "To be confirmed",
+      sourcetype: details.sourcetype || "To be confirmed",
+      inputCategory: details.inputCategory || "To be confirmed",
+      contentType: details.contentType || "To be confirmed",
+      inputTypeSub: details.inputTypeSub || "To be confirmed",
+      source: details.source || "To be confirmed",
+      collectionMethod: details.collectionMethod || "To be confirmed",
+      configurationSettings: details.configurationSettings || undefined,
+      schema: schemaRows.length ? "See the Schema tab (this sourcetype)" : "To be confirmed",
+      fields: schemaRows.map(f => ({ name: f.cimField || f.field, type: f.setVia, description: f.description }))
+    };
+  })
+);
+const fortinetInputCoverageAccountColumns = ["FortiGate Device ID / Cluster ID"];
+
+function renderFortinetInputsListView() {
+  const container = document.getElementById("fortinetInputsListGroups");
+  if (!container) return;
+  container.innerHTML = fortinetInputCoverageGroups.map(g => {
+    const items = g.inputs.map(label => {
+      const key = `${label} [${g.tag}]`;
+      return `<li><button type="button" class="input-detail-trigger" data-input-key="${escapeHtml(key)}">${escapeHtml(label)}</button></li>`;
+    }).join("");
+    return `<div class="input-coverage-group">
+      <h4>${escapeHtml(g.friendlyName)} <span class="ta-tag">${escapeHtml(g.tag)}</span></h4>
+      <p>${escapeHtml(g.description)}</p>
+      <ul class="input-coverage-list">${items}</ul>
+    </div>`;
+  }).join("");
+  const introEl = document.getElementById("fortinetInputsListIntro");
+  if (introEl) introEl.textContent = `${fortinetInputCoverageInputColumns.length} sourcetypes across ${fortinetInputCoverageGroups.length} Splunk-maintained Fortinet add-on. Select a sourcetype to see its details, including the CIM fields it contributes (see the Schema tab for the full per-field crosswalk).`;
+  const noteEl = document.getElementById("fortinetInputsListNote");
+  if (noteEl) noteEl.textContent = `See the Coverage tab for per-device enablement tracking against these ${fortinetInputCoverageInputColumns.length} sourcetypes, and the Schema tab for the full field-level CIM crosswalk.`;
+  const coverageSubtitleEl = document.getElementById("fortinetCoverageSubtitle");
+  if (coverageSubtitleEl) coverageSubtitleEl.textContent = `Editable per-FortiGate-device enablement tracking against the ${fortinetInputCoverageInputColumns.length} Fortinet sourcetypes listed under Inputs. Edits are saved in this browser automatically.`;
+  const columnNoteEl = document.getElementById("fortinetCoverageColumnNote");
+  if (columnNoteEl) {
+    const totalColumns = fortinetInputCoverageAccountColumns.length + fortinetInputCoverageInputColumns.length;
+    columnNoteEl.innerHTML = `${totalColumns} columns: ${escapeHtml(fortinetInputCoverageAccountColumns[0])} (free text) followed by one Y/N column per sourcetype.`;
+  }
+}
+renderFortinetInputsListView();
+
+document.getElementById("fortinetInputsListGroups").addEventListener("click", event => {
+  const trigger = event.target.closest(".input-detail-trigger");
+  if (!trigger) return;
+  openInputDetail(trigger.dataset.inputKey, trigger);
+});
+
+const fortinetInputCoverageAllColumns = [...fortinetInputCoverageAccountColumns, ...fortinetInputCoverageInputColumns.map(c => c.key)];
+const FORTINET_INPUT_COVERAGE_LS_KEY = "latch_fortinet_input_coverage_v1";
+
+let fortinetInputCoverageRows = [];
+
+function newFortinetInputCoverageRow() {
+  const row = {};
+  fortinetInputCoverageAllColumns.forEach(col => { row[col] = ""; });
+  return row;
+}
+
+function loadFortinetInputCoverageRows() {
+  try {
+    const raw = localStorage.getItem(FORTINET_INPUT_COVERAGE_LS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        fortinetInputCoverageRows = parsed.map(saved => {
+          const row = newFortinetInputCoverageRow();
+          fortinetInputCoverageAllColumns.forEach(col => { if (saved && typeof saved[col] === "string") row[col] = saved[col]; });
+          return row;
+        });
+        return;
+      }
+    }
+  } catch (e) { /* ignore corrupt/unavailable storage */ }
+  fortinetInputCoverageRows = [newFortinetInputCoverageRow()];
+}
+
+function saveFortinetInputCoverageRows() {
+  try { localStorage.setItem(FORTINET_INPUT_COVERAGE_LS_KEY, JSON.stringify(fortinetInputCoverageRows)); } catch (e) { /* ignore quota/unavailable errors */ }
+}
+
+function setFortinetInputCoverageStatus(text) {
+  const el = document.getElementById("fortinetInputCoverageStatus");
+  if (el) el.textContent = text;
+}
+
+const FORTINET_INPUT_COVERAGE_COLLAPSE_LS_KEY = "latch_fortinet_input_coverage_collapsed_v1";
+const fortinetInputCoverageCollapsibleTags = () => fortinetInputCoverageGroups.map(g => g.tag);
+let fortinetInputCoverageCollapsedGroups = new Set(fortinetInputCoverageCollapsibleTags());
+
+function loadFortinetInputCoverageCollapseState() {
+  try {
+    const raw = localStorage.getItem(FORTINET_INPUT_COVERAGE_COLLAPSE_LS_KEY);
+    if (raw !== null) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        const validTags = fortinetInputCoverageCollapsibleTags();
+        fortinetInputCoverageCollapsedGroups = new Set(parsed.filter(tag => validTags.includes(tag)));
+        return;
+      }
+    }
+  } catch (e) { /* ignore corrupt/unavailable storage */ }
+  fortinetInputCoverageCollapsedGroups = new Set(fortinetInputCoverageCollapsibleTags());
+}
+
+function saveFortinetInputCoverageCollapseState() {
+  try { localStorage.setItem(FORTINET_INPUT_COVERAGE_COLLAPSE_LS_KEY, JSON.stringify([...fortinetInputCoverageCollapsedGroups])); } catch (e) { /* ignore */ }
+}
+
+function toggleFortinetInputCoverageGroup(tag) {
+  if (fortinetInputCoverageCollapsedGroups.has(tag)) fortinetInputCoverageCollapsedGroups.delete(tag);
+  else fortinetInputCoverageCollapsedGroups.add(tag);
+  saveFortinetInputCoverageCollapseState();
+  renderFortinetInputCoverageTable();
+}
+
+function renderFortinetInputCoverageTable() {
+  const head = document.getElementById("fortinetInputCoverageTableHead");
+  const body = document.getElementById("fortinetInputCoverageTableBody");
+  if (!head || !body) return;
+
+  const accountHeaderCell = `<th class="ic-tenant-col">${escapeHtml(fortinetInputCoverageAccountColumns[0])}</th>`;
+
+  const groupInputCells = fortinetInputCoverageGroups.map(g => {
+    const collapsed = fortinetInputCoverageCollapsedGroups.has(g.tag);
+    const span = collapsed ? 1 : g.inputs.length;
+    const icon = collapsed ? "&#9656;" : "&#9662;";
+    const label = collapsed ? `${icon} [${escapeHtml(g.tag)}] (${g.inputs.length})` : `${icon} [${escapeHtml(g.tag)}]`;
+    return `<th class="ic-group-toggle" colspan="${span}" data-toggle-group="${escapeHtml(g.tag)}" title="Click to ${collapsed ? "expand" : "collapse"} ${escapeHtml(g.tag)}">${label}</th>`;
+  }).join("");
+  const totalDataColumns = 1 + fortinetInputCoverageGroups.reduce((sum, g) =>
+    sum + (fortinetInputCoverageCollapsedGroups.has(g.tag) ? 1 : g.inputs.length), 0);
+  const colHeaderCells = accountHeaderCell
+    + fortinetInputCoverageGroups.map(g => {
+        if (fortinetInputCoverageCollapsedGroups.has(g.tag)) {
+          return `<th class="ic-group-collapsed-col" data-toggle-group="${escapeHtml(g.tag)}" title="Click to expand ${escapeHtml(g.tag)}">&#9656;</th>`;
+        }
+        return fortinetInputCoverageInputColumns.filter(c => c.tag === g.tag)
+          .map(c => `<th title="${escapeHtml(c.label)}">${escapeHtml(c.label)}</th>`).join("");
+      }).join("")
+    + `<th></th>`;
+  // Account column has no group-level collapse toggle (single column, nothing to collapse), so its cell in
+  // the group-row banner is just a blank spacer matching the Microsoft/AWS table's row-shape.
+  head.innerHTML = `<tr class="ic-group-row"><th></th>${groupInputCells}<th></th></tr>`
+    + `<tr class="ic-col-row">${colHeaderCells}</tr>`;
+
+  if (!fortinetInputCoverageRows.length) {
+    body.innerHTML = `<tr class="ic-empty-row"><td colspan="${totalDataColumns + 1}">No rows yet. Use "+ Add row" or Import CSV to get started.</td></tr>`;
+  } else {
+    body.innerHTML = fortinetInputCoverageRows.map((row, rowIndex) => {
+      const accountCol = fortinetInputCoverageAccountColumns[0];
+      const accountCell = `<td class="ic-tenant-cell"><input class="ic-text-input" type="text" data-row="${rowIndex}" data-col="${escapeHtml(accountCol)}" value="${escapeHtml(row[accountCol] || "")}" placeholder="${escapeHtml(accountCol)}" /></td>`;
+      const groupCells = fortinetInputCoverageGroups.map(g => {
+        const groupCols = fortinetInputCoverageInputColumns.filter(c => c.tag === g.tag);
+        if (fortinetInputCoverageCollapsedGroups.has(g.tag)) {
+          const yesCount = groupCols.filter(c => row[c.key] === "Y").length;
+          const noCount = groupCols.filter(c => row[c.key] === "N").length;
+          const summary = (yesCount || noCount) ? `<span class="ic-count-y">${yesCount}Y</span> &middot; <span class="ic-count-n">${noCount}N</span>` : "&mdash;";
+          return `<td class="ic-group-collapsed-cell" data-toggle-group="${escapeHtml(g.tag)}" title="Click to expand ${escapeHtml(g.tag)} -- ${yesCount} Y, ${noCount} N, ${groupCols.length - yesCount - noCount} unset of ${groupCols.length}">${summary}</td>`;
+        }
+        return groupCols.map(c => {
+          const val = row[c.key] === "Y" || row[c.key] === "N" ? row[c.key] : "";
+          return `<td><select class="ic-yn-select" data-row="${rowIndex}" data-col="${escapeHtml(c.key)}" data-val="${val}">
+            <option value=""${val === "" ? " selected" : ""}>--</option>
+            <option value="Y"${val === "Y" ? " selected" : ""}>Y</option>
+            <option value="N"${val === "N" ? " selected" : ""}>N</option>
+          </select></td>`;
+        }).join("");
+      }).join("");
+      return `<tr>${accountCell}${groupCells}<td><button type="button" class="ic-row-remove" data-remove-row="${rowIndex}" title="Remove row" aria-label="Remove row">&times;</button></td></tr>`;
+    }).join("");
+  }
+  setFortinetInputCoverageStatus(`${fortinetInputCoverageRows.length} row${fortinetInputCoverageRows.length === 1 ? "" : "s"}`);
+}
+
+function exportFortinetInputCoverageCsv(event) {
+  const lines = [
+    fortinetInputCoverageAllColumns.map(csvValue).join(","),
+    ...fortinetInputCoverageRows.map(row => fortinetInputCoverageAllColumns.map(col => csvValue(row[col] || "")).join(","))
+  ];
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Fortinet-Input-Coverage.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  const btn = event && event.currentTarget;
+  if (btn) {
+    const original = btn.textContent;
+    btn.textContent = "Exported";
+    setTimeout(() => { btn.textContent = original; }, 1400);
+  }
+}
+
+function importFortinetInputCoverageCsv(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsedRows;
+    try {
+      parsedRows = parseInputCoverageCsv(String(reader.result || ""));
+    } catch (e) {
+      setFortinetInputCoverageStatus("Import failed: could not parse file as CSV.");
+      return;
+    }
+    if (!parsedRows.length) { setFortinetInputCoverageStatus("Import failed: file is empty."); return; }
+    const header = parsedRows[0].map(h => h.trim());
+    const accountCol = fortinetInputCoverageAccountColumns[0];
+    if (!header.includes(accountCol)) {
+      setFortinetInputCoverageStatus(`Import failed: header row must include a "${accountCol}" column.`);
+      return;
+    }
+    if (fortinetInputCoverageRows.length && !confirm(`This will replace the current ${fortinetInputCoverageRows.length} row(s) with the imported file. Continue?`)) {
+      return;
+    }
+    const colIndex = {};
+    header.forEach((h, i) => { colIndex[h] = i; });
+    const imported = parsedRows.slice(1).map(cells => {
+      const row = newFortinetInputCoverageRow();
+      fortinetInputCoverageAccountColumns.forEach(col => {
+        if (colIndex[col] !== undefined) row[col] = cells[colIndex[col]] || "";
+      });
+      fortinetInputCoverageInputColumns.forEach(c => {
+        if (colIndex[c.key] !== undefined) row[c.key] = normalizeYnValue(cells[colIndex[c.key]]);
+      });
+      return row;
+    });
+    fortinetInputCoverageRows = imported.length ? imported : [newFortinetInputCoverageRow()];
+    saveFortinetInputCoverageRows();
+    renderFortinetInputCoverageTable();
+    setFortinetInputCoverageStatus(`Imported ${imported.length} row${imported.length === 1 ? "" : "s"}.`);
+  };
+  reader.onerror = () => setFortinetInputCoverageStatus("Import failed: could not read file.");
+  reader.readAsText(file);
+}
+
+loadFortinetInputCoverageRows();
+loadFortinetInputCoverageCollapseState();
+renderFortinetInputCoverageTable();
+
+document.getElementById("fortinetInputCoverageTableHead").addEventListener("click", event => {
+  const target = event.target.closest("[data-toggle-group]");
+  if (target) toggleFortinetInputCoverageGroup(target.dataset.toggleGroup);
+});
+document.getElementById("fortinetInputCoverageTableBody").addEventListener("click", event => {
+  const toggleTarget = event.target.closest("[data-toggle-group]");
+  if (toggleTarget) { toggleFortinetInputCoverageGroup(toggleTarget.dataset.toggleGroup); return; }
+  const removeBtn = event.target.closest("[data-remove-row]");
+  if (removeBtn) {
+    const rowIndex = Number(removeBtn.dataset.removeRow);
+    fortinetInputCoverageRows.splice(rowIndex, 1);
+    saveFortinetInputCoverageRows();
+    renderFortinetInputCoverageTable();
+  }
+});
+document.getElementById("fortinetInputCoverageTableBody").addEventListener("input", event => {
+  const target = event.target;
+  if (target.classList.contains("ic-text-input")) {
+    const rowIndex = Number(target.dataset.row);
+    const col = target.dataset.col;
+    if (fortinetInputCoverageRows[rowIndex]) {
+      fortinetInputCoverageRows[rowIndex][col] = target.value;
+      saveFortinetInputCoverageRows();
+    }
+  }
+});
+document.getElementById("fortinetInputCoverageTableBody").addEventListener("change", event => {
+  const target = event.target;
+  if (target.classList.contains("ic-yn-select")) {
+    const rowIndex = Number(target.dataset.row);
+    const col = target.dataset.col;
+    if (fortinetInputCoverageRows[rowIndex]) {
+      fortinetInputCoverageRows[rowIndex][col] = target.value;
+      target.dataset.val = target.value;
+      saveFortinetInputCoverageRows();
+    }
+  }
+});
+document.getElementById("fortinetInputCoverageAddRow").addEventListener("click", () => {
+  fortinetInputCoverageRows.push(newFortinetInputCoverageRow());
+  saveFortinetInputCoverageRows();
+  renderFortinetInputCoverageTable();
+  const wrap = document.getElementById("fortinetInputCoverageTableWrap");
+  if (wrap) wrap.scrollTop = wrap.scrollHeight;
+});
+document.getElementById("fortinetInputCoverageClearBtn").addEventListener("click", () => {
+  if (!fortinetInputCoverageRows.length) return;
+  if (!confirm(`Remove all ${fortinetInputCoverageRows.length} row(s)? This cannot be undone.`)) return;
+  fortinetInputCoverageRows = [];
+  saveFortinetInputCoverageRows();
+  renderFortinetInputCoverageTable();
+});
+document.getElementById("fortinetInputCoverageImportBtn").addEventListener("click", () => {
+  document.getElementById("fortinetInputCoverageImportFile").click();
+});
+document.getElementById("fortinetInputCoverageImportFile").addEventListener("change", event => {
+  const file = event.target.files && event.target.files[0];
+  if (file) importFortinetInputCoverageCsv(file);
+  event.target.value = "";
+});
+document.getElementById("fortinetInputCoverageExportBtn").addEventListener("click", exportFortinetInputCoverageCsv);
+
+const fortinetCloudInputsViewTabs = document.querySelectorAll("#fortinetCloudInputsSubpage .page-subnav.level-3 .page-subtab");
+function setActiveFortinetCloudInputsView(viewName) {
+  fortinetCloudInputsViewTabs.forEach(tab => {
+    const active = tab.dataset.fortinetview === viewName;
+    tab.classList.toggle("active", active);
+    tab.setAttribute("aria-selected", String(active));
+  });
+  document.querySelectorAll("#fortinetCloudInputsSubpage > .subpage-view").forEach(view => {
+    view.hidden = view.id !== `${viewName}View`;
+  });
+}
+fortinetCloudInputsViewTabs.forEach(tab => {
+  tab.addEventListener("click", () => setActiveFortinetCloudInputsView(tab.dataset.fortinetview));
+});
+
+/* ---------- Fortinet Schema explorer: browse every FIELDALIAS/EVAL/LOOKUP directive across all 4
+ * sourcetypes (fortinetSchemaData, defined above). "Set via" doubles as the second rail filter (Zscaler's
+ * equivalent rail filters by field category; this vendor's own meaningful second dimension is how the TA
+ * derives each field -- straight alias, computed EVAL, or lookup-table join -- since there's no separate
+ * CIM/OCSF category concept in the source data the way Zscaler's ZIA/ZPA split was). */
+const FORTINET_SCHEMA_PAGE_SIZE = 150;
+let fortinetSchemaState = { query: "", sourcetype: "all", setVia: "all", visibleLimit: FORTINET_SCHEMA_PAGE_SIZE };
+const fortinetSchemaSourcetypes = [...new Set(fortinetSchemaData.map(f => f.sourcetype))];
+const fortinetSchemaSetVias = [...new Set(fortinetSchemaData.map(f => f.setVia))];
+
+function fortinetSchemaFilteredRows() {
+  const q = fortinetSchemaState.query.trim().toLowerCase();
+  return fortinetSchemaData.filter(f => {
+    if (fortinetSchemaState.sourcetype !== "all" && f.sourcetype !== fortinetSchemaState.sourcetype) return false;
+    if (fortinetSchemaState.setVia !== "all" && f.setVia !== fortinetSchemaState.setVia) return false;
+    if (!q) return true;
+    return `${f.sourcetype} ${f.setVia} ${f.field} ${f.cimField || ""} ${f.description}`.toLowerCase().includes(q);
+  });
+}
+
+function renderFortinetSchemaSourcetypeList() {
+  const el = document.getElementById("fortinetSchemaSourcetypeList");
+  if (!el) return;
+  const counts = {};
+  fortinetSchemaData.forEach(f => { counts[f.sourcetype] = (counts[f.sourcetype] || 0) + 1; });
+  const allBtn = `<button type="button" class="se-app-chip${fortinetSchemaState.sourcetype === "all" ? " active" : ""}" data-sourcetype="all">All sourcetypes <span class="n">${fortinetSchemaData.length}</span></button>`;
+  const rows = fortinetSchemaSourcetypes.map(st => `<button type="button" class="se-app-chip${fortinetSchemaState.sourcetype === st ? " active" : ""}" data-sourcetype="${escapeHtml(st)}">${escapeHtml(st)} <span class="n">${counts[st] || 0}</span></button>`);
+  el.innerHTML = [allBtn, ...rows].join("");
+  el.querySelectorAll("[data-sourcetype]").forEach(btn => btn.addEventListener("click", () => {
+    fortinetSchemaState.sourcetype = btn.dataset.sourcetype;
+    fortinetSchemaState.visibleLimit = FORTINET_SCHEMA_PAGE_SIZE;
+    renderFortinetSchemaAll();
+  }));
+}
+
+function renderFortinetSchemaCategoryList() {
+  const el = document.getElementById("fortinetSchemaCategoryList");
+  if (!el) return;
+  const counts = {};
+  fortinetSchemaData.forEach(f => { counts[f.setVia] = (counts[f.setVia] || 0) + 1; });
+  const allBtn = `<button type="button" class="se-app-chip${fortinetSchemaState.setVia === "all" ? " active" : ""}" data-category="all">All <span class="n">${fortinetSchemaData.length}</span></button>`;
+  const rows = fortinetSchemaSetVias.map(v => `<button type="button" class="se-app-chip${fortinetSchemaState.setVia === v ? " active" : ""}" data-category="${escapeHtml(v)}">${escapeHtml(v)} <span class="n">${counts[v] || 0}</span></button>`);
+  el.innerHTML = [allBtn, ...rows].join("");
+  el.querySelectorAll("[data-category]").forEach(btn => btn.addEventListener("click", () => {
+    fortinetSchemaState.setVia = btn.dataset.category;
+    fortinetSchemaState.visibleLimit = FORTINET_SCHEMA_PAGE_SIZE;
+    renderFortinetSchemaAll();
+  }));
+}
+
+function renderFortinetSchemaTable() {
+  const rows = fortinetSchemaFilteredRows();
+  const total = rows.length;
+  const countEl = document.getElementById("fortinetSchemaResultCount");
+  if (countEl) {
+    countEl.textContent = total > fortinetSchemaState.visibleLimit
+      ? `Showing ${fortinetSchemaState.visibleLimit.toLocaleString()} of ${total.toLocaleString()} directives`
+      : `${total.toLocaleString()} directive${total === 1 ? "" : "s"}`;
+  }
+  const body = document.getElementById("fortinetSchemaFieldsBody");
+  const loadMoreBtn = document.getElementById("fortinetSchemaLoadMoreBtn");
+  if (!body) return;
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="5" class="se-empty">No matching rows.</td></tr>`;
+    if (loadMoreBtn) loadMoreBtn.hidden = true;
+    return;
+  }
+  const visibleRows = rows.slice(0, fortinetSchemaState.visibleLimit);
+  body.innerHTML = visibleRows.map(f => `<tr>
+    <td><code>${escapeHtml(f.sourcetype)}</code></td>
+    <td>${escapeHtml(f.setVia)}</td>
+    <td><code>${escapeHtml(f.field)}</code></td>
+    <td>${f.cimField ? `<code>${escapeHtml(f.cimField)}</code>` : "&ndash;"}</td>
+    <td>${escapeHtml(f.description)}</td>
+  </tr>`).join("");
+  if (loadMoreBtn) {
+    const remaining = total - visibleRows.length;
+    if (remaining > 0) {
+      loadMoreBtn.hidden = false;
+      loadMoreBtn.textContent = `Show ${Math.min(remaining, FORTINET_SCHEMA_PAGE_SIZE).toLocaleString()} more (${remaining.toLocaleString()} remaining)`;
+    } else {
+      loadMoreBtn.hidden = true;
+    }
+  }
+}
+
+function renderFortinetSchemaAll() {
+  renderFortinetSchemaSourcetypeList();
+  renderFortinetSchemaCategoryList();
+  renderFortinetSchemaTable();
+}
+
+const fortinetSchemaStatsEl = document.getElementById("fortinetSchemaStats");
+if (fortinetSchemaStatsEl) {
+  const cimMappedCount = fortinetSchemaData.filter(f => f.cimField).length;
+  const stats = [
+    { n: fortinetSchemaData.length.toLocaleString(), l: "Total directives" },
+    { n: fortinetSchemaSourcetypes.length, l: "Sourcetypes" },
+    { n: fortinetSchemaSetVias.length, l: "Set-via types" },
+    { n: cimMappedCount.toLocaleString(), l: "With a CIM field" }
+  ];
+  fortinetSchemaStatsEl.innerHTML = stats.map(s => `<div class="se-stat"><span class="n">${s.n}</span><span class="l">${s.l}</span></div>`).join("");
+}
+
+const fortinetSchemaSearchBox = document.getElementById("fortinetSchemaSearchBox");
+if (fortinetSchemaSearchBox) {
+  fortinetSchemaSearchBox.addEventListener("input", e => {
+    fortinetSchemaState.query = e.target.value;
+    fortinetSchemaState.visibleLimit = FORTINET_SCHEMA_PAGE_SIZE;
+    renderFortinetSchemaTable();
+  });
+}
+const fortinetSchemaLoadMoreBtn = document.getElementById("fortinetSchemaLoadMoreBtn");
+if (fortinetSchemaLoadMoreBtn) {
+  fortinetSchemaLoadMoreBtn.addEventListener("click", () => {
+    fortinetSchemaState.visibleLimit += FORTINET_SCHEMA_PAGE_SIZE;
+    renderFortinetSchemaTable();
+  });
+}
+renderFortinetSchemaAll();
+document.getElementById("fortinetSchemaNote").textContent = "Every row above is a real FIELDALIAS, EVAL or LOOKUP directive read directly from the actual Fortinet FortiGate Add-on for Splunk package (Splunk_TA_fortinet_fortigate, Splunkbase app 2846, version 1.6.10) that the user provided -- specifically its props.conf. Complex multi-branch EVAL expressions (mostly on fortigate_event, which is gated almost entirely by FortiOS's numeric logid) are summarized in the description rather than transcribing every logid branch verbatim; the summary is this reference's own paraphrase of real, verifiable logic, not a fabricated one. Three lookup tables the TA also ships (ftnt_protocol_info.csv: 137 IANA protocol-number mappings, ftnt_action_info.csv: 22 action-normalization mappings, ftnt_event_action_info.csv: 52 subtype/action/status mappings, ftnt_severity_info.csv: 8 severity-level mappings) are referenced by name and row count in the relevant LOOKUP rows' descriptions rather than reproduced in full here -- see the TA's own lookups/ directory for the complete tables.";
+
+/* ---------- Fortinet CIM Coverage summary: every eventtype the TA defines, real tags.conf tags, and this
+ * reference's own derivation of the closest CIM data model (matched against the 10 models Fortinet's own
+ * app.manifest confirms this TA supports: Alerts, Authentication, Change, Email, IDS, Malware, Network
+ * Session(s), Network Traffic, Performance, Web) -- flagged explicitly in the sot-note below since, unlike
+ * the tags themselves (transcribed verbatim), the data-model NAME is this reference's interpretation, not an
+ * explicit per-eventtype statement in the package. */
+const fortinetCimCoverageData = [
+  { eventtype: "ftnt_fortigate", cimTags: "— none — (not tagged)", cimDataModel: "NOT CIM-MAPPED", search: "sourcetype=fgt_traffic OR sourcetype=fgt_utm OR sourcetype=fgt_event OR sourcetype=fgt_anomaly OR sourcetype=fortigate_traffic OR sourcetype=fortigate_utm OR sourcetype=fortigate_event OR sourcetype=fortigate_anomaly", notes: "Top-level umbrella search OR-ing all 4 sourcetypes together; not itself tagged -- exists only so other saved searches/dashboards can reference \"all Fortinet data\" in one eventtype." },
+  { eventtype: "ftnt_fortigate_traffic", cimTags: "network, communicate", cimDataModel: "Network Traffic", search: "sourcetype=fgt_traffic OR sourcetype=fortigate_traffic", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_utm", cimTags: "— none — (not tagged)", cimDataModel: "NOT CIM-MAPPED", search: "sourcetype=fortigate_utm OR sourcetype=fortigate_anomaly OR sourcetype = fgt_utm OR sourcetype=fgt_anomaly", notes: "Umbrella search grouping every UTM/anomaly sourcetype; feeds the narrower, individually-tagged eventtypes below (ips, virus, netscan, spam, webfilter, appctrl) rather than being tagged itself." },
+  { eventtype: "ftnt_fortigate_ips", cimTags: "ids, attack", cimDataModel: "Intrusion Detection (IDS)", search: "(sourcetype=fortigate_utm OR sourcetype=fgt_utm) subtype=ips", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_anomaly", cimTags: "ids, attack", cimDataModel: "Intrusion Detection (IDS)", search: "(sourcetype=fortigate_anomaly OR sourcetype=fortigate_utm OR sourcetype=fgt_anomaly OR sourcetype=fgt_utm) subtype=anomaly", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_virus", cimTags: "malware, attack, operations", cimDataModel: "Malware", search: "(sourcetype=fortigate_utm OR sourcetype=fgt_utm) subtype=virus vendor_action!=analytics", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_netscan", cimTags: "— none — (not tagged)", cimDataModel: "NOT CIM-MAPPED", search: "(sourcetype=fortigate_utm OR sourcetype=fgt_utm) subtype=netscan", notes: "A real coverage gap, not an umbrella: this eventtype exists (fires on subtype=netscan UTM events) but, unlike its siblings ips/virus/spam/webfilter/appctrl, was never given a tags.conf stanza by Fortinet -- network-scan detections are not wired into any CIM data model in this TA version." },
+  { eventtype: "ftnt_fortigate_spam", cimTags: "email, filter", cimDataModel: "Email", search: "(sourcetype=fortigate_utm OR sourcetype=fgt_utm) subtype=spam", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_webfilter", cimTags: "web", cimDataModel: "Web", search: "(sourcetype=fortigate_utm OR sourcetype=fgt_utm) subtype=webfilter", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_appctrl", cimTags: "network, communicate", cimDataModel: "Network Traffic", search: "(sourcetype=fortigate_utm OR sourcetype=fgt_utm) subtype=app-ctrl", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_event", cimTags: "— none — (not tagged)", cimDataModel: "NOT CIM-MAPPED", search: "sourcetype=fgt_event OR sourcetype=fortigate_event", notes: "Umbrella search grouping every fortigate_event-sourcetype log; feeds the narrower, individually-tagged eventtypes below (vpn/wireless/system/auth families) rather than being tagged itself." },
+  { eventtype: "ftnt_fortigate_vpn", cimTags: "— none — (not tagged)", cimDataModel: "NOT CIM-MAPPED", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=vpn", notes: "Umbrella search grouping all subtype=vpn events; feeds the narrower, individually-tagged eventtypes below (vpn_auth, vpn_start, vpn_end, vpn_cert_change) rather than being tagged itself." },
+  { eventtype: "ftnt_fortigate_vpn_cert_change", cimTags: "change, network", cimDataModel: "Change", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=vpn logid IN(\"0101041984\", \"0101041987\")", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_vpn_auth", cimTags: "authentication, default", cimDataModel: "Authentication", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=vpn (vendor_action=negotiate OR vendor_action=ssl-login-fail)", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_vpn_start", cimTags: "network, session, vpn, start", cimDataModel: "Network Sessions", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=vpn vendor_action IN(\"tunnel-up\", \"install_sa\", \"ssl-new-con\", \"ssl-web-pass\")", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_vpn_end", cimTags: "network, session, vpn, end", cimDataModel: "Network Sessions", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) ((subtype=vpn AND vendor_action IN(\"tunnel-down\", \"delete_ipsec_sa\", \"ssl-web-close\")) OR (logid=0107045061 AND connection_type=\"sslvpn\"))", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_wireless", cimTags: "— none — (not tagged)", cimDataModel: "NOT CIM-MAPPED", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=wireless", notes: "Umbrella search grouping all subtype=wireless events; feeds the narrower, individually-tagged eventtypes below (wireless_config_change, wireless_client_authentication, wireless_client_deauthentication) rather than being tagged itself." },
+  { eventtype: "ftnt_fortigate_wireless_config_change", cimTags: "change, network", cimDataModel: "Change", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=wireless vendor_action IN(\"oper-channel\", \"oper-txpower\", \"config-txpower\", \"country-config-success\", \"controller-cfg-loaded\", \"controller-up\", \"ap-join\", \"ap-add\")", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_wireless_client_auth", cimTags: "— none — (not tagged)", cimDataModel: "NOT CIM-MAPPED", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=wireless (vendor_action=client-ip-detected OR vendor_action=client-deauthentication)", notes: "Overlaps with the newer, individually-tagged wireless_client_authentication/wireless_client_deauthentication eventtypes below (similar vendor_action sets); appears to be an earlier, now-superseded eventtype that was left untagged rather than removed." },
+  { eventtype: "ftnt_fortigate_wireless_client_authentication", cimTags: "authentication, default", cimDataModel: "Authentication", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=wireless vendor_action IN(\"client-authentication\", \"user-sign-on-success\", \"user-sign-on\", \"user-sign-on-failure\")", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_wireless_client_deauthentication", cimTags: "change, network", cimDataModel: "Change", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=wireless vendor_action=client-deauthentication", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_system", cimTags: "— none — (not tagged)", cimDataModel: "NOT CIM-MAPPED", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=system", notes: "Umbrella search grouping all subtype=system events; feeds the narrower, individually-tagged eventtypes below (perf_stats, cpu_stats, restart, config_change, user_config_change, scanunit_db, auth_privileged_*) rather than being tagged itself." },
+  { eventtype: "ftnt_fortigate_dhcp_ack", cimTags: "network, session, dhcp", cimDataModel: "Network Sessions", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=system logid=0100026001", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_auth", cimTags: "authentication, default", cimDataModel: "Authentication", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=user vendor_action=authentication (vendor_status=success OR vendor_status=failure)", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_auth_privileged", cimTags: "— none — (not tagged)", cimDataModel: "NOT CIM-MAPPED", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=system (vendor_action=login OR vendor_action=logout)", notes: "Umbrella search grouping admin login/logout events; feeds the narrower, individually-tagged auth_privileged_login/auth_privileged_logout eventtypes below rather than being tagged itself." },
+  { eventtype: "ftnt_fortigate_auth_privileged_login", cimTags: "authentication, privileged", cimDataModel: "Authentication", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=system vendor_action=login NOT (logid=0100022952 OR logid=0100022949)", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_auth_privileged_logout", cimTags: "change, account", cimDataModel: "Change", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=system vendor_action=logout", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_perf_stats", cimTags: "os, performance, cpu, memory", cimDataModel: "Performance", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=system vendor_action=perf-stats", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_cpu_stats", cimTags: "performance, cpu", cimDataModel: "Performance", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=system vendor_action=cpu-usage", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_config_change", cimTags: "change, network", cimDataModel: "Change", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=system (vendor_action IN(\"Add\", \"Edit\", \"delete\", \"add-vdom\", \"pba-create\", \"pba-close\") OR logid IN(\"0100032141\", \"0100041000\", \"0100032130\", \"0100032102\"))", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_restart", cimTags: "change", cimDataModel: "Change", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) subtype=system (vendor_action=reboot OR vendor_action=shutdown)", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_scanunit_db", cimTags: "change", cimDataModel: "Change", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) logid IN(\"0100022815\",\"0100022813\")", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_user_config_change", cimTags: "change", cimDataModel: "Change", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) logid IN(\"0100032132\",\"0102043039\")", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_alerts", cimTags: "alert", cimDataModel: "Alerts", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) logid IN(\"0101041990\", \"0101041992\", \"0101039946\", \"0100046600\", \"0101053103\", \"0100032006\", \"0100022918\", \"0100022952\", \"0100022949\", \"0100036883\", \"0101039944\")", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+  { eventtype: "ftnt_fortigate_detected_ip_using_dhcp", cimTags: "network, session, start", cimDataModel: "Network Sessions", search: "(sourcetype=fortigate_event OR sourcetype=fgt_event) logid=0104043579", notes: "CIM data model is this reference's own derivation from the real tags above (matched against the 10 CIM models Fortinet's own app.manifest confirms this TA supports), not an explicit per-eventtype statement in the package." },
+];const FORTINET_CIM_COVERAGE_NOTES = "CIM tags are transcribed verbatim from the real Fortinet FortiGate Add-on for Splunk package (Splunk_TA_fortinet_fortigate, Splunkbase app 2846, version 1.6.10) that the user provided -- specifically its tags.conf, cross-referenced against eventtypes.conf for each eventtype's real search string. The CIM data model column is this reference's OWN derivation, matching each eventtype's tag combination against the 10 CIM data models Fortinet's own app.manifest confirms this TA supports (Alerts, Authentication, Change, Email, Intrusion Detection, Malware, Network Sessions, Network Traffic, Performance, Web) -- it is not an explicit per-eventtype statement Fortinet makes anywhere in the package, so treat it as a well-reasoned inference rather than a confirmed fact. 9 of the 35 eventtypes carry no tags.conf entry at all: most are pure umbrella/OR-grouping searches that exist only to feed their narrower, individually-tagged children (noted per row), but ftnt_fortigate_netscan is a genuine coverage gap -- unlike its ips/virus/spam/webfilter/appctrl siblings, Network Scan detections were never wired into any CIM data model in this TA version. See the Schema tab for the underlying per-field CIM crosswalk that actually produces these tagged eventtypes' fields.";
+
+let fortinetCimCoverageState = { query: "" };
+function fortinetCimCoverageFilteredRows() {
+  const q = fortinetCimCoverageState.query.trim().toLowerCase();
+  if (!q) return fortinetCimCoverageData;
+  return fortinetCimCoverageData.filter(r =>
+    `${r.eventtype} ${r.cimTags} ${r.cimDataModel} ${r.search} ${r.notes || ""}`.toLowerCase().includes(q));
+}
+function renderFortinetCimCoverageTable() {
+  const rows = fortinetCimCoverageFilteredRows();
+  const body = document.getElementById("fortinetCimCoverageBody");
+  const countEl = document.getElementById("fortinetCimCoverageResultCount");
+  if (countEl) countEl.textContent = `${rows.length.toLocaleString()} of ${fortinetCimCoverageData.length.toLocaleString()} eventtypes`;
+  if (!body) return;
+  body.innerHTML = rows.length ? rows.map(r => `<tr>
+    <td><code>${escapeHtml(r.eventtype)}</code></td>
+    <td>${escapeHtml(r.cimTags)}</td>
+    <td>${escapeHtml(r.cimDataModel)}</td>
+    <td><code class="se-field-notes">${escapeHtml(r.search)}</code></td>
+    <td>${escapeHtml(r.notes || "")}</td>
+  </tr>`).join("") : `<tr><td colspan="5" class="se-empty">No matching rows.</td></tr>`;
+}
+function exportFortinetCimCoverageCsv(event) {
+  const rows = fortinetCimCoverageFilteredRows();
+  const lines = [["Eventtype", "CIM tags", "CIM data model", "Search", "Notes"].map(csvValue).join(",")];
+  rows.forEach(r => lines.push([r.eventtype, r.cimTags, r.cimDataModel, r.search, r.notes || ""].map(csvValue).join(",")));
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Fortinet-CIM-Coverage.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  const btn = event && event.currentTarget;
+  if (btn) {
+    const original = btn.textContent;
+    btn.textContent = "Exported";
+    setTimeout(() => { btn.textContent = original; }, 1400);
+  }
+}
+document.getElementById("fortinetCimCoverageSearchBox").addEventListener("input", e => { fortinetCimCoverageState.query = e.target.value; renderFortinetCimCoverageTable(); });
+document.getElementById("fortinetCimCoverageExportBtn").addEventListener("click", exportFortinetCimCoverageCsv);
+document.getElementById("fortinetCimCoverageNote").textContent = FORTINET_CIM_COVERAGE_NOTES;
+renderFortinetCimCoverageTable();
 
 /* ---------- Input Coverage: Microsoft cloud inputs Permissions matrix -------------------------------------
  * Same visual style as the AWS Permissions tab (eccs-table-wrap/eccs-matrix), but this data is inherently a
