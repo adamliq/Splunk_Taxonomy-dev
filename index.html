@@ -753,6 +753,22 @@
     .advisor-export-panel select { min-width: 0; }
     .advisor-export-panel button { border-color: #2f855a; background: #2f855a; color: #fff; }
     .advisor-export-panel button:hover { background: #276749; }
+    .advisor-checklist { margin-top: 19px; padding: 16px 18px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
+    .advisor-checklist-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .advisor-checklist-heading h4 { margin: 0; }
+    .checklist-progress-text { color: #64748b; font-size: 12px; font-weight: 800; white-space: nowrap; }
+    .checklist-progress-track { height: 7px; margin: 9px 0 2px; overflow: hidden; border-radius: 999px; background: #e2e8f0; }
+    .checklist-progress-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #70ad47, #2f855a); transition: width .2s ease; }
+    .checklist-phase { margin-top: 15px; }
+    .checklist-phase h5 { margin: 0 0 6px; color: #1e293b; font-size: 11px; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
+    .checklist-item { display: flex; align-items: flex-start; gap: 9px; padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
+    .checklist-item:last-child { border-bottom: none; }
+    .checklist-item input[type="checkbox"] { margin-top: 3px; width: 15px; height: 15px; flex-shrink: 0; accent-color: #2f855a; }
+    .checklist-item label { font-size: 13px; line-height: 1.45; color: #334155; }
+    .checklist-item.is-done label { color: #94a3b8; text-decoration: line-through; }
+    .checklist-export-row { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 15px; }
+    .checklist-export-row select { flex: 1 1 180px; }
+    .checklist-export-row button { flex: 0 0 auto; }
     @media (max-width: 940px) {
       .advisor-shell { grid-template-columns: 1fr; }
       .advisor-result-empty { min-height: 260px; }
@@ -16855,6 +16871,165 @@ function loggingPatternRequirementCards(patternId) {
   return `<div class="advisor-overlay"><span class="advisor-pattern-id">Technical prerequisites</span><h4>Connectivity, identity and source configuration</h4><ul>${items.map(([label, value]) => `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</li>`).join("")}</ul></div>`;
 }
 
+const checklistPhaseNames = ["Design & prerequisites", "Build", "Secure", "Deploy & connect", "Validate & sign off"];
+
+function checklistItemsForPattern(pattern) {
+  const req = loggingPatternRequirementRecord(pattern.id) || {};
+  const buckets = { "Design & prerequisites": [], "Build": [], "Secure": [], "Deploy & connect": [], "Validate & sign off": [] };
+  const add = (phase, action, label, value) => { if (value !== "") buckets[phase].push(`${action} ${label}${value ? `: ${value}` : ""}`); };
+
+  add("Design & prerequisites", "Confirm", "app / add-on position", pattern.appAvailability || pattern.app);
+  add("Design & prerequisites", "Capture", "source platform requirements", req["Source platform requirements"] || "");
+  add("Design & prerequisites", "Define", "polling controls", pattern.pollingControls || "");
+  add("Design & prerequisites", "Confirm", "technical requirements", pattern.technicalRequirements || "");
+  add("Design & prerequisites", "Confirm", "source mechanism", pattern.mechanism || "");
+
+  add("Build", "Implement", "the execution runtime", [pattern.runtime, pattern.executionModel, pattern.implementationLanguage].filter(Boolean).join(" — "));
+  add("Build", "Implement", "checkpoint / state handling", pattern.checkpoint || "");
+  add("Build", "Implement", "processing and routing", pattern.processing || "");
+  add("Build", "Implement", "file management", pattern.fileManagement || "");
+  add("Build", "Configure", "forwarder collection", pattern.forwarderCollection || "");
+  add("Build", "Configure", "the syslog receiver", pattern.syslogReceiver || "");
+  add("Build", "Configure", "intermediate storage", pattern.intermediateStorage || "");
+  if (!buckets["Build"].length) add("Build", "Install and configure", pattern.tier || "the collection tier", "");
+
+  add("Secure", "Configure", "identity and secret handling", pattern.secretHandling || "");
+  add("Secure", "Confirm", "authentication requirements", req["Authentication requirements"] || "");
+  add("Secure", "Apply", "security-zone controls", pattern.securityControls || "");
+  add("Secure", "Confirm", "port / firewall requirements", req["Port / firewall requirements"] || "");
+  add("Secure", "Confirm", "required network flows", pattern.networkRequirements || pattern.networkFlows || "");
+
+  add("Deploy & connect", "Configure", "HEC", pattern.hecConfiguration || "");
+  add("Deploy & connect", "Confirm", "HEC delivery", pattern.hecDelivery || "");
+  add("Deploy & connect", "Confirm", "payload handling", pattern.payloadVariations || "");
+  add("Deploy & connect", "Confirm", "event forwarding", pattern.eventForwardingPort || "");
+  add("Deploy & connect", "Confirm", "deployment management", pattern.deploymentManagementPort || "");
+  add("Deploy & connect", "Confirm", "forwarder-to-destination transport", pattern.forwarderToDestinationTransport || "");
+  add("Deploy & connect", "Validate", "destination governance", pattern.governance || "");
+
+  add("Validate & sign off", "Confirm", "the health profile", pattern.health || "");
+  add("Validate & sign off", "Confirm", "runtime-specific health", pattern.runtimeHealth || "");
+  add("Validate & sign off", "Confirm", "network assurance", pattern.networkHealth || "");
+  add("Validate & sign off", "Confirm", "failure behaviour", pattern.failure || "");
+  add("Validate & sign off", "Assign", "operational ownership", pattern.operationalOwnership || "");
+  buckets["Validate & sign off"].push("Record the change via TAX-06.03.05 Configuration Change Record before go-live.");
+
+  let index = 0;
+  return checklistPhaseNames
+    .map(name => ({ name, items: buckets[name] }))
+    .filter(group => group.items.length)
+    .map(group => ({ name: group.name, items: group.items.map(text => ({ key: `item-${index++}`, text })) }));
+}
+
+function checklistStorageKey(patternId) { return `advisorChecklist:${patternId}`; }
+
+function loadChecklistState(patternId) {
+  try { return JSON.parse(localStorage.getItem(checklistStorageKey(patternId)) || "{}"); }
+  catch (e) { return {}; }
+}
+
+function saveChecklistState(patternId, state) {
+  try { localStorage.setItem(checklistStorageKey(patternId), JSON.stringify(state)); }
+  catch (e) { /* storage unavailable */ }
+}
+
+function checklistProgress(groups, state) {
+  const total = groups.reduce((sum, g) => sum + g.items.length, 0);
+  const done = groups.reduce((sum, g) => sum + g.items.filter(item => state[item.key]).length, 0);
+  return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
+}
+
+function renderAdvisorChecklist(pattern) {
+  const groups = checklistItemsForPattern(pattern);
+  if (!groups.length) return "";
+  const state = loadChecklistState(pattern.id);
+  const progress = checklistProgress(groups, state);
+  return `
+    <div class="advisor-checklist" id="advisorChecklist">
+      <div class="advisor-checklist-heading">
+        <h4>Implementation checklist</h4>
+        <span class="checklist-progress-text" id="checklistProgressText">${progress.done} of ${progress.total} · ${progress.pct}% complete</span>
+      </div>
+      <div class="checklist-progress-track"><div class="checklist-progress-fill" id="checklistProgressFill" style="width:${progress.pct}%"></div></div>
+      ${groups.map(group => `
+        <div class="checklist-phase">
+          <h5>${escapeHtml(group.name)}</h5>
+          ${group.items.map(item => `
+            <div class="checklist-item${state[item.key] ? " is-done" : ""}">
+              <input type="checkbox" id="cl-${escapeHtml(item.key)}" data-item-key="${escapeHtml(item.key)}" ${state[item.key] ? "checked" : ""}>
+              <label for="cl-${escapeHtml(item.key)}">${escapeHtml(item.text)}</label>
+            </div>`).join("")}
+        </div>`).join("")}
+      <div class="checklist-export-row">
+        <select id="checklistExportFormat" aria-label="Checklist export format">
+          <option value="markdown">Markdown checklist</option>
+          <option value="csv">CSV field list</option>
+        </select>
+        <button id="exportChecklist" type="button">Export checklist</button>
+      </div>
+    </div>`;
+}
+
+function handleChecklistToggle(event) {
+  const checkbox = event.target.closest("input[type='checkbox'][data-item-key]");
+  if (!checkbox || !currentAdvisorPattern) return;
+  const state = loadChecklistState(currentAdvisorPattern.id);
+  state[checkbox.dataset.itemKey] = checkbox.checked;
+  saveChecklistState(currentAdvisorPattern.id, state);
+  const item = checkbox.closest(".checklist-item");
+  if (item) item.classList.toggle("is-done", checkbox.checked);
+  const groups = checklistItemsForPattern(currentAdvisorPattern);
+  const progress = checklistProgress(groups, state);
+  const text = document.getElementById("checklistProgressText");
+  const fill = document.getElementById("checklistProgressFill");
+  if (text) text.textContent = `${progress.done} of ${progress.total} · ${progress.pct}% complete`;
+  if (fill) fill.style.width = `${progress.pct}%`;
+}
+
+function checklistMarkdown(pattern, groups, state, progress) {
+  const lines = [
+    `# ${pattern.id} — Implementation Checklist`,
+    "",
+    `- **Pattern:** ${pattern.id} — ${pattern.name}`,
+    `- **Generated:** ${new Date().toLocaleString()}`,
+    `- **Progress:** ${progress.done} of ${progress.total} items complete (${progress.pct}%)`,
+    ""
+  ];
+  groups.forEach(group => {
+    lines.push(`## ${group.name}`);
+    group.items.forEach(item => lines.push(`- [${state[item.key] ? "x" : " "}] ${item.text}`));
+    lines.push("");
+  });
+  return lines.join("\n");
+}
+
+function checklistCsv(pattern, groups, state) {
+  const rows = [["Phase", "Item", "Done"]];
+  groups.forEach(group => {
+    group.items.forEach(item => rows.push([group.name, item.text, state[item.key] ? "Yes" : "No"]));
+  });
+  return rows.map(row => row.map(csvCell).join(",")).join("\r\n") + "\r\n";
+}
+
+function exportAdvisorChecklist(event) {
+  if (!currentAdvisorPattern) return;
+  const groups = checklistItemsForPattern(currentAdvisorPattern);
+  if (!groups.length) return;
+  const state = loadChecklistState(currentAdvisorPattern.id);
+  const progress = checklistProgress(groups, state);
+  const format = document.getElementById("checklistExportFormat")?.value || "markdown";
+  const stem = `${safeFilenamePart(currentAdvisorPattern.id)}-implementation-checklist`;
+  if (format === "csv") {
+    downloadAdvisorFile(checklistCsv(currentAdvisorPattern, groups, state), `${stem}.csv`, "text/csv");
+  } else {
+    downloadAdvisorFile(checklistMarkdown(currentAdvisorPattern, groups, state, progress), `${stem}.md`, "text/markdown");
+  }
+  if (event && event.currentTarget) {
+    event.currentTarget.textContent = "Exported";
+    setTimeout(() => { if (event.currentTarget) event.currentTarget.textContent = "Export checklist"; }, 1400);
+  }
+}
+
 function renderAdvisorResult(answers) {
   const scored = scoreLoggingPatterns(answers);
   const primary = scored[0];
@@ -16938,6 +17113,7 @@ function renderAdvisorResult(answers) {
         </div>` : ""}
       ${implementation ? `<div class="advisor-implementation"><h4>Implementation and assurance requirements</h4>${implementation}</div>` : ""}
       ${warning ? `<div class="advisor-warning"><strong>Design note:</strong> ${escapeHtml(warning)}</div>` : ""}
+      ${renderAdvisorChecklist(primary.pattern)}
       <div class="advisor-alternatives">
         <h4>Closest alternatives</h4>
         <div class="alternative-list">
@@ -16966,6 +17142,11 @@ function renderAdvisorResult(answers) {
   document.getElementById("viewAdvisorPattern").addEventListener("click", viewRecommendedPattern);
   document.getElementById("copyAdvisorSummary").addEventListener("click", copyAdvisorSummary);
   document.getElementById("exportAdvisorFinalPattern").addEventListener("click", exportAdvisorFinalPattern);
+  const checklistEl = document.getElementById("advisorChecklist");
+  if (checklistEl) {
+    checklistEl.addEventListener("change", handleChecklistToggle);
+    document.getElementById("exportChecklist").addEventListener("click", exportAdvisorChecklist);
+  }
 }
 
 const advisorQuestionFields = [
