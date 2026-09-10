@@ -3122,6 +3122,20 @@
     .eccs-matrix th.ports-hl-header { background:#fef08a !important; }
     .eccs-matrix td.ports-hl-cell { background:#fde047 !important; box-shadow:inset 0 0 0 2px #ca8a04; font-weight:700; }
     .eccs-matrix .ports-hidden { display:none; }
+    /* Microsoft/AWS Permissions tables: freeze App (col 1) AND Input (col 2), since a
+       row is only identifiable by both together. Col 1's width isn't fixed (App names
+       vary a lot in length), so col 2's left offset is computed in JS after each render
+       and stored in --perm-col2-left; the px fallback below only covers the instant
+       before that JS runs. */
+    #msPermissionsTable th:nth-child(2), #msPermissionsTable td:nth-child(2),
+    #awsPermissionsTable th:nth-child(2), #awsPermissionsTable td:nth-child(2) {
+      position: sticky;
+      left: var(--perm-col2-left, 110px);
+      z-index: 1;
+      background: #f8fafc;
+      box-shadow: 2px 0 0 var(--border);
+    }
+    #msPermissionsTable th:nth-child(2), #awsPermissionsTable th:nth-child(2) { z-index: 3; }
     .perm-mark { display:inline-block; padding:3px 9px; border-radius:999px; font-size:10.5px; font-weight:800; letter-spacing:.02em; white-space:nowrap; border:none; cursor:pointer; font-family:inherit; }
     .perm-mark:hover, .perm-mark:focus-visible { outline:2px solid #7030a0; outline-offset:1px; }
     .perm-mark.perm-required { background:#dcfce7; color:#166534; }
@@ -35045,6 +35059,7 @@ function setActiveMsCloudInputsView(viewName) {
   document.querySelectorAll("#msCloudInputsSubpage > .subpage-view").forEach(view => {
     view.hidden = view.id !== `${viewName}View`;
   });
+  if (viewName === "msPermissions") syncPermTableStickyOffset("msPermissionsTable");
 }
 msCloudInputsViewTabs.forEach(tab => {
   tab.addEventListener("click", () => setActiveMsCloudInputsView(tab.dataset.msview));
@@ -35060,6 +35075,7 @@ function setActiveAwsCloudInputsView(viewName) {
   document.querySelectorAll("#awsCloudInputsSubpage > .subpage-view").forEach(view => {
     view.hidden = view.id !== `${viewName}View`;
   });
+  if (viewName === "awsPermissions") syncPermTableStickyOffset("awsPermissionsTable");
 }
 awsCloudInputsViewTabs.forEach(tab => {
   tab.addEventListener("click", () => setActiveAwsCloudInputsView(tab.dataset.awsview));
@@ -37926,6 +37942,25 @@ document.getElementById("zscalerInputCoverageImportFile").addEventListener("chan
   event.target.value = "";
 });
 
+/* Freezes App (col 1) and Input (col 2) together on the Microsoft/AWS Permissions tables. Col 1 has no fixed
+ * width (App names vary a lot in length), so col 2's sticky left offset can't be a static CSS value -- it's
+ * measured from col 1's actual rendered width and written to --perm-col2-left after every render. */
+function syncPermTableStickyOffset(tableId) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+  // The "no rows match" empty state renders a single colspan placeholder cell as tbody's
+  // first-child -- that's not a real column-1 width, so fall back to the header in that case.
+  let firstCell = table.querySelector("tbody tr td:first-child");
+  if (!firstCell || firstCell.hasAttribute("colspan")) firstCell = table.querySelector("thead tr th:first-child");
+  if (!firstCell) return;
+  const width = firstCell.getBoundingClientRect().width;
+  if (width) table.style.setProperty("--perm-col2-left", width + "px");
+}
+window.addEventListener("resize", () => {
+  syncPermTableStickyOffset("awsPermissionsTable");
+  syncPermTableStickyOffset("msPermissionsTable");
+});
+
 /* ---------- Input Coverage: Amazon AWS Permissions matrix ------------------------------------------------
  * REPLACED per user upload of a full permissions matrix spreadsheet (App/Input rows x 55 IAM-action columns,
  * cell value = family label) -- supersedes the earlier splunk_s3_permissions.csv/splunk_ta_aws_inputs_
@@ -38129,6 +38164,7 @@ function renderAwsPermissionsTable() {
   }
   if (!rows.length) {
     body.innerHTML = `<tr><td colspan="${actions.length + 2}"><div class="se-empty">No rows match the current search/filter.</div></td></tr>`;
+    syncPermTableStickyOffset("awsPermissionsTable");
     return;
   }
   body.innerHTML = rows.map(({ app, input }) => {
@@ -38141,6 +38177,7 @@ function renderAwsPermissionsTable() {
     }).join("");
     return `<tr><td>${escapeHtml(app)}</td><th scope="row">${escapeHtml(input)}</th>${cells}</tr>`;
   }).join("");
+  syncPermTableStickyOffset("awsPermissionsTable");
 }
 renderAwsPermissionsTable();
 
@@ -39907,6 +39944,7 @@ function renderMsPermissionsTable() {
   }
   if (!rows.length) {
     body.innerHTML = `<tr><td colspan="${actions.length + 2}"><div class="se-empty">No rows match the current search/filter.</div></td></tr>`;
+    syncPermTableStickyOffset("msPermissionsTable");
     return;
   }
   body.innerHTML = rows.map(({ app, input }) => {
@@ -39919,6 +39957,7 @@ function renderMsPermissionsTable() {
     }).join("");
     return `<tr><td>${escapeHtml(app)}</td><th scope="row">${escapeHtml(input)}</th>${cells}</tr>`;
   }).join("");
+  syncPermTableStickyOffset("msPermissionsTable");
 }
 renderMsPermissionsTable();
 
