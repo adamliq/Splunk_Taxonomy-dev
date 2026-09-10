@@ -730,6 +730,15 @@
     .advisor-overlay { margin-top: 14px; padding: 16px 18px; border: 1px solid #c4b5fd; border-radius: 12px; background: #faf5ff; }
     .advisor-overlay .advisor-pattern-id { display: inline-flex; margin-bottom: 9px; background: #ede9fe; color: #6d28d9; }
     .advisor-warning { margin-top: 14px; padding: 13px 15px; border: 1px solid #fde68a; border-radius: 11px; background: #fffbeb; color: #92400e; font-size: 13px; line-height: 1.5; }
+    .advisor-flow-schema { margin-top: 19px; }
+    .advisor-flow-schema h4 { margin: 0 0 9px; }
+    .advisor-flow-table-wrap { max-height: none; }
+    .advisor-flow-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .advisor-flow-table th, .advisor-flow-table td { padding: 7px 10px; text-align: left; border-bottom: 1px solid #f1f5f9; white-space: nowrap; }
+    .advisor-flow-table thead th { background: #f8fafc; color: #64748b; font-size: 10px; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
+    .advisor-flow-table tbody tr:last-child td { border-bottom: 0; }
+    .advisor-flow-view-full { margin-top: 9px; border: 0; background: transparent; color: var(--accent); padding: 0; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .advisor-flow-view-full:hover { text-decoration: underline; }
     .advisor-alternatives { margin-top: 19px; }
     .alternative-list { display: grid; gap: 8px; }
     .alternative-item { display: flex; justify-content: space-between; gap: 12px; padding: 11px 13px; border: 1px solid var(--border); border-radius: 10px; }
@@ -3203,6 +3212,13 @@
     .conf-tree-detail-body h5:first-of-type { margin-top:0; }
     .conf-tree-detail-body .ctd-chips { display:flex; flex-wrap:wrap; gap:5px; }
     .conf-tree-detail-body .ctd-chips code { font-size:10.5px; background:#f8fafc; border:1px solid var(--border); border-radius:5px; padding:3px 6px; }
+    .conf-tree-detail-body .ctd-context-desc { color:#334155; font-size:12px; line-height:1.6; margin:0 0 7px; }
+    .conf-tree-detail-body .ctd-context-tag { display:inline-block; font-size:10.5px; line-height:1.5; padding:4px 8px; border-radius:6px; margin:0; background:#f8fafc; border:1px solid var(--border); color:var(--muted); }
+    .conf-tree-detail-body .ctd-context-tag[data-context="global"] { background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8; }
+    .conf-tree-detail-body .ctd-context-tag[data-context="mixed"] { background:#fdf4ff; border-color:#e9d5ff; color:#a21caf; }
+    .conf-tree-detail-body .ctd-context-tag[data-context="app"] { background:#f0fdf4; border-color:#bbf7d0; color:#15803d; }
+    .conf-tree-detail-body .ctd-context-tag[data-context="app-user"] { background:#fff7ed; border-color:#fed7aa; color:#c2410c; }
+    .conf-tree-detail-body .ctd-context-tag[data-context="special"] { background:#fef2f2; border-color:#fecaca; color:#b91c1c; }
     .conf-tree-detail-body .ctd-btool-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
     .conf-tree-detail-body .ctd-copy-btn { border:0; background:transparent; color:var(--accent); padding:0; font-size:11px; font-weight:700; cursor:pointer; }
     .conf-tree-detail-body pre { margin:0; background:#0f1c26; color:#dbeafe; border-radius:7px; padding:9px 10px; white-space:pre-wrap; overflow-wrap:anywhere; font:11px/1.5 var(--mono); }
@@ -17586,6 +17602,46 @@ function exportAdvisorChecklist(event) {
   }
 }
 
+const ADVISOR_FLOW_SCHEMA_COLUMNS = [
+  ["id", "Flow ID"], ["srcComponent", "Source"], ["dstComponent", "Destination"],
+  ["dstPort", "Port"], ["transport", "Transport"], ["appProtocol", "App Protocol"],
+  ["firewallRule", "Firewall Rule"]
+];
+
+function flowSchemaRowsForPattern(patternId) {
+  if (typeof portsMatrixPatternEdges === "undefined" || typeof portsMatrixFlowSchema === "undefined") return [];
+  const edgeList = portsMatrixPatternEdges[patternId] || [];
+  if (!edgeList.length) return [];
+  const byId = {};
+  portsMatrixFlowSchema.forEach(rec => { byId[rec.id] = rec; });
+  return flowIdsForEdgeList(edgeList).map(id => byId[id]).filter(Boolean);
+}
+
+function renderAdvisorFlowSchemaRows(patternId) {
+  const rows = flowSchemaRowsForPattern(patternId);
+  if (!rows.length) return "";
+  const head = ADVISOR_FLOW_SCHEMA_COLUMNS.map(([, label]) => `<th scope="col">${escapeHtml(label)}</th>`).join("");
+  const body = rows.map(rec => `<tr>${ADVISOR_FLOW_SCHEMA_COLUMNS.map(([key]) => `<td>${escapeHtml(rec[key] || "")}</td>`).join("")}</tr>`).join("");
+  return `<div class="advisor-flow-schema">
+    <h4>Flow schema rows for ${escapeHtml(patternId)}</h4>
+    <div class="eccs-table-wrap advisor-flow-table-wrap"><table class="advisor-flow-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>
+    <button type="button" class="advisor-flow-view-full" id="advisorViewFlowSchema">View ${rows.length === 1 ? "this row" : "these rows"} in Flow schema table &rarr;</button>
+  </div>`;
+}
+
+function openFlowSchemaForPattern(patternId) {
+  if (!patternId) return;
+  closeAdvisor();
+  setActivePage("portsMatrix");
+  const schemaBtn = document.getElementById("portsViewFlowSchemaBtn");
+  if (schemaBtn) schemaBtn.click();
+  const patternSelect = document.getElementById("portsFlowSchemaPatternSelect");
+  if (patternSelect) {
+    patternSelect.value = patternId;
+    patternSelect.dispatchEvent(new Event("change"));
+  }
+}
+
 function renderAdvisorResult(answers) {
   const scored = scoreLoggingPatterns(answers);
   const primary = scored[0];
@@ -17668,6 +17724,7 @@ function renderAdvisorResult(answers) {
           </ul>
         </div>` : ""}
       ${implementation ? `<div class="advisor-implementation"><h4>Implementation and assurance requirements</h4>${implementation}</div>` : ""}
+      ${renderAdvisorFlowSchemaRows(primary.pattern.id)}
       ${warning ? `<div class="advisor-warning"><strong>Design note:</strong> ${escapeHtml(warning)}</div>` : ""}
       ${renderAdvisorChecklist(primary.pattern)}
       <div class="advisor-alternatives">
@@ -17698,6 +17755,8 @@ function renderAdvisorResult(answers) {
   document.getElementById("viewAdvisorPattern").addEventListener("click", viewRecommendedPattern);
   document.getElementById("copyAdvisorSummary").addEventListener("click", copyAdvisorSummary);
   document.getElementById("exportAdvisorFinalPattern").addEventListener("click", exportAdvisorFinalPattern);
+  const viewFlowSchemaBtn = document.getElementById("advisorViewFlowSchema");
+  if (viewFlowSchemaBtn) viewFlowSchemaBtn.addEventListener("click", () => openFlowSchemaForPattern(primary.pattern.id));
   const checklistEl = document.getElementById("advisorChecklist");
   if (checklistEl) {
     checklistEl.addEventListener("change", handleChecklistToggle);
@@ -24702,111 +24761,111 @@ const ALL_ROLES = ["splunk-enterprise","heavy-forwarder","universal-forwarder"];
 const NON_UF = ["splunk-enterprise","heavy-forwarder"];
 const DEPLOY_ROLES = ["splunk-enterprise","heavy-forwarder"];
 const confFileTreeData = [
-  {id:"alert-actions-conf",filename:"alert_actions.conf",category:"System + app",purpose:"Alerting",keywords:["action.<name>.*", "[email]", "allowedDomainList", "allowlist.<name>", "[script]", "[lookup]", "[summary_index]"],btool:"alert_actions",related:["savedsearches-conf", "transforms-conf"],precedence:["app-user"],tiers:[
+  {id:"alert-actions-conf",filename:"alert_actions.conf",category:"System + app",purpose:"Alerting",description:"Configures built-in and custom alert action behaviour, parameters, execution, and presentation.",context:"app-user",keywords:["action.<name>.*", "[email]", "allowedDomainList", "allowlist.<name>", "[script]", "[lookup]", "[summary_index]"],btool:"alert_actions",related:["savedsearches-conf", "transforms-conf"],precedence:["app-user"],tiers:[
     {scope:"System",path:"etc/system/default/alert_actions.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/alert_actions.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/alert_actions.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/alert_actions.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"app-conf",filename:"app.conf",category:"App-scoped only",purpose:"Applications",keywords:["[install]", "[triggers]", "[shclustering]"],btool:"app",related:["inputs-conf", "passwords-conf"],precedence:["app-user"],tiers:[
+  {id:"app-conf",filename:"app.conf",category:"App-scoped only",purpose:"Applications",description:"Maintains the state and selected properties of an installed or packaged Splunk app.",context:"app",keywords:["[install]", "[triggers]", "[shclustering]"],btool:"app",related:["inputs-conf", "passwords-conf"],precedence:["app-user"],tiers:[
     {scope:"App",path:"etc/apps/<app_name>/default/app.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/app.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"audit-conf",filename:"audit.conf",category:"System + app",purpose:"Auditing",keywords:["[auditTrail]", "[auditconfig:/path]", "queueing", "logging_format", "enabled", "disabled", "sampling.<action>"],btool:"audit",related:["inputs-conf"],precedence:["global"],tiers:[
+  {id:"audit-conf",filename:"audit.conf",category:"System + app",purpose:"Auditing",description:"Controls audit-trail routing, format, and which REST endpoint actions get logged.",context:"global",keywords:["[auditTrail]", "[auditconfig:/path]", "queueing", "logging_format", "enabled", "disabled", "sampling.<action>"],btool:"audit",related:["inputs-conf"],precedence:["global"],tiers:[
     {scope:"System",path:"etc/system/default/audit.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/audit.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/audit.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/audit.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"authentication-conf",filename:"authentication.conf",category:"System + app",purpose:"Identity and access",keywords:[],btool:"authentication",related:["web-conf"],precedence:["global"],tiers:[
+  {id:"authentication-conf",filename:"authentication.conf",category:"System + app",purpose:"Identity and access",description:"Selects the authentication type and defines LDAP integration and other platform authentication behaviour.",context:"global",keywords:[],btool:"authentication",related:["web-conf"],precedence:["global"],tiers:[
     {scope:"System",path:"etc/system/default/authentication.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/authentication.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/authentication.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/authentication.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"authorize-conf",filename:"authorize.conf",category:"System + app",purpose:"Identity and access",keywords:["[role_<roleName>]", "importRoles", "srchFilter", "srchIndexesAllowed/Default/Disallowed", "srchTimeWin", "srchJobsQuota"],btool:"authorize",related:[],precedence:["global"],tiers:[
+  {id:"authorize-conf",filename:"authorize.conf",category:"System + app",purpose:"Identity and access",description:"Controls role-based authorization, search restrictions, default application, capability grants, and allowed or default indexes.",context:"global",keywords:["[role_<roleName>]", "importRoles", "srchFilter", "srchIndexesAllowed/Default/Disallowed", "srchTimeWin", "srchJobsQuota"],btool:"authorize",related:[],precedence:["global"],tiers:[
     {scope:"System",path:"etc/system/default/authorize.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/authorize.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/authorize.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/authorize.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"commands-conf",filename:"commands.conf",category:"System + app",purpose:"Search extensions",keywords:["[<STANZA_NAME>]", "streaming", "generating", "retainsevents", "chunked", "required_fields", "maxinputs", "perf_warn_limit"],btool:"commands",related:[],precedence:["app-user"],tiers:[
+  {id:"commands-conf",filename:"commands.conf",category:"System + app",purpose:"Search extensions",description:"Defines command implementation, execution model, streaming behaviour, input/output handling, and related search command properties.",context:"app-user",keywords:["[<STANZA_NAME>]", "streaming", "generating", "retainsevents", "chunked", "required_fields", "maxinputs", "perf_warn_limit"],btool:"commands",related:[],precedence:["app-user"],tiers:[
     {scope:"System",path:"etc/system/default/commands.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/commands.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/commands.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/commands.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"inputs-conf",filename:"inputs.conf",category:"System + app",purpose:"Data collection",keywords:["[monitor://]", "[batch://]", "[tcp://]", "[udp://]", "[script://]", "[http://<token>]"],btool:"inputs",related:["outputs-conf"],precedence:["global", "global-indexer-cluster-peer"],tiers:[
+  {id:"inputs-conf",filename:"inputs.conf",category:"System + app",purpose:"Data collection",description:"Configures monitored files and directories, network inputs, scripted inputs, Windows inputs, modular inputs, and selected receiving inputs.",context:"global",keywords:["[monitor://]", "[batch://]", "[tcp://]", "[udp://]", "[script://]", "[http://<token>]"],btool:"inputs",related:["outputs-conf"],precedence:["global", "global-indexer-cluster-peer"],tiers:[
     {scope:"System",path:"etc/system/default/inputs.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/inputs.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/inputs.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/inputs.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"datamodels-conf",filename:"datamodels.conf",category:"System + app",purpose:"Knowledge objects",keywords:["[<datamodel_name>]", "acceleration.earliest_time", "backfill_time", "acceleration.cron_schedule", "allow_skew", "schedule_priority", "acceleration.source_guid"],btool:"datamodels",related:[],precedence:["app-user"],tiers:[
+  {id:"datamodels-conf",filename:"datamodels.conf",category:"System + app",purpose:"Knowledge objects",description:"Stores data model JSON and configuration controlling acceleration, retention, and related model behaviour.",context:"app-user",keywords:["[<datamodel_name>]", "acceleration.earliest_time", "backfill_time", "acceleration.cron_schedule", "allow_skew", "schedule_priority", "acceleration.source_guid"],btool:"datamodels",related:[],precedence:["app-user"],tiers:[
     {scope:"System",path:"etc/system/default/datamodels.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/datamodels.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/datamodels.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/datamodels.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"db-connection-types-conf",filename:"db_connection_types.conf",category:"App-scoped only",purpose:"Database connectivity",keywords:["jdbcUrlFormat", "serviceClass", "deprecated"],btool:"db_connection_types",related:[],precedence:["single-app"],tiers:[
+  {id:"db-connection-types-conf",filename:"db_connection_types.conf",category:"App-scoped only",purpose:"Database connectivity",description:"Defines the database engine types DB Connect can use — JDBC driver, connection URL template, and default pooling behavior.",context:"app",keywords:["jdbcUrlFormat", "serviceClass", "deprecated"],btool:"db_connection_types",related:[],precedence:["single-app"],tiers:[
     {scope:"App",path:"etc/apps/splunk_app_db_connect/default/db_connection_types.conf",editable:false,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
     {scope:"App",path:"etc/apps/splunk_app_db_connect/local/db_connection_types.conf",editable:true,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
   ]},
-  {id:"db-inputs-conf",filename:"db_inputs.conf",category:"App-scoped only",purpose:"Database connectivity",keywords:["connection", "mode", "query", "index_time_mode"],btool:"db_inputs",related:["inputs-conf"],precedence:["single-app"],tiers:[
+  {id:"db-inputs-conf",filename:"db_inputs.conf",category:"App-scoped only",purpose:"Database connectivity",description:"Defines scheduled SQL queries that DB Connect runs against a named connection and converts into Splunk events or metrics.",context:"app",keywords:["connection", "mode", "query", "index_time_mode"],btool:"db_inputs",related:["inputs-conf"],precedence:["single-app"],tiers:[
     {scope:"App",path:"etc/apps/splunk_app_db_connect/default/db_inputs.conf",editable:false,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
     {scope:"App",path:"etc/apps/splunk_app_db_connect/local/db_inputs.conf",editable:true,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
   ]},
-  {id:"db-outputs-conf",filename:"db_outputs.conf",category:"App-scoped only",purpose:"Database connectivity",keywords:["search", "table_name", "using_upsert", "customized_mappings", "retry_attempts", "retry_delay"],btool:"db_outputs",related:["db-inputs-conf", "outputs-conf"],precedence:["single-app"],tiers:[
+  {id:"db-outputs-conf",filename:"db_outputs.conf",category:"App-scoped only",purpose:"Database connectivity",description:"Defines scheduled searches whose results DB Connect writes into a target database table, as an insert or upsert.",context:"app",keywords:["search", "table_name", "using_upsert", "customized_mappings", "retry_attempts", "retry_delay"],btool:"db_outputs",related:["db-inputs-conf", "outputs-conf"],precedence:["single-app"],tiers:[
     {scope:"App",path:"etc/apps/splunk_app_db_connect/default/db_outputs.conf",editable:false,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
     {scope:"App",path:"etc/apps/splunk_app_db_connect/local/db_outputs.conf",editable:true,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
   ]},
-  {id:"db-identities-conf",filename:"identities.conf",category:"App-scoped only",purpose:"Secrets",keywords:["identity_type"],btool:"identities",related:["passwords-conf"],precedence:["single-app"],tiers:[
+  {id:"db-identities-conf",filename:"identities.conf",category:"App-scoped only",purpose:"Secrets",description:"Defines the credentials (identities) Database Connections authenticate with, including where the secret is actually stored.",context:"app",keywords:["identity_type"],btool:"identities",related:["passwords-conf"],precedence:["single-app"],tiers:[
     {scope:"App",path:"etc/apps/splunk_app_db_connect/default/identities.conf",editable:false,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
     {scope:"App",path:"etc/apps/splunk_app_db_connect/local/identities.conf",editable:true,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
   ]},
-  {id:"dbx-settings-conf",filename:"dbx_settings.conf",category:"App-scoped only",purpose:"Database connectivity",keywords:["[loglevel]", "[hec]", "[security]", "[synchronizer]"],btool:"dbx_settings",related:["commands-conf", "db-inputs-conf", "db-outputs-conf"],precedence:["single-app"],tiers:[
+  {id:"dbx-settings-conf",filename:"dbx_settings.conf",category:"App-scoped only",purpose:"Database connectivity",description:"Holds instance-wide operational settings for the DB Connect app itself — logging, HEC, security, and sync behavior.",context:"app",keywords:["[loglevel]", "[hec]", "[security]", "[synchronizer]"],btool:"dbx_settings",related:["commands-conf", "db-inputs-conf", "db-outputs-conf"],precedence:["single-app"],tiers:[
     {scope:"App",path:"etc/apps/splunk_app_db_connect/default/dbx_settings.conf",editable:false,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
     {scope:"App",path:"etc/apps/splunk_app_db_connect/local/dbx_settings.conf",editable:true,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
   ]},
-  {id:"deploymentclient-conf",filename:"deploymentclient.conf",category:"System + app",purpose:"Deployment",keywords:["repositoryLocation"],btool:"deploymentclient",related:["serverclass-conf"],precedence:["global"],tiers:[
+  {id:"deploymentclient-conf",filename:"deploymentclient.conf",category:"System + app",purpose:"Deployment",description:"Defines deployment-server connection details, client identity behaviour, polling, and repository-related deployment client settings.",context:"global",keywords:["repositoryLocation"],btool:"deploymentclient",related:["serverclass-conf"],precedence:["global"],tiers:[
     {scope:"System",path:"etc/system/default/deploymentclient.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/deploymentclient.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/deploymentclient.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/deploymentclient.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"distsearch-conf",filename:"distsearch.conf",category:"System + app",purpose:"Distributed search",keywords:["[distributedSearch]", "[replicationSettings]", "servers", "disabled_servers", "quarantined_servers", "replicationPolicy", "replicationAllowlist", "Denylist"],btool:"distsearch",related:[],precedence:["global"],tiers:[
+  {id:"distsearch-conf",filename:"distsearch.conf",category:"System + app",purpose:"Distributed search",description:"Configures distributed search timeouts, bundle replication, peer communication, and related search-head behaviour.",context:"global",keywords:["[distributedSearch]", "[replicationSettings]", "servers", "disabled_servers", "quarantined_servers", "replicationPolicy", "replicationAllowlist", "Denylist"],btool:"distsearch",related:[],precedence:["global"],tiers:[
     {scope:"System",path:"etc/system/default/distsearch.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/distsearch.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/distsearch.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/distsearch.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"eventtypes-conf",filename:"eventtypes.conf",category:"System + app + user",purpose:"Knowledge objects",keywords:["search", "%field%", "priority", "color"],btool:"eventtypes",related:["tags-conf"],precedence:["app-user"],tiers:[
+  {id:"eventtypes-conf",filename:"eventtypes.conf",category:"System + app + user",purpose:"Knowledge objects",description:"Associates event type names with searches, priorities, tags, and colour metadata.",context:"app-user",keywords:["search", "%field%", "priority", "color"],btool:"eventtypes",related:["tags-conf"],precedence:["app-user"],tiers:[
     {scope:"System",path:"etc/system/default/eventtypes.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/eventtypes.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/eventtypes.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/eventtypes.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/eventtypes.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"federated-conf",filename:"federated.conf",category:"System + app",purpose:"Federated search",keywords:["[provider://<name>]", "[general]", "mode", "fedSrchIndexesAllowed", "[s2s_*_unsupported_command:<cmd>]"],btool:"federated",related:["indexes-conf", "authorize-conf"],precedence:["global"],tiers:[
+  {id:"federated-conf",filename:"federated.conf",category:"System + app",purpose:"Federated search",description:"Configures access to external or remote datasets through supported federated search provider types.",context:"global",keywords:["[provider://<name>]", "[general]", "mode", "fedSrchIndexesAllowed", "[s2s_*_unsupported_command:<cmd>]"],btool:"federated",related:["indexes-conf", "authorize-conf"],precedence:["global"],tiers:[
     {scope:"System",path:"etc/system/default/federated.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/federated.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/federated.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/federated.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"fields-conf",filename:"fields.conf",category:"System + app + user",purpose:"Knowledge objects",keywords:["TOKENIZER", "INDEXED", "INDEXED_VALUE", "sourcetype::...::data*"],btool:"fields",related:[],precedence:["app-user"],tiers:[
+  {id:"fields-conf",filename:"fields.conf",category:"System + app + user",purpose:"Knowledge objects",description:"Describes field characteristics used by the search layer, including indexed-field and multivalue handling.",context:"app-user",keywords:["TOKENIZER", "INDEXED", "INDEXED_VALUE", "sourcetype::...::data*"],btool:"fields",related:[],precedence:["app-user"],tiers:[
     {scope:"System",path:"etc/system/default/fields.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/fields.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/fields.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/fields.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/fields.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"outputs-conf",filename:"outputs.conf",category:"System + app",purpose:"Forwarding",keywords:["[tcpout]", "[tcpout:<group>]", "server=", "[syslog:<name>]"],btool:"outputs",related:["inputs-conf"],precedence:["global"],tiers:[
+  {id:"outputs-conf",filename:"outputs.conf",category:"System + app",purpose:"Forwarding",description:"Configures forwarding groups, Splunk-to-Splunk targets, load balancing, acknowledgements, routing, and output-related TLS settings.",context:"global",keywords:["[tcpout]", "[tcpout:<group>]", "server=", "[syslog:<name>]"],btool:"outputs",related:["inputs-conf"],precedence:["global"],tiers:[
     {scope:"System",path:"etc/system/default/outputs.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/outputs.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/outputs.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/outputs.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"indexes-conf",filename:"indexes.conf",category:"Special-case",purpose:"Indexing",keywords:["homePath", "coldPath", "thawedPath", "[volume:<name>]", "datatype = metric"],btool:"indexes",related:["inputs-conf", "federated-conf"],precedence:["global", "global-indexer-cluster-peer"],tiers:[
+  {id:"indexes-conf",filename:"indexes.conf",category:"Special-case",purpose:"Indexing",description:"Configures event and metric indexes, volumes, bucket storage, retention controls, and related indexing properties.",context:"global",keywords:["homePath", "coldPath", "thawedPath", "[volume:<name>]", "datatype = metric"],btool:"indexes",related:["inputs-conf", "federated-conf"],precedence:["global", "global-indexer-cluster-peer"],tiers:[
     {scope:"System",path:"etc/system/default/indexes.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/indexes.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/indexes.conf",editable:false,roles:ALL_ROLES,why:null},
@@ -24816,109 +24875,109 @@ const confFileTreeData = [
     {scope:"Indexer peer",path:"etc/peer-apps/_cluster/default/indexes.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"Indexer peer",path:"etc/peer-apps/_cluster/local/indexes.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"instance-cfg-conf",filename:"instance.cfg",category:"Special-case",purpose:"Platform",keywords:["[general]", "guid", "splunk clone-prep-clear-config"],btool:null,related:[],precedence:[],tiers:[
+  {id:"instance-cfg-conf",filename:"instance.cfg",category:"Special-case",purpose:"Platform",description:"Holds a small set of per-instance identity settings, such as the server's GUID, managed directly by splunkd.",context:"special",keywords:["[general]", "guid", "splunk clone-prep-clear-config"],btool:null,related:[],precedence:[],tiers:[
     {scope:"Singleton",path:"etc/instance.cfg",editable:false,roles:ALL_ROLES,why:null},
   ]},
-  {id:"collections-conf",filename:"collections.conf",category:"App-scoped only",purpose:"KV Store",keywords:["[<collection-name>]", "field.<name>", "enforceTypes", "accelerated_fields.<name>", "replicate"],btool:"collections",related:["distsearch-conf"],precedence:["app-user"],tiers:[
+  {id:"collections-conf",filename:"collections.conf",category:"App-scoped only",purpose:"KV Store",description:"Configures app-scoped KV Store collections, acceleration, replication, and field type declarations.",context:"app-user",keywords:["[<collection-name>]", "field.<name>", "enforceTypes", "accelerated_fields.<name>", "replicate"],btool:"collections",related:["distsearch-conf"],precedence:["app-user"],tiers:[
     {scope:"App",path:"etc/apps/<app_name>/default/collections.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/collections.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"passwords-conf",filename:"passwords.conf",category:"Special-case",purpose:"Secrets",keywords:["[credential:<realm>:<username>:]"],btool:"passwords",related:[],precedence:["app-user", "global"],tiers:[
+  {id:"passwords-conf",filename:"passwords.conf",category:"Special-case",purpose:"Secrets",description:"Stores credential records managed by Splunk's credential mechanisms. Values can be encrypted at rest but remain highly sensitive.",context:"app-user",keywords:["[credential:<realm>:<username>:]"],btool:"passwords",related:[],precedence:["app-user", "global"],tiers:[
     {scope:"System",path:"etc/system/local/passwords.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/passwords.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"props-conf",filename:"props.conf",category:"System + app + user",purpose:"Parsing and knowledge",keywords:["[<spec>]", "TRANSFORMS", "REPORT", "EXTRACT", "FIELDALIAS", "EVAL", "LOOKUP", "SEDCMD"],btool:"props",related:["transforms-conf", "outputs-conf"],precedence:["mixed-props", "global", "global-indexer-cluster-peer", "app-user"],tiers:[
+  {id:"props-conf",filename:"props.conf",category:"System + app + user",purpose:"Parsing and knowledge",description:"Controls line breaking, timestamp recognition, character sets, event processing, field extraction, lookups, aliases, calculated fields, and links to transforms.",context:"mixed",keywords:["[<spec>]", "TRANSFORMS", "REPORT", "EXTRACT", "FIELDALIAS", "EVAL", "LOOKUP", "SEDCMD"],btool:"props",related:["transforms-conf", "outputs-conf"],precedence:["mixed-props", "global", "global-indexer-cluster-peer", "app-user"],tiers:[
     {scope:"System",path:"etc/system/default/props.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/props.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/props.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/props.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/props.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"savedsearches-conf",filename:"savedsearches.conf",category:"System + app + user",purpose:"Knowledge objects",keywords:[],btool:"savedsearches",related:["federated-conf", "alert-actions-conf", "transforms-conf"],precedence:["app-user"],tiers:[
+  {id:"savedsearches-conf",filename:"savedsearches.conf",category:"System + app + user",purpose:"Knowledge objects",description:"Stores saved search SPL, scheduling, dispatch, alerting, action, and visibility settings.",context:"app-user",keywords:[],btool:"savedsearches",related:["federated-conf", "alert-actions-conf", "transforms-conf"],precedence:["app-user"],tiers:[
     {scope:"System",path:"etc/system/default/savedsearches.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/savedsearches.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/savedsearches.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/savedsearches.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/savedsearches.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"serverclass-conf",filename:"serverclass.conf",category:"Special-case",purpose:"Deployment",keywords:["[global]", "[serverClass:<name>]", "[serverClass:<name>:app:<appName>]", "filterType", "machineTypesFilter"],btool:"serverclass",related:["deploymentclient-conf"],precedence:["global"],tiers:[
+  {id:"serverclass-conf",filename:"serverclass.conf",category:"Special-case",purpose:"Deployment",description:"Defines server classes, client inclusion and exclusion rules, application assignments, and deployment behaviour.",context:"global",keywords:["[global]", "[serverClass:<name>]", "[serverClass:<name>:app:<appName>]", "filterType", "machineTypesFilter"],btool:"serverclass",related:["deploymentclient-conf"],precedence:["global"],tiers:[
     {scope:"Deployment Server",path:"etc/system/local/serverclass.conf",editable:true,roles:DEPLOY_ROLES,why:"A Universal Forwarder cannot act as a Deployment Server."},
   ]},
-  {id:"sourcetypes-conf",filename:"sourcetypes.conf",category:"Special-case",purpose:"Parsing and knowledge",keywords:["_sourcetype", "_source"],btool:"sourcetypes",related:["props-conf"],precedence:["single-app"],tiers:[
+  {id:"sourcetypes-conf",filename:"sourcetypes.conf",category:"Special-case",purpose:"Parsing and knowledge",description:"Stores machine-learned source-classification models the sourcetype learning engine builds and reads; not meant for manual editing.",context:"app",keywords:["_sourcetype", "_source"],btool:"sourcetypes",related:["props-conf"],precedence:["single-app"],tiers:[
     {scope:"Learned app",path:"etc/apps/learned/local/sourcetypes.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"Any app",path:"etc/apps/<app_name>/default/sourcetypes.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"Any app",path:"etc/apps/<app_name>/local/sourcetypes.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"web-conf",filename:"web.conf",category:"System + app",purpose:"Web interface",keywords:["allowedSplunkWebClientNetlocList", "SSOMode", "trustedIP", "remoteUser", "remoteGroups", "dashboard_html_injection_mode"],btool:"web",related:["authentication-conf"],precedence:["global"],tiers:[
+  {id:"web-conf",filename:"web.conf",category:"System + app",purpose:"Web interface",description:"Controls Splunk Web listener settings, TLS, session behaviour, proxy-related settings, and selected UI features.",context:"global",keywords:["allowedSplunkWebClientNetlocList", "SSOMode", "trustedIP", "remoteUser", "remoteGroups", "dashboard_html_injection_mode"],btool:"web",related:["authentication-conf"],precedence:["global"],tiers:[
     {scope:"System",path:"etc/system/default/web.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/web.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/web.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/web.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"tags-conf",filename:"tags.conf",category:"System + app + user",purpose:"Knowledge objects",keywords:["[<fieldname>=<value>]", "<tag> = enabled|disabled"],btool:"tags",related:[],precedence:["app-user"],tiers:[
+  {id:"tags-conf",filename:"tags.conf",category:"System + app + user",purpose:"Knowledge objects",description:"Stores tag enablement for event types and field-value associations used in search-time knowledge management.",context:"app-user",keywords:["[<fieldname>=<value>]", "<tag> = enabled|disabled"],btool:"tags",related:[],precedence:["app-user"],tiers:[
     {scope:"System",path:"etc/system/default/tags.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/tags.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/tags.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/tags.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/tags.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"transforms-conf",filename:"transforms.conf",category:"System + app + user",purpose:"Parsing and knowledge",keywords:["REGEX", "FORMAT", "DEST_KEY", "SOURCE_KEY"],btool:"transforms",related:["props-conf", "outputs-conf", "collections-conf", "distsearch-conf"],precedence:["global", "global-indexer-cluster-peer", "app-user"],tiers:[
+  {id:"transforms-conf",filename:"transforms.conf",category:"System + app + user",purpose:"Parsing and knowledge",description:"Configures regex transformations, metadata rewrites, routing, field extractions, external lookups, and lookup-file definitions.",context:"mixed",keywords:["REGEX", "FORMAT", "DEST_KEY", "SOURCE_KEY"],btool:"transforms",related:["props-conf", "outputs-conf", "collections-conf", "distsearch-conf"],precedence:["global", "global-indexer-cluster-peer", "app-user"],tiers:[
     {scope:"System",path:"etc/system/default/transforms.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/transforms.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/transforms.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/transforms.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/transforms.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"user-prefs-conf",filename:"user-prefs.conf",category:"System + app + user",purpose:"Web interface",keywords:["default_namespace", "tz", "lang", "[general_default]", "[role_<name>]"],btool:"user-prefs",related:["authorize-conf"],precedence:["app-user"],tiers:[
+  {id:"user-prefs-conf",filename:"user-prefs.conf",category:"System + app + user",purpose:"Web interface",description:"Stores per-user Splunk Web preferences plus role- and deployment-wide UI defaults.",context:"app-user",keywords:["default_namespace", "tz", "lang", "[general_default]", "[role_<name>]"],btool:"user-prefs",related:["authorize-conf"],precedence:["app-user"],tiers:[
     {scope:"System",path:"etc/system/default/user-prefs.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/user-prefs.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/user-prefs.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/user-prefs.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/user-prefs.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"web-features-conf",filename:"web-features.conf",category:"System + app",purpose:"Web interface",keywords:["[feature:<name>]", "enable_<area>_vnext", "appserver_security"],btool:"web-features",related:[],precedence:["global"],tiers:[
+  {id:"web-features-conf",filename:"web-features.conf",category:"System + app",purpose:"Web interface",description:"Toggles individual Splunk Web feature areas on or off, largely as versioned preview/GA/removed feature flags.",context:"global",keywords:["[feature:<name>]", "enable_<area>_vnext", "appserver_security"],btool:"web-features",related:[],precedence:["global"],tiers:[
     {scope:"System",path:"etc/system/default/web-features.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/web-features.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/web-features.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/web-features.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"workflow-actions-conf",filename:"workflow_actions.conf",category:"System + app + user",purpose:"Knowledge objects",keywords:["link", "search", "$field$", "$@field_name$", "$@field_value$", "link.uri", "link.postargs", "search.search_string"],btool:"workflow_actions",related:[],precedence:["app-user"],tiers:[
+  {id:"workflow-actions-conf",filename:"workflow_actions.conf",category:"System + app + user",purpose:"Knowledge objects",description:"Defines workflow actions — clickable field-value links and searches available from event fields in Splunk Web.",context:"app-user",keywords:["link", "search", "$field$", "$@field_name$", "$@field_value$", "link.uri", "link.postargs", "search.search_string"],btool:"workflow_actions",related:[],precedence:["app-user"],tiers:[
     {scope:"System",path:"etc/system/default/workflow_actions.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/workflow_actions.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/workflow_actions.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/workflow_actions.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/workflow_actions.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"server-conf",filename:"server.conf",category:"System + app",purpose:"Platform",keywords:["[general]","[sslConfig]","serverName","pass4SymmKey","enableSplunkdSSL","[clustering]","[shclustering]","[license]","[kvstore]"],btool:"server",related:["distsearch-conf", "indexes-conf"],precedence:["global", "global-indexer-cluster-peer"],tiers:[
+  {id:"server-conf",filename:"server.conf",category:"System + app",purpose:"Platform",description:"Contains broad server-level settings including general instance properties, management TLS, distributed configuration, and clustering-related controls.",context:"global",keywords:["[general]","[sslConfig]","serverName","pass4SymmKey","enableSplunkdSSL","[clustering]","[shclustering]","[license]","[kvstore]"],btool:"server",related:["distsearch-conf", "indexes-conf"],precedence:["global", "global-indexer-cluster-peer"],tiers:[
     {scope:"System",path:"etc/system/default/server.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/server.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/server.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/server.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"limits-conf",filename:"limits.conf",category:"System + app",purpose:"Performance and safeguards",keywords:["[search]","maxresultrows","dispatch_dir_warning_size"],btool:"limits",related:[],precedence:["global", "global-indexer-cluster-peer"],tiers:[
+  {id:"limits-conf",filename:"limits.conf",category:"System + app",purpose:"Performance and safeguards",description:"Controls result sizes, concurrency, memory and processing limits, timeouts, workload safeguards, and subsystem-specific thresholds.",context:"global",keywords:["[search]","maxresultrows","dispatch_dir_warning_size"],btool:"limits",related:[],precedence:["global", "global-indexer-cluster-peer"],tiers:[
     {scope:"System",path:"etc/system/default/limits.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/limits.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/limits.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/limits.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"macros-conf",filename:"macros.conf",category:"System + app + user",purpose:"Knowledge objects",keywords:["args","definition","validation","errormsg","iseval"],btool:"macros",related:["savedsearches-conf"],precedence:["app-user"],tiers:[
+  {id:"macros-conf",filename:"macros.conf",category:"System + app + user",purpose:"Knowledge objects",description:"Stores macro definitions, argument lists, validation expressions, and validation error messages.",context:"app-user",keywords:["args","definition","validation","errormsg","iseval"],btool:"macros",related:["savedsearches-conf"],precedence:["app-user"],tiers:[
     {scope:"System",path:"etc/system/default/macros.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/macros.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/macros.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/macros.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/macros.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"restmap-conf",filename:"restmap.conf",category:"System + app",purpose:"Platform extensions",keywords:["[global]","[script:<uniqueName>]","scripttype","python.version","[admin:<name>]","[admin_external:<name>]"],btool:"restmap",related:["commands-conf", "authorize-conf"],precedence:["global"],tiers:[
+  {id:"restmap-conf",filename:"restmap.conf",category:"System + app",purpose:"Platform extensions",description:"Maps REST endpoint patterns to scripted or persistent handlers and defines handler execution properties.",context:"global",keywords:["[global]","[script:<uniqueName>]","scripttype","python.version","[admin:<name>]","[admin_external:<name>]"],btool:"restmap",related:["commands-conf", "authorize-conf"],precedence:["global"],tiers:[
     {scope:"System",path:"etc/system/default/restmap.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/restmap.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/restmap.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/restmap.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"health-conf",filename:"health.conf",category:"Special-case",purpose:"Monitoring",keywords:["disabled","distributed_disabled","alert.disabled","data_out_rate:yellow","data_out_rate:red"],btool:"health",related:[],precedence:["global"],tiers:[
+  {id:"health-conf",filename:"health.conf",category:"Special-case",purpose:"Monitoring",description:"Controls health-reporting indicators, thresholds, and related component monitoring behaviour.",context:"global",keywords:["disabled","distributed_disabled","alert.disabled","data_out_rate:yellow","data_out_rate:red"],btool:"health",related:[],precedence:["global"],tiers:[
     {scope:"System",path:"etc/system/default/health.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/health.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"log-cfg-conf",filename:"log.cfg",category:"Special-case",purpose:"Diagnostics",keywords:["[python]","log-local.cfg","log-btool.cfg","log-searchprocess.cfg"],btool:null,related:[],precedence:[],tiers:[
+  {id:"log-cfg-conf",filename:"log.cfg",category:"Special-case",purpose:"Diagnostics",description:"Controls internal service logging. This is log.cfg rather than a .conf file and is included because it is important in the Splunk directory tree.",context:"special",keywords:["[python]","log-local.cfg","log-btool.cfg","log-searchprocess.cfg"],btool:null,related:[],precedence:[],tiers:[
     {scope:"Shipped",path:"etc/log.cfg",editable:false,roles:ALL_ROLES,why:null},
     {scope:"Local override",path:"etc/log-local.cfg",editable:true,roles:ALL_ROLES,why:null},
   ]},
@@ -24936,6 +24995,13 @@ const CONF_TREE_PRECEDENCE_PROFILES = {
   "app-user": {label:"App and user context", order:["user-app-local","current-app-local","current-app-default","exported-other-app-local","exported-other-app-default","system-local","system-default"], notes:["Current-user settings take priority.","Other apps contribute only exported settings."]},
   "mixed-props": {label:"Mixed context for this file", order:[], notes:["Index-time settings are evaluated in global context; search-time settings are evaluated in app/user context.","Use the context of the specific setting rather than applying one universal ordering."]},
   "single-app": {label:"Single-app context", order:["app-local","app-default"], notes:["Only one app defines this file, so there is no cross-app ordering to consider -- local simply beats default within it."]}
+};
+const CONF_TREE_CONTEXT_LABELS = {
+  "global": "Global — applies uniformly; not tied to a current app or user.",
+  "mixed": "Mixed — some settings are global, others merge with app/user context depending on the setting.",
+  "app": "Single app — owned by one app; no cross-app merge is modeled for this file.",
+  "app-user": "App + user — merges app-level settings with the current user's own.",
+  "special": "Special — lives at a fixed path; normal default/local precedence does not apply."
 };
 const CONF_TREE_DEFAULT_PLATFORM = "linux", CONF_TREE_DEFAULT_ROLE = "splunk-enterprise", CONF_TREE_DEFAULT_FILE = "props-conf";
 let confTreePlatform = CONF_TREE_DEFAULT_PLATFORM, confTreeRole = CONF_TREE_DEFAULT_ROLE, confTreeActiveId = CONF_TREE_DEFAULT_FILE, confTreeCategoryFilter = "", confTreePurposeFilter = "", confTreeSearchQuery = "", confTreeRootOverride = null;
@@ -25166,6 +25232,14 @@ function initConfFileTree(){
     const label = detailViewLabels[file.id] || file.category;
     let html = '<p class="ctd-purpose">' + escapeHtml(label) + '</p>';
     html += '<p class="ctd-desc">' + escapeHtml(file.category) + '</p>';
+
+    if (file.description) {
+      html += '<h5>Configuration context</h5><p class="ctd-context-desc">' + escapeHtml(file.description) + '</p>';
+      const ctxLabel = CONF_TREE_CONTEXT_LABELS[file.context];
+      if (ctxLabel) {
+        html += '<p class="ctd-context-tag" id="confTreeContextTag" data-context="' + escapeHtml(file.context) + '">' + escapeHtml(ctxLabel) + '</p>';
+      }
+    }
 
     if (file.keywords && file.keywords.length) {
       html += '<h5>Key stanzas &amp; settings</h5><div class="ctd-chips">' + file.keywords.map(k => '<code>' + escapeHtml(k) + '</code>').join('') + '</div>';
