@@ -730,6 +730,15 @@
     .advisor-overlay { margin-top: 14px; padding: 16px 18px; border: 1px solid #c4b5fd; border-radius: 12px; background: #faf5ff; }
     .advisor-overlay .advisor-pattern-id { display: inline-flex; margin-bottom: 9px; background: #ede9fe; color: #6d28d9; }
     .advisor-warning { margin-top: 14px; padding: 13px 15px; border: 1px solid #fde68a; border-radius: 11px; background: #fffbeb; color: #92400e; font-size: 13px; line-height: 1.5; }
+    .advisor-flow-schema { margin-top: 19px; }
+    .advisor-flow-schema h4 { margin: 0 0 9px; }
+    .advisor-flow-table-wrap { max-height: none; }
+    .advisor-flow-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .advisor-flow-table th, .advisor-flow-table td { padding: 7px 10px; text-align: left; border-bottom: 1px solid #f1f5f9; white-space: nowrap; }
+    .advisor-flow-table thead th { background: #f8fafc; color: #64748b; font-size: 10px; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
+    .advisor-flow-table tbody tr:last-child td { border-bottom: 0; }
+    .advisor-flow-view-full { margin-top: 9px; border: 0; background: transparent; color: var(--accent); padding: 0; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .advisor-flow-view-full:hover { text-decoration: underline; }
     .advisor-alternatives { margin-top: 19px; }
     .alternative-list { display: grid; gap: 8px; }
     .alternative-item { display: flex; justify-content: space-between; gap: 12px; padding: 11px 13px; border: 1px solid var(--border); border-radius: 10px; }
@@ -17593,6 +17602,46 @@ function exportAdvisorChecklist(event) {
   }
 }
 
+const ADVISOR_FLOW_SCHEMA_COLUMNS = [
+  ["id", "Flow ID"], ["srcComponent", "Source"], ["dstComponent", "Destination"],
+  ["dstPort", "Port"], ["transport", "Transport"], ["appProtocol", "App Protocol"],
+  ["firewallRule", "Firewall Rule"]
+];
+
+function flowSchemaRowsForPattern(patternId) {
+  if (typeof portsMatrixPatternEdges === "undefined" || typeof portsMatrixFlowSchema === "undefined") return [];
+  const edgeList = portsMatrixPatternEdges[patternId] || [];
+  if (!edgeList.length) return [];
+  const byId = {};
+  portsMatrixFlowSchema.forEach(rec => { byId[rec.id] = rec; });
+  return flowIdsForEdgeList(edgeList).map(id => byId[id]).filter(Boolean);
+}
+
+function renderAdvisorFlowSchemaRows(patternId) {
+  const rows = flowSchemaRowsForPattern(patternId);
+  if (!rows.length) return "";
+  const head = ADVISOR_FLOW_SCHEMA_COLUMNS.map(([, label]) => `<th scope="col">${escapeHtml(label)}</th>`).join("");
+  const body = rows.map(rec => `<tr>${ADVISOR_FLOW_SCHEMA_COLUMNS.map(([key]) => `<td>${escapeHtml(rec[key] || "")}</td>`).join("")}</tr>`).join("");
+  return `<div class="advisor-flow-schema">
+    <h4>Flow schema rows for ${escapeHtml(patternId)}</h4>
+    <div class="eccs-table-wrap advisor-flow-table-wrap"><table class="advisor-flow-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>
+    <button type="button" class="advisor-flow-view-full" id="advisorViewFlowSchema">View ${rows.length === 1 ? "this row" : "these rows"} in Flow schema table &rarr;</button>
+  </div>`;
+}
+
+function openFlowSchemaForPattern(patternId) {
+  if (!patternId) return;
+  closeAdvisor();
+  setActivePage("portsMatrix");
+  const schemaBtn = document.getElementById("portsViewFlowSchemaBtn");
+  if (schemaBtn) schemaBtn.click();
+  const patternSelect = document.getElementById("portsFlowSchemaPatternSelect");
+  if (patternSelect) {
+    patternSelect.value = patternId;
+    patternSelect.dispatchEvent(new Event("change"));
+  }
+}
+
 function renderAdvisorResult(answers) {
   const scored = scoreLoggingPatterns(answers);
   const primary = scored[0];
@@ -17675,6 +17724,7 @@ function renderAdvisorResult(answers) {
           </ul>
         </div>` : ""}
       ${implementation ? `<div class="advisor-implementation"><h4>Implementation and assurance requirements</h4>${implementation}</div>` : ""}
+      ${renderAdvisorFlowSchemaRows(primary.pattern.id)}
       ${warning ? `<div class="advisor-warning"><strong>Design note:</strong> ${escapeHtml(warning)}</div>` : ""}
       ${renderAdvisorChecklist(primary.pattern)}
       <div class="advisor-alternatives">
@@ -17705,6 +17755,8 @@ function renderAdvisorResult(answers) {
   document.getElementById("viewAdvisorPattern").addEventListener("click", viewRecommendedPattern);
   document.getElementById("copyAdvisorSummary").addEventListener("click", copyAdvisorSummary);
   document.getElementById("exportAdvisorFinalPattern").addEventListener("click", exportAdvisorFinalPattern);
+  const viewFlowSchemaBtn = document.getElementById("advisorViewFlowSchema");
+  if (viewFlowSchemaBtn) viewFlowSchemaBtn.addEventListener("click", () => openFlowSchemaForPattern(primary.pattern.id));
   const checklistEl = document.getElementById("advisorChecklist");
   if (checklistEl) {
     checklistEl.addEventListener("change", handleChecklistToggle);
