@@ -3188,6 +3188,12 @@
     .conf-tree-intro { color:var(--muted); font-size:13px; line-height:1.6; margin:10px 0 14px; max-width:80ch; }
     .conf-tree-root-readout { margin-left:auto; font-size:12.5px; color:var(--muted); font-weight:700; }
     .conf-tree-root-readout code { font:700 12.5px var(--mono); color:var(--primary); background:var(--primary-light); padding:3px 7px; border-radius:6px; }
+    .conf-tree-root-input { flex:1 1 220px; min-width:180px; font:700 12.5px var(--mono); padding:9px 10px; border-radius:10px; border:1px solid var(--border); background:var(--primary-light); color:var(--primary); }
+    .conf-tree-actions { display:flex; gap:5px; align-items:center; }
+    .conf-tree-icon-btn { width:28px; height:28px; padding:0; border-radius:6px; border:1px solid var(--border); background:#fff; color:var(--muted); font-weight:700; cursor:pointer; display:grid; place-items:center; }
+    .conf-tree-icon-btn:hover { background:#f8fafc; }
+    .conf-tree-breadcrumbs { padding:7px 13px; border-bottom:1px solid var(--border); font:12px var(--mono); color:var(--muted); white-space:nowrap; overflow:auto; background:#f8fafc; }
+    .conf-tree-breadcrumbs b { color:#0f172a; }
     .conf-tree-workspace { display:grid; grid-template-columns:minmax(210px,260px) minmax(360px,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-top:4px; }
     .conf-tree-filelist-panel, .conf-tree-panel { background:#fff; min-width:0; display:flex; flex-direction:column; max-height:640px; }
     .conf-tree-panel-head { padding:11px 13px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:8px; }
@@ -8464,7 +8470,9 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
             <option value="heavy-forwarder">Heavy Forwarder</option>
             <option value="universal-forwarder">Universal Forwarder</option>
           </select>
-          <span class="conf-tree-root-readout">$SPLUNK_HOME resolves to <code id="confTreeRootPath"></code></span>
+          <label for="confTreeRootInput">$SPLUNK_HOME</label>
+          <input id="confTreeRootInput" type="text" class="conf-tree-root-input" aria-label="Override the displayed $SPLUNK_HOME root" />
+          <button id="confTreeResetBtn" type="button">Reset</button>
         </div>
         <div class="conf-tree-workspace">
           <aside class="conf-tree-filelist-panel">
@@ -8472,14 +8480,19 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
               <div><h4>Configuration files</h4><p id="confTreeFileCount"></p></div>
               <select id="confTreeCategorySelect" aria-label="Filter by category"><option value="">All categories</option></select>
             </div>
-            <input id="confTreeFileSearch" type="search" class="conf-tree-file-search" placeholder="Filter files…" aria-label="Filter configuration files" />
+            <input id="confTreeFileSearch" type="search" class="conf-tree-file-search" placeholder="Filter files, stanzas or settings…" aria-label="Filter configuration files, stanzas or settings" />
             <div id="confTreeFileList" class="conf-tree-file-list" role="listbox" aria-label="Configuration files"></div>
           </aside>
           <section class="conf-tree-panel">
             <div class="conf-tree-panel-head">
               <div><h4 id="confTreeTitle">Possible locations</h4><p id="confTreeSummary"></p></div>
-              <button id="confTreeOpenDetail" type="button">Open full reference</button>
+              <div class="conf-tree-actions">
+                <button id="confTreeCollapseBtn" class="conf-tree-icon-btn" type="button" title="Collapse all" aria-label="Collapse all">&minus;</button>
+                <button id="confTreeExpandBtn" class="conf-tree-icon-btn" type="button" title="Expand all" aria-label="Expand all">+</button>
+                <button id="confTreeOpenDetail" type="button">Open full reference</button>
+              </div>
             </div>
+            <nav id="confTreeBreadcrumbs" class="conf-tree-breadcrumbs" aria-label="Selected path"></nav>
             <div class="conf-tree-legend">
               <span><i class="conf-tree-dot standard"></i>Standard</span>
               <span><i class="conf-tree-dot ok"></i>Administrator-managed</span>
@@ -24336,111 +24349,111 @@ const ALL_ROLES = ["splunk-enterprise","heavy-forwarder","universal-forwarder"];
 const NON_UF = ["splunk-enterprise","heavy-forwarder"];
 const DEPLOY_ROLES = ["splunk-enterprise","heavy-forwarder"];
 const confFileTreeData = [
-  {id:"alert-actions-conf",filename:"alert_actions.conf",category:"System + app",tiers:[
+  {id:"alert-actions-conf",filename:"alert_actions.conf",category:"System + app",keywords:["action.<name>.*", "[email]", "allowedDomainList", "allowlist.<name>", "[script]", "[lookup]", "[summary_index]"],tiers:[
     {scope:"System",path:"etc/system/default/alert_actions.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/alert_actions.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/alert_actions.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/alert_actions.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"app-conf",filename:"app.conf",category:"App-scoped only",tiers:[
+  {id:"app-conf",filename:"app.conf",category:"App-scoped only",keywords:["[install]", "[triggers]", "[shclustering]"],tiers:[
     {scope:"App",path:"etc/apps/<app_name>/default/app.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/app.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"audit-conf",filename:"audit.conf",category:"System + app",tiers:[
+  {id:"audit-conf",filename:"audit.conf",category:"System + app",keywords:["[auditTrail]", "[auditconfig:/path]", "queueing", "logging_format", "enabled", "disabled", "sampling.<action>"],tiers:[
     {scope:"System",path:"etc/system/default/audit.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/audit.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/audit.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/audit.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"authentication-conf",filename:"authentication.conf",category:"System + app",tiers:[
+  {id:"authentication-conf",filename:"authentication.conf",category:"System + app",keywords:[],tiers:[
     {scope:"System",path:"etc/system/default/authentication.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/authentication.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/authentication.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/authentication.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"authorize-conf",filename:"authorize.conf",category:"System + app",tiers:[
+  {id:"authorize-conf",filename:"authorize.conf",category:"System + app",keywords:["[role_<roleName>]", "importRoles", "srchFilter", "srchIndexesAllowed/Default/Disallowed", "srchTimeWin", "srchJobsQuota"],tiers:[
     {scope:"System",path:"etc/system/default/authorize.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/authorize.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/authorize.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/authorize.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"commands-conf",filename:"commands.conf",category:"System + app",tiers:[
+  {id:"commands-conf",filename:"commands.conf",category:"System + app",keywords:["[<STANZA_NAME>]", "streaming", "generating", "retainsevents", "chunked", "required_fields", "maxinputs", "perf_warn_limit"],tiers:[
     {scope:"System",path:"etc/system/default/commands.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/commands.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/commands.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/commands.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"inputs-conf",filename:"inputs.conf",category:"System + app",tiers:[
+  {id:"inputs-conf",filename:"inputs.conf",category:"System + app",keywords:["[monitor://]", "[batch://]", "[tcp://]", "[udp://]", "[script://]", "[http://<token>]"],tiers:[
     {scope:"System",path:"etc/system/default/inputs.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/inputs.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/inputs.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/inputs.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"datamodels-conf",filename:"datamodels.conf",category:"System + app",tiers:[
+  {id:"datamodels-conf",filename:"datamodels.conf",category:"System + app",keywords:["[<datamodel_name>]", "acceleration.earliest_time", "backfill_time", "acceleration.cron_schedule", "allow_skew", "schedule_priority", "acceleration.source_guid"],tiers:[
     {scope:"System",path:"etc/system/default/datamodels.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/datamodels.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/datamodels.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/datamodels.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"db-connection-types-conf",filename:"db_connection_types.conf",category:"App-scoped only",tiers:[
+  {id:"db-connection-types-conf",filename:"db_connection_types.conf",category:"App-scoped only",keywords:["jdbcUrlFormat", "serviceClass", "deprecated"],tiers:[
     {scope:"App",path:"etc/apps/splunk_app_db_connect/default/db_connection_types.conf",editable:false,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
     {scope:"App",path:"etc/apps/splunk_app_db_connect/local/db_connection_types.conf",editable:true,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
   ]},
-  {id:"db-inputs-conf",filename:"db_inputs.conf",category:"App-scoped only",tiers:[
+  {id:"db-inputs-conf",filename:"db_inputs.conf",category:"App-scoped only",keywords:["connection", "mode", "query", "index_time_mode"],tiers:[
     {scope:"App",path:"etc/apps/splunk_app_db_connect/default/db_inputs.conf",editable:false,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
     {scope:"App",path:"etc/apps/splunk_app_db_connect/local/db_inputs.conf",editable:true,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
   ]},
-  {id:"db-outputs-conf",filename:"db_outputs.conf",category:"App-scoped only",tiers:[
+  {id:"db-outputs-conf",filename:"db_outputs.conf",category:"App-scoped only",keywords:["search", "table_name", "using_upsert", "customized_mappings", "retry_attempts", "retry_delay"],tiers:[
     {scope:"App",path:"etc/apps/splunk_app_db_connect/default/db_outputs.conf",editable:false,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
     {scope:"App",path:"etc/apps/splunk_app_db_connect/local/db_outputs.conf",editable:true,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
   ]},
-  {id:"db-identities-conf",filename:"identities.conf",category:"App-scoped only",tiers:[
+  {id:"db-identities-conf",filename:"identities.conf",category:"App-scoped only",keywords:["identity_type"],tiers:[
     {scope:"App",path:"etc/apps/splunk_app_db_connect/default/identities.conf",editable:false,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
     {scope:"App",path:"etc/apps/splunk_app_db_connect/local/identities.conf",editable:true,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
   ]},
-  {id:"dbx-settings-conf",filename:"dbx_settings.conf",category:"App-scoped only",tiers:[
+  {id:"dbx-settings-conf",filename:"dbx_settings.conf",category:"App-scoped only",keywords:["[loglevel]", "[hec]", "[security]", "[synchronizer]"],tiers:[
     {scope:"App",path:"etc/apps/splunk_app_db_connect/default/dbx_settings.conf",editable:false,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
     {scope:"App",path:"etc/apps/splunk_app_db_connect/local/dbx_settings.conf",editable:true,roles:NON_UF,why:"DB Connect requires a full Splunk Enterprise instance with Splunk Web \u2014 it is not deployable on Universal Forwarder."},
   ]},
-  {id:"deploymentclient-conf",filename:"deploymentclient.conf",category:"System + app",tiers:[
+  {id:"deploymentclient-conf",filename:"deploymentclient.conf",category:"System + app",keywords:["repositoryLocation"],tiers:[
     {scope:"System",path:"etc/system/default/deploymentclient.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/deploymentclient.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/deploymentclient.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/deploymentclient.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"distsearch-conf",filename:"distsearch.conf",category:"System + app",tiers:[
+  {id:"distsearch-conf",filename:"distsearch.conf",category:"System + app",keywords:["[distributedSearch]", "[replicationSettings]", "servers", "disabled_servers", "quarantined_servers", "replicationPolicy", "replicationAllowlist", "Denylist"],tiers:[
     {scope:"System",path:"etc/system/default/distsearch.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/distsearch.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/distsearch.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/distsearch.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"eventtypes-conf",filename:"eventtypes.conf",category:"System + app + user",tiers:[
+  {id:"eventtypes-conf",filename:"eventtypes.conf",category:"System + app + user",keywords:["search", "%field%", "priority", "color"],tiers:[
     {scope:"System",path:"etc/system/default/eventtypes.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/eventtypes.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/eventtypes.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/eventtypes.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/eventtypes.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"federated-conf",filename:"federated.conf",category:"System + app",tiers:[
+  {id:"federated-conf",filename:"federated.conf",category:"System + app",keywords:["[provider://<name>]", "[general]", "mode", "fedSrchIndexesAllowed", "[s2s_*_unsupported_command:<cmd>]"],tiers:[
     {scope:"System",path:"etc/system/default/federated.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/federated.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/federated.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/federated.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"fields-conf",filename:"fields.conf",category:"System + app + user",tiers:[
+  {id:"fields-conf",filename:"fields.conf",category:"System + app + user",keywords:["TOKENIZER", "INDEXED", "INDEXED_VALUE", "sourcetype::...::data*"],tiers:[
     {scope:"System",path:"etc/system/default/fields.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/fields.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/fields.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/fields.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/fields.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"outputs-conf",filename:"outputs.conf",category:"System + app",tiers:[
+  {id:"outputs-conf",filename:"outputs.conf",category:"System + app",keywords:["[tcpout]", "[tcpout:<group>]", "server=", "[syslog:<name>]"],tiers:[
     {scope:"System",path:"etc/system/default/outputs.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/outputs.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/outputs.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/outputs.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"indexes-conf",filename:"indexes.conf",category:"Special-case",tiers:[
+  {id:"indexes-conf",filename:"indexes.conf",category:"Special-case",keywords:["homePath", "coldPath", "thawedPath", "[volume:<name>]", "datatype = metric"],tiers:[
     {scope:"System",path:"etc/system/default/indexes.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/indexes.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/indexes.conf",editable:false,roles:ALL_ROLES,why:null},
@@ -24450,73 +24463,73 @@ const confFileTreeData = [
     {scope:"Indexer peer",path:"etc/peer-apps/_cluster/default/indexes.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"Indexer peer",path:"etc/peer-apps/_cluster/local/indexes.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"instance-cfg-conf",filename:"instance.cfg",category:"Special-case",tiers:[
+  {id:"instance-cfg-conf",filename:"instance.cfg",category:"Special-case",keywords:["[general]", "guid", "splunk clone-prep-clear-config"],tiers:[
     {scope:"Singleton",path:"etc/instance.cfg",editable:false,roles:ALL_ROLES,why:null},
   ]},
-  {id:"collections-conf",filename:"collections.conf",category:"App-scoped only",tiers:[
+  {id:"collections-conf",filename:"collections.conf",category:"App-scoped only",keywords:["[<collection-name>]", "field.<name>", "enforceTypes", "accelerated_fields.<name>", "replicate"],tiers:[
     {scope:"App",path:"etc/apps/<app_name>/default/collections.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/collections.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"passwords-conf",filename:"passwords.conf",category:"Special-case",tiers:[
+  {id:"passwords-conf",filename:"passwords.conf",category:"Special-case",keywords:["[credential:<realm>:<username>:]"],tiers:[
     {scope:"System",path:"etc/system/local/passwords.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/passwords.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"props-conf",filename:"props.conf",category:"System + app + user",tiers:[
+  {id:"props-conf",filename:"props.conf",category:"System + app + user",keywords:["[<spec>]", "TRANSFORMS", "REPORT", "EXTRACT", "FIELDALIAS", "EVAL", "LOOKUP", "SEDCMD"],tiers:[
     {scope:"System",path:"etc/system/default/props.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/props.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/props.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/props.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/props.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"savedsearches-conf",filename:"savedsearches.conf",category:"System + app + user",tiers:[
+  {id:"savedsearches-conf",filename:"savedsearches.conf",category:"System + app + user",keywords:[],tiers:[
     {scope:"System",path:"etc/system/default/savedsearches.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/savedsearches.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/savedsearches.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/savedsearches.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/savedsearches.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"serverclass-conf",filename:"serverclass.conf",category:"Special-case",tiers:[
+  {id:"serverclass-conf",filename:"serverclass.conf",category:"Special-case",keywords:["[global]", "[serverClass:<name>]", "[serverClass:<name>:app:<appName>]", "filterType", "machineTypesFilter"],tiers:[
     {scope:"Deployment Server",path:"etc/system/local/serverclass.conf",editable:true,roles:DEPLOY_ROLES,why:"A Universal Forwarder cannot act as a Deployment Server."},
   ]},
-  {id:"sourcetypes-conf",filename:"sourcetypes.conf",category:"Special-case",tiers:[
+  {id:"sourcetypes-conf",filename:"sourcetypes.conf",category:"Special-case",keywords:["_sourcetype", "_source"],tiers:[
     {scope:"Learned app",path:"etc/apps/learned/local/sourcetypes.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"Any app",path:"etc/apps/<app_name>/default/sourcetypes.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"Any app",path:"etc/apps/<app_name>/local/sourcetypes.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"web-conf",filename:"web.conf",category:"System + app",tiers:[
+  {id:"web-conf",filename:"web.conf",category:"System + app",keywords:["allowedSplunkWebClientNetlocList", "SSOMode", "trustedIP", "remoteUser", "remoteGroups", "dashboard_html_injection_mode"],tiers:[
     {scope:"System",path:"etc/system/default/web.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/web.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/web.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/web.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"tags-conf",filename:"tags.conf",category:"System + app + user",tiers:[
+  {id:"tags-conf",filename:"tags.conf",category:"System + app + user",keywords:["[<fieldname>=<value>]", "<tag> = enabled|disabled"],tiers:[
     {scope:"System",path:"etc/system/default/tags.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/tags.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/tags.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/tags.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/tags.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"transforms-conf",filename:"transforms.conf",category:"System + app + user",tiers:[
+  {id:"transforms-conf",filename:"transforms.conf",category:"System + app + user",keywords:["REGEX", "FORMAT", "DEST_KEY", "SOURCE_KEY"],tiers:[
     {scope:"System",path:"etc/system/default/transforms.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/transforms.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/transforms.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/transforms.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/transforms.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"user-prefs-conf",filename:"user-prefs.conf",category:"System + app + user",tiers:[
+  {id:"user-prefs-conf",filename:"user-prefs.conf",category:"System + app + user",keywords:["default_namespace", "tz", "lang", "[general_default]", "[role_<name>]"],tiers:[
     {scope:"System",path:"etc/system/default/user-prefs.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/user-prefs.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/user-prefs.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/user-prefs.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"User",path:"etc/users/<user_name>/<app_name>/local/user-prefs.conf",editable:true,roles:NON_UF,why:"Universal Forwarder has no search head or per-user knowledge-object context."},
   ]},
-  {id:"web-features-conf",filename:"web-features.conf",category:"System + app",tiers:[
+  {id:"web-features-conf",filename:"web-features.conf",category:"System + app",keywords:["[feature:<name>]", "enable_<area>_vnext", "appserver_security"],tiers:[
     {scope:"System",path:"etc/system/default/web-features.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/web-features.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/web-features.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/local/web-features.conf",editable:true,roles:ALL_ROLES,why:null},
   ]},
-  {id:"workflow-actions-conf",filename:"workflow_actions.conf",category:"System + app + user",tiers:[
+  {id:"workflow-actions-conf",filename:"workflow_actions.conf",category:"System + app + user",keywords:["link", "search", "$field$", "$@field_name$", "$@field_value$", "link.uri", "link.postargs", "search.search_string"],tiers:[
     {scope:"System",path:"etc/system/default/workflow_actions.conf",editable:false,roles:ALL_ROLES,why:null},
     {scope:"System",path:"etc/system/local/workflow_actions.conf",editable:true,roles:ALL_ROLES,why:null},
     {scope:"App",path:"etc/apps/<app_name>/default/workflow_actions.conf",editable:false,roles:ALL_ROLES,why:null},
@@ -24529,7 +24542,10 @@ const CONF_TREE_ROOTS = {
   windows: { "splunk-enterprise": "C:\\Program Files\\Splunk", "heavy-forwarder": "C:\\Program Files\\Splunk", "universal-forwarder": "C:\\Program Files\\SplunkUniversalForwarder" }
 };
 const CONF_TREE_ROLE_LABEL = { "splunk-enterprise": "Splunk Enterprise", "heavy-forwarder": "Heavy Forwarder", "universal-forwarder": "Universal Forwarder" };
-let confTreePlatform = "linux", confTreeRole = "splunk-enterprise", confTreeActiveId = "props-conf", confTreeCategoryFilter = "", confTreeSearchQuery = "", confTreeExpandedOverride = null;
+const CONF_TREE_DEFAULT_PLATFORM = "linux", CONF_TREE_DEFAULT_ROLE = "splunk-enterprise", CONF_TREE_DEFAULT_FILE = "props-conf";
+let confTreePlatform = CONF_TREE_DEFAULT_PLATFORM, confTreeRole = CONF_TREE_DEFAULT_ROLE, confTreeActiveId = CONF_TREE_DEFAULT_FILE, confTreeCategoryFilter = "", confTreeSearchQuery = "", confTreeRootOverride = null;
+let confTreeExpandedNodes = new Set();
+let confTreeExpandedForFileId = null;
 const confFileById = {};
 confFileTreeData.forEach(f => { confFileById[f.id] = f; });
 
@@ -24540,13 +24556,17 @@ function initConfFileTree(){
   const fileSearch = document.getElementById("confTreeFileSearch");
   const platformSelect = document.getElementById("confTreePlatformSelect");
   const roleSelect = document.getElementById("confTreeRoleSelect");
-  const rootPathEl = document.getElementById("confTreeRootPath");
+  const rootInput = document.getElementById("confTreeRootInput");
+  const resetBtn = document.getElementById("confTreeResetBtn");
   const fileCountEl = document.getElementById("confTreeFileCount");
   const treeTitleEl = document.getElementById("confTreeTitle");
   const summaryEl = document.getElementById("confTreeSummary");
   const treeRootEl = document.getElementById("confTreeRoot");
   const hiddenNoteEl = document.getElementById("confTreeHiddenNote");
+  const breadcrumbsEl = document.getElementById("confTreeBreadcrumbs");
   const openDetailBtn = document.getElementById("confTreeOpenDetail");
+  const collapseBtn = document.getElementById("confTreeCollapseBtn");
+  const expandBtn = document.getElementById("confTreeExpandBtn");
   const gridBtn = document.getElementById("confFileViewGridBtn");
   const treeBtn = document.getElementById("confFileViewTreeBtn");
   const gridView = document.getElementById("configFileGridView");
@@ -24560,9 +24580,11 @@ function initConfFileTree(){
     categorySelect.appendChild(opt);
   });
 
+  function computedRoot(){ return CONF_TREE_ROOTS[confTreePlatform][confTreeRole]; }
+
   function matchesSearch(f, q){
     if (!q) return true;
-    const hay = (f.filename + " " + f.category + " " + (detailViewLabels[f.id] || "")).toLowerCase();
+    const hay = (f.filename + " " + f.category + " " + (detailViewLabels[f.id] || "") + " " + (f.keywords || []).join(" ")).toLowerCase();
     return hay.includes(q);
   }
 
@@ -24589,17 +24611,32 @@ function initConfFileTree(){
   }
 
   function buildTree(tiers){
-    const root = { children: {}, order: [] };
+    const root = { children: {}, order: [], id: "" };
     tiers.forEach(tier => {
       const segs = tier.path.split("/");
       let node = root;
+      let idSoFar = "";
       segs.forEach((seg, i) => {
-        if (!node.children[seg]) { node.children[seg] = { children: {}, order: [], name: seg }; node.order.push(seg); }
+        idSoFar = idSoFar ? idSoFar + "/" + seg : seg;
+        if (!node.children[seg]) { node.children[seg] = { children: {}, order: [], name: seg, id: idSoFar }; node.order.push(seg); }
         node = node.children[seg];
         if (i === segs.length - 1) node.tier = tier;
       });
     });
     return root;
+  }
+
+  function allFolderIds(node, out){
+    node.order.forEach(key => {
+      const child = node.children[key];
+      const isLeaf = Object.keys(child.children).length === 0;
+      if (!isLeaf) { out.push(child.id); allFolderIds(child, out); }
+    });
+    return out;
+  }
+
+  function updateBreadcrumbs(path){
+    breadcrumbsEl.innerHTML = "$SPLUNK_HOME" + (path ? "/<b>" + escapeHtml(path) + "</b>" : "");
   }
 
   function renderNode(node){
@@ -24608,7 +24645,7 @@ function initConfFileTree(){
       const child = node.children[key];
       const li = document.createElement("li");
       const isLeaf = Object.keys(child.children).length === 0;
-      const isOpen = confTreeExpandedOverride === null ? true : confTreeExpandedOverride;
+      const isOpen = isLeaf || confTreeExpandedNodes.has(child.id);
 
       const line = document.createElement("div");
       line.className = "ctn-line" + (isLeaf ? " leaf" : " on-path");
@@ -24618,6 +24655,13 @@ function initConfFileTree(){
       toggle.className = "ctn-toggle" + (isLeaf ? " blank" : "");
       toggle.disabled = isLeaf;
       toggle.textContent = isLeaf ? "" : (isOpen ? "\u2212" : "+");
+      if (!isLeaf) {
+        toggle.addEventListener("click", () => {
+          if (confTreeExpandedNodes.has(child.id)) confTreeExpandedNodes.delete(child.id);
+          else confTreeExpandedNodes.add(child.id);
+          renderTree();
+        });
+      }
 
       const icon = document.createElement("span");
       icon.className = "ctn-icon" + (isLeaf ? " file" : "");
@@ -24644,6 +24688,14 @@ function initConfFileTree(){
         badge.textContent = child.tier.editable ? "editable" : "do not edit";
         line.appendChild(badge);
         line.title = "$SPLUNK_HOME/" + child.tier.path;
+        line.style.cursor = "pointer";
+        line.addEventListener("click", () => updateBreadcrumbs(child.tier.path));
+      } else if (!isLeaf) {
+        line.style.cursor = "pointer";
+        line.addEventListener("click", (event) => {
+          if (event.target === toggle) return;
+          toggle.click();
+        });
       }
 
       li.appendChild(line);
@@ -24660,13 +24712,19 @@ function initConfFileTree(){
     const applicable = file.tiers.filter(t => t.roles.includes(confTreeRole));
     const hidden = file.tiers.filter(t => !t.roles.includes(confTreeRole));
 
+    if (confTreeExpandedForFileId !== confTreeActiveId) {
+      confTreeExpandedNodes = new Set(allFolderIds(buildTree(applicable), []));
+      confTreeExpandedForFileId = confTreeActiveId;
+    }
+
     treeTitleEl.textContent = file.filename;
-    rootPathEl.textContent = CONF_TREE_ROOTS[confTreePlatform][confTreeRole];
+    if (!rootInput.matches(":focus")) rootInput.value = confTreeRootOverride !== null ? confTreeRootOverride : computedRoot();
+    updateBreadcrumbs(file.filename);
 
     treeRootEl.innerHTML = "";
     const rootLine = document.createElement("div");
     rootLine.className = "ctn-line on-path";
-    rootLine.innerHTML = '<span class="ctn-toggle blank"></span><span class="ctn-icon">\u25B8</span><span class="ctn-name">$SPLUNK_HOME</span>';
+    rootLine.innerHTML = '<span class="ctn-toggle blank"></span><span class="ctn-icon">\u25B8</span><span class="ctn-name">' + escapeHtml(confTreeRootOverride !== null ? confTreeRootOverride : "$SPLUNK_HOME") + '</span>';
     const wrapUl = document.createElement("ul");
     const wrapLi = document.createElement("li");
     wrapLi.appendChild(rootLine);
@@ -24697,7 +24755,23 @@ function initConfFileTree(){
   categorySelect.addEventListener("change", () => { confTreeCategoryFilter = categorySelect.value; renderFileList(); });
   platformSelect.addEventListener("change", () => { confTreePlatform = platformSelect.value; renderTree(); });
   roleSelect.addEventListener("change", () => { confTreeRole = roleSelect.value; renderTree(); });
+  rootInput.addEventListener("input", () => { confTreeRootOverride = rootInput.value; renderTree(); });
   openDetailBtn.addEventListener("click", () => { showReferenceDetail(confTreeActiveId); });
+  collapseBtn.addEventListener("click", () => { confTreeExpandedNodes = new Set(); renderTree(); });
+  expandBtn.addEventListener("click", () => {
+    const file = confFileById[confTreeActiveId];
+    if (!file) return;
+    const applicable = file.tiers.filter(t => t.roles.includes(confTreeRole));
+    confTreeExpandedNodes = new Set(allFolderIds(buildTree(applicable), []));
+    renderTree();
+  });
+  resetBtn.addEventListener("click", () => {
+    confTreePlatform = CONF_TREE_DEFAULT_PLATFORM; confTreeRole = CONF_TREE_DEFAULT_ROLE; confTreeActiveId = CONF_TREE_DEFAULT_FILE;
+    confTreeCategoryFilter = ""; confTreeSearchQuery = ""; confTreeRootOverride = null; confTreeExpandedForFileId = null;
+    platformSelect.value = CONF_TREE_DEFAULT_PLATFORM; roleSelect.value = CONF_TREE_DEFAULT_ROLE;
+    categorySelect.value = ""; fileSearch.value = "";
+    renderAll();
+  });
 
   if (gridBtn && treeBtn && gridView && treeView) {
     gridBtn.addEventListener("click", () => {
