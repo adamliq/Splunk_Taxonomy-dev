@@ -14393,6 +14393,14 @@ E. Assumptions and unresolved inputs</pre>
       <h3>Flow Schema Table</h3>
       <p>The same 191 populated flows from the grid above, one row per flow, expanded into a per-field network-flow-catalog record (Flow ID, ports, protocols, initiator/firewall direction, TLS posture, authentication, Splunk config stanzas, firewall rule text, and return traffic) -- the format commonly used for firewall change requests and network-flow documentation.</p>
       <div class="ports-pattern-toolbar">
+        <label for="portsFlowSchemaPatternSelect">Highlight components for logging pattern:</label>
+        <select id="portsFlowSchemaPatternSelect" aria-label="Select a logging pattern to highlight its flows in the flow schema table">
+          <option value="">(none selected)</option>
+        </select>
+        <button id="portsFlowSchemaPatternClear" type="button">Clear filters</button>
+      </div>
+      <p class="ports-pattern-caption" id="portsFlowSchemaPatternCaption" aria-live="polite"></p>
+      <div class="ports-pattern-toolbar">
         <label for="portsFlowSchemaSearch">Filter flows matching:</label>
         <input type="search" id="portsFlowSchemaSearch" placeholder="e.g. 9997, LDAP, SOAR…" aria-label="Filter the flow schema table to rows matching this text" />
         <button id="portsFlowSchemaExportBtn" class="primary-button" type="button">Export visible CSV</button>
@@ -33565,6 +33573,9 @@ function initPortsFlowSchemaView() {
   const searchInput = document.getElementById("portsFlowSchemaSearch");
   const exportBtn = document.getElementById("portsFlowSchemaExportBtn");
   const visibleCountEl = document.getElementById("portsFlowSchemaVisibleCount");
+  const patternSelect = document.getElementById("portsFlowSchemaPatternSelect");
+  const patternClear = document.getElementById("portsFlowSchemaPatternClear");
+  const patternCaption = document.getElementById("portsFlowSchemaPatternCaption");
   if (!table || typeof portsMatrixFlowSchema === "undefined") return;
 
   const thead = table.querySelector("thead tr");
@@ -33597,11 +33608,15 @@ function initPortsFlowSchemaView() {
 
   const rows = Array.from(tbody.querySelectorAll("tr"));
 
+  let activePatternFlowIds = null;
+
   function applyFilter() {
     const q = (searchInput && searchInput.value.trim().toLowerCase()) || "";
     let visible = 0;
     rows.forEach(tr => {
-      const match = !q || tr.dataset.searchText.includes(q);
+      const searchMatch = !q || tr.dataset.searchText.includes(q);
+      const patternMatch = !activePatternFlowIds || activePatternFlowIds.has(tr.dataset.flowId);
+      const match = searchMatch && patternMatch;
       tr.classList.toggle("ports-flow-hidden", !match);
       if (match) visible++;
     });
@@ -33609,6 +33624,46 @@ function initPortsFlowSchemaView() {
   }
   applyFilter();
   if (searchInput) searchInput.addEventListener("input", applyFilter);
+
+  // Logging-pattern highlight: reuses the grid's own pattern-to-edge map
+  // (portsMatrixPatternEdges) and edge-to-Flow-ID lookup (flowIdsForEdgeList)
+  // so the two views can't disagree about which flows a pattern touches.
+  if (patternSelect && typeof loggingPatternTableData !== "undefined") {
+    loggingPatternTableData.forEach(row => {
+      const option = document.createElement("option");
+      option.value = row["Pattern ID"];
+      option.textContent = `${row["Pattern ID"]} — ${row["Pattern"]}`;
+      patternSelect.appendChild(option);
+    });
+  }
+
+  function applyPatternHighlight(patternId) {
+    if (!patternId || typeof portsMatrixPatternEdges === "undefined") {
+      activePatternFlowIds = null;
+      if (patternCaption) patternCaption.textContent = "";
+      applyFilter();
+      return;
+    }
+    const edgeList = portsMatrixPatternEdges[patternId] || [];
+    const flowIds = flowIdsForEdgeList(edgeList);
+    const patternRow = typeof loggingPatternTableData !== "undefined" ? loggingPatternTableData.find(r => r["Pattern ID"] === patternId) : null;
+    if (flowIds.length === 0) {
+      activePatternFlowIds = new Set();
+      if (patternCaption) patternCaption.textContent = patternRow ? `No mapped flow for ${patternId} yet.` : "";
+    } else {
+      activePatternFlowIds = new Set(flowIds);
+      if (patternCaption) patternCaption.textContent = `Highlighting ${flowIds.length} flow${flowIds.length === 1 ? "" : "s"} for ${patternId}${patternRow ? " — " + patternRow["Pattern"] : ""} -- other rows are hidden; use Clear filters to show every flow again.`;
+    }
+    applyFilter();
+  }
+
+  if (patternSelect) patternSelect.addEventListener("change", () => applyPatternHighlight(patternSelect.value));
+  if (patternClear) {
+    patternClear.addEventListener("click", () => {
+      if (patternSelect) patternSelect.value = "";
+      applyPatternHighlight("");
+    });
+  }
 
   if (exportBtn) {
     exportBtn.addEventListener("click", (event) => {
