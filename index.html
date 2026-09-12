@@ -740,6 +740,11 @@
     .advisor-tdp-badge[data-tdp="point-to-point"] { background: #ffedd5; color: #c2410c; border-color: #fdba74; }
     .advisor-tdp-badge[data-tdp="varies"] { background: #f8fafc; color: #64748b; border-color: #cbd5e1; border-style: dashed; }
     .advisor-tdp-badge[data-tdp="na"] { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+    .advisor-complexity-badge { display: inline-block; margin-right: 7px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: .01em; white-space: nowrap; vertical-align: middle; border: 1px solid transparent; }
+    .advisor-complexity-badge[data-tier="low"] { background: #dcfce7; color: #15803d; border-color: #86efac; }
+    .advisor-complexity-badge[data-tier="moderate"] { background: #dbeafe; color: #1d4ed8; border-color: #93c5fd; }
+    .advisor-complexity-badge[data-tier="high"] { background: #fef3c7; color: #b45309; border-color: #fcd34d; }
+    .advisor-complexity-badge[data-tier="very-high"] { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
     .advisor-reasons { margin-top: 19px; padding: 16px 18px; border-left: 4px solid #2f855a; border-radius: 10px; background: #f0fdf4; }
     .advisor-reasons h4, .advisor-overlay h4, .advisor-alternatives h4 { margin: 0 0 9px; }
     .advisor-reasons ul, .advisor-overlay ul { margin: 0; padding-left: 19px; }
@@ -17514,6 +17519,39 @@ function renderAdvisorLatencyTile(pattern) {
   return `<div class="advisor-info advisor-latency-tile"><span>Expected latency tier</span><strong>${badge}${classSpan}${pattern.latencyRationale ? " " + escapeHtml(pattern.latencyRationale) : ""}</strong></div>`;
 }
 
+// Implementation complexity is computed, not authored: architecture hops (pattern.flow.length)
+// + distinct network flows required (flowSchemaRowsForPattern) + a fixed +3 penalty for patterns
+// that require writing and deploying custom code (a serverless function or script), since that's
+// qualitatively different work from configuring an existing component. A simple checklist-item
+// count was tried first and rejected -- it tracks how much optional descriptive data a pattern
+// happens to have authored, not how much work it actually takes to implement (LP-016, one of the
+// simplest architectures in the catalogue at 1 flow/3 hops, has the 2nd-highest checklist item
+// count purely because more of its optional fields are filled in).
+function implementationComplexityScore(pattern) {
+  const hopCount = (pattern.flow || []).length;
+  const flowCount = flowSchemaRowsForPattern(pattern.id).length;
+  const hasCustomCode = !!(pattern.runtime || pattern.implementationLanguage);
+  return { score: hopCount + flowCount + (hasCustomCode ? 3 : 0), hopCount, flowCount, hasCustomCode };
+}
+// Bands set from the real distribution across all 39 patterns (range 4-11): a low cluster at 4,
+// the bulk of patterns at 5-6, an elevated group at 7-8, and custom-code/multi-hop patterns at
+// 10-11, with natural gaps at 9 separating the top two bands.
+function implementationComplexityTier(score) {
+  if (score <= 4) return "Low";
+  if (score <= 6) return "Moderate";
+  if (score <= 8) return "High";
+  return "Very high";
+}
+const LOGGING_PATTERN_COMPLEXITY_KEYS = { "Low": "low", "Moderate": "moderate", "High": "high", "Very high": "very-high" };
+function renderAdvisorComplexityTile(pattern) {
+  const { score, hopCount, flowCount, hasCustomCode } = implementationComplexityScore(pattern);
+  const tier = implementationComplexityTier(score);
+  const key = LOGGING_PATTERN_COMPLEXITY_KEYS[tier] || "";
+  const badge = `<span class="advisor-complexity-badge" data-tier="${escapeHtml(key)}">${escapeHtml(tier)}</span>`;
+  const breakdown = `${hopCount} architecture hop${hopCount === 1 ? "" : "s"}, ${flowCount} network flow${flowCount === 1 ? "" : "s"}${hasCustomCode ? ", custom code to build and deploy" : ""}`;
+  return `<div class="advisor-info advisor-latency-tile"><span>Implementation complexity</span><strong>${badge} ${escapeHtml(breakdown)}</strong></div>`;
+}
+
 // Matches the four Transport Delivery Pattern (TAX-03.02.07) archetypes exactly, plus this
 // catalogue's own "Varies" (a processing/app tier that inherits whichever archetype feeds it)
 // and "Not directly applicable" (passive capture, which fits none of the four).
@@ -17790,6 +17828,7 @@ function renderAdvisorResult(answers) {
         <div class="advisor-info"><span>Default health profile</span><strong>${escapeHtml(primary.pattern.health)}</strong></div>
         <div class="advisor-info"><span>Destination governance</span><strong>${escapeHtml(primary.pattern.governance)}</strong></div>
         ${renderAdvisorLatencyTile(primary.pattern)}
+        ${renderAdvisorComplexityTile(primary.pattern)}
       </div>
       ${loggingPatternRequirementCards(primary.pattern.id)}
       <div class="advisor-reasons">
@@ -17939,6 +17978,16 @@ function buildAdvisorAssessment(answers, primary, confidence, reasons, alternati
       changeOverTime: pattern.changeOverTime || null,
       transportDeliveryPattern: pattern.transportDeliveryPattern || null,
       transportDeliveryPatternRationale: pattern.transportDeliveryPatternRationale || null,
+      implementationComplexity: (() => {
+        const c = implementationComplexityScore(pattern);
+        return {
+          tier: implementationComplexityTier(c.score),
+          score: c.score,
+          hopCount: c.hopCount,
+          flowCount: c.flowCount,
+          hasCustomCode: c.hasCustomCode
+        };
+      })(),
       implementationRequirements: implementationItems(pattern),
       companionPattern: companion ? { id: companion.id, name: companion.name } : null,
       processingOverlay: overlay ? { id: overlay.id, name: overlay.name } : null,
@@ -18004,6 +18053,7 @@ function advisorFinalPatternMarkdown(assessment) {
     `- **Health profile:** ${r.healthProfile}`,
     `- **Destination governance:** ${r.destinationGovernance}`,
     `- **Expected latency tier:** ${r.latencyTier ? `${r.latencyTier}${r.latencyRealtimeClass ? " (" + r.latencyRealtimeClass + ")" : ""}${r.latencyRationale ? " -- " + r.latencyRationale : ""}` : "Not specified"}`,
+    `- **Implementation complexity:** ${r.implementationComplexity.tier} (score ${r.implementationComplexity.score}: ${r.implementationComplexity.hopCount} architecture hops, ${r.implementationComplexity.flowCount} network flows${r.implementationComplexity.hasCustomCode ? ", custom code to build and deploy" : ""})`,
     `- **Port / firewall requirements:** ${r.portFirewallRequirements || "Not applicable"}`,
     `- **Authentication requirements:** ${r.authenticationRequirements || "Not applicable"}`,
     `- **Source platform requirements:** ${r.sourcePlatformRequirements || "Not applicable"}`,
@@ -18065,6 +18115,9 @@ function advisorFinalPatternCsv(assessment) {
     ["Destination governance", r.destinationGovernance],
     ["Expected latency tier", r.latencyTier], ["Real-time classification", r.latencyRealtimeClass],
     ["Latency tier rationale", r.latencyRationale],
+    ["Implementation complexity", r.implementationComplexity.tier],
+    ["Implementation complexity score", r.implementationComplexity.score],
+    ["Implementation complexity breakdown", `${r.implementationComplexity.hopCount} architecture hops, ${r.implementationComplexity.flowCount} network flows${r.implementationComplexity.hasCustomCode ? ", custom code to build and deploy" : ""}`],
     ["Port / firewall requirements", r.portFirewallRequirements],
     ["Authentication requirements", r.authenticationRequirements],
     ["Source platform requirements", r.sourcePlatformRequirements],
@@ -18097,6 +18150,7 @@ function advisorFinalPatternHtml(assessment) {
     ["Destination", r.destination], ["Required app / TA", r.requiredAppOrTA],
     ["Health profile", r.healthProfile], ["Destination governance", r.destinationGovernance],
     ["Expected latency tier", r.latencyTier ? `${r.latencyTier}${r.latencyRealtimeClass ? " (" + r.latencyRealtimeClass + ")" : ""}${r.latencyRationale ? " -- " + r.latencyRationale : ""}` : ""],
+    ["Implementation complexity", `${r.implementationComplexity.tier} (${r.implementationComplexity.hopCount} architecture hops, ${r.implementationComplexity.flowCount} network flows${r.implementationComplexity.hasCustomCode ? ", custom code to build and deploy" : ""})`],
     ["Port / firewall requirements", r.portFirewallRequirements],
     ["Authentication requirements", r.authenticationRequirements],
     ["Source platform requirements", r.sourcePlatformRequirements]
