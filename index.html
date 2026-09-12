@@ -2537,6 +2537,17 @@
       font-size: 11px;
       line-height: 1.25;
     }
+    /* The panel's grid-template-columns: minmax(220px,280px) minmax(0,1fr) has a hard 220px
+       floor on its first track, so below ~620px the row overflows its container and squeezes
+       the score column into an overflowing single-word-per-line sliver. Stacking to one column
+       fixes this for both radar charts that share the class (Viability Calculator and the
+       Logging Pattern Advisor's comparison radar). Placed here, after the base rule, so it
+       actually wins the cascade at matching widths -- a same-specificity override earlier in
+       the file loses to a later unconditional rule regardless of its own media query. */
+    @media (max-width: 620px) {
+      .calc-radar-panel { grid-template-columns: 1fr; }
+      .calc-radar-score-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
 
     @media (max-width: 1200px) {
       .viability-toolbar { grid-template-columns: 1fr 1fr 1fr; }
