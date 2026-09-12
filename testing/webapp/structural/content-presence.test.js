@@ -11,9 +11,9 @@ const { readIndexHtml, parseFrameworkConcepts, parseTaxonomyNodes } = require('.
 const text = readIndexHtml();
 
 describe('glossary', () => {
-  test('frameworkConcepts has exactly 59 terms', () => {
+  test('frameworkConcepts has exactly 81 terms', () => {
     const concepts = parseFrameworkConcepts(text);
-    assert.equal(concepts.length, 59);
+    assert.equal(concepts.length, 81);
   });
   test('every glossary term has a non-empty term, category and definition', () => {
     const concepts = parseFrameworkConcepts(text);
@@ -564,17 +564,17 @@ describe('Health Checks Table: Splunk platform security/upgrade-readiness + oper
   const nodes = parseTaxonomyNodes(text);
   const health = nodes.filter(n => n.nodeType === 'instance' && n.parentCode === 'CUR::TAX-04.10.01');
 
-  test('561 total health-check instance nodes under CUR::TAX-04.10.01 (390 original + 171 new)', () => {
-    assert.equal(health.length, 561);
+  test('678 total health-check instance nodes under CUR::TAX-04.10.01', () => {
+    assert.equal(health.length, 678);
   });
 
-  test('entryCount on both the taxonomy node and its current-entries group matches 561', () => {
+  test('entryCount on both the taxonomy node and its current-entries group matches 678', () => {
     const taxNode = nodes.find(n => n.code === 'TAX-04.10.01');
     const groupNode = nodes.find(n => n.code === 'CUR::TAX-04.10.01');
-    assert.equal(taxNode.entryCount, 561);
-    assert.equal(groupNode.entryCount, 561);
-    assert.equal(groupNode.fields['Record count'], 561);
-    assert.match(groupNode.term, /Current entries \(561\)/);
+    assert.equal(taxNode.entryCount, 678);
+    assert.equal(groupNode.entryCount, 678);
+    assert.equal(groupNode.fields['Record count'], 678);
+    assert.match(groupNode.term, /Current entries \(678\)/);
   });
 
   test('every health-check Test ID is unique across all 561 rows', () => {

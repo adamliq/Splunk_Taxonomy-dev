@@ -83,7 +83,11 @@ describe('Splunk Index Sizing Calculator page', () => {
     assert.match(text, /<section id="sizingCalculatorPage" class="page-view reference-page" role="tabpanel" aria-labelledby="showSizingPage" hidden>/);
     assert.match(text, /sizing: document\.getElementById\("showSizingPage"\)/);
     assert.match(text, /sizing: document\.getElementById\("sizingCalculatorPage"\)/);
-    assert.match(text, /"info", "onboarding", "taxonomy", "assessments", "sizing", "reference"/);
+    // Tolerates other page keys being inserted between these six as the app grows (it now
+    // has "objectTaxonomy" between taxonomy/assessments and "s3calc" between sizing/reference)
+    // -- the real intent is that these six exist, in this relative order, not that they're
+    // contiguous.
+    assert.match(text, /"info",\s*"onboarding",\s*"taxonomy",\s*(?:"[^"]+",\s*)*"assessments",\s*"sizing",\s*(?:"[^"]+",\s*)*"reference"/);
     assert.match(text, /<button id="calculateIndexSizing" type="button">Calculate<\/button>/);
   });
   test('on-premises and cloud deployment toggle buttons both exist with distinct tier terminology', () => {
