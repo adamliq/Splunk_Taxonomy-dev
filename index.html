@@ -755,6 +755,12 @@
     .advisor-reasons li, .advisor-overlay li { margin: 6px 0; color: #334155; font-size: 13px; line-height: 1.45; }
     .advisor-overlay { margin-top: 14px; padding: 16px 18px; border: 1px solid #c4b5fd; border-radius: 12px; background: #faf5ff; }
     .advisor-overlay .advisor-pattern-id { display: inline-flex; margin-bottom: 9px; background: #ede9fe; color: #6d28d9; }
+    /* The radar chart is always-visible summary content, not an optional overlay like the
+       companion/security-zone/processing cards it's structurally identical to -- given its own
+       treatment (primary blue, matching .advisor-kicker's role as "here's the headline info")
+       so it doesn't read as just another purple conditional box. */
+    .advisor-overlay.advisor-radar { border-color: var(--primary); background: var(--primary-light); }
+    .advisor-overlay.advisor-radar .advisor-pattern-id { background: #fff; color: var(--primary); }
     .advisor-warning { margin-top: 14px; padding: 13px 15px; border: 1px solid #fde68a; border-radius: 11px; background: #fffbeb; color: #92400e; font-size: 13px; line-height: 1.5; }
     .advisor-resilience-label { margin: 12px 0 4px; font-size: 10px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; color: #6d28d9; }
     .advisor-resilience-label:first-of-type { margin-top: 2px; }
@@ -807,6 +813,32 @@
     .checklist-export-row { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 15px; }
     .checklist-export-row select { flex: 1 1 180px; }
     .checklist-export-row button { flex: 0 0 auto; }
+    /* Progressive disclosure for the result page: everything a reader needs to judge the
+       recommendation (header, radar, reasons, any warning) stays always visible; the architecture
+       tiles/overlays/resilience prose and the implementation prerequisites/checklist/flow schema
+       -- together over half the page's original length -- sit behind these two zones instead. */
+    .advisor-zone { margin-top: 19px; border: 1px solid var(--border); border-radius: 12px; background: #fff; overflow: hidden; }
+    .advisor-zone > summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      font-size: 14px;
+      font-weight: 800;
+      color: #1e293b;
+    }
+    .advisor-zone > summary::-webkit-details-marker { display: none; }
+    .advisor-zone-meta { flex: 1 1 auto; font-weight: 600; font-size: 12px; color: #64748b; }
+    .advisor-zone-chevron { color: #64748b; flex-shrink: 0; transition: transform .15s ease; }
+    .advisor-zone[open] > summary .advisor-zone-chevron { transform: rotate(90deg); }
+    .advisor-zone-body { padding: 0 18px 18px; }
+    .advisor-zone-body > *:first-child { margin-top: 0; }
+    @media (max-width: 620px) {
+      .advisor-zone > summary { flex-wrap: wrap; }
+      .advisor-zone-meta { flex-basis: 100%; }
+    }
     @media (max-width: 940px) {
       .advisor-shell { grid-template-columns: 1fr; }
       .advisor-result-empty { min-height: 260px; }
@@ -18003,60 +18035,78 @@ function renderAdvisorResult(answers) {
       <div class="architecture-flow" aria-label="Recommended architecture flow">
         ${flow.map((step, index) => `${index ? '<span class="flow-arrow">→</span>' : ''}<span class="flow-step">${escapeHtml(step)}</span>`).join("")}
       </div>
-      <div class="advisor-grid">
-        <div class="advisor-info"><span>Pattern category</span><strong>${escapeHtml(primary.pattern.category)}</strong></div>
-        <div class="advisor-info"><span>Collection / execution tier</span><strong>${escapeHtml(primary.pattern.tier)}</strong></div>
-        <div class="advisor-info"><span>Source mechanism</span><strong>${escapeHtml(primary.pattern.mechanism)}</strong></div>
-        <div class="advisor-info"><span>Transport</span><strong>${escapeHtml(primary.pattern.transport)}</strong></div>
-        <div class="advisor-info"><span>Final destination</span><strong>${escapeHtml(primary.pattern.destination)}</strong></div>
-        <div class="advisor-info"><span>Required app / TA</span><strong>${escapeHtml(primary.pattern.app)}</strong></div>
-        <div class="advisor-info"><span>Default health profile</span><strong>${escapeHtml(primary.pattern.health)}</strong></div>
-        <div class="advisor-info"><span>Destination governance</span><strong>${escapeHtml(primary.pattern.governance)}</strong></div>
-        ${renderAdvisorLatencyTile(primary.pattern)}
-        ${renderAdvisorComplexityTile(primary.pattern)}
-        ${renderAdvisorConfigFootprintTile(primary.pattern)}
-      </div>
-      ${loggingPatternRequirementCards(primary.pattern.id)}
+      ${renderAdvisorRadarCard(primary.pattern)}
       <div class="advisor-reasons">
         <h4>Why this pattern fits</h4>
         <ul>${reasons.map(reason => `<li>${escapeHtml(reason)}</li>`).join("")}</ul>
       </div>
-      ${companion ? `
-        <div class="advisor-overlay">
-          <span class="advisor-pattern-id">Paired source method</span>
-          <h4>${escapeHtml(companion.id)} · ${escapeHtml(companion.name)}</h4>
-          <ul>
-            <li>Use the source-specific input method on, or immediately before, the approved Heavy Forwarder intermediary.</li>
-            <li>The Heavy Forwarder remains the governed cross-zone delivery pattern and final routing point.</li>
-            ${primary.pattern.networkFlows ? `<li><strong>Required flows:</strong> ${escapeHtml(primary.pattern.networkFlows)}</li>` : ""}
-          </ul>
-        </div>` : ""}
-      ${primary.pattern.base === "LP-014" ? `
-        <div class="advisor-overlay">
-          <span class="advisor-pattern-id">Security-zone controls</span>
-          <h4>Heavy Forwarder boundary requirements</h4>
-          <ul>
-            ${primary.pattern.securityControls ? `<li>${escapeHtml(primary.pattern.securityControls)}</li>` : ""}
-            ${primary.pattern.networkHealth ? `<li><strong>Network assurance:</strong> ${escapeHtml(primary.pattern.networkHealth)}</li>` : ""}
-            ${primary.pattern.failure ? `<li><strong>Failure behaviour:</strong> ${escapeHtml(primary.pattern.failure)}</li>` : ""}
-          </ul>
-        </div>` : ""}
-      ${overlay ? `
-        <div class="advisor-overlay">
-          <span class="advisor-pattern-id">${escapeHtml(overlay.id)} overlay</span>
-          <h4>Add ${escapeHtml(overlay.name)}</h4>
-          <ul>
-            <li>Use the processing tier for governed filtering, masking, sourcetype splitting or multi-destination routing.</li>
-            <li>Place it at the supported point in the selected destination architecture.</li>
-            <li>Apply the ${escapeHtml(overlay.health)} profile in addition to the primary-pattern checks.</li>
-          </ul>
-        </div>` : ""}
-      ${implementation ? `<div class="advisor-implementation"><h4>Implementation and assurance requirements</h4>${implementation}</div>` : ""}
-      ${renderAdvisorRadarCard(primary.pattern)}
-      ${renderAdvisorResilienceCard(primary.pattern)}
-      ${renderAdvisorFlowSchemaRows(primary.pattern.id)}
       ${warning ? `<div class="advisor-warning"><strong>Design note:</strong> ${escapeHtml(warning)}</div>` : ""}
-      ${renderAdvisorChecklist(primary.pattern)}
+      <details class="advisor-zone">
+        <summary>
+          <span>Architecture &amp; operations detail</span>
+          <span class="advisor-zone-meta">category, tier, transport, governance &amp; delivery guarantees</span>
+          <span class="advisor-zone-chevron" aria-hidden="true">▸</span>
+        </summary>
+        <div class="advisor-zone-body">
+          <div class="advisor-grid">
+            <div class="advisor-info"><span>Pattern category</span><strong>${escapeHtml(primary.pattern.category)}</strong></div>
+            <div class="advisor-info"><span>Collection / execution tier</span><strong>${escapeHtml(primary.pattern.tier)}</strong></div>
+            <div class="advisor-info"><span>Source mechanism</span><strong>${escapeHtml(primary.pattern.mechanism)}</strong></div>
+            <div class="advisor-info"><span>Transport</span><strong>${escapeHtml(primary.pattern.transport)}</strong></div>
+            <div class="advisor-info"><span>Final destination</span><strong>${escapeHtml(primary.pattern.destination)}</strong></div>
+            <div class="advisor-info"><span>Required app / TA</span><strong>${escapeHtml(primary.pattern.app)}</strong></div>
+            <div class="advisor-info"><span>Default health profile</span><strong>${escapeHtml(primary.pattern.health)}</strong></div>
+            <div class="advisor-info"><span>Destination governance</span><strong>${escapeHtml(primary.pattern.governance)}</strong></div>
+            ${renderAdvisorLatencyTile(primary.pattern)}
+            ${renderAdvisorComplexityTile(primary.pattern)}
+            ${renderAdvisorConfigFootprintTile(primary.pattern)}
+          </div>
+          ${companion ? `
+            <div class="advisor-overlay">
+              <span class="advisor-pattern-id">Paired source method</span>
+              <h4>${escapeHtml(companion.id)} · ${escapeHtml(companion.name)}</h4>
+              <ul>
+                <li>Use the source-specific input method on, or immediately before, the approved Heavy Forwarder intermediary.</li>
+                <li>The Heavy Forwarder remains the governed cross-zone delivery pattern and final routing point.</li>
+                ${primary.pattern.networkFlows ? `<li><strong>Required flows:</strong> ${escapeHtml(primary.pattern.networkFlows)}</li>` : ""}
+              </ul>
+            </div>` : ""}
+          ${primary.pattern.base === "LP-014" ? `
+            <div class="advisor-overlay">
+              <span class="advisor-pattern-id">Security-zone controls</span>
+              <h4>Heavy Forwarder boundary requirements</h4>
+              <ul>
+                ${primary.pattern.securityControls ? `<li>${escapeHtml(primary.pattern.securityControls)}</li>` : ""}
+                ${primary.pattern.networkHealth ? `<li><strong>Network assurance:</strong> ${escapeHtml(primary.pattern.networkHealth)}</li>` : ""}
+                ${primary.pattern.failure ? `<li><strong>Failure behaviour:</strong> ${escapeHtml(primary.pattern.failure)}</li>` : ""}
+              </ul>
+            </div>` : ""}
+          ${overlay ? `
+            <div class="advisor-overlay">
+              <span class="advisor-pattern-id">${escapeHtml(overlay.id)} overlay</span>
+              <h4>Add ${escapeHtml(overlay.name)}</h4>
+              <ul>
+                <li>Use the processing tier for governed filtering, masking, sourcetype splitting or multi-destination routing.</li>
+                <li>Place it at the supported point in the selected destination architecture.</li>
+                <li>Apply the ${escapeHtml(overlay.health)} profile in addition to the primary-pattern checks.</li>
+              </ul>
+            </div>` : ""}
+          ${renderAdvisorResilienceCard(primary.pattern)}
+        </div>
+      </details>
+      <details class="advisor-zone">
+        <summary>
+          <span>Implementation</span>
+          <span class="advisor-zone-meta">prerequisites, checklist &amp; flow schema</span>
+          <span class="advisor-zone-chevron" aria-hidden="true">▸</span>
+        </summary>
+        <div class="advisor-zone-body">
+          ${loggingPatternRequirementCards(primary.pattern.id)}
+          ${implementation ? `<div class="advisor-implementation"><h4>Implementation and assurance requirements</h4>${implementation}</div>` : ""}
+          ${renderAdvisorChecklist(primary.pattern)}
+          ${renderAdvisorFlowSchemaRows(primary.pattern.id)}
+        </div>
+      </details>
       <div class="advisor-alternatives">
         <h4>Closest alternatives</h4>
         <div class="alternative-list">
