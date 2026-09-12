@@ -18243,6 +18243,11 @@ function buildAdvisorAssessment(answers, primary, confidence, reasons, alternati
         const tier = configFootprintTier(score);
         return { tier, score, configLocation: pattern.configLocation, dsManageable: pattern.dsManageable, fleetScope: pattern.fleetScope, externalConfigRequired: pattern.externalConfigRequired, oaiNote: CONFIG_FOOTPRINT_OAI_NOTE[tier] };
       })(),
+      radarProfile: (() => {
+        if (!radarHasScores(pattern)) return null;
+        const scores = radarAxisScores(pattern);
+        return LOGGING_PATTERN_RADAR_AXES.map((axis, index) => ({ axis, score: scores[index], note: radarAxisNote(pattern, index) }));
+      })(),
       implementationRequirements: implementationItems(pattern),
       companionPattern: companion ? { id: companion.id, name: companion.name } : null,
       processingOverlay: overlay ? { id: overlay.id, name: overlay.name } : null,
@@ -18326,6 +18331,12 @@ function advisorFinalPatternMarkdown(assessment) {
     "",
     ...r.reasons.map(reason => `- ${reason}`)
   ];
+  if (r.radarProfile) {
+    lines.push("", "### 8-axis pattern profile", "", "| Axis | Score | Notes |", "|---|---|---|");
+    r.radarProfile.forEach(item => lines.push(`| ${markdownCell(item.axis)} | ${item.score} / 5 | ${markdownCell(item.note)} |`));
+  } else {
+    lines.push("", "### 8-axis pattern profile", "", "Not available -- this pattern's HA, integrity, replay, provenance and change-stability properties depend on the specific app, not the architecture.");
+  }
   if (r.implementationRequirements.length) {
     lines.push("", "### Implementation and assurance requirements", "");
     r.implementationRequirements.forEach(item => lines.push(`- **${item.label}:** ${item.value}`));
@@ -18386,6 +18397,11 @@ function advisorFinalPatternCsv(assessment) {
     ["Architecture flow", r.architectureFlow]
   ].forEach(([field, value]) => add("Suggested final pattern", field, value));
   r.reasons.forEach((reason, index) => add("Rationale", `Reason ${index + 1}`, reason));
+  if (r.radarProfile) {
+    r.radarProfile.forEach(item => add("8-axis pattern profile", item.axis, `${item.score} / 5 -- ${item.note}`));
+  } else {
+    add("8-axis pattern profile", "Not available", "This pattern's HA, integrity, replay, provenance and change-stability properties depend on the specific app, not the architecture.");
+  }
   r.implementationRequirements.forEach(item => add("Implementation requirement", item.label, item.value));
   if (r.transportDeliveryPattern) add("Delivery guarantees & operational risk", "Transport delivery pattern", r.transportDeliveryPattern);
   if (r.transportDeliveryPatternRationale) add("Delivery guarantees & operational risk", "Transport delivery pattern rationale", r.transportDeliveryPatternRationale);
@@ -18432,6 +18448,9 @@ function advisorFinalPatternHtml(assessment) {
   const resilience = resilienceItems.length
     ? `<h2>Delivery guarantees &amp; operational risk</h2><div class="requirements">${resilienceItems.map(([label, value]) => `<div class="req"><strong>${escapeHtml(label)}</strong><p>${escapeHtml(value)}</p></div>`).join("")}</div>`
     : "";
+  const radarSection = r.radarProfile
+    ? `<h2>8-axis pattern profile</h2><div style="overflow:auto"><table><thead><tr><th>Axis</th><th>Score</th><th>Notes</th></tr></thead><tbody>${r.radarProfile.map(item => `<tr><td>${escapeHtml(item.axis)}</td><td>${item.score} / 5</td><td>${escapeHtml(item.note)}</td></tr>`).join("")}</tbody></table></div>`
+    : `<h2>8-axis pattern profile</h2><p>Not available -- this pattern's HA, integrity, replay, provenance and change-stability properties depend on the specific app, not the architecture.</p>`;
   const related = [
     r.companionPattern ? `<li><strong>Paired source pattern:</strong> ${escapeHtml(r.companionPattern.id)} — ${escapeHtml(r.companionPattern.name)}</li>` : "",
     r.processingOverlay ? `<li><strong>Processing overlay:</strong> ${escapeHtml(r.processingOverlay.id)} — ${escapeHtml(r.processingOverlay.name)}</li>` : ""
@@ -18446,6 +18465,7 @@ body{margin:0;background:#f8fafc;color:#0f172a;font-family:Inter,system-ui,-appl
 <section class="card"><p>${escapeHtml(r.summary)}</p><div class="grid">${infoRows}</div>
 <h2>Architecture flow</h2><div class="flow">${r.architectureFlow.map((step, index) => `${index ? '<span class="arrow">→</span>' : ''}<span class="step">${escapeHtml(step)}</span>`).join("")}</div>
 <h2>Why this pattern fits</h2><ul>${r.reasons.map(reason => `<li>${escapeHtml(reason)}</li>`).join("")}</ul>
+${radarSection}
 ${requirements}
 ${resilience}
 ${related ? `<h2>Related governed patterns</h2><ul>${related}</ul>` : ""}
