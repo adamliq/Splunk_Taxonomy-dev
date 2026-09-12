@@ -130,6 +130,9 @@ describe('dangling TAX-XX code references (regression: TAX-02.03.02.01)', () => 
       'TAX-04.09.03.01', 'TAX-04.09.03.02', 'TAX-04.09.03.03', 'TAX-04.09.03.04',
       'TAX-04.09.03.05', 'TAX-04.09.03.06', 'TAX-04.09.03.07', 'TAX-04.09.03.08',
       'TAX-04.09.03.09', 'TAX-04.09.03.10', 'TAX-04.09.03.11', 'TAX-04.09.03.12',
+      'TAX-03.07', // proposed future "REST API Collection Mechanics" branch, named in the
+                   // REST API Collection Profile's own coverage-gap finding -- that section is
+                   // explicitly scoped to document the gap, not to add the branch unprompted.
     ]);
     const unexplained = missing.filter(r => !knownExceptions.has(r));
     assert.deepEqual(unexplained, [], `unexplained dangling TAX-XX references: ${unexplained.join(', ')}`);
