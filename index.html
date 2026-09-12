@@ -3161,6 +3161,18 @@
     .config-setting-result .setting-file { font-size:11.5px; color:#7030a0; font-weight:700; }
     .config-setting-result .setting-desc { font-size:12px; color:#64748b; line-height:1.4; }
     .config-setting-count { margin:0 0 8px; color:#64748b; font-size:12px; }
+    /* .eccs-table (269 reference tables across the conf-file/glossary articles) had no
+       dedicated rule at all until now -- it rendered on bare browser table defaults: ~1px cell
+       padding, no borders, centered bold headers, no header/body distinction. Styled here to
+       match the established look of its sibling .eccs-example-table/.eccs-matrix, without
+       forcing a min-width or fixed column widths, since usages range from a plain 2-column
+       Setting/Description table to 7-column comparison tables that legitimately need the
+       .eccs-table-wrap's horizontal scroll -- this only touches padding/borders/header styling,
+       so every existing table's column proportions are unaffected. */
+    .eccs-table { width:100%; border-collapse:collapse; font-size:12.5px; line-height:1.55; }
+    .eccs-table th,.eccs-table td { padding:10px 12px; border-bottom:1px solid #e2e8f0; text-align:left; vertical-align:top; }
+    .eccs-table th { background:#f8fafc; color:#0f172a; font-size:11px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; }
+    .eccs-table tbody tr:last-child td { border-bottom:0; }
     .eccs-table tr.highlight td { background:rgba(112,48,160,.14); }
     .eccs-reference { padding-bottom:42px; }
     .eccs-reference-hero { padding:24px; border:1px solid #c4b5fd; border-radius:18px; background:linear-gradient(135deg,#0f2034 0%,#1f4e78 58%,#7030a0 100%); color:#fff; box-shadow:var(--shadow); }
