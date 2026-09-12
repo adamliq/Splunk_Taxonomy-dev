@@ -732,6 +732,7 @@
     .advisor-latency-badge[data-tier="delayed"] { background: #ffedd5; color: #c2410c; border-color: #fdba74; }
     .advisor-latency-badge[data-tier="batch"] { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
     .advisor-latency-badge[data-tier="varies"] { background: #f8fafc; color: #64748b; border-color: #cbd5e1; border-style: dashed; }
+    .advisor-latency-class { display: inline-block; margin-right: 7px; color: #64748b; font-size: 11.5px; font-weight: 700; font-style: italic; vertical-align: middle; }
     .advisor-reasons { margin-top: 19px; padding: 16px 18px; border-left: 4px solid #2f855a; border-radius: 10px; background: #f0fdf4; }
     .advisor-reasons h4, .advisor-overlay h4, .advisor-alternatives h4 { margin: 0 0 9px; }
     .advisor-reasons ul, .advisor-overlay ul { margin: 0; padding-left: 19px; }
@@ -17480,11 +17481,25 @@ const LOGGING_PATTERN_LATENCY_KEYS = {
   "Immediate": "immediate", "Critical": "critical", "High": "high",
   "Standard": "standard", "Delayed": "delayed", "Batch/Historical": "batch", "Varies": "varies"
 };
+// The "Real-time classification" column from the Ingestion Latency reference's own tier table
+// (#ingestion-latency-tiers), reused verbatim so the two never drift apart. "Varies" has no row
+// in that table -- it's this catalogue's own pseudo-tier for a pattern with no fixed latency.
+const LOGGING_PATTERN_REALTIME_CLASS = {
+  "Immediate": "Sub-second / effectively real-time",
+  "Critical": "Near real-time",
+  "High": "Near real-time",
+  "Standard": "Operational real-time",
+  "Delayed": "Delayed",
+  "Batch/Historical": "Batch / non-real-time",
+  "Varies": "Depends on the underlying transport"
+};
 function renderAdvisorLatencyTile(pattern) {
   if (!pattern.latencyTier) return "";
   const key = LOGGING_PATTERN_LATENCY_KEYS[pattern.latencyTier] || "";
+  const realtimeClass = LOGGING_PATTERN_REALTIME_CLASS[pattern.latencyTier] || "";
   const badge = `<span class="advisor-latency-badge" data-tier="${escapeHtml(key)}">${escapeHtml(pattern.latencyTier)}</span>`;
-  return `<div class="advisor-info advisor-latency-tile"><span>Expected latency tier</span><strong>${badge}${pattern.latencyRationale ? " " + escapeHtml(pattern.latencyRationale) : ""}</strong></div>`;
+  const classSpan = realtimeClass ? `<span class="advisor-latency-class">${escapeHtml(realtimeClass)}</span>` : "";
+  return `<div class="advisor-info advisor-latency-tile"><span>Expected latency tier</span><strong>${badge}${classSpan}${pattern.latencyRationale ? " " + escapeHtml(pattern.latencyRationale) : ""}</strong></div>`;
 }
 
 function renderAdvisorResilienceCard(pattern) {
@@ -17883,6 +17898,7 @@ function buildAdvisorAssessment(answers, primary, confidence, reasons, alternati
       haResilience: pattern.haResilience || null,
       dataIntegrity: pattern.dataIntegrity || null,
       latencyTier: pattern.latencyTier || null,
+      latencyRealtimeClass: LOGGING_PATTERN_REALTIME_CLASS[pattern.latencyTier] || null,
       latencyRationale: pattern.latencyRationale || null,
       implementationRequirements: implementationItems(pattern),
       companionPattern: companion ? { id: companion.id, name: companion.name } : null,
@@ -17948,7 +17964,7 @@ function advisorFinalPatternMarkdown(assessment) {
     `- **Required app / TA:** ${r.requiredAppOrTA}`,
     `- **Health profile:** ${r.healthProfile}`,
     `- **Destination governance:** ${r.destinationGovernance}`,
-    `- **Expected latency tier:** ${r.latencyTier ? `${r.latencyTier}${r.latencyRationale ? " -- " + r.latencyRationale : ""}` : "Not specified"}`,
+    `- **Expected latency tier:** ${r.latencyTier ? `${r.latencyTier}${r.latencyRealtimeClass ? " (" + r.latencyRealtimeClass + ")" : ""}${r.latencyRationale ? " -- " + r.latencyRationale : ""}` : "Not specified"}`,
     `- **Port / firewall requirements:** ${r.portFirewallRequirements || "Not applicable"}`,
     `- **Authentication requirements:** ${r.authenticationRequirements || "Not applicable"}`,
     `- **Source platform requirements:** ${r.sourcePlatformRequirements || "Not applicable"}`,
@@ -18004,7 +18020,8 @@ function advisorFinalPatternCsv(assessment) {
     ["Required app / TA", r.requiredAppOrTA], ["App availability", r.appAvailability],
     ["Source push capability", r.sourcePushCapability], ["Health profile", r.healthProfile],
     ["Destination governance", r.destinationGovernance],
-    ["Expected latency tier", r.latencyTier], ["Latency tier rationale", r.latencyRationale],
+    ["Expected latency tier", r.latencyTier], ["Real-time classification", r.latencyRealtimeClass],
+    ["Latency tier rationale", r.latencyRationale],
     ["Port / firewall requirements", r.portFirewallRequirements],
     ["Authentication requirements", r.authenticationRequirements],
     ["Source platform requirements", r.sourcePlatformRequirements],
@@ -18031,7 +18048,7 @@ function advisorFinalPatternHtml(assessment) {
     ["Transport", r.transport], ["Processing / routing", r.processingAndRouting],
     ["Destination", r.destination], ["Required app / TA", r.requiredAppOrTA],
     ["Health profile", r.healthProfile], ["Destination governance", r.destinationGovernance],
-    ["Expected latency tier", r.latencyTier ? `${r.latencyTier}${r.latencyRationale ? " -- " + r.latencyRationale : ""}` : ""],
+    ["Expected latency tier", r.latencyTier ? `${r.latencyTier}${r.latencyRealtimeClass ? " (" + r.latencyRealtimeClass + ")" : ""}${r.latencyRationale ? " -- " + r.latencyRationale : ""}` : ""],
     ["Port / firewall requirements", r.portFirewallRequirements],
     ["Authentication requirements", r.authenticationRequirements],
     ["Source platform requirements", r.sourcePlatformRequirements]
