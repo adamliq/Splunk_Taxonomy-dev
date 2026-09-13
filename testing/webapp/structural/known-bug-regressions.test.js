@@ -83,7 +83,11 @@ describe('Splunk Index Sizing Calculator page', () => {
     assert.match(text, /<section id="sizingCalculatorPage" class="page-view reference-page" role="tabpanel" aria-labelledby="showSizingPage" hidden>/);
     assert.match(text, /sizing: document\.getElementById\("showSizingPage"\)/);
     assert.match(text, /sizing: document\.getElementById\("sizingCalculatorPage"\)/);
-    assert.match(text, /"info", "onboarding", "taxonomy", "assessments", "sizing", "reference"/);
+    // Tolerates other page keys being inserted between these six as the app grows (it now
+    // has "objectTaxonomy" between taxonomy/assessments and "s3calc" between sizing/reference)
+    // -- the real intent is that these six exist, in this relative order, not that they're
+    // contiguous.
+    assert.match(text, /"info",\s*"onboarding",\s*"taxonomy",\s*(?:"[^"]+",\s*)*"assessments",\s*"sizing",\s*(?:"[^"]+",\s*)*"reference"/);
     assert.match(text, /<button id="calculateIndexSizing" type="button">Calculate<\/button>/);
   });
   test('on-premises and cloud deployment toggle buttons both exist with distinct tier terminology', () => {
@@ -122,7 +126,10 @@ describe('Companion Tools external links page', () => {
     assert.match(text, /<section id="externalToolsPage" class="page-view reference-page" role="tabpanel" aria-labelledby="showExternalToolsPage" hidden>/);
     assert.match(text, /externalTools: document\.getElementById\("showExternalToolsPage"\)/);
     assert.match(text, /externalTools: document\.getElementById\("externalToolsPage"\)/);
-    assert.match(text, /"info", "onboarding", "taxonomy", "assessments", "sizing", "reference", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "health", "externalTools"/);
+    // Tolerates other page keys being inserted between these thirteen as the app grows (see
+    // the identical fix in the Sizing Calculator test above) -- the real intent is that they
+    // exist, in this relative order, not that they're contiguous.
+    assert.match(text, /"info",\s*"onboarding",\s*"taxonomy",\s*(?:"[^"]+",\s*)*"assessments",\s*"sizing",\s*(?:"[^"]+",\s*)*"reference",\s*(?:"[^"]+",\s*)*"prompts",\s*"cmei",\s*"assurance",\s*"viability",\s*"catalogue",\s*"patterns",\s*(?:"[^"]+",\s*)*"health",\s*(?:"[^"]+",\s*)*"externalTools"/);
   });
   test('all 5 external links are present, open in a new tab, and are safely rel-attributed', () => {
     const section = text.match(/<section id="externalToolsPage"[\s\S]*<\/main>/)[0];
