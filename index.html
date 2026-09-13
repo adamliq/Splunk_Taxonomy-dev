@@ -4047,6 +4047,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
         <button id="showAssessmentMethodsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentMethods">Assessment methodologies</button>
         <button id="showConceptDefinitionsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="conceptDefinitions">Concepts &amp; definitions</button>
         <button id="showConfigFileReferencesPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="configFileReferences">Configuration file reference</button>
+        <button id="showDataPipelinePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="dataPipelinePage">Data Pipeline</button>
         <button id="showCataloguePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cataloguePage">Data source catalogue</button>
         <button id="showCmeiPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cmeiPage">Framework</button>
         <button id="showFrameworkOverviewPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="frameworkOverview">Framework overview</button>
@@ -8992,6 +8993,39 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
       </section>
     </article>
   </section>
+<section id="dataPipelinePage" class="page-view reference-page" role="tabpanel" aria-labelledby="showDataPipelinePage" hidden>
+      <div class="reference-section-heading"><div><h3>Data Pipeline</h3><p>The stages an event passes through from a Universal Forwarder's input pipeline to an indexer's write to disk, including the internal queues connecting them, and which component (UF vs. Heavy Forwarder/Indexer) each stage typically applies to.</p></div></div>
+      <div class="eccs-table-wrap" role="region" aria-label="Splunk data pipeline stages" tabindex="0">
+        <table class="eccs-table">
+          <thead><tr><th>Pipeline</th><th>Stage</th><th>What happens</th><th>Common configuration</th><th>UF</th><th>HF/Indexer</th></tr></thead>
+          <tbody>
+            <tr><td>Input pipeline</td><td>Input processing</td><td>Receives data from Splunk-to-Splunk, raw TCP, UDP, HEC, files or modular inputs. Initial host, source and sourcetype metadata may be attached.</td><td><code>inputs.conf</code></td><td>Y</td><td>Y</td></tr>
+            <tr><td>TCP input handoff</td><td>tcpin_queue</td><td>Buffers incoming Splunk-to-Splunk data before passing it toward the parsing path. Applies when the component acts as a Splunk receiver.</td><td>Internal queue; <code>[splunktcp://&lt;port&gt;]</code> in <code>inputs.conf</code></td><td>N</td><td>Y</td></tr>
+            <tr><td>Parsing handoff</td><td>parsingQueue</td><td>Buffers incoming data before full parsing or forwarding.</td><td>Internal queue</td><td>Y</td><td>Y</td></tr>
+            <tr><td>Forwarding pipeline</td><td>Event boundary detection</td><td>Identifies event boundaries so a UF can distribute data between receivers without splitting an event. It does not create the final indexed event.</td><td><code>EVENT_BREAKER_ENABLE</code>, <code>EVENT_BREAKER</code> in <code>props.conf</code></td><td>Y</td><td>N</td></tr>
+            <tr><td>TCP output handoff</td><td>tcpout_queue</td><td>Buffers outgoing data before the TCP output processor sends it to a Splunk receiver using Splunk-to-Splunk.</td><td>Internal queue; <code>[tcpout]</code>, <code>[tcpout:&lt;target_group&gt;]</code> in <code>outputs.conf</code></td><td>Y</td><td>Y</td></tr>
+            <tr><td>Parsing pipeline</td><td>Character decoding</td><td>Applies character encoding and converts incoming data into Splunk's internal UTF-8 representation.</td><td><code>CHARSET</code> in <code>props.conf</code></td><td>N</td><td>Y</td></tr>
+            <tr><td>Parsing pipeline</td><td>Line breaking and line-length control</td><td>Identifies initial event boundaries and enforces the maximum length of an individual line before aggregation.</td><td><code>LINE_BREAKER</code>, <code>LINE_BREAKER_LOOKBEHIND</code>, <code>TRUNCATE</code> in <code>props.conf</code></td><td>N</td><td>Y</td></tr>
+            <tr><td>Parsing pipeline</td><td>Header processing</td><td>Processes structured-data headers or preambles where applicable, such as CSV field headers.</td><td><code>HEADER_FIELD_LINE_NUMBER</code>, <code>FIELD_HEADER_REGEX</code>, <code>PREAMBLE_REGEX</code>, structured-data settings</td><td>N</td><td>Y</td></tr>
+            <tr><td>Merging handoff</td><td>aggQueue</td><td>Passes initial event fragments to event aggregation and timestamp processing.</td><td>Internal queue</td><td>N</td><td>Y</td></tr>
+            <tr><td>Merging pipeline</td><td>Event aggregation</td><td>Combines physical lines into complete logical events or keeps each line as an event.</td><td><code>SHOULD_LINEMERGE</code>, <code>BREAK_ONLY_BEFORE</code>, <code>BREAK_ONLY_BEFORE_DATE</code>, <code>MUST_BREAK_AFTER</code>, <code>MAX_EVENTS</code></td><td>N</td><td>Y</td></tr>
+            <tr><td>Merging pipeline</td><td>Timestamp extraction</td><td>Finds the event timestamp, determines its format and assigns <code>_time</code>.</td><td><code>TIME_PREFIX</code>, <code>TIME_FORMAT</code>, <code>MAX_TIMESTAMP_LOOKAHEAD</code>, <code>DATETIME_CONFIG</code>, <code>TZ</code></td><td>N</td><td>Y</td></tr>
+            <tr><td>Merging pipeline</td><td>Default timestamp handling</td><td>Selects a fallback timestamp when no valid timestamp can be extracted from the event.</td><td><code>DATETIME_CONFIG</code>, <code>MAX_DAYS_AGO</code>, <code>MAX_DAYS_HENCE</code> and other timestamp settings in <code>props.conf</code></td><td>N</td><td>Y</td></tr>
+            <tr><td>Merging pipeline</td><td>Event annotation</td><td>Associates the event with metadata such as host, source and sourcetype.</td><td>Input settings, <code>props.conf</code>, <code>transforms.conf</code></td><td>Y</td><td>Y</td></tr>
+            <tr><td>Typing handoff</td><td>typingQueue</td><td>Buffers completed events before index-time transformations and event typing.</td><td>Internal queue</td><td>N</td><td>Y</td></tr>
+            <tr><td>Typing pipeline</td><td>Index-time transformations</td><td>Applies regex-based metadata changes, routing, filtering, masking, cloning or indexed-field extraction.</td><td><code>TRANSFORMS-*</code> in <code>props.conf</code>; <code>REGEX</code>, <code>FORMAT</code>, <code>DEST_KEY</code>, <code>WRITE_META</code> in <code>transforms.conf</code></td><td>N</td><td>Y</td></tr>
+            <tr><td>Typing pipeline</td><td>Metadata routing</td><td>Selects or changes the destination index, processing queue, host, source or sourcetype. Events can be routed to <code>nullQueue</code>.</td><td><code>_MetaData:Index</code>, <code>_MetaData:Host</code>, <code>MetaData:Source</code>, <code>MetaData:Sourcetype</code>, <code>queue</code></td><td>N</td><td>Y</td></tr>
+            <tr><td>Typing pipeline</td><td>_raw modification</td><td>Changes, replaces or masks the raw event before it is stored or forwarded.</td><td><code>DEST_KEY = _raw</code> in <code>transforms.conf</code></td><td>N</td><td>Y</td></tr>
+            <tr><td>Typing pipeline</td><td>Indexed-field creation</td><td>Creates explicitly configured index-time fields that are stored with the event metadata.</td><td><code>WRITE_META = true</code> in <code>transforms.conf</code>; <code>fields.conf</code></td><td>N</td><td>Y</td></tr>
+            <tr><td>Typing pipeline</td><td>Event typing</td><td>Generates internal event characteristics such as the <code>_punct</code> representation.</td><td>Primarily internal processing</td><td>N</td><td>Y</td></tr>
+            <tr><td>Indexing handoff</td><td>indexQueue</td><td>Buffers fully parsed events before local indexing or forwarding.</td><td>Internal queue</td><td>N</td><td>Y</td></tr>
+            <tr><td>Indexing pipeline</td><td>Indexing</td><td>Compresses <code>_raw</code>, creates index structures, writes metadata and searchable terms, and updates bucket files.</td><td><code>indexes.conf</code></td><td>N</td><td>Y</td></tr>
+            <tr><td>Replication pipeline</td><td>Replication</td><td>Replicates data or bucket information to other indexer-cluster peers according to the configured replication policy.</td><td><code>server.conf</code>, indexer-cluster configuration</td><td>N</td><td>Y</td></tr>
+            <tr><td>Acknowledgement path</td><td>Acknowledgement</td><td>Returns indexer acknowledgement when enabled and the required processing or storage conditions have been met.</td><td><code>useACK</code> in <code>outputs.conf</code>; receiver configuration</td><td>N</td><td>Y</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 <section id="frameworkOverview" class="page-view reference-page" role="tabpanel" aria-labelledby="showFrameworkOverviewPage" hidden>
       <div class="reference-section-heading"><div><h3>Framework overview</h3><p>The intended path from source identification through operational assurance.</p></div></div>
       <div class="framework-flow">
@@ -23543,6 +23577,7 @@ const pageTabs = {
   refAssessmentMethods: document.getElementById("showAssessmentMethodsPage"),
   refStandardsReferences: document.getElementById("showStandardsReferencesPage"),
   refConfigFileReferences: document.getElementById("showConfigFileReferencesPage"),
+  dataPipeline: document.getElementById("showDataPipelinePage"),
   refNetworkReference: document.getElementById("showNetworkReferencePage"),
   refRoles: document.getElementById("showRolesPage"),
   refSplunkBin: document.getElementById("showSplunkBinPage"),
@@ -23573,6 +23608,7 @@ const pageViews = {
   refAssessmentMethods: document.getElementById("assessmentMethods"),
   refStandardsReferences: document.getElementById("standardsReferences"),
   refConfigFileReferences: document.getElementById("configFileReferences"),
+  dataPipeline: document.getElementById("dataPipelinePage"),
   refNetworkReference: document.getElementById("networkReferenceSection"),
   refRoles: document.getElementById("rolesSection"),
   refSplunkBin: document.getElementById("splunkBinSection"),
@@ -23596,7 +23632,7 @@ const SIDEBAR_GROUP_MAP = {
   onboarding: "onboarding", taxonomy: "onboarding", objectTaxonomy: "onboarding", assessments: "onboarding",
   sizing: "calculators", s3calc: "calculators",
   reference: "reference", refFrameworkOverview: "reference", refConceptDefinitions: "reference", refAssessmentMethods: "reference", refStandardsReferences: "reference", refConfigFileReferences: "reference", refNetworkReference: "reference", refRoles: "reference", refSplunkBin: "reference", refQuestions: "reference", refNamingConvention: "reference",
-  prompts: "reference", cmei: "reference", catalogue: "reference", patterns: "reference", refLoggingPatternAdvisor: "reference", health: "reference", portsMatrix: "reference",
+  prompts: "reference", cmei: "reference", catalogue: "reference", patterns: "reference", refLoggingPatternAdvisor: "reference", health: "reference", portsMatrix: "reference", dataPipeline: "reference",
   inputCoverage: "coverage", metrics: "coverage"
 };
 function setSidebarGroupOpen(groupKey, open) {
@@ -25162,7 +25198,7 @@ function exportViabilityCalculator(event) {
 }
 
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "refFrameworkOverview", "refConceptDefinitions", "refAssessmentMethods", "refStandardsReferences", "refConfigFileReferences", "refNetworkReference", "refRoles", "refSplunkBin", "refQuestions", "refNamingConvention", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "refLoggingPatternAdvisor", "health", "portsMatrix", "externalTools", "inputCoverage", "metrics"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "refFrameworkOverview", "refConceptDefinitions", "refAssessmentMethods", "refStandardsReferences", "refConfigFileReferences", "dataPipeline", "refNetworkReference", "refRoles", "refSplunkBin", "refQuestions", "refNamingConvention", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "refLoggingPatternAdvisor", "health", "portsMatrix", "externalTools", "inputCoverage", "metrics"].includes(pageName) ? pageName : "info";
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#file-mon-/.test(location.hash) ? "file-monitoring-profile" : /^#rest-api-/.test(location.hash) ? "rest-api-collection-profile" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : /^#eda-/.test(location.hash) ? "eda-playbook" : "");
   
@@ -25211,6 +25247,8 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
           ? "#standards-references"
         : selected === "refConfigFileReferences"
           ? "#config-file-reference"
+        : selected === "dataPipeline"
+          ? "#data-pipeline"
         : selected === "refNetworkReference"
           ? "#network-reference"
         : selected === "refRoles"
@@ -26563,6 +26601,7 @@ function pageNameFromHash() {
   if (location.hash === "#assessment-methodologies") return "refAssessmentMethods";
   if (location.hash === "#standards-references") return "refStandardsReferences";
   if (location.hash === "#config-file-reference") return "refConfigFileReferences";
+  if (location.hash === "#data-pipeline") return "dataPipeline";
   if (location.hash === "#network-reference") return "refNetworkReference";
   if (location.hash === "#splunk-ports") return "refNetworkReference";
   if (location.hash === "#network-flows") return "refNetworkReference";
