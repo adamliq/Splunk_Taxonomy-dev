@@ -927,6 +927,25 @@
     .side-group-trigger:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.34); color: #fff; }
     .side-group-trigger:focus-visible { outline: 3px solid rgba(169,200,234,.5); outline-offset: 2px; }
     .side-chev { font-size: 9px; opacity: .7; flex-shrink: 0; transition: transform .15s ease; }
+    /* Populated at load by refreshSidebarCounts() with each group's live .side-sub item
+       count -- e.g. "18" for Reference -- so a group's size is visible before it's opened
+       instead of the sidebar suddenly growing by however many items it happens to hold. */
+    .side-count {
+      flex-shrink: 0;
+      min-width: 18px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.14);
+      color: rgba(255,255,255,.78);
+      font-size: 10px;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.5;
+    }
+    .side-item.open > .side-group-trigger .side-count { background: rgba(255,255,255,.22); color: #fff; }
+    .side-link-glyph { font-size: 12px; opacity: .5; flex-shrink: 0; }
+    .app-sidebar .page-tab:hover .side-link-glyph,
+    .app-sidebar .page-tab.active .side-link-glyph { opacity: .85; }
     .side-item.open > .side-group-trigger { background: rgba(255,255,255,.13); border-color: rgba(255,255,255,.32); color: #fff; }
     .side-item.open > .side-group-trigger .side-chev { transform: rotate(180deg); opacity: 1; }
     .side-item.has-active > .side-group-trigger { box-shadow: inset 3px 0 0 #fff; }
@@ -934,10 +953,23 @@
       display: none;
       flex-direction: column;
       gap: 1px;
-      padding: 3px 0 5px 10px;
+      padding: 3px 4px 5px 10px;
       margin: 2px 0 0;
       border-left: 2px solid rgba(255,255,255,.14);
+      /* Caps how tall a single open group can make the whole (sticky) sidebar -- without
+         this, opening Reference (18 items) pushes the sidebar past the viewport on common
+         laptop heights (measured ~128px of overflow at 1366x768), forcing a page-level
+         scroll that carries the rest of the page away with it. ~7 items' worth of height
+         before the group scrolls internally instead, matching how the mobile drawer already
+         caps its own height. */
+      max-height: 280px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.28) transparent;
     }
+    .side-sub::-webkit-scrollbar { width: 6px; }
+    .side-sub::-webkit-scrollbar-thumb { background: rgba(255,255,255,.28); border-radius: 999px; }
+    .side-sub::-webkit-scrollbar-track { background: transparent; }
     .side-item.open .side-sub { display: flex; }
     .app-sidebar .page-tab {
       position: relative;
@@ -956,6 +988,7 @@
       text-align: left;
       transition: background .16s ease, border-color .16s ease, transform .16s ease, box-shadow .16s ease;
     }
+    .side-single .page-tab { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .app-sidebar .page-tab:hover {
       border-color: rgba(255,255,255,.34);
       background: rgba(255,255,255,.14);
@@ -4013,27 +4046,27 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
 <main class="app-shell">
   <nav class="app-sidebar" id="appSidebarNav" aria-label="Splunk taxonomy pages">
     <div class="side-item" data-group="calculators">
-      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Calculators</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
+      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Calculators</span><span class="side-count" aria-hidden="true"></span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
       <div class="side-sub">
         <button id="showS3CalcPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="s3CalcPage">S3 cost calculator</button>
         <button id="showSizingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="sizingCalculatorPage">Sizing calculator</button>
       </div>
     </div>
     <div class="side-item side-single">
-      <button id="showExternalToolsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="externalToolsPage">Companion tools</button>
+      <button id="showExternalToolsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="externalToolsPage"><span>Companion tools</span><span class="side-link-glyph" aria-hidden="true">&rarr;</span></button>
     </div>
     <div class="side-item" data-group="coverage">
-      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Coverage &amp; Metrics</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
+      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Coverage &amp; Metrics</span><span class="side-count" aria-hidden="true"></span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
       <div class="side-sub">
         <button id="showInputCoveragePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="inputCoveragePage">Input coverage</button>
         <button id="showMetricsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="metricsPage">Metrics</button>
       </div>
     </div>
     <div class="side-item side-single">
-      <button id="showInfoPage" class="page-tab active" type="button" role="tab" aria-selected="true" aria-controls="infoPage">Info</button>
+      <button id="showInfoPage" class="page-tab active" type="button" role="tab" aria-selected="true" aria-controls="infoPage"><span>Info</span><span class="side-link-glyph" aria-hidden="true">&rarr;</span></button>
     </div>
     <div class="side-item" data-group="onboarding">
-      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Onboarding</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
+      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Onboarding</span><span class="side-count" aria-hidden="true"></span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
       <div class="side-sub">
         <button id="showAssessmentsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentsPage">Assessments</button>
         <button id="showTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="taxonomyPage">Onboard taxonomy</button>
@@ -4042,7 +4075,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       </div>
     </div>
     <div class="side-item" data-group="reference">
-      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Reference</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
+      <button type="button" class="side-group-trigger" aria-expanded="false"><span>Reference</span><span class="side-count" aria-hidden="true"></span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
       <div class="side-sub">
         <button id="showAssessmentMethodsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentMethods">Assessment methodologies</button>
         <button id="showConceptDefinitionsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="conceptDefinitions">Concepts &amp; definitions</button>
@@ -35845,6 +35878,18 @@ document.querySelectorAll(".app-sidebar .side-group-trigger").forEach(trigger =>
   });
 });
 restoreSidebarGroups();
+
+// Counts each group's live .side-sub items rather than hardcoding a number in the HTML --
+// a hardcoded count is exactly the kind of thing that goes stale the next time a page is
+// added to or removed from a group (see this session's entryCount-badge fixes elsewhere).
+function refreshSidebarCounts() {
+  document.querySelectorAll(".app-sidebar .side-item[data-group]").forEach(item => {
+    const countEl = item.querySelector(".side-count");
+    const sub = item.querySelector(".side-sub");
+    if (countEl && sub) countEl.textContent = String(sub.querySelectorAll(".page-tab").length);
+  });
+}
+refreshSidebarCounts();
 
 // Reuse the Info page's own logo mark for the compact header instead of
 // embedding the ~94KB base64 icon a second time in the file source.

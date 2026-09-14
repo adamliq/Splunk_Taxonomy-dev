@@ -122,7 +122,10 @@ describe('Splunk Index Sizing Calculator page', () => {
 
 describe('Companion Tools external links page', () => {
   test('tab, page section and navigation wiring all exist', () => {
-    assert.match(text, /<button id="showExternalToolsPage" class="page-tab"[^>]*>Companion tools<\/button>/);
+    // The sidebar button's content became <span>Companion tools</span><span class="side-link-glyph">
+    // (a trailing "->" glyph distinguishing single-page links from expandable groups) --
+    // match the label text rather than requiring it to be the button's sole child.
+    assert.match(text, /<button id="showExternalToolsPage" class="page-tab"[^>]*>[\s\S]{0,40}Companion tools/);
     assert.match(text, /<section id="externalToolsPage" class="page-view reference-page" role="tabpanel" aria-labelledby="showExternalToolsPage" hidden>/);
     assert.match(text, /externalTools: document\.getElementById\("showExternalToolsPage"\)/);
     assert.match(text, /externalTools: document\.getElementById\("externalToolsPage"\)/);
