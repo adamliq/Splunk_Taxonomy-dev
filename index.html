@@ -18036,15 +18036,13 @@ function renderAdvisorResilienceCard(pattern) {
 // the two radar charts in this app look and behave identically rather than drifting into two
 // slightly different implementations. Scores here are 1-5 (not 0-100), so each is scaled by 20
 // before being handed to calculatorRadarPoint.
-function renderAdvisorRadarCard(pattern) {
-  if (!radarHasScores(pattern)) {
-    const reason = pattern.base === "LP-011"
-      ? "This pattern's HA, integrity, replay, provenance and change-stability properties are inherited entirely from whichever app or add-on implements it, so there is no single fixed shape to draw -- verify each axis against the specific app."
-      : "Radar scores are not available for this pattern.";
-    return `<div class="advisor-overlay advisor-radar"><span class="advisor-pattern-id">Comparison radar</span><h4>Profile varies by app</h4><p class="advisor-resilience-text">${escapeHtml(reason)}</p></div>`;
-  }
-  const axes = LOGGING_PATTERN_RADAR_AXES;
-  const scores = radarAxisScores(pattern);
+// Builds just the <svg> markup for the 8-axis radar diagram, shared between the on-screen
+// advisor result (renderAdvisorRadarCard, styled via the app's own .calc-radar-* stylesheet
+// rules) and the standalone HTML export (advisorFinalPatternHtml, which ships its own inline
+// copy of those same rules since the exported file has no access to the app's stylesheet).
+// Keeping the point/line/shape math in one place means the two can't silently draw different
+// diagrams for the same pattern.
+function radarSvgMarkup(axes, scores, patternId, svgClass) {
   const count = axes.length;
   const size = 340;
   const center = 170;
@@ -18066,17 +18064,29 @@ function renderAdvisorRadarCard(pattern) {
     const point = calculatorRadarPoint(score * 20, index, count, radius, center);
     return `<circle class="calc-radar-point" cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="4"><title>${escapeHtml(axes[index])}: ${score} / 5</title></circle>`;
   }).join("");
+  return `<svg class="${svgClass || "calc-radar-svg"}" viewBox="0 0 ${size} ${size}" role="img" aria-label="${escapeHtml(patternId)} 8-axis radar diagram">
+        ${gridHtml}
+        ${axisHtml}
+        <polygon class="calc-radar-shape" points="${shapePoints}"></polygon>
+        ${pointHtml}
+      </svg>`;
+}
+
+function renderAdvisorRadarCard(pattern) {
+  if (!radarHasScores(pattern)) {
+    const reason = pattern.base === "LP-011"
+      ? "This pattern's HA, integrity, replay, provenance and change-stability properties are inherited entirely from whichever app or add-on implements it, so there is no single fixed shape to draw -- verify each axis against the specific app."
+      : "Radar scores are not available for this pattern.";
+    return `<div class="advisor-overlay advisor-radar"><span class="advisor-pattern-id">Comparison radar</span><h4>Profile varies by app</h4><p class="advisor-resilience-text">${escapeHtml(reason)}</p></div>`;
+  }
+  const axes = LOGGING_PATTERN_RADAR_AXES;
+  const scores = radarAxisScores(pattern);
   const scoreHtml = axes.map((label, index) => `<div class="calc-radar-score"><span>${escapeHtml(label)}</span><strong>${scores[index]} / 5</strong><small>${escapeHtml(radarAxisNote(pattern, index))}</small></div>`).join("");
   return `<div class="advisor-overlay advisor-radar">
     <span class="advisor-pattern-id">Comparison radar</span>
     <h4>8-axis pattern profile</h4>
     <div class="calc-radar-panel">
-      <svg class="calc-radar-svg" viewBox="0 0 ${size} ${size}" role="img" aria-label="${escapeHtml(pattern.id)} 8-axis radar diagram">
-        ${gridHtml}
-        ${axisHtml}
-        <polygon class="calc-radar-shape" points="${shapePoints}"></polygon>
-        ${pointHtml}
-      </svg>
+      ${radarSvgMarkup(axes, scores, pattern.id)}
       <div>
         <p class="calc-radar-note">Timeliness, Simplicity and Config ease are computed directly from this pattern's latency tier, implementation complexity and configuration footprint. HA/Resilience, Data integrity, Replay, Provenance and Change stability are authored 1-5 judgement scores grounded in the architecture notes below. Higher is always better on every axis.</p>
         <div class="calc-radar-score-grid">${scoreHtml}</div>
@@ -18404,7 +18414,7 @@ function renderAdvisorResult(answers) {
       <div class="advisor-export-panel" aria-label="Export suggested final pattern">
         <div class="advisor-export-copy">
           <strong>Export suggested final pattern</strong>
-          <span>Includes the answered questions, final pattern, architecture flow, rationale, implementation controls, overlays and alternatives.</span>
+          <span>Includes the answered questions, final pattern, architecture flow, rationale, implementation controls, network flow schema, overlays and alternatives.</span>
         </div>
         <select id="advisorFinalExportFormat" aria-label="Final pattern export format">
           <option value="markdown">Markdown report</option>
@@ -18522,8 +18532,14 @@ function buildAdvisorAssessment(answers, primary, confidence, reasons, alternati
       })(),
       implementationRequirements: implementationItems(pattern),
       securityZoneControls: advisorSecurityZoneItems(pattern).length ? advisorSecurityZoneItems(pattern) : null,
+      flowSchema: (() => {
+        const rows = flowSchemaRowsForPattern(pattern.id);
+        return rows.length
+          ? rows.map(rec => Object.fromEntries(ADVISOR_FLOW_SCHEMA_COLUMNS.map(([key, label]) => [label, rec[key] || ""])))
+          : null;
+      })(),
       companionPattern: companion ? { id: companion.id, name: companion.name } : null,
-      processingOverlay: overlay ? { id: overlay.id, name: overlay.name } : null,
+      processingOverlay: overlay ? { id: overlay.id, name: overlay.name, health: overlay.health || null } : null,
       designNote: warning || null,
       catalogueRecord
     },
@@ -18620,6 +18636,11 @@ function advisorFinalPatternMarkdown(assessment) {
     lines.push("", "### Security-zone controls", "");
     r.securityZoneControls.forEach(item => lines.push(`- **${item.label}:** ${item.value}`));
   }
+  if (r.flowSchema) {
+    const columns = Object.keys(r.flowSchema[0]);
+    lines.push("", "### Network flow schema", "", `| ${columns.join(" | ")} |`, `|${columns.map(() => "---").join("|")}|`);
+    r.flowSchema.forEach(row => lines.push(`| ${columns.map(col => markdownCell(row[col])).join(" | ")} |`));
+  }
   if (r.transportDeliveryPattern || r.haResilience || r.dataIntegrity || r.replay || r.provenance || r.changeOverTime) {
     lines.push("", "### Delivery guarantees & operational risk", "");
     if (r.transportDeliveryPattern) lines.push(`- **Transport delivery pattern:** ${r.transportDeliveryPattern}${r.transportDeliveryPatternRationale ? " -- " + r.transportDeliveryPatternRationale : ""}`);
@@ -18630,7 +18651,7 @@ function advisorFinalPatternMarkdown(assessment) {
     if (r.changeOverTime) lines.push(`- **Change over time:** ${r.changeOverTime}`);
   }
   if (r.companionPattern) lines.push("", `- **Paired source pattern:** ${r.companionPattern.id} — ${r.companionPattern.name}`);
-  if (r.processingOverlay) lines.push(`- **Processing overlay:** ${r.processingOverlay.id} — ${r.processingOverlay.name}`);
+  if (r.processingOverlay) lines.push(`- **Processing overlay:** ${r.processingOverlay.id} — ${r.processingOverlay.name}${r.processingOverlay.health ? ` (apply the ${r.processingOverlay.health} profile in addition to the primary pattern's checks)` : ""}`);
   if (r.designNote) lines.push("", `> **Design note:** ${r.designNote}`);
   lines.push("", "## Closest alternatives", "");
   assessment.alternatives.forEach(item => lines.push(`- ${item.id} — ${item.name} (${item.fitPoints} fit points)`));
@@ -18683,6 +18704,7 @@ function advisorFinalPatternCsv(assessment) {
   }
   r.implementationRequirements.forEach(item => add("Implementation requirement", item.label, item.value));
   if (r.securityZoneControls) r.securityZoneControls.forEach(item => add("Security-zone controls", item.label, item.value));
+  if (r.flowSchema) r.flowSchema.forEach((row, index) => Object.entries(row).forEach(([col, value]) => add("Network flow schema", `Flow ${index + 1}: ${col}`, value)));
   if (r.transportDeliveryPattern) add("Delivery guarantees & operational risk", "Transport delivery pattern", r.transportDeliveryPattern);
   if (r.transportDeliveryPatternRationale) add("Delivery guarantees & operational risk", "Transport delivery pattern rationale", r.transportDeliveryPatternRationale);
   if (r.haResilience) add("Delivery guarantees & operational risk", "HA / redundancy topology", r.haResilience);
@@ -18692,6 +18714,7 @@ function advisorFinalPatternCsv(assessment) {
   if (r.changeOverTime) add("Delivery guarantees & operational risk", "Change over time", r.changeOverTime);
   if (r.companionPattern) add("Related pattern", "Paired source pattern", `${r.companionPattern.id} — ${r.companionPattern.name}`);
   if (r.processingOverlay) add("Related pattern", "Processing overlay", `${r.processingOverlay.id} — ${r.processingOverlay.name}`);
+  if (r.processingOverlay && r.processingOverlay.health) add("Related pattern", "Processing overlay: additional health profile", r.processingOverlay.health);
   if (r.designNote) add("Design", "Design note", r.designNote);
   assessment.alternatives.forEach((item, index) => add("Alternative", `Alternative ${index + 1}`, `${item.id} — ${item.name} (${item.fitPoints} fit points)`));
   return rows.map(row => row.map(csvCell).join(",")).join("\r\n") + "\r\n";
@@ -18721,6 +18744,12 @@ function advisorFinalPatternHtml(assessment) {
   const securityZone = r.securityZoneControls
     ? `<h2>Security-zone controls</h2><div class="requirements">${r.securityZoneControls.map(item => `<div class="req"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(item.value)}</p></div>`).join("")}</div>`
     : "";
+  const flowSchema = r.flowSchema
+    ? (() => {
+        const columns = Object.keys(r.flowSchema[0]);
+        return `<h2>Network flow schema</h2><div style="overflow:auto"><table><thead><tr>${columns.map(col => `<th>${escapeHtml(col)}</th>`).join("")}</tr></thead><tbody>${r.flowSchema.map(row => `<tr>${columns.map(col => `<td>${escapeHtml(row[col])}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+      })()
+    : "";
   const resilienceItems = [
     r.transportDeliveryPattern ? ["Transport delivery pattern", `${r.transportDeliveryPattern}${r.transportDeliveryPatternRationale ? " -- " + r.transportDeliveryPatternRationale : ""}`] : null,
     r.haResilience ? ["HA / redundancy topology", r.haResilience] : null,
@@ -18733,17 +18762,17 @@ function advisorFinalPatternHtml(assessment) {
     ? `<h2>Delivery guarantees &amp; operational risk</h2><div class="requirements">${resilienceItems.map(([label, value]) => `<div class="req"><strong>${escapeHtml(label)}</strong><p>${escapeHtml(value)}</p></div>`).join("")}</div>`
     : "";
   const radarSection = r.radarProfile
-    ? `<h2>8-axis pattern profile</h2><div style="overflow:auto"><table><thead><tr><th>Axis</th><th>Score</th><th>Notes</th></tr></thead><tbody>${r.radarProfile.map(item => `<tr><td>${escapeHtml(item.axis)}</td><td>${item.score} / 5</td><td>${escapeHtml(item.note)}</td></tr>`).join("")}</tbody></table></div>`
+    ? `<h2>8-axis pattern profile</h2><div class="calc-radar-panel"><div class="radar-svg-wrap">${radarSvgMarkup(r.radarProfile.map(item => item.axis), r.radarProfile.map(item => item.score), r.id)}</div><div style="overflow:auto"><table><thead><tr><th>Axis</th><th>Score</th><th>Notes</th></tr></thead><tbody>${r.radarProfile.map(item => `<tr><td>${escapeHtml(item.axis)}</td><td>${item.score} / 5</td><td>${escapeHtml(item.note)}</td></tr>`).join("")}</tbody></table></div></div>`
     : `<h2>8-axis pattern profile</h2><p>Not available -- this pattern's HA, integrity, replay, provenance and change-stability properties depend on the specific app, not the architecture.</p>`;
   const related = [
     r.companionPattern ? `<li><strong>Paired source pattern:</strong> ${escapeHtml(r.companionPattern.id)} — ${escapeHtml(r.companionPattern.name)}</li>` : "",
-    r.processingOverlay ? `<li><strong>Processing overlay:</strong> ${escapeHtml(r.processingOverlay.id)} — ${escapeHtml(r.processingOverlay.name)}</li>` : ""
+    r.processingOverlay ? `<li><strong>Processing overlay:</strong> ${escapeHtml(r.processingOverlay.id)} — ${escapeHtml(r.processingOverlay.name)}${r.processingOverlay.health ? ` (apply the ${escapeHtml(r.processingOverlay.health)} profile in addition to the primary pattern's checks)` : ""}</li>` : ""
   ].filter(Boolean).join("");
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${escapeHtml(r.id)} — ${escapeHtml(r.name)}</title>
 <style>
-body{margin:0;background:#f8fafc;color:#0f172a;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}main{width:calc(100% - 64px);margin:32px auto}.hero{padding:28px;border-radius:18px;background:linear-gradient(135deg,#1b4332,#2f855a 58%,#2f75b5);color:#fff}.hero p{margin:8px 0 0;opacity:.9}.id{display:inline-block;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.16);font-family:monospace;font-weight:800}.card{margin-top:18px;padding:22px;border:1px solid #e2e8f0;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.06)}h1{margin:8px 0 0}h2{margin:26px 0 10px;font-size:19px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.item,.req{padding:12px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc}.item span{display:block;color:#64748b;font-size:11px;font-weight:800;text-transform:uppercase}.item strong{display:block;margin-top:4px}.requirements{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:9px}.flow{display:flex;gap:8px;align-items:center;overflow:auto;flex-wrap:wrap}.step{min-width:130px;padding:11px;border:1px solid #bbf7d0;border-radius:10px;background:#f0fdf4;color:#166534;text-align:center;font-weight:800}.arrow{color:#64748b;font-weight:900}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#f8fafc;font-size:12px}.req p{margin:5px 0 0}.note{padding:13px;border:1px solid #fde68a;border-radius:10px;background:#fffbeb;color:#92400e}.meta{color:#64748b;font-size:12px}@media(max-width:700px){.grid{grid-template-columns:1fr}.requirements{grid-template-columns:1fr}.flow{flex-direction:column;align-items:stretch}.step{min-width:0}.arrow{transform:rotate(90deg);text-align:center}}
+body{margin:0;background:#f8fafc;color:#0f172a;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.55}main{width:calc(100% - 64px);margin:32px auto}.hero{padding:28px;border-radius:18px;background:linear-gradient(135deg,#1b4332,#2f855a 58%,#2f75b5);color:#fff}.hero p{margin:8px 0 0;opacity:.9;font-size:14px}.id{display:inline-block;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.16);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:800}.card{margin-top:18px;padding:22px;border:1px solid #e2e8f0;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.06)}h1{margin:8px 0 0;font-size:26px}h2{margin:26px 0 10px;font-size:18px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.item,.req{padding:12px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc}.item span{display:block;color:#64748b;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase}.item strong{display:block;margin-top:4px;font-size:13.5px}.requirements{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:9px}.flow{display:flex;gap:8px;align-items:center;overflow:auto;flex-wrap:wrap}.step{min-width:130px;padding:11px;border:1px solid #bbf7d0;border-radius:10px;background:#f0fdf4;color:#166534;text-align:center;font-weight:800;font-size:13px}.arrow{color:#64748b;font-weight:900}table{width:100%;border-collapse:collapse;font-size:12.5px;line-height:1.55}th,td{padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#f8fafc;color:#0f172a;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase}tbody tr:last-child td{border-bottom:0}td code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;color:#475569;background:#f1f5f9;padding:2px 5px;border-radius:5px}.req strong{font-size:13.5px}.req p{margin:5px 0 0;font-size:13px}.note{padding:13px;border:1px solid #fde68a;border-radius:10px;background:#fffbeb;color:#92400e;font-size:13px}.meta{color:#64748b;font-size:12px}ul{font-size:13.5px}.calc-radar-panel{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:16px;align-items:center;padding:12px;border:1px solid #e2e8f0;border-radius:13px;background:#f8fafc}.radar-svg-wrap{display:flex;justify-content:center}.calc-radar-svg{width:100%;max-width:300px;height:auto;display:block}.calc-radar-shape{fill:rgba(37,99,235,.18);stroke:#2563eb;stroke-width:2.5}.calc-radar-grid{fill:none;stroke:#cbd5e1;stroke-width:1}.calc-radar-axis{stroke:#e2e8f0;stroke-width:1}.calc-radar-point{fill:#1d4ed8;stroke:#fff;stroke-width:2}.calc-radar-label{fill:#334155;font-size:9px;font-weight:800}@media(max-width:700px){.grid{grid-template-columns:1fr}.requirements{grid-template-columns:1fr}.flow{flex-direction:column;align-items:stretch}.step{min-width:0}.arrow{transform:rotate(90deg);text-align:center}.calc-radar-panel{grid-template-columns:1fr}}
 </style></head><body><main>
 <section class="hero"><span class="id">${escapeHtml(r.id)}</span><h1>${escapeHtml(r.name)}</h1><p>Suggested final logging pattern · ${r.confidence}% confidence</p></section>
 <section class="card"><p>${escapeHtml(r.summary)}</p><div class="grid">${infoRows}</div>
@@ -18752,6 +18781,7 @@ body{margin:0;background:#f8fafc;color:#0f172a;font-family:Inter,system-ui,-appl
 ${radarSection}
 ${requirements}
 ${securityZone}
+${flowSchema}
 ${resilience}
 ${related ? `<h2>Related governed patterns</h2><ul>${related}</ul>` : ""}
 ${r.designNote ? `<h2>Design note</h2><div class="note">${escapeHtml(r.designNote)}</div>` : ""}
