@@ -11,19 +11,41 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { withServerAndPage } = require('../lib/browser-harness');
 
+// Several sidebar buttons live inside a collapsible group (.side-item[data-group] >
+// .side-sub) that starts closed, so a plain page.click() on them times out waiting for
+// visibility. Expand the button's own group first, exactly as a real user would, rather
+// than reaching into the hidden .side-sub directly. Returns false if the button doesn't
+// exist at all (a stale/renamed id), true otherwise.
+async function openSidebarPage(page, buttonId) {
+  const btn = await page.$(`#${buttonId}`);
+  if (!btn) return false;
+  if (!(await btn.isVisible())) {
+    await page.evaluate(id => {
+      const el = document.getElementById(id);
+      const trigger = el && el.closest('.side-item[data-group]')?.querySelector('.side-group-trigger');
+      if (trigger) trigger.click();
+    }, buttonId);
+    await page.waitForTimeout(150);
+  }
+  await btn.click();
+  return true;
+}
+
 const TABS = [
   { name: 'Info', buttonId: 'showInfoPage' },
   { name: 'Onboarding flow', buttonId: 'showOnboardingPage' },
   { name: 'Taxonomy explorer', buttonId: 'showTaxonomyPage' },
   { name: 'Assessments', buttonId: 'showAssessmentsPage' },
   { name: 'Sizing calculator', buttonId: 'showSizingPage' },
-  { name: 'Reference', buttonId: 'showReferencePage' },
   { name: 'Prompt library', buttonId: 'showPromptLibraryPage' },
   { name: 'Framework', buttonId: 'showCmeiPage' },
   { name: 'Data source catalogue', buttonId: 'showCataloguePage' },
   { name: 'Logging patterns table', buttonId: 'showPatternsPage' },
   { name: 'Health checks table', buttonId: 'showHealthChecksPage' },
   { name: 'Companion tools', buttonId: 'showExternalToolsPage' },
+  // No 'Reference' entry: the sidebar's "Reference" item is a group trigger with no page
+  // (and no button id) of its own -- reference-navigation.spec.js already asserts
+  // pageErrors is empty while exercising all of its articles individually.
 ];
 
 test('every primary tab loads without a page error', { timeout: 60000 }, async () => {
@@ -33,9 +55,8 @@ test('every primary tab loads without a page error', { timeout: 60000 }, async (
 
     const missingButtons = [];
     for (const tab of TABS) {
-      const btn = await page.$(`#${tab.buttonId}`);
-      if (!btn) { missingButtons.push(tab.name); continue; }
-      await btn.click();
+      const opened = await openSidebarPage(page, tab.buttonId);
+      if (!opened) { missingButtons.push(tab.name); continue; }
       await page.waitForTimeout(250);
     }
 
@@ -48,19 +69,34 @@ test('Reference tab: a handful of real entry-point buttons open their article wi
   await withServerAndPage(async ({ page, baseUrl, pageErrors }) => {
     await page.goto(`${baseUrl}/index.html`, { waitUntil: 'load' });
     await page.waitForTimeout(300);
-    await page.click('#showReferencePage');
-    await page.waitForTimeout(300);
 
     // Exercises the actual click->button->showReferenceDetail wiring (not
     // just the function directly) for a representative sample, including
-    // the two reference sections added this session.
-    const sampleKeys = ['username-format', 'datetime-format', 'log-format-parse', 'eccs'];
-    for (const key of sampleKeys) {
-      await page.click(`[data-open-reference-detail="${key}"]`);
+    // the two reference sections added this session. Each key's real (plain
+    // "Open detailed reference") entry-point button lives on a specific page --
+    // not all four are on the same one.
+    const sampleKeys = [
+      { key: 'username-format', sourceButtonId: 'showStandardsReferencesPage' },
+      { key: 'datetime-format', sourceButtonId: 'showStandardsReferencesPage' },
+      { key: 'log-format-parse', sourceButtonId: 'showStandardsReferencesPage' },
+      { key: 'log-format-quality', sourceButtonId: 'showAssessmentMethodsPage' },
+    ];
+    for (const { key, sourceButtonId } of sampleKeys) {
+      // showReferenceDetail() opens the requested article inside a shared, generic hub page
+      // (id="referencePage"), and the back-link below returns to *that* hub -- not back to
+      // wherever the entry-point button actually lives. Re-navigate to the source page before
+      // every iteration rather than assuming the previous iteration's "back" landed on it.
+      await openSidebarPage(page, sourceButtonId);
+      await page.waitForTimeout(150);
+      // Concepts & definitions renders its own button for the same detailView key into its
+      // (currently hidden) page, so the plain selector can resolve to more than one element
+      // -- :visible scopes the click to the one actually on screen, same as the existing
+      // back-link scoping below.
+      await page.click(`[data-open-reference-detail="${key}"]:visible`);
       await page.waitForTimeout(150);
       const opened = await page.evaluate(k => {
         const cfg = { 'username-format': 'usernameFormatReferenceView', 'datetime-format': 'datetimeFormatReferenceView',
-          'log-format-parse': 'logFormatParseReferenceView', 'eccs': 'eccsReferenceView' };
+          'log-format-parse': 'logFormatParseReferenceView', 'log-format-quality': 'logFormatQualityReferenceView' };
         const el = document.getElementById(cfg[k]);
         return el ? !el.hidden : false;
       }, key);
@@ -81,7 +117,7 @@ test('Sizing calculator: on-prem and cloud toggle, calculate, produce correct re
   await withServerAndPage(async ({ page, baseUrl, pageErrors }) => {
     await page.goto(`${baseUrl}/index.html`, { waitUntil: 'load' });
     await page.waitForTimeout(300);
-    await page.click('#showSizingPage');
+    await openSidebarPage(page, 'showSizingPage');
     await page.waitForTimeout(200);
 
     // Default on-prem inputs: 100 GB/day, 90 days searchable, RF=1, SF=1
