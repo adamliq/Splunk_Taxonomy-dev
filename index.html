@@ -18414,7 +18414,7 @@ function renderAdvisorResult(answers) {
       <div class="advisor-export-panel" aria-label="Export suggested final pattern">
         <div class="advisor-export-copy">
           <strong>Export suggested final pattern</strong>
-          <span>Includes the answered questions, final pattern, architecture flow, rationale, implementation controls, overlays and alternatives.</span>
+          <span>Includes the answered questions, final pattern, architecture flow, rationale, implementation controls, network flow schema, overlays and alternatives.</span>
         </div>
         <select id="advisorFinalExportFormat" aria-label="Final pattern export format">
           <option value="markdown">Markdown report</option>
@@ -18532,6 +18532,12 @@ function buildAdvisorAssessment(answers, primary, confidence, reasons, alternati
       })(),
       implementationRequirements: implementationItems(pattern),
       securityZoneControls: advisorSecurityZoneItems(pattern).length ? advisorSecurityZoneItems(pattern) : null,
+      flowSchema: (() => {
+        const rows = flowSchemaRowsForPattern(pattern.id);
+        return rows.length
+          ? rows.map(rec => Object.fromEntries(ADVISOR_FLOW_SCHEMA_COLUMNS.map(([key, label]) => [label, rec[key] || ""])))
+          : null;
+      })(),
       companionPattern: companion ? { id: companion.id, name: companion.name } : null,
       processingOverlay: overlay ? { id: overlay.id, name: overlay.name, health: overlay.health || null } : null,
       designNote: warning || null,
@@ -18630,6 +18636,11 @@ function advisorFinalPatternMarkdown(assessment) {
     lines.push("", "### Security-zone controls", "");
     r.securityZoneControls.forEach(item => lines.push(`- **${item.label}:** ${item.value}`));
   }
+  if (r.flowSchema) {
+    const columns = Object.keys(r.flowSchema[0]);
+    lines.push("", "### Network flow schema", "", `| ${columns.join(" | ")} |`, `|${columns.map(() => "---").join("|")}|`);
+    r.flowSchema.forEach(row => lines.push(`| ${columns.map(col => markdownCell(row[col])).join(" | ")} |`));
+  }
   if (r.transportDeliveryPattern || r.haResilience || r.dataIntegrity || r.replay || r.provenance || r.changeOverTime) {
     lines.push("", "### Delivery guarantees & operational risk", "");
     if (r.transportDeliveryPattern) lines.push(`- **Transport delivery pattern:** ${r.transportDeliveryPattern}${r.transportDeliveryPatternRationale ? " -- " + r.transportDeliveryPatternRationale : ""}`);
@@ -18693,6 +18704,7 @@ function advisorFinalPatternCsv(assessment) {
   }
   r.implementationRequirements.forEach(item => add("Implementation requirement", item.label, item.value));
   if (r.securityZoneControls) r.securityZoneControls.forEach(item => add("Security-zone controls", item.label, item.value));
+  if (r.flowSchema) r.flowSchema.forEach((row, index) => Object.entries(row).forEach(([col, value]) => add("Network flow schema", `Flow ${index + 1}: ${col}`, value)));
   if (r.transportDeliveryPattern) add("Delivery guarantees & operational risk", "Transport delivery pattern", r.transportDeliveryPattern);
   if (r.transportDeliveryPatternRationale) add("Delivery guarantees & operational risk", "Transport delivery pattern rationale", r.transportDeliveryPatternRationale);
   if (r.haResilience) add("Delivery guarantees & operational risk", "HA / redundancy topology", r.haResilience);
@@ -18732,6 +18744,12 @@ function advisorFinalPatternHtml(assessment) {
   const securityZone = r.securityZoneControls
     ? `<h2>Security-zone controls</h2><div class="requirements">${r.securityZoneControls.map(item => `<div class="req"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(item.value)}</p></div>`).join("")}</div>`
     : "";
+  const flowSchema = r.flowSchema
+    ? (() => {
+        const columns = Object.keys(r.flowSchema[0]);
+        return `<h2>Network flow schema</h2><div style="overflow:auto"><table><thead><tr>${columns.map(col => `<th>${escapeHtml(col)}</th>`).join("")}</tr></thead><tbody>${r.flowSchema.map(row => `<tr>${columns.map(col => `<td>${escapeHtml(row[col])}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+      })()
+    : "";
   const resilienceItems = [
     r.transportDeliveryPattern ? ["Transport delivery pattern", `${r.transportDeliveryPattern}${r.transportDeliveryPatternRationale ? " -- " + r.transportDeliveryPatternRationale : ""}`] : null,
     r.haResilience ? ["HA / redundancy topology", r.haResilience] : null,
@@ -18763,6 +18781,7 @@ body{margin:0;background:#f8fafc;color:#0f172a;font-family:Inter,ui-sans-serif,s
 ${radarSection}
 ${requirements}
 ${securityZone}
+${flowSchema}
 ${resilience}
 ${related ? `<h2>Related governed patterns</h2><ul>${related}</ul>` : ""}
 ${r.designNote ? `<h2>Design note</h2><div class="note">${escapeHtml(r.designNote)}</div>` : ""}
