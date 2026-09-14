@@ -4036,9 +4036,9 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <button type="button" class="side-group-trigger" aria-expanded="false"><span>Onboarding</span><span class="side-chev" aria-hidden="true">&#9662;</span></button>
       <div class="side-sub">
         <button id="showAssessmentsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentsPage">Assessments</button>
-        <button id="showTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="taxonomyPage">Onboard Taxonomy</button>
+        <button id="showTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="taxonomyPage">Onboard taxonomy</button>
         <button id="showOnboardingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="onboardingPage">Onboarding flow</button>
-        <button id="showObjectTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="objectTaxonomyPage">Splunk Taxonomy</button>
+        <button id="showObjectTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="objectTaxonomyPage">Splunk object taxonomy</button>
       </div>
     </div>
     <div class="side-item" data-group="reference">
@@ -4047,7 +4047,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
         <button id="showAssessmentMethodsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentMethods">Assessment methodologies</button>
         <button id="showConceptDefinitionsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="conceptDefinitions">Concepts &amp; definitions</button>
         <button id="showConfigFileReferencesPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="configFileReferences">Configuration file reference</button>
-        <button id="showDataPipelinePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="dataPipelinePage">Data Pipeline</button>
+        <button id="showDataPipelinePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="dataPipelinePage">Data pipeline</button>
         <button id="showCataloguePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cataloguePage">Data source catalogue</button>
         <button id="showCmeiPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cmeiPage">Framework</button>
         <button id="showFrameworkOverviewPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="frameworkOverview">Framework overview</button>
@@ -45948,17 +45948,20 @@ const GLOBAL_SEARCH_PAGES = [
   { key: "metrics", label: "Metrics" },
   { key: "info", label: "Info" },
   { key: "assessments", label: "Assessments" },
-  { key: "taxonomy", label: "Onboard Taxonomy" },
+  { key: "taxonomy", label: "Onboard taxonomy" },
   { key: "onboarding", label: "Onboarding flow" },
-  { key: "objectTaxonomy", label: "Splunk Taxonomy" },
+  { key: "objectTaxonomy", label: "Splunk object taxonomy" },
   { key: "refAssessmentMethods", label: "Assessment methodologies" },
   { key: "refConceptDefinitions", label: "Concepts & definitions" },
   { key: "refConfigFileReferences", label: "Configuration file reference" },
+  { key: "dataPipeline", label: "Data pipeline" },
   { key: "catalogue", label: "Data source catalogue" },
   { key: "cmei", label: "Framework" },
   { key: "refFrameworkOverview", label: "Framework overview" },
   { key: "health", label: "Health checks table" },
+  { key: "refLoggingPatternAdvisor", label: "Logging pattern advisor" },
   { key: "patterns", label: "Logging patterns table" },
+  { key: "refNamingConvention", label: "Naming convention" },
   { key: "refNetworkReference", label: "Network reference" },
   { key: "portsMatrix", label: "Ports matrix" },
   { key: "prompts", label: "Prompt library" },
@@ -45979,7 +45982,7 @@ function gsSetSearchAndFire(el, value) {
 
 const GLOBAL_SEARCH_DOMAINS = [
   {
-    id: "taxonomy", label: "Onboard Taxonomy",
+    id: "taxonomy", label: "Onboard taxonomy",
     getItems: () => nodes.filter(n => n.nodeType === "taxonomy"),
     text: n => [n.code, n.displayCode, n.term, n.definition, n.domain].join(" "),
     title: n => n.term, subtitle: n => n.displayCode || n.code, snippet: n => n.definition || "",
@@ -46164,7 +46167,7 @@ const GLOBAL_SEARCH_DOMAINS = [
     go: p => { setActivePage("prompts"); selectPromptLibraryItem(p.target); }
   },
   {
-    id: "sot", label: "Splunk Object Taxonomy",
+    id: "sot", label: "Splunk object taxonomy",
     getItems: () => SOT_OBJECTS,
     text: o => [o.name, o.domain, o.type, o.scope, o.def, o.notes, o.sotCode, o.instanceId].join(" "),
     title: o => o.name, subtitle: o => o.sotCode || o.domain, snippet: o => o.def || "",
