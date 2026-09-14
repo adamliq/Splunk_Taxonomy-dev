@@ -18533,7 +18533,7 @@ function buildAdvisorAssessment(answers, primary, confidence, reasons, alternati
       implementationRequirements: implementationItems(pattern),
       securityZoneControls: advisorSecurityZoneItems(pattern).length ? advisorSecurityZoneItems(pattern) : null,
       companionPattern: companion ? { id: companion.id, name: companion.name } : null,
-      processingOverlay: overlay ? { id: overlay.id, name: overlay.name } : null,
+      processingOverlay: overlay ? { id: overlay.id, name: overlay.name, health: overlay.health || null } : null,
       designNote: warning || null,
       catalogueRecord
     },
@@ -18640,7 +18640,7 @@ function advisorFinalPatternMarkdown(assessment) {
     if (r.changeOverTime) lines.push(`- **Change over time:** ${r.changeOverTime}`);
   }
   if (r.companionPattern) lines.push("", `- **Paired source pattern:** ${r.companionPattern.id} — ${r.companionPattern.name}`);
-  if (r.processingOverlay) lines.push(`- **Processing overlay:** ${r.processingOverlay.id} — ${r.processingOverlay.name}`);
+  if (r.processingOverlay) lines.push(`- **Processing overlay:** ${r.processingOverlay.id} — ${r.processingOverlay.name}${r.processingOverlay.health ? ` (apply the ${r.processingOverlay.health} profile in addition to the primary pattern's checks)` : ""}`);
   if (r.designNote) lines.push("", `> **Design note:** ${r.designNote}`);
   lines.push("", "## Closest alternatives", "");
   assessment.alternatives.forEach(item => lines.push(`- ${item.id} — ${item.name} (${item.fitPoints} fit points)`));
@@ -18702,6 +18702,7 @@ function advisorFinalPatternCsv(assessment) {
   if (r.changeOverTime) add("Delivery guarantees & operational risk", "Change over time", r.changeOverTime);
   if (r.companionPattern) add("Related pattern", "Paired source pattern", `${r.companionPattern.id} — ${r.companionPattern.name}`);
   if (r.processingOverlay) add("Related pattern", "Processing overlay", `${r.processingOverlay.id} — ${r.processingOverlay.name}`);
+  if (r.processingOverlay && r.processingOverlay.health) add("Related pattern", "Processing overlay: additional health profile", r.processingOverlay.health);
   if (r.designNote) add("Design", "Design note", r.designNote);
   assessment.alternatives.forEach((item, index) => add("Alternative", `Alternative ${index + 1}`, `${item.id} — ${item.name} (${item.fitPoints} fit points)`));
   return rows.map(row => row.map(csvCell).join(",")).join("\r\n") + "\r\n";
@@ -18747,7 +18748,7 @@ function advisorFinalPatternHtml(assessment) {
     : `<h2>8-axis pattern profile</h2><p>Not available -- this pattern's HA, integrity, replay, provenance and change-stability properties depend on the specific app, not the architecture.</p>`;
   const related = [
     r.companionPattern ? `<li><strong>Paired source pattern:</strong> ${escapeHtml(r.companionPattern.id)} — ${escapeHtml(r.companionPattern.name)}</li>` : "",
-    r.processingOverlay ? `<li><strong>Processing overlay:</strong> ${escapeHtml(r.processingOverlay.id)} — ${escapeHtml(r.processingOverlay.name)}</li>` : ""
+    r.processingOverlay ? `<li><strong>Processing overlay:</strong> ${escapeHtml(r.processingOverlay.id)} — ${escapeHtml(r.processingOverlay.name)}${r.processingOverlay.health ? ` (apply the ${escapeHtml(r.processingOverlay.health)} profile in addition to the primary pattern's checks)` : ""}</li>` : ""
   ].filter(Boolean).join("");
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
