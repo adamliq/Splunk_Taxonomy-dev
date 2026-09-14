@@ -18723,67 +18723,82 @@ function advisorFinalPatternCsv(assessment) {
 function advisorFinalPatternHtml(assessment) {
   const r = assessment.finalPattern;
   const questionRows = assessment.answeredQuestions.map(item => `<tr><td>${escapeHtml(item.question)}</td><td>${escapeHtml(item.answer)}</td><td><code>${escapeHtml(item.value)}</code></td></tr>`).join("");
-  const infoRows = [
-    ["Pattern ID", r.id], ["Pattern name", r.name], ["Base pattern", r.basePattern],
-    ["Confidence", `${r.confidence}%`], ["Category", r.category], ["Source mechanism", r.sourceMechanism],
-    ["Collection / execution tier", r.collectionTier], ["Collector type", r.collectorType],
-    ["Transport", r.transport], ["Processing / routing", r.processingAndRouting],
-    ["Destination", r.destination], ["Required app / TA", r.requiredAppOrTA],
-    ["App availability", r.appAvailability], ["Source push capability", r.sourcePushCapability],
-    ["Health profile", r.healthProfile], ["Destination governance", r.destinationGovernance],
-    ["Expected latency tier", r.latencyTier ? `${r.latencyTier}${r.latencyRealtimeClass ? " (" + r.latencyRealtimeClass + ")" : ""}${r.latencyRationale ? " -- " + r.latencyRationale : ""}` : ""],
-    ["Implementation complexity", `${r.implementationComplexity.tier} (${r.implementationComplexity.hopCount} architecture hops, ${r.implementationComplexity.flowCount} network flows${r.implementationComplexity.hasCustomCode ? ", custom code to build and deploy" : ""})`],
-    ["Configuration footprint", r.configFootprint ? `${r.configFootprint.tier} -- config lives in ${r.configFootprint.configLocation}; Deployment Server manageable: ${r.configFootprint.dsManageable}; fleet scope: ${r.configFootprint.fleetScope}; external configuration required: ${r.configFootprint.externalConfigRequired}. ${r.configFootprint.oaiNote}` : ""],
-    ["Port / firewall requirements", r.portFirewallRequirements],
-    ["Authentication requirements", r.authenticationRequirements],
-    ["Source platform requirements", r.sourcePlatformRequirements]
-  ].filter(([, value]) => value).map(([label, value]) => `<div class="item"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("");
-  const requirements = r.implementationRequirements.length
-    ? `<h2>Implementation and assurance requirements</h2><div class="requirements">${r.implementationRequirements.map(item => `<div class="req"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(item.value)}</p></div>`).join("")}</div>`
+  // Tier/pattern badges reuse the exact colours and data-* keys the on-screen advisor result
+  // uses (.advisor-latency-badge / -complexity-badge / -footprint-badge / -tdp-badge), so a
+  // reader sees the same green/blue/amber/red severity language in the export as on-screen.
+  const latencyBadge = r.latencyTier
+    ? `<span class="advisor-latency-badge" data-tier="${escapeHtml(LOGGING_PATTERN_LATENCY_KEYS[r.latencyTier] || "")}">${escapeHtml(r.latencyTier)}</span>`
     : "";
-  const securityZone = r.securityZoneControls
-    ? `<h2>Security-zone controls</h2><div class="requirements">${r.securityZoneControls.map(item => `<div class="req"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(item.value)}</p></div>`).join("")}</div>`
+  const complexityBadge = `<span class="advisor-complexity-badge" data-tier="${escapeHtml(LOGGING_PATTERN_COMPLEXITY_KEYS[r.implementationComplexity.tier] || "")}">${escapeHtml(r.implementationComplexity.tier)}</span>`;
+  const footprintBadge = r.configFootprint
+    ? `<span class="advisor-footprint-badge" data-tier="${escapeHtml(LOGGING_PATTERN_FOOTPRINT_KEYS[r.configFootprint.tier] || "")}">${escapeHtml(r.configFootprint.tier)}</span>`
+    : "";
+  const infoRows = [
+    ["Pattern ID", escapeHtml(r.id)], ["Pattern name", escapeHtml(r.name)], ["Base pattern", escapeHtml(r.basePattern)],
+    ["Confidence", `${r.confidence}%`], ["Category", escapeHtml(r.category)], ["Source mechanism", escapeHtml(r.sourceMechanism)],
+    ["Collection / execution tier", escapeHtml(r.collectionTier)], ["Collector type", escapeHtml(r.collectorType)],
+    ["Transport", escapeHtml(r.transport)], ["Processing / routing", escapeHtml(r.processingAndRouting)],
+    ["Destination", escapeHtml(r.destination)], ["Required app / TA", escapeHtml(r.requiredAppOrTA)],
+    ["App availability", escapeHtml(r.appAvailability)], ["Source push capability", escapeHtml(r.sourcePushCapability)],
+    ["Health profile", escapeHtml(r.healthProfile)], ["Destination governance", escapeHtml(r.destinationGovernance)],
+    ["Expected latency tier", r.latencyTier ? `${latencyBadge}${r.latencyRealtimeClass ? ` <span class="advisor-latency-class">(${escapeHtml(r.latencyRealtimeClass)})</span>` : ""}${r.latencyRationale ? " " + escapeHtml(r.latencyRationale) : ""}` : ""],
+    ["Implementation complexity", `${complexityBadge} (${r.implementationComplexity.hopCount} architecture hops, ${r.implementationComplexity.flowCount} network flows${r.implementationComplexity.hasCustomCode ? ", custom code to build and deploy" : ""})`],
+    ["Configuration footprint", r.configFootprint ? `${footprintBadge} config lives in ${escapeHtml(r.configFootprint.configLocation)}; Deployment Server manageable: ${escapeHtml(r.configFootprint.dsManageable)}; fleet scope: ${escapeHtml(r.configFootprint.fleetScope)}; external configuration required: ${escapeHtml(r.configFootprint.externalConfigRequired)}. ${escapeHtml(r.configFootprint.oaiNote)}` : ""],
+    ["Port / firewall requirements", escapeHtml(r.portFirewallRequirements)],
+    ["Authentication requirements", escapeHtml(r.authenticationRequirements)],
+    ["Source platform requirements", escapeHtml(r.sourcePlatformRequirements)]
+  ].filter(([, value]) => value).map(([label, value]) => `<div class="item"><span>${escapeHtml(label)}</span><strong>${value}</strong></div>`).join("");
+  const requirements = r.implementationRequirements.length
+    ? `<h3>Implementation and assurance requirements</h3><div class="requirements">${r.implementationRequirements.map(item => `<div class="req"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(item.value)}</p></div>`).join("")}</div>`
     : "";
   const flowSchema = r.flowSchema
     ? (() => {
         const columns = Object.keys(r.flowSchema[0]);
-        return `<h2>Network flow schema</h2><div style="overflow:auto"><table><thead><tr>${columns.map(col => `<th>${escapeHtml(col)}</th>`).join("")}</tr></thead><tbody>${r.flowSchema.map(row => `<tr>${columns.map(col => `<td>${escapeHtml(row[col])}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+        return `<h3>Network flow schema</h3><div style="overflow:auto"><table><thead><tr>${columns.map(col => `<th>${escapeHtml(col)}</th>`).join("")}</tr></thead><tbody>${r.flowSchema.map(row => `<tr>${columns.map(col => `<td>${escapeHtml(row[col])}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
       })()
     : "";
+  const implementationZone = (requirements || flowSchema)
+    ? `<div class="zone-block zone-blue"><div class="zone-block-head"><h2>Implementation</h2><span class="zone-block-meta">prerequisites &amp; network flow schema</span></div>${requirements}${flowSchema}</div>`
+    : "";
+  const securityZone = r.securityZoneControls
+    ? `<h3>Security-zone controls</h3><div class="requirements">${r.securityZoneControls.map(item => `<div class="req"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(item.value)}</p></div>`).join("")}</div>`
+    : "";
+  const tdpKey = r.transportDeliveryPattern ? (LOGGING_PATTERN_TDP_KEYS[r.transportDeliveryPattern] || "") : "";
   const resilienceItems = [
-    r.transportDeliveryPattern ? ["Transport delivery pattern", `${r.transportDeliveryPattern}${r.transportDeliveryPatternRationale ? " -- " + r.transportDeliveryPatternRationale : ""}`] : null,
-    r.haResilience ? ["HA / redundancy topology", r.haResilience] : null,
-    r.dataIntegrity ? ["Data integrity", r.dataIntegrity] : null,
-    r.replay ? ["Replay", r.replay] : null,
-    r.provenance ? ["Provenance", r.provenance] : null,
-    r.changeOverTime ? ["Change over time", r.changeOverTime] : null
+    r.transportDeliveryPattern ? ["Transport delivery pattern", `<span class="advisor-tdp-badge" data-tdp="${escapeHtml(tdpKey)}">${escapeHtml(r.transportDeliveryPattern)}</span>${r.transportDeliveryPatternRationale ? " " + escapeHtml(r.transportDeliveryPatternRationale) : ""}`] : null,
+    r.haResilience ? ["HA / redundancy topology", escapeHtml(r.haResilience)] : null,
+    r.dataIntegrity ? ["Data integrity", escapeHtml(r.dataIntegrity)] : null,
+    r.replay ? ["Replay", escapeHtml(r.replay)] : null,
+    r.provenance ? ["Provenance", escapeHtml(r.provenance)] : null,
+    r.changeOverTime ? ["Change over time", escapeHtml(r.changeOverTime)] : null
   ].filter(Boolean);
   const resilience = resilienceItems.length
-    ? `<h2>Delivery guarantees &amp; operational risk</h2><div class="requirements">${resilienceItems.map(([label, value]) => `<div class="req"><strong>${escapeHtml(label)}</strong><p>${escapeHtml(value)}</p></div>`).join("")}</div>`
+    ? `<h3>Delivery guarantees &amp; operational risk</h3><div class="requirements">${resilienceItems.map(([label, value]) => `<div class="req"><strong>${escapeHtml(label)}</strong><p>${value}</p></div>`).join("")}</div>`
     : "";
-  const radarSection = r.radarProfile
-    ? `<h2>8-axis pattern profile</h2><div class="calc-radar-panel"><div class="radar-svg-wrap">${radarSvgMarkup(r.radarProfile.map(item => item.axis), r.radarProfile.map(item => item.score), r.id)}</div><div style="overflow:auto"><table><thead><tr><th>Axis</th><th>Score</th><th>Notes</th></tr></thead><tbody>${r.radarProfile.map(item => `<tr><td>${escapeHtml(item.axis)}</td><td>${item.score} / 5</td><td>${escapeHtml(item.note)}</td></tr>`).join("")}</tbody></table></div></div>`
-    : `<h2>8-axis pattern profile</h2><p>Not available -- this pattern's HA, integrity, replay, provenance and change-stability properties depend on the specific app, not the architecture.</p>`;
   const related = [
     r.companionPattern ? `<li><strong>Paired source pattern:</strong> ${escapeHtml(r.companionPattern.id)} — ${escapeHtml(r.companionPattern.name)}</li>` : "",
     r.processingOverlay ? `<li><strong>Processing overlay:</strong> ${escapeHtml(r.processingOverlay.id)} — ${escapeHtml(r.processingOverlay.name)}${r.processingOverlay.health ? ` (apply the ${escapeHtml(r.processingOverlay.health)} profile in addition to the primary pattern's checks)` : ""}</li>` : ""
   ].filter(Boolean).join("");
+  const relatedSection = related ? `<h3>Related governed patterns</h3><ul>${related}</ul>` : "";
+  const architectureZone = (securityZone || resilience || relatedSection)
+    ? `<div class="zone-block zone-violet"><div class="zone-block-head"><h2>Architecture &amp; operations detail</h2><span class="zone-block-meta">security zone, delivery guarantees &amp; related patterns</span></div>${securityZone}${resilience}${relatedSection}</div>`
+    : "";
+  const radarSection = r.radarProfile
+    ? `<h2>8-axis pattern profile</h2><div class="calc-radar-panel"><div class="radar-svg-wrap">${radarSvgMarkup(r.radarProfile.map(item => item.axis), r.radarProfile.map(item => item.score), r.id)}</div><div style="overflow:auto"><table><thead><tr><th>Axis</th><th>Score</th><th>Notes</th></tr></thead><tbody>${r.radarProfile.map(item => `<tr><td>${escapeHtml(item.axis)}</td><td>${item.score} / 5</td><td>${escapeHtml(item.note)}</td></tr>`).join("")}</tbody></table></div></div>`
+    : `<h2>8-axis pattern profile</h2><p>Not available -- this pattern's HA, integrity, replay, provenance and change-stability properties depend on the specific app, not the architecture.</p>`;
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${escapeHtml(r.id)} — ${escapeHtml(r.name)}</title>
 <style>
-body{margin:0;background:#f8fafc;color:#0f172a;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.55}main{width:calc(100% - 64px);margin:32px auto}.hero{padding:28px;border-radius:18px;background:linear-gradient(135deg,#1b4332,#2f855a 58%,#2f75b5);color:#fff}.hero p{margin:8px 0 0;opacity:.9;font-size:14px}.id{display:inline-block;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.16);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:800}.card{margin-top:18px;padding:22px;border:1px solid #e2e8f0;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.06)}h1{margin:8px 0 0;font-size:26px}h2{margin:26px 0 10px;font-size:18px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.item,.req{padding:12px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc}.item span{display:block;color:#64748b;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase}.item strong{display:block;margin-top:4px;font-size:13.5px}.requirements{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:9px}.flow{display:flex;gap:8px;align-items:center;overflow:auto;flex-wrap:wrap}.step{min-width:130px;padding:11px;border:1px solid #bbf7d0;border-radius:10px;background:#f0fdf4;color:#166534;text-align:center;font-weight:800;font-size:13px}.arrow{color:#64748b;font-weight:900}table{width:100%;border-collapse:collapse;font-size:12.5px;line-height:1.55}th,td{padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#f8fafc;color:#0f172a;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase}tbody tr:last-child td{border-bottom:0}td code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;color:#475569;background:#f1f5f9;padding:2px 5px;border-radius:5px}.req strong{font-size:13.5px}.req p{margin:5px 0 0;font-size:13px}.note{padding:13px;border:1px solid #fde68a;border-radius:10px;background:#fffbeb;color:#92400e;font-size:13px}.meta{color:#64748b;font-size:12px}ul{font-size:13.5px}.calc-radar-panel{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:16px;align-items:center;padding:12px;border:1px solid #e2e8f0;border-radius:13px;background:#f8fafc}.radar-svg-wrap{display:flex;justify-content:center}.calc-radar-svg{width:100%;max-width:300px;height:auto;display:block}.calc-radar-shape{fill:rgba(37,99,235,.18);stroke:#2563eb;stroke-width:2.5}.calc-radar-grid{fill:none;stroke:#cbd5e1;stroke-width:1}.calc-radar-axis{stroke:#e2e8f0;stroke-width:1}.calc-radar-point{fill:#1d4ed8;stroke:#fff;stroke-width:2}.calc-radar-label{fill:#334155;font-size:9px;font-weight:800}@media(max-width:700px){.grid{grid-template-columns:1fr}.requirements{grid-template-columns:1fr}.flow{flex-direction:column;align-items:stretch}.step{min-width:0}.arrow{transform:rotate(90deg);text-align:center}.calc-radar-panel{grid-template-columns:1fr}}
+body{margin:0;background:#f8fafc;color:#0f172a;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.55}main{width:calc(100% - 64px);margin:32px auto}.hero{padding:28px;border-radius:18px;background:linear-gradient(135deg,#1b4332,#2f855a 58%,#2f75b5);color:#fff}.hero p{margin:8px 0 0;opacity:.9;font-size:14px}.id{display:inline-block;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.16);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:800}.card{margin-top:18px;padding:22px;border:1px solid #e2e8f0;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.06)}h1{margin:8px 0 0;font-size:26px}h2{margin:26px 0 10px;font-size:18px}h3{margin:18px 0 8px;font-size:15px}.zone-block-head h2{margin:0;font-size:17px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.item,.req{padding:12px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc}.item span{display:block;color:#64748b;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase}.item strong{display:block;margin-top:4px;font-size:13.5px}.requirements{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:9px}.flow{display:flex;gap:8px;align-items:center;overflow:auto;flex-wrap:wrap;margin-top:19px}.step{min-width:130px;padding:11px;border:1px solid #bbf7d0;border-radius:10px;background:#f0fdf4;color:#166534;text-align:center;font-weight:800;font-size:13px}.arrow{color:#64748b;font-weight:900}table{width:100%;border-collapse:collapse;font-size:12.5px;line-height:1.55}th,td{padding:10px 12px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#f8fafc;color:#0f172a;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase}tbody tr:last-child td{border-bottom:0}td code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;color:#475569;background:#f1f5f9;padding:2px 5px;border-radius:5px}.req strong{font-size:13.5px}.req p{margin:5px 0 0;font-size:13px}.note{padding:13px;border:1px solid #fde68a;border-radius:10px;background:#fffbeb;color:#92400e;font-size:13px}.meta{color:#64748b;font-size:12px}ul{font-size:13.5px}.calc-radar-panel{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:16px;align-items:center;margin-top:8px;padding:12px;border:1px solid #e2e8f0;border-radius:13px;background:#f8fafc}.radar-svg-wrap{display:flex;justify-content:center}.calc-radar-svg{width:100%;max-width:300px;height:auto;display:block}.calc-radar-shape{fill:rgba(37,99,235,.18);stroke:#2563eb;stroke-width:2.5}.calc-radar-grid{fill:none;stroke:#cbd5e1;stroke-width:1}.calc-radar-axis{stroke:#e2e8f0;stroke-width:1}.calc-radar-point{fill:#1d4ed8;stroke:#fff;stroke-width:2}.calc-radar-label{fill:#334155;font-size:9px;font-weight:800}.advisor-latency-badge,.advisor-tdp-badge,.advisor-complexity-badge,.advisor-footprint-badge{display:inline-block;margin-right:7px;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.01em;white-space:nowrap;vertical-align:middle;border:1px solid transparent}.advisor-latency-class{display:inline-block;margin-right:5px;color:#64748b;font-size:11.5px;font-weight:700;font-style:italic;vertical-align:middle}.advisor-latency-badge[data-tier="immediate"]{background:#d1fae5;color:#065f46;border-color:#6ee7b7}.advisor-latency-badge[data-tier="critical"],.advisor-tdp-badge[data-tdp="event-driven"],.advisor-complexity-badge[data-tier="low"],.advisor-footprint-badge[data-tier="low"]{background:#dcfce7;color:#15803d;border-color:#86efac}.advisor-latency-badge[data-tier="high"],.advisor-tdp-badge[data-tdp="polling"],.advisor-complexity-badge[data-tier="moderate"],.advisor-footprint-badge[data-tier="moderate"]{background:#dbeafe;color:#1d4ed8;border-color:#93c5fd}.advisor-latency-badge[data-tier="standard"],.advisor-tdp-badge[data-tdp="buffering"],.advisor-complexity-badge[data-tier="high"],.advisor-footprint-badge[data-tier="high"]{background:#fef3c7;color:#b45309;border-color:#fcd34d}.advisor-latency-badge[data-tier="delayed"],.advisor-tdp-badge[data-tdp="point-to-point"]{background:#ffedd5;color:#c2410c;border-color:#fdba74}.advisor-latency-badge[data-tier="batch"],.advisor-tdp-badge[data-tdp="na"]{background:#f1f5f9;color:#475569;border-color:#cbd5e1}.advisor-latency-badge[data-tier="varies"],.advisor-tdp-badge[data-tdp="varies"],.advisor-footprint-badge[data-tier="varies"]{background:#f8fafc;color:#64748b;border-color:#cbd5e1;border-style:dashed}.advisor-complexity-badge[data-tier="very-high"],.advisor-footprint-badge[data-tier="very-high"]{background:#fee2e2;color:#b91c1c;border-color:#fca5a5}.zone-block{margin-top:22px;padding:18px 20px 20px;border-radius:14px;border:1px solid}.zone-block .requirements{margin-top:2px}.zone-block .req{background:#fff}.zone-block-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:9px;margin-bottom:2px}.zone-block-meta{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;opacity:.7}.zone-violet{background:#faf5ff;border-color:#c4b5fd}.zone-violet h2,.zone-violet h3{color:#6d28d9}.zone-blue{background:#eff6ff;border-color:#bfdbfe}.zone-blue h2,.zone-blue h3{color:#1d4ed8}@media(max-width:700px){.grid{grid-template-columns:1fr}.requirements{grid-template-columns:1fr}.flow{flex-direction:column;align-items:stretch}.step{min-width:0}.arrow{transform:rotate(90deg);text-align:center}.calc-radar-panel{grid-template-columns:1fr}}
 </style></head><body><main>
 <section class="hero"><span class="id">${escapeHtml(r.id)}</span><h1>${escapeHtml(r.name)}</h1><p>Suggested final logging pattern · ${r.confidence}% confidence</p></section>
 <section class="card"><p>${escapeHtml(r.summary)}</p><div class="grid">${infoRows}</div>
 <h2>Architecture flow</h2><div class="flow">${r.architectureFlow.map((step, index) => `${index ? '<span class="arrow">→</span>' : ''}<span class="step">${escapeHtml(step)}</span>`).join("")}</div>
 <h2>Why this pattern fits</h2><ul>${r.reasons.map(reason => `<li>${escapeHtml(reason)}</li>`).join("")}</ul>
 ${radarSection}
-${requirements}
-${securityZone}
-${flowSchema}
-${resilience}
-${related ? `<h2>Related governed patterns</h2><ul>${related}</ul>` : ""}
+${architectureZone}
+${implementationZone}
 ${r.designNote ? `<h2>Design note</h2><div class="note">${escapeHtml(r.designNote)}</div>` : ""}
 <h2>Answered questions</h2><div style="overflow:auto"><table><thead><tr><th>Question</th><th>Answer</th><th>Stored value</th></tr></thead><tbody>${questionRows}</tbody></table></div>
 <h2>Closest alternatives</h2><ul>${assessment.alternatives.map(item => `<li>${escapeHtml(item.id)} — ${escapeHtml(item.name)} (${item.fitPoints} fit points)</li>`).join("")}</ul>
