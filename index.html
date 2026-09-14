@@ -3385,6 +3385,7 @@
     .conf-tree-detail-body .ctd-related span { background:transparent; color:#94a3b8; font-style:italic; }
     .conf-tree-detail-body .ctd-open-full { display:block; width:100%; margin-top:14px; padding:9px 11px; border-radius:8px; border:1px solid var(--border); background:#fff; color:var(--primary); font-weight:700; font-size:12.5px; cursor:pointer; }
     .conf-tree-detail-body .ctd-open-full:hover { background:var(--primary-light); }
+    .conf-tree-detail-body .hint { font-size:10.5px; color:#94a3b8; margin:6px 0 0; }
     .conf-tree-detail-body .ctd-precedence-group { margin-bottom:10px; }
     .conf-tree-detail-body .ctd-precedence-group:last-child { margin-bottom:0; }
     .conf-tree-detail-body .ctd-precedence-group > strong { display:block; font-size:11.5px; margin-bottom:5px; }
@@ -26136,22 +26137,22 @@ function initConfFileTree(){
     html += '<h5>Effective configuration</h5><div class="ctd-btool-row"><span></span><button class="ctd-copy-btn" id="confTreeCopyBtool" type="button">Copy</button></div>';
     if (file.btool) {
       const cmd = CONF_TREE_BTOOL_TEMPLATE[confTreePlatform].replace("{type}", file.btool);
-      html += '<pre id="confTreeBtoolCmd">' + escapeHtml(cmd) + '</pre><p class="hint" style="font-size:10.5px;color:#94a3b8;margin:6px 0 0;">Displayed only -- this view never connects to or changes a Splunk installation.</p>';
+      html += '<pre id="confTreeBtoolCmd">' + escapeHtml(cmd) + '</pre><p class="hint">Displayed only -- this view never connects to or changes a Splunk installation.</p>';
     } else {
-      html += '<pre id="confTreeBtoolCmd">Not applicable</pre><p class="hint" style="font-size:10.5px;color:#94a3b8;margin:6px 0 0;">' + escapeHtml(file.filename) + ' is not part of the merged system+app configuration btool inspects.</p>';
+      html += '<pre id="confTreeBtoolCmd">Not applicable</pre><p class="hint">' + escapeHtml(file.filename) + ' is not part of the merged system+app configuration btool inspects.</p>';
     }
 
     html += '<h5>Precedence</h5><div class="ctd-precedence">';
     const profileIds = file.precedence || [];
     if (!profileIds.length) {
-      html += '<p class="hint" style="font-size:10.5px;color:#94a3b8;margin:0;">' + (file.id === "instance-cfg-conf" || file.id === "log-cfg-conf" ? "Special file: normal .conf default/local precedence does not apply." : "No precedence profile identified for this file.") + '</p>';
+      html += '<p class="hint" style="margin:0">' + (file.id === "instance-cfg-conf" || file.id === "log-cfg-conf" ? "Special file: normal .conf default/local precedence does not apply." : "No precedence profile identified for this file.") + '</p>';
     } else {
       html += profileIds.map(pid => {
         const profile = CONF_TREE_PRECEDENCE_PROFILES[pid];
         if (!profile) return "";
         let block = '<div class="ctd-precedence-group"><strong>' + escapeHtml(profile.label) + '</strong>';
         block += profile.order.map((stepId, i) => '<div class="ctd-precedence-step"><b>' + (i + 1) + '</b><span>' + escapeHtml(CONF_TREE_STEP_LABELS[stepId] || stepId) + '</span></div>').join("");
-        block += profile.notes.map(n => '<p class="hint" style="font-size:10.5px;color:#94a3b8;margin:5px 0 0;">' + escapeHtml(n) + '</p>').join("");
+        block += profile.notes.map(n => '<p class="hint" style="margin:5px 0 0">' + escapeHtml(n) + '</p>').join("");
         block += '</div>';
         return block;
       }).join("");
