@@ -3154,7 +3154,11 @@
     .s3c-saved-scenario { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 12px; border:1px solid var(--border); border-radius:8px; margin-bottom:8px; flex-wrap:wrap; }
     #s3CalcPage .sizing-grid label strong { font-size:15px; color:#1e293b; }
     @media print {
-      .main-menu, .page-tabs, .reference-jump, #s3cExportJson, #s3cExportCostCsv, #s3cExportCapacityCsv, #s3cExportScenarioCsv, #s3cExportMarkdown, #s3cPrintReport, #s3cImportFile, .method-actions { display:none !important; }
+      /* .main-menu and .page-tabs were stale selector names left over from an earlier
+         sidebar/tab-bar structure -- the sidebar's real class is .app-sidebar and each nav
+         button's is .page-tab (singular), so this rule silently hid nothing and every
+         printed report bled the full navy sidebar and every nav button across every page. */
+      .app-sidebar, .page-tab, .reference-jump, #s3cExportJson, #s3cExportCostCsv, #s3cExportCapacityCsv, #s3cExportScenarioCsv, #s3cExportMarkdown, #s3cPrintReport, #s3cImportFile, .method-actions { display:none !important; }
       #s3CalcPage { display:block !important; }
     }
     .framework-flow { display:grid; grid-template-columns: repeat(6,minmax(145px,1fr)); gap:10px; }
