@@ -17757,8 +17757,17 @@ function implementationItems(pattern) {
     add("Data transformation", pattern.processing);
     add("HEC delivery", pattern.hecDelivery);
     add("Network requirements", pattern.networkRequirements);
+    add("Security controls", pattern.securityControls);
     add("Runtime-specific health", pattern.runtimeHealth);
     add("Operational ownership", pattern.operationalOwnership);
+    add("Failure behaviour", pattern.failure);
+  }
+  if (pattern.base === "LP-012") {
+    add("Required network flows", pattern.networkRequirements || pattern.networkFlows);
+    add("Failure behaviour", pattern.failure);
+  }
+  if (pattern.base === "LP-013") {
+    add("Security controls", pattern.securityControls);
     add("Failure behaviour", pattern.failure);
   }
   if (pattern.base === "LP-018") {
@@ -17775,6 +17784,21 @@ function implementationItems(pattern) {
     add("Failure behaviour", pattern.failure);
   }
   return rows;
+}
+
+// LP-014 (Heavy Forwarder boundary crossing) carries security-zone data that doesn't fit the
+// generic implementationItems() shape -- it's shown as its own dedicated card on-screen rather
+// than folded into the Implementation checklist. Shared here so the on-screen card and the
+// Export final result formats never drift out of sync with each other.
+function advisorSecurityZoneItems(pattern) {
+  if (pattern.base !== "LP-014") return [];
+  const items = [];
+  if (pattern.securityControls) items.push({ label: "Security controls", value: pattern.securityControls });
+  if (pattern.networkHealth) items.push({ label: "Network assurance", value: pattern.networkHealth });
+  if (pattern.failure) items.push({ label: "Failure behaviour", value: pattern.failure });
+  const requiredFlows = pattern.networkRequirements || pattern.networkFlows;
+  if (requiredFlows) items.push({ label: "Required network flows", value: requiredFlows });
+  return items;
 }
 
 function implementationRows(pattern) {
@@ -18336,9 +18360,9 @@ function renderAdvisorResult(answers) {
               <span class="advisor-pattern-id">Security-zone controls</span>
               <h4>Heavy Forwarder boundary requirements</h4>
               <ul>
-                ${primary.pattern.securityControls ? `<li>${escapeHtml(primary.pattern.securityControls)}</li>` : ""}
-                ${primary.pattern.networkHealth ? `<li><strong>Network assurance:</strong> ${escapeHtml(primary.pattern.networkHealth)}</li>` : ""}
-                ${primary.pattern.failure ? `<li><strong>Failure behaviour:</strong> ${escapeHtml(primary.pattern.failure)}</li>` : ""}
+                ${advisorSecurityZoneItems(primary.pattern).map(item => item.label === "Security controls"
+                  ? `<li>${escapeHtml(item.value)}</li>`
+                  : `<li><strong>${escapeHtml(item.label)}:</strong> ${escapeHtml(item.value)}</li>`).join("")}
               </ul>
             </div>` : ""}
           ${overlay ? `
@@ -18497,6 +18521,7 @@ function buildAdvisorAssessment(answers, primary, confidence, reasons, alternati
         return LOGGING_PATTERN_RADAR_AXES.map((axis, index) => ({ axis, score: scores[index], note: radarAxisNote(pattern, index) }));
       })(),
       implementationRequirements: implementationItems(pattern),
+      securityZoneControls: advisorSecurityZoneItems(pattern).length ? advisorSecurityZoneItems(pattern) : null,
       companionPattern: companion ? { id: companion.id, name: companion.name } : null,
       processingOverlay: overlay ? { id: overlay.id, name: overlay.name } : null,
       designNote: warning || null,
@@ -18558,6 +18583,8 @@ function advisorFinalPatternMarkdown(assessment) {
     `- **Processing / routing:** ${r.processingAndRouting}`,
     `- **Destination:** ${r.destination}`,
     `- **Required app / TA:** ${r.requiredAppOrTA}`,
+    `- **App availability:** ${r.appAvailability || "Not specified"}`,
+    `- **Source push capability:** ${r.sourcePushCapability || "Not specified"}`,
     `- **Health profile:** ${r.healthProfile}`,
     `- **Destination governance:** ${r.destinationGovernance}`,
     `- **Expected latency tier:** ${r.latencyTier ? `${r.latencyTier}${r.latencyRealtimeClass ? " (" + r.latencyRealtimeClass + ")" : ""}${r.latencyRationale ? " -- " + r.latencyRationale : ""}` : "Not specified"}`,
@@ -18588,6 +18615,10 @@ function advisorFinalPatternMarkdown(assessment) {
   if (r.implementationRequirements.length) {
     lines.push("", "### Implementation and assurance requirements", "");
     r.implementationRequirements.forEach(item => lines.push(`- **${item.label}:** ${item.value}`));
+  }
+  if (r.securityZoneControls) {
+    lines.push("", "### Security-zone controls", "");
+    r.securityZoneControls.forEach(item => lines.push(`- **${item.label}:** ${item.value}`));
   }
   if (r.transportDeliveryPattern || r.haResilience || r.dataIntegrity || r.replay || r.provenance || r.changeOverTime) {
     lines.push("", "### Delivery guarantees & operational risk", "");
@@ -18651,6 +18682,7 @@ function advisorFinalPatternCsv(assessment) {
     add("8-axis pattern profile", "Not available", "This pattern's HA, integrity, replay, provenance and change-stability properties depend on the specific app, not the architecture.");
   }
   r.implementationRequirements.forEach(item => add("Implementation requirement", item.label, item.value));
+  if (r.securityZoneControls) r.securityZoneControls.forEach(item => add("Security-zone controls", item.label, item.value));
   if (r.transportDeliveryPattern) add("Delivery guarantees & operational risk", "Transport delivery pattern", r.transportDeliveryPattern);
   if (r.transportDeliveryPatternRationale) add("Delivery guarantees & operational risk", "Transport delivery pattern rationale", r.transportDeliveryPatternRationale);
   if (r.haResilience) add("Delivery guarantees & operational risk", "HA / redundancy topology", r.haResilience);
@@ -18674,6 +18706,7 @@ function advisorFinalPatternHtml(assessment) {
     ["Collection / execution tier", r.collectionTier], ["Collector type", r.collectorType],
     ["Transport", r.transport], ["Processing / routing", r.processingAndRouting],
     ["Destination", r.destination], ["Required app / TA", r.requiredAppOrTA],
+    ["App availability", r.appAvailability], ["Source push capability", r.sourcePushCapability],
     ["Health profile", r.healthProfile], ["Destination governance", r.destinationGovernance],
     ["Expected latency tier", r.latencyTier ? `${r.latencyTier}${r.latencyRealtimeClass ? " (" + r.latencyRealtimeClass + ")" : ""}${r.latencyRationale ? " -- " + r.latencyRationale : ""}` : ""],
     ["Implementation complexity", `${r.implementationComplexity.tier} (${r.implementationComplexity.hopCount} architecture hops, ${r.implementationComplexity.flowCount} network flows${r.implementationComplexity.hasCustomCode ? ", custom code to build and deploy" : ""})`],
@@ -18684,6 +18717,9 @@ function advisorFinalPatternHtml(assessment) {
   ].filter(([, value]) => value).map(([label, value]) => `<div class="item"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("");
   const requirements = r.implementationRequirements.length
     ? `<h2>Implementation and assurance requirements</h2><div class="requirements">${r.implementationRequirements.map(item => `<div class="req"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(item.value)}</p></div>`).join("")}</div>`
+    : "";
+  const securityZone = r.securityZoneControls
+    ? `<h2>Security-zone controls</h2><div class="requirements">${r.securityZoneControls.map(item => `<div class="req"><strong>${escapeHtml(item.label)}</strong><p>${escapeHtml(item.value)}</p></div>`).join("")}</div>`
     : "";
   const resilienceItems = [
     r.transportDeliveryPattern ? ["Transport delivery pattern", `${r.transportDeliveryPattern}${r.transportDeliveryPatternRationale ? " -- " + r.transportDeliveryPatternRationale : ""}`] : null,
@@ -18707,7 +18743,7 @@ function advisorFinalPatternHtml(assessment) {
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${escapeHtml(r.id)} — ${escapeHtml(r.name)}</title>
 <style>
-body{margin:0;background:#f8fafc;color:#0f172a;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}main{width:min(1050px,calc(100% - 32px));margin:32px auto}.hero{padding:28px;border-radius:18px;background:linear-gradient(135deg,#1b4332,#2f855a 58%,#2f75b5);color:#fff}.hero p{margin:8px 0 0;opacity:.9}.id{display:inline-block;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.16);font-family:monospace;font-weight:800}.card{margin-top:18px;padding:22px;border:1px solid #e2e8f0;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.06)}h1{margin:8px 0 0}h2{margin:26px 0 10px;font-size:19px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.item,.req{padding:12px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc}.item span{display:block;color:#64748b;font-size:11px;font-weight:800;text-transform:uppercase}.item strong{display:block;margin-top:4px}.flow{display:flex;gap:8px;align-items:center;overflow:auto}.step{min-width:130px;padding:11px;border:1px solid #bbf7d0;border-radius:10px;background:#f0fdf4;color:#166534;text-align:center;font-weight:800}.arrow{color:#64748b;font-weight:900}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#f8fafc;font-size:12px}.requirements{display:grid;gap:9px}.req p{margin:5px 0 0}.note{padding:13px;border:1px solid #fde68a;border-radius:10px;background:#fffbeb;color:#92400e}.meta{color:#64748b;font-size:12px}@media(max-width:700px){.grid{grid-template-columns:1fr}.flow{flex-direction:column;align-items:stretch}.step{min-width:0}.arrow{transform:rotate(90deg);text-align:center}}
+body{margin:0;background:#f8fafc;color:#0f172a;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}main{width:calc(100% - 64px);margin:32px auto}.hero{padding:28px;border-radius:18px;background:linear-gradient(135deg,#1b4332,#2f855a 58%,#2f75b5);color:#fff}.hero p{margin:8px 0 0;opacity:.9}.id{display:inline-block;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.16);font-family:monospace;font-weight:800}.card{margin-top:18px;padding:22px;border:1px solid #e2e8f0;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.06)}h1{margin:8px 0 0}h2{margin:26px 0 10px;font-size:19px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.item,.req{padding:12px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc}.item span{display:block;color:#64748b;font-size:11px;font-weight:800;text-transform:uppercase}.item strong{display:block;margin-top:4px}.requirements{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:9px}.flow{display:flex;gap:8px;align-items:center;overflow:auto;flex-wrap:wrap}.step{min-width:130px;padding:11px;border:1px solid #bbf7d0;border-radius:10px;background:#f0fdf4;color:#166534;text-align:center;font-weight:800}.arrow{color:#64748b;font-weight:900}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#f8fafc;font-size:12px}.req p{margin:5px 0 0}.note{padding:13px;border:1px solid #fde68a;border-radius:10px;background:#fffbeb;color:#92400e}.meta{color:#64748b;font-size:12px}@media(max-width:700px){.grid{grid-template-columns:1fr}.requirements{grid-template-columns:1fr}.flow{flex-direction:column;align-items:stretch}.step{min-width:0}.arrow{transform:rotate(90deg);text-align:center}}
 </style></head><body><main>
 <section class="hero"><span class="id">${escapeHtml(r.id)}</span><h1>${escapeHtml(r.name)}</h1><p>Suggested final logging pattern · ${r.confidence}% confidence</p></section>
 <section class="card"><p>${escapeHtml(r.summary)}</p><div class="grid">${infoRows}</div>
@@ -18715,6 +18751,7 @@ body{margin:0;background:#f8fafc;color:#0f172a;font-family:Inter,system-ui,-appl
 <h2>Why this pattern fits</h2><ul>${r.reasons.map(reason => `<li>${escapeHtml(reason)}</li>`).join("")}</ul>
 ${radarSection}
 ${requirements}
+${securityZone}
 ${resilience}
 ${related ? `<h2>Related governed patterns</h2><ul>${related}</ul>` : ""}
 ${r.designNote ? `<h2>Design note</h2><div class="note">${escapeHtml(r.designNote)}</div>` : ""}
