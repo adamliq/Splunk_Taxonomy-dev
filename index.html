@@ -904,6 +904,18 @@
       background: radial-gradient(circle at 92% 6%, rgba(112,48,160,.22), transparent 34%);
     }
     .app-content { flex: 1 1 auto; min-width: 0; }
+    /* One shared breadcrumb element sits before every .page-view section (rather than being
+       duplicated inside all 30 of them) -- renderBreadcrumb() rewrites its content to match
+       whichever page is currently visible. Empty (and collapsed via :empty) until the first
+       render call. */
+    .app-breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin: 0 0 14px; font-size: 12.5px; font-weight: 700; }
+    .app-breadcrumb:empty { display: none; margin: 0; }
+    .app-breadcrumb .crumb { color: var(--muted); text-decoration: none; font: inherit; background: none; border: none; padding: 2px; border-radius: 5px; }
+    .app-breadcrumb a.crumb { cursor: pointer; }
+    .app-breadcrumb a.crumb:hover { color: var(--primary); text-decoration: underline; }
+    .app-breadcrumb .crumb:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .app-breadcrumb .sep { color: #cbd5e1; font-weight: 400; }
+    .app-breadcrumb .current { color: var(--text); font-weight: 800; }
     .side-item { position: relative; z-index: 1; }
     .side-item + .side-item { margin-top: 2px; }
     .side-group-trigger {
@@ -4142,6 +4154,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
   </nav>
   <div class="app-content">
 
+  <nav class="app-breadcrumb" id="appBreadcrumb" aria-label="Breadcrumb"></nav>
 
   <section id="infoPage" class="page-view info-page" role="tabpanel" aria-labelledby="showInfoPage">
     <div class="info-hero">
@@ -23816,6 +23829,26 @@ const SIDEBAR_GROUP_MAP = {
   prompts: "reference", cmei: "reference", catalogue: "reference", patterns: "reference", refLoggingPatternAdvisor: "reference", health: "reference", portsMatrix: "reference", dataPipeline: "reference",
   inputCoverage: "coverage", metrics: "coverage"
 };
+const SIDEBAR_GROUP_LABELS = { calculators: "Calculators", coverage: "Coverage & Metrics", onboarding: "Onboarding", reference: "Reference" };
+// Display labels for the breadcrumb, keyed the same way as pageTabs/SIDEBAR_GROUP_MAP.
+// Deliberately its own small map rather than reusing GLOBAL_SEARCH_PAGES: that array is
+// declared much later in the script (after the app's own initial setActivePage() call), so
+// referencing it from here -- which setActivePage() calls into on every page's first render
+// -- would throw a "used before initialization" error on page load.
+const PAGE_LABELS = {
+  info: "Info", onboarding: "Onboarding flow", taxonomy: "Onboard taxonomy", objectTaxonomy: "Splunk object taxonomy",
+  assessments: "Assessments", sizing: "Sizing calculator", s3calc: "S3 cost calculator",
+  refFrameworkOverview: "Framework overview", refConceptDefinitions: "Concepts & definitions",
+  refAssessmentMethods: "Assessment methodologies", refStandardsReferences: "Standards & references",
+  refConfigFileReferences: "Configuration file reference", dataPipeline: "Data pipeline",
+  refNetworkReference: "Network reference", refRoles: "Roles", refSplunkBin: "Splunk bin",
+  refQuestions: "Questions", refNamingConvention: "Naming convention", prompts: "Prompt library",
+  cmei: "Framework", catalogue: "Data source catalogue", patterns: "Logging patterns table",
+  refLoggingPatternAdvisor: "Logging pattern advisor", health: "Health checks table",
+  portsMatrix: "Ports matrix", externalTools: "Companion tools", inputCoverage: "Input coverage",
+  metrics: "Metrics", assurance: "Data source assurance", viability: "Viability assessment",
+  reference: "Reference"
+};
 function setSidebarGroupOpen(groupKey, open) {
   const item = document.querySelector('.app-sidebar .side-item[data-group="' + groupKey + '"]');
   if (!item) return;
@@ -25473,6 +25506,7 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
   updateBackToTopVisibility();
+  renderBreadcrumb();
 }
 
 const frameworkConcepts = [
@@ -26443,12 +26477,17 @@ function showReferenceDetail(detailName){
   const config=detailConfig[detailName]||detailConfig.eccs;
   if(history.replaceState) history.replaceState(null,"",config.hash);
   requestAnimationFrame(()=>document.getElementById(config.view)?.scrollIntoView({behavior:"smooth",block:"start"}));
+  // setActivePage("reference") above already rendered the breadcrumb once, but from the OLD
+  // location.hash -- re-render now that setReferenceDetailVisibility(detailName) has put the
+  // actual requested article on screen, so the breadcrumb's trailing crumb matches it.
+  renderBreadcrumb();
 }
 function showReferenceIndex(event){
   event?.preventDefault();
   setReferenceDetailVisibility("");
   if(history.replaceState) history.replaceState(null,"","#reference");
   requestAnimationFrame(()=>document.getElementById("referencePage")?.scrollIntoView({behavior:"smooth",block:"start"}));
+  renderBreadcrumb();
 }
 function openReferenceConcept(term){
   setActivePage("reference");
@@ -35939,6 +35978,53 @@ function refreshSidebarCounts() {
   });
 }
 refreshSidebarCounts();
+
+// Breadcrumb: Home > [group] > [page] > [open detail article, if any]. Rebuilt on every
+// setActivePage() call (and, for the shared Reference hub page, whenever the open article
+// changes without a full page change -- see showReferenceDetail/showReferenceIndex).
+function currentReferenceArticleTitle() {
+  const openArticle = document.querySelector("#referencePage article.eccs-reference:not([hidden])");
+  if (!openArticle) return null;
+  const labelledBy = openArticle.getAttribute("aria-labelledby");
+  const titleEl = labelledBy && document.getElementById(labelledBy);
+  return titleEl ? titleEl.textContent.trim() : null;
+}
+function renderBreadcrumb() {
+  const nav = document.getElementById("appBreadcrumb");
+  if (!nav) return;
+  const key = currentActivePageKey;
+  const crumbs = [];
+  if (key === "info") {
+    crumbs.push({ label: "Home" });
+  } else {
+    crumbs.push({ label: "Home", go: "info" });
+    if (key === "reference") {
+      const articleTitle = currentReferenceArticleTitle();
+      if (articleTitle) {
+        crumbs.push({ label: "Reference", go: "reference" });
+        crumbs.push({ label: articleTitle });
+      } else {
+        crumbs.push({ label: "Reference" });
+      }
+    } else {
+      const groupKey = SIDEBAR_GROUP_MAP[key];
+      if (groupKey) crumbs.push({ label: SIDEBAR_GROUP_LABELS[groupKey], go: groupKey === "reference" ? "reference" : null });
+      crumbs.push({ label: PAGE_LABELS[key] || key });
+    }
+  }
+  nav.innerHTML = crumbs.map((c, i) => {
+    const isLast = i === crumbs.length - 1;
+    const sep = i > 0 ? '<span class="sep">&rsaquo;</span>' : "";
+    if (!isLast && c.go) return `${sep}<a href="#" class="crumb" data-breadcrumb-go="${escapeHtml(c.go)}">${escapeHtml(c.label)}</a>`;
+    return `${sep}<span class="crumb${isLast ? " current" : ""}">${escapeHtml(c.label)}</span>`;
+  }).join("");
+}
+document.getElementById("appBreadcrumb")?.addEventListener("click", event => {
+  const target = event.target.closest("[data-breadcrumb-go]");
+  if (!target) return;
+  event.preventDefault();
+  setActivePage(target.dataset.breadcrumbGo);
+});
 
 // Back to top: only ever shown on pages in the Reference sidebar group (per
 // SIDEBAR_GROUP_MAP, the same map the sidebar's own active-group highlighting uses) --
