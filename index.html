@@ -983,11 +983,8 @@
     .side-sub::-webkit-scrollbar-thumb { background: rgba(255,255,255,.28); border-radius: 999px; }
     .side-sub::-webkit-scrollbar-track { background: transparent; }
     .side-item.open .side-sub { display: flex; }
-    /* Shown only while the active page is in the Reference sidebar group (per
-       SIDEBAR_GROUP_MAP, the same source of truth the sidebar itself uses) and the page has
-       been scrolled down -- Reference is the one group whose pages and detail articles
-       regularly run to several screens. toggleBackToTop() in the main script drives
-       .visible. */
+    /* Shown on every page once scrolled down far enough -- updateBackToTopVisibility() in the
+       main script drives .visible. */
     .back-to-top-btn {
       position: fixed;
       right: 22px;
@@ -36026,19 +36023,18 @@ document.getElementById("appBreadcrumb")?.addEventListener("click", event => {
   setActivePage(target.dataset.breadcrumbGo);
 });
 
-// Back to top: only ever shown on pages in the Reference sidebar group (per
-// SIDEBAR_GROUP_MAP, the same map the sidebar's own active-group highlighting uses) --
-// Reference is the one group whose pages and 81 detail articles routinely run long enough
-// to need it. Visibility is re-checked on scroll (rAF-throttled) and whenever the active
+// Back to top: shown on every page (matching the breadcrumb's scope) once scrolled far
+// enough down -- Reference pages and its 81 detail articles are the ones that routinely need
+// it, but several other pages (Data source catalogue, Health checks table, Prompt library...)
+// run long too. Visibility is re-checked on scroll (rAF-throttled) and whenever the active
 // page changes (setActivePage calls this directly after its own scroll-to-top).
 const backToTopBtn = document.getElementById("backToTopBtn");
 const BACK_TO_TOP_SCROLL_THRESHOLD = 400;
 let backToTopScrollQueued = false;
 function updateBackToTopVisibility() {
   if (!backToTopBtn) return;
-  const eligiblePage = SIDEBAR_GROUP_MAP[currentActivePageKey] === "reference";
   const scrolled = window.scrollY > BACK_TO_TOP_SCROLL_THRESHOLD;
-  backToTopBtn.classList.toggle("visible", eligiblePage && scrolled);
+  backToTopBtn.classList.toggle("visible", scrolled);
 }
 if (backToTopBtn) {
   window.addEventListener("scroll", () => {
