@@ -659,6 +659,22 @@
     }
     .advisor-primary:hover { background: #276749; }
     .advisor-result-card { min-height: 520px; }
+    .pattern-compare-section { margin-top: 20px; border: 1px solid var(--border); border-radius: 16px; background: #fff; overflow: hidden; }
+    .pattern-compare-picker { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; padding: 20px; border-bottom: 1px solid var(--border); background: #f8fafc; }
+    .pattern-compare-picker select { flex: 1 1 220px; min-width: 0; }
+    .pattern-compare-picker button { flex: 0 0 auto; }
+    .pattern-compare-result { padding: 20px; }
+    .pattern-compare-empty { padding: 30px; text-align: center; color: #64748b; }
+    .pattern-compare-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+    .pattern-compare-column { border: 1px solid var(--border); border-radius: 12px; padding: 16px; background: #fff; }
+    .pattern-compare-column-heading { margin-bottom: 10px; }
+    .pattern-compare-column-heading h4 { margin: 8px 0 4px; font-size: 16px; }
+    /* The radar panel's own narrow-layout collapse (see the @media (max-width: 620px) rule
+       above) is keyed to viewport width, not container width, so it never fires in here --
+       these columns are narrow (one of 2-3 side by side) regardless of how wide the browser
+       is. Force the same stacked layout unconditionally rather than let the score grid
+       squeeze into unreadable slivers at full desktop width. */
+    .pattern-compare-column .calc-radar-panel { grid-template-columns: 1fr; }
     .advisor-result-empty {
       display: grid;
       place-items: center;
@@ -15009,6 +15025,7 @@ E. Assumptions and unresolved inputs</pre>
       </div>
       <div class="patterns-hero-actions">
         <button id="patternsOpenAdvisor" class="advisor-button" type="button">Suggest logging pattern</button>
+        <button id="patternsOpenCompare" class="advisor-button" type="button">Compare patterns</button>
       </div>
     </div>
 
@@ -16400,6 +16417,21 @@ E. Assumptions and unresolved inputs</pre>
       <div class="advisor-result-empty"><div><strong>Ready to assess</strong>Complete the questions and select <em>Suggest pattern</em>.</div></div>
     </section>
   </div>
+  <section class="pattern-compare-section" id="patternCompareSection" aria-labelledby="compareTitle">
+    <div class="advisor-card-heading">
+      <h3 id="compareTitle">Compare patterns</h3>
+      <p>Pick two or three governed patterns to see implementation complexity, configuration footprint, delivery guarantees and the 8-axis profile side by side.</p>
+    </div>
+    <div class="pattern-compare-picker">
+      <select id="patternCompareSelect1" aria-label="First pattern to compare"></select>
+      <select id="patternCompareSelect2" aria-label="Second pattern to compare"></select>
+      <select id="patternCompareSelect3" aria-label="Third pattern to compare (optional)"></select>
+      <button id="runPatternCompareBtn" class="advisor-primary" type="button">Compare</button>
+    </div>
+    <div id="patternCompareResult" class="pattern-compare-result">
+      <div class="pattern-compare-empty">Select at least two patterns, then select <em>Compare</em>.</div>
+    </div>
+  </section>
 </section>
 
   </div>
@@ -18121,6 +18153,53 @@ function renderAdvisorResilienceCard(pattern) {
   const tdp = renderAdvisorTdpBadge(pattern);
   return `<div class="advisor-overlay advisor-resilience"><span class="advisor-pattern-id">Delivery guarantees</span><h4>Delivery guarantees &amp; operational risk</h4>${tdp}${sections.map(([label, value]) => `<p class="advisor-resilience-label">${escapeHtml(label)}</p><p class="advisor-resilience-text">${escapeHtml(value)}</p>`).join("")}</div>`;
 }
+
+// --- Pattern comparison: pick 2-3 governed patterns and view their complexity,
+// footprint, radar and resilience data side by side, reusing the same tile/card
+// renderers the single-pattern advisor result uses so the two views can't drift.
+const PATTERN_COMPARE_SELECT_IDS = ["patternCompareSelect1", "patternCompareSelect2", "patternCompareSelect3"];
+function findLoggingPatternById(id) {
+  return loggingPatternCatalogue.find(pattern => pattern.id === id) || null;
+}
+function populatePatternCompareSelects() {
+  const sorted = [...loggingPatternCatalogue].sort((a, b) => a.id.localeCompare(b.id));
+  const options = `<option value="">Select a pattern…</option>` +
+    sorted.map(pattern => `<option value="${escapeHtml(pattern.id)}">${escapeHtml(pattern.id)} — ${escapeHtml(pattern.name)}</option>`).join("");
+  PATTERN_COMPARE_SELECT_IDS.forEach(selectId => {
+    const el = document.getElementById(selectId);
+    if (el) el.innerHTML = options;
+  });
+}
+function renderPatternCompareColumn(pattern) {
+  return `<div class="pattern-compare-column">
+    <div class="pattern-compare-column-heading">
+      <span class="advisor-pattern-id">${escapeHtml(pattern.id)}</span>
+      <h4>${escapeHtml(pattern.name)}</h4>
+      <p class="advisor-resilience-text">${escapeHtml(pattern.summary)}</p>
+    </div>
+    ${renderAdvisorComplexityTile(pattern)}
+    ${renderAdvisorConfigFootprintTile(pattern)}
+    ${renderAdvisorRadarCard(pattern)}
+    ${renderAdvisorResilienceCard(pattern)}
+  </div>`;
+}
+function renderPatternCompare() {
+  const result = document.getElementById("patternCompareResult");
+  if (!result) return;
+  const ids = [...new Set(PATTERN_COMPARE_SELECT_IDS.map(selectId => document.getElementById(selectId).value).filter(Boolean))];
+  if (ids.length < 2) {
+    result.innerHTML = '<div class="pattern-compare-empty">Select at least two patterns, then select <em>Compare</em>.</div>';
+    return;
+  }
+  const patterns = ids.map(findLoggingPatternById).filter(Boolean);
+  result.innerHTML = `<div class="pattern-compare-grid">${patterns.map(renderPatternCompareColumn).join("")}</div>`;
+}
+populatePatternCompareSelects();
+document.getElementById("runPatternCompareBtn").addEventListener("click", renderPatternCompare);
+document.getElementById("patternsOpenCompare").addEventListener("click", () => {
+  openAdvisor();
+  requestAnimationFrame(() => document.getElementById("patternCompareSection")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+});
 
 // Reuses the Viability Calculator's own radar geometry (calculatorRadarPoint) and CSS classes so
 // the two radar charts in this app look and behave identically rather than drifting into two
