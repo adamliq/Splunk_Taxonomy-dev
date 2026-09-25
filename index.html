@@ -1304,8 +1304,62 @@
       align-items: center;
       margin-bottom: 12px;
     }
-    .role-compare { margin: 0 0 18px; padding: 16px 18px; border: 1px solid var(--border); border-radius: 14px; background: #fff; }
-    .role-compare h3 { margin: 0; font-size: 17px; }
+    .role-tools { margin: 0 0 18px; padding: 16px 18px; border: 1px solid var(--border); border-radius: 14px; background: #fff; }
+    .role-tools-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+    .role-tool-panel > p:first-child { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+    .cap-picker { padding: 10px; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; }
+    .cap-picker-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+    .cap-picker-chips:empty { display: none; }
+    .cap-picker-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 4px 3px 10px; border: 1px solid #bfd3e6; border-radius: 999px; background: var(--primary-light); color: var(--primary); font: 700 12px var(--mono); }
+    .cap-picker-chip button { padding: 0 6px; border: 0; background: transparent; color: inherit; font-size: 15px; line-height: 1; }
+    .cap-picker-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 8px; }
+    .cap-picker-bar input { flex: 1 1 220px; width: auto; padding: 9px 11px; }
+    .cap-picker-count { font-size: 12px; color: var(--muted); white-space: nowrap; }
+    .cap-picker-bar button { padding: 8px 11px; }
+    .cap-picker-list { max-height: 260px; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; background: #fff; }
+    .cap-picker-item { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-bottom: 1px solid #f1f5f9; font-size: 12.5px; cursor: pointer; }
+    .cap-picker-item[hidden] { display: none; }
+    .cap-picker-item:hover { background: #f8fafc; }
+    .cap-picker-item input[type="checkbox"] { width: auto; margin: 0; padding: 0; flex: 0 0 auto; accent-color: var(--primary); }
+    .cap-picker-name { font: 700 12.5px var(--mono); color: #0f172a; overflow-wrap: anywhere; }
+    .cap-picker-plats { margin-left: auto; font-size: 11px; color: var(--muted); white-space: nowrap; }
+    .cap-picker-lock { font-size: 11px; font-weight: 700; color: #15803d; white-space: nowrap; }
+    .cap-picker-lock:empty { display: none; }
+    .cap-picker-item.is-locked { background: #f8fafc; cursor: default; }
+    .cap-picker-item.is-locked .cap-picker-name { color: #64748b; }
+    .cap-picker-empty { padding: 12px; color: var(--muted); font-size: 12.5px; }
+    .role-finder .eccs-matrix, .role-compare .eccs-matrix { min-width: 0; }
+    .role-finder-lead { margin: 14px 0 8px; font-size: 13px; color: #334155; }
+    .role-finder-best td { background: #f0fdf4; }
+    .role-finder-missing { font: 12px var(--mono); color: #b91c1c; overflow-wrap: anywhere; }
+    .role-finder-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .role-finder td button { padding: 7px 10px; font-size: 12px; }
+    .role-builder-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 18px; align-items: start; }
+    .role-builder-field { display: grid; gap: 5px; min-width: 0; margin: 0 0 12px; padding: 0; border: 0; font-size: 12px; font-weight: 800; color: #334155; }
+    .role-builder-field legend { margin-bottom: 5px; padding: 0; }
+    .role-builder-field small { font-weight: 500; color: var(--muted); }
+    .role-builder-field small.invalid { color: #dc2626; font-weight: 700; }
+    .role-builder-field input[type="text"] { padding: 9px 11px; }
+    .role-builder-imports { display: flex; flex-wrap: wrap; gap: 6px; max-height: 190px; overflow-y: auto; }
+    .role-builder-import { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border: 1px solid var(--border); border-radius: 999px; background: #fff; font: 700 12px var(--mono); color: #0f172a; cursor: pointer; }
+    .role-builder-import input { width: auto; margin: 0; padding: 0; accent-color: var(--primary); }
+    .role-builder-import small { font: 600 10.5px Inter, system-ui, sans-serif; color: var(--muted); }
+    .role-builder-import.is-checked { border-color: var(--primary); background: var(--primary-light); }
+    .role-builder-output { position: sticky; top: 12px; min-width: 0; }
+    .role-builder-summary { margin: 0 0 8px; font-size: 13px; color: #334155; }
+    .role-builder-conf { margin: 0; padding: 14px; max-height: 440px; overflow: auto; border-radius: 12px; background: #0f172a; color: #e2e8f0; font: 12.5px/1.55 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+    .role-builder-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+    .role-builder-status { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+    .role-builder-note { margin: 10px 0 0; font-size: 12px; line-height: 1.5; color: var(--muted); }
+    .role-builder-note:empty { display: none; }
+    @media (max-width: 980px) {
+      .role-builder-grid { grid-template-columns: 1fr; }
+      .role-builder-output { position: static; }
+    }
+    @media (max-width: 600px) {
+      .cap-picker-item { flex-wrap: wrap; row-gap: 2px; }
+      .cap-picker-name { overflow-wrap: normal; }
+    }
     .role-compare > p { margin: 4px 0 12px; color: var(--muted); font-size: 13px; }
     .role-compare-pickers { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
     .role-compare-pickers label { display: grid; gap: 5px; flex: 1 1 240px; min-width: 0; font-size: 12px; font-weight: 800; color: #334155; }
@@ -9589,8 +9643,13 @@ INGEST PROCESSOR
       </div>
     </div>
 
-    <section class="role-compare" aria-labelledby="roleCompareTitle">
-      <h3 id="roleCompareTitle">Compare two roles</h3>
+    <section class="role-tools" aria-label="Role tools">
+      <div class="role-tools-tabs" role="tablist" aria-label="Role tools">
+        <button type="button" role="tab" id="roleToolTabCompare" class="role-view-btn active" aria-selected="true" aria-controls="roleToolCompare">Compare two roles</button>
+        <button type="button" role="tab" id="roleToolTabFinder" class="role-view-btn" aria-selected="false" aria-controls="roleToolFinder">Which role do I need?</button>
+        <button type="button" role="tab" id="roleToolTabBuilder" class="role-view-btn" aria-selected="false" aria-controls="roleToolBuilder">Build a custom role</button>
+      </div>
+      <div id="roleToolCompare" class="role-compare role-tool-panel" role="tabpanel" aria-labelledby="roleToolTabCompare">
       <p>Pick two roles to see which capabilities only one of them has and which they share.</p>
       <div class="role-compare-pickers">
         <label for="roleCompareA">Role A<select id="roleCompareA"><option value="">Select a role…</option></select></label>
@@ -9599,6 +9658,49 @@ INGEST PROCESSOR
         <button id="roleCompareExport" class="primary-button" type="button" disabled>Export comparison CSV</button>
       </div>
       <div id="roleCompareResult" aria-live="polite"><p class="role-compare-empty">Pick two different roles to compare.</p></div>
+      </div>
+
+      <div id="roleToolFinder" class="role-finder role-tool-panel" role="tabpanel" aria-labelledby="roleToolTabFinder" hidden>
+        <p>Pick the capabilities someone needs. Roles that have all of them are listed smallest first, so the least-privileged fit is at the top.</p>
+        <div class="cap-picker" id="roleFinderPicker"></div>
+        <div id="roleFinderResult" aria-live="polite"></div>
+      </div>
+
+      <div id="roleToolBuilder" class="role-builder role-tool-panel" role="tabpanel" aria-labelledby="roleToolTabBuilder" hidden>
+        <p>Import existing roles, add the extra capabilities you need, and copy the resulting <code>authorize.conf</code> stanza.</p>
+        <div class="role-builder-grid">
+          <div>
+            <label class="role-builder-field" for="roleBuilderName">Role name
+              <input id="roleBuilderName" type="text" placeholder="e.g. secops_reader" autocomplete="off" spellcheck="false" />
+              <small id="roleBuilderNameHint">Lowercase letters, numbers, underscores and hyphens.</small>
+            </label>
+            <fieldset class="role-builder-field">
+              <legend>Import roles <small>(inherits all of their capabilities)</small></legend>
+              <div class="role-builder-imports" id="roleBuilderImports"></div>
+            </fieldset>
+            <label class="role-builder-field" for="roleBuilderIndexesAllowed">Indexes allowed <small>srchIndexesAllowed, semicolon-separated</small>
+              <input id="roleBuilderIndexesAllowed" type="text" placeholder="e.g. main;security_*" autocomplete="off" spellcheck="false" />
+            </label>
+            <label class="role-builder-field" for="roleBuilderIndexesDefault">Default indexes <small>srchIndexesDefault</small>
+              <input id="roleBuilderIndexesDefault" type="text" placeholder="e.g. main" autocomplete="off" spellcheck="false" />
+            </label>
+            <div class="role-builder-field"><span>Capabilities to add <small>(inherited ones are ticked and locked)</small></span>
+              <div class="cap-picker" id="roleBuilderPicker"></div>
+            </div>
+          </div>
+          <div class="role-builder-output">
+            <div class="role-builder-summary" id="roleBuilderSummary" aria-live="polite"></div>
+            <pre class="role-builder-conf" id="roleBuilderConf"></pre>
+            <div class="role-builder-actions">
+              <button id="roleBuilderCopy" type="button" class="primary-button">Copy stanza</button>
+              <button id="roleBuilderDownload" type="button">Download .conf</button>
+              <button id="roleBuilderReset" type="button">Start over</button>
+              <span class="role-builder-status" id="roleBuilderStatus" role="status" aria-live="polite"></span>
+            </div>
+            <p class="role-builder-note" id="roleBuilderNote"></p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <div class="role-view-switch" role="group" aria-label="Choose how to view roles and capabilities">
@@ -36017,6 +36119,260 @@ function initRolesGridView() {
   document.getElementById("roleGridSort")?.addEventListener("change", renderRolesGrid);
 }
 
+// --- Role tools: shared capability picker, "Which role do I need?" finder, custom role builder ---
+const ROLE_PLATFORM_SHORT = { "Splunk On-premises": "On-prem", "Splunk Cloud": "Cloud", "Splunk ES": "ES", "Splunk SOAR": "SOAR" };
+// Splunk's role names are lowercase (user, power, admin, sc_admin); the source matrix capitalises some.
+const splunkRoleName = role => role.toLowerCase();
+const isTemplateRole = role => /[<>]/.test(role);
+let capabilityPlatformsCache = null;
+function capabilityPlatforms() {
+  if (capabilityPlatformsCache) return capabilityPlatformsCache;
+  const { roles } = rolesCapabilityIndex();
+  const map = new Map();
+  roles.forEach(info => info.capabilities.forEach(cap => {
+    if (!map.has(cap)) map.set(cap, new Set());
+    map.get(cap).add(info.platform);
+  }));
+  capabilityPlatformsCache = new Map([...map].map(([cap, set]) => [cap, ROLE_GRID_PLATFORM_ORDER.filter(p => set.has(p))]));
+  return capabilityPlatformsCache;
+}
+
+// A searchable checkbox list of every capability, with removable chips for the current
+// selection. "Locked" capabilities (inherited in the builder) show ticked and disabled.
+function createCapabilityPicker(root, onChange) {
+  const { capabilityDescription } = rolesCapabilityIndex();
+  const platforms = capabilityPlatforms();
+  const capabilities = [...capabilityDescription.keys()].sort((a, b) => a.localeCompare(b));
+  root.innerHTML = `
+    <div class="cap-picker-chips"></div>
+    <div class="cap-picker-bar">
+      <input type="search" class="cap-picker-search" placeholder="Filter capabilities by name or description…" aria-label="Filter capabilities" />
+      <span class="cap-picker-count"></span>
+      <button type="button" class="cap-picker-clear">Clear</button>
+    </div>
+    <div class="cap-picker-list" role="group" aria-label="Capabilities">
+      ${capabilities.map(cap => `<label class="cap-picker-item" title="${escapeHtml(capabilityDescription.get(cap))}" data-search="${escapeHtml(`${cap} ${capabilityDescription.get(cap)}`.toLowerCase())}"><input type="checkbox" value="${escapeHtml(cap)}" /><span class="cap-picker-name">${escapeHtml(cap)}</span><span class="cap-picker-lock"></span><span class="cap-picker-plats">${escapeHtml(platforms.get(cap).map(p => ROLE_PLATFORM_SHORT[p] || p).join(" · "))}</span></label>`).join("")}
+      <p class="cap-picker-empty" hidden>No capabilities match.</p>
+    </div>`;
+  const chips = root.querySelector(".cap-picker-chips");
+  const search = root.querySelector(".cap-picker-search");
+  const count = root.querySelector(".cap-picker-count");
+  const empty = root.querySelector(".cap-picker-empty");
+  const items = Array.from(root.querySelectorAll(".cap-picker-item")).map(label => ({ label, input: label.querySelector("input"), lock: label.querySelector(".cap-picker-lock") }));
+  let selected = new Set();
+  let locked = new Map();
+  const added = () => [...selected].filter(cap => !locked.has(cap)).sort((a, b) => a.localeCompare(b));
+
+  function sync() {
+    items.forEach(({ label, input, lock }) => {
+      const isLocked = locked.has(input.value);
+      input.checked = isLocked || selected.has(input.value);
+      input.disabled = isLocked;
+      label.classList.toggle("is-locked", isLocked);
+      lock.textContent = isLocked ? locked.get(input.value) : "";
+    });
+    const list = added();
+    chips.innerHTML = list.map(cap => `<span class="cap-picker-chip">${escapeHtml(cap)}<button type="button" data-remove="${escapeHtml(cap)}" aria-label="Remove ${escapeHtml(cap)}">&times;</button></span>`).join("");
+    count.textContent = `${list.length} selected`;
+    onChange(list);
+  }
+  search.addEventListener("input", () => {
+    const q = search.value.trim().toLowerCase();
+    let shown = 0;
+    items.forEach(({ label }) => {
+      const match = !q || label.dataset.search.includes(q);
+      label.hidden = !match;
+      if (match) shown++;
+    });
+    empty.hidden = shown > 0;
+  });
+  root.addEventListener("change", event => {
+    const input = event.target.closest(".cap-picker-item input");
+    if (!input) return;
+    if (input.checked) selected.add(input.value); else selected.delete(input.value);
+    sync();
+  });
+  chips.addEventListener("click", event => {
+    const btn = event.target.closest("[data-remove]");
+    if (!btn) return;
+    selected.delete(btn.dataset.remove);
+    sync();
+  });
+  root.querySelector(".cap-picker-clear").addEventListener("click", () => { selected = new Set([...selected].filter(cap => locked.has(cap))); sync(); });
+  sync();
+  return {
+    getSelected: added,
+    setSelected(list) { selected = new Set(list); sync(); },
+    setLocked(map) { locked = map; sync(); },
+    reset() { selected = new Set(); locked = new Map(); search.value = ""; search.dispatchEvent(new Event("input")); sync(); }
+  };
+}
+
+function initRoleTools() {
+  const tabs = [
+    ["roleToolTabCompare", "roleToolCompare"], ["roleToolTabFinder", "roleToolFinder"], ["roleToolTabBuilder", "roleToolBuilder"]
+  ].map(([tabId, panelId]) => [document.getElementById(tabId), document.getElementById(panelId)]);
+  if (tabs.some(([tab, panel]) => !tab || !panel)) return;
+  function showTool(panelId) {
+    tabs.forEach(([tab, panel]) => {
+      const active = panel.id === panelId;
+      panel.hidden = !active;
+      tab.classList.toggle("active", active);
+      tab.setAttribute("aria-selected", String(active));
+    });
+  }
+  tabs.forEach(([tab, panel]) => tab.addEventListener("click", () => showTool(panel.id)));
+
+  const { roles } = rolesCapabilityIndex();
+  const platformIndex = platform => {
+    const index = ROLE_GRID_PLATFORM_ORDER.indexOf(platform);
+    return index === -1 ? ROLE_GRID_PLATFORM_ORDER.length : index;
+  };
+  const roleList = [...roles.entries()]
+    .map(([name, info]) => ({ name, platform: info.platform, capabilities: info.capabilities }))
+    .sort((a, b) => platformIndex(a.platform) - platformIndex(b.platform) || a.capabilities.size - b.capabilities.size || a.name.localeCompare(b.name));
+
+  // ---- Builder ----
+  const nameInput = document.getElementById("roleBuilderName");
+  const nameHint = document.getElementById("roleBuilderNameHint");
+  const importsEl = document.getElementById("roleBuilderImports");
+  const idxAllowed = document.getElementById("roleBuilderIndexesAllowed");
+  const idxDefault = document.getElementById("roleBuilderIndexesDefault");
+  const summaryEl = document.getElementById("roleBuilderSummary");
+  const confEl = document.getElementById("roleBuilderConf");
+  const noteEl = document.getElementById("roleBuilderNote");
+  const statusEl = document.getElementById("roleBuilderStatus");
+  const importable = roleList.filter(role => !isTemplateRole(role.name));
+  importsEl.innerHTML = importable.map(role => `<label class="role-builder-import"><input type="checkbox" value="${escapeHtml(role.name)}" />${escapeHtml(splunkRoleName(role.name))} <small>${escapeHtml(ROLE_PLATFORM_SHORT[role.platform] || role.platform)} · ${role.capabilities.size}</small></label>`).join("");
+  const importInputs = Array.from(importsEl.querySelectorAll("input"));
+  const selectedImports = () => importInputs.filter(input => input.checked).map(input => input.value);
+
+  let builderPicker = null;
+  function renderBuilderOutput(added) {
+    const rawName = nameInput.value.trim();
+    const validName = /^[a-z0-9_-]+$/.test(rawName);
+    nameHint.classList.toggle("invalid", rawName !== "" && !validName);
+    nameHint.textContent = rawName !== "" && !validName
+      ? "Use lowercase letters, numbers, underscores and hyphens only (no spaces or capitals)."
+      : "Lowercase letters, numbers, underscores and hyphens.";
+    const imports = selectedImports();
+    const inherited = new Set();
+    imports.forEach(role => roles.get(role).capabilities.forEach(cap => inherited.add(cap)));
+    const lines = ["# Generated by the LATCH role builder -- review before deploying.", `[role_${validName ? rawName : "<role_name>"}]`];
+    if (imports.length) lines.push(`importRoles = ${imports.map(splunkRoleName).join(";")}`);
+    const allowed = idxAllowed.value.trim();
+    const defaults = idxDefault.value.trim();
+    lines.push(allowed ? `srchIndexesAllowed = ${allowed}` : "# srchIndexesAllowed = <index>;<index>");
+    lines.push(defaults ? `srchIndexesDefault = ${defaults}` : "# srchIndexesDefault = <index>");
+    added.forEach(cap => lines.push(`${cap} = enabled`));
+    confEl.textContent = lines.join("\n");
+    importInputs.forEach(input => input.closest("label").classList.toggle("is-checked", input.checked));
+    summaryEl.textContent = `${inherited.size} inherited + ${added.length} added = ${inherited.size + added.length} capabilities`;
+
+    // Flag anything that only exists outside Splunk Enterprise in this matrix.
+    const platforms = capabilityPlatforms();
+    const outsideEnterprise = new Set();
+    imports.forEach(role => { if (roles.get(role).platform !== "Splunk On-premises") outsideEnterprise.add(roles.get(role).platform); });
+    added.forEach(cap => { if (!platforms.get(cap).includes("Splunk On-premises")) platforms.get(cap).forEach(p => outsideEnterprise.add(p)); });
+    const notes = [];
+    if (outsideEnterprise.size) notes.push(`Some selections are only listed for ${[...outsideEnterprise].join(" / ")} in this matrix, so this role only works where that platform or app is installed.`);
+    notes.push("In Splunk Cloud, roles are created in Splunk Web rather than by editing authorize.conf. Capabilities are additive, so this role can never have less than the roles it imports.");
+    noteEl.textContent = notes.join(" ");
+  }
+  function refreshBuilderInheritance() {
+    const locked = new Map();
+    selectedImports().forEach(role => roles.get(role).capabilities.forEach(cap => {
+      if (!locked.has(cap)) locked.set(cap, `inherited from ${splunkRoleName(role)}`);
+    }));
+    builderPicker.setLocked(locked);
+  }
+  builderPicker = createCapabilityPicker(document.getElementById("roleBuilderPicker"), renderBuilderOutput);
+  importsEl.addEventListener("change", refreshBuilderInheritance);
+  [nameInput, idxAllowed, idxDefault].forEach(input => input.addEventListener("input", () => renderBuilderOutput(builderPicker.getSelected())));
+  document.getElementById("roleBuilderReset").addEventListener("click", () => {
+    nameInput.value = ""; idxAllowed.value = ""; idxDefault.value = "";
+    importInputs.forEach(input => { input.checked = false; });
+    builderPicker.reset();
+    statusEl.textContent = "";
+  });
+  document.getElementById("roleBuilderCopy").addEventListener("click", async event => {
+    const button = event.currentTarget;
+    try {
+      await navigator.clipboard.writeText(confEl.textContent);
+      button.textContent = "Copied";
+      statusEl.textContent = "";
+    } catch (e) {
+      const range = document.createRange();
+      range.selectNodeContents(confEl);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      statusEl.textContent = "Selected -- press Ctrl+C or Cmd+C to copy.";
+    }
+    setTimeout(() => { button.textContent = "Copy stanza"; }, 1400);
+  });
+  document.getElementById("roleBuilderDownload").addEventListener("click", () => {
+    const rawName = nameInput.value.trim();
+    const blob = new Blob([confEl.textContent + "\n"], { type: "text/plain;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `authorize-role_${/^[a-z0-9_-]+$/.test(rawName) ? rawName : "custom"}.conf`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(link.href);
+  });
+  function openBuilderWith(imports, capabilities) {
+    importInputs.forEach(input => { input.checked = imports.includes(input.value); });
+    builderPicker.setSelected(capabilities);
+    refreshBuilderInheritance();
+    showTool("roleToolBuilder");
+    document.getElementById("roleToolBuilder").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // ---- Finder ----
+  const finderResult = document.getElementById("roleFinderResult");
+  let finderSelection = [];
+  function renderFinder(selected) {
+    finderSelection = selected;
+    if (!selected.length) {
+      finderResult.innerHTML = '<p class="role-compare-empty">Tick one or more capabilities to see which roles have them.</p>';
+      return;
+    }
+    const n = selected.length;
+    const scored = roleList.map(role => {
+      const missing = selected.filter(cap => !role.capabilities.has(cap));
+      return { ...role, missing, covered: n - missing.length };
+    });
+    const full = scored.filter(role => !role.missing.length).sort((a, b) => a.capabilities.size - b.capabilities.size || a.name.localeCompare(b.name));
+    const buildOnly = `<button type="button" class="primary-button" data-build-only>Build a role with only these ${n}</button>`;
+    if (full.length) {
+      finderResult.innerHTML = `
+        <p class="role-finder-lead"><strong>${full.length}</strong> role${full.length === 1 ? "" : "s"} ${full.length === 1 ? "has" : "have"} all ${n} capabilit${n === 1 ? "y" : "ies"}. The first is the smallest fit.</p>
+        <div class="eccs-table-wrap"><table class="eccs-matrix"><thead><tr><th scope="col">Role</th><th scope="col">Platform</th><th scope="col">Capabilities in role</th><th scope="col">Also grants</th></tr></thead><tbody>
+        ${full.map((role, i) => `<tr${i === 0 ? ' class="role-finder-best"' : ""}><td>${escapeHtml(role.name)}</td><td>${escapeHtml(role.platform)}</td><td>${role.capabilities.size}</td><td>${role.capabilities.size - n} more</td></tr>`).join("")}
+        </tbody></table></div>
+        <div class="role-finder-actions">${buildOnly}</div>`;
+      return;
+    }
+    const partial = scored.filter(role => role.covered > 0).sort((a, b) => b.covered - a.covered || a.capabilities.size - b.capabilities.size || a.name.localeCompare(b.name)).slice(0, 6);
+    finderResult.innerHTML = `
+      <p class="role-compare-note">No single role has all ${n} capabilities.${partial.length ? " These come closest:" : ""}</p>
+      ${partial.length ? `<div class="eccs-table-wrap"><table class="eccs-matrix"><thead><tr><th scope="col">Role</th><th scope="col">Platform</th><th scope="col">Has</th><th scope="col">Missing</th><th scope="col"></th></tr></thead><tbody>
+      ${partial.map(role => `<tr><td>${escapeHtml(role.name)}</td><td>${escapeHtml(role.platform)}</td><td>${role.covered} of ${n}</td><td class="role-finder-missing">${role.missing.map(escapeHtml).join(", ")}</td><td>${isTemplateRole(role.name) ? "" : `<button type="button" data-build-from="${escapeHtml(role.name)}">Import ${escapeHtml(splunkRoleName(role.name))} + add ${role.missing.length}</button>`}</td></tr>`).join("")}
+      </tbody></table></div>` : ""}
+      <div class="role-finder-actions">${buildOnly}</div>`;
+  }
+  createCapabilityPicker(document.getElementById("roleFinderPicker"), renderFinder);
+  finderResult.addEventListener("click", event => {
+    if (event.target.closest("[data-build-only]")) { openBuilderWith([], finderSelection); return; }
+    const from = event.target.closest("[data-build-from]");
+    if (!from) return;
+    const role = roles.get(from.dataset.buildFrom);
+    openBuilderWith([from.dataset.buildFrom], finderSelection.filter(cap => !role.capabilities.has(cap)));
+  });
+}
+
 function healthSearchText(row) {
   return healthCheckTableColumns.map(column => row[column] || "").join(" ").toLowerCase();
 }
@@ -36685,6 +37041,7 @@ function initPortsMatrixCellModal() {
 renderRolesTable();
 initRoleComparison();
 initRolesGridView();
+initRoleTools();
 renderSplunkPortsTable();
 renderNetworkFlowsTable();
 renderQuestionsTable();
