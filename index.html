@@ -1304,6 +1304,23 @@
       align-items: center;
       margin-bottom: 12px;
     }
+    .role-compare { margin: 0 0 18px; padding: 16px 18px; border: 1px solid var(--border); border-radius: 14px; background: #fff; }
+    .role-compare h3 { margin: 0; font-size: 17px; }
+    .role-compare > p { margin: 4px 0 12px; color: var(--muted); font-size: 13px; }
+    .role-compare-pickers { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+    .role-compare-pickers label { display: grid; gap: 5px; flex: 1 1 240px; min-width: 0; font-size: 12px; font-weight: 800; color: #334155; }
+    .role-compare-swap { font-size: 16px; padding: 10px 13px; }
+    .role-compare-pickers .primary-button:disabled { opacity: .45; cursor: not-allowed; }
+    .role-compare-empty { margin: 12px 0 0; color: var(--muted); font-size: 13px; }
+    .role-compare-note { margin: 12px 0 0; padding: 9px 12px; border: 1px solid #fcd34d; border-radius: 10px; background: #fffbeb; color: #92400e; font-size: 12.5px; line-height: 1.5; }
+    .role-compare-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 10px; }
+    .role-compare-filter { padding: 7px 12px; border-radius: 999px; font-size: 12.5px; color: #475569; }
+    .role-compare-filter strong { color: #1e293b; }
+    .role-compare-filter.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .role-compare-filter.active strong { color: #fff; }
+    .role-compare .eccs-table-wrap { max-height: 60vh; }
+    .role-compare .eccs-matrix td.role-compare-yes { color: #15803d; font-size: 16px; font-weight: 900; text-align: center; }
+    .role-compare .eccs-matrix td.role-compare-no { color: #94a3b8; font-size: 15px; text-align: center; }
     .patterns-toolbar.roles-toolbar {
       grid-template-columns: minmax(220px, 1fr) minmax(170px, 200px) minmax(170px, 200px) minmax(190px, 230px) minmax(140px, 170px) auto;
     }
@@ -9532,6 +9549,18 @@ INGEST PROCESSOR
         <p><strong>Platform:</strong> derived from each role's naming convention and the source file's Mission Control Roles tab -- <code>Sc_admin</code> is Splunk Cloud-specific; <code>User</code>/<code>Power</code>/<code>Admin</code> are the base roles (shown as Splunk On-premises, since Sc_admin is the file's distinct Splunk Cloud counterpart to Admin); <code>ess_*</code> and the non-SOAR <code>mc_*</code> Mission Control/incident-review roles are Splunk ES; the <code>mc_soar_*</code> roles are Splunk SOAR.</p>
       </div>
     </div>
+
+    <section class="role-compare" aria-labelledby="roleCompareTitle">
+      <h3 id="roleCompareTitle">Compare two roles</h3>
+      <p>Pick two roles to see which capabilities only one of them has and which they share.</p>
+      <div class="role-compare-pickers">
+        <label for="roleCompareA">Role A<select id="roleCompareA"><option value="">Select a role…</option></select></label>
+        <button id="roleCompareSwap" class="role-compare-swap" type="button" aria-label="Swap role A and role B" title="Swap roles">&#8644;</button>
+        <label for="roleCompareB">Role B<select id="roleCompareB"><option value="">Select a role…</option></select></label>
+        <button id="roleCompareExport" class="primary-button" type="button" disabled>Export comparison CSV</button>
+      </div>
+      <div id="roleCompareResult" aria-live="polite"><p class="role-compare-empty">Pick two different roles to compare.</p></div>
+    </section>
 
     <div class="patterns-toolbar roles-toolbar">
       <input id="rolesTableSearch" type="search" placeholder="Search role, capability or description…" aria-label="Search roles and capabilities" />
@@ -35636,6 +35665,126 @@ function exportVisibleRoles(event) {
   setTimeout(() => { if (event.currentTarget) event.currentTarget.textContent = "Export visible CSV"; }, 1400);
 }
 
+// Role comparison: a straight set comparison of each role's assigned capabilities in
+// rolesTableData. Each role belongs to exactly one platform in this matrix, and the matrix
+// lists capabilities per role rather than modelling inheritance, so "only in A" means only
+// A's row in the source matrix lists it.
+const ROLE_COMPARE_VIEWS = [
+  ["diff", "All differences"], ["onlyA", "Only in A"], ["onlyB", "Only in B"], ["both", "In both"]
+];
+function initRoleComparison() {
+  const selectA = document.getElementById("roleCompareA");
+  const selectB = document.getElementById("roleCompareB");
+  const swapBtn = document.getElementById("roleCompareSwap");
+  const exportBtn = document.getElementById("roleCompareExport");
+  const result = document.getElementById("roleCompareResult");
+  if (!selectA || !selectB || !result) return;
+
+  const roles = new Map();
+  const capabilityDescription = new Map();
+  rolesTableData.forEach(row => {
+    if (!roles.has(row["Role"])) roles.set(row["Role"], { platform: row["Platform"], capabilities: new Set() });
+    roles.get(row["Role"]).capabilities.add(row["Capability"]);
+    if (!capabilityDescription.has(row["Capability"])) capabilityDescription.set(row["Capability"], row["What it lets you do"] || "");
+  });
+  const optionsHtml = [...roles.keys()].sort((a, b) => a.localeCompare(b)).map(role => {
+    const info = roles.get(role);
+    return `<option value="${escapeHtml(role)}">${escapeHtml(role)} — ${escapeHtml(info.platform)} (${info.capabilities.size})</option>`;
+  }).join("");
+  selectA.insertAdjacentHTML("beforeend", optionsHtml);
+  selectB.insertAdjacentHTML("beforeend", optionsHtml);
+
+  let view = "diff";
+  let comparison = null;
+
+  function buildComparison(roleA, roleB) {
+    const capsA = roles.get(roleA).capabilities;
+    const capsB = roles.get(roleB).capabilities;
+    const byName = (a, b) => a.localeCompare(b);
+    return {
+      roleA, roleB,
+      onlyA: [...capsA].filter(cap => !capsB.has(cap)).sort(byName),
+      onlyB: [...capsB].filter(cap => !capsA.has(cap)).sort(byName),
+      both: [...capsA].filter(cap => capsB.has(cap)).sort(byName)
+    };
+  }
+
+  function rowsForView() {
+    if (view === "onlyA") return comparison.onlyA.map(cap => [cap, true, false]);
+    if (view === "onlyB") return comparison.onlyB.map(cap => [cap, false, true]);
+    if (view === "both") return comparison.both.map(cap => [cap, true, true]);
+    return [...comparison.onlyA.map(cap => [cap, true, false]), ...comparison.onlyB.map(cap => [cap, false, true])];
+  }
+
+  function render() {
+    const roleA = selectA.value;
+    const roleB = selectB.value;
+    if (!roleA || !roleB || roleA === roleB) {
+      comparison = null;
+      exportBtn.disabled = true;
+      result.innerHTML = `<p class="role-compare-empty">${roleA && roleA === roleB ? "Both selections are the same role -- pick a different role for A or B." : "Pick two different roles to compare."}</p>`;
+      return;
+    }
+    comparison = buildComparison(roleA, roleB);
+    exportBtn.disabled = false;
+    const platformA = roles.get(roleA).platform;
+    const platformB = roles.get(roleB).platform;
+    const counts = { diff: comparison.onlyA.length + comparison.onlyB.length, onlyA: comparison.onlyA.length, onlyB: comparison.onlyB.length, both: comparison.both.length };
+    const note = platformA !== platformB
+      ? `<p class="role-compare-note">These roles are on different platforms (${escapeHtml(platformA)} and ${escapeHtml(platformB)}), so some differences are capabilities that only exist on one platform rather than access one role was denied.</p>`
+      : "";
+    const filters = ROLE_COMPARE_VIEWS.map(([key, label]) =>
+      `<button type="button" class="role-compare-filter${view === key ? " active" : ""}" data-role-compare-view="${key}" aria-pressed="${view === key}">${escapeHtml(label)} <strong>${counts[key]}</strong></button>`).join("");
+    const rows = rowsForView();
+    const body = rows.length
+      ? rows.map(([cap, inA, inB]) => `<tr><td>${escapeHtml(cap)}</td><td>${escapeHtml(capabilityDescription.get(cap))}</td><td class="${inA ? "role-compare-yes" : "role-compare-no"}">${inA ? "&#10003;" : "&mdash;"}</td><td class="${inB ? "role-compare-yes" : "role-compare-no"}">${inB ? "&#10003;" : "&mdash;"}</td></tr>`).join("")
+      : `<tr><td class="patterns-empty" colspan="4">No capabilities in this view.</td></tr>`;
+    result.innerHTML = `${note}
+      <div class="role-compare-filters" role="group" aria-label="Choose which capabilities to show">${filters}</div>
+      <div class="eccs-table-wrap" role="region" aria-label="Role comparison" tabindex="0">
+        <table class="eccs-matrix">
+          <thead><tr><th scope="col">Capability</th><th scope="col">What it lets you do</th><th scope="col">A: ${escapeHtml(roleA)}</th><th scope="col">B: ${escapeHtml(roleB)}</th></tr></thead>
+          <tbody>${body}</tbody>
+        </table>
+      </div>`;
+  }
+
+  result.addEventListener("click", event => {
+    const btn = event.target.closest("[data-role-compare-view]");
+    if (!btn) return;
+    view = btn.dataset.roleCompareView;
+    render();
+  });
+  selectA.addEventListener("change", render);
+  selectB.addEventListener("change", render);
+  swapBtn?.addEventListener("click", () => {
+    [selectA.value, selectB.value] = [selectB.value, selectA.value];
+    if (view === "onlyA") view = "onlyB";
+    else if (view === "onlyB") view = "onlyA";
+    render();
+  });
+  exportBtn?.addEventListener("click", () => {
+    if (!comparison) return;
+    const { roleA, roleB } = comparison;
+    const statusFor = (inA, inB) => inA && inB ? "In both" : inA ? `Only ${roleA}` : `Only ${roleB}`;
+    const lines = [["Capability", "What it lets you do", roleA, roleB, "Result"].map(csvValue).join(",")];
+    rowsForView().forEach(([cap, inA, inB]) => {
+      lines.push([cap, capabilityDescription.get(cap), inA ? "Yes" : "No", inB ? "Yes" : "No", statusFor(inA, inB)].map(csvValue).join(","));
+    });
+    const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    const slug = value => value.replace(/[^A-Za-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
+    link.download = `Splunk-Role-Comparison-${slug(roleA)}-vs-${slug(roleB)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(link.href);
+    exportBtn.textContent = "Exported";
+    setTimeout(() => { exportBtn.textContent = "Export comparison CSV"; }, 1400);
+  });
+}
+
 
 function healthSearchText(row) {
   return healthCheckTableColumns.map(column => row[column] || "").join(" ").toLowerCase();
@@ -36303,6 +36452,7 @@ function initPortsMatrixCellModal() {
 }
 
 renderRolesTable();
+initRoleComparison();
 renderSplunkPortsTable();
 renderNetworkFlowsTable();
 renderQuestionsTable();
