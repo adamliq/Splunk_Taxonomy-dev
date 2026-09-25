@@ -3523,7 +3523,28 @@
     .ports-cell-modal-grid { display:grid; grid-template-columns:auto 1fr; gap:6px 14px; font-size:13px; }
     .ports-cell-modal-grid dt { font-weight:700; color:#475569; white-space:nowrap; }
     .ports-cell-modal-grid dd { margin:0; color:#0f172a; }
-    .ports-cell-modal-footer { margin-top:16px; padding-top:14px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; }
+    .ports-cell-modal-footer { margin-top:16px; padding-top:14px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; flex-wrap:wrap; gap:8px; }
+    .ports-cell-modal-footer .secondary-button { padding:9px 14px; border-radius:10px; border:1px solid var(--border); background:#fff; cursor:pointer; font-size:13px; font-weight:700; color:#0f172a; }
+    .ports-cell-modal-footer .secondary-button:hover { background:#f8fafc; }
+    .ports-cell-modal-grid dd code { display:block; font-size:12px; background:#f1f5f9; padding:4px 7px; border-radius:6px; white-space:pre-wrap; }
+    .ports-cell-modal-override { margin:12px 0 0; padding:8px 11px; border-radius:9px; background:#fffbeb; border:1px solid #fcd34d; color:#92400e; font-size:12.5px; }
+    .ports-override-panel { margin:12px 0 4px; border:1px solid var(--border); border-radius:12px; background:#fff; }
+    .ports-override-panel > summary { cursor:pointer; padding:11px 14px; font-weight:800; font-size:13px; color:#0f172a; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .ports-override-status { font-weight:700; font-size:12px; color:#475569; }
+    .ports-override-status.active { color:#92400e; }
+    .ports-override-body { padding:0 14px 14px; }
+    .ports-override-body p { margin:0 0 10px; font-size:12.5px; color:#475569; line-height:1.5; }
+    .ports-override-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:10px; }
+    .ports-override-field { display:grid; gap:4px; }
+    .ports-override-field label { font-size:12px; font-weight:800; color:#0f172a; }
+    .ports-override-field input { padding:8px 10px; border-radius:9px; border:1px solid var(--border); font-size:13px; font-family:inherit; }
+    .ports-override-field input.is-custom { border-color:#f59e0b; background:#fffbeb; }
+    .ports-override-field input[aria-invalid="true"] { border-color:#dc2626; background:#fef2f2; }
+    .ports-override-field small { font-size:11px; color:#64748b; }
+    .ports-override-actions { margin-top:10px; }
+    .ports-override-actions button { padding:8px 13px; border-radius:9px; border:1px solid var(--border); background:#fff; cursor:pointer; font-size:12.5px; font-weight:700; }
+    #portsMatrixTable tbody td.ports-cell-overridden { box-shadow:inset 0 0 0 2px #f59e0b; }
+    .ports-flow-schema-table tr.ports-flow-overridden td:first-child { box-shadow:2px 0 0 var(--border), inset 3px 0 0 #f59e0b; }
     .ports-flow-schema-table tr.ports-flow-jump-highlight { animation: portsFlowJumpFlash 2s ease-out 1; }
     @keyframes portsFlowJumpFlash { 0%, 40% { background:#ede9fe; } 100% { background:transparent; } }
     @media (max-width:860px) {
@@ -15150,6 +15171,15 @@ E. Assumptions and unresolved inputs</pre>
       <button type="button" id="portsViewFlowSchemaBtn" class="ports-view-btn" aria-pressed="false">Flow schema table</button>
     </div>
 
+    <details class="ports-override-panel" id="portsOverridePanel">
+      <summary>Your environment's ports <span class="ports-override-status" id="portsOverrideStatus" aria-live="polite">Using Splunk defaults</span></summary>
+      <div class="ports-override-body">
+        <p>If your environment has moved a Splunk listener off its default port, enter the port you actually use. The matrix, flow schema table, cell details and every export will show your ports. Custom ports only apply to flows into customer-run Splunk components (Core Platform Roles). Splunk Cloud, SaaS and third-party endpoints keep their fixed ports. Saved in this browser.</p>
+        <div class="ports-override-grid" id="portsOverrideGrid"></div>
+        <div class="ports-override-actions"><button type="button" id="portsOverrideReset">Reset to Splunk defaults</button></div>
+      </div>
+    </details>
+
     <div id="portsMatrixGridView">
     <h3>Expanded Cross-Matrix</h3>
     <div class="ports-pattern-toolbar">
@@ -15171,6 +15201,7 @@ E. Assumptions and unresolved inputs</pre>
       <label class="ports-checkbox-label" for="portsMatrixHideEmpty"><input type="checkbox" id="portsMatrixHideEmpty" /> Hide fully-empty rows/columns</label>
       <label class="ports-checkbox-label" for="portsMatrixShowTLS"><input type="checkbox" id="portsMatrixShowTLS" /> Show TLS defaults</label>
       <button id="portsMatrixExportBtn" class="primary-button" type="button">Export visible CSV</button>
+      <button id="portsMatrixFirewallExportBtn" class="primary-button" type="button" title="Exports the selected logging pattern's or topology's flows as firewall rules; with nothing selected, exports every flow currently visible in the matrix">Export firewall rules</button>
     </div>
     <p class="ports-pattern-caption" id="portsMatrixPatternCaption" aria-live="polite"></p>
     <div class="patterns-stats" id="portsMatrixStats" aria-live="polite">
@@ -15276,7 +15307,9 @@ E. Assumptions and unresolved inputs</pre>
         </div>
         <div class="ports-cell-modal-flow" id="portsCellModalFlowLine"></div>
         <dl class="ports-cell-modal-grid" id="portsCellModalGrid"></dl>
+        <p class="ports-cell-modal-override" id="portsCellModalOverride" hidden></p>
         <div class="ports-cell-modal-footer">
+          <button type="button" class="secondary-button" id="portsCellModalNetRef">Find this port in Network reference &rarr;</button>
           <button type="button" class="primary-button" id="portsCellModalViewFull">View full record in Flow schema table &rarr;</button>
         </div>
       </div>
@@ -34803,6 +34836,85 @@ function flowIdsForEdgeList(edgeList) {
     .map(([src, dst]) => portsFlowIdByEdgeKey[`${src}|${dst}`])
     .filter(Boolean);
 }
+const portsFlowById = {};
+portsMatrixFlowSchema.forEach(rec => { portsFlowById[rec.id] = rec; });
+
+// Custom port overrides. Scoped to flows whose destination is a customer-run Splunk
+// component (the grid's "Core Platform Roles" group): Splunk Cloud's 9997/8089/8088
+// endpoints and third-party vendor ports are fixed and must not be rewritten.
+// Indexer replication is further scoped to the indexer->indexer flow, because 9887
+// also appears in the SHC replication cell as an unrelated example port.
+const PORT_OVERRIDE_DEFS = [
+  { key: "mgmt", label: "Management / REST API (splunkd)", defaultPort: "8089" },
+  { key: "s2s", label: "Forwarding receiver (S2S)", defaultPort: "9997" },
+  { key: "hec", label: "HTTP Event Collector", defaultPort: "8088" },
+  { key: "web", label: "Splunk Web", defaultPort: "8000" },
+  { key: "kvstore", label: "KV Store", defaultPort: "8191" },
+  { key: "idxRepl", label: "Indexer cluster replication", defaultPort: "9887", appliesTo: (src, dst) => src === "Indexer / IDX Peer" && dst === "Indexer / IDX Peer" }
+];
+const PORT_OVERRIDE_STORAGE_KEY = "portsMatrixPortOverrides";
+// Fields that describe Splunk's own defaults rather than this environment's ports.
+const PORT_OVERRIDE_UNTOUCHED_FIELDS = new Set(["id", "defaultPort", "enabledByDefault"]);
+const portOverrideListeners = [];
+
+function loadPortOverrides() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(PORT_OVERRIDE_STORAGE_KEY) || "{}");
+    const clean = {};
+    PORT_OVERRIDE_DEFS.forEach(def => {
+      const value = parsed && parsed[def.key];
+      if (typeof value === "string" && /^\d{1,5}$/.test(value) && Number(value) >= 1 && Number(value) <= 65535 && String(Number(value)) !== def.defaultPort) clean[def.key] = String(Number(value));
+    });
+    return clean;
+  } catch (e) { return {}; }
+}
+let portsPortOverrides = loadPortOverrides();
+function savePortOverrides() {
+  try { localStorage.setItem(PORT_OVERRIDE_STORAGE_KEY, JSON.stringify(portsPortOverrides)); } catch (e) { /* storage unavailable */ }
+}
+function notifyPortOverrideListeners() { portOverrideListeners.forEach(fn => fn()); }
+
+let portsCustomerManagedSet = null;
+function portsCustomerManagedComponents() {
+  if (!portsCustomerManagedSet) {
+    portsCustomerManagedSet = new Set(Array.from(document.querySelectorAll('#portsMatrixTable thead th[data-component-group="Core Platform Roles"]')).map(th => th.textContent.trim()));
+  }
+  return portsCustomerManagedSet;
+}
+function activePortOverridesForFlow(src, dst) {
+  if (!portsCustomerManagedComponents().has(dst)) return [];
+  return PORT_OVERRIDE_DEFS
+    .filter(def => {
+      const custom = portsPortOverrides[def.key];
+      return custom && custom !== def.defaultPort && (!def.appliesTo || def.appliesTo(src, dst));
+    })
+    .map(def => [def.defaultPort, portsPortOverrides[def.key]]);
+}
+// Single regex pass so swapped overrides (e.g. 8089->9997 and 9997->8089) can't chain.
+function applyPortOverridesToText(text, pairs) {
+  if (!text || !pairs.length) return text;
+  const map = new Map(pairs);
+  const re = new RegExp(`\\b(${pairs.map(([from]) => from).join("|")})\\b`, "g");
+  return text.replace(re, match => map.get(match));
+}
+function portsDisplayRecord(rec) {
+  const pairs = activePortOverridesForFlow(rec.srcComponent, rec.dstComponent);
+  if (!pairs.length) return rec;
+  const out = {};
+  Object.entries(rec).forEach(([key, value]) => {
+    out[key] = typeof value === "string" && !PORT_OVERRIDE_UNTOUCHED_FIELDS.has(key) ? applyPortOverridesToText(value, pairs) : value;
+  });
+  return out;
+}
+// Only the overrides this flow actually uses (an active HEC override is in scope for every
+// core-destination flow, but only matters where 8088 appears).
+function portOverrideSummary(rec) {
+  const text = Object.entries(rec).filter(([key]) => !PORT_OVERRIDE_UNTOUCHED_FIELDS.has(key)).map(([, value]) => value).join(" ");
+  return activePortOverridesForFlow(rec.srcComponent, rec.dstComponent)
+    .filter(([from]) => new RegExp(`\\b${from}\\b`).test(text))
+    .map(([from, to]) => `${from} → ${to}`)
+    .join(", ");
+}
 
 let portsMatrixHashHandler = null;
 function initPortsMatrixPatternHighlighter() {
@@ -34850,6 +34962,42 @@ function initPortsMatrixPatternHighlighter() {
     clone.querySelectorAll("br").forEach(br => br.replaceWith(" / "));
     return clone.textContent.replace(/\s+/g, " ").trim();
   }
+
+  // Original text nodes of every populated cell (badge text excluded), so custom ports can be
+  // applied and reverted without re-parsing the static cell HTML or disturbing the TLS badges.
+  const overridableCells = [];
+  bodyRows.forEach(tr => {
+    const src = tr.querySelector("th").textContent.trim();
+    tr.querySelectorAll("td").forEach((td, i) => {
+      if (!td.querySelector(".flow-badge")) return;
+      td.dataset.origText = cellText(td);
+      const nodes = [];
+      const walker = document.createTreeWalker(td, NodeFilter.SHOW_TEXT, {
+        acceptNode: node => node.parentElement.closest(".flow-badge, .tls-badge") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT
+      });
+      while (walker.nextNode()) nodes.push([walker.currentNode, walker.currentNode.nodeValue]);
+      overridableCells.push({ td, src, dst: headerCells[i + 1].textContent.trim(), nodes });
+    });
+  });
+  function applyGridPortOverrides() {
+    overridableCells.forEach(({ td, src, dst, nodes }) => {
+      const pairs = activePortOverridesForFlow(src, dst);
+      let changed = false;
+      nodes.forEach(([node, original]) => {
+        const next = applyPortOverridesToText(original, pairs);
+        if (next !== original) changed = true;
+        if (node.nodeValue !== next) node.nodeValue = next;
+      });
+      td.classList.toggle("ports-cell-overridden", changed);
+      if (changed) {
+        const used = pairs.filter(([from]) => new RegExp(`\\b${from}\\b`).test(td.dataset.origText));
+        td.title = `Custom port applied (${used.map(([from, to]) => `${from} → ${to}`).join(", ")})`;
+      } else {
+        td.removeAttribute("title");
+      }
+    });
+  }
+  portOverrideListeners.push(applyGridPortOverrides);
 
   function clearHighlight() {
     table.querySelectorAll(".ports-hl-header").forEach(el => el.classList.remove("ports-hl-header"));
@@ -35240,7 +35388,8 @@ function initPortsMatrixPatternHighlighter() {
     bodyRows.forEach(tr => {
       tr.querySelectorAll("td").forEach(cell => {
         if (badgedCells.has(cell)) return;
-        const text = cellText(cell);
+        // Original text: a custom management port still runs splunkd's HTTPS listener.
+        const text = cell.dataset.origText || cellText(cell);
         const rule = PORT_ON_RULES.find(r => r.pattern.test(text));
         if (!rule) return;
         addTLSBadge(cell, "on", rule.title);
@@ -35282,6 +35431,73 @@ function initPortsMatrixPatternHighlighter() {
     event.currentTarget.textContent = "Exported";
     setTimeout(() => { if (event.currentTarget) event.currentTarget.textContent = "Export visible CSV"; }, 1400);
   }
+
+  // Firewall change-request export. A selected pattern/topology exports exactly its own edges
+  // (the highlight view also shows unrelated flows between the same components, which a
+  // change request must not include); with nothing selected, every flow visible in the grid.
+  function firewallExportScope() {
+    if (select.value) {
+      const row = loggingPatternTableData.find(r => r["Pattern ID"] === select.value);
+      return {
+        slug: select.value,
+        context: `${select.value}${row ? " — " + row["Pattern"] : ""}`,
+        flowIds: flowIdsForEdgeList(portsMatrixPatternEdges[select.value] || [])
+      };
+    }
+    if (topologySelect && topologySelect.value) {
+      const id = topologySelect.value;
+      return {
+        slug: id.replace(/[^A-Za-z0-9-]+/g, "-"),
+        context: `${id} — ${portsMatrixTopologyLabels[id] || id}`,
+        flowIds: flowIdsForEdgeList(portsMatrixTopologyEdges[id] || [])
+      };
+    }
+    const flowIds = [];
+    bodyRows.forEach(tr => {
+      if (tr.classList.contains("ports-hidden")) return;
+      const src = tr.querySelector("th").textContent.trim();
+      tr.querySelectorAll("td").forEach((td, i) => {
+        if (!td.querySelector(".flow-badge") || headerCells[i + 1].classList.contains("ports-hidden")) return;
+        const id = portsFlowIdByEdgeKey[`${src}|${headerCells[i + 1].textContent.trim()}`];
+        if (id) flowIds.push(id);
+      });
+    });
+    return { slug: "Visible", context: "Flows visible in the Ports Matrix", flowIds };
+  }
+
+  function exportFirewallRules(event) {
+    const button = event.currentTarget;
+    const scope = firewallExportScope();
+    const records = [...new Set(scope.flowIds)].map(id => portsFlowById[id]).filter(Boolean);
+    if (!records.length) {
+      button.textContent = "No flows to export";
+      setTimeout(() => { button.textContent = "Export firewall rules"; }, 1600);
+      return;
+    }
+    const header = ["Rule #", "Flow ID", "Change context", "Source", "Source port", "Destination", "Destination port", "Protocol", "Application protocol", "Direction (initiator → listener)", "Return traffic", "TLS / encryption", "Purpose", "Rule text", "Custom port applied", "Taxonomy code"];
+    const lines = [header.map(csvValue).join(",")];
+    records.forEach((rec, index) => {
+      const shown = portsDisplayRecord(rec);
+      const overrides = portOverrideSummary(rec);
+      lines.push([
+        index + 1, rec.id, scope.context, shown.srcComponent, shown.srcPort, shown.dstComponent, shown.dstPort,
+        shown.transport, shown.appProtocol, shown.fwDirection, shown.retRuleRequired, shown.encryption,
+        shown.purpose, shown.firewallRule, overrides ? `Yes (${overrides})` : "No", "TAX-03.02.06 Firewall Rule"
+      ].map(csvValue).join(","));
+    });
+    const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Splunk-Firewall-Rules-${scope.slug}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(link.href);
+    button.textContent = `Exported ${records.length} rule${records.length === 1 ? "" : "s"}`;
+    setTimeout(() => { button.textContent = "Export firewall rules"; }, 1600);
+  }
+  const firewallExportBtn = document.getElementById("portsMatrixFirewallExportBtn");
+  if (firewallExportBtn) firewallExportBtn.addEventListener("click", exportFirewallRules);
 
   select.addEventListener("change", () => { applyHighlight(select.value); updatePortsMatrixHash(); });
   if (topologySelect) {
@@ -35816,13 +36032,13 @@ function initPortsFlowSchemaView() {
   });
 
   const tbody = table.querySelector("tbody");
-  portsMatrixFlowSchema.forEach(rec => {
-    const tr = document.createElement("tr");
-    tr.dataset.flowId = rec.id;
-    tr.dataset.searchText = PORTS_FLOW_SCHEMA_COLUMNS.map(([key]) => rec[key] || "").join("   ").toLowerCase();
-    PORTS_FLOW_SCHEMA_COLUMNS.forEach(([key]) => {
+  function fillFlowSchemaRow(tr, rec) {
+    const shown = portsDisplayRecord(rec);
+    tr.dataset.searchText = PORTS_FLOW_SCHEMA_COLUMNS.map(([key]) => shown[key] || "").join("   ").toLowerCase();
+    tr.classList.toggle("ports-flow-overridden", shown !== rec && Boolean(portOverrideSummary(rec)));
+    tr.replaceChildren(...PORTS_FLOW_SCHEMA_COLUMNS.map(([key]) => {
       const td = document.createElement("td");
-      const val = rec[key] || "";
+      const val = shown[key] || "";
       if (PORTS_FLOW_SCHEMA_STANZA_FIELDS.has(key) && val && val !== "N/A") {
         const code = document.createElement("code");
         code.textContent = val;
@@ -35830,12 +36046,18 @@ function initPortsFlowSchemaView() {
       } else {
         td.textContent = val;
       }
-      tr.appendChild(td);
-    });
+      return td;
+    }));
+  }
+  const schemaRows = portsMatrixFlowSchema.map(rec => {
+    const tr = document.createElement("tr");
+    tr.dataset.flowId = rec.id;
+    fillFlowSchemaRow(tr, rec);
     tbody.appendChild(tr);
+    return { tr, rec };
   });
 
-  const rows = Array.from(tbody.querySelectorAll("tr"));
+  const rows = schemaRows.map(({ tr }) => tr);
 
   let activePatternFlowIds = null;
 
@@ -35853,6 +36075,10 @@ function initPortsFlowSchemaView() {
   }
   applyFilter();
   if (searchInput) searchInput.addEventListener("input", applyFilter);
+  portOverrideListeners.push(() => {
+    schemaRows.forEach(({ tr, rec }) => fillFlowSchemaRow(tr, rec));
+    applyFilter();
+  });
 
   // Logging-pattern highlight: reuses the grid's own pattern-to-edge map
   // (portsMatrixPatternEdges) and edge-to-Flow-ID lookup (flowIdsForEdgeList)
@@ -35930,9 +36156,23 @@ function initPortsFlowSchemaView() {
 const PORTS_CELL_MODAL_BRIEF_FIELDS = [
   ["dstPort", "Port"], ["transport", "Transport"], ["appProtocol", "Application Protocol"],
   ["service", "Service / Function"], ["purpose", "Purpose"],
-  ["tlsCapability", "TLS Capability"], ["requirement", "Requirement"],
+  ["tlsCapability", "TLS Capability"], ["encryption", "TLS Default"], ["requirement", "Requirement"],
+  ["srcConfig", "Source Config File"], ["srcStanza", "Source Stanza"],
+  ["dstConfig", "Destination Config File"], ["dstStanza", "Destination Stanza"],
   ["firewallRule", "Firewall Rule"]
 ];
+const PORTS_CELL_MODAL_CODE_FIELDS = new Set(["srcConfig", "dstConfig", "srcStanza", "dstStanza"]);
+
+// The Network reference tables list Splunk's default ports under their own component names
+// (which don't match this matrix's names one-to-one), so the link filters by the flow's
+// default destination port rather than claiming an exact row match.
+function openNetworkReferenceForPort(port) {
+  setActivePage("refNetworkReference");
+  setActiveNetRefView("ports");
+  splunkPortsTableSearch.value = port;
+  renderSplunkPortsTable();
+  requestAnimationFrame(() => document.getElementById("netRefPortsPanel")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+}
 
 function initPortsMatrixCellModal() {
   const table = document.getElementById("portsMatrixTable");
@@ -35942,6 +36182,8 @@ function initPortsMatrixCellModal() {
   const flowLineEl = document.getElementById("portsCellModalFlowLine");
   const gridEl = document.getElementById("portsCellModalGrid");
   const viewFullBtn = document.getElementById("portsCellModalViewFull");
+  const netRefBtn = document.getElementById("portsCellModalNetRef");
+  const overrideNoteEl = document.getElementById("portsCellModalOverride");
   if (!table || !backdrop || typeof portsMatrixFlowSchema === "undefined") return;
 
   const flowByKey = {};
@@ -35957,17 +36199,37 @@ function initPortsMatrixCellModal() {
   function openModal(rec, triggerEl) {
     activeRecord = rec;
     lastFocused = triggerEl || document.activeElement;
+    const shown = portsDisplayRecord(rec);
     idEl.textContent = rec.id;
-    flowLineEl.innerHTML = `${rec.srcComponent}<span class="arrow">&rarr;</span>${rec.dstComponent}`;
+    flowLineEl.innerHTML = `${escapeHtml(rec.srcComponent)}<span class="arrow">&rarr;</span>${escapeHtml(rec.dstComponent)}`;
     gridEl.innerHTML = "";
     PORTS_CELL_MODAL_BRIEF_FIELDS.forEach(([key, label]) => {
+      const value = shown[key] || "";
+      if (!value) return;
       const dt = document.createElement("dt");
       dt.textContent = label;
       const dd = document.createElement("dd");
-      dd.textContent = rec[key] || "";
+      if (PORTS_CELL_MODAL_CODE_FIELDS.has(key) && value !== "N/A" && !/^Not documented/.test(value)) {
+        const code = document.createElement("code");
+        code.textContent = value;
+        dd.appendChild(code);
+      } else {
+        dd.textContent = value;
+      }
       gridEl.appendChild(dt);
       gridEl.appendChild(dd);
     });
+    const overrides = portOverrideSummary(rec);
+    if (overrideNoteEl) {
+      overrideNoteEl.hidden = !overrides;
+      overrideNoteEl.textContent = overrides ? `Showing your environment's ports (${overrides}). Splunk's default stays in the Flow schema table's Default Destination Port column.` : "";
+    }
+    const defaultPortMatch = (rec.dstPort || "").match(/\d+/);
+    if (netRefBtn) {
+      netRefBtn.hidden = !defaultPortMatch;
+      netRefBtn.dataset.port = defaultPortMatch ? defaultPortMatch[0] : "";
+      netRefBtn.textContent = defaultPortMatch ? `Find port ${defaultPortMatch[0]} in Network reference →` : "";
+    }
     backdrop.hidden = false;
     closeBtn.focus();
   }
@@ -35998,6 +36260,16 @@ function initPortsMatrixCellModal() {
   closeBtn.addEventListener("click", closeModal);
   backdrop.addEventListener("click", (event) => { if (event.target === backdrop) closeModal(); });
   document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !backdrop.hidden) closeModal(); });
+
+  if (netRefBtn) {
+    netRefBtn.addEventListener("click", () => {
+      const port = netRefBtn.dataset.port;
+      if (!port) return;
+      backdrop.hidden = true;
+      activeRecord = null;
+      openNetworkReferenceForPort(port);
+    });
+  }
 
   if (viewFullBtn) {
     viewFullBtn.addEventListener("click", () => {
@@ -36031,6 +36303,67 @@ renderQuestionsTable();
 initPortsMatrixPatternHighlighter();
 initPortsFlowSchemaView();
 initPortsMatrixCellModal();
+initPortsOverridePanel();
+
+function initPortsOverridePanel() {
+  const grid = document.getElementById("portsOverrideGrid");
+  const status = document.getElementById("portsOverrideStatus");
+  const resetBtn = document.getElementById("portsOverrideReset");
+  if (!grid) return;
+
+  function updateStatus() {
+    const active = PORT_OVERRIDE_DEFS.filter(def => portsPortOverrides[def.key] && portsPortOverrides[def.key] !== def.defaultPort);
+    if (status) {
+      status.textContent = active.length
+        ? `${active.length} custom port${active.length === 1 ? "" : "s"} active: ${active.map(def => `${def.defaultPort} → ${portsPortOverrides[def.key]}`).join(", ")}`
+        : "Using Splunk defaults";
+      status.classList.toggle("active", active.length > 0);
+    }
+  }
+
+  grid.innerHTML = PORT_OVERRIDE_DEFS.map(def => `
+    <div class="ports-override-field">
+      <label for="portsOverride-${def.key}">${escapeHtml(def.label)}</label>
+      <input id="portsOverride-${def.key}" data-override-key="${def.key}" type="number" inputmode="numeric" min="1" max="65535" step="1" placeholder="${def.defaultPort}" value="${escapeHtml(portsPortOverrides[def.key] || "")}" />
+      <small>Splunk default: ${def.defaultPort}</small>
+    </div>`).join("");
+
+  const inputs = Array.from(grid.querySelectorAll("input[data-override-key]"));
+  function syncInputState(input) {
+    const def = PORT_OVERRIDE_DEFS.find(d => d.key === input.dataset.overrideKey);
+    const raw = input.value.trim();
+    const valid = raw === "" || (/^\d+$/.test(raw) && Number(raw) >= 1 && Number(raw) <= 65535);
+    input.setAttribute("aria-invalid", valid ? "false" : "true");
+    input.classList.toggle("is-custom", valid && raw !== "" && String(Number(raw)) !== def.defaultPort);
+    return { def, raw, valid };
+  }
+  inputs.forEach(input => {
+    syncInputState(input);
+    input.addEventListener("input", () => {
+      const { def, raw, valid } = syncInputState(input);
+      if (!valid) return;
+      const port = raw === "" ? "" : String(Number(raw));
+      if (!port || port === def.defaultPort) delete portsPortOverrides[def.key];
+      else portsPortOverrides[def.key] = port;
+      savePortOverrides();
+      updateStatus();
+      notifyPortOverrideListeners();
+    });
+  });
+
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      portsPortOverrides = {};
+      savePortOverrides();
+      inputs.forEach(input => { input.value = ""; syncInputState(input); });
+      updateStatus();
+      notifyPortOverrideListeners();
+    });
+  }
+
+  updateStatus();
+  if (Object.keys(portsPortOverrides).length) notifyPortOverrideListeners();
+}
 
 Object.entries(pageTabs).forEach(([name, tab]) => {
   if (tab) tab.addEventListener("click", () => setActivePage(name));
