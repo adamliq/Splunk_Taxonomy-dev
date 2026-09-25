@@ -1339,6 +1339,9 @@
     .eccs-matrix.role-grid td.role-grid-count { white-space: nowrap; color: #475569; font-weight: 700; }
     .eccs-matrix.role-grid td.role-grid-cell { text-align: center; }
     .eccs-matrix.role-grid td.role-grid-yes { color: #15803d; font-size: 14px; font-weight: 900; }
+    .eccs-matrix.role-grid td.role-grid-inherited { color: #86b89a; font-weight: 400; }
+    .role-grid-legend-tick { margin-right: 5px; color: #15803d; font-weight: 900; }
+    .role-grid-legend-tick.role-grid-legend-inherited { color: #86b89a; font-weight: 400; }
     .eccs-matrix.role-grid thead th.role-grid-plat-0 { background: #dbeafe; }
     .eccs-matrix.role-grid thead th.role-grid-plat-1 { background: #ede9fe; }
     .eccs-matrix.role-grid thead th.role-grid-plat-2 { background: #dcfce7; }
@@ -1357,7 +1360,7 @@
       .role-grid-toolbar select { flex: 1 1 auto; min-width: 0; }
     }
     .patterns-toolbar.roles-toolbar {
-      grid-template-columns: minmax(220px, 1fr) minmax(170px, 200px) minmax(170px, 200px) minmax(190px, 230px) minmax(140px, 170px) auto;
+      grid-template-columns: minmax(150px, 1fr) minmax(130px, 180px) minmax(150px, 190px) minmax(178px, 210px) minmax(200px, 230px) minmax(100px, 150px) auto;
     }
     .patterns-stats {
       display: flex;
@@ -9582,6 +9585,7 @@ INGEST PROCESSOR
         <p>Every Splunk role and the individual capabilities assigned to it, derived from the uploaded role/capability matrix. Click a role below, or use search and the filters, to see exactly which capabilities a role carries, what each capability lets you do, whether it is flagged as a privileged capability, and where the mapping came from.</p>
         <p><strong>Note:</strong> the source file also lists three roles with no capabilities assigned in this matrix -- <code>mc_analyst</code>, <code>mc_analyst_reader</code>, <code>mc_soar_automation</code> -- they carry nothing to list in the table below and so do not appear in the Role filter.</p>
         <p><strong>Platform:</strong> derived from each role's naming convention and the source file's Mission Control Roles tab -- <code>Sc_admin</code> is Splunk Cloud-specific; <code>User</code>/<code>Power</code>/<code>Admin</code> are the base roles (shown as Splunk On-premises, since Sc_admin is the file's distinct Splunk Cloud counterpart to Admin); <code>ess_*</code> and the non-SOAR <code>mc_*</code> Mission Control/incident-review roles are Splunk ES; the <code>mc_soar_*</code> roles are Splunk SOAR.</p>
+        <p><strong>Granted how:</strong> whether a role adds a capability itself or inherits it through <code>importRoles</code>. This follows Splunk Enterprise's shipped <code>authorize.conf</code>, where <code>power</code> imports <code>user</code> and <code>admin</code> imports <code>power</code> and <code>user</code>, so it's recorded for User, Power and Admin only. No inheritance data is held for Sc_admin, ES, SOAR or Mission Control roles, so their capabilities show "Not recorded".</p>
       </div>
     </div>
 
@@ -9613,6 +9617,12 @@ INGEST PROCESSOR
       <select id="rolesCapabilityFilter" aria-label="Filter by capability">
         <option value="">All capabilities</option>
       </select>
+      <select id="rolesInheritanceFilter" aria-label="Filter by whether the capability is inherited or added">
+        <option value="">Added or inherited</option>
+        <option value="added">Added by the role</option>
+        <option value="inherited">Inherited</option>
+        <option value="unrecorded">Inheritance not recorded</option>
+      </select>
       <select id="rolesPrivFilter" aria-label="Filter by privileged capability">
         <option value="">All</option>
       </select>
@@ -9630,7 +9640,7 @@ INGEST PROCESSOR
     <div id="rolesTableView">
     <div class="eccs-table-wrap" role="region" aria-label="Scrollable roles and capabilities table" tabindex="0">
       <table class="eccs-matrix">
-        <thead><tr><th scope="col">Role</th><th scope="col">Platform</th><th scope="col">Capability</th><th scope="col">What it lets you do</th><th scope="col">Priv</th><th scope="col">Source / Notes</th></tr></thead>
+        <thead><tr><th scope="col">Role</th><th scope="col">Platform</th><th scope="col">Capability</th><th scope="col">Granted how</th><th scope="col">What it lets you do</th><th scope="col">Priv</th><th scope="col">Source / Notes</th></tr></thead>
         <tbody id="rolesTableBody"></tbody>
       </table>
     </div>
@@ -21994,7 +22004,7 @@ const networkFlowsTableData = [
   {"Section":"Supporting infrastructure","Source":"Splunk","Destination":"Git repository","Protocol":"HTTPS/SSH","Port":"443/22","Purpose":"CI/CD, app/config deployment where used."}
 ];
 
-const rolesTableColumns = ["Role", "Platform", "Capability", "What it lets you do", "Priv", "Source / Notes"];
+const rolesTableColumns = ["Role", "Platform", "Capability", "Granted how", "What it lets you do", "Priv", "Source / Notes"];
 const rolesColumnOrder = ["User", "Power", "Admin", "ess_user", "ess_analyst", "ess_admin", "Sc_admin", "mc_admin", "mc_analyst_all_edit", "mc_analyst_edit_<incident-type>", "mc_analyst_read_<incident-type>", "mc_observer", "mc_soar_asset_owner", "mc_soar_automation_engineer", "mc_soar_incident_commander", "mc_soar_observer", "mc_soar_repo_edit_<repo_name>", "mc_soar_repo_execute_<repo_name>", "mc_soar_repo_view_<repo_name>", "mc_soar_system_edit", "mc_soar_proxy", "mc_analyst", "mc_analyst_reader", "mc_soar_automation"];
 const rolesTableData = [
   {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "accelerate_datamodel", "What it lets you do": "Enable or disable acceleration for data models. Set acceleration to true to enable automatic acceleration. Additional storage is required depending on event volume, fields, and distinct field values.", "Priv": "Y", "Source / Notes": "Supplied Splunk Cloud capability table"},
@@ -22578,6 +22588,34 @@ const rolesTableData = [
   {"Role": "mc_soar_repo_edit_<repo_name>", "Platform": "Splunk SOAR", "Capability": "mc_delete_soar_assets", "What it lets you do": "Allows deletion of Splunk SOAR assets through Splunk Mission Control.", "Priv": "Y", "Source / Notes": "Added from supplied Splunk Mission Control role mapping"},
   {"Role": "mc_soar_proxy", "Platform": "Splunk SOAR", "Capability": "mc_delete_soar_assets", "What it lets you do": "Allows deletion of Splunk SOAR assets through Splunk Mission Control.", "Priv": "Y", "Source / Notes": "Added from supplied Splunk Mission Control role mapping"}
 ];
+
+// Inherited vs added. Only the base-role chain from Splunk Enterprise's shipped authorize.conf
+// is recorded: [role_power] importRoles = user and [role_admin] importRoles = power;user. The
+// matrix agrees with it (every User capability is also listed for Power, and every Power
+// capability for Admin). No inheritance source exists here for Sc_admin, ES, SOAR or Mission
+// Control roles, so their assignments read "Not recorded" rather than a guessed chain.
+// Imports are listed base-first so a capability is credited to the role that first grants it.
+const ROLE_IMPORTS = { User: [], Power: ["User"], Admin: ["User", "Power"] };
+const ROLE_GRANT_ADDED = "Added by this role";
+const ROLE_GRANT_UNRECORDED = "Not recorded";
+(function annotateRoleInheritance() {
+  const capabilitiesByRole = new Map();
+  rolesTableData.forEach(row => {
+    if (!capabilitiesByRole.has(row["Role"])) capabilitiesByRole.set(row["Role"], new Set());
+    capabilitiesByRole.get(row["Role"]).add(row["Capability"]);
+  });
+  rolesTableData.forEach(row => {
+    const imports = ROLE_IMPORTS[row["Role"]];
+    if (!imports) { row["Granted how"] = ROLE_GRANT_UNRECORDED; return; }
+    const source = imports.find(role => capabilitiesByRole.get(role)?.has(row["Capability"]));
+    row["Granted how"] = source ? `Inherited from ${source}` : ROLE_GRANT_ADDED;
+  });
+})();
+function roleGrantCategory(grantedHow) {
+  if (grantedHow === ROLE_GRANT_ADDED) return "added";
+  if (grantedHow === ROLE_GRANT_UNRECORDED) return "unrecorded";
+  return "inherited";
+}
 
 
 
@@ -24069,6 +24107,7 @@ const rolesTableBody = document.getElementById("rolesTableBody");
 const rolesTableSearch = document.getElementById("rolesTableSearch");
 const rolesRoleFilter = document.getElementById("rolesRoleFilter");
 const rolesPrivFilter = document.getElementById("rolesPrivFilter");
+const rolesInheritanceFilter = document.getElementById("rolesInheritanceFilter");
 const rolesPlatformFilter = document.getElementById("rolesPlatformFilter");
 const rolesCapabilityFilter = document.getElementById("rolesCapabilityFilter");
 let visibleLoggingPatternRows = [...loggingPatternTableData];
@@ -35691,12 +35730,14 @@ function filteredRolesRows() {
   const platform = rolesPlatformFilter.value;
   const capability = rolesCapabilityFilter.value;
   const priv = rolesPrivFilter.value;
+  const inheritance = rolesInheritanceFilter.value;
   return rolesTableData.filter(row => {
     if (query && !rolesSearchText(row).includes(query)) return false;
     if (role && row["Role"] !== role) return false;
     if (platform && row["Platform"] !== platform) return false;
     if (capability && row["Capability"] !== capability) return false;
     if (priv && row["Priv"] !== priv) return false;
+    if (inheritance && roleGrantCategory(row["Granted how"]) !== inheritance) return false;
     return true;
   });
 }
@@ -35745,12 +35786,14 @@ function rolesCapabilityIndex() {
   if (rolesCapabilityIndexCache) return rolesCapabilityIndexCache;
   const roles = new Map();
   const capabilityDescription = new Map();
+  const grantedHow = new Map();
   rolesTableData.forEach(row => {
     if (!roles.has(row["Role"])) roles.set(row["Role"], { platform: row["Platform"], capabilities: new Set() });
     roles.get(row["Role"]).capabilities.add(row["Capability"]);
     if (!capabilityDescription.has(row["Capability"])) capabilityDescription.set(row["Capability"], row["What it lets you do"] || "");
+    grantedHow.set(`${row["Role"]}|${row["Capability"]}`, row["Granted how"]);
   });
-  rolesCapabilityIndexCache = { roles, capabilityDescription };
+  rolesCapabilityIndexCache = { roles, capabilityDescription, grantedHow };
   return rolesCapabilityIndexCache;
 }
 
@@ -35902,12 +35945,14 @@ function renderRolesGrid() {
   const table = document.getElementById("roleGridTable");
   const legend = document.getElementById("roleGridLegend");
   const stat = document.getElementById("roleGridStat");
-  const { capabilityDescription } = rolesCapabilityIndex();
+  const { capabilityDescription, grantedHow } = rolesCapabilityIndex();
   const columns = roleGridColumns();
   const rows = roleGridRows(columns);
   const highlightRole = rolesRoleFilter.value;
   const shownPlatforms = [...new Set(columns.map(column => column.platform))];
-  legend.innerHTML = shownPlatforms.map(platform => `<span><i class="role-grid-plat-${ROLE_GRID_PLATFORM_ORDER.indexOf(platform)}"></i>${escapeHtml(platform)}</span>`).join("");
+  const showsInheritance = columns.some(column => ROLE_IMPORTS[column.name]?.length);
+  legend.innerHTML = shownPlatforms.map(platform => `<span><i class="role-grid-plat-${ROLE_GRID_PLATFORM_ORDER.indexOf(platform)}"></i>${escapeHtml(platform)}</span>`).join("")
+    + (showsInheritance ? `<span><b class="role-grid-legend-tick">&#10003;</b>Added by the role</span><span><b class="role-grid-legend-tick role-grid-legend-inherited">&#10003;</b>Inherited (recorded for User, Power and Admin)</span>` : "");
   stat.textContent = `${rows.length} capabilit${rows.length === 1 ? "y" : "ies"} × ${columns.length} role${columns.length === 1 ? "" : "s"}`;
   const hl = name => name === highlightRole ? " role-grid-hl" : "";
   table.querySelector("thead").innerHTML = `<tr><th scope="col">Capability</th><th scope="col" class="role-grid-count">Roles</th>${columns.map(column =>
@@ -35915,9 +35960,13 @@ function renderRolesGrid() {
   table.querySelector("tbody").innerHTML = rows.length
     ? rows.map(({ capability, holders }) => {
         const count = holders.length === 1 ? `1 · ${escapeHtml(holders[0].name)}` : holders.length === columns.length && columns.length > 1 ? `All ${holders.length}` : String(holders.length);
-        const cells = columns.map(column => column.capabilities.has(capability)
-          ? `<td class="role-grid-cell role-grid-yes${hl(column.name)}" title="${escapeHtml(column.name)}: ${escapeHtml(capability)}">&#10003;</td>`
-          : `<td class="role-grid-cell${hl(column.name)}"></td>`).join("");
+        const cells = columns.map(column => {
+          if (!column.capabilities.has(capability)) return `<td class="role-grid-cell${hl(column.name)}"></td>`;
+          const how = grantedHow.get(`${column.name}|${capability}`);
+          const inherited = roleGrantCategory(how) === "inherited";
+          const note = how === ROLE_GRANT_UNRECORDED ? "" : ` (${how.toLowerCase()})`;
+          return `<td class="role-grid-cell role-grid-yes${inherited ? " role-grid-inherited" : ""}${hl(column.name)}" title="${escapeHtml(column.name)}: ${escapeHtml(capability)}${escapeHtml(note)}">&#10003;</td>`;
+        }).join("");
         return `<tr><td title="${escapeHtml(capabilityDescription.get(capability))}">${escapeHtml(capability)}</td><td class="role-grid-count">${count}</td>${cells}</tr>`;
       }).join("")
     : `<tr><td class="patterns-empty" colspan="${columns.length + 2}">No capabilities match the current filters.</td></tr>`;
@@ -35925,10 +35974,14 @@ function renderRolesGrid() {
 function exportRolesGrid(event) {
   const columns = roleGridColumns();
   const rows = roleGridRows(columns);
-  const { capabilityDescription } = rolesCapabilityIndex();
+  const { capabilityDescription, grantedHow } = rolesCapabilityIndex();
   const lines = [["Capability", "What it lets you do", "Roles holding it", ...columns.map(column => column.name)].map(csvValue).join(",")];
+  const cellValue = (role, capability) => {
+    const how = grantedHow.get(`${role}|${capability}`);
+    return roleGrantCategory(how) === "inherited" ? `Y (${how.toLowerCase()})` : "Y";
+  };
   rows.forEach(({ capability, holders }) => {
-    lines.push([capability, capabilityDescription.get(capability), holders.length, ...columns.map(column => column.capabilities.has(capability) ? "Y" : "")].map(csvValue).join(","));
+    lines.push([capability, capabilityDescription.get(capability), holders.length, ...columns.map(column => column.capabilities.has(capability) ? cellValue(column.name, capability) : "")].map(csvValue).join(","));
   });
   const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
   const link = document.createElement("a");
@@ -42296,12 +42349,14 @@ rolesRoleFilter.addEventListener("change", renderRolesTable);
 rolesPlatformFilter.addEventListener("change", renderRolesTable);
 rolesCapabilityFilter.addEventListener("change", renderRolesTable);
 rolesPrivFilter.addEventListener("change", renderRolesTable);
+rolesInheritanceFilter.addEventListener("change", renderRolesTable);
 document.getElementById("resetRolesTable").addEventListener("click", () => {
   rolesTableSearch.value = "";
   rolesRoleFilter.value = "";
   rolesPlatformFilter.value = "";
   rolesCapabilityFilter.value = "";
   rolesPrivFilter.value = "";
+  rolesInheritanceFilter.value = "";
   renderRolesTable();
 });
 document.getElementById("exportRolesTable").addEventListener("click", exportVisibleRoles);
@@ -46991,7 +47046,7 @@ const GLOBAL_SEARCH_DOMAINS = [
     title: r => `${r["Role"]} — ${r["Capability"]}`, subtitle: r => r["Platform"], snippet: r => r["What it lets you do"] || "",
     go: r => {
       setActivePage("refRoles");
-      gsClearFilters(["rolesRoleFilter", "rolesPlatformFilter", "rolesCapabilityFilter", "rolesPrivFilter"]);
+      gsClearFilters(["rolesRoleFilter", "rolesPlatformFilter", "rolesCapabilityFilter", "rolesInheritanceFilter", "rolesPrivFilter"]);
       gsSetSearchAndFire(rolesTableSearch, r["Capability"]);
     }
   },
