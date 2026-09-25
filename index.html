@@ -3411,9 +3411,13 @@
     .pattern-matrix-link { margin-left:6px; padding:0; border:0; background:transparent; color:#7030a0; font-size:11px; font-weight:700; text-decoration:underline; text-underline-offset:2px; cursor:pointer; white-space:nowrap; }
     .pattern-matrix-link:hover { color:#5b2683; }
     .ports-view-switch { display:flex; gap:8px; margin:14px 0 4px; }
+    #portsMatrixPage .ports-view-switch { flex-wrap:wrap; align-items:center; }
     .ports-view-btn { padding:9px 16px; border-radius:10px; border:1px solid var(--border); background:#fff; cursor:pointer; font-size:13px; font-weight:700; color:#475569; }
     .ports-view-btn:hover { background:#f8fafc; }
     .ports-view-btn.ports-view-btn-active { background:#7030a0; color:#fff; border-color:#7030a0; }
+    .ports-copy-link-btn { margin-left:auto; }
+    .ports-copy-link-status { flex-basis:100%; text-align:right; font-size:12px; color:#475569; word-break:break-all; }
+    .ports-copy-link-status:empty { display:none; }
     .conf-tree-intro { color:var(--muted); font-size:13px; line-height:1.6; margin:10px 0 14px; max-width:80ch; }
     .conf-tree-root-readout { margin-left:auto; font-size:12.5px; color:var(--muted); font-weight:700; }
     .conf-tree-root-readout code { font:700 12.5px var(--mono); color:var(--primary); background:var(--primary-light); padding:3px 7px; border-radius:6px; }
@@ -15169,6 +15173,8 @@ E. Assumptions and unresolved inputs</pre>
     <div class="ports-view-switch" role="group" aria-label="Choose how to view the ports matrix">
       <button type="button" id="portsViewGridBtn" class="ports-view-btn ports-view-btn-active" aria-pressed="true">Matrix grid</button>
       <button type="button" id="portsViewFlowSchemaBtn" class="ports-view-btn" aria-pressed="false">Flow schema table</button>
+      <button type="button" id="portsMatrixCopyLink" class="ports-view-btn ports-copy-link-btn" title="Copies a link that reopens this page with the current view, filters and toggles">Copy link to this view</button>
+      <span class="ports-copy-link-status" id="portsMatrixCopyLinkStatus" role="status" aria-live="polite"></span>
     </div>
 
     <details class="ports-override-panel" id="portsOverridePanel">
@@ -25561,6 +25567,7 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
                     ? "#metrics"
                     : "#taxonomy";
     history.replaceState(null, "", hash);
+    if (selected === "portsMatrix") updatePortsMatrixHash();
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
   updateBackToTopVisibility();
@@ -34863,6 +34870,54 @@ function portOverrideSummary(rec) {
 }
 
 let portsMatrixHashHandler = null;
+
+// Shareable URL state. Every control on the page (both views) is encoded, so a copied link
+// reproduces exactly what the sender saw. Pattern, topology, group and search are mutually
+// exclusive in the grid UI, so only the one that's active is written, in that precedence.
+let portsMatrixActiveGroup = null;
+let portsMatrixRestoringHash = false;
+const portsMatrixHashRestorers = [];
+function portsMatrixHashFromControls() {
+  const get = id => document.getElementById(id);
+  const params = new URLSearchParams();
+  const pattern = get("portsMatrixPatternSelect")?.value;
+  const topology = get("portsMatrixTopologySelect")?.value;
+  const search = get("portsMatrixComponentSearch")?.value.trim();
+  if (pattern) params.set("pattern", pattern);
+  else if (topology) params.set("topology", topology);
+  else if (portsMatrixActiveGroup) params.set("group", portsMatrixActiveGroup);
+  else if (search) params.set("search", search);
+  if (get("portsMatrixHideEmpty")?.checked) params.set("hideEmpty", "1");
+  if (get("portsMatrixShowTLS")?.checked) params.set("tls", "1");
+  if (get("portsMatrixFlowSchemaView") && !get("portsMatrixFlowSchemaView").hidden) params.set("view", "flows");
+  const flowPattern = get("portsFlowSchemaPatternSelect")?.value;
+  const flowSearch = get("portsFlowSchemaSearch")?.value.trim();
+  if (flowPattern) params.set("flowPattern", flowPattern);
+  if (flowSearch) params.set("flowSearch", flowSearch);
+  const query = params.toString();
+  return query ? `#ports-matrix?${query}` : "#ports-matrix";
+}
+// Only ever rewrites a ports-matrix URL, so it can't clobber another page's hash.
+function updatePortsMatrixHash() {
+  if (portsMatrixRestoringHash || !history.replaceState || !/^#ports-matrix/.test(location.hash)) return;
+  const next = portsMatrixHashFromControls();
+  if (location.hash !== next) history.replaceState(null, "", next);
+}
+function parsePortsMatrixHash() {
+  const hash = location.hash;
+  const qIdx = hash.indexOf("?");
+  return new URLSearchParams(/^#ports-matrix/.test(hash) && qIdx !== -1 ? hash.slice(qIdx + 1) : "");
+}
+// Each view resets its own controls to the URL's state (not merely layering the URL on top
+// of whatever was showing), then the URL is rewritten once to drop anything invalid.
+function applyPortsMatrixHash() {
+  const params = parsePortsMatrixHash();
+  portsMatrixRestoringHash = true;
+  try { portsMatrixHashRestorers.forEach(restore => restore(params)); }
+  finally { portsMatrixRestoringHash = false; }
+  updatePortsMatrixHash();
+}
+
 function initPortsMatrixPatternHighlighter() {
   const select = document.getElementById("portsMatrixPatternSelect");
   const clearBtn = document.getElementById("portsMatrixPatternClear");
@@ -35049,6 +35104,7 @@ function initPortsMatrixPatternHighlighter() {
   }
 
   function applySearchOrEmptyFilter() {
+    portsMatrixActiveGroup = null;
     const query = searchInput ? searchInput.value : "";
     if (!query || !query.trim()) {
       applyEmptyFilter();
@@ -35115,6 +35171,7 @@ function initPortsMatrixPatternHighlighter() {
     });
     caption.textContent = `Showing ${groupSet.size} component${groupSet.size === 1 ? "" : "s"} in the "${groupName}" group -- use Clear filters to show the full matrix again.`;
     updatePortsMatrixStats();
+    portsMatrixActiveGroup = groupName;
   }
 
   // Live stat chips: recomputed after every filter change so they always
@@ -35145,45 +35202,34 @@ function initPortsMatrixPatternHighlighter() {
     statFlows.textContent = `${visibleFlows} / ${totalFlows}`;
   }
 
-  // URL deep-linking: "#ports-matrix?pattern=LP-007-SC" or
-  // "#ports-matrix?search=aws" restores that exact filtered view, mirroring
-  // the location.hash convention other reference sub-pages already use.
-  function parsePortsMatrixHash() {
-    const hash = location.hash;
-    const qIdx = hash.indexOf("?");
-    if (!/^#ports-matrix/.test(hash) || qIdx === -1) return { pattern: "", search: "", topology: "" };
-    const params = new URLSearchParams(hash.slice(qIdx + 1));
-    return { pattern: params.get("pattern") || "", search: params.get("search") || "", topology: params.get("topology") || "" };
-  }
-
-  function updatePortsMatrixHash() {
-    if (!history.replaceState) return;
-    if (select.value) {
-      history.replaceState(null, "", `#ports-matrix?pattern=${encodeURIComponent(select.value)}`);
-    } else if (topologySelect && topologySelect.value) {
-      history.replaceState(null, "", `#ports-matrix?topology=${encodeURIComponent(topologySelect.value)}`);
-    } else if (searchInput && searchInput.value.trim()) {
-      history.replaceState(null, "", `#ports-matrix?search=${encodeURIComponent(searchInput.value.trim())}`);
-    } else {
-      history.replaceState(null, "", "#ports-matrix");
-    }
-  }
-
-  function applyPortsMatrixHashState() {
-    const { pattern, search, topology } = parsePortsMatrixHash();
+  // URL deep-linking (see portsMatrixHashFromControls): resets every grid control to the
+  // URL's state first, so opening a second shared link in the same tab can't inherit filters
+  // from the first. Unknown pattern/topology/group values fall back to the full matrix.
+  function restoreGridFromHash(params) {
+    const pattern = params.get("pattern") || "";
+    const topology = params.get("topology") || "";
+    const group = params.get("group") || "";
+    const search = params.get("search") || "";
+    select.value = "";
+    if (topologySelect) topologySelect.value = "";
+    if (searchInput) searchInput.value = "";
+    if (hideEmptyCheckbox) hideEmptyCheckbox.checked = params.get("hideEmpty") === "1";
+    if (tlsCheckbox) tlsCheckbox.checked = params.get("tls") === "1";
+    caption.textContent = "";
+    clearHighlight();
     if (pattern && Array.from(select.options).some(option => option.value === pattern)) {
       select.value = pattern;
       applyHighlight(pattern);
-    } else if (topology && portsMatrixTopologyEdges[topology]) {
-      if (topologySelect) topologySelect.value = topology;
+    } else if (topology && topologySelect && portsMatrixTopologyEdges[topology]) {
+      topologySelect.value = topology;
       applyTopologyHighlight(topology);
-    } else if (search) {
-      select.value = "";
+    } else if (group && groupLegendButtons.some(btn => btn.dataset.groupName === group)) {
+      applyGroupFilter(group);
+    } else {
       if (searchInput) searchInput.value = search;
       applySearchOrEmptyFilter();
-    } else {
-      updatePortsMatrixStats();
     }
+    applyTLSOverlay();
   }
 
   // Shared by applyHighlight() (logging patterns) and applyTopologyHighlight()
@@ -35234,6 +35280,7 @@ function initPortsMatrixPatternHighlighter() {
   }
 
   function applyHighlight(patternId) {
+    portsMatrixActiveGroup = null;
     clearHighlight();
     if (patternId && topologySelect) topologySelect.value = "";
     if (!patternId) {
@@ -35257,6 +35304,7 @@ function initPortsMatrixPatternHighlighter() {
   }
 
   function applyTopologyHighlight(topologyId) {
+    portsMatrixActiveGroup = null;
     clearHighlight();
     if (topologyId) select.value = "";
     if (!topologyId) {
@@ -35459,6 +35507,7 @@ function initPortsMatrixPatternHighlighter() {
   if (hideEmptyCheckbox) {
     hideEmptyCheckbox.addEventListener("change", () => {
       if (!select.value && (!topologySelect || !topologySelect.value)) applySearchOrEmptyFilter();
+      updatePortsMatrixHash();
     });
   }
   if (searchInput) {
@@ -35467,17 +35516,17 @@ function initPortsMatrixPatternHighlighter() {
     });
   }
   if (exportBtn) exportBtn.addEventListener("click", exportVisiblePortsMatrix);
-  if (tlsCheckbox) tlsCheckbox.addEventListener("change", applyTLSOverlay);
+  if (tlsCheckbox) tlsCheckbox.addEventListener("change", () => { applyTLSOverlay(); updatePortsMatrixHash(); });
   groupLegendButtons.forEach(btn => {
-    btn.addEventListener("click", () => applyGroupFilter(btn.dataset.groupName));
+    btn.addEventListener("click", () => { applyGroupFilter(btn.dataset.groupName); updatePortsMatrixHash(); });
   });
 
-  portsMatrixHashHandler = applyPortsMatrixHashState;
-  applyPortsMatrixHashState();
+  portsMatrixHashRestorers.push(restoreGridFromHash);
 }
 
 function openPortsMatrixForPattern(patternId) {
   setActivePage("portsMatrix");
+  document.getElementById("portsViewGridBtn")?.click();
   const select = document.getElementById("portsMatrixPatternSelect");
   const searchInput = document.getElementById("portsMatrixComponentSearch");
   if (searchInput) searchInput.value = "";
@@ -36020,7 +36069,7 @@ function initPortsFlowSchemaView() {
     if (visibleCountEl) visibleCountEl.textContent = `${visible} / ${rows.length}`;
   }
   applyFilter();
-  if (searchInput) searchInput.addEventListener("input", applyFilter);
+  if (searchInput) searchInput.addEventListener("input", () => { applyFilter(); updatePortsMatrixHash(); });
   portOverrideListeners.push(() => {
     schemaRows.forEach(({ tr, rec }) => fillFlowSchemaRow(tr, rec));
     applyFilter();
@@ -36058,11 +36107,12 @@ function initPortsFlowSchemaView() {
     applyFilter();
   }
 
-  if (patternSelect) patternSelect.addEventListener("change", () => applyPatternHighlight(patternSelect.value));
+  if (patternSelect) patternSelect.addEventListener("change", () => { applyPatternHighlight(patternSelect.value); updatePortsMatrixHash(); });
   if (patternClear) {
     patternClear.addEventListener("click", () => {
       if (patternSelect) patternSelect.value = "";
       applyPatternHighlight("");
+      updatePortsMatrixHash();
     });
   }
 
@@ -36094,9 +36144,19 @@ function initPortsFlowSchemaView() {
     if (schemaView) schemaView.hidden = !showSchema;
     if (gridBtn) { gridBtn.classList.toggle("ports-view-btn-active", !showSchema); gridBtn.setAttribute("aria-pressed", String(!showSchema)); }
     if (schemaBtn) { schemaBtn.classList.toggle("ports-view-btn-active", showSchema); schemaBtn.setAttribute("aria-pressed", String(showSchema)); }
+    updatePortsMatrixHash();
   }
   if (gridBtn) gridBtn.addEventListener("click", () => showView("grid"));
   if (schemaBtn) schemaBtn.addEventListener("click", () => showView("schema"));
+
+  portsMatrixHashRestorers.push(params => {
+    const flowPattern = params.get("flowPattern") || "";
+    const validPattern = patternSelect && Array.from(patternSelect.options).some(option => option.value === flowPattern);
+    if (patternSelect) patternSelect.value = validPattern ? flowPattern : "";
+    if (searchInput) searchInput.value = params.get("flowSearch") || "";
+    applyPatternHighlight(validPattern ? flowPattern : "");
+    showView(params.get("view") === "flows" ? "schema" : "grid");
+  });
 }
 
 const PORTS_CELL_MODAL_BRIEF_FIELDS = [
@@ -36250,6 +36310,24 @@ initPortsMatrixPatternHighlighter();
 initPortsFlowSchemaView();
 initPortsMatrixCellModal();
 initPortsOverridePanel();
+portsMatrixHashHandler = applyPortsMatrixHash;
+applyPortsMatrixHash();
+
+document.getElementById("portsMatrixCopyLink")?.addEventListener("click", async event => {
+  const button = event.currentTarget;
+  const status = document.getElementById("portsMatrixCopyLinkStatus");
+  updatePortsMatrixHash();
+  const url = location.href;
+  try {
+    await navigator.clipboard.writeText(url);
+    button.textContent = "Link copied";
+    if (status) status.textContent = "";
+  } catch (e) {
+    // Clipboard access can be blocked (insecure origin, permissions); show the link instead.
+    if (status) status.textContent = `Copy this link: ${url}`;
+  }
+  setTimeout(() => { button.textContent = "Copy link to this view"; }, 1600);
+});
 
 function initPortsOverridePanel() {
   const grid = document.getElementById("portsOverrideGrid");
