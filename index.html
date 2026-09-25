@@ -1304,8 +1304,63 @@
       align-items: center;
       margin-bottom: 12px;
     }
+    .role-compare { margin: 0 0 18px; padding: 16px 18px; border: 1px solid var(--border); border-radius: 14px; background: #fff; }
+    .role-compare h3 { margin: 0; font-size: 17px; }
+    .role-compare > p { margin: 4px 0 12px; color: var(--muted); font-size: 13px; }
+    .role-compare-pickers { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+    .role-compare-pickers label { display: grid; gap: 5px; flex: 1 1 240px; min-width: 0; font-size: 12px; font-weight: 800; color: #334155; }
+    .role-compare-swap { font-size: 16px; padding: 10px 13px; }
+    .role-compare-pickers .primary-button:disabled { opacity: .45; cursor: not-allowed; }
+    .role-compare-empty { margin: 12px 0 0; color: var(--muted); font-size: 13px; }
+    .role-compare-note { margin: 12px 0 0; padding: 9px 12px; border: 1px solid #fcd34d; border-radius: 10px; background: #fffbeb; color: #92400e; font-size: 12.5px; line-height: 1.5; }
+    .role-compare-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 10px; }
+    .role-compare-filter { padding: 7px 12px; border-radius: 999px; font-size: 12.5px; color: #475569; }
+    .role-compare-filter strong { color: #1e293b; }
+    .role-compare-filter.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .role-compare-filter.active strong { color: #fff; }
+    .role-compare .eccs-table-wrap { max-height: 60vh; }
+    .role-compare .eccs-matrix td.role-compare-yes { color: #15803d; font-size: 16px; font-weight: 900; text-align: center; }
+    .role-compare .eccs-matrix td.role-compare-no { color: #94a3b8; font-size: 15px; text-align: center; }
+    .role-view-switch { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+    .role-view-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .role-grid-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0 0 10px; }
+    .role-grid-toolbar .role-grid-control { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; color: #334155; }
+    .role-grid-toolbar select { width: auto; min-width: 190px; padding: 9px 11px; }
+    .role-grid-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0 0 8px; font-size: 12px; color: #475569; }
+    .role-grid-legend i { display: inline-block; width: 11px; height: 11px; margin-right: 5px; border-radius: 3px; vertical-align: middle; border: 1px solid rgba(15,23,42,.12); }
+    .role-grid-note { margin: 0 0 10px; color: var(--muted); font-size: 12px; }
+    .role-grid-wrap { max-height: 75vh; }
+    .eccs-matrix.role-grid { width: auto; min-width: 0; }
+    .eccs-matrix.role-grid th, .eccs-matrix.role-grid td { padding: 6px 8px; }
+    .eccs-matrix.role-grid td:first-child { white-space: nowrap; font-weight: 700; }
+    .eccs-matrix.role-grid thead th.role-grid-role { vertical-align: bottom; text-transform: none; letter-spacing: 0; padding: 8px 4px; min-width: 32px; }
+    .eccs-matrix.role-grid thead th.role-grid-role span { display: inline-block; writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; font-size: 11.5px; font-weight: 800; }
+    .eccs-matrix.role-grid thead th.role-grid-count { vertical-align: bottom; }
+    .eccs-matrix.role-grid td.role-grid-count { white-space: nowrap; color: #475569; font-weight: 700; }
+    .eccs-matrix.role-grid td.role-grid-cell { text-align: center; }
+    .eccs-matrix.role-grid td.role-grid-yes { color: #15803d; font-size: 14px; font-weight: 900; }
+    .eccs-matrix.role-grid td.role-grid-inherited { color: #86b89a; font-weight: 400; }
+    .role-grid-legend-tick { margin-right: 5px; color: #15803d; font-weight: 900; }
+    .role-grid-legend-tick.role-grid-legend-inherited { color: #86b89a; font-weight: 400; }
+    .eccs-matrix.role-grid thead th.role-grid-plat-0 { background: #dbeafe; }
+    .eccs-matrix.role-grid thead th.role-grid-plat-1 { background: #ede9fe; }
+    .eccs-matrix.role-grid thead th.role-grid-plat-2 { background: #dcfce7; }
+    .eccs-matrix.role-grid thead th.role-grid-plat-3 { background: #ffedd5; }
+    .role-grid-legend .role-grid-plat-0 { background: #dbeafe; }
+    .role-grid-legend .role-grid-plat-1 { background: #ede9fe; }
+    .role-grid-legend .role-grid-plat-2 { background: #dcfce7; }
+    .role-grid-legend .role-grid-plat-3 { background: #ffedd5; }
+    .eccs-matrix.role-grid thead th.role-grid-hl { background: #fde047; }
+    .eccs-matrix.role-grid td.role-grid-hl { background: #fef9c3; }
+    /* On phones the sticky capability column would otherwise take the whole width. */
+    @media (max-width: 700px) {
+      .eccs-matrix.role-grid td:first-child, .eccs-matrix.role-grid th:first-child { min-width: 118px; max-width: 128px; white-space: normal; overflow-wrap: anywhere; }
+      .eccs-matrix.role-grid td.role-grid-count { white-space: normal; min-width: 44px; max-width: 90px; overflow-wrap: anywhere; }
+      .role-grid-toolbar .role-grid-control { flex: 1 1 100%; }
+      .role-grid-toolbar select { flex: 1 1 auto; min-width: 0; }
+    }
     .patterns-toolbar.roles-toolbar {
-      grid-template-columns: minmax(220px, 1fr) minmax(170px, 200px) minmax(170px, 200px) minmax(190px, 230px) minmax(140px, 170px) auto;
+      grid-template-columns: minmax(150px, 1fr) minmax(130px, 180px) minmax(150px, 190px) minmax(178px, 210px) minmax(200px, 230px) minmax(100px, 150px) auto;
     }
     .patterns-stats {
       display: flex;
@@ -3411,9 +3466,13 @@
     .pattern-matrix-link { margin-left:6px; padding:0; border:0; background:transparent; color:#7030a0; font-size:11px; font-weight:700; text-decoration:underline; text-underline-offset:2px; cursor:pointer; white-space:nowrap; }
     .pattern-matrix-link:hover { color:#5b2683; }
     .ports-view-switch { display:flex; gap:8px; margin:14px 0 4px; }
+    #portsMatrixPage .ports-view-switch { flex-wrap:wrap; align-items:center; }
     .ports-view-btn { padding:9px 16px; border-radius:10px; border:1px solid var(--border); background:#fff; cursor:pointer; font-size:13px; font-weight:700; color:#475569; }
     .ports-view-btn:hover { background:#f8fafc; }
     .ports-view-btn.ports-view-btn-active { background:#7030a0; color:#fff; border-color:#7030a0; }
+    .ports-copy-link-btn { margin-left:auto; }
+    .ports-copy-link-status { flex-basis:100%; text-align:right; font-size:12px; color:#475569; word-break:break-all; }
+    .ports-copy-link-status:empty { display:none; }
     .conf-tree-intro { color:var(--muted); font-size:13px; line-height:1.6; margin:10px 0 14px; max-width:80ch; }
     .conf-tree-root-readout { margin-left:auto; font-size:12.5px; color:var(--muted); font-weight:700; }
     .conf-tree-root-readout code { font:700 12.5px var(--mono); color:var(--primary); background:var(--primary-light); padding:3px 7px; border-radius:6px; }
@@ -9526,7 +9585,25 @@ INGEST PROCESSOR
         <p>Every Splunk role and the individual capabilities assigned to it, derived from the uploaded role/capability matrix. Click a role below, or use search and the filters, to see exactly which capabilities a role carries, what each capability lets you do, whether it is flagged as a privileged capability, and where the mapping came from.</p>
         <p><strong>Note:</strong> the source file also lists three roles with no capabilities assigned in this matrix -- <code>mc_analyst</code>, <code>mc_analyst_reader</code>, <code>mc_soar_automation</code> -- they carry nothing to list in the table below and so do not appear in the Role filter.</p>
         <p><strong>Platform:</strong> derived from each role's naming convention and the source file's Mission Control Roles tab -- <code>Sc_admin</code> is Splunk Cloud-specific; <code>User</code>/<code>Power</code>/<code>Admin</code> are the base roles (shown as Splunk On-premises, since Sc_admin is the file's distinct Splunk Cloud counterpart to Admin); <code>ess_*</code> and the non-SOAR <code>mc_*</code> Mission Control/incident-review roles are Splunk ES; the <code>mc_soar_*</code> roles are Splunk SOAR.</p>
+        <p><strong>Granted how:</strong> whether a role adds a capability itself or inherits it through <code>importRoles</code>. This follows Splunk Enterprise's shipped <code>authorize.conf</code>, where <code>power</code> imports <code>user</code> and <code>admin</code> imports <code>power</code> and <code>user</code>, so it's recorded for User, Power and Admin only. No inheritance data is held for Sc_admin, ES, SOAR or Mission Control roles, so their capabilities show "Not recorded".</p>
       </div>
+    </div>
+
+    <section class="role-compare" aria-labelledby="roleCompareTitle">
+      <h3 id="roleCompareTitle">Compare two roles</h3>
+      <p>Pick two roles to see which capabilities only one of them has and which they share.</p>
+      <div class="role-compare-pickers">
+        <label for="roleCompareA">Role A<select id="roleCompareA"><option value="">Select a role…</option></select></label>
+        <button id="roleCompareSwap" class="role-compare-swap" type="button" aria-label="Swap role A and role B" title="Swap roles">&#8644;</button>
+        <label for="roleCompareB">Role B<select id="roleCompareB"><option value="">Select a role…</option></select></label>
+        <button id="roleCompareExport" class="primary-button" type="button" disabled>Export comparison CSV</button>
+      </div>
+      <div id="roleCompareResult" aria-live="polite"><p class="role-compare-empty">Pick two different roles to compare.</p></div>
+    </section>
+
+    <div class="role-view-switch" role="group" aria-label="Choose how to view roles and capabilities">
+      <button type="button" id="rolesViewTableBtn" class="role-view-btn active" aria-pressed="true">Assignments table</button>
+      <button type="button" id="rolesViewGridBtn" class="role-view-btn" aria-pressed="false">Role &times; capability grid</button>
     </div>
 
     <div class="patterns-toolbar roles-toolbar">
@@ -9539,6 +9616,12 @@ INGEST PROCESSOR
       </select>
       <select id="rolesCapabilityFilter" aria-label="Filter by capability">
         <option value="">All capabilities</option>
+      </select>
+      <select id="rolesInheritanceFilter" aria-label="Filter by whether the capability is inherited or added">
+        <option value="">Added or inherited</option>
+        <option value="added">Added by the role</option>
+        <option value="inherited">Inherited</option>
+        <option value="unrecorded">Inheritance not recorded</option>
       </select>
       <select id="rolesPrivFilter" aria-label="Filter by privileged capability">
         <option value="">All</option>
@@ -9554,11 +9637,38 @@ INGEST PROCESSOR
       <span class="patterns-stat"><strong id="rolesRoleCount">21</strong> roles with capabilities</span>
     </div>
 
+    <div id="rolesTableView">
     <div class="eccs-table-wrap" role="region" aria-label="Scrollable roles and capabilities table" tabindex="0">
       <table class="eccs-matrix">
-        <thead><tr><th scope="col">Role</th><th scope="col">Platform</th><th scope="col">Capability</th><th scope="col">What it lets you do</th><th scope="col">Priv</th><th scope="col">Source / Notes</th></tr></thead>
+        <thead><tr><th scope="col">Role</th><th scope="col">Platform</th><th scope="col">Capability</th><th scope="col">Granted how</th><th scope="col">What it lets you do</th><th scope="col">Priv</th><th scope="col">Source / Notes</th></tr></thead>
         <tbody id="rolesTableBody"></tbody>
       </table>
+    </div>
+    </div>
+
+    <div id="rolesGridView" hidden>
+      <div class="role-grid-toolbar">
+        <label class="role-grid-control">Show
+          <select id="roleGridCoverage">
+            <option value="all">All capabilities</option>
+            <option value="one">Held by only one role</option>
+            <option value="every">Held by every role shown</option>
+          </select>
+        </label>
+        <label class="role-grid-control">Sort
+          <select id="roleGridSort">
+            <option value="shared">Most shared first</option>
+            <option value="unique">Least shared first</option>
+            <option value="name">Capability A&ndash;Z</option>
+          </select>
+        </label>
+        <span class="patterns-stat"><strong id="roleGridStat"></strong></span>
+      </div>
+      <div class="role-grid-legend" id="roleGridLegend"></div>
+      <p class="role-grid-note">The search and filters above choose which capabilities appear. The Platform filter also limits the role columns, and the Role filter highlights that role's column. Hover a capability for its description.</p>
+      <div class="eccs-table-wrap role-grid-wrap" role="region" aria-label="Scrollable role by capability grid" tabindex="0">
+        <table class="eccs-matrix role-grid" id="roleGridTable"><thead></thead><tbody></tbody></table>
+      </div>
     </div>
   </section>
 <section id="splunkBinSection" class="page-view reference-page" role="tabpanel" aria-labelledby="showSplunkBinPage" hidden>
@@ -15169,6 +15279,8 @@ E. Assumptions and unresolved inputs</pre>
     <div class="ports-view-switch" role="group" aria-label="Choose how to view the ports matrix">
       <button type="button" id="portsViewGridBtn" class="ports-view-btn ports-view-btn-active" aria-pressed="true">Matrix grid</button>
       <button type="button" id="portsViewFlowSchemaBtn" class="ports-view-btn" aria-pressed="false">Flow schema table</button>
+      <button type="button" id="portsMatrixCopyLink" class="ports-view-btn ports-copy-link-btn" title="Copies a link that reopens this page with the current view, filters and toggles">Copy link to this view</button>
+      <span class="ports-copy-link-status" id="portsMatrixCopyLinkStatus" role="status" aria-live="polite"></span>
     </div>
 
     <details class="ports-override-panel" id="portsOverridePanel">
@@ -21892,7 +22004,7 @@ const networkFlowsTableData = [
   {"Section":"Supporting infrastructure","Source":"Splunk","Destination":"Git repository","Protocol":"HTTPS/SSH","Port":"443/22","Purpose":"CI/CD, app/config deployment where used."}
 ];
 
-const rolesTableColumns = ["Role", "Platform", "Capability", "What it lets you do", "Priv", "Source / Notes"];
+const rolesTableColumns = ["Role", "Platform", "Capability", "Granted how", "What it lets you do", "Priv", "Source / Notes"];
 const rolesColumnOrder = ["User", "Power", "Admin", "ess_user", "ess_analyst", "ess_admin", "Sc_admin", "mc_admin", "mc_analyst_all_edit", "mc_analyst_edit_<incident-type>", "mc_analyst_read_<incident-type>", "mc_observer", "mc_soar_asset_owner", "mc_soar_automation_engineer", "mc_soar_incident_commander", "mc_soar_observer", "mc_soar_repo_edit_<repo_name>", "mc_soar_repo_execute_<repo_name>", "mc_soar_repo_view_<repo_name>", "mc_soar_system_edit", "mc_soar_proxy", "mc_analyst", "mc_analyst_reader", "mc_soar_automation"];
 const rolesTableData = [
   {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "accelerate_datamodel", "What it lets you do": "Enable or disable acceleration for data models. Set acceleration to true to enable automatic acceleration. Additional storage is required depending on event volume, fields, and distinct field values.", "Priv": "Y", "Source / Notes": "Supplied Splunk Cloud capability table"},
@@ -22476,6 +22588,34 @@ const rolesTableData = [
   {"Role": "mc_soar_repo_edit_<repo_name>", "Platform": "Splunk SOAR", "Capability": "mc_delete_soar_assets", "What it lets you do": "Allows deletion of Splunk SOAR assets through Splunk Mission Control.", "Priv": "Y", "Source / Notes": "Added from supplied Splunk Mission Control role mapping"},
   {"Role": "mc_soar_proxy", "Platform": "Splunk SOAR", "Capability": "mc_delete_soar_assets", "What it lets you do": "Allows deletion of Splunk SOAR assets through Splunk Mission Control.", "Priv": "Y", "Source / Notes": "Added from supplied Splunk Mission Control role mapping"}
 ];
+
+// Inherited vs added. Only the base-role chain from Splunk Enterprise's shipped authorize.conf
+// is recorded: [role_power] importRoles = user and [role_admin] importRoles = power;user. The
+// matrix agrees with it (every User capability is also listed for Power, and every Power
+// capability for Admin). No inheritance source exists here for Sc_admin, ES, SOAR or Mission
+// Control roles, so their assignments read "Not recorded" rather than a guessed chain.
+// Imports are listed base-first so a capability is credited to the role that first grants it.
+const ROLE_IMPORTS = { User: [], Power: ["User"], Admin: ["User", "Power"] };
+const ROLE_GRANT_ADDED = "Added by this role";
+const ROLE_GRANT_UNRECORDED = "Not recorded";
+(function annotateRoleInheritance() {
+  const capabilitiesByRole = new Map();
+  rolesTableData.forEach(row => {
+    if (!capabilitiesByRole.has(row["Role"])) capabilitiesByRole.set(row["Role"], new Set());
+    capabilitiesByRole.get(row["Role"]).add(row["Capability"]);
+  });
+  rolesTableData.forEach(row => {
+    const imports = ROLE_IMPORTS[row["Role"]];
+    if (!imports) { row["Granted how"] = ROLE_GRANT_UNRECORDED; return; }
+    const source = imports.find(role => capabilitiesByRole.get(role)?.has(row["Capability"]));
+    row["Granted how"] = source ? `Inherited from ${source}` : ROLE_GRANT_ADDED;
+  });
+})();
+function roleGrantCategory(grantedHow) {
+  if (grantedHow === ROLE_GRANT_ADDED) return "added";
+  if (grantedHow === ROLE_GRANT_UNRECORDED) return "unrecorded";
+  return "inherited";
+}
 
 
 
@@ -23967,6 +24107,7 @@ const rolesTableBody = document.getElementById("rolesTableBody");
 const rolesTableSearch = document.getElementById("rolesTableSearch");
 const rolesRoleFilter = document.getElementById("rolesRoleFilter");
 const rolesPrivFilter = document.getElementById("rolesPrivFilter");
+const rolesInheritanceFilter = document.getElementById("rolesInheritanceFilter");
 const rolesPlatformFilter = document.getElementById("rolesPlatformFilter");
 const rolesCapabilityFilter = document.getElementById("rolesCapabilityFilter");
 let visibleLoggingPatternRows = [...loggingPatternTableData];
@@ -25561,6 +25702,7 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
                     ? "#metrics"
                     : "#taxonomy";
     history.replaceState(null, "", hash);
+    if (selected === "portsMatrix") updatePortsMatrixHash();
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
   updateBackToTopVisibility();
@@ -34863,6 +35005,54 @@ function portOverrideSummary(rec) {
 }
 
 let portsMatrixHashHandler = null;
+
+// Shareable URL state. Every control on the page (both views) is encoded, so a copied link
+// reproduces exactly what the sender saw. Pattern, topology, group and search are mutually
+// exclusive in the grid UI, so only the one that's active is written, in that precedence.
+let portsMatrixActiveGroup = null;
+let portsMatrixRestoringHash = false;
+const portsMatrixHashRestorers = [];
+function portsMatrixHashFromControls() {
+  const get = id => document.getElementById(id);
+  const params = new URLSearchParams();
+  const pattern = get("portsMatrixPatternSelect")?.value;
+  const topology = get("portsMatrixTopologySelect")?.value;
+  const search = get("portsMatrixComponentSearch")?.value.trim();
+  if (pattern) params.set("pattern", pattern);
+  else if (topology) params.set("topology", topology);
+  else if (portsMatrixActiveGroup) params.set("group", portsMatrixActiveGroup);
+  else if (search) params.set("search", search);
+  if (get("portsMatrixHideEmpty")?.checked) params.set("hideEmpty", "1");
+  if (get("portsMatrixShowTLS")?.checked) params.set("tls", "1");
+  if (get("portsMatrixFlowSchemaView") && !get("portsMatrixFlowSchemaView").hidden) params.set("view", "flows");
+  const flowPattern = get("portsFlowSchemaPatternSelect")?.value;
+  const flowSearch = get("portsFlowSchemaSearch")?.value.trim();
+  if (flowPattern) params.set("flowPattern", flowPattern);
+  if (flowSearch) params.set("flowSearch", flowSearch);
+  const query = params.toString();
+  return query ? `#ports-matrix?${query}` : "#ports-matrix";
+}
+// Only ever rewrites a ports-matrix URL, so it can't clobber another page's hash.
+function updatePortsMatrixHash() {
+  if (portsMatrixRestoringHash || !history.replaceState || !/^#ports-matrix/.test(location.hash)) return;
+  const next = portsMatrixHashFromControls();
+  if (location.hash !== next) history.replaceState(null, "", next);
+}
+function parsePortsMatrixHash() {
+  const hash = location.hash;
+  const qIdx = hash.indexOf("?");
+  return new URLSearchParams(/^#ports-matrix/.test(hash) && qIdx !== -1 ? hash.slice(qIdx + 1) : "");
+}
+// Each view resets its own controls to the URL's state (not merely layering the URL on top
+// of whatever was showing), then the URL is rewritten once to drop anything invalid.
+function applyPortsMatrixHash() {
+  const params = parsePortsMatrixHash();
+  portsMatrixRestoringHash = true;
+  try { portsMatrixHashRestorers.forEach(restore => restore(params)); }
+  finally { portsMatrixRestoringHash = false; }
+  updatePortsMatrixHash();
+}
+
 function initPortsMatrixPatternHighlighter() {
   const select = document.getElementById("portsMatrixPatternSelect");
   const clearBtn = document.getElementById("portsMatrixPatternClear");
@@ -35049,6 +35239,7 @@ function initPortsMatrixPatternHighlighter() {
   }
 
   function applySearchOrEmptyFilter() {
+    portsMatrixActiveGroup = null;
     const query = searchInput ? searchInput.value : "";
     if (!query || !query.trim()) {
       applyEmptyFilter();
@@ -35115,6 +35306,7 @@ function initPortsMatrixPatternHighlighter() {
     });
     caption.textContent = `Showing ${groupSet.size} component${groupSet.size === 1 ? "" : "s"} in the "${groupName}" group -- use Clear filters to show the full matrix again.`;
     updatePortsMatrixStats();
+    portsMatrixActiveGroup = groupName;
   }
 
   // Live stat chips: recomputed after every filter change so they always
@@ -35145,45 +35337,34 @@ function initPortsMatrixPatternHighlighter() {
     statFlows.textContent = `${visibleFlows} / ${totalFlows}`;
   }
 
-  // URL deep-linking: "#ports-matrix?pattern=LP-007-SC" or
-  // "#ports-matrix?search=aws" restores that exact filtered view, mirroring
-  // the location.hash convention other reference sub-pages already use.
-  function parsePortsMatrixHash() {
-    const hash = location.hash;
-    const qIdx = hash.indexOf("?");
-    if (!/^#ports-matrix/.test(hash) || qIdx === -1) return { pattern: "", search: "", topology: "" };
-    const params = new URLSearchParams(hash.slice(qIdx + 1));
-    return { pattern: params.get("pattern") || "", search: params.get("search") || "", topology: params.get("topology") || "" };
-  }
-
-  function updatePortsMatrixHash() {
-    if (!history.replaceState) return;
-    if (select.value) {
-      history.replaceState(null, "", `#ports-matrix?pattern=${encodeURIComponent(select.value)}`);
-    } else if (topologySelect && topologySelect.value) {
-      history.replaceState(null, "", `#ports-matrix?topology=${encodeURIComponent(topologySelect.value)}`);
-    } else if (searchInput && searchInput.value.trim()) {
-      history.replaceState(null, "", `#ports-matrix?search=${encodeURIComponent(searchInput.value.trim())}`);
-    } else {
-      history.replaceState(null, "", "#ports-matrix");
-    }
-  }
-
-  function applyPortsMatrixHashState() {
-    const { pattern, search, topology } = parsePortsMatrixHash();
+  // URL deep-linking (see portsMatrixHashFromControls): resets every grid control to the
+  // URL's state first, so opening a second shared link in the same tab can't inherit filters
+  // from the first. Unknown pattern/topology/group values fall back to the full matrix.
+  function restoreGridFromHash(params) {
+    const pattern = params.get("pattern") || "";
+    const topology = params.get("topology") || "";
+    const group = params.get("group") || "";
+    const search = params.get("search") || "";
+    select.value = "";
+    if (topologySelect) topologySelect.value = "";
+    if (searchInput) searchInput.value = "";
+    if (hideEmptyCheckbox) hideEmptyCheckbox.checked = params.get("hideEmpty") === "1";
+    if (tlsCheckbox) tlsCheckbox.checked = params.get("tls") === "1";
+    caption.textContent = "";
+    clearHighlight();
     if (pattern && Array.from(select.options).some(option => option.value === pattern)) {
       select.value = pattern;
       applyHighlight(pattern);
-    } else if (topology && portsMatrixTopologyEdges[topology]) {
-      if (topologySelect) topologySelect.value = topology;
+    } else if (topology && topologySelect && portsMatrixTopologyEdges[topology]) {
+      topologySelect.value = topology;
       applyTopologyHighlight(topology);
-    } else if (search) {
-      select.value = "";
+    } else if (group && groupLegendButtons.some(btn => btn.dataset.groupName === group)) {
+      applyGroupFilter(group);
+    } else {
       if (searchInput) searchInput.value = search;
       applySearchOrEmptyFilter();
-    } else {
-      updatePortsMatrixStats();
     }
+    applyTLSOverlay();
   }
 
   // Shared by applyHighlight() (logging patterns) and applyTopologyHighlight()
@@ -35234,6 +35415,7 @@ function initPortsMatrixPatternHighlighter() {
   }
 
   function applyHighlight(patternId) {
+    portsMatrixActiveGroup = null;
     clearHighlight();
     if (patternId && topologySelect) topologySelect.value = "";
     if (!patternId) {
@@ -35257,6 +35439,7 @@ function initPortsMatrixPatternHighlighter() {
   }
 
   function applyTopologyHighlight(topologyId) {
+    portsMatrixActiveGroup = null;
     clearHighlight();
     if (topologyId) select.value = "";
     if (!topologyId) {
@@ -35459,6 +35642,7 @@ function initPortsMatrixPatternHighlighter() {
   if (hideEmptyCheckbox) {
     hideEmptyCheckbox.addEventListener("change", () => {
       if (!select.value && (!topologySelect || !topologySelect.value)) applySearchOrEmptyFilter();
+      updatePortsMatrixHash();
     });
   }
   if (searchInput) {
@@ -35467,17 +35651,17 @@ function initPortsMatrixPatternHighlighter() {
     });
   }
   if (exportBtn) exportBtn.addEventListener("click", exportVisiblePortsMatrix);
-  if (tlsCheckbox) tlsCheckbox.addEventListener("change", applyTLSOverlay);
+  if (tlsCheckbox) tlsCheckbox.addEventListener("change", () => { applyTLSOverlay(); updatePortsMatrixHash(); });
   groupLegendButtons.forEach(btn => {
-    btn.addEventListener("click", () => applyGroupFilter(btn.dataset.groupName));
+    btn.addEventListener("click", () => { applyGroupFilter(btn.dataset.groupName); updatePortsMatrixHash(); });
   });
 
-  portsMatrixHashHandler = applyPortsMatrixHashState;
-  applyPortsMatrixHashState();
+  portsMatrixHashRestorers.push(restoreGridFromHash);
 }
 
 function openPortsMatrixForPattern(patternId) {
   setActivePage("portsMatrix");
+  document.getElementById("portsViewGridBtn")?.click();
   const select = document.getElementById("portsMatrixPatternSelect");
   const searchInput = document.getElementById("portsMatrixComponentSearch");
   if (searchInput) searchInput.value = "";
@@ -35546,12 +35730,14 @@ function filteredRolesRows() {
   const platform = rolesPlatformFilter.value;
   const capability = rolesCapabilityFilter.value;
   const priv = rolesPrivFilter.value;
+  const inheritance = rolesInheritanceFilter.value;
   return rolesTableData.filter(row => {
     if (query && !rolesSearchText(row).includes(query)) return false;
     if (role && row["Role"] !== role) return false;
     if (platform && row["Platform"] !== platform) return false;
     if (capability && row["Capability"] !== capability) return false;
     if (priv && row["Priv"] !== priv) return false;
+    if (inheritance && roleGrantCategory(row["Granted how"]) !== inheritance) return false;
     return true;
   });
 }
@@ -35568,9 +35754,11 @@ function renderRolesTable() {
   }
   document.getElementById("rolesVisibleCount").textContent = String(visibleRolesRows.length);
   document.getElementById("rolesRoleCount").textContent = String(new Set(visibleRolesRows.map(row => row["Role"])).size);
+  renderRolesGrid();
 }
 
 function exportVisibleRoles(event) {
+  if (!document.getElementById("rolesGridView")?.hidden) { exportRolesGrid(event); return; }
   const lines = [
     rolesTableColumns.map(csvValue).join(","),
     ...visibleRolesRows.map(row => rolesTableColumns.map(column => csvValue(row[column])).join(","))
@@ -35587,6 +35775,247 @@ function exportVisibleRoles(event) {
   setTimeout(() => { if (event.currentTarget) event.currentTarget.textContent = "Export visible CSV"; }, 1400);
 }
 
+// Role comparison: a straight set comparison of each role's assigned capabilities in
+// rolesTableData. Each role belongs to exactly one platform in this matrix, and the matrix
+// lists capabilities per role rather than modelling inheritance, so "only in A" means only
+// A's row in the source matrix lists it.
+// Shared by the role comparison and the role x capability grid: each role's platform and
+// capability set, and one description per capability, built once from rolesTableData.
+let rolesCapabilityIndexCache = null;
+function rolesCapabilityIndex() {
+  if (rolesCapabilityIndexCache) return rolesCapabilityIndexCache;
+  const roles = new Map();
+  const capabilityDescription = new Map();
+  const grantedHow = new Map();
+  rolesTableData.forEach(row => {
+    if (!roles.has(row["Role"])) roles.set(row["Role"], { platform: row["Platform"], capabilities: new Set() });
+    roles.get(row["Role"]).capabilities.add(row["Capability"]);
+    if (!capabilityDescription.has(row["Capability"])) capabilityDescription.set(row["Capability"], row["What it lets you do"] || "");
+    grantedHow.set(`${row["Role"]}|${row["Capability"]}`, row["Granted how"]);
+  });
+  rolesCapabilityIndexCache = { roles, capabilityDescription, grantedHow };
+  return rolesCapabilityIndexCache;
+}
+
+const ROLE_COMPARE_VIEWS = [
+  ["diff", "All differences"], ["onlyA", "Only in A"], ["onlyB", "Only in B"], ["both", "In both"]
+];
+function initRoleComparison() {
+  const selectA = document.getElementById("roleCompareA");
+  const selectB = document.getElementById("roleCompareB");
+  const swapBtn = document.getElementById("roleCompareSwap");
+  const exportBtn = document.getElementById("roleCompareExport");
+  const result = document.getElementById("roleCompareResult");
+  if (!selectA || !selectB || !result) return;
+
+  const { roles, capabilityDescription } = rolesCapabilityIndex();
+  const optionsHtml = [...roles.keys()].sort((a, b) => a.localeCompare(b)).map(role => {
+    const info = roles.get(role);
+    return `<option value="${escapeHtml(role)}">${escapeHtml(role)} — ${escapeHtml(info.platform)} (${info.capabilities.size})</option>`;
+  }).join("");
+  selectA.insertAdjacentHTML("beforeend", optionsHtml);
+  selectB.insertAdjacentHTML("beforeend", optionsHtml);
+
+  let view = "diff";
+  let comparison = null;
+
+  function buildComparison(roleA, roleB) {
+    const capsA = roles.get(roleA).capabilities;
+    const capsB = roles.get(roleB).capabilities;
+    const byName = (a, b) => a.localeCompare(b);
+    return {
+      roleA, roleB,
+      onlyA: [...capsA].filter(cap => !capsB.has(cap)).sort(byName),
+      onlyB: [...capsB].filter(cap => !capsA.has(cap)).sort(byName),
+      both: [...capsA].filter(cap => capsB.has(cap)).sort(byName)
+    };
+  }
+
+  function rowsForView() {
+    if (view === "onlyA") return comparison.onlyA.map(cap => [cap, true, false]);
+    if (view === "onlyB") return comparison.onlyB.map(cap => [cap, false, true]);
+    if (view === "both") return comparison.both.map(cap => [cap, true, true]);
+    return [...comparison.onlyA.map(cap => [cap, true, false]), ...comparison.onlyB.map(cap => [cap, false, true])];
+  }
+
+  function render() {
+    const roleA = selectA.value;
+    const roleB = selectB.value;
+    if (!roleA || !roleB || roleA === roleB) {
+      comparison = null;
+      exportBtn.disabled = true;
+      result.innerHTML = `<p class="role-compare-empty">${roleA && roleA === roleB ? "Both selections are the same role -- pick a different role for A or B." : "Pick two different roles to compare."}</p>`;
+      return;
+    }
+    comparison = buildComparison(roleA, roleB);
+    exportBtn.disabled = false;
+    const platformA = roles.get(roleA).platform;
+    const platformB = roles.get(roleB).platform;
+    const counts = { diff: comparison.onlyA.length + comparison.onlyB.length, onlyA: comparison.onlyA.length, onlyB: comparison.onlyB.length, both: comparison.both.length };
+    const note = platformA !== platformB
+      ? `<p class="role-compare-note">These roles are on different platforms (${escapeHtml(platformA)} and ${escapeHtml(platformB)}), so some differences are capabilities that only exist on one platform rather than access one role was denied.</p>`
+      : "";
+    const filters = ROLE_COMPARE_VIEWS.map(([key, label]) =>
+      `<button type="button" class="role-compare-filter${view === key ? " active" : ""}" data-role-compare-view="${key}" aria-pressed="${view === key}">${escapeHtml(label)} <strong>${counts[key]}</strong></button>`).join("");
+    const rows = rowsForView();
+    const body = rows.length
+      ? rows.map(([cap, inA, inB]) => `<tr><td>${escapeHtml(cap)}</td><td>${escapeHtml(capabilityDescription.get(cap))}</td><td class="${inA ? "role-compare-yes" : "role-compare-no"}">${inA ? "&#10003;" : "&mdash;"}</td><td class="${inB ? "role-compare-yes" : "role-compare-no"}">${inB ? "&#10003;" : "&mdash;"}</td></tr>`).join("")
+      : `<tr><td class="patterns-empty" colspan="4">No capabilities in this view.</td></tr>`;
+    result.innerHTML = `${note}
+      <div class="role-compare-filters" role="group" aria-label="Choose which capabilities to show">${filters}</div>
+      <div class="eccs-table-wrap" role="region" aria-label="Role comparison" tabindex="0">
+        <table class="eccs-matrix">
+          <thead><tr><th scope="col">Capability</th><th scope="col">What it lets you do</th><th scope="col">A: ${escapeHtml(roleA)}</th><th scope="col">B: ${escapeHtml(roleB)}</th></tr></thead>
+          <tbody>${body}</tbody>
+        </table>
+      </div>`;
+  }
+
+  result.addEventListener("click", event => {
+    const btn = event.target.closest("[data-role-compare-view]");
+    if (!btn) return;
+    view = btn.dataset.roleCompareView;
+    render();
+  });
+  selectA.addEventListener("change", render);
+  selectB.addEventListener("change", render);
+  swapBtn?.addEventListener("click", () => {
+    [selectA.value, selectB.value] = [selectB.value, selectA.value];
+    if (view === "onlyA") view = "onlyB";
+    else if (view === "onlyB") view = "onlyA";
+    render();
+  });
+  exportBtn?.addEventListener("click", () => {
+    if (!comparison) return;
+    const { roleA, roleB } = comparison;
+    const statusFor = (inA, inB) => inA && inB ? "In both" : inA ? `Only ${roleA}` : `Only ${roleB}`;
+    const lines = [["Capability", "What it lets you do", roleA, roleB, "Result"].map(csvValue).join(",")];
+    rowsForView().forEach(([cap, inA, inB]) => {
+      lines.push([cap, capabilityDescription.get(cap), inA ? "Yes" : "No", inB ? "Yes" : "No", statusFor(inA, inB)].map(csvValue).join(","));
+    });
+    const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    const slug = value => value.replace(/[^A-Za-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
+    link.download = `Splunk-Role-Comparison-${slug(roleA)}-vs-${slug(roleB)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(link.href);
+    exportBtn.textContent = "Exported";
+    setTimeout(() => { exportBtn.textContent = "Export comparison CSV"; }, 1400);
+  });
+}
+
+
+// Role x capability grid: rows are the capabilities matched by the assignments table's own
+// filters (filteredRolesRows), so both views always agree on what the filters select; ticks
+// come from the full data so every role that holds a matched capability is shown.
+const ROLE_GRID_PLATFORM_ORDER = ["Splunk On-premises", "Splunk Cloud", "Splunk ES", "Splunk SOAR"];
+function roleGridColumns() {
+  const { roles } = rolesCapabilityIndex();
+  const platformFilter = rolesPlatformFilter.value;
+  const platformIndex = platform => {
+    const index = ROLE_GRID_PLATFORM_ORDER.indexOf(platform);
+    return index === -1 ? ROLE_GRID_PLATFORM_ORDER.length : index;
+  };
+  // Within a platform, fewest capabilities first, so nested roles (User, Power, Admin) read left to right.
+  return [...roles.entries()]
+    .filter(([, info]) => !platformFilter || info.platform === platformFilter)
+    .sort(([nameA, a], [nameB, b]) => platformIndex(a.platform) - platformIndex(b.platform) || a.capabilities.size - b.capabilities.size || nameA.localeCompare(nameB))
+    .map(([name, info]) => ({ name, platform: info.platform, platformIndex: platformIndex(info.platform), capabilities: info.capabilities }));
+}
+function roleGridRows(columns) {
+  const coverage = document.getElementById("roleGridCoverage")?.value || "all";
+  const sort = document.getElementById("roleGridSort")?.value || "shared";
+  const capabilities = [...new Set(filteredRolesRows().map(row => row["Capability"]))];
+  const rows = capabilities
+    .map(capability => ({ capability, holders: columns.filter(column => column.capabilities.has(capability)) }))
+    .filter(row => row.holders.length > 0)
+    .filter(row => coverage === "one" ? row.holders.length === 1 : coverage === "every" ? row.holders.length === columns.length : true);
+  const byName = (a, b) => a.capability.localeCompare(b.capability);
+  if (sort === "name") rows.sort(byName);
+  else if (sort === "unique") rows.sort((a, b) => a.holders.length - b.holders.length || byName(a, b));
+  else rows.sort((a, b) => b.holders.length - a.holders.length || byName(a, b));
+  return rows;
+}
+function renderRolesGrid() {
+  const view = document.getElementById("rolesGridView");
+  if (!view || view.hidden) return;
+  const table = document.getElementById("roleGridTable");
+  const legend = document.getElementById("roleGridLegend");
+  const stat = document.getElementById("roleGridStat");
+  const { capabilityDescription, grantedHow } = rolesCapabilityIndex();
+  const columns = roleGridColumns();
+  const rows = roleGridRows(columns);
+  const highlightRole = rolesRoleFilter.value;
+  const shownPlatforms = [...new Set(columns.map(column => column.platform))];
+  const showsInheritance = columns.some(column => ROLE_IMPORTS[column.name]?.length);
+  legend.innerHTML = shownPlatforms.map(platform => `<span><i class="role-grid-plat-${ROLE_GRID_PLATFORM_ORDER.indexOf(platform)}"></i>${escapeHtml(platform)}</span>`).join("")
+    + (showsInheritance ? `<span><b class="role-grid-legend-tick">&#10003;</b>Added by the role</span><span><b class="role-grid-legend-tick role-grid-legend-inherited">&#10003;</b>Inherited (recorded for User, Power and Admin)</span>` : "");
+  stat.textContent = `${rows.length} capabilit${rows.length === 1 ? "y" : "ies"} × ${columns.length} role${columns.length === 1 ? "" : "s"}`;
+  const hl = name => name === highlightRole ? " role-grid-hl" : "";
+  table.querySelector("thead").innerHTML = `<tr><th scope="col">Capability</th><th scope="col" class="role-grid-count">Roles</th>${columns.map(column =>
+    `<th scope="col" class="role-grid-role role-grid-plat-${column.platformIndex}${hl(column.name)}" title="${escapeHtml(column.name)} (${escapeHtml(column.platform)})"><span>${escapeHtml(column.name)}</span></th>`).join("")}</tr>`;
+  table.querySelector("tbody").innerHTML = rows.length
+    ? rows.map(({ capability, holders }) => {
+        const count = holders.length === 1 ? `1 · ${escapeHtml(holders[0].name)}` : holders.length === columns.length && columns.length > 1 ? `All ${holders.length}` : String(holders.length);
+        const cells = columns.map(column => {
+          if (!column.capabilities.has(capability)) return `<td class="role-grid-cell${hl(column.name)}"></td>`;
+          const how = grantedHow.get(`${column.name}|${capability}`);
+          const inherited = roleGrantCategory(how) === "inherited";
+          const note = how === ROLE_GRANT_UNRECORDED ? "" : ` (${how.toLowerCase()})`;
+          return `<td class="role-grid-cell role-grid-yes${inherited ? " role-grid-inherited" : ""}${hl(column.name)}" title="${escapeHtml(column.name)}: ${escapeHtml(capability)}${escapeHtml(note)}">&#10003;</td>`;
+        }).join("");
+        return `<tr><td title="${escapeHtml(capabilityDescription.get(capability))}">${escapeHtml(capability)}</td><td class="role-grid-count">${count}</td>${cells}</tr>`;
+      }).join("")
+    : `<tr><td class="patterns-empty" colspan="${columns.length + 2}">No capabilities match the current filters.</td></tr>`;
+}
+function exportRolesGrid(event) {
+  const columns = roleGridColumns();
+  const rows = roleGridRows(columns);
+  const { capabilityDescription, grantedHow } = rolesCapabilityIndex();
+  const lines = [["Capability", "What it lets you do", "Roles holding it", ...columns.map(column => column.name)].map(csvValue).join(",")];
+  const cellValue = (role, capability) => {
+    const how = grantedHow.get(`${role}|${capability}`);
+    return roleGrantCategory(how) === "inherited" ? `Y (${how.toLowerCase()})` : "Y";
+  };
+  rows.forEach(({ capability, holders }) => {
+    lines.push([capability, capabilityDescription.get(capability), holders.length, ...columns.map(column => column.capabilities.has(capability) ? cellValue(column.name, capability) : "")].map(csvValue).join(","));
+  });
+  const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Splunk-Role-Capability-Grid-Visible.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  const button = event.currentTarget;
+  button.textContent = "Exported";
+  setTimeout(() => { button.textContent = "Export visible CSV"; }, 1400);
+}
+function initRolesGridView() {
+  const tableBtn = document.getElementById("rolesViewTableBtn");
+  const gridBtn = document.getElementById("rolesViewGridBtn");
+  const tableView = document.getElementById("rolesTableView");
+  const gridView = document.getElementById("rolesGridView");
+  if (!tableBtn || !gridBtn || !tableView || !gridView) return;
+  function showView(which) {
+    const grid = which === "grid";
+    tableView.hidden = grid;
+    gridView.hidden = !grid;
+    tableBtn.classList.toggle("active", !grid);
+    tableBtn.setAttribute("aria-pressed", String(!grid));
+    gridBtn.classList.toggle("active", grid);
+    gridBtn.setAttribute("aria-pressed", String(grid));
+    renderRolesGrid();
+  }
+  tableBtn.addEventListener("click", () => showView("table"));
+  gridBtn.addEventListener("click", () => showView("grid"));
+  document.getElementById("roleGridCoverage")?.addEventListener("change", renderRolesGrid);
+  document.getElementById("roleGridSort")?.addEventListener("change", renderRolesGrid);
+}
 
 function healthSearchText(row) {
   return healthCheckTableColumns.map(column => row[column] || "").join(" ").toLowerCase();
@@ -36020,7 +36449,7 @@ function initPortsFlowSchemaView() {
     if (visibleCountEl) visibleCountEl.textContent = `${visible} / ${rows.length}`;
   }
   applyFilter();
-  if (searchInput) searchInput.addEventListener("input", applyFilter);
+  if (searchInput) searchInput.addEventListener("input", () => { applyFilter(); updatePortsMatrixHash(); });
   portOverrideListeners.push(() => {
     schemaRows.forEach(({ tr, rec }) => fillFlowSchemaRow(tr, rec));
     applyFilter();
@@ -36058,11 +36487,12 @@ function initPortsFlowSchemaView() {
     applyFilter();
   }
 
-  if (patternSelect) patternSelect.addEventListener("change", () => applyPatternHighlight(patternSelect.value));
+  if (patternSelect) patternSelect.addEventListener("change", () => { applyPatternHighlight(patternSelect.value); updatePortsMatrixHash(); });
   if (patternClear) {
     patternClear.addEventListener("click", () => {
       if (patternSelect) patternSelect.value = "";
       applyPatternHighlight("");
+      updatePortsMatrixHash();
     });
   }
 
@@ -36094,9 +36524,19 @@ function initPortsFlowSchemaView() {
     if (schemaView) schemaView.hidden = !showSchema;
     if (gridBtn) { gridBtn.classList.toggle("ports-view-btn-active", !showSchema); gridBtn.setAttribute("aria-pressed", String(!showSchema)); }
     if (schemaBtn) { schemaBtn.classList.toggle("ports-view-btn-active", showSchema); schemaBtn.setAttribute("aria-pressed", String(showSchema)); }
+    updatePortsMatrixHash();
   }
   if (gridBtn) gridBtn.addEventListener("click", () => showView("grid"));
   if (schemaBtn) schemaBtn.addEventListener("click", () => showView("schema"));
+
+  portsMatrixHashRestorers.push(params => {
+    const flowPattern = params.get("flowPattern") || "";
+    const validPattern = patternSelect && Array.from(patternSelect.options).some(option => option.value === flowPattern);
+    if (patternSelect) patternSelect.value = validPattern ? flowPattern : "";
+    if (searchInput) searchInput.value = params.get("flowSearch") || "";
+    applyPatternHighlight(validPattern ? flowPattern : "");
+    showView(params.get("view") === "flows" ? "schema" : "grid");
+  });
 }
 
 const PORTS_CELL_MODAL_BRIEF_FIELDS = [
@@ -36243,6 +36683,8 @@ function initPortsMatrixCellModal() {
 }
 
 renderRolesTable();
+initRoleComparison();
+initRolesGridView();
 renderSplunkPortsTable();
 renderNetworkFlowsTable();
 renderQuestionsTable();
@@ -36250,6 +36692,24 @@ initPortsMatrixPatternHighlighter();
 initPortsFlowSchemaView();
 initPortsMatrixCellModal();
 initPortsOverridePanel();
+portsMatrixHashHandler = applyPortsMatrixHash;
+applyPortsMatrixHash();
+
+document.getElementById("portsMatrixCopyLink")?.addEventListener("click", async event => {
+  const button = event.currentTarget;
+  const status = document.getElementById("portsMatrixCopyLinkStatus");
+  updatePortsMatrixHash();
+  const url = location.href;
+  try {
+    await navigator.clipboard.writeText(url);
+    button.textContent = "Link copied";
+    if (status) status.textContent = "";
+  } catch (e) {
+    // Clipboard access can be blocked (insecure origin, permissions); show the link instead.
+    if (status) status.textContent = `Copy this link: ${url}`;
+  }
+  setTimeout(() => { button.textContent = "Copy link to this view"; }, 1600);
+});
 
 function initPortsOverridePanel() {
   const grid = document.getElementById("portsOverrideGrid");
@@ -41889,12 +42349,14 @@ rolesRoleFilter.addEventListener("change", renderRolesTable);
 rolesPlatformFilter.addEventListener("change", renderRolesTable);
 rolesCapabilityFilter.addEventListener("change", renderRolesTable);
 rolesPrivFilter.addEventListener("change", renderRolesTable);
+rolesInheritanceFilter.addEventListener("change", renderRolesTable);
 document.getElementById("resetRolesTable").addEventListener("click", () => {
   rolesTableSearch.value = "";
   rolesRoleFilter.value = "";
   rolesPlatformFilter.value = "";
   rolesCapabilityFilter.value = "";
   rolesPrivFilter.value = "";
+  rolesInheritanceFilter.value = "";
   renderRolesTable();
 });
 document.getElementById("exportRolesTable").addEventListener("click", exportVisibleRoles);
@@ -46584,7 +47046,7 @@ const GLOBAL_SEARCH_DOMAINS = [
     title: r => `${r["Role"]} — ${r["Capability"]}`, subtitle: r => r["Platform"], snippet: r => r["What it lets you do"] || "",
     go: r => {
       setActivePage("refRoles");
-      gsClearFilters(["rolesRoleFilter", "rolesPlatformFilter", "rolesCapabilityFilter", "rolesPrivFilter"]);
+      gsClearFilters(["rolesRoleFilter", "rolesPlatformFilter", "rolesCapabilityFilter", "rolesInheritanceFilter", "rolesPrivFilter"]);
       gsSetSearchAndFire(rolesTableSearch, r["Capability"]);
     }
   },
