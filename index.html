@@ -1453,6 +1453,8 @@
     .api-product-note { color:var(--muted); font-size:11.5px; line-height:1.45; }
     .patterns-toolbar.api-toolbar { grid-template-columns:minmax(200px, 1fr) minmax(160px, 220px) minmax(150px, 210px) minmax(120px, 150px) minmax(150px, 190px) auto; }
     .api-table-wrap { max-height:75vh; }
+    .api-copy-link-status { grid-column:1 / -1; font-size:12px; color:#475569; word-break:break-all; }
+    .api-copy-link-status:empty { display:none; }
     .eccs-matrix.api-table td:first-child { min-width:260px; font-weight:400; color:#0f172a; }
     .api-path { display:block; font:600 12px var(--mono); color:#1f4e78; overflow-wrap:anywhere; }
     .api-path + .api-path { margin-top:3px; }
@@ -4348,7 +4350,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.26 &middot; build 130</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.26 &middot; build 131</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -16297,8 +16299,10 @@ E. Assumptions and unresolved inputs</pre>
       <select id="apiAvailabilityFilter" aria-label="Filter by where the endpoint works"><option value="">Anywhere</option></select>
       <div class="button-group">
         <button id="apiReset" type="button">Reset</button>
+        <button id="apiCopyLink" type="button" title="Copies a link that reopens this page with the current search, filters and sort">Copy link</button>
         <button id="apiExport" class="primary-button" type="button">Export visible CSV</button>
       </div>
+      <span class="api-copy-link-status" id="apiCopyLinkStatus" role="status" aria-live="polite"></span>
     </div>
 
     <div class="patterns-stats" aria-live="polite">
@@ -26532,6 +26536,7 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
                     : "#taxonomy";
     history.replaceState(null, "", hash);
     if (selected === "portsMatrix") updatePortsMatrixHash();
+    if (selected === "splunkApi") updateSplunkApiHash();
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
   updateBackToTopVisibility();
@@ -27849,7 +27854,7 @@ function pageNameFromHash() {
   if (location.hash === "#health-checks") return "health";
   if (/^#ports-matrix/.test(location.hash)) return "portsMatrix";
   if (location.hash === "#my-tools") return "externalTools";
-  if (location.hash === "#splunk-api") return "splunkApi";
+  if (/^#splunk-api(\?|$)/.test(location.hash)) return "splunkApi";
   if (location.hash === "#input-coverage") return "inputCoverage";
   if (location.hash === "#metrics" || location.hash === "#metrics-pivot") return "metrics";
   if (location.hash === "#framework-overview") return "refFrameworkOverview";
@@ -38256,6 +38261,52 @@ function apiHighlight(text, q) {
   }
   return out + escapeHtml(raw.slice(from));
 }
+// Shareable URL state: #splunk-api?q=&product=&group=&method=&works=&sort=&dir=desc.
+// Only non-default values are written, and only ever to a splunk-api URL.
+const API_HASH_FILTERS = [["q", "apiSearch"], ["product", "apiProductFilter"], ["group", "apiGroupFilter"], ["method", "apiMethodFilter"], ["works", "apiAvailabilityFilter"]];
+function splunkApiHashFromControls() {
+  const params = new URLSearchParams();
+  API_HASH_FILTERS.forEach(([key, id]) => {
+    const value = document.getElementById(id).value.trim();
+    if (value) params.set(key, value);
+  });
+  if (apiSort) {
+    params.set("sort", apiSort.key);
+    if (apiSort.dir === "desc") params.set("dir", "desc");
+  }
+  const query = params.toString();
+  return query ? `#splunk-api?${query}` : "#splunk-api";
+}
+// False until the URL's state has been applied once, so the first render (with empty controls)
+// can't overwrite an incoming shared link.
+let apiHashApplied = false;
+function updateSplunkApiHash() {
+  if (!apiHashApplied || !history.replaceState || !/^#splunk-api(\?|$)/.test(location.hash)) return;
+  const next = splunkApiHashFromControls();
+  if (location.hash !== next) history.replaceState(null, "", next);
+}
+// Sets every control from the URL (unknown values fall back to "All"), then renders, which
+// rewrites the URL to the state actually applied.
+function applySplunkApiHash() {
+  if (!document.getElementById("apiSearch")) return;
+  if (!/^#splunk-api(\?|$)/.test(location.hash)) { apiHashApplied = true; return; }
+  const qIdx = location.hash.indexOf("?");
+  const params = new URLSearchParams(qIdx === -1 ? "" : location.hash.slice(qIdx + 1));
+  const setSelect = (id, value) => {
+    const select = document.getElementById(id);
+    select.value = [...select.options].some(o => o.value === value) ? value : "";
+  };
+  document.getElementById("apiSearch").value = params.get("q") || "";
+  setSelect("apiProductFilter", params.get("product") || "");
+  setSelect("apiMethodFilter", params.get("method") || "");
+  setSelect("apiAvailabilityFilter", params.get("works") || "");
+  renderSplunkApiGroupOptions();
+  setSelect("apiGroupFilter", params.get("group") || "");
+  const sortKey = params.get("sort");
+  apiSort = sortKey && API_SORT_COMPARE[sortKey] ? { key: sortKey, dir: params.get("dir") === "desc" ? "desc" : "asc" } : null;
+  apiHashApplied = true;
+  renderSplunkApiTable();
+}
 function renderSplunkApiSortHeaders() {
   document.querySelectorAll("#apiTableHead .api-sort").forEach(button => {
     const th = button.closest("th");
@@ -38276,8 +38327,10 @@ function renderSplunkApiTable() {
   const body = document.getElementById("apiTableBody");
   if (!rows.length) {
     body.innerHTML = `<tr><td class="patterns-empty" colspan="5">No endpoints match the current filters.</td></tr>`;
+    updateSplunkApiHash();
     return;
   }
+  updateSplunkApiHash();
   const groupCounts = rows.reduce((m, e) => m.set(e.group, (m.get(e.group) || 0) + 1), new Map());
   let lastGroup = null;
   body.innerHTML = rows.map(e => {
@@ -38526,6 +38579,20 @@ function initSplunkApiPage() {
   });
   document.getElementById("apiSearch").addEventListener("input", renderSplunkApiTable);
   ["apiProductFilter", "apiGroupFilter", "apiMethodFilter", "apiAvailabilityFilter"].forEach(id => document.getElementById(id).addEventListener("change", renderSplunkApiTable));
+  document.getElementById("apiCopyLink").addEventListener("click", async event => {
+    const button = event.currentTarget;
+    const status = document.getElementById("apiCopyLinkStatus");
+    const url = location.href.split("#")[0] + splunkApiHashFromControls();
+    try {
+      await navigator.clipboard.writeText(url);
+      button.textContent = "Link copied";
+      status.textContent = "";
+    } catch (err) {
+      // Clipboard access can be blocked (insecure origin, permissions); show the link instead.
+      status.textContent = `Copy this link: ${url}`;
+    }
+    setTimeout(() => { button.textContent = "Copy link"; }, 1600);
+  });
   document.getElementById("apiTableHead").addEventListener("click", event => {
     const button = event.target.closest(".api-sort");
     if (!button) return;
@@ -38550,6 +38617,7 @@ initRoleTools();
 initRoleAudit();
 initSplunkApiPage();
 initApiRequestBuilder();
+applySplunkApiHash();
 renderSplunkPortsTable();
 renderNetworkFlowsTable();
 renderQuestionsTable();
@@ -44229,6 +44297,7 @@ window.addEventListener("hashchange", () => {
   const hashPage = pageNameFromHash();
   setActivePage(hashPage, false);
   if (hashPage === "portsMatrix" && portsMatrixHashHandler) portsMatrixHashHandler();
+  if (hashPage === "splunkApi") applySplunkApiHash();
 });
 
 advisorForm.addEventListener("submit", event => {
