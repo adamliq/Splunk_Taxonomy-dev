@@ -1470,6 +1470,16 @@
     .api-avail-on_prem_only { background:#fef3c7; color:#b45309; border-color:#fcd34d; }
     .api-avail-cloud_only { background:#dbeafe; color:#1d4ed8; border-color:#93c5fd; }
     .api-product-cell small { display:block; margin-top:2px; color:var(--muted); font-size:11px; }
+    .api-sort { all:unset; box-sizing:border-box; display:inline-flex; align-items:center; gap:4px; cursor:pointer; font:inherit; color:inherit; text-transform:inherit; letter-spacing:inherit; border-radius:4px; }
+    .api-sort::after { content:"\2195"; color:#94a3b8; font-size:11px; }
+    .api-sort:hover { color:var(--accent); }
+    .api-sort:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+    th[aria-sort="ascending"] .api-sort::after { content:"\2191"; color:var(--accent); }
+    th[aria-sort="descending"] .api-sort::after { content:"\2193"; color:var(--accent); }
+    .api-table mark { background:#fde68a; color:inherit; padding:0 1px; border-radius:2px; }
+    .eccs-matrix.api-table tr.api-group-row th { position:static; padding:9px 12px; background:#e8eef6; color:#1f4e78; font-size:12px; text-transform:none; letter-spacing:0; border-right:0; }
+    .api-group-label { position:sticky; left:12px; display:inline-flex; gap:8px; align-items:baseline; }
+    .api-group-label small { color:var(--muted); font-size:11px; font-weight:700; }
     .api-about p, #apiAbout p { margin:0 0 10px; font-size:13px; line-height:1.55; color:#334155; }
     #apiAbout ul { margin:0 0 10px; padding-left:18px; font-size:12.5px; color:#334155; }
     .patterns-toolbar.roles-toolbar {
@@ -4317,7 +4327,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.26 &middot; build 128</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.26 &middot; build 129</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -16277,7 +16287,7 @@ E. Assumptions and unresolved inputs</pre>
 
     <div class="eccs-table-wrap api-table-wrap" role="region" aria-label="Scrollable Splunk API endpoint table" tabindex="0">
       <table class="eccs-matrix api-table">
-        <thead><tr><th scope="col">Endpoint</th><th scope="col">Methods</th><th scope="col">Description</th><th scope="col">Product</th><th scope="col">Works on</th></tr></thead>
+        <thead id="apiTableHead"><tr><th scope="col" aria-sort="none"><button type="button" class="api-sort" data-sort="endpoint">Endpoint</button></th><th scope="col" aria-sort="none"><button type="button" class="api-sort" data-sort="methods">Methods</button></th><th scope="col" aria-sort="none"><button type="button" class="api-sort" data-sort="description">Description</button></th><th scope="col" aria-sort="none"><button type="button" class="api-sort" data-sort="product">Product</button></th><th scope="col" aria-sort="none"><button type="button" class="api-sort" data-sort="availability">Works on</button></th></tr></thead>
         <tbody id="apiTableBody"></tbody>
       </table>
     </div>
@@ -38161,10 +38171,54 @@ function renderSplunkApiGroupOptions() {
   select.value = groups.includes(keep) ? keep : "";
 }
 
+// Column sort (null = the atlas's own order). When one product is selected, rows are also
+// grouped under that product's group headings, in the atlas's group order, sorted within each group.
+let apiSort = null;
+const API_AVAILABILITY_ORDER = ["enterprise_and_cloud", "on_prem_only", "cloud_only"];
+const apiMethodRank = e => Math.min(...e.methods.map(m => { const i = API_METHOD_ORDER.indexOf(m); return i === -1 ? API_METHOD_ORDER.length : i; }));
+const API_SORT_COMPARE = {
+  endpoint: (a, b) => (apiEndpointRefs(a)[0] || "").localeCompare(apiEndpointRefs(b)[0] || ""),
+  methods: (a, b) => apiMethodRank(a) - apiMethodRank(b) || a.methods.length - b.methods.length,
+  description: (a, b) => a.description.localeCompare(b.description),
+  product: (a, b) => apiProductName(a.component).localeCompare(apiProductName(b.component)) || a.group.localeCompare(b.group),
+  availability: (a, b) => API_AVAILABILITY_ORDER.indexOf(a.availability) - API_AVAILABILITY_ORDER.indexOf(b.availability)
+};
+function apiOrderedEndpoints() {
+  const rows = apiFilteredEndpoints();
+  const index = new Map(splunkApiAtlas.endpoints.map((e, i) => [e, i]));
+  const byColumn = apiSort
+    ? (a, b) => (apiSort.dir === "asc" ? 1 : -1) * API_SORT_COMPARE[apiSort.key](a, b) || index.get(a) - index.get(b)
+    : (a, b) => index.get(a) - index.get(b);
+  if (!document.getElementById("apiProductFilter").value) return rows.sort(byColumn);
+  const groupOrder = [...new Set(splunkApiAtlas.endpoints.map(e => e.group))];
+  return rows.sort((a, b) => groupOrder.indexOf(a.group) - groupOrder.indexOf(b.group) || byColumn(a, b));
+}
+// Wraps every case-insensitive occurrence of the search text in <mark>, escaping the rest.
+function apiHighlight(text, q) {
+  const raw = String(text == null ? "" : text);
+  if (!q) return escapeHtml(raw);
+  const lower = raw.toLowerCase();
+  let out = "", from = 0, idx;
+  while ((idx = lower.indexOf(q, from)) !== -1) {
+    out += escapeHtml(raw.slice(from, idx)) + "<mark>" + escapeHtml(raw.slice(idx, idx + q.length)) + "</mark>";
+    from = idx + q.length;
+  }
+  return out + escapeHtml(raw.slice(from));
+}
+function renderSplunkApiSortHeaders() {
+  document.querySelectorAll("#apiTableHead .api-sort").forEach(button => {
+    const th = button.closest("th");
+    const state = apiSort && apiSort.key === button.dataset.sort ? (apiSort.dir === "asc" ? "ascending" : "descending") : "none";
+    th.setAttribute("aria-sort", state);
+    button.title = state === "ascending" ? "Sorted A to Z -- click to reverse" : state === "descending" ? "Sorted Z to A -- click to reverse" : "Sort by this column";
+  });
+}
 function renderSplunkApiTable() {
   renderSplunkApiGroupOptions();
-  const rows = apiFilteredEndpoints();
+  renderSplunkApiSortHeaders();
+  const rows = apiOrderedEndpoints();
   const product = document.getElementById("apiProductFilter").value;
+  const q = document.getElementById("apiSearch").value.trim().toLowerCase();
   document.querySelectorAll("#apiProductGrid .api-product").forEach(card => card.classList.toggle("active", card.dataset.product === product));
   document.getElementById("apiVisibleCount").textContent = String(rows.length);
   document.getElementById("apiPathCount").textContent = String(rows.reduce((sum, e) => sum + apiEndpointRefs(e).length, 0));
@@ -38173,10 +38227,16 @@ function renderSplunkApiTable() {
     body.innerHTML = `<tr><td class="patterns-empty" colspan="5">No endpoints match the current filters.</td></tr>`;
     return;
   }
+  const groupCounts = rows.reduce((m, e) => m.set(e.group, (m.get(e.group) || 0) + 1), new Map());
+  let lastGroup = null;
   body.innerHTML = rows.map(e => {
+    const heading = product && e.group !== lastGroup
+      ? `<tr class="api-group-row"><th scope="colgroup" colspan="5"><span class="api-group-label"><strong>${apiHighlight(e.group, q)}</strong><small>${groupCounts.get(e.group)} endpoint${groupCounts.get(e.group) === 1 ? "" : "s"}</small></span></th></tr>`
+      : "";
+    lastGroup = e.group;
     const refs = e.paths
-      ? e.paths.map(path => `<span class="api-path">${escapeHtml(path)}</span>`).join("")
-      : (e.operation_ids || []).map(id => `<span class="api-path api-opid">${escapeHtml(id)}</span>`).join("");
+      ? e.paths.map(path => `<span class="api-path">${apiHighlight(path, q)}</span>`).join("")
+      : (e.operation_ids || []).map(id => `<span class="api-path api-opid">${apiHighlight(id, q)}</span>`).join("");
     const urls = apiFullUrls(e);
     const note = splunkApiAtlas.components[e.component]?.notes;
     const detail = e.paths
@@ -38185,12 +38245,11 @@ function renderSplunkApiTable() {
     const methods = API_METHOD_ORDER.filter(m => e.methods.includes(m)).concat(e.methods.filter(m => !API_METHOD_ORDER.includes(m)))
       .map(m => `<span class="api-method api-method-${escapeHtml(m)}">${escapeHtml(m)}</span>`).join("");
     const legend = splunkApiAtlas.availability_legend[e.availability] || "";
-    return `<tr><td>${refs}${detail}</td><td>${methods}</td><td>${escapeHtml(e.description)}</td><td class="api-product-cell">${escapeHtml(apiProductName(e.component))}<small>${escapeHtml(e.group)}</small></td><td><span class="api-avail api-avail-${escapeHtml(e.availability)}" title="${escapeHtml(legend)}">${escapeHtml(API_AVAILABILITY_LABELS[e.availability] || e.availability)}</span></td></tr>`;
+    return `${heading}<tr><td>${refs}${detail}</td><td>${methods}</td><td>${apiHighlight(e.description, q)}</td><td class="api-product-cell">${apiHighlight(apiProductName(e.component), q)}<small>${apiHighlight(e.group, q)}</small></td><td><span class="api-avail api-avail-${escapeHtml(e.availability)}" title="${escapeHtml(legend)}">${escapeHtml(API_AVAILABILITY_LABELS[e.availability] || e.availability)}</span></td></tr>`;
   }).join("");
 }
-
 function exportSplunkApi(event) {
-  const rows = apiFilteredEndpoints();
+  const rows = apiOrderedEndpoints();
   const lines = [["Product", "Group", "Methods", "Paths / operation IDs", "Description", "Works on", "Full URLs"].map(csvValue).join(",")];
   rows.forEach(e => lines.push([
     splunkApiAtlas.components[e.component]?.name || e.component, e.group, e.methods.join(" "), apiEndpointRefs(e).join(" · "),
@@ -38254,7 +38313,15 @@ function initSplunkApiPage() {
   });
   document.getElementById("apiSearch").addEventListener("input", renderSplunkApiTable);
   ["apiProductFilter", "apiGroupFilter", "apiMethodFilter", "apiAvailabilityFilter"].forEach(id => document.getElementById(id).addEventListener("change", renderSplunkApiTable));
+  document.getElementById("apiTableHead").addEventListener("click", event => {
+    const button = event.target.closest(".api-sort");
+    if (!button) return;
+    const key = button.dataset.sort;
+    apiSort = { key, dir: apiSort && apiSort.key === key && apiSort.dir === "asc" ? "desc" : "asc" };
+    renderSplunkApiTable();
+  });
   document.getElementById("apiReset").addEventListener("click", () => {
+    apiSort = null;
     document.getElementById("apiSearch").value = "";
     ["apiProductFilter", "apiGroupFilter", "apiMethodFilter", "apiAvailabilityFilter"].forEach(id => { document.getElementById(id).value = ""; });
     renderSplunkApiTable();
