@@ -9664,9 +9664,6 @@ INGEST PROCESSOR
         <div class="eyebrow">Access &amp; Capability reference</div>
         <h2>Roles &amp; Assigned Capabilities</h2>
         <p>Every Splunk role and the individual capabilities assigned to it, derived from the uploaded role/capability matrix. Click a role below, or use search and the filters, to see exactly which capabilities a role carries, what each capability lets you do, whether it is flagged as a privileged capability, and where the mapping came from.</p>
-        <p><strong>Note:</strong> the source file also lists three roles with no capabilities assigned in this matrix -- <code>mc_analyst</code>, <code>mc_analyst_reader</code>, <code>mc_soar_automation</code> -- they carry nothing to list in the table below and so do not appear in the Role filter.</p>
-        <p><strong>Platform:</strong> derived from each role's naming convention and the source file's Mission Control Roles tab -- <code>Sc_admin</code> is Splunk Cloud-specific; <code>User</code>/<code>Power</code>/<code>Admin</code> are the base roles (shown as Splunk On-premises, since Sc_admin is the file's distinct Splunk Cloud counterpart to Admin); <code>ess_*</code> and the non-SOAR <code>mc_*</code> Mission Control/incident-review roles are Splunk ES; the <code>mc_soar_*</code> roles are Splunk SOAR.</p>
-        <p><strong>Granted how:</strong> whether a role adds a capability itself or inherits it through <code>importRoles</code>. This follows Splunk Enterprise's shipped <code>authorize.conf</code>, where <code>power</code> imports <code>user</code> and <code>admin</code> imports <code>power</code> and <code>user</code>, so it's recorded for User, Power and Admin only. No inheritance data is held for Sc_admin, ES, SOAR or Mission Control roles, so their capabilities show "Not recorded".</p>
       </div>
     </div>
 
@@ -9813,6 +9810,17 @@ INGEST PROCESSOR
       <div class="eccs-table-wrap role-grid-wrap" role="region" aria-label="Scrollable role by capability grid" tabindex="0">
         <table class="eccs-matrix role-grid" id="roleGridTable"><thead></thead><tbody></tbody></table>
       </div>
+    </div>
+
+    <div class="eccs-examples" style="margin-top:18px">
+      <details>
+        <summary>About this data</summary>
+        <div class="eccs-example-body">
+          <p><strong>Note:</strong> the source file also lists three roles with no capabilities assigned in this matrix -- <code>mc_analyst</code>, <code>mc_analyst_reader</code>, <code>mc_soar_automation</code> -- they carry nothing to list in the table below and so do not appear in the Role filter.</p>
+          <p><strong>Platform:</strong> derived from each role's naming convention and the source file's Mission Control Roles tab -- <code>Sc_admin</code> is Splunk Cloud-specific; <code>User</code>/<code>Power</code>/<code>Admin</code> are the base roles (shown as Splunk On-premises, since Sc_admin is the file's distinct Splunk Cloud counterpart to Admin); <code>ess_*</code> and the non-SOAR <code>mc_*</code> Mission Control/incident-review roles are Splunk ES; the <code>mc_soar_*</code> roles are Splunk SOAR.</p>
+          <p><strong>Granted how:</strong> whether a role adds a capability itself or inherits it through <code>importRoles</code>. This follows Splunk Enterprise's shipped <code>authorize.conf</code>, where <code>power</code> imports <code>user</code> and <code>admin</code> imports <code>power</code> and <code>user</code>, so it's recorded for User, Power and Admin only. No inheritance data is held for Sc_admin, ES, SOAR or Mission Control roles, so their capabilities show "Not recorded".</p>
+        </div>
+      </details>
     </div>
   </section>
 <section id="splunkBinSection" class="page-view reference-page" role="tabpanel" aria-labelledby="showSplunkBinPage" hidden>
