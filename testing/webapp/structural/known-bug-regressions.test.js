@@ -150,3 +150,11 @@ describe('Companion Tools external links page', () => {
     }
   });
 });
+
+describe('Header version badge', () => {
+  test('shows exactly one version as v<YYYY.MM.DD> · build <N>, set by scripts/release/set_version.py', () => {
+    const matches = text.match(/<span class="app-header-version" id="appVersion"[^>]*>(v\d{4}\.\d{2}\.\d{2}) &middot; build (\d+)<\/span>/g) || [];
+    assert.equal(matches.length, 1, 'expected exactly one #appVersion badge in the header');
+    assert.doesNotMatch(matches[0], /v0000\.00\.00|build 0</, 'version badge still has its placeholder -- run scripts/release/set_version.py');
+  });
+});

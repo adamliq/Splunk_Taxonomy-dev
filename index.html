@@ -52,6 +52,7 @@
     .app-header-brandtext { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
     .app-header-wordmark { font-size: 19px; font-weight: 900; letter-spacing: .01em; line-height: 1; }
     .app-header-tagline { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #b7c3d9; }
+    .app-header-version { padding: 2px 7px; border: 1px solid rgba(255,255,255,.28); border-radius: 999px; font: 700 10.5px var(--mono); letter-spacing: .02em; color: #dbe4f0; white-space: nowrap; align-self: center; }
     .app-nav-toggle {
       display: none;
       flex-shrink: 0;
@@ -4316,6 +4317,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.26 &middot; build 127</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
