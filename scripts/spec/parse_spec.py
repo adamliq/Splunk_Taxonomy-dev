@@ -5,23 +5,78 @@ import json
 
 SETTING_RE = re.compile(r'^([^\s#*=\[][^=]*?)\s*=\s*(.*)$')
 STANZA_RE = re.compile(r'^\[(.+)\]\s*$')
+BANNER_RE = re.compile(r'^#[*#]{19,}\s*$')
+SUBHEADING_RE = re.compile(r'^#{5}\s+(\S.*?)\s*$')
 
 
-def parse(path):
+def parse(path, banner_sections=False):
+    """banner_sections: for specs with no stanza lines (indexes.conf), start a new section at
+    each comment-banner heading ("#****" then "# PER INDEX OPTIONS", or "##### S3 specific
+    settings"). Sections have name None and a 'section' title; the heading's prose (up to
+    the next blank comment line) becomes the section's description."""
     lines = open(path, encoding='utf-8').read().split('\n')
     stanzas = []           # [{name, desc_bullets, settings:[...]}]
     current = {'name': None, 'bullets': [], 'settings': []}   # settings before first stanza = global
     stanzas.append(current)
     target = None          # the bullets list currently being appended to
     in_example = False
+    after_banner = False   # banner_sections: the previous line was a banner
+    just_headed = False    # banner_sections: the previous line was a heading (banner/HEADING/banner/prose)
+    section_prose = None   # banner_sections: collecting a section heading's prose
     for raw in lines:
         line = raw.rstrip()
         if not line:
+            after_banner = just_headed = False
+            section_prose = None
             continue
         if line.startswith('#'):
             # Comment banners/prose between blocks end the current bullet list.
             target = None
+            if banner_sections:
+                text = line.lstrip('#').strip()
+                if BANNER_RE.match(line):
+                    # A banner closing a heading keeps collecting that heading's prose.
+                    if just_headed:
+                        just_headed = False
+                    else:
+                        after_banner, section_prose = True, None
+                    continue
+                just_headed = False
+                sub = SUBHEADING_RE.match(line)
+                heading, rest = None, ''
+                if sub:
+                    heading = sub.group(1)
+                elif after_banner and text:
+                    heading, _, rest = text.partition('. ')
+                    heading = heading.rstrip('.')
+                after_banner = False
+                if heading and heading.upper() == 'OVERVIEW':
+                    just_headed, section_prose = True, None
+                    continue
+                if heading:
+                    current = {'name': None, 'section': heading, 'bullets': [], 'settings': []}
+                    stanzas.append(current)
+                    section_prose = current['bullets']
+                    just_headed = True
+                    if rest.strip():
+                        section_prose.append({'text': rest.strip(), 'level': 0})
+                    continue
+                if section_prose is not None:
+                    if not text or text.startswith('[') or '=' in text:
+                        # A blank comment line, or the start of an example config, ends the prose.
+                        if section_prose and section_prose[-1]['text'].endswith('For example:'):
+                            section_prose[-1]['text'] = section_prose[-1]['text'][:-len('For example:')].rstrip()
+                        section_prose = None
+                    elif text.startswith('* '):
+                        section_prose.append({'text': text[2:].strip(), 'level': 1})
+                    elif section_prose and text[:1].islower():
+                        prev = section_prose[-1]['text']
+                        section_prose[-1]['text'] = prev + text if prev.endswith('-') else prev + ' ' + text
+                    else:
+                        section_prose.append({'text': text, 'level': 0})
             continue
+        after_banner = just_headed = False
+        section_prose = None
         m = STANZA_RE.match(line)
         if m:
             current = {'name': m.group(1).strip(), 'bullets': [], 'settings': []}

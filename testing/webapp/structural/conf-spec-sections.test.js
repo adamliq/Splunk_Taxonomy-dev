@@ -8,7 +8,7 @@ const assert = require('node:assert/strict');
 const { readIndexHtml } = require('../lib/parse-index');
 
 const text = readIndexHtml();
-const GENERATED = ['server', 'limits', 'restmap', 'health'];
+const GENERATED = ['server', 'limits', 'restmap', 'health', 'inputs', 'outputs', 'indexes', 'web', 'savedsearches', 'web-features'];
 
 function section(prefix) {
   const start = text.indexOf(`<section id="${prefix}-conf-settings" class="eccs-detail-section">`);
@@ -19,14 +19,18 @@ function section(prefix) {
 for (const prefix of GENERATED) {
   test(`${prefix}.conf settings section matches its stated setting and stanza counts`, () => {
     const html = section(prefix);
-    const stated = html.match(/(\d+) settings across (\d+) stanzas/);
+    // indexes.conf has no stanza lines, so it is grouped into the spec's banner sections instead.
+    const stated = html.match(/(\d+) settings (?:across|in) (\d+) (?:stanzas?|sections?)/);
     assert.ok(stated, 'source note with counts is missing');
     const rows = (html.match(/<tr><td>/g) || []).length;
-    const stanzas = (html.match(/<h4 id="[^"]+" class="spec-stanza">/g) || []).length;
+    const headings = (html.match(/<h4 id="[^"]+" class="spec-stanza">/g) || []).length;
+    // Settings outside any stanza (e.g. inputs.conf's host/index/source) get their own group,
+    // which isn't one of the stated stanzas. (Matched by text: restmap.conf has a real [global].)
+    const globalGroups = (html.match(/class="spec-stanza">Settings outside any stanza<\/h4>/g) || []).length;
     const navLinks = (html.match(/<a href="#[^"]+-stanza-[^"]+">/g) || []).length;
     assert.equal(rows, Number(stated[1]), 'row count differs from the stated number of settings');
-    assert.equal(stanzas, Number(stated[2]), 'stanza headings differ from the stated number of stanzas');
-    assert.equal(navLinks, stanzas, 'stanza jump links differ from stanza headings');
+    assert.equal(headings - globalGroups, Number(stated[2]), 'stanza/section headings differ from the stated number');
+    assert.equal(navLinks, headings, 'stanza jump links differ from stanza headings');
   });
 }
 
