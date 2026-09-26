@@ -3426,7 +3426,65 @@
          button's is .page-tab (singular), so this rule silently hid nothing and every
          printed report bled the full navy sidebar and every nav button across every page. */
       .app-sidebar, .page-tab, .reference-jump, #s3cExportJson, #s3cExportCostCsv, #s3cExportCapacityCsv, #s3cExportScenarioCsv, #s3cExportMarkdown, #s3cPrintReport, #s3cImportFile, .method-actions { display:none !important; }
-      #s3CalcPage { display:block !important; }
+      /* Scoped to the page when it is showing -- unscoped, this !important rule overrode [hidden]
+         and printed the whole S3 calculator at the top of every page's printout. */
+      #s3CalcPage:not([hidden]) { display:block !important; }
+    }
+    /* ---- Print ----
+       Prints what's on screen for the current page, as a clean handout: no app chrome, no
+       interactive controls, tables at full length with repeating headers, dark hero banners
+       turned into plain headings, and a header line naming the page, version and print date.
+       Table-heavy pages print landscape (set in beforeprint, see PRINT_LANDSCAPE_PAGES). A role
+       comparison can be printed on its own (body.print-scoped). Collapsed <details> are left
+       out -- the handout shows what's open on screen. */
+    .print-header, .print-fit-note { display:none; }
+    @page { size:A4; margin:12mm; }
+    @media print {
+      html, body { background:#fff !important; }
+      body { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+      *, *::before, *::after { box-shadow:none !important; text-shadow:none !important; }
+      .app-header, .global-search-bar, .app-nav-backdrop, .app-breadcrumb, .back-to-top-btn,
+      .modal, .ports-cell-modal-backdrop, .eccs-back, .eccs-anchor-nav, .eccs-subsection-nav,
+      .page-subnav, .role-tools-tabs, .role-view-switch, .ports-view-switch, .button-group, .primary-button,
+      .ports-copy-link-btn, .ports-copy-link-status, .api-copy-link-status, .api-req-open, .role-compare-swap,
+      .role-builder-actions, .role-audit-actions, .ports-pattern-toolbar, .catalogue-scroll-hint, .patterns-scroll-hint,
+      .health-scroll-hint, .patterns-toolbar, .config-setting-toolbar { display:none !important; }
+      .print-fit-note { display:block; margin:0 0 6px; padding:6px 9px; border:1px solid #fcd34d; border-radius:6px; background:#fffbeb; color:#92400e; font-size:8.5pt; }
+      .print-header { display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; margin:0 0 12px; padding-bottom:6px; border-bottom:1.5px solid #1f4e78; color:#334155; font:9pt/1.4 Inter, system-ui, sans-serif; }
+      .print-header strong { color:#0f172a; }
+      .print-header .print-header-url { flex-basis:100%; color:#64748b; font-size:8pt; word-break:break-all; }
+      .app-shell { display:block !important; padding:0 !important; margin:0 !important; max-width:none !important; }
+      .app-content { width:auto !important; max-width:none !important; padding:0 !important; margin:0 !important; }
+      .page-view { padding:0 !important; margin:0 !important; }
+      /* Hero banners: dark gradients become plain headings */
+      .reference-hero, .eccs-reference-hero, .patterns-hero, .info-hero {
+        background:none !important; border:0 !important; border-bottom:1px solid #cbd5e1 !important; border-radius:0 !important;
+        padding:0 0 8px !important; margin:0 0 12px !important; color:#0f172a !important; }
+      .reference-hero *, .eccs-reference-hero * { color:#0f172a !important; }
+      .reference-hero .eyebrow, .eccs-reference-hero .eyebrow, .patterns-hero .eyebrow { color:#475569 !important; }
+      .reference-hero h2, .eccs-reference-hero h2, .patterns-hero h2 { font-size:18pt !important; margin-top:2px !important; }
+      h1, h2, h3, h4, h5 { break-after:avoid; page-break-after:avoid; }
+      /* Tables: full length, header repeated on each page, no sticky cells, rows kept whole */
+      .eccs-table-wrap, [role="region"][tabindex="0"] { max-height:none !important; overflow:visible !important; border:0 !important; }
+      table { width:100% !important; min-width:0 !important; }
+      thead { display:table-header-group; }
+      tr, .method-card, .concept-card, .api-product, .role-compare-note { break-inside:avoid; page-break-inside:avoid; }
+      .eccs-matrix th, .eccs-matrix td, .eccs-table th, .eccs-table td { position:static !important; }
+      .eccs-matrix, .eccs-table { font-size:8.5pt; }
+      .eccs-matrix th, .eccs-matrix td { padding:5px 6px !important; }
+      .eccs-matrix td:first-child { min-width:0 !important; }
+      th[aria-sort="none"] .api-sort::after { display:none; }
+      .spec-table { table-layout:fixed; font-size:8pt; }
+      .spec-table th:nth-child(1) { width:32%; } .spec-table th:nth-child(2) { width:50%; } .spec-table th:nth-child(3) { width:18%; }
+      .spec-table td { padding:4px 6px !important; overflow-wrap:anywhere; }
+      /* Controls left on the page (filters, pickers) print as plain values */
+      input, select, textarea { border:1px solid #cbd5e1 !important; background:#fff !important; }
+      details:not([open]) { display:none !important; }
+      details > summary { list-style:none; }
+      details > summary::-webkit-details-marker { display:none; }
+      .eccs-detail-section a[href^="http"]::after { content:" (" attr(href) ")"; color:#64748b; font-size:8pt; word-break:break-all; }
+      /* Scoped print: only the chosen element (and the print header) */
+      body.print-scoped .print-scope-path > :not(.print-scope-path):not(.print-scope):not(.print-header) { display:none !important; }
     }
     .framework-flow { display:grid; grid-template-columns: repeat(6,minmax(145px,1fr)); gap:10px; }
     .framework-step { position:relative; min-height:130px; padding:16px; border:1px solid var(--border); border-radius:14px; background:#fff; box-shadow:0 6px 18px rgba(15,23,42,.05); }
@@ -4350,7 +4408,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.26 &middot; build 131</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.26 &middot; build 132</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -4425,6 +4483,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
   </nav>
   <div class="app-content">
 
+  <div class="print-header" id="printHeader" aria-hidden="true"></div>
   <nav class="app-breadcrumb" id="appBreadcrumb" aria-label="Breadcrumb"></nav>
 
   <section id="infoPage" class="page-view info-page" role="tabpanel" aria-labelledby="showInfoPage">
@@ -10252,6 +10311,7 @@ INGEST PROCESSOR
         <button id="roleCompareSwap" class="role-compare-swap" type="button" aria-label="Swap role A and role B" title="Swap roles">&#8644;</button>
         <label for="roleCompareB">Role B<select id="roleCompareB"><option value="">Select a role…</option></select></label>
         <button id="roleCompareExport" class="primary-button" type="button" disabled>Export comparison CSV</button>
+        <button id="roleComparePrint" class="primary-button" type="button" disabled>Print comparison</button>
       </div>
       <div id="roleCompareResult" aria-live="polite"><p class="role-compare-empty">Pick two different roles to compare.</p></div>
       </div>
@@ -16075,7 +16135,7 @@ E. Assumptions and unresolved inputs</pre>
     </div>
     <p class="patterns-scroll-hint" aria-hidden="true">&#8596; Swipe sideways to see every destination component</p>
     <div class="eccs-table-wrap ports-matrix-wrap" role="region" aria-label="Scrollable component-to-component TCP ports matrix" tabindex="0">
-      <table class="eccs-matrix ports-matrix-grouped" id="portsMatrixTable">
+      <table class="eccs-matrix ports-matrix-grouped" id="portsMatrixTable" data-print-hint="Narrow it first -- pick a logging pattern or topology, search for components, or tick Hide fully-empty rows/columns -- or print the Flows view instead.">
         <thead><tr><th scope="col">Source &darr; / Destination &rarr;</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Universal Forwarder (UF)</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Heavy Forwarder (HF)</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Indexer / IDX Peer</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Search Head / SHC Member</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Deployment Server (DS)</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Cluster Manager (CM)</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">License Manager (LM)</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Deployer</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Splunk Stream Server</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Splunk Stream Forwarder (Client)</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Monitoring Console (MC)</th><th scope="col" class="ports-grp-0" data-component-group="Core Platform Roles">Edge / Ingest Processor</th><th scope="col" class="ports-grp-1" data-component-group="External Actors & Clients">User</th><th scope="col" class="ports-grp-1" data-component-group="External Actors & Clients">Syslog Source</th><th scope="col" class="ports-grp-1" data-component-group="External Actors & Clients">HEC Client (Application)</th><th scope="col" class="ports-grp-1" data-component-group="External Actors & Clients">Admin / API Client</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">LDAP / AD Server</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">SAML IdP</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">DNS Server</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">NTP Server</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">SMTP Relay</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">Internet / Proxy</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">CA / CRL / OCSP (PKI Validation)</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">Syslog Collector (SC4S / rsyslog / syslog-ng)</th><th scope="col" class="ports-grp-2" data-component-group="Directory, Auth & Core Infrastructure">Load Balancer / Reverse Proxy</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Database Server (JDBC)</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Azure Event Hub</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">AWS S3</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">AWS SQS</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">AWS STS</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">AWS KMS</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">AWS Glue</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Vendor / Source API (External REST/HTTPS)</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Kafka</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">AWS Kinesis</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Azure Storage / ARM</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Microsoft Graph</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Google Cloud APIs / Pub/Sub</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">SNMP Manager / Trap Receiver</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">OpenTelemetry Collector</th><th scope="col" class="ports-grp-3" data-component-group="Data Source Integrations">Container / Kubernetes API</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunk Cloud</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunk SOAR / SOAR Cloud</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunk Enterprise Security / Mission Control (Cloud)</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunk ACS (Admin Config Service)</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunk Observability Cloud</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Splunkbase / Update Service</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Webhook Destination</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Ticketing / ITSM API</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">TAXII Server (Threat Intelligence)</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Proxy Authentication Service</th><th scope="col" class="ports-grp-4" data-component-group="Splunk Cloud & SaaS Dependencies">Git Host (GitHub / GitLab / Azure DevOps)</th></tr></thead>
         <tbody>
           <tr><th scope="row" class="ports-grp-0" data-component-group="Core Platform Roles">Universal Forwarder (UF)</th><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 9997 (S2S, TCP, optionally TLS)</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 9997 (S2S, TCP, optionally TLS)</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 8089 (mgmt / phone-home / apps)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 53 (DNS, UDP/TCP)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 123 (NTP, UDP)</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 443 (HTTPS, apps/updates/cloud APIs)</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> 80 / 443 (CA / CRL / OCSP, TLS certificate validation)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-ING" title="INGEST">ING</span> 9997 (S2S, TCP) -- conventional default; verify the actual forwarding endpoint/port for your Splunk Cloud stack</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-MGMT" title="MANAGEMENT">MGMT</span> 443 (HTTPS, app/update download)</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td><span class="flow-badge flow-INFRA" title="INFRASTRUCTURE">INFRA</span> environment-specific (often the proxy's own listener, e.g. 3128/8080)</td><td>&mdash;</td></tr>
@@ -36648,6 +36708,7 @@ function initRoleComparison() {
   const selectB = document.getElementById("roleCompareB");
   const swapBtn = document.getElementById("roleCompareSwap");
   const exportBtn = document.getElementById("roleCompareExport");
+  const printBtn = document.getElementById("roleComparePrint");
   const result = document.getElementById("roleCompareResult");
   if (!selectA || !selectB || !result) return;
 
@@ -36693,12 +36754,14 @@ function initRoleComparison() {
     if (!roleA || !roleB || roleA === roleB) {
       comparison = null;
       exportBtn.disabled = true;
+      if (printBtn) printBtn.disabled = true;
       result.innerHTML = `<p class="role-compare-empty">${roleA && roleA === roleB ? "Both selections are the same role -- pick a different role for A or B." : "Pick two different roles to compare."}</p>`;
       return;
     }
     if (!lookupRole(roleA) || !lookupRole(roleB)) return;
     comparison = buildComparison(roleA, roleB);
     exportBtn.disabled = false;
+    if (printBtn) printBtn.disabled = false;
     const platformA = lookupRole(roleA).platform;
     const platformB = lookupRole(roleB).platform;
     const counts = { diff: comparison.onlyA.length + comparison.onlyB.length, onlyA: comparison.onlyA.length, onlyB: comparison.onlyB.length, both: comparison.both.length };
@@ -36735,6 +36798,9 @@ function initRoleComparison() {
     if (view === "onlyA") view = "onlyB";
     else if (view === "onlyB") view = "onlyA";
     render();
+  });
+  printBtn?.addEventListener("click", () => {
+    if (comparison) printScoped(document.getElementById("roleToolCompare"), `Role comparison: ${comparison.roleA} vs ${comparison.roleB}`);
   });
   exportBtn?.addEventListener("click", () => {
     if (!comparison) return;
@@ -45762,6 +45828,84 @@ function s3cInitCalculator() {
 }
 
 s3cInitCalculator();
+
+// --- Print ---
+// The header line printed above every page: what this is, which build, when, and where from.
+let printScopeTitle = "";
+const PRINT_LANDSCAPE_PAGES = ["portsMatrix", "splunkApi", "refRoles", "health", "patterns", "catalogue", "refSplunkBin"];
+// A named @page on the page's section would force a page break before it (the print header
+// sits outside it), so the orientation is set for the whole document instead.
+function setPrintOrientation() {
+  let style = document.getElementById("printPageStyle");
+  if (!style) {
+    style = document.createElement("style");
+    style.id = "printPageStyle";
+    document.head.appendChild(style);
+  }
+  style.textContent = PRINT_LANDSCAPE_PAGES.includes(currentActivePageKey) ? "@page { size: A4 landscape; margin: 10mm; }" : "";
+}
+function fillPrintHeader() {
+  setPrintOrientation();
+  const header = document.getElementById("printHeader");
+  if (!header) return;
+  const article = [...document.querySelectorAll(".eccs-reference:not([hidden]) h2")].find(h => h.offsetParent !== null);
+  const title = printScopeTitle || article?.textContent.trim() || PAGE_LABELS[currentActivePageKey] || document.title;
+  const now = new Date();
+  const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  const version = document.getElementById("appVersion")?.textContent.trim() || "";
+  header.innerHTML = `<span><strong>LATCH</strong> &middot; ${escapeHtml(title)}</span>`
+    + `<span>${escapeHtml(version)}${version ? " &middot; " : ""}Printed ${date}</span>`
+    + `<span class="print-header-url">${escapeHtml(location.href)}</span>`;
+}
+// Prints only `element` (plus the header), e.g. a role comparison without the rest of the page.
+function printScoped(element, title) {
+  if (!element) return;
+  document.body.classList.add("print-scoped");
+  element.classList.add("print-scope");
+  for (let node = element.parentElement; node && node !== document.body; node = node.parentElement) node.classList.add("print-scope-path");
+  printScopeTitle = title || "";
+  window.print();
+}
+// Tables wider than the paper are scaled down to fit (CSS zoom), measured at their narrowest
+// (min-content) width. A table shrunk below 60% gets a print-only note saying so.
+const PRINT_WIDTH = { portrait: 700, landscape: 980 }; // CSS px on A4/Letter at the @page margins
+function fitTablesForPrint() {
+  unfitTablesAfterPrint(); // idempotent if beforeprint fires more than once
+  const available = PRINT_LANDSCAPE_PAGES.includes(currentActivePageKey) ? PRINT_WIDTH.landscape : PRINT_WIDTH.portrait;
+  const root = document.querySelector("body.print-scoped .print-scope") || document.querySelector(".page-view:not([hidden])");
+  if (!root) return;
+  root.querySelectorAll("table").forEach(table => {
+    if (table.offsetParent === null) return;
+    const { width, minWidth } = table.style;
+    table.style.minWidth = "0";
+    table.style.width = "min-content";
+    const needed = table.getBoundingClientRect().width;
+    table.style.width = width;
+    table.style.minWidth = minWidth;
+    if (needed <= available) return;
+    // 0.95: print layout comes out a little wider than this on-screen measurement
+    const zoom = Math.max(0.15, (available / needed) * 0.95);
+    table.style.zoom = zoom.toFixed(3);
+    table.dataset.printZoomed = "1";
+    if (zoom < 0.6) {
+      const note = document.createElement("p");
+      note.className = "print-fit-note";
+      note.textContent = `This table is scaled to ${Math.round(zoom * 100)}% to fit the page. ${table.dataset.printHint || "Filter it first for a more readable printout."}`;
+      (table.closest(".eccs-table-wrap") || table).before(note);
+    }
+  });
+}
+function unfitTablesAfterPrint() {
+  document.querySelectorAll("table[data-print-zoomed]").forEach(table => { table.style.zoom = ""; delete table.dataset.printZoomed; });
+  document.querySelectorAll(".print-fit-note").forEach(note => note.remove());
+}
+function clearPrintScope() {
+  document.body.classList.remove("print-scoped");
+  document.querySelectorAll(".print-scope, .print-scope-path").forEach(node => node.classList.remove("print-scope", "print-scope-path"));
+  printScopeTitle = "";
+}
+window.addEventListener("beforeprint", () => { fillPrintHeader(); fitTablesForPrint(); });
+window.addEventListener("afterprint", () => { unfitTablesAfterPrint(); clearPrintScope(); });
 
 setActivePage(pageNameFromHash(), false);
 
