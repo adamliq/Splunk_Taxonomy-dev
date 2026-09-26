@@ -1352,6 +1352,33 @@
     .role-builder-status { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
     .role-builder-note { margin: 10px 0 0; font-size: 12px; line-height: 1.5; color: var(--muted); }
     .role-builder-note:empty { display: none; }
+    .role-prereq-list:empty { display: none; }
+    .role-audit-input { width: 100%; min-height: 180px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; font: 12.5px/1.55 var(--mono); resize: vertical; }
+    .role-audit-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 0; }
+    .role-audit-actions button:disabled { opacity: .45; cursor: not-allowed; }
+    .role-audit-file { position: relative; display: inline-flex; align-items: center; padding: 11px 13px; border: 1px solid #cbd5e1; border-radius: 10px; background: #fff; color: #334155; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .role-audit-file:focus-within { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .role-audit-file input { position: absolute; inset: 0; opacity: 0; width: 100%; cursor: pointer; }
+    .role-audit-summary { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 10px; }
+    .role-audit-file-notes { margin: 0 0 10px; padding-left: 18px; font-size: 12.5px; color: #475569; }
+    .role-audit-card { margin: 0 0 12px; padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
+    .role-audit-card h4 { margin: 0; font: 800 15px var(--mono); color: #0f172a; }
+    .role-audit-meta { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 6px 0 10px; font-size: 12.5px; color: #475569; }
+    .role-audit-meta code { font-size: 12px; }
+    .role-audit-findings { display: grid; gap: 6px; margin: 0 0 10px; padding: 0; list-style: none; }
+    .role-audit-finding { padding: 7px 10px; border-radius: 9px; font-size: 12.5px; line-height: 1.45; border: 1px solid transparent; }
+    .role-audit-finding.sev-error { background: #fef2f2; border-color: #fca5a5; color: #991b1b; }
+    .role-audit-finding.sev-warning { background: #fffbeb; border-color: #fcd34d; color: #92400e; }
+    .role-audit-finding.sev-info { background: #f8fafc; border-color: var(--border); color: #475569; }
+    .role-audit-finding strong { margin-right: 6px; text-transform: uppercase; font-size: 10.5px; letter-spacing: .05em; }
+    .role-audit-finding code { font-size: 12px; }
+    .role-audit-ok { margin: 0 0 10px; font-size: 12.5px; color: #15803d; font-weight: 700; }
+    .role-audit-card-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .role-audit-card-actions button { padding: 7px 11px; font-size: 12px; }
+    .role-prereq-list { display: grid; gap: 6px; margin: 0 0 10px; }
+    .role-prereq-warning { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0; padding: 7px 10px; border: 1px solid #fcd34d; border-radius: 9px; background: #fffbeb; color: #92400e; font-size: 12.5px; line-height: 1.45; }
+    .role-prereq-warning code { font-size: 12px; }
+    .role-prereq-warning button { padding: 5px 9px; font-size: 12px; }
     @media (max-width: 980px) {
       .role-builder-grid { grid-template-columns: 1fr; }
       .role-builder-output { position: static; }
@@ -9648,6 +9675,7 @@ INGEST PROCESSOR
         <button type="button" role="tab" id="roleToolTabCompare" class="role-view-btn active" aria-selected="true" aria-controls="roleToolCompare">Compare two roles</button>
         <button type="button" role="tab" id="roleToolTabFinder" class="role-view-btn" aria-selected="false" aria-controls="roleToolFinder">Which role do I need?</button>
         <button type="button" role="tab" id="roleToolTabBuilder" class="role-view-btn" aria-selected="false" aria-controls="roleToolBuilder">Build a custom role</button>
+        <button type="button" role="tab" id="roleToolTabAudit" class="role-view-btn" aria-selected="false" aria-controls="roleToolAudit">Audit authorize.conf</button>
       </div>
       <div id="roleToolCompare" class="role-compare role-tool-panel" role="tabpanel" aria-labelledby="roleToolTabCompare">
       <p>Pick two roles to see which capabilities only one of them has and which they share.</p>
@@ -9690,6 +9718,7 @@ INGEST PROCESSOR
           </div>
           <div class="role-builder-output">
             <div class="role-builder-summary" id="roleBuilderSummary" aria-live="polite"></div>
+            <div class="role-prereq-list" id="roleBuilderWarnings" aria-live="polite"></div>
             <pre class="role-builder-conf" id="roleBuilderConf"></pre>
             <div class="role-builder-actions">
               <button id="roleBuilderCopy" type="button" class="primary-button">Copy stanza</button>
@@ -9700,6 +9729,19 @@ INGEST PROCESSOR
             <p class="role-builder-note" id="roleBuilderNote"></p>
           </div>
         </div>
+      </div>
+
+      <div id="roleToolAudit" class="role-audit role-tool-panel" role="tabpanel" aria-labelledby="roleToolTabAudit" hidden>
+        <p>Paste or load an <code>authorize.conf</code> to check its roles against the reference matrix: each role's full capabilities including <code>importRoles</code>, unknown capability names, imports that don't resolve, capabilities disabled with no effect, missing prerequisites, and the closest built-in role. Nothing leaves your browser and nothing is saved.</p>
+        <textarea id="roleAuditInput" class="role-audit-input" rows="10" spellcheck="false" placeholder="[role_secops_analyst]&#10;importRoles = user&#10;srchIndexesAllowed = main;security_*&#10;rtsearch = enabled"></textarea>
+        <div class="role-audit-actions">
+          <button id="roleAuditRun" type="button" class="primary-button">Audit</button>
+          <label class="role-audit-file">Load a file<input id="roleAuditFile" type="file" accept=".conf,.txt,text/plain" /></label>
+          <button id="roleAuditExample" type="button">Load an example</button>
+          <button id="roleAuditClear" type="button">Clear</button>
+          <button id="roleAuditExport" type="button" disabled>Export findings CSV</button>
+        </div>
+        <div id="roleAuditResult" aria-live="polite"></div>
       </div>
     </section>
 
@@ -22713,6 +22755,35 @@ const ROLE_GRANT_UNRECORDED = "Not recorded";
     row["Granted how"] = source ? `Inherited from ${source}` : ROLE_GRANT_ADDED;
   });
 })();
+// Capability prerequisites, hand-checked against each capability's own description in
+// rolesTableData (only 6 of the 254 descriptions name another capability they depend on).
+// "when" is set where the description limits the dependency to one use of the capability.
+// A structural test fails if a description stops naming its prerequisite.
+const CAPABILITY_PREREQUISITES = [
+  { capability: "accelerate_search", requires: ["schedule_search"], when: "" },
+  { capability: "schedule_rtsearch", requires: ["schedule_search", "rtsearch"], when: "" },
+  { capability: "list_all_roles", requires: ["list_all_users"], when: "for full user and role visibility" },
+  { capability: "list_all_users", requires: ["list_all_roles"], when: "for full user and role visibility" },
+  { capability: "edit_federated_indexes", requires: ["edit_federated_providers"], when: "to edit Amazon S3 and Amazon Security Lake federated indexes" },
+  { capability: "edit_managed_configurations", requires: ["schedule_search"], when: "to create search-driven lookup tables" }
+];
+function missingPrerequisites(capabilities) {
+  return CAPABILITY_PREREQUISITES
+    .filter(rule => capabilities.has(rule.capability))
+    .map(rule => ({ ...rule, missing: rule.requires.filter(cap => !capabilities.has(cap)) }))
+    .filter(rule => rule.missing.length);
+}
+function prerequisiteMessage(rule) {
+  return `${rule.capability} also needs ${rule.missing.join(" and ")}${rule.when ? ` ${rule.when}` : ""}.`;
+}
+// sourceOf(capability) optionally explains where the dependent capability came from.
+function prerequisiteWarningsHtml(gaps, sourceOf) {
+  return gaps.map(rule => {
+    const source = sourceOf ? sourceOf(rule.capability) : "";
+    return `<p class="role-prereq-warning"><span>&#9888; <code>${escapeHtml(rule.capability)}</code>${source ? ` (${escapeHtml(source)})` : ""} also needs ${rule.missing.map(cap => `<code>${escapeHtml(cap)}</code>`).join(" and ")}${rule.when ? ` ${escapeHtml(rule.when)}` : ""}.</span><button type="button" data-add-prereq="${escapeHtml(rule.missing.join(","))}">Add ${escapeHtml(rule.missing.join(" + "))}</button></p>`;
+  }).join("");
+}
+
 function roleGrantCategory(grantedHow) {
   if (grantedHow === ROLE_GRANT_ADDED) return "added";
   if (grantedHow === ROLE_GRANT_UNRECORDED) return "unrecorded";
@@ -35899,6 +35970,10 @@ function rolesCapabilityIndex() {
   return rolesCapabilityIndexCache;
 }
 
+// Set by initRoleComparison so the authorize.conf audit can offer its roles in the comparison.
+let roleComparisonApi = null;
+const AUDITED_ROLE_PREFIX = "audit:";
+
 const ROLE_COMPARE_VIEWS = [
   ["diff", "All differences"], ["onlyA", "Only in A"], ["onlyB", "Only in B"], ["both", "In both"]
 ];
@@ -35920,13 +35995,19 @@ function initRoleComparison() {
 
   let view = "diff";
   let comparison = null;
+  // Roles from an audited authorize.conf, keyed by role name; option values carry a prefix so a
+  // custom role can't collide with a built-in one of the same name.
+  let auditedRoles = new Map();
+  const lookupRole = value => value.startsWith(AUDITED_ROLE_PREFIX) ? auditedRoles.get(value.slice(AUDITED_ROLE_PREFIX.length)) : roles.get(value);
+  const roleLabel = value => value.startsWith(AUDITED_ROLE_PREFIX) ? `${value.slice(AUDITED_ROLE_PREFIX.length)} (your authorize.conf)` : value;
+  const describe = cap => capabilityDescription.get(cap) || "Not in the reference matrix";
 
-  function buildComparison(roleA, roleB) {
-    const capsA = roles.get(roleA).capabilities;
-    const capsB = roles.get(roleB).capabilities;
+  function buildComparison(valueA, valueB) {
+    const capsA = lookupRole(valueA).capabilities;
+    const capsB = lookupRole(valueB).capabilities;
     const byName = (a, b) => a.localeCompare(b);
     return {
-      roleA, roleB,
+      roleA: roleLabel(valueA), roleB: roleLabel(valueB),
       onlyA: [...capsA].filter(cap => !capsB.has(cap)).sort(byName),
       onlyB: [...capsB].filter(cap => !capsA.has(cap)).sort(byName),
       both: [...capsA].filter(cap => capsB.has(cap)).sort(byName)
@@ -35949,25 +36030,27 @@ function initRoleComparison() {
       result.innerHTML = `<p class="role-compare-empty">${roleA && roleA === roleB ? "Both selections are the same role -- pick a different role for A or B." : "Pick two different roles to compare."}</p>`;
       return;
     }
+    if (!lookupRole(roleA) || !lookupRole(roleB)) return;
     comparison = buildComparison(roleA, roleB);
     exportBtn.disabled = false;
-    const platformA = roles.get(roleA).platform;
-    const platformB = roles.get(roleB).platform;
+    const platformA = lookupRole(roleA).platform;
+    const platformB = lookupRole(roleB).platform;
     const counts = { diff: comparison.onlyA.length + comparison.onlyB.length, onlyA: comparison.onlyA.length, onlyB: comparison.onlyB.length, both: comparison.both.length };
-    const note = platformA !== platformB
+    const eitherAudited = roleA.startsWith(AUDITED_ROLE_PREFIX) || roleB.startsWith(AUDITED_ROLE_PREFIX);
+    const note = platformA !== platformB && !eitherAudited
       ? `<p class="role-compare-note">These roles are on different platforms (${escapeHtml(platformA)} and ${escapeHtml(platformB)}), so some differences are capabilities that only exist on one platform rather than access one role was denied.</p>`
       : "";
     const filters = ROLE_COMPARE_VIEWS.map(([key, label]) =>
       `<button type="button" class="role-compare-filter${view === key ? " active" : ""}" data-role-compare-view="${key}" aria-pressed="${view === key}">${escapeHtml(label)} <strong>${counts[key]}</strong></button>`).join("");
     const rows = rowsForView();
     const body = rows.length
-      ? rows.map(([cap, inA, inB]) => `<tr><td>${escapeHtml(cap)}</td><td>${escapeHtml(capabilityDescription.get(cap))}</td><td class="${inA ? "role-compare-yes" : "role-compare-no"}">${inA ? "&#10003;" : "&mdash;"}</td><td class="${inB ? "role-compare-yes" : "role-compare-no"}">${inB ? "&#10003;" : "&mdash;"}</td></tr>`).join("")
+      ? rows.map(([cap, inA, inB]) => `<tr><td>${escapeHtml(cap)}</td><td>${escapeHtml(describe(cap))}</td><td class="${inA ? "role-compare-yes" : "role-compare-no"}">${inA ? "&#10003;" : "&mdash;"}</td><td class="${inB ? "role-compare-yes" : "role-compare-no"}">${inB ? "&#10003;" : "&mdash;"}</td></tr>`).join("")
       : `<tr><td class="patterns-empty" colspan="4">No capabilities in this view.</td></tr>`;
     result.innerHTML = `${note}
       <div class="role-compare-filters" role="group" aria-label="Choose which capabilities to show">${filters}</div>
       <div class="eccs-table-wrap" role="region" aria-label="Role comparison" tabindex="0">
         <table class="eccs-matrix">
-          <thead><tr><th scope="col">Capability</th><th scope="col">What it lets you do</th><th scope="col">A: ${escapeHtml(roleA)}</th><th scope="col">B: ${escapeHtml(roleB)}</th></tr></thead>
+          <thead><tr><th scope="col">Capability</th><th scope="col">What it lets you do</th><th scope="col">A: ${escapeHtml(comparison.roleA)}</th><th scope="col">B: ${escapeHtml(comparison.roleB)}</th></tr></thead>
           <tbody>${body}</tbody>
         </table>
       </div>`;
@@ -35993,7 +36076,7 @@ function initRoleComparison() {
     const statusFor = (inA, inB) => inA && inB ? "In both" : inA ? `Only ${roleA}` : `Only ${roleB}`;
     const lines = [["Capability", "What it lets you do", roleA, roleB, "Result"].map(csvValue).join(",")];
     rowsForView().forEach(([cap, inA, inB]) => {
-      lines.push([cap, capabilityDescription.get(cap), inA ? "Yes" : "No", inB ? "Yes" : "No", statusFor(inA, inB)].map(csvValue).join(","));
+      lines.push([cap, describe(cap), inA ? "Yes" : "No", inB ? "Yes" : "No", statusFor(inA, inB)].map(csvValue).join(","));
     });
     const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
     const link = document.createElement("a");
@@ -36007,6 +36090,27 @@ function initRoleComparison() {
     exportBtn.textContent = "Exported";
     setTimeout(() => { exportBtn.textContent = "Export comparison CSV"; }, 1400);
   });
+
+  roleComparisonApi = {
+    setAuditedRoles(list) {
+      auditedRoles = new Map(list.map(role => [role.name, role]));
+      [selectA, selectB].forEach(select => {
+        const keep = select.value;
+        select.querySelector("optgroup[data-audited]")?.remove();
+        if (list.length) {
+          select.insertAdjacentHTML("beforeend", `<optgroup data-audited label="From your authorize.conf">${list.map(role =>
+            `<option value="${escapeHtml(AUDITED_ROLE_PREFIX + role.name)}">${escapeHtml(role.name)} (${role.capabilities.size})</option>`).join("")}</optgroup>`);
+        }
+        select.value = Array.from(select.options).some(option => option.value === keep) ? keep : "";
+      });
+      render();
+    },
+    compare(valueA, valueB) {
+      selectA.value = valueA;
+      selectB.value = valueB;
+      render();
+    }
+  };
 }
 
 
@@ -36208,9 +36312,10 @@ function createCapabilityPicker(root, onChange) {
   };
 }
 
+let roleToolsApi = null;
 function initRoleTools() {
   const tabs = [
-    ["roleToolTabCompare", "roleToolCompare"], ["roleToolTabFinder", "roleToolFinder"], ["roleToolTabBuilder", "roleToolBuilder"]
+    ["roleToolTabCompare", "roleToolCompare"], ["roleToolTabFinder", "roleToolFinder"], ["roleToolTabBuilder", "roleToolBuilder"], ["roleToolTabAudit", "roleToolAudit"]
   ].map(([tabId, panelId]) => [document.getElementById(tabId), document.getElementById(panelId)]);
   if (tabs.some(([tab, panel]) => !tab || !panel)) return;
   function showTool(panelId) {
@@ -36242,6 +36347,7 @@ function initRoleTools() {
   const confEl = document.getElementById("roleBuilderConf");
   const noteEl = document.getElementById("roleBuilderNote");
   const statusEl = document.getElementById("roleBuilderStatus");
+  const warningsEl = document.getElementById("roleBuilderWarnings");
   const importable = roleList.filter(role => !isTemplateRole(role.name));
   importsEl.innerHTML = importable.map(role => `<label class="role-builder-import"><input type="checkbox" value="${escapeHtml(role.name)}" />${escapeHtml(splunkRoleName(role.name))} <small>${escapeHtml(ROLE_PLATFORM_SHORT[role.platform] || role.platform)} · ${role.capabilities.size}</small></label>`).join("");
   const importInputs = Array.from(importsEl.querySelectorAll("input"));
@@ -36268,6 +36374,11 @@ function initRoleTools() {
     confEl.textContent = lines.join("\n");
     importInputs.forEach(input => input.closest("label").classList.toggle("is-checked", input.checked));
     summaryEl.textContent = `${inherited.size} inherited + ${added.length} added = ${inherited.size + added.length} capabilities`;
+    const inheritedFrom = cap => {
+      const role = imports.find(name => roles.get(name).capabilities.has(cap));
+      return role ? `inherited from ${splunkRoleName(role)}` : "";
+    };
+    warningsEl.innerHTML = prerequisiteWarningsHtml(missingPrerequisites(new Set([...inherited, ...added])), inheritedFrom);
 
     // Flag anything that only exists outside Splunk Enterprise in this matrix.
     const platforms = capabilityPlatforms();
@@ -36288,6 +36399,10 @@ function initRoleTools() {
   }
   builderPicker = createCapabilityPicker(document.getElementById("roleBuilderPicker"), renderBuilderOutput);
   importsEl.addEventListener("change", refreshBuilderInheritance);
+  warningsEl.addEventListener("click", event => {
+    const btn = event.target.closest("[data-add-prereq]");
+    if (btn) builderPicker.setSelected([...builderPicker.getSelected(), ...btn.dataset.addPrereq.split(",")]);
+  });
   [nameInput, idxAllowed, idxDefault].forEach(input => input.addEventListener("input", () => renderBuilderOutput(builderPicker.getSelected())));
   document.getElementById("roleBuilderReset").addEventListener("click", () => {
     nameInput.value = ""; idxAllowed.value = ""; idxDefault.value = "";
@@ -36322,7 +36437,8 @@ function initRoleTools() {
     link.remove();
     URL.revokeObjectURL(link.href);
   });
-  function openBuilderWith(imports, capabilities) {
+  function openBuilderWith(imports, capabilities, name = null) {
+    if (name !== null) nameInput.value = name;
     importInputs.forEach(input => { input.checked = imports.includes(input.value); });
     builderPicker.setSelected(capabilities);
     refreshBuilderInheritance();
@@ -36339,6 +36455,8 @@ function initRoleTools() {
       finderResult.innerHTML = '<p class="role-compare-empty">Tick one or more capabilities to see which roles have them.</p>';
       return;
     }
+    const prereqHtml = prerequisiteWarningsHtml(missingPrerequisites(new Set(selected)));
+    const prereqBlock = prereqHtml ? `<div class="role-prereq-list" style="margin-top:12px">${prereqHtml}</div>` : "";
     const n = selected.length;
     const scored = roleList.map(role => {
       const missing = selected.filter(cap => !role.capabilities.has(cap));
@@ -36348,6 +36466,7 @@ function initRoleTools() {
     const buildOnly = `<button type="button" class="primary-button" data-build-only>Build a role with only these ${n}</button>`;
     if (full.length) {
       finderResult.innerHTML = `
+        ${prereqBlock}
         <p class="role-finder-lead"><strong>${full.length}</strong> role${full.length === 1 ? "" : "s"} ${full.length === 1 ? "has" : "have"} all ${n} capabilit${n === 1 ? "y" : "ies"}. The first is the smallest fit.</p>
         <div class="eccs-table-wrap"><table class="eccs-matrix"><thead><tr><th scope="col">Role</th><th scope="col">Platform</th><th scope="col">Capabilities in role</th><th scope="col">Also grants</th></tr></thead><tbody>
         ${full.map((role, i) => `<tr${i === 0 ? ' class="role-finder-best"' : ""}><td>${escapeHtml(role.name)}</td><td>${escapeHtml(role.platform)}</td><td>${role.capabilities.size}</td><td>${role.capabilities.size - n} more</td></tr>`).join("")}
@@ -36357,20 +36476,365 @@ function initRoleTools() {
     }
     const partial = scored.filter(role => role.covered > 0).sort((a, b) => b.covered - a.covered || a.capabilities.size - b.capabilities.size || a.name.localeCompare(b.name)).slice(0, 6);
     finderResult.innerHTML = `
+      ${prereqBlock}
       <p class="role-compare-note">No single role has all ${n} capabilities.${partial.length ? " These come closest:" : ""}</p>
       ${partial.length ? `<div class="eccs-table-wrap"><table class="eccs-matrix"><thead><tr><th scope="col">Role</th><th scope="col">Platform</th><th scope="col">Has</th><th scope="col">Missing</th><th scope="col"></th></tr></thead><tbody>
       ${partial.map(role => `<tr><td>${escapeHtml(role.name)}</td><td>${escapeHtml(role.platform)}</td><td>${role.covered} of ${n}</td><td class="role-finder-missing">${role.missing.map(escapeHtml).join(", ")}</td><td>${isTemplateRole(role.name) ? "" : `<button type="button" data-build-from="${escapeHtml(role.name)}">Import ${escapeHtml(splunkRoleName(role.name))} + add ${role.missing.length}</button>`}</td></tr>`).join("")}
       </tbody></table></div>` : ""}
       <div class="role-finder-actions">${buildOnly}</div>`;
   }
-  createCapabilityPicker(document.getElementById("roleFinderPicker"), renderFinder);
+  const finderPicker = createCapabilityPicker(document.getElementById("roleFinderPicker"), renderFinder);
   finderResult.addEventListener("click", event => {
+    const addPrereq = event.target.closest("[data-add-prereq]");
+    if (addPrereq) { finderPicker.setSelected([...finderSelection, ...addPrereq.dataset.addPrereq.split(",")]); return; }
     if (event.target.closest("[data-build-only]")) { openBuilderWith([], finderSelection); return; }
     const from = event.target.closest("[data-build-from]");
     if (!from) return;
     const role = roles.get(from.dataset.buildFrom);
     openBuilderWith([from.dataset.buildFrom], finderSelection.filter(cap => !role.capabilities.has(cap)));
   });
+
+  roleToolsApi = { showTool, openBuilderWith };
+}
+
+// --- authorize.conf audit ---
+// Roles the matrix can't describe, so importing them isn't an error but adds nothing countable.
+const ROLES_WITHOUT_MATRIX_DATA = {
+  can_delete: "Splunk's built-in can_delete role (the delete command) isn't in the reference matrix, so its capabilities aren't counted.",
+  "splunk-system-role": "splunk-system-role is a Splunk built-in role that isn't in the reference matrix, so its capabilities aren't counted.",
+  mc_analyst: "mc_analyst has no capabilities in the source matrix.",
+  mc_analyst_reader: "mc_analyst_reader has no capabilities in the source matrix.",
+  mc_soar_automation: "mc_soar_automation has no capabilities in the source matrix."
+};
+const ROLE_AUDIT_EXAMPLE = `# Example authorize.conf -- two custom roles and one broken import
+[role_secops_analyst]
+importRoles = user
+srchIndexesAllowed = main;security_*
+srchIndexesDefault = security_events
+schedule_rtsearch = enabled
+edit_sourcetype = enabled
+list_all_roles = enabled
+
+[role_secops_lead]
+importRoles = secops_analyst;power
+rtsearch = enabled
+accelerate_search = enabled
+schedule_search = disabled
+
+[role_legacy_ops]
+importRoles = ops_base
+`;
+
+// Splunk .conf syntax: [stanza] headers, key = value lines, # comments, and a trailing
+// backslash continuing a value onto the next line. Settings before the first stanza belong
+// to [default]; repeated stanzas merge, with later keys winning.
+function parseAuthorizeConf(text) {
+  const stanzas = new Map();
+  const problems = [];
+  const lines = text.replace(/\r\n?/g, "\n").split("\n");
+  let current = null;
+  for (let i = 0; i < lines.length; i++) {
+    const lineNo = i + 1;
+    let line = lines[i];
+    while (/\\$/.test(line) && i + 1 < lines.length) line = line.slice(0, -1) + lines[++i];
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const stanza = trimmed.match(/^\[(.+)\]$/);
+    if (stanza) {
+      const name = stanza[1].trim();
+      if (!stanzas.has(name)) stanzas.set(name, { name, line: lineNo, settings: new Map() });
+      current = stanzas.get(name);
+      continue;
+    }
+    const kv = trimmed.match(/^([^=]+?)\s*=\s*(.*)$/);
+    if (!kv) { problems.push(`Line ${lineNo} isn't a stanza header, a setting or a comment, so it was skipped.`); continue; }
+    if (!current) {
+      if (!stanzas.has("default")) stanzas.set("default", { name: "default", line: lineNo, settings: new Map() });
+      current = stanzas.get("default");
+    }
+    current.settings.set(kv[1].trim(), { value: kv[2].trim(), line: lineNo });
+  }
+  return { stanzas, problems };
+}
+
+function editDistance(a, b) {
+  const prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    let diag = prev[0];
+    prev[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const temp = prev[j];
+      prev[j] = Math.min(prev[j] + 1, prev[j - 1] + 1, diag + (a[i - 1] === b[j - 1] ? 0 : 1));
+      diag = temp;
+    }
+  }
+  return prev[b.length];
+}
+
+function auditAuthorizeConf(text) {
+  const { roles: matrixRoles, capabilityDescription } = rolesCapabilityIndex();
+  const knownCaps = new Set(capabilityDescription.keys());
+  const escapeRegExp = value => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const exactBuiltins = new Map();
+  const templateBuiltins = [];
+  matrixRoles.forEach((info, name) => {
+    if (isTemplateRole(name)) templateBuiltins.push({ name, info, re: new RegExp(`^${name.split(/<[^>]+>/).map(escapeRegExp).join(".+")}$`) });
+    else exactBuiltins.set(name.toLowerCase(), { name, info });
+  });
+  const lookupBuiltin = roleName => {
+    const lower = roleName.toLowerCase();
+    if (exactBuiltins.has(lower)) return exactBuiltins.get(lower);
+    const template = templateBuiltins.find(entry => entry.re.test(lower));
+    return template ? { ...template, template: true } : null;
+  };
+  const adminOnly = new Set([...knownCaps].filter(cap => [...matrixRoles.values()].filter(info => info.capabilities.has(cap)).length === 1 && matrixRoles.get("Admin")?.capabilities.has(cap)));
+  const suggestCapability = cap => {
+    let best = null;
+    knownCaps.forEach(known => {
+      const distance = editDistance(cap.toLowerCase(), known);
+      if (distance <= 2 && (!best || distance < best.distance)) best = { known, distance };
+    });
+    return best ? best.known : null;
+  };
+
+  const { stanzas, problems } = parseAuthorizeConf(text);
+  const fileRoles = new Map();
+  const otherStanzas = [];
+  stanzas.forEach((stanza, name) => {
+    if (/^role_/i.test(name)) fileRoles.set(name.slice(5), stanza);
+    else otherStanzas.push(name);
+  });
+
+  const resolved = new Map();
+  const visiting = [];
+  const cycles = [];
+  function resolve(roleName) {
+    if (resolved.has(roleName)) return resolved.get(roleName);
+    if (visiting.includes(roleName)) {
+      const cycle = [...visiting.slice(visiting.indexOf(roleName)), roleName];
+      cycles.push(cycle);
+      return { cycle, effective: new Set() };
+    }
+    visiting.push(roleName);
+    const stanza = fileRoles.get(roleName);
+    const findings = [];
+    const inherited = new Map();
+    const imports = [];
+    const importNames = (stanza.settings.get("importRoles")?.value || "").split(";").map(name => name.trim()).filter(Boolean);
+    importNames.forEach(importName => {
+      if (fileRoles.has(importName)) {
+        const sub = resolve(importName);
+        if (sub.cycle) {
+          findings.push({ sev: "error", text: `importRoles forms a loop: ${sub.cycle.map(name => `\`${name}\``).join(" → ")}.` });
+          imports.push({ name: importName, kind: "file" });
+          return;
+        }
+        sub.effective.forEach(cap => { if (!inherited.has(cap)) inherited.set(cap, importName); });
+        imports.push({ name: importName, kind: "file" });
+        return;
+      }
+      const builtin = lookupBuiltin(importName);
+      if (builtin) {
+        builtin.info.capabilities.forEach(cap => { if (!inherited.has(cap)) inherited.set(cap, importName); });
+        imports.push({ name: importName, kind: "builtin", matrixName: builtin.name });
+        if (builtin.template) findings.push({ sev: "info", text: `\`${importName}\` was matched to the matrix template \`${builtin.name}\`.` });
+        return;
+      }
+      if (ROLES_WITHOUT_MATRIX_DATA[importName.toLowerCase()]) {
+        imports.push({ name: importName, kind: "nodata" });
+        findings.push({ sev: "info", text: ROLES_WITHOUT_MATRIX_DATA[importName.toLowerCase()] });
+        return;
+      }
+      imports.push({ name: importName, kind: "unknown" });
+      findings.push({ sev: "error", text: `Imports \`${importName}\`, which isn't defined in this file and isn't a built-in role in the reference matrix. Splunk can't resolve it unless another app defines it.` });
+    });
+
+    const redefined = lookupBuiltin(roleName);
+    const builtinBase = new Set(redefined && !redefined.template ? redefined.info.capabilities : []);
+    if (builtinBase.size) findings.push({ sev: "info", text: `Redefines the built-in \`${roleName}\` role, so its ${builtinBase.size} capabilities from the matrix are included. Changes to a built-in role's defaults aren't modelled beyond that.` });
+
+    const own = [];
+    const alreadyInherited = [];
+    const unknown = [];
+    stanza.settings.forEach(({ value }, key) => {
+      const state = value.toLowerCase();
+      if (state === "enabled") {
+        if (inherited.has(key) || builtinBase.has(key)) alreadyInherited.push(key);
+        else own.push(key);
+        if (!knownCaps.has(key)) unknown.push(key);
+      } else if (state === "disabled") {
+        if (inherited.has(key)) findings.push({ sev: "warning", text: `\`${key} = disabled\` has no effect: it's inherited from \`${inherited.get(key)}\`, and inherited capabilities can't be disabled.` });
+        else if (builtinBase.has(key)) findings.push({ sev: "info", text: `Disables \`${key}\` on a built-in role; this audit still counts it.` });
+      }
+    });
+    unknown.forEach(cap => {
+      const suggestion = suggestCapability(cap);
+      findings.push({ sev: "warning", text: `\`${cap}\` isn't a capability in the reference matrix${suggestion ? ` -- did you mean \`${suggestion}\`?` : ". It may be a typo or come from an app this page doesn't cover."}` });
+    });
+    if (alreadyInherited.length) findings.push({ sev: "info", text: `Already inherited, so these lines are redundant: ${alreadyInherited.map(cap => `\`${cap}\``).join(", ")}.` });
+
+    const effective = new Set([...inherited.keys(), ...builtinBase, ...own, ...alreadyInherited]);
+    const knownEffective = new Set([...effective].filter(cap => knownCaps.has(cap)));
+    const sourceOf = cap => inherited.has(cap) ? `inherited from ${inherited.get(cap)}` : builtinBase.has(cap) ? "built-in default" : "";
+    missingPrerequisites(knownEffective).forEach(rule => {
+      const source = sourceOf(rule.capability);
+      findings.push({ sev: "warning", text: `\`${rule.capability}\`${source ? ` (${source})` : ""} also needs ${rule.missing.map(cap => `\`${cap}\``).join(" and ")}${rule.when ? ` ${rule.when}` : ""}.`, addCaps: rule.missing });
+    });
+
+    let closest = null;
+    if (knownEffective.size) {
+      const candidates = [...matrixRoles.entries()].map(([name, info]) => ({ name, size: info.capabilities.size, overlap: [...knownEffective].filter(cap => info.capabilities.has(cap)).length, missing: [...knownEffective].filter(cap => !info.capabilities.has(cap)) }));
+      const covering = candidates.filter(c => !c.missing.length).sort((a, b) => a.size - b.size || a.name.localeCompare(b.name));
+      closest = covering.length ? { ...covering[0], covers: true } : { ...candidates.sort((a, b) => b.overlap - a.overlap || a.size - b.size || a.name.localeCompare(b.name))[0], covers: false };
+    }
+
+    const result = {
+      name: roleName, line: stanza.line, imports, findings, effective, knownEffective, inheritedCount: inherited.size + builtinBase.size, ownCount: own.length,
+      adminOnlyCount: [...knownEffective].filter(cap => adminOnly.has(cap)).length,
+      indexesAllowed: stanza.settings.get("srchIndexesAllowed")?.value || "",
+      indexesDefault: stanza.settings.get("srchIndexesDefault")?.value || "",
+      ownKnown: own.filter(cap => knownCaps.has(cap)), closest
+    };
+    visiting.pop();
+    resolved.set(roleName, result);
+    return result;
+  }
+
+  const results = [...fileRoles.keys()].map(resolve);
+  // The loop is detected on whichever role closes it; flag every other role in it too.
+  cycles.forEach(cycle => {
+    const text = `importRoles forms a loop: ${cycle.map(name => `\`${name}\``).join(" → ")}.`;
+    new Set(cycle).forEach(name => {
+      const role = resolved.get(name);
+      if (role && !role.findings.some(f => f.text === text)) role.findings.unshift({ sev: "error", text });
+    });
+  });
+  const fileNotes = [...problems];
+  if (!fileRoles.size) fileNotes.unshift("No [role_...] stanzas were found.");
+  const defaultStanza = stanzas.get("default");
+  if (defaultStanza && defaultStanza.settings.size) fileNotes.push("[default] settings are listed in the file but aren't applied to the roles below.");
+  const ignored = otherStanzas.filter(name => name !== "default");
+  if (ignored.length) fileNotes.push(`Not role stanzas, so not audited: ${ignored.map(name => `[${name}]`).join(", ")}.`);
+  return { results, fileNotes };
+}
+
+function initRoleAudit() {
+  const input = document.getElementById("roleAuditInput");
+  const result = document.getElementById("roleAuditResult");
+  const fileInput = document.getElementById("roleAuditFile");
+  const exportBtn = document.getElementById("roleAuditExport");
+  if (!input || !result) return;
+  let lastAudit = null;
+  const codeHtml = text => escapeHtml(text).replace(/`([^`]+)`/g, "<code>$1</code>");
+  const plain = text => text.replace(/`/g, "");
+  const SEVERITY_LABEL = { error: "Error", warning: "Warning", info: "Note" };
+
+  function render(audit) {
+    lastAudit = audit;
+    const { results, fileNotes } = audit;
+    const counts = { error: 0, warning: 0 };
+    results.forEach(role => role.findings.forEach(f => { if (counts[f.sev] !== undefined) counts[f.sev]++; }));
+    exportBtn.disabled = !results.length;
+    const summary = `<div class="role-audit-summary"><span class="patterns-stat"><strong>${results.length}</strong> role${results.length === 1 ? "" : "s"}</span><span class="patterns-stat"><strong>${counts.error}</strong> error${counts.error === 1 ? "" : "s"}</span><span class="patterns-stat"><strong>${counts.warning}</strong> warning${counts.warning === 1 ? "" : "s"}</span></div>`;
+    const notes = fileNotes.length ? `<ul class="role-audit-file-notes">${fileNotes.map(note => `<li>${escapeHtml(note)}</li>`).join("")}</ul>` : "";
+    const cards = results.map((role, index) => {
+      const imports = role.imports.length ? role.imports.map(imp => `<code>${escapeHtml(imp.name)}</code>`).join("; ") : "none";
+      const closest = role.closest
+        ? role.closest.covers
+          ? role.closest.size === role.knownEffective.size
+            ? `Same capabilities as built-in <code>${escapeHtml(role.closest.name)}</code>`
+            : `Fits within built-in <code>${escapeHtml(role.closest.name)}</code> (which grants ${role.closest.size - role.knownEffective.size} more)`
+          : `Closest built-in: <code>${escapeHtml(role.closest.name)}</code> (has ${role.closest.overlap} of ${role.knownEffective.size}; missing ${role.closest.missing.slice(0, 6).map(cap => `<code>${escapeHtml(cap)}</code>`).join(", ")}${role.closest.missing.length > 6 ? `, +${role.closest.missing.length - 6} more` : ""})`
+        : "No known capabilities to compare";
+      const findings = role.findings.length
+        ? `<ul class="role-audit-findings">${role.findings.map(f => `<li class="role-audit-finding sev-${f.sev}"><strong>${SEVERITY_LABEL[f.sev]}</strong>${codeHtml(f.text)}</li>`).join("")}</ul>`
+        : `<p class="role-audit-ok">&#10003; No problems found.</p>`;
+      return `<article class="role-audit-card">
+        <h4>role_${escapeHtml(role.name)}</h4>
+        <div class="role-audit-meta">
+          <span>Imports: ${imports}</span>
+          <span><strong>${role.effective.size}</strong> capabilities (${role.inheritedCount} inherited + ${role.ownCount} own)</span>
+          ${role.adminOnlyCount ? `<span>${role.adminOnlyCount} Admin-only</span>` : ""}
+          ${role.indexesAllowed ? `<span>srchIndexesAllowed <code>${escapeHtml(role.indexesAllowed)}</code></span>` : ""}
+          ${role.indexesDefault ? `<span>srchIndexesDefault <code>${escapeHtml(role.indexesDefault)}</code></span>` : ""}
+          <span>${closest}</span>
+        </div>
+        ${findings}
+        <div class="role-audit-card-actions">
+          <button type="button" data-audit-builder="${index}">Edit in role builder</button>
+          ${role.closest ? `<button type="button" data-audit-compare="${index}">Compare with ${escapeHtml(role.closest.name)}</button>` : ""}
+        </div>
+      </article>`;
+    }).join("");
+    result.innerHTML = summary + notes + cards;
+    roleComparisonApi?.setAuditedRoles(results.map(role => ({ name: role.name, platform: "Your authorize.conf", capabilities: role.effective })));
+  }
+
+  function run() {
+    const text = input.value;
+    if (!text.trim()) {
+      lastAudit = null;
+      exportBtn.disabled = true;
+      result.innerHTML = '<p class="role-compare-empty">Paste an authorize.conf above, or load a file.</p>';
+      roleComparisonApi?.setAuditedRoles([]);
+      return;
+    }
+    render(auditAuthorizeConf(text));
+  }
+
+  document.getElementById("roleAuditRun").addEventListener("click", run);
+  document.getElementById("roleAuditExample").addEventListener("click", () => { input.value = ROLE_AUDIT_EXAMPLE; run(); });
+  document.getElementById("roleAuditClear").addEventListener("click", () => { input.value = ""; fileInput.value = ""; run(); });
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files && fileInput.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      result.innerHTML = '<p class="role-compare-note">That file is over 2 MB -- an authorize.conf is normally a few KB. Check you picked the right file.</p>';
+      return;
+    }
+    file.text()
+      .then(text => { input.value = text; run(); })
+      .catch(() => { result.innerHTML = '<p class="role-compare-note">That file couldn\'t be read. Try pasting its contents instead.</p>'; });
+  });
+  result.addEventListener("click", event => {
+    if (!lastAudit) return;
+    const builderBtn = event.target.closest("[data-audit-builder]");
+    const compareBtn = event.target.closest("[data-audit-compare]");
+    if (!builderBtn && !compareBtn) return;
+    const role = lastAudit.results[Number(builderBtn ? builderBtn.dataset.auditBuilder : compareBtn.dataset.auditCompare)];
+    if (!role) return;
+    if (builderBtn) {
+      // The builder can only import matrix roles; capabilities from roles defined in this file are added directly.
+      const builtinImports = role.imports.filter(imp => imp.kind === "builtin" && !isTemplateRole(imp.matrixName)).map(imp => imp.matrixName);
+      const { roles } = rolesCapabilityIndex();
+      const covered = new Set(builtinImports.flatMap(name => [...roles.get(name).capabilities]));
+      roleToolsApi?.openBuilderWith(builtinImports, [...role.knownEffective].filter(cap => !covered.has(cap)), /^[a-z0-9_-]+$/.test(role.name) ? role.name : "");
+    } else {
+      roleComparisonApi?.compare(AUDITED_ROLE_PREFIX + role.name, role.closest.name);
+      roleToolsApi?.showTool("roleToolCompare");
+      document.getElementById("roleToolCompare")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+  exportBtn.addEventListener("click", () => {
+    if (!lastAudit) return;
+    const lines = [["Role", "Severity", "Finding"].map(csvValue).join(",")];
+    lastAudit.fileNotes.forEach(note => lines.push(["(file)", "Note", note].map(csvValue).join(",")));
+    lastAudit.results.forEach(role => {
+      if (!role.findings.length) lines.push([`role_${role.name}`, "OK", "No problems found."].map(csvValue).join(","));
+      role.findings.forEach(f => lines.push([`role_${role.name}`, SEVERITY_LABEL[f.sev], plain(f.text)].map(csvValue).join(",")));
+    });
+    const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "Splunk-authorize-conf-audit.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(link.href);
+    exportBtn.textContent = "Exported";
+    setTimeout(() => { exportBtn.textContent = "Export findings CSV"; }, 1400);
+  });
+  run();
 }
 
 function healthSearchText(row) {
@@ -37042,6 +37506,7 @@ renderRolesTable();
 initRoleComparison();
 initRolesGridView();
 initRoleTools();
+initRoleAudit();
 renderSplunkPortsTable();
 renderNetworkFlowsTable();
 renderQuestionsTable();
