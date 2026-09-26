@@ -134,7 +134,7 @@ describe('Companion Tools external links page', () => {
     // exist, in this relative order, not that they're contiguous.
     assert.match(text, /"info",\s*"onboarding",\s*"taxonomy",\s*(?:"[^"]+",\s*)*"assessments",\s*"sizing",\s*(?:"[^"]+",\s*)*"reference",\s*(?:"[^"]+",\s*)*"prompts",\s*"cmei",\s*"assurance",\s*"viability",\s*"catalogue",\s*"patterns",\s*(?:"[^"]+",\s*)*"health",\s*(?:"[^"]+",\s*)*"externalTools"/);
   });
-  test('all 5 external links are present, open in a new tab, and are safely rel-attributed', () => {
+  test('the core external links are present, open in a new tab, and are safely rel-attributed', () => {
     const section = text.match(/<section id="externalToolsPage"[\s\S]*<\/main>/)[0];
     const links = [
       ['https://adamliq.github.io/Splunk-spl-library/', 'Splunk SPL Library'],
@@ -142,6 +142,7 @@ describe('Companion Tools external links page', () => {
       ['https://adamliq.github.io/Winevent-catalogue/', 'Windows Event Catalogue'],
       ['https://adamliq.github.io/knowledgegraph-splunk/', 'Knowledge Graph -- Splunk'],
       ['https://adamliq.github.io/knowledgegraph-logcollection/', 'Knowledge Graph -- Log Collection'],
+      ['https://adamliq.github.io/Splunk-pipeline-explorer/', 'Splunk Pipeline Explorer'],
     ];
     for (const [href, title] of links) {
       const escapedHref = href.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
