@@ -1,6 +1,8 @@
 # Spec-generated settings sections
 
-The Settings sections of four Configuration file reference articles in `index.html` are generated from Splunk's `.conf.spec` files, not written by hand:
+Ten Configuration file reference articles in `index.html` have a settings section generated from Splunk's `.conf.spec` files, not written by hand.
+
+For these four, the generated **Settings** section is the article's only settings listing:
 
 | Article | Spec file | Settings | Stanzas |
 |---|---|---|---|
@@ -8,6 +10,17 @@ The Settings sections of four Configuration file reference articles in `index.ht
 | Search Limits Configuration | `limits.conf.spec` | 645 | 110 |
 | REST Endpoints Configuration | `restmap.conf.spec` | 66 | 15 |
 | Health Report Configuration | `health.conf.spec` | 35 | 7 |
+
+These six keep their hand-written, topic-grouped settings sections (e.g. inputs.conf's "Network inputs", "Windows inputs"), and the generated section, titled **All settings**, sits after them, before Example:
+
+| Article | Spec file | Settings | Stanzas |
+|---|---|---|---|
+| Data Inputs Configuration | `inputs.conf.spec` | 500 | 35 (plus global settings) |
+| Forwarder Outputs Configuration | `outputs.conf.spec` | 260 | 12 |
+| Indexes Configuration | `indexes.conf.spec` | 336 | 12 sections (see below) |
+| Splunk Web Configuration | `web.conf.spec` | 194 | 7 |
+| Saved Searches Configuration | `savedsearches.conf.spec` | 275 | 1 |
+| Web Feature Flag Configuration | `web-features.conf.spec` | 75 | 28 |
 
 ## Source
 
@@ -21,11 +34,16 @@ S=/tmp/vscode-extension-splunk/spec_files/10.4
 for f in server limits restmap health; do
   python3 scripts/spec/gen_spec_html.py $S/$f.conf.spec $f.conf $f-conf 10.4.2 --apply index.html
 done
+for f in inputs outputs web savedsearches web-features; do
+  python3 scripts/spec/gen_spec_html.py $S/$f.conf.spec $f.conf $f-conf 10.4.2 --title "All settings" --apply index.html
+done
+python3 scripts/spec/gen_spec_html.py $S/indexes.conf.spec indexes.conf indexes-conf 10.4.2 --title "All settings" --banner-sections --apply index.html
 ```
 
-Change the folder and version string to move to a newer Splunk release. Only the `<section id="<file>-conf-settings">` block is replaced; each article's Definition, File locations, Example and Validation sections are hand-written and should be re-checked against the new spec.
+Change the folder and version string to move to a newer Splunk release. Only the `<section id="<file>-conf-settings">` block is replaced; each article's Definition, File locations, Example and Validation sections -- and, for the six above, the topic-grouped settings sections -- are hand-written and should be re-checked against the new spec.
 
 ## What the generator does
 
 - `parse_spec.py` reads stanza headers, `setting = <type>` lines and their `*` bullet descriptions. Consecutive setting lines with no bullets between them share the description that follows. `NOTE:` prose introduces the settings after it, so it's attached to the stanza.
+- `indexes.conf.spec` has no stanza lines: it separates global, per-index, provider, virtual-index and volume options with comment banners (`#****` / `# PER INDEX OPTIONS` / `#****`, and `##### S3 specific settings`). `--banner-sections` groups settings under those headings instead, with each heading's prose as the section description. It's opt-in, so the other files parse exactly as before.
 - `gen_spec_html.py` writes one table per stanza (Setting, Description, Default). The first bullet shows and the rest sit behind a "More" toggle, all in the spec's own wording. The Default column is filled only from the spec's `Default:` (or `Default (<condition>):` / `No default.`) lines.
