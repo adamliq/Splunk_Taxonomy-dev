@@ -1476,6 +1476,27 @@
     .api-sort:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
     th[aria-sort="ascending"] .api-sort::after { content:"\2191"; color:var(--accent); }
     th[aria-sort="descending"] .api-sort::after { content:"\2193"; color:var(--accent); }
+    .api-req-open { all:unset; box-sizing:border-box; display:inline-block; margin-top:6px; cursor:pointer; color:var(--accent); font-size:11.5px; font-weight:700; border-radius:4px; }
+    .api-req-open:hover { text-decoration:underline; }
+    .api-req-open:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+    .api-request-dialog { width:min(860px, 100%); }
+    .modal-title.api-request-title { font:700 clamp(17px, 2.6vw, 22px) var(--mono); }
+    .api-req-controls { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px 12px; margin-bottom:14px; }
+    .api-req-controls label { display:grid; gap:4px; min-width:0; font-size:11.5px; font-weight:800; color:#475569; }
+    .api-req-controls select { width:100%; min-width:0; }
+    .api-req-controls .api-req-wide { grid-column:1 / -1; }
+    .api-req-controls .api-req-check { grid-column:1 / -1; display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; color:#334155; cursor:pointer; }
+    .api-req-check input { flex:0 0 auto; width:16px; height:16px; margin:0; }
+    .api-request-dialog .modal-close { flex:0 0 42px; }
+    .api-req-controls [hidden] { display:none; }
+    .api-req-formats { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:8px; }
+    .api-req-format { padding:6px 12px; border-radius:999px; font-size:12.5px; font-weight:700; }
+    .api-req-format[aria-pressed="true"] { background:#1f4e78; border-color:#1f4e78; color:#fff; }
+    #apiReqCopy { margin-left:auto; }
+    .api-req-code { margin:0; padding:14px 16px; max-height:340px; overflow:auto; border-radius:10px; background:#0f172a; color:#e2e8f0; font:12.5px/1.55 var(--mono); white-space:pre; }
+    .api-req-code:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+    .api-req-notes { margin:12px 0 0; padding-left:18px; font-size:12.5px; line-height:1.5; color:#475569; }
+    .api-req-notes li { margin:4px 0; }
     .api-table mark { background:#fde68a; color:inherit; padding:0 1px; border-radius:2px; }
     .eccs-matrix.api-table tr.api-group-row th { position:static; padding:9px 12px; background:#e8eef6; color:#1f4e78; font-size:12px; text-transform:none; letter-spacing:0; border-right:0; }
     .api-group-label { position:sticky; left:12px; display:inline-flex; gap:8px; align-items:baseline; }
@@ -4327,7 +4348,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.26 &middot; build 129</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.26 &middot; build 130</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -17285,6 +17306,36 @@ E. Assumptions and unresolved inputs</pre>
     </div>
     <div class="modal-body">
       <dl class="input-detail-grid" id="inputDetailGrid"></dl>
+    </div>
+  </div>
+</div>
+
+<div id="apiRequestModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="apiRequestTitle" aria-hidden="true">
+  <div class="modal-dialog api-request-dialog">
+    <div class="modal-header">
+      <div>
+        <p class="modal-eyebrow" id="apiRequestEyebrow">Copy request</p>
+        <h2 id="apiRequestTitle" class="modal-title api-request-title">&mdash;</h2>
+        <p class="modal-subtitle" id="apiRequestSubtitle"></p>
+      </div>
+      <button id="closeApiRequest" class="modal-close" type="button" aria-label="Close request builder">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="api-req-controls">
+        <label id="apiReqPathField">Path<select id="apiReqPath"></select></label>
+        <label>Method<select id="apiReqMethod"></select></label>
+        <label>Authentication<select id="apiReqAuth"></select></label>
+        <label class="api-req-wide">Server<select id="apiReqBase"></select></label>
+        <label class="api-req-check" id="apiReqOutputModeField"><input type="checkbox" id="apiReqOutputMode" /><span>Add <code>output_mode=json</code> to the URL</span></label>
+      </div>
+      <div class="api-req-formats" role="group" aria-label="Request format">
+        <button type="button" class="api-req-format" data-format="curl" aria-pressed="true">curl</button>
+        <button type="button" class="api-req-format" data-format="python" aria-pressed="false">Python</button>
+        <button type="button" class="api-req-format" data-format="powershell" aria-pressed="false">PowerShell</button>
+        <button type="button" id="apiReqCopy" class="primary-button">Copy</button>
+      </div>
+      <pre class="api-req-code" tabindex="0" aria-label="Generated request"><code id="apiReqCode"></code></pre>
+      <ul class="api-req-notes" id="apiReqNotes"></ul>
     </div>
   </div>
 </div>
@@ -38245,8 +38296,170 @@ function renderSplunkApiTable() {
     const methods = API_METHOD_ORDER.filter(m => e.methods.includes(m)).concat(e.methods.filter(m => !API_METHOD_ORDER.includes(m)))
       .map(m => `<span class="api-method api-method-${escapeHtml(m)}">${escapeHtml(m)}</span>`).join("");
     const legend = splunkApiAtlas.availability_legend[e.availability] || "";
-    return `${heading}<tr><td>${refs}${detail}</td><td>${methods}</td><td>${apiHighlight(e.description, q)}</td><td class="api-product-cell">${apiHighlight(apiProductName(e.component), q)}<small>${apiHighlight(e.group, q)}</small></td><td><span class="api-avail api-avail-${escapeHtml(e.availability)}" title="${escapeHtml(legend)}">${escapeHtml(API_AVAILABILITY_LABELS[e.availability] || e.availability)}</span></td></tr>`;
+    const build = e.paths ? `<button type="button" class="api-req-open" data-endpoint="${API_ENDPOINT_INDEX.get(e)}">Copy request&hellip;</button>` : "";
+    return `${heading}<tr><td>${refs}${detail}${build}</td><td>${methods}</td><td>${apiHighlight(e.description, q)}</td><td class="api-product-cell">${apiHighlight(apiProductName(e.component), q)}<small>${apiHighlight(e.group, q)}</small></td><td><span class="api-avail api-avail-${escapeHtml(e.availability)}" title="${escapeHtml(legend)}">${escapeHtml(API_AVAILABILITY_LABELS[e.availability] || e.availability)}</span></td></tr>`;
   }).join("");
+}
+// --- Copy request (curl / Python / PowerShell) ---
+// Built from the atlas: base URLs, the product's listed auth methods, and its notes. Every
+// credential and path parameter stays a <placeholder>; nothing chosen here is saved.
+const API_ENDPOINT_INDEX = new Map(splunkApiAtlas.endpoints.map((e, i) => [e, i]));
+const API_OUTPUT_MODE_PRODUCTS = ["core", "ds", "dbx", "esl", "mc"]; // splunkd REST (port 8089)
+const API_OUTPUT_MODE_DEFAULT = ["core", "ds"];
+let apiRequestEndpoint = null;
+let apiRequestFormat = "curl";
+let lastApiRequestTrigger = null;
+// "Basic" -> username/password; "Name: value (hint)" -> a header, with the hint shown as a note.
+function apiAuthOptions(key) {
+  return (splunkApiAtlas.components[key]?.auth || []).map(entry => {
+    if (/^basic$/i.test(entry.trim())) return { type: "basic", label: "Basic (username and password)" };
+    const m = entry.match(/^([\w-]+):\s*(.+?)(?:\s*\(([^)]*)\))?$/);
+    return m ? { type: "header", name: m[1], value: m[2], hint: m[3] || "", label: `${m[1]}: ${m[2]}` } : null;
+  }).filter(Boolean);
+}
+function apiBaseOptions(e) {
+  const { bases, cloud } = apiBaseUrls(e.component);
+  const out = [];
+  if (e.availability !== "cloud_only" || !cloud) bases.forEach(url => out.push({ url, where: cloud ? "On-prem" : "" }));
+  if (cloud && e.availability !== "on_prem_only") out.push({ url: cloud, where: "Cloud" });
+  return out;
+}
+// Placeholder body for methods that send one, in the format the product takes.
+function apiRequestBody(e, path, method) {
+  if (!["POST", "PUT", "PATCH"].includes(method)) return null;
+  if (e.component === "hec") {
+    if (/\/raw(\/|$)/.test(path)) return { kind: "raw", text: "<raw event text>" };
+    if (/^services\/collector(\/event(\/1\.0)?)?$/.test(path)) return { kind: "json", text: '{"event": "<event>"}' };
+    return { kind: "json", text: '{"<field>": "<value>"}' };
+  }
+  if (["acs", "soar", "mc", "es"].includes(e.component) || (e.component === "dbx" && path.startsWith("db_connect/dbxproxy/")))
+    return { kind: "json", text: '{"<field>": "<value>"}' };
+  return { kind: "form", field: "<field>", value: "<value>" };
+}
+function apiRequestUrl(base, path, outputMode) {
+  const url = base + path.replace(/\{([^}]+)\}/g, "<$1>");
+  return outputMode ? url + (url.includes("?") ? "&" : "?") + "output_mode=json" : url;
+}
+const apiShellQuote = v => "'" + String(v).replace(/'/g, "'\\''") + "'";
+const apiPsQuote = v => "'" + String(v).replace(/'/g, "''") + "'";
+const apiPyQuote = v => JSON.stringify(String(v));
+// Pure: { format, method, url, auth: {type, name, value}, body } -> command text.
+function apiRequestSnippet({ format, method, url, auth, body }) {
+  if (format === "python") {
+    const args = ["url"];
+    const lines = ["import requests", "", `url = ${apiPyQuote(url)}`];
+    if (auth && auth.type === "header") { lines.push(`headers = {${apiPyQuote(auth.name)}: ${apiPyQuote(auth.value)}}`); args.push("headers=headers"); }
+    if (auth && auth.type === "basic") args.push('auth=("<username>", "<password>")');
+    if (body && body.kind === "form") args.push(`data={${apiPyQuote(body.field)}: ${apiPyQuote(body.value)}}`);
+    if (body && body.kind === "json") args.push(`json=${body.text}`);
+    if (body && body.kind === "raw") args.push(`data=${apiPyQuote(body.text)}`);
+    lines.push("", `response = requests.${method.toLowerCase()}(${args.join(", ")})`, "response.raise_for_status()", "print(response.text)");
+    return lines.join("\n");
+  }
+  if (format === "powershell") {
+    const lines = [];
+    if (auth && auth.type === "basic") {
+      lines.push("$pair = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes('<username>:<password>'))");
+      lines.push("$headers = @{ 'Authorization' = \"Basic $pair\" }");
+    } else if (auth && auth.type === "header") {
+      lines.push(`$headers = @{ ${apiPsQuote(auth.name)} = ${apiPsQuote(auth.value)} }`);
+    }
+    const call = [`Invoke-RestMethod -Method ${method.charAt(0)}${method.slice(1).toLowerCase()} -Uri ${apiPsQuote(url)}`];
+    if (auth) call.push("-Headers $headers");
+    if (body && body.kind === "form") call.push(`-Body @{ ${apiPsQuote(body.field)} = ${apiPsQuote(body.value)} }`);
+    if (body && body.kind === "json") call.push(`-ContentType 'application/json' -Body ${apiPsQuote(body.text)}`);
+    if (body && body.kind === "raw") call.push(`-Body ${apiPsQuote(body.text)}`);
+    lines.push(`$response = ${call.join(" `\n  ")}`, "$response | ConvertTo-Json -Depth 10");
+    return lines.join("\n");
+  }
+  const parts = [method === "GET" ? `curl ${apiShellQuote(url)}` : `curl -X ${method} ${apiShellQuote(url)}`];
+  if (auth && auth.type === "basic") parts.push("-u '<username>:<password>'");
+  if (auth && auth.type === "header") parts.push(`-H ${apiShellQuote(`${auth.name}: ${auth.value}`)}`);
+  if (body && body.kind === "form") parts.push(`-d ${apiShellQuote(`${body.field}=${body.value}`)}`);
+  if (body && body.kind === "json") parts.push(`-H 'Content-Type: application/json' -d ${apiShellQuote(body.text)}`);
+  if (body && body.kind === "raw") parts.push(`--data-binary ${apiShellQuote(body.text)}`);
+  return parts.join(" \\\n  ");
+}
+function renderApiRequest() {
+  const e = apiRequestEndpoint;
+  if (!e) return;
+  const path = document.getElementById("apiReqPath").value;
+  const method = document.getElementById("apiReqMethod").value;
+  document.getElementById("apiRequestTitle").textContent = path;
+  const baseOption = apiBaseOptions(e)[Number(document.getElementById("apiReqBase").value)] || apiBaseOptions(e)[0];
+  const auth = apiAuthOptions(e.component)[Number(document.getElementById("apiReqAuth").value)] || null;
+  const outputMode = API_OUTPUT_MODE_PRODUCTS.includes(e.component) && document.getElementById("apiReqOutputMode").checked;
+  const body = apiRequestBody(e, path, method);
+  document.getElementById("apiReqCode").textContent = apiRequestSnippet({ format: apiRequestFormat, method, url: apiRequestUrl(baseOption.url, path, outputMode), auth, body });
+  document.querySelectorAll("#apiRequestModal .api-req-format").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.format === apiRequestFormat)));
+  const c = splunkApiAtlas.components[e.component] || {};
+  const { cloudNote } = apiBaseUrls(e.component);
+  const notes = ["Replace every <code>&lt;placeholder&gt;</code> before running it, including path parameters (shown as <code>&lt;name&gt;</code>)."];
+  if (auth && auth.hint) notes.push(`The token needs the <strong>${escapeHtml(auth.hint)}</strong> role.`);
+  if (baseOption.where === "Cloud" && cloudNote) notes.push(`Cloud: ${escapeHtml(cloudNote)}.`);
+  if (body) notes.push("The body is a placeholder -- check the endpoint's reference for the fields it takes.");
+  if (/:808[89]\//.test(baseOption.url)) notes.push("Splunk's ports 8089 and 8088 often use Splunk's own self-signed certificate. Trust your CA rather than turning verification off: <code>--cacert</code> (curl), <code>verify=\"&lt;ca.pem&gt;\"</code> (Python).");
+  if (c.notes) notes.push(`${escapeHtml(apiProductName(e.component))}: ${escapeHtml(c.notes)}`);
+  document.getElementById("apiReqNotes").innerHTML = notes.map(n => `<li>${n}</li>`).join("");
+}
+function openApiRequest(index, trigger) {
+  const e = splunkApiAtlas.endpoints[index];
+  const modal = document.getElementById("apiRequestModal");
+  if (!e || !e.paths || !modal) return;
+  apiRequestEndpoint = e;
+  lastApiRequestTrigger = trigger || null;
+  document.getElementById("apiRequestSubtitle").textContent = `${apiProductName(e.component)} · ${e.group} -- ${e.description}`;
+  const pathSelect = document.getElementById("apiReqPath");
+  pathSelect.innerHTML = e.paths.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join("");
+  document.getElementById("apiReqPathField").hidden = e.paths.length < 2;
+  const methods = API_METHOD_ORDER.filter(m => e.methods.includes(m)).concat(e.methods.filter(m => !API_METHOD_ORDER.includes(m)));
+  document.getElementById("apiReqMethod").innerHTML = methods.map(m => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join("");
+  document.getElementById("apiReqBase").innerHTML = apiBaseOptions(e).map((o, i) => `<option value="${i}">${escapeHtml(o.where ? `${o.where} -- ${o.url}` : o.url)}</option>`).join("");
+  const auths = apiAuthOptions(e.component);
+  const preferred = Math.max(0, auths.findIndex(a => a.type === "header" && /bearer/i.test(a.value)));
+  const authSelect = document.getElementById("apiReqAuth");
+  authSelect.innerHTML = auths.map((a, i) => `<option value="${i}">${escapeHtml(a.label)}</option>`).join("");
+  authSelect.value = String(auths.length ? preferred : 0);
+  const outputModeField = document.getElementById("apiReqOutputModeField");
+  outputModeField.hidden = !API_OUTPUT_MODE_PRODUCTS.includes(e.component);
+  document.getElementById("apiReqOutputMode").checked = API_OUTPUT_MODE_DEFAULT.includes(e.component);
+  renderApiRequest();
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  document.getElementById("closeApiRequest").focus();
+}
+function closeApiRequest() {
+  const modal = document.getElementById("apiRequestModal");
+  if (!modal || !modal.classList.contains("open")) return;
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+  apiRequestEndpoint = null;
+  if (lastApiRequestTrigger && lastApiRequestTrigger.isConnected) lastApiRequestTrigger.focus();
+}
+function initApiRequestBuilder() {
+  const modal = document.getElementById("apiRequestModal");
+  if (!modal) return;
+  document.getElementById("apiTableBody").addEventListener("click", event => {
+    const trigger = event.target.closest(".api-req-open");
+    if (trigger) openApiRequest(Number(trigger.dataset.endpoint), trigger);
+  });
+  ["apiReqPath", "apiReqMethod", "apiReqBase", "apiReqAuth", "apiReqOutputMode"].forEach(id => document.getElementById(id).addEventListener("change", renderApiRequest));
+  modal.querySelectorAll(".api-req-format").forEach(button => button.addEventListener("click", () => { apiRequestFormat = button.dataset.format; renderApiRequest(); }));
+  document.getElementById("apiReqCopy").addEventListener("click", async event => {
+    const button = event.currentTarget;
+    try {
+      await navigator.clipboard.writeText(document.getElementById("apiReqCode").textContent);
+      button.textContent = "Copied";
+    } catch (err) {
+      button.textContent = "Copy failed -- select the text";
+    }
+    setTimeout(() => { button.textContent = "Copy"; }, 1400);
+  });
+  document.getElementById("closeApiRequest").addEventListener("click", closeApiRequest);
+  modal.addEventListener("click", event => { if (event.target === modal) closeApiRequest(); });
+  document.addEventListener("keydown", event => { if (event.key === "Escape") closeApiRequest(); });
 }
 function exportSplunkApi(event) {
   const rows = apiOrderedEndpoints();
@@ -38336,6 +38549,7 @@ initRolesGridView();
 initRoleTools();
 initRoleAudit();
 initSplunkApiPage();
+initApiRequestBuilder();
 renderSplunkPortsTable();
 renderNetworkFlowsTable();
 renderQuestionsTable();
