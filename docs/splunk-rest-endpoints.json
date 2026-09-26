@@ -1,0 +1,5746 @@
+{
+  "title": "Splunk REST Endpoint Atlas",
+  "generated": "2026-09-26",
+  "availability_legend": {
+    "enterprise_and_cloud": "Works on Enterprise/on-prem and Cloud",
+    "on_prem_only": "Enterprise/on-prem only; Cloud blocks it or handles it via ACS (for SOAR: on-prem only)",
+    "cloud_only": "Splunk Cloud only"
+  },
+  "path_notes": "Paths joined by ' \u00b7 ' in the page are split into the paths array. Short forms like 'tcp/raw' share the prefix of the first path in the row.",
+  "components": {
+    "core": {
+      "name": "Core Splunk (splunkd)",
+      "base_url": "https://<host>:8089/services/ | https://<host>:8089/servicesNS/<user>/<app>/",
+      "cloud_base_url": "https://<stack>.splunkcloud.com:8089/services/ (IP must be on the ACS search-api allow list)",
+      "auth": [
+        "Basic",
+        "Authorization: Splunk <session_key>",
+        "Authorization: Bearer <JWT>"
+      ],
+      "version": "Splunk Enterprise 10.4 / Splunk Cloud Platform 10.5.2605",
+      "notes": "Add output_mode=json. POST creates or updates; no PUT."
+    },
+    "ds": {
+      "name": "Deployment server & clients",
+      "base_url": "https://<deployment-server>:8089/services/",
+      "auth": [
+        "Basic",
+        "Authorization: Splunk <session_key>",
+        "Authorization: Bearer <JWT>"
+      ],
+      "version": "Splunk Enterprise 10.x",
+      "notes": "On-prem only. Client endpoints run on the forwarder. Run deployment/server/config/_reload after serverclass changes."
+    },
+    "dbx": {
+      "name": "Splunk DB Connect",
+      "base_url": "https://<host>:8089/servicesNS/nobody/splunk_app_db_connect/",
+      "auth": [
+        "Basic",
+        "Authorization: Splunk <session_key>",
+        "Authorization: Bearer <JWT>"
+      ],
+      "version": "DB Connect 4.3",
+      "notes": "dbxproxy endpoints take JSON bodies and use PUT to update. They are not in Splunk's published REST reference; paths come from Splunk Community posts, and outputs/lookups are assumed to follow the same pattern."
+    },
+    "hec": {
+      "name": "HTTP Event Collector",
+      "base_url": "https://<host>:8088/",
+      "cloud_base_url": "https://http-inputs-<stack>.splunkcloud.com/",
+      "auth": [
+        "Authorization: Splunk <HEC_token>"
+      ],
+      "version": "Splunk Enterprise 10.4 / Cloud 10.5.2605"
+    },
+    "acs": {
+      "name": "Splunk Cloud Admin Config Service (ACS)",
+      "base_url": "https://admin.splunk.com/<stack>/adminconfig/v2/",
+      "auth": [
+        "Authorization: Bearer <JWT> (sc_admin)"
+      ],
+      "version": "ACS reference 10.5.2605"
+    },
+    "es": {
+      "name": "Mission Control public v2 API (Enterprise Security 8)",
+      "base_url": "https://<es-search-head>:8089/servicesNS/nobody/missioncontrol/public/v2/",
+      "auth": [
+        "Basic",
+        "Authorization: Splunk <session_key>",
+        "Authorization: Bearer <JWT>"
+      ],
+      "version": "ES 8.6 / 8.7 (same endpoint set)",
+      "notes": "The 'path' values are official operation IDs, not URLs. Get exact URL templates from missioncontrol/mcopenapi.yaml. GET endpoints work with | rest when you add search_format=true."
+    },
+    "mc": {
+      "name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "base_url": "https://<es-search-head>:8089/servicesNS/nobody/missioncontrol/v1/",
+      "auth": [
+        "Basic",
+        "Authorization: Splunk <session_key>",
+        "Authorization: Bearer <JWT>"
+      ],
+      "version": "Mission Control Automation API 3.1.0",
+      "notes": "The 'operation_ids' values are official operation IDs; the spec is mc_openapi.json. Legacy API; use the public v2 API on ES 8."
+    },
+    "esl": {
+      "name": "Enterprise Security deprecated/legacy",
+      "base_url": "https://<es-search-head>:8089/",
+      "auth": [
+        "Basic",
+        "Authorization: Splunk <session_key>"
+      ],
+      "version": "ES 8.x deprecated; notable_update is ES 7.x"
+    },
+    "soar": {
+      "name": "Splunk SOAR",
+      "base_url": "https://<soar-host>/",
+      "auth": [
+        "ph-auth-token: <token>",
+        "Basic"
+      ],
+      "version": "SOAR Cloud 26.09 / On-prem 8.6",
+      "notes": "Query params: _filter_<field>, page, page_size, sort, order. POST to /rest/<type>/<id> updates."
+    }
+  },
+  "endpoint_count": 395,
+  "endpoints": [
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "auth/login"
+      ],
+      "description": "Get a session key (Authorization: Splunk <key>)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "authentication/current-context",
+        "authentication/current-context/{name}"
+      ],
+      "description": "Current user, roles and capabilities",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "authentication/users"
+      ],
+      "description": "List or create local users",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "authentication/users/{name}"
+      ],
+      "description": "Read, update or delete a user",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "authentication/httpauth-tokens"
+      ],
+      "description": "List active session tokens",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET",
+        "DELETE"
+      ],
+      "paths": [
+        "authentication/httpauth-tokens/{name}"
+      ],
+      "description": "Read or revoke a session token",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "authentication/LDAP-auth"
+      ],
+      "description": "LDAP authentication strategies",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "admin/LDAP-groups"
+      ],
+      "description": "LDAP groups and role mappings",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "authentication/providers/SAML",
+        "authentication/providers/SAML/{stanza_name}"
+      ],
+      "description": "SAML configuration",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "admin/SAML-groups"
+      ],
+      "description": "Map SAML groups to roles",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "admin/SAML-user-role-map",
+        "admin/SAML-user-role-map/{name}"
+      ],
+      "description": "SAML user-to-role mapping",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "admin/SAML-idp-metadata",
+        "admin/SAML-sp-metadata"
+      ],
+      "description": "IdP / SP metadata",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "admin/replicate-SAML-certs"
+      ],
+      "description": "Replicate SAML certs across a search head cluster",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "admin/ProxySSO-auth"
+      ],
+      "description": "Proxy SSO settings",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "admin/Rsa-MFA",
+        "admin/Rsa-MFA-config-verify/{rsa-stanza-name}"
+      ],
+      "description": "RSA MFA settings / verify config",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "admin/metrics-reload/_metrics"
+      ],
+      "description": "Reload metrics configuration",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "authorization/capabilities",
+        "authorization/grantable_capabilities"
+      ],
+      "description": "All / grantable capabilities",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "authorization/roles"
+      ],
+      "description": "List or create roles",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "authorization/roles/{name}"
+      ],
+      "description": "Read, update or delete a role",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "authorization/tokens",
+        "authorization/tokens/{user}"
+      ],
+      "description": "List, create (JWT) or delete auth tokens",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "storage/passwords"
+      ],
+      "description": "Encrypted credential store (secrets for apps)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Authentication & access",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "storage/passwords/{name}"
+      ],
+      "description": "One stored credential ({realm}:{user}:)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Applications",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "apps/appinstall"
+      ],
+      "description": "Install app from file or URL",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Applications",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "apps/apptemplates",
+        "apps/apptemplates/{name}"
+      ],
+      "description": "App templates",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Applications",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "apps/local"
+      ],
+      "description": "List apps / create app",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Applications",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "apps/local/{name}"
+      ],
+      "description": "Read, configure, remove an app (Cloud: install via ACS)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Applications",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "apps/local/{name}/package",
+        "apps/local/{name}/setup",
+        "apps/local/{name}/update"
+      ],
+      "description": "Package, setup UI, update info",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search jobs",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "search/v2/jobs",
+        "search/jobs"
+      ],
+      "description": "List or create search jobs (v2 recommended since 9.0.1)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search jobs",
+      "methods": [
+        "GET",
+        "DELETE"
+      ],
+      "paths": [
+        "search/v2/jobs/{sid}",
+        "search/jobs/{search_id}"
+      ],
+      "description": "Job status / delete job",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search jobs",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "search/v2/jobs/{sid}/control",
+        "search/jobs/{search_id}/control"
+      ],
+      "description": "pause, unpause, finalize, cancel, touch, setttl, setpriority",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search jobs",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "search/v2/jobs/{sid}/results",
+        "search/jobs/{search_id}/results"
+      ],
+      "description": "Final results (json, csv, xml)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search jobs",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "search/v2/jobs/{sid}/results_preview",
+        "search/jobs/{search_id}/results_preview"
+      ],
+      "description": "Partial results while running",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search jobs",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "search/v2/jobs/{sid}/events",
+        "search/jobs/{search_id}/events"
+      ],
+      "description": "Raw events",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search jobs",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "search/jobs/{search_id}/summary",
+        "search/jobs/{search_id}/timeline",
+        "search/jobs/{search_id}/search.log"
+      ],
+      "description": "Field summary, timeline, job log (also under v2)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search jobs",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "search/v2/jobs/export",
+        "search/jobs/export"
+      ],
+      "description": "Stream results as they arrive",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search jobs",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "search/parser",
+        "search/typeahead",
+        "search/timeparser"
+      ],
+      "description": "Parse SPL, typeahead, time parsing",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search jobs",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "search/scheduler",
+        "search/scheduler/status"
+      ],
+      "description": "Scheduler status; POST to enable/disable scheduler",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search jobs",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "search/concurrency-settings",
+        "search/concurrency-settings/scheduler",
+        "search/concurrency-settings/search"
+      ],
+      "description": "Search concurrency limits",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search jobs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "search/distributed/peers",
+        "search/distributed/peers/{name}"
+      ],
+      "description": "Distributed search peers",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search jobs",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "search/distributed/config"
+      ],
+      "description": "Distributed search settings",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search jobs",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "search/distributed/bundle/replication/config",
+        "search/distributed/bundle/replication/cycles"
+      ],
+      "description": "Knowledge bundle replication config and cycles",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search jobs",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "search/distributed/bundle-replication-files",
+        "search/distributed/bundle-replication-files/{name}"
+      ],
+      "description": "Replicated bundle files",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Saved searches & alerts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "saved/searches"
+      ],
+      "description": "List or create saved searches/alerts/reports",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Saved searches & alerts",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "saved/searches/{name}"
+      ],
+      "description": "Read, update, delete",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Saved searches & alerts",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "saved/searches/{name}/dispatch"
+      ],
+      "description": "Run a saved search now",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Saved searches & alerts",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "saved/searches/{name}/history"
+      ],
+      "description": "Past dispatched jobs",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Saved searches & alerts",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "saved/searches/{name}/acknowledge",
+        "saved/searches/{name}/suppress"
+      ],
+      "description": "Acknowledge or suppress alert",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Saved searches & alerts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "saved/searches/{name}/scheduled_times",
+        "saved/searches/{name}/reschedule"
+      ],
+      "description": "Schedule preview / reschedule",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Saved searches & alerts",
+      "methods": [
+        "GET",
+        "DELETE"
+      ],
+      "paths": [
+        "alerts/fired_alerts",
+        "alerts/fired_alerts/{name}"
+      ],
+      "description": "Triggered alerts",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Saved searches & alerts",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "alerts/alert_actions"
+      ],
+      "description": "Available alert actions",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Saved searches & alerts",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "scheduled/views",
+        "scheduled/views/{name}"
+      ],
+      "description": "Scheduled dashboard PDF delivery",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Saved searches & alerts",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "paths": [
+        "scheduled/views/{name}/dispatch",
+        "scheduled/views/{name}/history",
+        "scheduled/views/{name}/reschedule",
+        "scheduled/views/{name}/scheduled_times"
+      ],
+      "description": "Run, history and schedule of scheduled views",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Saved searches & alerts",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "data/commands",
+        "data/commands/{name}"
+      ],
+      "description": "Search commands",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "saved/eventtypes",
+        "saved/eventtypes/{name}"
+      ],
+      "description": "Event types",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "search/tags",
+        "search/tags/{tag_name}"
+      ],
+      "description": "Tags",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "search/fields",
+        "search/fields/{field_name}",
+        "search/fields/{field_name}/tags"
+      ],
+      "description": "Fields and their tags",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/props/extractions",
+        "data/props/extractions/{name}"
+      ],
+      "description": "Field extractions (props)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/props/fieldaliases",
+        "data/props/fieldaliases/{name}"
+      ],
+      "description": "Field aliases",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/props/calcfields",
+        "data/props/calcfields/{name}"
+      ],
+      "description": "Calculated fields",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/props/lookups",
+        "data/props/lookups/{name}"
+      ],
+      "description": "Automatic lookups",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/props/sourcetype-rename",
+        "data/props/sourcetype-rename/{name}"
+      ],
+      "description": "Sourcetype renames",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/transforms/lookups",
+        "data/transforms/lookups/{name}"
+      ],
+      "description": "Lookup definitions",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/transforms/extractions",
+        "data/transforms/extractions/{name}"
+      ],
+      "description": "Transforms-based extractions",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "data/transforms/metric-schema",
+        "data/transforms/statsdextractions"
+      ],
+      "description": "Log-to-metrics schema, StatsD extractions",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/lookup-table-files",
+        "data/lookup-table-files/{name}"
+      ],
+      "description": "CSV lookup files",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "datamodel/model",
+        "datamodel/model/{name}"
+      ],
+      "description": "Data models",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "datamodel/pivot"
+      ],
+      "description": "Generate SPL from a pivot",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "DELETE"
+      ],
+      "paths": [
+        "data/summaries",
+        "data/summaries/{summary_name}"
+      ],
+      "description": "Data model / report acceleration summaries",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/ui/views",
+        "data/ui/views/{name}"
+      ],
+      "description": "Dashboards",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "data/ui/panels"
+      ],
+      "description": "Prebuilt dashboard panels",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "data/ui/global-banner"
+      ],
+      "description": "Global banner shown to all users",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "configs/conf-macros"
+      ],
+      "description": "Search macros (via configs)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Knowledge objects",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "directory",
+        "directory/{name}"
+      ],
+      "description": "All knowledge objects for a user/app",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "KV store",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "storage/collections/config"
+      ],
+      "description": "List or create collections",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "KV store",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "storage/collections/config/{collection}"
+      ],
+      "description": "Collection schema, accelerated fields",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "KV store",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "storage/collections/data/{collection}"
+      ],
+      "description": "Query (query=, fields=, sort=, limit=), insert, delete",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "KV store",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "storage/collections/data/{collection}/{id}"
+      ],
+      "description": "One record",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "KV store",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "storage/collections/data/{collection}/batch_save"
+      ],
+      "description": "Bulk upsert",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "KV store",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "kvstore/status"
+      ],
+      "description": "KV store status",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "KV store",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "kvstore/backup/create",
+        "kvstore/backup/restore"
+      ],
+      "description": "Backup / restore",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Configuration",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "configs/conf-{file}"
+      ],
+      "description": "Stanzas of any .conf file",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Configuration",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "configs/conf-{file}/{name}"
+      ],
+      "description": "One stanza",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Configuration",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "properties",
+        "properties/{file_name}",
+        "properties/{file_name}/{stanza_name}",
+        "properties/{file_name}/{stanza_name}/{key_name}"
+      ],
+      "description": "Read/write .conf values by file, stanza, key",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "data/inputs/all",
+        "data/inputs/all/{name}"
+      ],
+      "description": "All inputs",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/inputs/http",
+        "data/inputs/http/{name}"
+      ],
+      "description": "HEC tokens (Cloud: use ACS)",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/inputs/token/http",
+        "data/inputs/token/http/{name}"
+      ],
+      "description": "HEC tokens (alternate path)",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "data/inputs/token/http/{name}/enable",
+        "data/inputs/token/http/{name}/disable"
+      ],
+      "description": "Enable / disable an HEC token",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/inputs/monitor",
+        "data/inputs/monitor/{name}"
+      ],
+      "description": "File/directory monitor inputs",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "data/inputs/monitor/{name}/members"
+      ],
+      "description": "Files a monitor input is reading",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "data/inputs/oneshot",
+        "data/inputs/oneshot/{name}"
+      ],
+      "description": "Index a file once / oneshot status",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/inputs/script",
+        "data/inputs/script/{name}"
+      ],
+      "description": "Scripted inputs",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "data/inputs/script/restart"
+      ],
+      "description": "Restart a scripted input",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/inputs/tcp/raw",
+        "data/inputs/tcp/raw/{name}"
+      ],
+      "description": "Raw TCP inputs",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/inputs/tcp/cooked",
+        "data/inputs/tcp/cooked/{name}"
+      ],
+      "description": "Forwarder (splunktcp) inputs",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "data/inputs/tcp/raw/{name}/connections",
+        "data/inputs/tcp/cooked/{name}/connections"
+      ],
+      "description": "Active connections",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/inputs/tcp/ssl",
+        "data/inputs/tcp/ssl/{name}"
+      ],
+      "description": "SSL settings for TCP inputs",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/inputs/tcp/splunktcptoken",
+        "data/inputs/tcp/splunktcptoken/{name}"
+      ],
+      "description": "Forwarder tokens",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/inputs/udp",
+        "data/inputs/udp/{name}"
+      ],
+      "description": "UDP inputs",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "data/inputs/udp/{name}/connections"
+      ],
+      "description": "UDP connections",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/inputs/win-event-log-collections",
+        "data/inputs/win-event-log-collections/{name}"
+      ],
+      "description": "Windows event log inputs",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/inputs/win-perfmon",
+        "data/inputs/win-perfmon/{name}"
+      ],
+      "description": "Windows perfmon inputs",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/inputs/win-wmi-collections",
+        "data/inputs/win-wmi-collections/{name}"
+      ],
+      "description": "Windows WMI inputs",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/inputs/registry",
+        "data/inputs/registry/{name}"
+      ],
+      "description": "Windows registry inputs",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/inputs/ad",
+        "data/inputs/ad/{name}"
+      ],
+      "description": "Active Directory monitoring inputs",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "data/modular-inputs",
+        "data/modular-inputs/{name}"
+      ],
+      "description": "Modular input kinds",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "receivers/simple",
+        "receivers/stream"
+      ],
+      "description": "Send events over REST (8089)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "receivers/token",
+        "receivers/token/event",
+        "receivers/token/event/1.0",
+        "receivers/token/mint",
+        "receivers/token/mint/1.0"
+      ],
+      "description": "Token-based receivers (HEC equivalents on 8089)",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Data inputs",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "indexing/preview",
+        "indexing/preview/{job_id}"
+      ],
+      "description": "Data preview (test parsing before indexing)",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Ingest actions",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "data/ingest/rulesets",
+        "data/ingest/rulesets/{name}"
+      ],
+      "description": "Ingest actions rulesets (filter, mask, route)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Ingest actions",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "data/ingest/rulesets/publish"
+      ],
+      "description": "Publish rulesets",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Ingest actions",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "data/ingest/rfsdestinations"
+      ],
+      "description": "Remote file system (S3 etc.) destinations",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexes & metrics",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "data/indexes"
+      ],
+      "description": "List indexes / create (Cloud: create via ACS)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexes & metrics",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/indexes/{name}"
+      ],
+      "description": "Index settings",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexes & metrics",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "data/indexes-extended",
+        "data/indexes-extended/{name}"
+      ],
+      "description": "Bucket-level index details",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexes & metrics",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "data/index-volumes",
+        "data/index-volumes/{name}"
+      ],
+      "description": "Volumes",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexes & metrics",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "catalog/metricstore/metrics",
+        "catalog/metricstore/dimensions"
+      ],
+      "description": "Metric names and dimensions",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexes & metrics",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "catalog/metricstore/dimensions/{dimension-name}/values"
+      ],
+      "description": "Dimension values",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexes & metrics",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "catalog/metricstore/rollup",
+        "catalog/metricstore/rollup/{index}"
+      ],
+      "description": "Metric rollup policies",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Outputs",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "data/outputs/tcp/default",
+        "data/outputs/tcp/default/{name}"
+      ],
+      "description": "Default forwarding settings",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Outputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/outputs/tcp/group",
+        "data/outputs/tcp/group/{name}"
+      ],
+      "description": "Target groups",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Outputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/outputs/tcp/server",
+        "data/outputs/tcp/server/{name}"
+      ],
+      "description": "Receiving servers",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Outputs",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "data/outputs/tcp/server/{name}/allconnections"
+      ],
+      "description": "Connection status to a receiver",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Outputs",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/outputs/tcp/syslog",
+        "data/outputs/tcp/syslog/{name}"
+      ],
+      "description": "Syslog outputs",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Federated search",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "data/federated/settings/general"
+      ],
+      "description": "Federated search settings",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Federated search",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "data/federated/provider",
+        "data/federated/provider/{name}"
+      ],
+      "description": "Federated providers (Splunk, Amazon S3 on Cloud)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "SPL2",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "orchestrator/datasets",
+        "orchestrator/datasets/{id}"
+      ],
+      "description": "List / get SPL2 datasets",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "SPL2",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "orchestrator/spl/convert",
+        "orchestrator/spl/convertv2"
+      ],
+      "description": "Convert SPL to SPL2 (v2 returns warnings)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "SPL2",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "orchestrator/modules/list"
+      ],
+      "description": "Modules the user can access",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "SPL2",
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "paths": [
+        "orchestrator/modules/{resource_name}"
+      ],
+      "description": "Read, create/update, delete an SPL2 module",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "SPL2",
+      "methods": [
+        "GET",
+        "PUT"
+      ],
+      "paths": [
+        "orchestrator/modules/{resource_name}/permissions"
+      ],
+      "description": "Module permissions (no servicesNS)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "SPL2",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "orchestrator/dispatch"
+      ],
+      "description": "Start SPL2 searches, one SID per named statement",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Topology",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "stack-explainer/v1/topology"
+      ],
+      "description": "Full deployment topology as JSON (needs list_topology)",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Topology",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "stack-explainer/v1/node-identity",
+        "stack-explainer/v1/node-identity/{guid}"
+      ],
+      "description": "Local / remote node identity",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Topology",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "stack-explainer/v1/trusted-connections",
+        "stack-explainer/v1/trusted-connections/{guid}"
+      ],
+      "description": "Trusted connections",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "server/info",
+        "server/sysinfo"
+      ],
+      "description": "Version, GUID, roles, OS and hardware",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "server/settings"
+      ],
+      "description": "Server settings (ports, SPLUNK_DB, etc.)",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "server/control",
+        "server/control/restart",
+        "server/control/restart_webui"
+      ],
+      "description": "Restart splunkd / web",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "server/httpsettings/proxysettings",
+        "server/httpsettings/proxysettings/proxyConfig"
+      ],
+      "description": "Outbound HTTP proxy",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "server/logger",
+        "server/logger/{name}"
+      ],
+      "description": "Log levels",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "server/roles"
+      ],
+      "description": "Roles this instance plays",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "server/pipelinesets"
+      ],
+      "description": "Ingestion pipeline sets",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "server/security/rotate-splunk-secret"
+      ],
+      "description": "Rotate splunk.secret",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "server/health/splunkd",
+        "server/health/splunkd/details"
+      ],
+      "description": "splunkd health report",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "server/health/deployment",
+        "server/health/deployment/details"
+      ],
+      "description": "Deployment-wide health report",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "server/health-config",
+        "server/health-config/{alert_action}",
+        "server/health-config/{feature_name}"
+      ],
+      "description": "Health report thresholds and alerts",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "server/status"
+      ],
+      "description": "Status endpoints index",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "server/status/resource-usage",
+        "server/status/resource-usage/hostwide",
+        "server/status/resource-usage/iostats",
+        "server/status/resource-usage/splunk-processes"
+      ],
+      "description": "Host and process resource usage",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "server/status/dispatch-artifacts",
+        "server/status/fishbucket",
+        "server/status/installed-file-integrity"
+      ],
+      "description": "Dispatch dir, fishbucket, file integrity",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "server/status/limits/search-concurrency",
+        "server/status/partitions-space"
+      ],
+      "description": "Search concurrency, disk space",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "server/introspection",
+        "server/introspection/indexer"
+      ],
+      "description": "Introspection index / indexer state",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "server/introspection/kvstore",
+        "server/introspection/kvstore/collectionstats",
+        "server/introspection/kvstore/replicasetstats",
+        "server/introspection/kvstore/serverstatus"
+      ],
+      "description": "KV store introspection",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "server/introspection/search/saved"
+      ],
+      "description": "Saved search introspection",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "System & introspection",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "messages",
+        "messages/{name}"
+      ],
+      "description": "Bulletin messages",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Workload management",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "workloads/pools",
+        "workloads/rules"
+      ],
+      "description": "Workload pools, workload and admission rules",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Workload management",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "workloads/categories"
+      ],
+      "description": "Search / ingest / misc categories",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Workload management",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "workloads/config/enable",
+        "workloads/config/disable"
+      ],
+      "description": "Turn workload management on/off",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Workload management",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "workloads/config/get-base-dirname",
+        "workloads/config/set-base-dirname"
+      ],
+      "description": "cgroup base directory",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Workload management",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "workloads/status"
+      ],
+      "description": "Workload management status",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Licensing",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "licenser/usage"
+      ],
+      "description": "Usage",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Licensing",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "licenser/messages",
+        "licenser/messages/{name}"
+      ],
+      "description": "Warnings and violations",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Licensing",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "licenser/licenses",
+        "licenser/licenses/{name}"
+      ],
+      "description": "Installed licenses",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Licensing",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "licenser/pools",
+        "licenser/pools/{name}"
+      ],
+      "description": "License pools",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Licensing",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "licenser/stacks",
+        "licenser/stacks/{name}"
+      ],
+      "description": "License stacks",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Licensing",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "licenser/groups",
+        "licenser/groups/{name}"
+      ],
+      "description": "License groups (switch active group)",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Licensing",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "licenser/peers",
+        "licenser/peers/{name}",
+        "licenser/localpeer"
+      ],
+      "description": "License peers / this peer",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexer clustering",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "cluster/manager/info",
+        "cluster/manager/status",
+        "cluster/manager/health"
+      ],
+      "description": "Manager node state (legacy cluster/master/* still aliased)",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexer clustering",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "cluster/manager/peers",
+        "cluster/manager/peers/{name}"
+      ],
+      "description": "Peer nodes",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexer clustering",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "cluster/manager/buckets",
+        "cluster/manager/buckets/{name}"
+      ],
+      "description": "Buckets",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexer clustering",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "cluster/manager/indexes",
+        "cluster/manager/indexes/{name}"
+      ],
+      "description": "Clustered indexes",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexer clustering",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "cluster/manager/sites",
+        "cluster/manager/sites/{name}"
+      ],
+      "description": "Sites (multisite)",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexer clustering",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "cluster/manager/generation",
+        "cluster/manager/generation/{name}",
+        "cluster/manager/redundancy"
+      ],
+      "description": "Generation, RF/SF state",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexer clustering",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "cluster/manager/control/control/rebalance_primaries",
+        "cluster/manager/control/control/remove_peers",
+        "cluster/manager/control/control/roll-hot-buckets"
+      ],
+      "description": "Manager operations",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexer clustering",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "cluster/manager/control/control/rolling_upgrade_init",
+        "cluster/manager/control/control/rolling_upgrade_finalize"
+      ],
+      "description": "Rolling upgrade",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexer clustering",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "cluster/peer/info",
+        "cluster/peer/info/{name}",
+        "cluster/peer/buckets",
+        "cluster/peer/buckets/{name}"
+      ],
+      "description": "Peer view",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexer clustering",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "cluster/peer/control/control/decommission",
+        "cluster/peer/control/control/set_manual_detention"
+      ],
+      "description": "Take peer offline / detention",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexer clustering",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "cluster/config",
+        "cluster/config/config"
+      ],
+      "description": "Clustering config for this node",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Indexer clustering",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "cluster/searchhead/searchheadconfig",
+        "cluster/searchhead/searchheadconfig/{name}",
+        "cluster/searchhead/generation",
+        "cluster/searchhead/generation/{name}"
+      ],
+      "description": "Search head view of the cluster",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search head clustering",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "shcluster/status",
+        "shcluster/config",
+        "shcluster/config/config"
+      ],
+      "description": "SHC status and config",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search head clustering",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "shcluster/captain/info",
+        "shcluster/captain/members",
+        "shcluster/captain/members/{name}"
+      ],
+      "description": "Captain and members",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search head clustering",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "shcluster/captain/jobs",
+        "shcluster/captain/jobs/{name}",
+        "shcluster/captain/artifacts",
+        "shcluster/captain/artifacts/{name}"
+      ],
+      "description": "Scheduled jobs and artifacts",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search head clustering",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "shcluster/captain/control/default/restart"
+      ],
+      "description": "Rolling restart of the SHC",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search head clustering",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "shcluster/captain/control/control/upgrade-init",
+        "shcluster/captain/control/control/upgrade-finalize"
+      ],
+      "description": "SHC rolling upgrade",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search head clustering",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "shcluster/captain/control/control/rotate-splunk-secret"
+      ],
+      "description": "Rotate splunk.secret across the SHC",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search head clustering",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "shcluster/member/info",
+        "shcluster/member/consensus",
+        "shcluster/member/artifacts",
+        "shcluster/member/artifacts/{name}"
+      ],
+      "description": "Member view",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search head clustering",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "shcluster/member/control/control/set_manual_detention"
+      ],
+      "description": "Member manual detention",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Search head clustering",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "replication/configuration/health"
+      ],
+      "description": "Configuration replication health",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Generic patterns",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "{any-endpoint}/{name}/acl"
+      ],
+      "description": "Change owner, sharing and read/write roles on any object",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Generic patterns",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "{any-endpoint}/_reload"
+      ],
+      "description": "Reload that endpoint's config from disk",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Generic patterns",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "{any-endpoint}/{name}/enable",
+        "{any-endpoint}/{name}/disable",
+        "{any-endpoint}/{name}/move"
+      ],
+      "description": "Enable, disable, move object to another app",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Not in the reference (widely used)",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "cluster/manager/control/default/apply",
+        "cluster/manager/control/default/restart",
+        "cluster/manager/control/default/maintenance"
+      ],
+      "description": "Push cluster bundle, rolling restart, maintenance mode",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "core",
+      "component_name": "Core Splunk (splunkd)",
+      "group": "Not in the reference (widely used)",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "data/ui/nav",
+        "data/ui/times",
+        "data/ui/prefs"
+      ],
+      "description": "App navigation, time presets, UI prefs",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment server",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "deployment/server/serverclasses"
+      ],
+      "description": "List server classes",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment server",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "deployment/server/serverclasses/{name}"
+      ],
+      "description": "Read, create/update (whitelist.N, blacklist.N, machineTypesFilter, restartSplunkd), delete a server class",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment server",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "deployment/server/serverclasses/rename"
+      ],
+      "description": "Rename a server class",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment server",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "deployment/server/applications"
+      ],
+      "description": "Deployment apps and their state",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment server",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "deployment/server/applications/{name}"
+      ],
+      "description": "Read or update an app's distribution settings (serverclass mapping, restart)",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment server",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "deployment/server/clients"
+      ],
+      "description": "Clients that have phoned home",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment server",
+      "methods": [
+        "GET",
+        "DELETE"
+      ],
+      "paths": [
+        "deployment/server/clients/{name}"
+      ],
+      "description": "One client (apps, server classes, IP, DNS, last phone home) / remove record",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment server",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "deployment/server/clients/countClients_by_machineType"
+      ],
+      "description": "Client counts by machine type",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment server",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "deployment/server/clients/countRecentDownloads"
+      ],
+      "description": "Recent app downloads",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment server",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "deployment/server/config"
+      ],
+      "description": "Deployment server settings (serverclass.conf global)",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment server",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "deployment/server/config/listIsDisabled"
+      ],
+      "description": "Is the deployment server disabled",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment server",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "deployment/server/config/attributesUnsupportedInUI"
+      ],
+      "description": "Settings the Forwarder Management UI can't show",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment server",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "deployment/server/config/_reload"
+      ],
+      "description": "Reload serverclass.conf (same as splunk reload deploy-server)",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment client",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "deployment/client"
+      ],
+      "description": "Client status and server classes",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment client",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "deployment/client/config"
+      ],
+      "description": "Client config (targetUri, phoneHomeInterval)",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment client",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "deployment/client/config/listIsDisabled"
+      ],
+      "description": "Is the deployment client disabled",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment client",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "deployment/client/config/reload"
+      ],
+      "description": "Reload deploymentclient.conf",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "ds",
+      "component_name": "Deployment server & clients",
+      "group": "Deployment client",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "deployment/client/{name}/reload"
+      ],
+      "description": "Force the client to phone home and reload",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "dbx",
+      "component_name": "Splunk DB Connect",
+      "group": "Identities",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "db_connect/dbxproxy/identities"
+      ],
+      "description": "List / create DB credentials (JSON body: name, username, password)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "dbx",
+      "component_name": "Splunk DB Connect",
+      "group": "Identities",
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "paths": [
+        "db_connect/dbxproxy/identities/{name}"
+      ],
+      "description": "Read, update (PUT with full JSON), delete",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "dbx",
+      "component_name": "Splunk DB Connect",
+      "group": "Connections",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "db_connect/dbxproxy/connections"
+      ],
+      "description": "List / create connections (name, identity, connection_type, host, port, database)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "dbx",
+      "component_name": "Splunk DB Connect",
+      "group": "Connections",
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "paths": [
+        "db_connect/dbxproxy/connections/{name}"
+      ],
+      "description": "Read, update (PUT), delete",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "dbx",
+      "component_name": "Splunk DB Connect",
+      "group": "Inputs",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "db_connect/dbxproxy/inputs"
+      ],
+      "description": "List / create DB inputs (query, mode batch/rising, interval, index, sourcetype, checkpoint)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "dbx",
+      "component_name": "Splunk DB Connect",
+      "group": "Inputs",
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "paths": [
+        "db_connect/dbxproxy/inputs/{name}"
+      ],
+      "description": "Read, update, delete an input",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "dbx",
+      "component_name": "Splunk DB Connect",
+      "group": "Outputs & lookups",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "db_connect/dbxproxy/outputs"
+      ],
+      "description": "List / create DB outputs",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "dbx",
+      "component_name": "Splunk DB Connect",
+      "group": "Outputs & lookups",
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "paths": [
+        "db_connect/dbxproxy/outputs/{name}"
+      ],
+      "description": "One output",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "dbx",
+      "component_name": "Splunk DB Connect",
+      "group": "Outputs & lookups",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "db_connect/dbxproxy/lookups"
+      ],
+      "description": "List / create DB lookups",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "dbx",
+      "component_name": "Splunk DB Connect",
+      "group": "Outputs & lookups",
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "paths": [
+        "db_connect/dbxproxy/lookups/{name}"
+      ],
+      "description": "One lookup",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "dbx",
+      "component_name": "Splunk DB Connect",
+      "group": "Config (read via splunkd)",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "configs/conf-db_connections",
+        "conf-db_inputs",
+        "conf-db_outputs",
+        "conf-db_lookups",
+        "conf-identities"
+      ],
+      "description": "Read raw DB Connect .conf stanzas (works with the SPL rest command)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "dbx",
+      "component_name": "Splunk DB Connect",
+      "group": "Config (read via splunkd)",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "configs/conf-db_connection_types"
+      ],
+      "description": "Supported database types and JDBC driver settings",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "dbx",
+      "component_name": "Splunk DB Connect",
+      "group": "Config (read via splunkd)",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "admin/server/_reload"
+      ],
+      "description": "Reload after bulk changes (space out calls to avoid 503s)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "hec",
+      "component_name": "HTTP Event Collector",
+      "group": "HTTP Event Collector (port 8088)",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "services/collector",
+        "services/collector/event",
+        "services/collector/event/1.0"
+      ],
+      "description": "JSON events (Authorization: Splunk <HEC token>)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "hec",
+      "component_name": "HTTP Event Collector",
+      "group": "HTTP Event Collector (port 8088)",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "services/collector/raw",
+        "services/collector/raw/1.0"
+      ],
+      "description": "Raw payload (X-Splunk-Request-Channel header when ack is on)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "hec",
+      "component_name": "HTTP Event Collector",
+      "group": "HTTP Event Collector (port 8088)",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "services/collector/ack"
+      ],
+      "description": "Check indexer acknowledgement for ackIds",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "hec",
+      "component_name": "HTTP Event Collector",
+      "group": "HTTP Event Collector (port 8088)",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "services/collector/health",
+        "services/collector/health/1.0"
+      ],
+      "description": "HEC health check",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "hec",
+      "component_name": "HTTP Event Collector",
+      "group": "HTTP Event Collector (port 8088)",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "services/collector/mint"
+      ],
+      "description": "Splunk MINT (mobile) data format",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Access",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "access/{feature}/ipallowlists"
+      ],
+      "description": "IPv4 allow lists (search-api, hec, s2s, search-ui, idm-ui, idm-api)",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Access",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "access/{feature}/ipallowlists-v6"
+      ],
+      "description": "IPv6 allow lists",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Access",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "access/outbound-ports",
+        "access/outbound-ports-v6"
+      ],
+      "description": "Outbound ports",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Access",
+      "methods": [
+        "GET",
+        "DELETE"
+      ],
+      "paths": [
+        "access/outbound-ports/{port}"
+      ],
+      "description": "One outbound port",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Tokens",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "tokens"
+      ],
+      "description": "JWT auth tokens",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Tokens",
+      "methods": [
+        "GET",
+        "DELETE"
+      ],
+      "paths": [
+        "tokens/{tokenID}"
+      ],
+      "description": "One token",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "HEC tokens",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "inputs/http-event-collectors"
+      ],
+      "description": "List / create HEC tokens",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "HEC tokens",
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "paths": [
+        "inputs/http-event-collectors/{hec-token-name}"
+      ],
+      "description": "Read, update, delete HEC token",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Indexes",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "indexes"
+      ],
+      "description": "List / create indexes (event or metric)",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Indexes",
+      "methods": [
+        "GET",
+        "PATCH",
+        "DELETE"
+      ],
+      "paths": [
+        "indexes/{name}"
+      ],
+      "description": "Index settings",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Apps",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "apps/victoria"
+      ],
+      "description": "List / install private or Splunkbase apps (Victoria)",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Apps",
+      "methods": [
+        "GET",
+        "PATCH",
+        "DELETE"
+      ],
+      "paths": [
+        "apps/victoria/{app_name}"
+      ],
+      "description": "Read, update, uninstall",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Apps",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "apps/victoria/export/download/{app_id}"
+      ],
+      "description": "Export an app",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Apps",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "apps",
+        "apps/{app_name}"
+      ],
+      "description": "Classic Experience apps",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Apps",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "paths": [
+        "permissions/apps",
+        "permissions/apps/{app-name}"
+      ],
+      "description": "App permissions",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Limits",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "paths": [
+        "limits",
+        "limits/{stanza}",
+        "limits/{stanza}/{setting}"
+      ],
+      "description": "limits.conf settings",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Maintenance",
+      "methods": [
+        "GET",
+        "PUT"
+      ],
+      "paths": [
+        "maintenance-windows/preferences"
+      ],
+      "description": "Maintenance preferences",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Maintenance",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "paths": [
+        "maintenance-windows/schedules",
+        "/{scheduleID}",
+        "/{scheduleID}/audits"
+      ],
+      "description": "Maintenance schedules",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Stack operations",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "restart-now"
+      ],
+      "description": "Restart the stack",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Stack operations",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "restart/status"
+      ],
+      "description": "Restart status",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Stack operations",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "paths": [
+        "python-runtime"
+      ],
+      "description": "Python version",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Stack operations",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "deployment/status",
+        "deployment/status/{deploymentID}",
+        "deployment/retry"
+      ],
+      "description": "Deployment status / retry failed ops",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Storage & keys",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "cloud-resources/self-storage-locations/buckets"
+      ],
+      "description": "DDSS self-storage buckets",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Storage & keys",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "cloud-resources/self-storage-locations/configs/prefix",
+        "/configs/service-accounts"
+      ],
+      "description": "DDSS prefix and service accounts",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Storage & keys",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "emek/key",
+        "emek/key-policy",
+        "emek/waiver"
+      ],
+      "description": "Enterprise Managed Encryption Keys",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Observability",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "observability/sso-pairing",
+        "observability/sso-pairing/{pairing-id}"
+      ],
+      "description": "Unified Identity pairing with Observability Cloud",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Users & roles",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "capabilities"
+      ],
+      "description": "List capabilities",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Users & roles",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "roles"
+      ],
+      "description": "List / create roles",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Users & roles",
+      "methods": [
+        "GET",
+        "PATCH",
+        "DELETE"
+      ],
+      "paths": [
+        "roles/{name}"
+      ],
+      "description": "Read, update, delete a role",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Users & roles",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "users"
+      ],
+      "description": "List / create users",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Users & roles",
+      "methods": [
+        "GET",
+        "PATCH",
+        "DELETE"
+      ],
+      "paths": [
+        "users/{name}"
+      ],
+      "description": "Read, update, delete a user",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Private connectivity",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "private-connectivity/eligibility"
+      ],
+      "description": "Is the stack eligible for PrivateLink / Private Service Connect",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Private connectivity",
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH"
+      ],
+      "paths": [
+        "private-connectivity/endpoints"
+      ],
+      "description": "Enable private connectivity, read endpoint details, add cloud accounts",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "acs",
+      "component_name": "Splunk Cloud Admin Config Service (ACS)",
+      "group": "Storage & keys",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "cloud-resources/self-storage-locations/buckets/{bucketPath}",
+        "cloud-resources/self-storage-locations/buckets/{bucketName}/policy"
+      ],
+      "description": "One DDSS bucket / its policy",
+      "availability": "cloud_only"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Investigations",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "public_v2_list_investigations"
+      ],
+      "description": "Retrieve investigations (filter by urgency, status, owner, time\u2026)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Investigations",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "public_v2_create_investigation"
+      ],
+      "description": "Create investigations",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Investigations",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "public_v2_update_investigation"
+      ],
+      "description": "Update fields of an investigation or finding by ID",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Investigations",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "public_v2_investigations_bulk_update"
+      ],
+      "description": "Update one or more findings and investigations",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Investigations",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "public_v2_add_findings_to_investigation"
+      ],
+      "description": "Add findings to an investigation",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Investigations",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "public_v2_get_history"
+      ],
+      "description": "History of a finding or investigation",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Findings",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "public_v2_get_findings"
+      ],
+      "description": "Retrieve findings by query fields",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Findings",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "public_v2_get_finding_by_id"
+      ],
+      "description": "Retrieve a finding by ID",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Findings",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "public_v2_create_manual_finding"
+      ],
+      "description": "Create a manual finding",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Findings",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "public_v2_bulk_create_manual_findings"
+      ],
+      "description": "Bulk create manual findings",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Findings",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "public_v2_add_file_to_finding"
+      ],
+      "description": "Upload attachment to a finding",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Findings",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "public_v2_send_finding_email_to_saa"
+      ],
+      "description": "Submit finding email to Splunk Attack Analyzer",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Findings",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "public_v2_cancel_saa_submissions"
+      ],
+      "description": "Bulk cancel pending SAA submissions",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Notes",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "operation_ids": [
+        "public_v2_get_notes_from_investigation",
+        "public_v2_create_note_in_investigation"
+      ],
+      "description": "List / add notes on a finding or investigation",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Notes",
+      "methods": [
+        "POST",
+        "DELETE"
+      ],
+      "operation_ids": [
+        "public_v2_update_note_in_investigation",
+        "public_v2_delete_note_in_investigation"
+      ],
+      "description": "Edit / delete a note",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Notes",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "operation_ids": [
+        "public_v2_get_notes_from_task",
+        "public_v2_add_note_to_task",
+        "public_v2_get_note_by_id_from_task"
+      ],
+      "description": "Notes on response-plan tasks",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Notes",
+      "methods": [
+        "POST",
+        "DELETE"
+      ],
+      "operation_ids": [
+        "public_v2_update_note_in_task",
+        "public_v2_delete_note_from_task"
+      ],
+      "description": "Edit / delete a task note",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Queues",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "operation_ids": [
+        "public_v2_queues_list",
+        "public_v2_queues_create"
+      ],
+      "description": "List / create analyst queues",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Queues",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "operation_ids": [
+        "public_v2_queues_get_by_id",
+        "public_v2_queues_update",
+        "public_v2_queues_delete"
+      ],
+      "description": "Read, update, delete a queue",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Response plans",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "operation_ids": [
+        "public_v2_responseplan_get",
+        "public_v2_responseplan_create"
+      ],
+      "description": "List / create response plans",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Response plans",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "operation_ids": [
+        "public_v2_responseplan_get_by_id",
+        "public_v2_responseplan_update",
+        "public_v2_responseplan_delete_by_id"
+      ],
+      "description": "One response plan",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Response plans",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "public_v2_import_responseplan"
+      ],
+      "description": "Import a response plan",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Response plans",
+      "methods": [
+        "GET",
+        "DELETE"
+      ],
+      "operation_ids": [
+        "public_v2_list_import_job_statuses",
+        "public_v2_get_import_job_status",
+        "public_v2_cancel_import_job"
+      ],
+      "description": "Import job status / cancel",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Response plans",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "public_v2_download_responseplan"
+      ],
+      "description": "Download a response plan",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Response plans",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "public_v2_get_splunk_owned_response_plan_manifest",
+        "public_v2_get_splunk_owned_response_plans",
+        "public_v2_get_splunk_owned_response_plans_download"
+      ],
+      "description": "Splunk-owned plans from SCS",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Risk",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "public_v2_risk_entity_risk_scores_retrieve"
+      ],
+      "description": "Risk scores for a risk entity",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Risk",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "public_v2_risk_entity_risk_scores_update"
+      ],
+      "description": "Add risk modifiers",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Assets & identities",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "public_v2_get_identity"
+      ],
+      "description": "Retrieve an identity",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Assets & identities",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "public_v2_assets"
+      ],
+      "description": "Retrieve assets",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "es",
+      "component_name": "Mission Control public v2 API (Enterprise Security 8)",
+      "group": "Splunk Search",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "public_v2_search_dashboards"
+      ],
+      "description": "Run an RBAC-filtered dashboard saved search",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Incidents & events",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "create_incident"
+      ],
+      "description": "Create an incident",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Incidents & events",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "v1_incidents_update"
+      ],
+      "description": "Update an incident",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Incidents & events",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "v1_incidents_get_by_id"
+      ],
+      "description": "Get an incident",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Incidents & events",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "create_events"
+      ],
+      "description": "Create events (findings) in an incident",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Incidents & events",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "update_events"
+      ],
+      "description": "Update events",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Incidents & events",
+      "methods": [
+        "DELETE"
+      ],
+      "operation_ids": [
+        "v1_incidents_delete_event"
+      ],
+      "description": "Delete an event",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Incidents & events",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "set_summary_fields"
+      ],
+      "description": "Set summary fields",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Incidents & events",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "remove_summary_fields"
+      ],
+      "description": "Remove summary fields",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Notes",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "v1_incidents_get_notes"
+      ],
+      "description": "Notes in an incident",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Notes",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "v1_incidents_add_general_note"
+      ],
+      "description": "Add an incident note",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Notes",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "v1_update_note_in_incident"
+      ],
+      "description": "Update an incident note",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Notes",
+      "methods": [
+        "DELETE"
+      ],
+      "operation_ids": [
+        "v1_delete_note_in_task"
+      ],
+      "description": "Delete an incident note",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Response plans, phases & tasks",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "v1_response_template_get"
+      ],
+      "description": "Get response templates",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Response plans, phases & tasks",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "v1_incidents_apply_response_template"
+      ],
+      "description": "Add a response plan to an incident",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Response plans, phases & tasks",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "v1_phase_get_by_incident_id"
+      ],
+      "description": "Get phase ID",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Response plans, phases & tasks",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "v1_task_get_by_incident_id"
+      ],
+      "description": "Get task ID",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Response plans, phases & tasks",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "v1_incidents_get_current_phase"
+      ],
+      "description": "Get current phase",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Response plans, phases & tasks",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "v1_incidents_set_current_phase"
+      ],
+      "description": "Set current phase",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Response plans, phases & tasks",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "v1_incidents_tasks"
+      ],
+      "description": "Get tasks",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Response plans, phases & tasks",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "v1_incidents_add_task_to_current_phase"
+      ],
+      "description": "Add a task",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Response plans, phases & tasks",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "v1_incidents_get_task_from_current_phase"
+      ],
+      "description": "Get a task",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Response plans, phases & tasks",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "v1_incidents_update_task_in_current_phase"
+      ],
+      "description": "Update a task",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Files",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "v1_upload_an_attachment"
+      ],
+      "description": "Add a task file",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Files",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "v1_get_attachment_file_data"
+      ],
+      "description": "Get a task file",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Files",
+      "methods": [
+        "DELETE"
+      ],
+      "operation_ids": [
+        "v1_delete_attachment_file_data"
+      ],
+      "description": "Delete a task file",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Notes",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "v1_get_all_notes_from_task"
+      ],
+      "description": "Get task notes",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Notes",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "v1_add_note_to_task"
+      ],
+      "description": "Add a task note",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Notes",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "v1_update_note_in_task"
+      ],
+      "description": "Update a task note",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Notes",
+      "methods": [
+        "DELETE"
+      ],
+      "operation_ids": [
+        "v1_delete_a_note_from_task"
+      ],
+      "description": "Delete a task note",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Files",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "v1_return_file_to_user_from_response_plan"
+      ],
+      "description": "Get a response-plan file",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Files",
+      "methods": [
+        "GET"
+      ],
+      "operation_ids": [
+        "v1_return_all_files_from_an_incident"
+      ],
+      "description": "Files in an incident",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Files",
+      "methods": [
+        "POST"
+      ],
+      "operation_ids": [
+        "v1_upload_a_file_to_the_kv_store"
+      ],
+      "description": "Add an incident file",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Files",
+      "methods": [
+        "DELETE"
+      ],
+      "operation_ids": [
+        "v1_delete_a_incident_file_from_the_kv_store"
+      ],
+      "description": "Delete an incident file",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "mc",
+      "component_name": "Mission Control v1 Automation API (ES 7 + Mission Control)",
+      "group": "Undocumented (UI-internal)",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "servicesNS/nobody/missioncontrol/v2/investigations/{id}/findings",
+        "servicesNS/nobody/missioncontrol/v1/incidents/notes"
+      ],
+      "description": "Internal endpoints the Analyst Queue calls; unsupported and can change without notice",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "esl",
+      "component_name": "Enterprise Security deprecated/legacy",
+      "group": "Deprecated: threat intel",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "services/data/threat_intel/upload"
+      ],
+      "description": "Upload STIX, IOC or CSV intel",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "esl",
+      "component_name": "Enterprise Security deprecated/legacy",
+      "group": "Deprecated: threat intel",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "paths": [
+        "services/data/threat_intel/item/{collection}"
+      ],
+      "description": "Rows in a threat intel collection",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "esl",
+      "component_name": "Enterprise Security deprecated/legacy",
+      "group": "Deprecated: threat intel",
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "paths": [
+        "services/data/threat_intel/item/{collection}/{item_key}"
+      ],
+      "description": "One threat intel row",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "esl",
+      "component_name": "Enterprise Security deprecated/legacy",
+      "group": "Deprecated: analytic stories",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "services/analyticstories/configs/{stanza_type}",
+        "/{name}"
+      ],
+      "description": "Analytic story config proxy",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "esl",
+      "component_name": "Enterprise Security deprecated/legacy",
+      "group": "Deprecated: analytic stories",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "services/analyticstories/configs/{stanza_type}/{name}/acl",
+        "/move"
+      ],
+      "description": "ACL, move stanza",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "esl",
+      "component_name": "Enterprise Security deprecated/legacy",
+      "group": "Deprecated: analytic stories",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "services/analyticstories/configs/_reload",
+        "services/analyticstories/batch",
+        "services/analyticstories/schemas/{version}"
+      ],
+      "description": "Reload, batch save, schemas",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "esl",
+      "component_name": "Enterprise Security deprecated/legacy",
+      "group": "ES 7.x legacy",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "services/notable_update"
+      ],
+      "description": "Update notable event status/owner/urgency/comment (ES 7.x Incident Review)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "esl",
+      "component_name": "Enterprise Security deprecated/legacy",
+      "group": "ES 7.x legacy",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "services/storage/investigation/{object}"
+      ],
+      "description": "List / create investigation objects (investigation, investigation_event, investigation_attachment, investigation_lead)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "esl",
+      "component_name": "Enterprise Security deprecated/legacy",
+      "group": "ES 7.x legacy",
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "paths": [
+        "services/storage/investigation/{object}/{id}"
+      ],
+      "description": "Read, update, delete one investigation object",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Containers",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/container"
+      ],
+      "description": "List / create containers (events, cases)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Containers",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "rest/container/{id}"
+      ],
+      "description": "Read, update, delete a container",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Containers",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/container/{id}/permitted_users",
+        "/approvals",
+        "/audit"
+      ],
+      "description": "Authorized users, approvals, audit",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Containers",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "rest/container_comment",
+        "rest/container_attachment"
+      ],
+      "description": "Comment, attach a file",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Containers",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/container_options"
+      ],
+      "description": "Container config options",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Artifacts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/artifact"
+      ],
+      "description": "List / create artifacts (CEF fields)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Artifacts",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "rest/artifact/{id}"
+      ],
+      "description": "One artifact",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Assets & apps",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/asset",
+        "rest/asset/{id}"
+      ],
+      "description": "Asset configs (credentials for apps)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Assets & apps",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "rest/app"
+      ],
+      "description": "Install app (base64 tarball)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Assets & apps",
+      "methods": [
+        "GET",
+        "DELETE"
+      ],
+      "paths": [
+        "rest/app/{id}"
+      ],
+      "description": "App details / uninstall",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Actions",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "rest/action_run"
+      ],
+      "description": "Run an action against a container",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Actions",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/action_run/{id}"
+      ],
+      "description": "Status / cancel",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Actions",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/action_run/{id}/app_runs",
+        "rest/app_run",
+        "rest/app_run/{id}"
+      ],
+      "description": "Action results",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Playbooks",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/playbook"
+      ],
+      "description": "List / find playbooks (_filter_name)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Playbooks",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/playbook/{id}"
+      ],
+      "description": "Read / update (active, trigger, cancel_runs)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Playbooks",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "rest/import_playbook"
+      ],
+      "description": "Import playbook (base64 tgz)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Playbooks",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/playbook/{id}/export",
+        "rest/playbook_resource_usage/{id}"
+      ],
+      "description": "Export, run statistics",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Playbooks",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "rest/playbook_run"
+      ],
+      "description": "Run a playbook on a container",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Playbooks",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/playbook_run/{id}"
+      ],
+      "description": "Status / cancel run",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Playbooks",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/playbook_run/{id}/block_results"
+      ],
+      "description": "Datapath results for each playbook block",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Playbooks",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/custom_function",
+        "rest/custom_function/{id}"
+      ],
+      "description": "Custom functions",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Playbooks",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "paths": [
+        "rest/import_custom_function",
+        "rest/custom_function/{id}/export"
+      ],
+      "description": "Import / export custom function",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Playbooks",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "rest/scm/{scm_id}"
+      ],
+      "description": "Sync a source-control repo",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Approvals & prompts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/approval",
+        "rest/approval/{id}"
+      ],
+      "description": "Approvals, prompts, manual tasks",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Approvals & prompts",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/approval/{id}/detail_summary_view"
+      ],
+      "description": "Approval details",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Approvals & prompts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/external_prompt/{id}"
+      ],
+      "description": "Read / answer an external prompt",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Case management",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/note",
+        "rest/note/{id}"
+      ],
+      "description": "Notes (general, artifact, task)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Case management",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "rest/evidence",
+        "rest/evidence/{id}"
+      ],
+      "description": "Evidence on a container",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Case management",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/workbook_template",
+        "rest/workbook_phase_template",
+        "rest/workbook_task_template"
+      ],
+      "description": "Workbook templates",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Case management",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/workbook_phase",
+        "rest/workbook_task"
+      ],
+      "description": "Live workbook phases and tasks",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Case management",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "rest/container_pin",
+        "rest/container_pin/{id}",
+        "rest/container_pin_settings"
+      ],
+      "description": "HUD pins",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Data & lists",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "rest/decided_list"
+      ],
+      "description": "Create a custom list",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Data & lists",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/decided_list/{name or id}"
+      ],
+      "description": "Read / replace / append_rows / delete_rows",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Data & lists",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/decided_list/{name or id}/formatted_content"
+      ],
+      "description": "List as JSON, CSV or text",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Data & lists",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/vault_document",
+        "rest/vault_document/{id}"
+      ],
+      "description": "Vault documents",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Data & lists",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/download_attachment?vault_id="
+      ],
+      "description": "Download a vault file",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Data & lists",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "rest/vault_add"
+      ],
+      "description": "Add a file to the vault",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Data & lists",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/indicator",
+        "rest/indicator/{id}",
+        "rest/indicator_by_value"
+      ],
+      "description": "Indicators",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Data & lists",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/indicator_artifact",
+        "rest/indicator_artifact_timeline",
+        "rest/indicator_common_container"
+      ],
+      "description": "Where an indicator appears",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Data & lists",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/indicator_stats_indicator_count",
+        "_top_labels",
+        "_top_types",
+        "_top_values"
+      ],
+      "description": "Indicator stats",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Data & lists",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/search"
+      ],
+      "description": "Global search (query, categories)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Data & lists",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/cef",
+        "rest/cef/{id}"
+      ],
+      "description": "Custom CEF fields",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Users & roles",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/ph_user"
+      ],
+      "description": "List / create users",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Users & roles",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "rest/ph_user/{id}"
+      ],
+      "description": "Update roles, delete user",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Users & roles",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/ph_user/{id}/token"
+      ],
+      "description": "Automation user's own token info",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Users & roles",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/role",
+        "rest/role/{role_id}"
+      ],
+      "description": "Roles and permissions",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Users & roles",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/user_settings"
+      ],
+      "description": "Your own settings",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Users & roles",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/notification",
+        "rest/notification/{id}/detail_summary_view"
+      ],
+      "description": "Notifications",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Administration",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/system_settings"
+      ],
+      "description": "Auth providers (LDAP, SAML2, OpenID), sections",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Administration",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "paths": [
+        "rest/system_settings/events",
+        "rest/system_settings/labels"
+      ],
+      "description": "Container labels",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Administration",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/feature_flag",
+        "rest/feature_flag/{name}"
+      ],
+      "description": "Feature flags (replaces system_settings/features)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Administration",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/severity",
+        "rest/container_status"
+      ],
+      "description": "Severities and statuses",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Administration",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "rest/aggregation_rule",
+        "rest/aggregation_rule/{id}"
+      ],
+      "description": "Aggregation rules",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Administration",
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "paths": [
+        "rest/automation_proxy",
+        "rest/automation_proxy/{id}"
+      ],
+      "description": "Automation Broker",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Administration",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/command_run",
+        "rest/command_run/{id}"
+      ],
+      "description": "Run background admin commands",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Administration",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "paths": [
+        "rest/indicator_cef_filter",
+        "rest/indicator_cef_filter/{id}"
+      ],
+      "description": "Indicator CEF filters",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Administration",
+      "methods": [
+        "POST"
+      ],
+      "paths": [
+        "rest/license"
+      ],
+      "description": "Load license",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Administration",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/tenant"
+      ],
+      "description": "Tenants (multi-tenancy is on-prem only)",
+      "availability": "on_prem_only"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Administration",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/audit",
+        "rest/ph_user/{id}/audit",
+        "rest/role/{id}/audit",
+        "rest/playbook/{id}/audit"
+      ],
+      "description": "Audit trail (JSON or CSV)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Querying (all object types)",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/{type}/{id}/{related_type}"
+      ],
+      "description": "Related objects, e.g. rest/container/{id}/artifacts, /actions, /attachments (see Query for Data)",
+      "availability": "enterprise_and_cloud"
+    },
+    {
+      "component": "soar",
+      "component_name": "Splunk SOAR",
+      "group": "Administration",
+      "methods": [
+        "GET"
+      ],
+      "paths": [
+        "rest/cluster_node"
+      ],
+      "description": "Cluster nodes: name, status, version (on-prem)",
+      "availability": "on_prem_only"
+    }
+  ]
+}
