@@ -1389,6 +1389,7 @@
       .cap-picker-name { overflow-wrap: normal; }
     }
     .role-compare > p { margin: 4px 0 12px; color: var(--muted); font-size: 13px; }
+    #rolesUnassignedDetails .eccs-matrix td:first-child { min-width: 250px; }
     .role-compare-pickers { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
     .role-compare-pickers label { display: grid; gap: 5px; flex: 1 1 240px; min-width: 0; font-size: 12px; font-weight: 800; color: #334155; }
     .role-compare-swap { font-size: 16px; padding: 10px 13px; }
@@ -4408,7 +4409,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.27 &middot; build 134</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.27 &middot; build 135</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -10719,9 +10720,22 @@ INGEST PROCESSOR
     </div>
 
     <div class="eccs-examples" style="margin-top:18px">
+      <details id="rolesUnassignedDetails">
+        <summary>Capabilities no built-in role has by default (<span id="rolesUnassignedCount">0</span>)</summary>
+        <div class="eccs-example-body">
+          <p>These are in Splunk Enterprise 10.4.2's <code>authorize.conf.spec</code>, but its shipped default <code>authorize.conf</code> doesn't give them to <code>user</code>, <code>power</code>, <code>admin</code> or <code>can_delete</code>. Some go only to an internal system role. Grant them through a custom role -- they're available in <em>Build a custom role</em>.</p>
+          <div class="eccs-table-wrap" role="region" aria-label="Capabilities no built-in role has by default" tabindex="0">
+            <table class="eccs-matrix"><thead><tr><th scope="col">Capability</th><th scope="col">What it lets you do</th><th scope="col">Default grant</th></tr></thead><tbody id="rolesUnassignedBody"></tbody></table>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="eccs-examples" style="margin-top:18px">
       <details>
         <summary>About this data</summary>
         <div class="eccs-example-body">
+          <p><strong>Splunk Enterprise 10.4.2 capabilities:</strong> 26 capabilities the supplied tables didn't include were added from <code>authorize.conf.spec</code> (descriptions) and the shipped default <code>authorize.conf</code> (which roles hold them), both version 10.4.2, taken from the <code>jewnix/splunk-spec-files</code> mirror. That added the built-in <code>can_delete</code> role, which holds only <code>delete_by_keyword</code>. The mirror doesn't say which OS package the defaults come from.</p>
           <p><strong>Note:</strong> the source file also lists three roles with no capabilities assigned in this matrix -- <code>mc_analyst</code>, <code>mc_analyst_reader</code>, <code>mc_soar_automation</code> -- they carry nothing to list in the table below and so do not appear in the Role filter.</p>
           <p><strong>Platform:</strong> derived from each role's naming convention and the source file's Mission Control Roles tab -- <code>Sc_admin</code> is Splunk Cloud-specific; <code>User</code>/<code>Power</code>/<code>Admin</code> are the base roles (shown as Splunk On-premises, since Sc_admin is the file's distinct Splunk Cloud counterpart to Admin); <code>ess_*</code> and the non-SOAR <code>mc_*</code> Mission Control/incident-review roles are Splunk ES; the <code>mc_soar_*</code> roles are Splunk SOAR.</p>
           <p><strong>Granted how:</strong> whether a role adds a capability itself or inherits it through <code>importRoles</code>. This follows Splunk Enterprise's shipped <code>authorize.conf</code>, where <code>power</code> imports <code>user</code> and <code>admin</code> imports <code>power</code> and <code>user</code>, so it's recorded for User, Power and Admin only. No inheritance data is held for Sc_admin, ES, SOAR or Mission Control roles, so their capabilities show "Not recorded".</p>
@@ -23720,7 +23734,59 @@ const rolesTableData = [
   {"Role": "mc_admin", "Platform": "Splunk ES", "Capability": "mc_delete_soar_assets", "What it lets you do": "Allows deletion of Splunk SOAR assets through Splunk Mission Control.", "Priv": "Y", "Source / Notes": "Added from supplied Splunk Mission Control role mapping"},
   {"Role": "mc_soar_asset_owner", "Platform": "Splunk SOAR", "Capability": "mc_delete_soar_assets", "What it lets you do": "Allows deletion of Splunk SOAR assets through Splunk Mission Control.", "Priv": "Y", "Source / Notes": "Added from supplied Splunk Mission Control role mapping"},
   {"Role": "mc_soar_repo_edit_<repo_name>", "Platform": "Splunk SOAR", "Capability": "mc_delete_soar_assets", "What it lets you do": "Allows deletion of Splunk SOAR assets through Splunk Mission Control.", "Priv": "Y", "Source / Notes": "Added from supplied Splunk Mission Control role mapping"},
-  {"Role": "mc_soar_proxy", "Platform": "Splunk SOAR", "Capability": "mc_delete_soar_assets", "What it lets you do": "Allows deletion of Splunk SOAR assets through Splunk Mission Control.", "Priv": "Y", "Source / Notes": "Added from supplied Splunk Mission Control role mapping"}
+  {"Role": "mc_soar_proxy", "Platform": "Splunk SOAR", "Capability": "mc_delete_soar_assets", "What it lets you do": "Allows deletion of Splunk SOAR assets through Splunk Mission Control.", "Priv": "Y", "Source / Notes": "Added from supplied Splunk Mission Control role mapping"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "change_audit", "What it lets you do": "Lets the user change and reload audit settings through the audit endpoints.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "can_delete", "Platform": "Splunk On-premises", "Capability": "delete_by_keyword", "What it lets you do": "Lets the user run the 'delete' command, which masks events from search results (via the index) rather than removing the raw data from disk.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "delete_oauth_config_clients", "What it lets you do": "Lets the user delete OAuth app clients for an OAuth configuration.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "edit_authentication_node", "What it lets you do": "Lets the user create, update and delete authentication_node configuration settings through REST API endpoints.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "edit_certificates", "What it lets you do": "Lets the user add, update and remove CA certificates through the REST API -- specifically the 'sslRootCAPath' setting in server.conf, inputs.conf, outputs.conf and web.conf stanzas.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "edit_conf_objects", "What it lets you do": "Lets the user create, update and delete configuration objects through the /services/configs/v1 REST endpoint.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "edit_data_management_agent", "What it lets you do": "Lets the user manage data management agents.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "edit_data_management_edgeprocessor", "What it lets you do": "Lets the user manage Edge Processors.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "edit_data_management_otelcollector", "What it lets you do": "Lets the user edit the list of managed OpenTelemetry collectors.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "edit_heap_profiler", "What it lets you do": "Lets the user edit the heap profiler configuration without restarting splunkd.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "edit_input_ingest_processor", "What it lets you do": "Lets the user update Ingest Processor configurations without a restart -- for example, stop receiving events from Ingest Processor.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Power", "Platform": "Splunk On-premises", "Capability": "edit_messages", "What it lets you do": "Lets the user create and delete system messages that appear in the Splunk Web navigation bar.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "edit_messages", "What it lets you do": "Lets the user create and delete system messages that appear in the Splunk Web navigation bar.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "edit_oauth_config_role_mappings", "What it lets you do": "Lets the user edit and delete the role mappings for an OAuth configuration.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "edit_oauth_configs", "What it lets you do": "Lets the user edit and delete OAuth configurations for external identity providers.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "edit_output_ingest_processor", "What it lets you do": "Lets the user update Ingest Processor configurations without a restart -- for example, stop sending events to Ingest Processor.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "edit_spl2_datasets", "What it lets you do": "Lets the user create, update and delete SPL2 datasets.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "edit_storage_passwords_masking", "What it lets you do": "Lets the user edit the /storage/passwords cleartext password masking settings.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "edit_user_seed", "What it lets you do": "Lets the user view and edit user-seed.conf, which sets the initial username and password.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "list_authentication_node", "What it lets you do": "Lets the user list and view authentication_node configuration settings through REST API endpoints.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "list_certificates", "What it lets you do": "Lets the user display server and CA certificates across the Splunk configuration, and the operating system's certificate trust store.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "list_conf_objects", "What it lets you do": "Lets the user list and read configuration objects through the /services/configs/v1 REST endpoint.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "list_data_management_otelcollector", "What it lets you do": "Lets the user view managed OpenTelemetry collectors and their details, such as status and parameters.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "list_oauth_config_clients", "What it lets you do": "Lets the user list OAuth app clients for an OAuth configuration.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "list_oauth_config_role_mappings", "What it lets you do": "Lets the user list the role mappings for an OAuth configuration.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "list_oauth_configs", "What it lets you do": "Lets the user list OAuth configurations for external identity providers.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"},
+  {"Role": "Admin", "Platform": "Splunk On-premises", "Capability": "provision_data_management_agent", "What it lets you do": "Lets the user register data management agents.", "Priv": "Y", "Source / Notes": "Splunk Enterprise 10.4.2 authorize.conf.spec; role grant from its default authorize.conf"}
+];
+// Capabilities in the Splunk Enterprise 10.4.2 authorize.conf.spec that no user-facing built-in
+// role has in the shipped default authorize.conf -- either granted to no role at all, or only to an
+// internal system role ("internalRole"). They have no rows in the matrix above (a row is a role
+// holding a capability), but they are listed on the Roles page and can be picked for custom roles.
+const ROLE_UNASSIGNED_CAPABILITIES = [
+  {"capability": "edit_alert_actions", "description": "Lets the user edit all alert actions regardless of their ACLs. Use instead of 'admin_all_objects' to grant this; assign only to high-privileged roles.", "internalRole": ""},
+  {"capability": "list_alert_actions", "description": "Lets the user list all alert actions including sensitive fields, such as the OAuth configuration email alert actions use, regardless of ACLs. All users can list alert actions without those fields.", "internalRole": ""},
+  {"capability": "edit_saved_search", "description": "Lets the user change a saved search's search string, description and earliest/latest time without write permission on it. To do this for any saved search regardless of its ACL, the user also needs list_saved_searches.", "internalRole": ""},
+  {"capability": "edit_saved_search_owner", "description": "Lets the user change the owner of a saved search they can see, to themselves or 'nobody'. Making another user the owner also needs list_all_users.", "internalRole": ""},
+  {"capability": "list_saved_searches", "description": "Lets the user discover every saved search on the instance -- and so every owner and app with a saved search -- regardless of ACLs. Assign only to high-privileged users.", "internalRole": ""},
+  {"capability": "edit_search_concurrency_scheduled", "description": "Lets the user edit concurrency settings for scheduled searches.", "internalRole": ""},
+  {"capability": "edit_modinput_admon", "description": "Lets the user add and edit Active Directory monitoring inputs.", "internalRole": ""},
+  {"capability": "edit_modinput_perfmon", "description": "Lets the user add and edit Windows performance monitoring inputs.", "internalRole": ""},
+  {"capability": "edit_modinput_winhostmon", "description": "Lets the user add and edit Windows host monitoring inputs.", "internalRole": ""},
+  {"capability": "edit_modinput_winnetmon", "description": "Lets the user add and edit Windows network monitoring inputs.", "internalRole": ""},
+  {"capability": "edit_modinput_winprintmon", "description": "Lets the user add and edit Windows printer monitoring inputs.", "internalRole": ""},
+  {"capability": "edit_watchdog", "description": "Lets the user reconfigure watchdog settings through a REST endpoint.", "internalRole": ""},
+  {"capability": "request_pstacks", "description": "Lets the user trigger pstack generation for the main splunkd process through a REST endpoint.", "internalRole": ""},
+  {"capability": "run_walklex", "description": "Lets the user run the 'walklex' command even when they have a role with a search filter.", "internalRole": ""},
+  {"capability": "list_internal_oauth_clients", "description": "Lets the user list existing internal OAuth clients.", "internalRole": ""},
+  {"capability": "delete_saml_user", "description": "Lets the user delete user accounts created through SAML authentication.", "internalRole": "_spl_role_for_sidecar_identity"},
+  {"capability": "edit_data_management_pipeline_job", "description": "Lets the user deploy, update and cancel SPL2-based pipelines.", "internalRole": "_spl_role_for_sidecar_cmp-orchestrator"},
+  {"capability": "edit_internal_oauth_clients", "description": "Lets the user edit internal OAuth clients.", "internalRole": "_spl_role_for_sidecar_opamp-svc"},
+  {"capability": "license_read", "description": "Lets the user access license attributes and related information.", "internalRole": "_spl_role_for_sidecar_topology"}
 ];
 
 // Inherited vs added. Only the base-role chain from Splunk Enterprise's shipped authorize.conf
@@ -23729,7 +23795,7 @@ const rolesTableData = [
 // capability for Admin). No inheritance source exists here for Sc_admin, ES, SOAR or Mission
 // Control roles, so their assignments read "Not recorded" rather than a guessed chain.
 // Imports are listed base-first so a capability is credited to the role that first grants it.
-const ROLE_IMPORTS = { User: [], Power: ["User"], Admin: ["User", "Power"] };
+const ROLE_IMPORTS = { User: [], Power: ["User"], Admin: ["User", "Power"], can_delete: [] };
 const ROLE_GRANT_ADDED = "Added by this role";
 const ROLE_GRANT_UNRECORDED = "Not recorded";
 (function annotateRoleInheritance() {
@@ -23746,7 +23812,8 @@ const ROLE_GRANT_UNRECORDED = "Not recorded";
   });
 })();
 // Capability prerequisites, hand-checked against each capability's own description in
-// rolesTableData (only 6 of the 254 descriptions name another capability they depend on).
+// rolesTableData and ROLE_UNASSIGNED_CAPABILITIES (only 8 of the 299 descriptions name another
+// capability they depend on).
 // "when" is set where the description limits the dependency to one use of the capability.
 // A structural test fails if a description stops naming its prerequisite.
 const CAPABILITY_PREREQUISITES = [
@@ -23755,7 +23822,9 @@ const CAPABILITY_PREREQUISITES = [
   { capability: "list_all_roles", requires: ["list_all_users"], when: "for full user and role visibility" },
   { capability: "list_all_users", requires: ["list_all_roles"], when: "for full user and role visibility" },
   { capability: "edit_federated_indexes", requires: ["edit_federated_providers"], when: "to edit Amazon S3 and Amazon Security Lake federated indexes" },
-  { capability: "edit_managed_configurations", requires: ["schedule_search"], when: "to create search-driven lookup tables" }
+  { capability: "edit_managed_configurations", requires: ["schedule_search"], when: "to create search-driven lookup tables" },
+  { capability: "edit_saved_search", requires: ["list_saved_searches"], when: "for any saved search regardless of its ACL" },
+  { capability: "edit_saved_search_owner", requires: ["list_all_users"], when: "to make another user the owner" }
 ];
 function missingPrerequisites(capabilities) {
   return CAPABILITY_PREREQUISITES
@@ -36967,6 +37036,9 @@ function rolesCapabilityIndex() {
     if (!capabilityDescription.has(row["Capability"])) capabilityDescription.set(row["Capability"], row["What it lets you do"] || "");
     grantedHow.set(`${row["Role"]}|${row["Capability"]}`, row["Granted how"]);
   });
+  ROLE_UNASSIGNED_CAPABILITIES.forEach(({ capability, description }) => {
+    if (!capabilityDescription.has(capability)) capabilityDescription.set(capability, description);
+  });
   rolesCapabilityIndexCache = { roles, capabilityDescription, grantedHow };
   return rolesCapabilityIndexCache;
 }
@@ -37262,7 +37334,7 @@ function createCapabilityPicker(root, onChange) {
       <button type="button" class="cap-picker-clear">Clear</button>
     </div>
     <div class="cap-picker-list" role="group" aria-label="Capabilities">
-      ${capabilities.map(cap => `<label class="cap-picker-item" title="${escapeHtml(capabilityDescription.get(cap))}" data-search="${escapeHtml(`${cap} ${capabilityDescription.get(cap)}`.toLowerCase())}"><input type="checkbox" value="${escapeHtml(cap)}" /><span class="cap-picker-name">${escapeHtml(cap)}</span><span class="cap-picker-lock"></span><span class="cap-picker-plats">${escapeHtml(platforms.get(cap).map(p => ROLE_PLATFORM_SHORT[p] || p).join(" · "))}</span></label>`).join("")}
+      ${capabilities.map(cap => `<label class="cap-picker-item" title="${escapeHtml(capabilityDescription.get(cap))}" data-search="${escapeHtml(`${cap} ${capabilityDescription.get(cap)}`.toLowerCase())}"><input type="checkbox" value="${escapeHtml(cap)}" /><span class="cap-picker-name">${escapeHtml(cap)}</span><span class="cap-picker-lock"></span><span class="cap-picker-plats">${escapeHtml(platforms.has(cap) ? platforms.get(cap).map(p => ROLE_PLATFORM_SHORT[p] || p).join(" · ") : "No default role")}</span></label>`).join("")}
       <p class="cap-picker-empty" hidden>No capabilities match.</p>
     </div>`;
   const chips = root.querySelector(".cap-picker-chips");
@@ -37391,7 +37463,8 @@ function initRoleTools() {
     const platforms = capabilityPlatforms();
     const outsideEnterprise = new Set();
     imports.forEach(role => { if (roles.get(role).platform !== "Splunk On-premises") outsideEnterprise.add(roles.get(role).platform); });
-    added.forEach(cap => { if (!platforms.get(cap).includes("Splunk On-premises")) platforms.get(cap).forEach(p => outsideEnterprise.add(p)); });
+    // Capabilities with no matrix rows (ROLE_UNASSIGNED_CAPABILITIES) come from the Splunk Enterprise spec.
+    added.forEach(cap => { const plats = platforms.get(cap); if (plats && !plats.includes("Splunk On-premises")) plats.forEach(p => outsideEnterprise.add(p)); });
     const notes = [];
     if (outsideEnterprise.size) notes.push(`Some selections are only listed for ${[...outsideEnterprise].join(" / ")} in this matrix, so this role only works where that platform or app is installed.`);
     notes.push("In Splunk Cloud, roles are created in Splunk Web rather than by editing authorize.conf. Capabilities are additive, so this role can never have less than the roles it imports.");
@@ -37470,7 +37543,7 @@ function initRoleTools() {
       return { ...role, missing, covered: n - missing.length };
     });
     const full = scored.filter(role => !role.missing.length).sort((a, b) => a.capabilities.size - b.capabilities.size || a.name.localeCompare(b.name));
-    const buildOnly = `<button type="button" class="primary-button" data-build-only>Build a role with only these ${n}</button>`;
+    const buildOnly = `<button type="button" class="primary-button" data-build-only>${n === 1 ? "Build a role with just this capability" : `Build a role with only these ${n}`}</button>`;
     if (full.length) {
       finderResult.innerHTML = `
         ${prereqBlock}
@@ -37484,7 +37557,7 @@ function initRoleTools() {
     const partial = scored.filter(role => role.covered > 0).sort((a, b) => b.covered - a.covered || a.capabilities.size - b.capabilities.size || a.name.localeCompare(b.name)).slice(0, 6);
     finderResult.innerHTML = `
       ${prereqBlock}
-      <p class="role-compare-note">No single role has all ${n} capabilities.${partial.length ? " These come closest:" : ""}</p>
+      <p class="role-compare-note">${n === 1 ? "No role has this capability by default." : `No single role has all ${n} capabilities.`}${partial.length ? " These come closest:" : ""}</p>
       ${partial.length ? `<div class="eccs-table-wrap"><table class="eccs-matrix"><thead><tr><th scope="col">Role</th><th scope="col">Platform</th><th scope="col">Has</th><th scope="col">Missing</th><th scope="col"></th></tr></thead><tbody>
       ${partial.map(role => `<tr><td>${escapeHtml(role.name)}</td><td>${escapeHtml(role.platform)}</td><td>${role.covered} of ${n}</td><td class="role-finder-missing">${role.missing.map(escapeHtml).join(", ")}</td><td>${isTemplateRole(role.name) ? "" : `<button type="button" data-build-from="${escapeHtml(role.name)}">Import ${escapeHtml(splunkRoleName(role.name))} + add ${role.missing.length}</button>`}</td></tr>`).join("")}
       </tbody></table></div>` : ""}
@@ -44634,6 +44707,14 @@ document.getElementById("resetRolesTable").addEventListener("click", () => {
   renderRolesTable();
 });
 document.getElementById("exportRolesTable").addEventListener("click", exportVisibleRoles);
+(function renderUnassignedCapabilities() {
+  const body = document.getElementById("rolesUnassignedBody");
+  if (!body) return;
+  document.getElementById("rolesUnassignedCount").textContent = String(ROLE_UNASSIGNED_CAPABILITIES.length);
+  body.innerHTML = [...ROLE_UNASSIGNED_CAPABILITIES].sort((a, b) => a.capability.localeCompare(b.capability)).map(item =>
+    `<tr><td><code>${escapeHtml(item.capability)}</code></td><td>${escapeHtml(item.description)}</td><td>${item.internalRole ? `Internal system role only (<code>${escapeHtml(item.internalRole)}</code>)` : "None"}</td></tr>`
+  ).join("");
+})();
 window.addEventListener("hashchange", () => {
   const hashPage = pageNameFromHash();
   setActivePage(hashPage, false);

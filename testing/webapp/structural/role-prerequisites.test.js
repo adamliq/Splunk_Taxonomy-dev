@@ -19,18 +19,33 @@ function evalArrayAfter(marker) {
 
 const prerequisites = evalArrayAfter('const CAPABILITY_PREREQUISITES =');
 const rolesTableData = evalArrayAfter('const rolesTableData =');
+// Capabilities no built-in role holds by default: listed separately, but prerequisites can
+// involve them (e.g. edit_saved_search needs list_saved_searches).
+const unassigned = evalArrayAfter('const ROLE_UNASSIGNED_CAPABILITIES =');
 const descriptions = new Map();
 rolesTableData.forEach(row => {
   if (!descriptions.has(row.Capability)) descriptions.set(row.Capability, []);
   descriptions.get(row.Capability).push(row['What it lets you do'] || '');
 });
+unassigned.forEach(item => {
+  if (!descriptions.has(item.capability)) descriptions.set(item.capability, []);
+  descriptions.get(item.capability).push(item.description || '');
+});
 
-test('every prerequisite rule refers to capabilities that exist in the roles matrix', () => {
+test('capabilities listed as held by no built-in role have no rows in the roles matrix', () => {
+  const inMatrix = new Set(rolesTableData.map(row => row.Capability));
+  for (const item of unassigned) {
+    assert.ok(!inMatrix.has(item.capability), `${item.capability} is in both rolesTableData and ROLE_UNASSIGNED_CAPABILITIES`);
+    assert.ok(item.description, `${item.capability} has no description`);
+  }
+});
+
+test('every prerequisite rule refers to known capabilities', () => {
   assert.ok(prerequisites.length > 0);
   for (const rule of prerequisites) {
-    assert.ok(descriptions.has(rule.capability), `${rule.capability} is not in rolesTableData`);
+    assert.ok(descriptions.has(rule.capability), `${rule.capability} is not a known capability`);
     for (const required of rule.requires) {
-      assert.ok(descriptions.has(required), `${rule.capability} requires ${required}, which is not in rolesTableData`);
+      assert.ok(descriptions.has(required), `${rule.capability} requires ${required}, which is not a known capability`);
     }
   }
 });
