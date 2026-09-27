@@ -8,7 +8,9 @@ const assert = require('node:assert/strict');
 const { readIndexHtml } = require('../lib/parse-index');
 
 const text = readIndexHtml();
-const GENERATED = ['server', 'limits', 'restmap', 'health', 'inputs', 'outputs', 'indexes', 'web', 'savedsearches', 'web-features'];
+const GENERATED = ['server', 'limits', 'restmap', 'health', 'inputs', 'outputs', 'indexes', 'web', 'savedsearches', 'web-features',
+  'wmi', 'transactiontypes', 'field-filters', 'workload-pools', 'workload-rules', 'workload-policy', 'splunk-launch', 'user-seed',
+  'multikv', 'segmenters', 'metric-alerts', 'metric-rollups'];
 
 function section(prefix) {
   const start = text.indexOf(`<section id="${prefix}-conf-settings" class="eccs-detail-section">`);

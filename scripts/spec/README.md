@@ -1,6 +1,6 @@
 # Spec-generated settings sections
 
-Ten Configuration file reference articles in `index.html` have a settings section generated from Splunk's `.conf.spec` files, not written by hand.
+Twenty-two Configuration file reference articles in `index.html` have a settings section generated from Splunk's `.conf.spec` files, not written by hand.
 
 For these four, the generated **Settings** section is the article's only settings listing:
 
@@ -10,6 +10,25 @@ For these four, the generated **Settings** section is the article's only setting
 | Search Limits Configuration | `limits.conf.spec` | 645 | 110 |
 | REST Endpoints Configuration | `restmap.conf.spec` | 66 | 15 |
 | Health Report Configuration | `health.conf.spec` | 35 | 7 |
+
+These twelve are articles whose settings listing is only the generated **Settings** section, alongside a short hand-written Definition and File locations:
+
+| Article | Spec file | Settings | Stanzas |
+|---|---|---|---|
+| WMI Inputs Configuration | `wmi.conf.spec` | 25 | 2 |
+| Transaction Types Configuration | `transactiontypes.conf.spec` | 14 | 1 |
+| Field Filters Configuration | `field_filters.conf.spec` | 5 | 1 |
+| Workload Pools Configuration | `workload_pools.conf.spec` | 12 | 3 |
+| Workload Rules Configuration | `workload_rules.conf.spec` | 25 | 4 |
+| Workload Policy Configuration | `workload_policy.conf.spec` | 1 | 1 |
+| Splunk Launch Configuration | `splunk-launch.conf.spec` | 14 | 0 (no stanzas) |
+| User Seed Configuration | `user-seed.conf.spec` | 3 | 1 |
+| Multikv Configuration | `multikv.conf.spec` | 12 | 1 |
+| Segmenters Configuration | `segmenters.conf.spec` | 9 | 1 |
+| Metric Alerts Configuration | `metric_alerts.conf.spec` | 19 | 1 |
+| Metric Rollups Configuration | `metric_rollups.conf.spec` | 8 | 1 |
+
+(`default.meta.spec` is an annotated example rather than a stanza reference, so the Metadata Permissions article is written by hand from it.)
 
 These six keep their hand-written, topic-grouped settings sections (e.g. inputs.conf's "Network inputs", "Windows inputs"), and the generated section, titled **All settings**, sits after them, before Example:
 
@@ -38,6 +57,9 @@ for f in inputs outputs web savedsearches web-features; do
   python3 scripts/spec/gen_spec_html.py $S/$f.conf.spec $f.conf $f-conf 10.4.2 --title "All settings" --apply index.html
 done
 python3 scripts/spec/gen_spec_html.py $S/indexes.conf.spec indexes.conf indexes-conf 10.4.2 --title "All settings" --banner-sections --apply index.html
+for f in wmi transactiontypes field_filters workload_pools workload_rules workload_policy splunk-launch user-seed multikv segmenters metric_alerts metric_rollups; do
+  python3 scripts/spec/gen_spec_html.py $S/$f.conf.spec $f.conf $(echo $f | tr '_' '-')-conf 10.4.2 --apply index.html
+done
 ```
 
 Change the folder and version string to move to a newer Splunk release. Only the `<section id="<file>-conf-settings">` block is replaced; each article's Definition, File locations, Example and Validation sections -- and, for the six above, the topic-grouped settings sections -- are hand-written and should be re-checked against the new spec.
