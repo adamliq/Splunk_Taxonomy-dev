@@ -8,17 +8,22 @@ const assert = require('node:assert/strict');
 const { readIndexHtml } = require('../lib/parse-index');
 
 const text = readIndexHtml();
-const GENERATED = ['server', 'limits', 'restmap', 'health', 'inputs', 'outputs', 'indexes', 'web', 'savedsearches', 'web-features'];
+const GENERATED = ['server', 'limits', 'restmap', 'health', 'inputs', 'outputs', 'indexes', 'web', 'savedsearches', 'web-features',
+  'wmi', 'transactiontypes', 'field-filters', 'workload-pools', 'workload-rules', 'workload-policy', 'splunk-launch', 'user-seed',
+  'multikv', 'segmenters', 'metric-alerts', 'metric-rollups', 'agent-management', 'authentication-node', 'global-banner',
+  'checklist', 'procmon-filters', 'source-classifier', 'times'];
+// Section ids: one per generated article, plus the Tags article's CIM tag list (tags.conf.cim.spec).
+const SECTION_IDS = [...GENERATED.map(prefix => `${prefix}-conf-settings`), 'tags-conf-cim-settings'];
 
-function section(prefix) {
-  const start = text.indexOf(`<section id="${prefix}-conf-settings" class="eccs-detail-section">`);
-  assert.ok(start !== -1, `${prefix}-conf-settings section not found`);
+function section(id) {
+  const start = text.indexOf(`<section id="${id}" class="eccs-detail-section">`);
+  assert.ok(start !== -1, `${id} section not found`);
   return text.slice(start, text.indexOf('</section>', start));
 }
 
-for (const prefix of GENERATED) {
-  test(`${prefix}.conf settings section matches its stated setting and stanza counts`, () => {
-    const html = section(prefix);
+for (const id of SECTION_IDS) {
+  test(`${id} matches its stated setting and stanza counts`, () => {
+    const html = section(id);
     // indexes.conf has no stanza lines, so it is grouped into the spec's banner sections instead.
     const stated = html.match(/(\d+) settings (?:across|in) (\d+) (?:stanzas?|sections?)/);
     assert.ok(stated, 'source note with counts is missing');

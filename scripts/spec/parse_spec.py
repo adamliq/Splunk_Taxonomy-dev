@@ -9,11 +9,13 @@ BANNER_RE = re.compile(r'^#[*#]{19,}\s*$')
 SUBHEADING_RE = re.compile(r'^#{5}\s+(\S.*?)\s*$')
 
 
-def parse(path, banner_sections=False):
+def parse(path, banner_sections=False, banner_min=20):
     """banner_sections: for specs with no stanza lines (indexes.conf), start a new section at
     each comment-banner heading ("#****" then "# PER INDEX OPTIONS", or "##### S3 specific
     settings"). Sections have name None and a 'section' title; the heading's prose (up to
-    the next blank comment line) becomes the section's description."""
+    the next blank comment line) becomes the section's description. banner_min is the shortest
+    all-'#'/'*' line treated as a banner (tags.conf.cim.spec uses banners as short as 16)."""
+    banner_re = re.compile(r'^#[*#]{%d,}\s*$' % (banner_min - 1))
     lines = open(path, encoding='utf-8').read().split('\n')
     stanzas = []           # [{name, desc_bullets, settings:[...]}]
     current = {'name': None, 'bullets': [], 'settings': []}   # settings before first stanza = global
@@ -34,7 +36,7 @@ def parse(path, banner_sections=False):
             target = None
             if banner_sections:
                 text = line.lstrip('#').strip()
-                if BANNER_RE.match(line):
+                if banner_re.match(line):
                     # A banner closing a heading keeps collecting that heading's prose.
                     if just_headed:
                         just_headed = False
