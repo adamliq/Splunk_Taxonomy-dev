@@ -1414,6 +1414,41 @@
     .conf-check-kind { display: inline-block; margin-right: 4px; padding: 1px 7px; border-radius: 5px; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; }
     tr.conf-check-row-error .conf-check-kind { background: #fee2e2; color: #b91c1c; }
     tr.conf-check-row-warn .conf-check-kind { background: #fef3c7; color: #b45309; }
+    .conf-merge-rule { margin: 0 0 12px; padding: 9px 12px; border-left: 3px solid var(--primary); background: var(--primary-light); border-radius: 6px; font-size: 12.5px; color: #334155; }
+    .conf-merge-rule:empty { display: none; }
+    .conf-merge-layers { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 12px; margin-bottom: 12px; }
+    .conf-merge-layer { margin: 0; padding: 10px 12px 12px; border: 1px solid var(--border); border-radius: 10px; min-width: 0; }
+    .conf-merge-layer legend { padding: 0 4px; font-size: 12px; font-weight: 800; color: var(--primary); }
+    .conf-merge-layer-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; margin-bottom: 6px; }
+    .conf-merge-layer-controls label { display: grid; gap: 3px; font-size: 11.5px; font-weight: 800; color: #334155; min-width: 0; }
+    .conf-merge-layer-controls input[type="text"] { width: 130px; max-width: 100%; }
+    .conf-merge-layer-controls label.conf-merge-export { display: flex; align-items: center; gap: 5px; font-weight: 700; }
+    .conf-merge-layer [hidden], #configFileMergeView .conf-check-controls label[hidden] { display: none !important; }
+    .conf-merge-filter input, .conf-merge-export input { width: auto; min-height: 0; margin: 0; }
+    .conf-merge-path { display: block; margin-bottom: 6px; font-size: 11px; color: var(--muted); overflow-wrap: anywhere; }
+    .conf-merge-layer textarea { width: 100%; min-height: 110px; padding: 8px; border: 1px solid var(--border); border-radius: 8px; font: 12px/1.5 var(--mono); resize: vertical; box-sizing: border-box; }
+    .conf-merge-heading { margin: 18px 0 6px; font-size: 13px; }
+    .conf-merge-order { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 4px; font-size: 12.5px; }
+    .conf-merge-order li { display: flex; gap: 8px; align-items: baseline; overflow-wrap: anywhere; }
+    .conf-merge-rank { display: inline-grid; place-items: center; flex: 0 0 auto; width: 20px; height: 20px; border-radius: 50%; background: var(--primary-light); color: var(--primary); font-size: 11px; font-weight: 800; }
+    .conf-merge-ignored { margin: 4px 0; font-size: 12.5px; color: #92400e; }
+    .conf-merge-filter { display: inline-flex; gap: 6px; align-items: center; margin-bottom: 8px; font-size: 12.5px; }
+    table.conf-merge-table { min-width: 0; }
+    .conf-merge-table tr.conf-merge-stanza th { background: #f8fafc; text-transform: none; letter-spacing: 0; }
+    .conf-merge-table tr.conf-merge-inherit td { font-size: 12px; color: var(--muted); }
+    .conf-merge-value { white-space: pre-wrap; overflow-wrap: anywhere; font-weight: 700; }
+    .conf-merge-lost { font-size: 12px; margin-bottom: 3px; }
+    .conf-merge-lost code { text-decoration: line-through; color: var(--muted); white-space: pre-wrap; overflow-wrap: anywhere; }
+    .conf-merge-btool { margin-top: 12px; }
+    .conf-merge-btool summary { cursor: pointer; font-size: 13px; font-weight: 800; }
+    .conf-merge-btool pre { overflow-x: auto; padding: 10px; background: #0f172a; color: #e2e8f0; border-radius: 8px; font-size: 11.5px; }
+    .ctd-merge-link { margin-top: 6px; }
+    @media (max-width: 640px) {
+      table.conf-merge-table thead { display: none; }
+      .conf-merge-table tbody, .conf-merge-table tr, .conf-merge-table td, .conf-merge-table th { display: block; }
+      .conf-merge-table tr { padding: 6px 0; border-bottom: 1px solid var(--border); }
+      table.conf-merge-table td, table.conf-merge-table th { width: auto; min-width: 0; padding: 2px 12px; border: 0; overflow-wrap: anywhere; }
+    }
     @media (max-width: 640px) {
       /* Phone width: each finding becomes a card so the Finding text isn't scrolled off-screen. */
       table.conf-check-table { min-width: 0; }
@@ -4445,7 +4480,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.27 &middot; build 139</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.27 &middot; build 140</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -10785,6 +10820,7 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
         <button type="button" id="confFileViewGridBtn" class="ports-view-btn ports-view-btn-active" aria-pressed="true">Card grid</button>
         <button type="button" id="confFileViewTreeBtn" class="ports-view-btn" aria-pressed="false">Directory tree</button>
         <button type="button" id="confFileViewCheckBtn" class="ports-view-btn" aria-pressed="false">Check a .conf file</button>
+        <button type="button" id="confFileViewMergeBtn" class="ports-view-btn" aria-pressed="false">Effective configuration</button>
       </div>
       <div id="configFileGridView">
       <div class="config-setting-toolbar"><input id="configSettingSearch" type="search" placeholder="Search individual settings across every .conf file (e.g. srchIndexesAllowed, TIME_PREFIX, allowedDomainList)…" aria-label="Search configuration settings" /></div>
@@ -10861,6 +10897,21 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
         </div>
         <textarea id="confCheckInput" rows="14" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Paste a .conf file to check" placeholder="[monitor:///var/log/secure]&#10;sourcetype = linux_secure&#10;index = os"></textarea>
         <div id="confCheckResult" aria-live="polite"></div>
+      </div>
+      <div id="configFileMergeView" hidden>
+        <p class="conf-check-intro">Paste the same <code>.conf</code> file from each directory it lives in -- system default and local, an app's default and local, a user's directory -- and see which value Splunk uses for every setting, and why. It follows Splunk's configuration file precedence, the order the Directory tree view lists for each file. It doesn't model <code>props.conf</code>'s ordering between <code>[source::]</code>, <code>[host::]</code> and source type stanzas, or <code>.meta</code> permissions beyond an app exporting its settings. It runs entirely in your browser -- nothing you paste is saved or sent anywhere.</p>
+        <div class="conf-check-controls">
+          <label for="confMergeFile">File<select id="confMergeFile"></select></label>
+          <label for="confMergeContext">Context<select id="confMergeContext"></select></label>
+          <label id="confMergeAppLabel" for="confMergeCurrentApp" hidden>Current app<input type="text" id="confMergeCurrentApp" spellcheck="false" autocomplete="off" placeholder="search"></label>
+          <label id="confMergeUserLabel" for="confMergeCurrentUser" hidden>Current user<input type="text" id="confMergeCurrentUser" spellcheck="false" autocomplete="off" placeholder="admin"></label>
+          <button type="button" id="confMergeExample">Load an example</button>
+          <button type="button" id="confMergeClear">Clear</button>
+        </div>
+        <p id="confMergeRule" class="conf-merge-rule"></p>
+        <div id="confMergeLayers" class="conf-merge-layers"></div>
+        <button type="button" id="confMergeAdd" class="primary-button">Add a layer</button>
+        <div id="confMergeResult" aria-live="polite"></div>
       </div>
       <div id="configFileTreeView" hidden>
         <p class="conf-tree-intro">Resolves each file's locations (from the File locations section of its own detailed reference) against a selected installation profile. A location tagged role-dependent is omitted, with the reason given below the tree, when it doesn't apply to the selected role. Everything else defaults to applying across all three roles -- that default isn't a verified per-file fact for every setting, only the three flagged exceptions are.</p>
@@ -27884,14 +27935,345 @@ function initConfChecker() {
     const chip = event.target.closest("[data-conf-jump]");
     if (chip) confJumpToSetting(chip.dataset.confJump, chip.dataset.confSetting);
   });
-  const buttons = ["confFileViewGridBtn", "confFileViewTreeBtn", "confFileViewCheckBtn"].map(id => document.getElementById(id));
-  const views = ["configFileGridView", "configFileTreeView", "configFileCheckView"].map(id => document.getElementById(id));
-  // The grid and tree buttons keep their own handlers; this one also hides the checker for them.
+  const buttons = ["confFileViewGridBtn", "confFileViewTreeBtn", "confFileViewCheckBtn", "confFileViewMergeBtn"].map(id => document.getElementById(id));
+  const views = ["configFileGridView", "configFileTreeView", "configFileCheckView", "configFileMergeView"].map(id => document.getElementById(id));
+  // The grid and tree buttons keep their own handlers; these also hide the checker and the
+  // effective-configuration view for them.
   buttons.forEach((button, i) => button?.addEventListener("click", () => {
-    if (i !== 2) { view.hidden = true; buttons[2].classList.remove("ports-view-btn-active"); buttons[2].setAttribute("aria-pressed", "false"); return; }
-    buttons.forEach((b, j) => { b.classList.toggle("ports-view-btn-active", j === 2); b.setAttribute("aria-pressed", String(j === 2)); });
-    views.forEach((v, j) => { v.hidden = j !== 2; });
+    if (i < 2) {
+      views.slice(2).forEach(v => { if (v) v.hidden = true; });
+      buttons.slice(2).forEach(b => { b?.classList.remove("ports-view-btn-active"); b?.setAttribute("aria-pressed", "false"); });
+      return;
+    }
+    buttons.forEach((b, j) => { b?.classList.toggle("ports-view-btn-active", j === i); b?.setAttribute("aria-pressed", String(j === i)); });
+    views.forEach((v, j) => { if (v) v.hidden = j !== i; });
   }));
+}
+// --- Effective-configuration explainer ---
+// The same .conf file pasted from several directories, resolved the way Splunk's configuration
+// file precedence does it (the orders the Directory tree view lists per file). In global context:
+// system local, every app's local, every app's default (apps in ASCII order of directory name),
+// system default. In app/user context: the current user's directory for the current app, the
+// current app's local and default, other apps in reverse ASCII order (local then default, and
+// only what they export), system local, system default. Pure functions first; the view after.
+const CONF_MERGE_TYPES = {
+  "system-default": { label: "System default", path: f => `etc/system/default/${f}` },
+  "system-local": { label: "System local", path: f => `etc/system/local/${f}` },
+  "app-default": { label: "App default", app: true, path: (f, l) => `etc/apps/${l.app || "<app>"}/default/${f}` },
+  "app-local": { label: "App local", app: true, path: (f, l) => `etc/apps/${l.app || "<app>"}/local/${f}` },
+  "user-local": { label: "User local", app: true, user: true, path: (f, l) => `etc/users/${l.user || "<user>"}/${l.app || "<app>"}/local/${f}` },
+  "peer-default": { label: "Indexer peer default", app: true, path: (f, l) => `etc/peer-apps/${l.app || "<app>"}/default/${f}` },
+  "peer-local": { label: "Indexer peer local", app: true, path: (f, l) => `etc/peer-apps/${l.app || "<app>"}/local/${f}` }
+};
+const CONF_MERGE_RULES = {
+  "global": "System local first, then every app's local directory, then every app's default directory, then system default. Apps at the same level are read in ASCII order of directory name: digits, then uppercase, then lowercase.",
+  "global-indexer-cluster-peer": "Peer-app local (what the cluster manager pushes), system local, app local, peer-app default, app default, then system default. Apps at the same level are read in ASCII order of directory name.",
+  "app-user": "The current user's directory for the current app, then the current app's local and default directories, then every other app -- its local, then its default -- in reverse ASCII order of directory name, counting only settings that app exports. System local and system default come last.",
+  "single-app": "Only one app defines this file, so its local directory simply beats its default directory."
+};
+// Where a layer sits in the chosen context: a tier (lower wins), the app and its sort direction,
+// or the reason Splunk doesn't read it there.
+function confMergePlace(layer, ctx) {
+  const type = layer.type, app = (layer.app || "").trim();
+  if (CONF_MERGE_TYPES[type].app && !app) return { ignored: "Enter the app's directory name." };
+  if (ctx.id === "global" || ctx.id === "global-indexer-cluster-peer") {
+    if (type === "user-local") return { ignored: "User directories are read only in app/user context." };
+    const peer = ctx.id !== "global";
+    if (!peer && type.startsWith("peer-")) return { ignored: "Peer-app directories exist only on an indexer cluster peer -- choose that context." };
+    const order = peer ? ["peer-local", "system-local", "app-local", "peer-default", "app-default", "system-default"] : ["system-local", "app-local", "app-default", "system-default"];
+    return { tier: order.indexOf(type), app, dir: 1 };
+  }
+  if (ctx.id === "single-app") {
+    if (type !== "app-local" && type !== "app-default") return { ignored: "This file lives only in its app's directory, so only that app's local and default are read." };
+    if (app !== ctx.app) return { ignored: `Only one app defines this file, and here that's ${ctx.app}.` };
+    return { tier: type === "app-local" ? 0 : 1, app, dir: 1 };
+  }
+  if (type.startsWith("peer-")) return { ignored: "Peer-app directories are modelled only in the indexer cluster peer context." };
+  if (type === "user-local") {
+    if (!(layer.user || "").trim()) return { ignored: "Enter the user's directory name." };
+    if (app !== ctx.app || layer.user.trim() !== ctx.user) return { ignored: `Only the current user's directory for the current app is read (${ctx.user || "<user>"} in ${ctx.app || "<app>"}).` };
+    return { tier: 0, app, dir: 1 };
+  }
+  if (type === "app-local" || type === "app-default") {
+    const sub = type === "app-local" ? 0 : 1;
+    if (app === ctx.app) return { tier: 1 + sub, app, dir: 1 };
+    if (!layer.exported) return { ignored: "Not exported: in app/user context another app's settings count only when its metadata exports them (export = system)." };
+    return { tier: 3, app, dir: -1, sub };
+  }
+  return { tier: type === "system-local" ? 4 : 5, app: "", dir: 1 };
+}
+function confMergeCompare(a, b) {
+  if (a.tier !== b.tier) return a.tier - b.tier;
+  if (a.app !== b.app) return (a.app < b.app ? -1 : 1) * a.dir;
+  return (a.sub || 0) - (b.sub || 0);
+}
+function confMergeWhy(win, lose, ctxId) {
+  if (win.tier === lose.tier && win.app !== lose.app) {
+    return ctxId === "app-user"
+      ? `other apps are read in reverse ASCII order of directory name, so ${win.app} comes before ${lose.app}`
+      : `apps at the same level are read in ASCII order of directory name, so ${win.app} comes before ${lose.app}`;
+  }
+  if (win.tier === lose.tier) return "an app's local directory beats its default directory";
+  if (ctxId !== "app-user" && win.layer.type.endsWith("-local") && lose.layer.type === win.layer.type.replace("-local", "-default") && win.app !== lose.app) return "every app's local directory comes before every app's default directory";
+  if (ctxId === "app-user" && win.tier <= 2 && lose.tier === 3) return "the current app's directories beat every other app's";
+  return `${win.name} comes before ${lose.name}`;
+}
+// Stanzas and settings of one layer. Settings above the first stanza belong to [default]; a
+// setting repeated in a stanza keeps its last value, as Splunk does.
+function confMergeParse(text) {
+  const stanzas = new Map(), dups = [];
+  let current = "default", pending = null;
+  const stanza = name => { if (!stanzas.has(name)) stanzas.set(name, new Map()); return stanzas.get(name); };
+  text.split(/\r?\n/).forEach((raw, i) => {
+    const line = raw.trim();
+    if (pending) {
+      const more = /\\$/.test(line);
+      pending.value += "\n" + (more ? line.slice(0, -1) : line);
+      if (!more) pending = null;
+      return;
+    }
+    if (!line || line[0] === "#" || line[0] === ";") return;
+    const header = line.match(/^\[(.*)\]$/);
+    if (header) { current = header[1].trim() || "default"; stanza(current); return; }
+    const kv = raw.match(/^\s*([^=]+?)\s*=(.*)$/);
+    if (!kv) return;
+    const key = kv[1].trim();
+    let value = kv[2].trim();
+    const more = /\\$/.test(value);
+    if (more) value = value.slice(0, -1);
+    const settings = stanza(current);
+    if (settings.has(key)) dups.push({ stanza: current, key, first: settings.get(key).line, line: i + 1 });
+    settings.delete(key);
+    const entry = { value, line: i + 1 };
+    settings.set(key, entry);
+    if (more) pending = entry;
+  });
+  return { stanzas, dups };
+}
+function confMergeResolve(file, ctx, layers) {
+  const placed = layers.map((layer, index) => {
+    const type = CONF_MERGE_TYPES[layer.type];
+    const app = (layer.app || "").trim() || "<app>";
+    const name = type.label + (layer.type === "user-local" ? ` (${(layer.user || "").trim() || "<user>"}, ${app})` : type.app ? ` (${app})` : "");
+    return { ...confMergePlace(layer, ctx), index, layer, name, path: type.path(file, { app: (layer.app || "").trim(), user: (layer.user || "").trim() }), parsed: confMergeParse(layer.text || "") };
+  });
+  // The same directory twice: there's only one file there, so only the first counts.
+  placed.forEach((p, i) => {
+    if (p.ignored) return;
+    const same = placed.slice(0, i).find(q => !q.ignored && q.path === p.path);
+    if (same) p.ignored = `Same location as layer ${same.index + 1} -- a directory holds one ${file}.`;
+  });
+  const active = placed.filter(p => !p.ignored).sort(confMergeCompare);
+  active.forEach((p, i) => { p.rank = i + 1; });
+  const names = [];
+  placed.filter(p => !p.ignored).forEach(p => p.parsed.stanzas.forEach((_, name) => { if (!names.includes(name)) names.push(name); }));
+  names.sort((a, b) => (b === "default") - (a === "default"));
+  const stanzas = names.map(name => {
+    const keys = [];
+    placed.filter(p => !p.ignored).forEach(p => p.parsed.stanzas.get(name)?.forEach((_, key) => { if (!keys.includes(key)) keys.push(key); }));
+    const settings = keys.map(key => {
+      const [winner, ...rest] = active.filter(p => p.parsed.stanzas.get(name)?.has(key)).map(p => ({ layer: p, ...p.parsed.stanzas.get(name).get(key) }));
+      return { key, value: winner.value, line: winner.line, layer: winner.layer, overridden: rest.map(o => ({ ...o, why: confMergeWhy(winner.layer, o.layer, ctx.id) })) };
+    });
+    return { name, settings, layers: active.filter(p => p.parsed.stanzas.has(name)) };
+  });
+  // Settings in [default] apply to every other stanza that doesn't set them itself.
+  const defaults = stanzas.find(s => s.name === "default");
+  stanzas.forEach(s => { s.inherits = defaults && s !== defaults ? defaults.settings.filter(d => !s.settings.some(x => x.key === d.key)) : []; });
+  const dups = placed.filter(p => !p.ignored).flatMap(p => p.parsed.dups.map(d => ({ ...d, layer: p })));
+  return { placed, active, stanzas, dups };
+}
+// The merged file as `splunk btool <file> list --debug` prints it: each line prefixed with
+// the file its value came from, stanzas and settings in sorted order, [default] values inherited.
+function confMergeBtool(result) {
+  const width = Math.max(0, ...result.active.map(p => p.path.length));
+  const byName = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+  const lines = [];
+  [...result.stanzas].sort((a, b) => byName(a.name, b.name)).forEach(s => {
+    lines.push(`${(s.layers[0]?.path || "").padEnd(width)} [${s.name}]`);
+    [...s.settings, ...s.inherits].sort((a, b) => byName(a.key, b.key)).forEach(x => lines.push(`${x.layer.path.padEnd(width)} ${x.key} = ${x.value}`));
+  });
+  return lines.join("\n");
+}
+const confMergeState = {
+  file: "inputs-conf", context: "global", app: "", user: "", onlyConflicts: false,
+  layers: [{ type: "system-default", app: "", user: "", exported: false, text: "" }, { type: "system-local", app: "", user: "", exported: false, text: "" }]
+};
+// Example values to show the rules at work -- not Splunk's shipped defaults.
+const CONF_MERGE_EXAMPLE = {
+  file: "inputs-conf", context: "global", app: "", user: "",
+  layers: [
+    { type: "system-default", app: "", user: "", exported: false, text: "[default]\nhost = $decideOnStartup\nindex = default" },
+    { type: "app-default", app: "linux_inputs", user: "", exported: false, text: "[monitor:///var/log/secure]\nsourcetype = linux_secure\nindex = os\ndisabled = true" },
+    { type: "app-local", app: "linux_inputs", user: "", exported: false, text: "[monitor:///var/log/secure]\nindex = linux\ndisabled = false" },
+    { type: "app-local", app: "a_team_overrides", user: "", exported: false, text: "[monitor:///var/log/secure]\nindex = security" },
+    { type: "system-local", app: "", user: "", exported: false, text: "[default]\nhost = web01" }
+  ]
+};
+function confMergeFileRecord() {
+  return confFileTreeData.find(f => f.id === confMergeState.file) || null;
+}
+function confMergeContexts() {
+  const record = confMergeFileRecord();
+  const ids = (record?.precedence || []).filter(id => id !== "mixed-props");
+  return ids.length ? ids : ["global", "global-indexer-cluster-peer", "app-user", "single-app"];
+}
+function confMergeCtx() {
+  const ctx = { id: confMergeState.context, app: confMergeState.app.trim(), user: confMergeState.user.trim() };
+  // Single-app files default to the first app named in the layers.
+  if (ctx.id === "single-app" && !ctx.app) ctx.app = (confMergeState.layers.find(l => CONF_MERGE_TYPES[l.type].app && (l.app || "").trim())?.app || "").trim();
+  return ctx;
+}
+function renderConfMergeControls() {
+  const record = confMergeFileRecord();
+  const contextSelect = document.getElementById("confMergeContext");
+  const contexts = confMergeContexts();
+  if (!contexts.includes(confMergeState.context)) confMergeState.context = contexts[0];
+  contextSelect.innerHTML = contexts.map(id => `<option value="${escapeHtml(id)}">${escapeHtml(CONF_TREE_PRECEDENCE_PROFILES[id]?.label || id)}</option>`).join("");
+  contextSelect.value = confMergeState.context;
+  document.getElementById("confMergeFile").value = confMergeState.file;
+  document.getElementById("confMergeCurrentApp").value = confMergeState.app;
+  document.getElementById("confMergeCurrentUser").value = confMergeState.user;
+  document.getElementById("confMergeAppLabel").hidden = !["app-user", "single-app"].includes(confMergeState.context);
+  document.getElementById("confMergeUserLabel").hidden = confMergeState.context !== "app-user";
+  const mixed = record?.precedence?.includes("mixed-props") ? CONF_TREE_PRECEDENCE_PROFILES["mixed-props"].notes.join(" ") + " " : "";
+  document.getElementById("confMergeRule").textContent = mixed + (CONF_MERGE_RULES[confMergeState.context] || "");
+}
+function renderConfMergeLayers() {
+  const list = document.getElementById("confMergeLayers");
+  const types = Object.entries(CONF_MERGE_TYPES);
+  list.innerHTML = confMergeState.layers.map((layer, i) => `<fieldset class="conf-merge-layer" data-layer="${i}"><legend>Layer ${i + 1}</legend>`
+    + `<div class="conf-merge-layer-controls"><label>Location<select data-field="type">${types.map(([id, t]) => `<option value="${id}"${id === layer.type ? " selected" : ""}>${escapeHtml(t.label)}</option>`).join("")}</select></label>`
+    + `<label data-show="app">App directory<input type="text" data-field="app" value="${escapeHtml(layer.app)}" spellcheck="false" autocomplete="off" placeholder="my_app"></label>`
+    + `<label data-show="user">User<input type="text" data-field="user" value="${escapeHtml(layer.user)}" spellcheck="false" autocomplete="off" placeholder="admin"></label>`
+    + `<label class="conf-merge-export" data-show="export"><input type="checkbox" data-field="exported"${layer.exported ? " checked" : ""}>Exported to other apps</label>`
+    + `<button type="button" class="conf-merge-remove" data-remove="${i}"${confMergeState.layers.length < 2 ? " disabled" : ""}>Remove</button></div>`
+    + `<code class="conf-merge-path"></code>`
+    + `<textarea data-field="text" rows="6" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Layer ${i + 1} contents" placeholder="[stanza]&#10;setting = value">${escapeHtml(layer.text)}</textarea></fieldset>`).join("");
+  document.getElementById("confMergeAdd").disabled = confMergeState.layers.length >= 12;
+  updateConfMergeLayerFields();
+}
+function updateConfMergeLayerFields() {
+  const file = confMergeFileRecord()?.filename || "<file>.conf";
+  const ctx = confMergeCtx();
+  document.querySelectorAll("#confMergeLayers .conf-merge-layer").forEach(fieldset => {
+    const layer = confMergeState.layers[Number(fieldset.dataset.layer)];
+    const type = CONF_MERGE_TYPES[layer.type];
+    fieldset.querySelector('[data-show="app"]').hidden = !type.app;
+    fieldset.querySelector('[data-show="user"]').hidden = !type.user;
+    fieldset.querySelector('[data-show="export"]').hidden = !(ctx.id === "app-user" && /^app-/.test(layer.type) && (layer.app || "").trim() !== ctx.app);
+    fieldset.querySelector(".conf-merge-path").textContent = type.path(file, { app: (layer.app || "").trim(), user: (layer.user || "").trim() });
+  });
+}
+function renderConfMergeResult() {
+  const out = document.getElementById("confMergeResult");
+  const record = confMergeFileRecord();
+  const file = record?.filename || "<file>.conf";
+  const ctx = confMergeCtx();
+  const result = confMergeResolve(file, ctx, confMergeState.layers);
+  const total = result.stanzas.reduce((n, s) => n + s.settings.length, 0);
+  const overridden = result.stanzas.reduce((n, s) => n + s.settings.filter(x => x.overridden.length).length, 0);
+  const order = `<h4 class="conf-merge-heading">Read order</h4><ol class="conf-merge-order">${result.active.map(p => `<li><span class="conf-merge-rank">${p.rank}</span><span><b>${escapeHtml(p.name)}</b> <code>${escapeHtml(p.path)}</code> <span class="spec-muted">layer ${p.index + 1}</span></span></li>`).join("")}</ol>`
+    + result.placed.filter(p => p.ignored).map(p => `<p class="conf-merge-ignored"><b>Not read:</b> layer ${p.index + 1}, ${escapeHtml(p.name)} -- ${escapeHtml(p.ignored)}</p>`).join("");
+  if (!total) {
+    out.innerHTML = order + '<p class="role-compare-empty">Paste settings into the layers above to see which value wins.</p>';
+    return;
+  }
+  const dups = result.dups.map(d => `<p class="conf-merge-ignored"><b>Repeated:</b> layer ${d.layer.index + 1} sets <code>${escapeHtml(d.key)}</code> twice in <code>[${escapeHtml(d.stanza)}]</code> (lines ${d.first} and ${d.line}); the later line wins.</p>`).join("");
+  const summary = `<p class="conf-check-summary">${result.stanzas.length} stanza${result.stanzas.length === 1 ? "" : "s"}, ${total} setting${total === 1 ? "" : "s"}. <span class="conf-check-count conf-check-warn">${overridden} set in more than one layer</span></p>`
+    + `<label class="conf-merge-filter"><input type="checkbox" id="confMergeOnlyConflicts"${confMergeState.onlyConflicts ? " checked" : ""}> Show only settings set in more than one layer</label>`;
+  const rows = result.stanzas.map(s => {
+    const settings = confMergeState.onlyConflicts ? s.settings.filter(x => x.overridden.length) : s.settings;
+    if (confMergeState.onlyConflicts && !settings.length) return "";
+    const inherits = s.inherits.length && !confMergeState.onlyConflicts ? `<tr class="conf-merge-inherit"><td colspan="4">Also inherits from [default]: ${s.inherits.map(x => `<code>${escapeHtml(x.key)}</code>`).join(", ")}</td></tr>` : "";
+    return `<tr class="conf-merge-stanza"><th colspan="4" scope="colgroup"><code>[${escapeHtml(s.name)}]</code></th></tr>`
+      + (settings.length ? settings.map(x => `<tr><td><code>${escapeHtml(x.key)}</code></td><td><code class="conf-merge-value">${escapeHtml(x.value)}</code></td>`
+        + `<td><b>${escapeHtml(x.layer.name)}</b><div class="spec-muted">${x.overridden.length ? `${ordinalSuffix(x.layer.rank)} in the read order` : "only layer that sets it"}</div></td>`
+        + `<td>${x.overridden.map(o => `<div class="conf-merge-lost"><code>${escapeHtml(o.value)}</code> from ${escapeHtml(o.layer.name)} -- ${escapeHtml(o.why)}.</div>`).join("") || '<span class="spec-muted">--</span>'}</td></tr>`).join("")
+        : '<tr><td colspan="4" class="spec-muted">No settings.</td></tr>')
+      + inherits;
+  }).join("");
+  const btool = confMergeBtool(result);
+  out.innerHTML = order + dups + summary
+    + `<div class="eccs-table-wrap" role="region" aria-label="Effective settings" tabindex="0"><table class="eccs-matrix conf-merge-table"><thead><tr><th scope="col">Setting</th><th scope="col">Effective value</th><th scope="col">Set by</th><th scope="col">Overridden</th></tr></thead><tbody>${rows || '<tr><td colspan="4" class="spec-muted">No setting is set in more than one layer.</td></tr>'}</tbody></table></div>`
+    + `<details class="conf-merge-btool"><summary>Merged result, as btool --debug prints it</summary><div class="ctd-btool-row"><span></span><button type="button" class="ctd-copy-btn" id="confMergeCopy">Copy</button></div><pre id="confMergeBtoolText">${escapeHtml(btool)}</pre></details>`;
+}
+function ordinalSuffix(n) {
+  const s = ["th", "st", "nd", "rd"], v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+function openConfMerge(fileId) {
+  if (fileId && confFileTreeData.some(f => f.id === fileId)) {
+    confMergeState.file = fileId;
+    renderConfMergeControls(); updateConfMergeLayerFields(); renderConfMergeResult();
+  }
+  document.getElementById("confFileViewMergeBtn")?.click();
+  document.getElementById("configFileMergeView")?.scrollIntoView({ block: "start" });
+}
+function initConfMerge() {
+  const view = document.getElementById("configFileMergeView");
+  if (!view) return;
+  const fileSelect = document.getElementById("confMergeFile");
+  fileSelect.innerHTML = confFileTreeData.filter(f => f.precedence && f.precedence.length).sort((a, b) => a.filename.localeCompare(b.filename))
+    .map(f => `<option value="${escapeHtml(f.id)}">${escapeHtml(f.filename)}</option>`).join("");
+  const refresh = () => { updateConfMergeLayerFields(); renderConfMergeResult(); };
+  fileSelect.addEventListener("change", () => { confMergeState.file = fileSelect.value; renderConfMergeControls(); refresh(); });
+  document.getElementById("confMergeContext").addEventListener("change", event => { confMergeState.context = event.target.value; renderConfMergeControls(); refresh(); });
+  document.getElementById("confMergeCurrentApp").addEventListener("input", event => { confMergeState.app = event.target.value; refresh(); });
+  document.getElementById("confMergeCurrentUser").addEventListener("input", event => { confMergeState.user = event.target.value; refresh(); });
+  const list = document.getElementById("confMergeLayers");
+  const onField = event => {
+    const field = event.target.dataset.field;
+    const fieldset = event.target.closest("[data-layer]");
+    if (!field || !fieldset) return;
+    const layer = confMergeState.layers[Number(fieldset.dataset.layer)];
+    layer[field] = field === "exported" ? event.target.checked : event.target.value;
+    refresh();
+  };
+  list.addEventListener("input", onField);
+  list.addEventListener("change", onField);
+  list.addEventListener("click", event => {
+    const button = event.target.closest("[data-remove]");
+    if (!button || confMergeState.layers.length < 2) return;
+    confMergeState.layers.splice(Number(button.dataset.remove), 1);
+    renderConfMergeLayers(); renderConfMergeResult();
+  });
+  document.getElementById("confMergeAdd").addEventListener("click", () => {
+    const appTypes = ["app-default", "app-local"];
+    const last = confMergeState.layers[confMergeState.layers.length - 1];
+    confMergeState.layers.push({ type: last && appTypes.includes(last.type) ? last.type : "app-local", app: "", user: "", exported: false, text: "" });
+    renderConfMergeLayers(); renderConfMergeResult();
+    list.lastElementChild?.querySelector("textarea")?.focus();
+  });
+  document.getElementById("confMergeExample").addEventListener("click", () => {
+    Object.assign(confMergeState, JSON.parse(JSON.stringify(CONF_MERGE_EXAMPLE)));
+    renderConfMergeControls(); renderConfMergeLayers(); renderConfMergeResult();
+  });
+  document.getElementById("confMergeClear").addEventListener("click", () => {
+    confMergeState.layers = [{ type: "system-default", app: "", user: "", exported: false, text: "" }, { type: "system-local", app: "", user: "", exported: false, text: "" }];
+    renderConfMergeLayers(); renderConfMergeResult();
+  });
+  const result = document.getElementById("confMergeResult");
+  result.addEventListener("change", event => {
+    if (event.target.id === "confMergeOnlyConflicts") { confMergeState.onlyConflicts = event.target.checked; renderConfMergeResult(); }
+  });
+  result.addEventListener("click", async event => {
+    const button = event.target.closest("#confMergeCopy");
+    if (!button) return;
+    try {
+      await navigator.clipboard.writeText(document.getElementById("confMergeBtoolText").textContent);
+      button.textContent = "Copied";
+    } catch (err) {
+      button.textContent = "Copy failed -- select the text";
+    }
+    setTimeout(() => { button.textContent = "Copy"; }, 1400);
+  });
+  // The Directory tree's Precedence section links here for the file it shows.
+  document.addEventListener("click", event => {
+    const link = event.target.closest("[data-open-merge]");
+    if (link) openConfMerge(link.dataset.openMerge);
+  });
+  renderConfMergeControls(); renderConfMergeLayers(); renderConfMergeResult();
 }
 function jumpToConfigSetting(entry){
   showReferenceDetail(configDetailNameFromArticleId(entry.articleId));
@@ -28532,6 +28914,7 @@ function initConfFileTree(){
         block += '</div>';
         return block;
       }).join("");
+      html += '<button type="button" class="ctd-copy-btn ctd-merge-link" data-open-merge="' + escapeHtml(file.id) + '">Work out effective values for ' + escapeHtml(file.filename) + '</button>';
     }
     html += '</div>';
 
@@ -40050,6 +40433,7 @@ initRoleAudit();
 initSplunkApiPage();
 initApiRequestBuilder();
 initConfChecker();
+initConfMerge();
 applySplunkApiHash();
 renderSplunkPortsTable();
 renderNetworkFlowsTable();
