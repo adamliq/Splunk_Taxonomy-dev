@@ -1,7 +1,7 @@
 """Generate a conf-file reference article's Settings section from a Splunk .conf.spec file.
 
 Usage:
-  python3 scripts/spec/gen_spec_html.py <spec path> <conf file name> <section prefix> <splunk version> [--title TEXT] [--banner-sections] [--apply index.html]
+  python3 scripts/spec/gen_spec_html.py <spec path> <conf file name> <section prefix> <splunk version> [--title TEXT] [--banner-sections [--banner-min N]] [--source TEXT] [--apply index.html]
 
 Example (regenerates the server.conf article's Settings section in place):
   python3 scripts/spec/gen_spec_html.py spec_files/10.4/server.conf.spec server.conf server-conf 10.4.2 --apply index.html
@@ -10,7 +10,9 @@ Without --apply the section HTML is printed. With --apply, the existing
 <section id="<prefix>-settings"> in the given file is replaced. --title sets the section
 heading (default "Settings"; articles that keep hand-written, topic-grouped settings
 sections use "All settings"). --banner-sections is for specs with no stanza lines
-(indexes.conf): settings are grouped under the spec's comment-banner headings instead.
+(indexes.conf): settings are grouped under the spec's comment-banner headings instead; --banner-min
+sets the shortest banner line (default 20). --source replaces "Splunk Enterprise <version>" in the
+section's source note, for specs that don't come from a Splunk Enterprise release.
 """
 import os
 import re
@@ -65,8 +67,8 @@ def setting_row(stanza_name, setting):
             f'<td>{type_html}{first}{more}</td><td>{escape("; ".join(defaults))}</td></tr>')
 
 
-def generate(spec_path, file_name, prefix, version, title='Settings', banner_sections=False):
-    stanzas = parse(spec_path, banner_sections=banner_sections)
+def generate(spec_path, file_name, prefix, version, title='Settings', banner_sections=False, banner_min=20, source=None):
+    stanzas = parse(spec_path, banner_sections=banner_sections, banner_min=banner_min)
     total = sum(len(s['settings']) for s in stanzas)
     named = [s for s in stanzas if s['name'] is not None or s.get('section')]
     unit = ('section' if banner_sections else 'stanza') + ('' if len(named) == 1 else 's')
@@ -82,7 +84,7 @@ def generate(spec_path, file_name, prefix, version, title='Settings', banner_sec
 
     out = [f'      <section id="{prefix}-settings" class="eccs-detail-section">',
            f'        <h3>{escape(title)}</h3>',
-           f'        <p class="spec-source">Every stanza and setting in <code>{escape(file_name)}.spec</code> from Splunk Enterprise {escape(version)}: '
+           f'        <p class="spec-source">Every stanza and setting in <code>{escape(file_name)}.spec</code> from {escape(source or ("Splunk Enterprise " + version))}: '
            f'{total} settings {"in" if banner_sections else "across"} {len(named)} {unit}. Descriptions use the spec\'s own wording -- the first line shows here and <em>More</em> '
            'opens the rest. The Default column is filled only where the spec gives a <code>Default:</code> line.</p>',
            f'        <nav class="eccs-subsection-nav spec-stanza-nav" aria-label="{escape(file_name)} {unit}">'
@@ -119,6 +121,15 @@ if __name__ == '__main__':
     title = 'Settings'
     banner_sections = '--banner-sections' in args
     args = [a for a in args if a != '--banner-sections']
+    banner_min, source = 20, None
+    if '--banner-min' in args:
+        i = args.index('--banner-min')
+        banner_min = int(args[i + 1])
+        args = args[:i] + args[i + 2:]
+    if '--source' in args:
+        i = args.index('--source')
+        source = args[i + 1]
+        args = args[:i] + args[i + 2:]
     if '--title' in args:
         i = args.index('--title')
         title = args[i + 1]
@@ -129,7 +140,7 @@ if __name__ == '__main__':
         args = args[:i] + args[i + 2:]
     if len(args) != 4:
         sys.exit(__doc__)
-    html, total, count = generate(*args, title=title, banner_sections=banner_sections)
+    html, total, count = generate(*args, title=title, banner_sections=banner_sections, banner_min=banner_min, source=source)
     if target:
         apply(target, args[2], html)
         print(f'{args[1]}: {total} settings, {count} {"sections" if banner_sections else "stanzas"}, written to {target}')

@@ -1,6 +1,6 @@
 # Spec-generated settings sections
 
-Twenty-two Configuration file reference articles in `index.html` have a settings section generated from Splunk's `.conf.spec` files, not written by hand.
+Twenty-nine Configuration file reference articles in `index.html` have a settings section generated from Splunk's `.conf.spec` files, not written by hand.
 
 For these four, the generated **Settings** section is the article's only settings listing:
 
@@ -11,7 +11,7 @@ For these four, the generated **Settings** section is the article's only setting
 | REST Endpoints Configuration | `restmap.conf.spec` | 66 | 15 |
 | Health Report Configuration | `health.conf.spec` | 35 | 7 |
 
-These twelve are articles whose settings listing is only the generated **Settings** section, alongside a short hand-written Definition and File locations:
+These nineteen are articles whose settings listing is only the generated **Settings** section, alongside a short hand-written Definition and File locations:
 
 | Article | Spec file | Settings | Stanzas |
 |---|---|---|---|
@@ -27,6 +27,15 @@ These twelve are articles whose settings listing is only the generated **Setting
 | Segmenters Configuration | `segmenters.conf.spec` | 9 | 1 |
 | Metric Alerts Configuration | `metric_alerts.conf.spec` | 19 | 1 |
 | Metric Rollups Configuration | `metric_rollups.conf.spec` | 8 | 1 |
+| Agent Management Configuration | `agent_management.conf.spec` | 38 | 7 |
+| Authentication Node Configuration | `authentication_node.conf.spec` | 10 | 1 |
+| Global Banner Configuration | `global-banner.conf.spec` | 5 | 1 |
+| Monitoring Console Checklist Configuration | `checklist.conf.spec` | 13 | 1 |
+| Process Monitor Filters Configuration (deprecated) | `procmon-filters.conf.spec` | 3 | 1 |
+| Source Classifier Configuration | `source-classifier.conf.spec` | 2 | 0 (no stanzas) |
+| Time Ranges Configuration | `times.conf.spec` | 14 | 2 |
+
+The Tags article also has a generated **CIM tag names by data model** section (`tags-conf-cim-settings`) from `tags.conf.cim.spec` -- 81 tags in 25 data-model groups. That spec isn't part of a Splunk Enterprise release: it's in the root of the VS Code extension's `spec_files/` folder, headed "Version 9.0", and has no stanzas, so it's parsed with `--banner-sections --banner-min 10` (its banners are as short as 16 characters).
 
 (`default.meta.spec` is an annotated example rather than a stanza reference, so the Metadata Permissions article is written by hand from it.)
 
@@ -57,9 +66,12 @@ for f in inputs outputs web savedsearches web-features; do
   python3 scripts/spec/gen_spec_html.py $S/$f.conf.spec $f.conf $f-conf 10.4.2 --title "All settings" --apply index.html
 done
 python3 scripts/spec/gen_spec_html.py $S/indexes.conf.spec indexes.conf indexes-conf 10.4.2 --title "All settings" --banner-sections --apply index.html
-for f in wmi transactiontypes field_filters workload_pools workload_rules workload_policy splunk-launch user-seed multikv segmenters metric_alerts metric_rollups; do
+for f in wmi transactiontypes field_filters workload_pools workload_rules workload_policy splunk-launch user-seed multikv segmenters metric_alerts metric_rollups \
+         agent_management authentication_node global-banner checklist procmon-filters source-classifier times; do
   python3 scripts/spec/gen_spec_html.py $S/$f.conf.spec $f.conf $(echo $f | tr '_' '-')-conf 10.4.2 --apply index.html
 done
+python3 scripts/spec/gen_spec_html.py /tmp/vscode-extension-splunk/spec_files/tags.conf.cim.spec tags.conf.cim tags-conf-cim 9.0 \
+  --title "CIM tag names by data model" --banner-sections --banner-min 10 --source "Splunk's VS Code extension (spec version 9.0)" --apply index.html
 ```
 
 Change the folder and version string to move to a newer Splunk release. Only the `<section id="<file>-conf-settings">` block is replaced; each article's Definition, File locations, Example and Validation sections -- and, for the six above, the topic-grouped settings sections -- are hand-written and should be re-checked against the new spec.
