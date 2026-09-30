@@ -3649,6 +3649,7 @@
     .eccs-back { display:inline-flex; margin-bottom:14px; padding:8px 11px; border:1px solid #cbd5e1; border-radius:8px; background:#fff; color:#1f4e78; font-size:12px; font-weight:800; text-decoration:none; }
     .eccs-anchor-nav { display:flex; gap:8px; flex-wrap:wrap; margin-top:17px; }
     .eccs-anchor-nav a { display:inline-flex; align-items:center; min-height:36px; padding:7px 11px; border:1px solid rgba(255,255,255,.34); border-radius:8px; background:rgba(255,255,255,.1); color:#fff; font-size:12px; font-weight:800; text-decoration:none; }
+    .eccs-anchor-nav a { overflow-wrap:anywhere; min-width:0; }
     .eccs-anchor-nav a:hover,.eccs-anchor-nav a:focus { background:rgba(255,255,255,.2); }
     .eccs-subsection-nav { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
     .eccs-subsection-nav a { display:inline-flex; align-items:center; min-height:32px; padding:6px 10px; border:1px solid #dbeafe; border-radius:8px; background:#eff6ff; color:#1e3a8a; font-size:12px; font-weight:700; text-decoration:none; }
@@ -3659,7 +3660,7 @@
     .spec-stanza-nav { max-height:190px; overflow-y:auto; }
     .spec-stanza-nav a { font-family:var(--mono); font-weight:600; }
     .eccs-detail-section h4.spec-stanza { margin:24px 0 6px; font-size:15px; scroll-margin-top:18px; }
-    .spec-stanza-desc { margin:0 0 8px; padding-left:18px; font-size:13px; line-height:1.5; color:#334155; }
+    .spec-stanza-desc { margin:0 0 8px; padding-left:18px; font-size:13px; line-height:1.5; color:#334155; overflow-wrap:anywhere; }
     .spec-stanza-desc li, .spec-more li { margin:3px 0; }
     .spec-stanza-desc li.spec-nested, .spec-more li.spec-nested { margin-left:16px; list-style:circle; }
     .spec-table td:first-child { min-width:190px; overflow-wrap:anywhere; }
@@ -4492,7 +4493,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.28 &middot; build 141</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.30 &middot; build 142</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -16263,7 +16264,7 @@ E. Assumptions and unresolved inputs</pre>
   </section>
 
 
-  <section id="assurancePage" class="page-view assurance-page" role="tabpanel" aria-labelledby="showAssurancePage" hidden>
+  <section id="assurancePage" class="page-view assurance-page" role="tabpanel" aria-label="Data source assurance" hidden>
     <div class="assurance-hero">
       <div>
         <div class="eyebrow">Lifecycle, Assurance &amp; Dependency · TAX-06.03.02</div>
@@ -16327,7 +16328,7 @@ E. Assumptions and unresolved inputs</pre>
   </section>
 
 
-  <section id="viabilityPage" class="page-view viability-page" role="tabpanel" aria-labelledby="showViabilityPage" hidden>
+  <section id="viabilityPage" class="page-view viability-page" role="tabpanel" aria-label="Viability assessment" hidden>
     <div class="viability-hero">
       <div>
         <div class="eyebrow">Lifecycle, Assurance &amp; Dependency · TAX-06.01.02</div>
