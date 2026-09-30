@@ -61,3 +61,31 @@ test('at phone width the journey is a phase list with an inspector sheet', async
     assert.deepEqual(pageErrors, []);
   });
 });
+
+test('the detection lifecycle route and its links to the log source journey', async () => {
+  await withServerAndPage(async ({ page, baseUrl, pageErrors }) => {
+    await page.goto(`${baseUrl}/index.html#onboarding-flow`, { waitUntil: 'load' });
+    await page.waitForTimeout(300);
+    await page.click('#objRoutes [data-route="detection"]');
+    assert.equal(await page.textContent('#objStats'), '14 stages5 gates2 stop points8 loop-backs6 links to onboarding');
+    assert.equal(await page.locator('#onboardingFlowMapWrap [data-item]').count(), 19);
+    assert.equal(await page.locator('#onboardingFlowMapWrap .obj-rail').count(), 6);
+    assert.equal(await page.locator('[data-layer="branch"]').isHidden(), true);
+
+    await page.click('#onboardingFlowMapWrap [data-item="gate-dl-review"]');
+    assert.equal(await heading(page), 'Detection Quality Gate');
+    assert.equal(await page.locator('#objInspector .obj-check li').count(), 19);
+
+    await page.click('#onboardingFlowMapWrap [data-item="gate-dl-data"]');
+    await page.click('#objInspector [data-route-link="ob-candidate"]');
+    assert.equal(await page.getAttribute('#objRoutes [data-route="onboarding"]', 'aria-selected'), 'true');
+    assert.equal(await heading(page), 'Candidate log source identified');
+
+    await page.click('#onboardingFlowMapWrap [data-item="ob-detection"]');
+    await page.click('#objInspector [data-detection-link="dl-analytic"]');
+    assert.equal(await page.getAttribute('#objRoutes [data-route="detection"]', 'aria-selected'), 'true');
+    assert.equal(await heading(page), 'Detection analytic & rule');
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth), 0);
+    assert.deepEqual(pageErrors, []);
+  });
+});
