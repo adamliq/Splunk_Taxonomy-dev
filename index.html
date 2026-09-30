@@ -3985,6 +3985,16 @@
     .obj-routes button { border:0; background:transparent; border-radius:8px; padding:5px 12px; font-size:12.5px; font-weight:800; color:#475569; cursor:pointer; }
     .obj-routes button[aria-selected="true"] { background:#fff; color:#0f172a; box-shadow:0 1px 3px rgba(15,23,42,.14); }
     .obj-swatch-link { border-color:#0e7490; border-top-style:dashed; }
+    .obj-swatch-feed { width:14px; height:10px; border:1px solid #67e8f9; border-radius:6px; background:#ecfeff; }
+    .obj-swatch-state { width:6px; height:14px; border:0; border-radius:3px; background:linear-gradient(#64748b 33%, #1d4ed8 33% 66%, #15803d 66%); }
+    .obj-state-seg, .obj-state-side { cursor:pointer; }
+    button.obj-tax { border:0; cursor:pointer; text-decoration:underline; text-decoration-style:dotted; text-underline-offset:2px; }
+    button.obj-tax:hover, button.obj-tax:focus-visible { background:#c7d2fe; }
+    .obj-tax-pop { position:absolute; z-index:5; width:300px; max-width:100%; background:#fff; border:1px solid #cbd5e1; border-radius:10px; box-shadow:0 10px 24px rgba(15,23,42,.16); padding:9px 12px; font-size:12px; color:#334155; pointer-events:none; }
+    .obj-tax-pop b { display:block; font-size:13px; color:#0f172a; }
+    .obj-tax-pop span { display:block; margin:2px 0 5px; line-height:1.45; }
+    .obj-tax-pop .obj-tax-code { font:800 10.5px ui-monospace,Menlo,monospace; color:#3730a3; margin:0; }
+    .obj-tax-pop em { font-style:normal; font-weight:800; color:#1d4ed8; }
     .obj-badge-link { background:#cffafe; color:#0e7490; }
     .obj-check { list-style:none; margin:0 0 6px; padding:0; display:grid; gap:3px; font-size:12.5px; color:#334155; }
     .obj-check li { display:flex; gap:7px; align-items:flex-start; }
@@ -3998,7 +4008,7 @@
     .obj-search-count { font-size:11px; font-weight:700; white-space:nowrap; }
     .obj-stepper { display:grid; grid-template-columns:repeat(6, minmax(0, 1fr)); gap:6px; }
     .obj-step { display:block; min-width:0; text-align:left; border:1px solid transparent; border-radius:10px; padding:6px 9px 7px; cursor:pointer; font:inherit; }
-    .obj-step-name { display:flex; align-items:center; gap:6px; font-weight:800; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .obj-step-name { display:flex; align-items:flex-start; gap:6px; font-weight:800; font-size:11.5px; line-height:1.3; white-space:normal; hyphens:auto; min-width:0; }
     .obj-step-letter { display:inline-grid; place-items:center; flex:0 0 auto; width:19px; height:19px; border-radius:50%; color:#fff; font-size:10.5px; }
     .obj-step-bar { display:flex; gap:2px; margin-top:5px; }
     .obj-step-bar i { flex:1; height:4px; border-radius:2px; opacity:.3; }
@@ -4062,11 +4072,12 @@
     @media (max-width: 1000px) {
       .obj-main { grid-template-columns:minmax(0, 1fr); }
       .obj-map { border-right:0; border-bottom:1px solid var(--border); }
-      .obj-inspector-inner { position:static; }
+      .obj-inspector-inner { position:relative; }
     }
     @media (max-width: 760px) {
       .obj-stepper { display:flex; overflow-x:auto; padding-bottom:2px; }
       .obj-step { flex:0 0 auto; }
+      .obj-step-name { white-space:nowrap; }
       .obj-step-bar, .obj-step-meta, .obj-keys { display:none; }
       .obj-search { margin-left:0; flex:1 1 100%; }
       .obj-map { border-bottom:0; padding:0; }
@@ -4587,7 +4598,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.30 &middot; build 144</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.30 &middot; build 145</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -4767,6 +4778,8 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
           <button type="button" class="obj-toggle" data-layer="stops" aria-pressed="true"><i class="obj-swatch obj-swatch-stop"></i>Stop points</button>
           <button type="button" class="obj-toggle" data-layer="branch" aria-pressed="true"><i class="obj-swatch obj-swatch-branch"></i>Post-go-live branch</button>
           <button type="button" class="obj-toggle" data-layer="links" aria-pressed="true" hidden><i class="obj-swatch obj-swatch-link"></i>Links to the log source journey</button>
+          <button type="button" class="obj-toggle" data-layer="feeds" aria-pressed="true"><i class="obj-swatch obj-swatch-feed"></i>Feeds in</button>
+          <button type="button" class="obj-toggle" data-layer="states" aria-pressed="true"><i class="obj-swatch obj-swatch-state"></i>Lifecycle states</button>
           <span class="obj-keys">Select a stage or gate for its detail &middot; step with <kbd>&uarr;</kbd> <kbd>&darr;</kbd></span>
         </div>
       </div>
@@ -29639,8 +29652,14 @@ const DETECTION_MAP_PHASES = [
 // Layout per route. The detection route is wider: its right-hand strip shows where it meets
 // the log source journey.
 const JOURNEY_ROUTES = {
-  onboarding: { label: "Log source onboarding", phases: ONBOARDING_MAP_PHASES, names: ONBOARDING_JOURNEY_NAMES, branch: ONBOARDING_JOURNEY_BRANCH, line: "#1f4e78", W: 640, X: 170, pillRight: 610, stopX: 604 },
-  detection: { label: "Detection lifecycle", phases: DETECTION_MAP_PHASES, names: {}, branch: new Set(), line: "#0e7490", W: 830, X: 150, pillRight: 505, stopX: 480, railX: 592 },
+  onboarding: { label: "Log source onboarding", phases: ONBOARDING_MAP_PHASES, names: ONBOARDING_JOURNEY_NAMES, branch: ONBOARDING_JOURNEY_BRANCH, line: "#1f4e78", W: 722, X: 170, pillRight: 610, stopX: 604, laneX: 638, sideRight: true, stateCode: "TAX-06.04.01" },
+  detection: { label: "Detection lifecycle", phases: DETECTION_MAP_PHASES, names: {}, branch: new Set(), line: "#0e7490", W: 842, X: 150, pillRight: 505, stopX: 480, laneX: 532, sideRight: false, stateCode: "TAX-05.03.02", railX: 604 },
+};
+// Lifecycle state colours for the state lane (TAX-06.04.01 and TAX-05.03.02).
+const JOURNEY_STATE_COLORS = {
+  PLANNED: "#64748b", ONBOARDING: "#1d4ed8", ACTIVE: "#15803d", DEGRADED: "#d97706", EXPIRED: "#c2410c", RETIRED: "#b91c1c",
+  PROPOSED: "#64748b", DEVELOPMENT: "#c2410c", TESTING: "#1d4ed8", "PEER REVIEW": "#4338ca", PRODUCTION: "#15803d", MONITORING: "#0e7490",
+  TUNING: "#d97706", REVALIDATION: "#7c3aed", DEPRECATED: "#64748b"
 };
 function onboardingJourneyModel(flow, route) {
   const text = el => (el ? el.textContent.replace(/\s+/g, " ").trim() : "");
@@ -29657,6 +29676,8 @@ function onboardingJourneyModel(flow, route) {
         title: without(h4, ".assessment-tag, .flow-badge"),
         tags: [...h4.querySelectorAll(".assessment-tag")].map(text),
         states: [...h4.querySelectorAll(".flow-badge")].map(text),
+        lifecycle: [...h4.querySelectorAll(".flow-badge.state")].map(text),
+        sideStates: [...el.querySelectorAll(":scope > p .flow-badge.state")].map(text),
         paragraphs: [...el.querySelectorAll(":scope > p")].map(text),
         actions: [...el.querySelectorAll("[data-open-reference-detail]")].map(b => ({ label: text(b), detail: b.dataset.openReferenceDetail })),
         feeds: [], links: []
@@ -29679,19 +29700,20 @@ function onboardingJourneyModel(flow, route) {
       };
       items.push(last);
     } else if (el.matches(".onboarding-link[data-link]") && last) {
-      const link = { from: last.id, to: el.dataset.link, dir: el.dataset.dir || "in", title: text(el.querySelector("strong")), text: text(el.querySelector("div > span")) };
+      const link = { from: last.id, to: el.dataset.link, dir: el.dataset.dir || "in", title: text(el.querySelector("strong")), text: text(el.querySelector(":scope > div > span")) };
       last.links.push(link);
       links.push(link);
     } else if (el.matches(".onboarding-feed") && stage) {
-      stage.feeds.push(text(el.querySelector("strong")));
+      const detail = el.querySelector(":scope > div > span");
+      stage.feeds.push({ title: text(el.querySelector("strong")), text: text(detail), tags: detail ? [...detail.querySelectorAll(".assessment-tag")].map(text) : [] });
     } else if (el.matches(".onboarding-loopback[data-to]")) {
-      loops.push({ from: el.dataset.from, to: el.dataset.to, tone: "expire", label: text(el.querySelector("strong")) });
+      loops.push({ from: el.dataset.from, to: el.dataset.to, tone: "expire", label: text(el.querySelector("strong")), states: [...el.querySelectorAll(".flow-badge.state")].map(text) });
     }
   });
   items.filter(i => i.type === "gate").forEach(g => g.outcomes.filter(o => o.to).forEach(o => loops.unshift({ gate: g.id, from: g.id, to: o.to, tone: o.tone === "proceed" ? "cycle" : "hold" })));
   return { items, loops, links, byId: Object.fromEntries(items.map(i => [i.id, i])) };
 }
-const onboardingJourney = { route: "onboarding", models: {}, selected: {}, query: "", show: { loops: true, stops: true, branch: true, links: true }, narrow: false, open: false };
+const onboardingJourney = { route: "onboarding", models: {}, selected: {}, query: "", show: { loops: true, stops: true, branch: true, links: true, feeds: true, states: true }, narrow: false, open: false };
 const journeyModel = () => onboardingJourney.models[onboardingJourney.route];
 const journeySelected = () => onboardingJourney.selected[onboardingJourney.route];
 function onboardingJourneyMatches(item, q) {
@@ -29718,9 +29740,11 @@ function renderOnboardingJourneyMap() {
     pos[item.id] = y + (item.type === "stage" ? 16 : 14);
     y += (item.type === "stage" ? (item.tags.length ? 46 : 38) : 34) + (rail ? Math.max(0, item.links.length - 1) * 30 : 0);
   });
-  if (bands.length) bands[bands.length - 1].end = y + 6;
-  const H = y + 14;
-  const bandRight = rail ? route.railX - 24 : W - 10;
+  // Side states drawn below the last row (detection route) need room.
+  const lastSides = show.states && !route.sideRight ? 30 : 0;
+  if (bands.length) bands[bands.length - 1].end = y + 6 + lastSides;
+  const H = y + 14 + lastSides;
+  const bandRight = Math.min(rail ? route.railX - 24 : W - 10, show.states ? route.laneX - 14 : Infinity);
   let svg = `<svg viewBox="0 0 ${W} ${H}" role="group" aria-label="${escapeHtml(route.label)} route: ${items.length} stages and gates" font-family="system-ui,-apple-system,Segoe UI,sans-serif">
     <defs><marker id="objArrowHold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#c2410c"/></marker>
     <marker id="objArrowCycle" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#15803d"/></marker>
@@ -29734,7 +29758,7 @@ function renderOnboardingJourneyMap() {
   svg += `<path d="M ${X} ${pos[main[0].id]} V ${pos[main[main.length - 1].id]}" stroke="${route.line}" stroke-width="5" stroke-linecap="round" fill="none"/>`;
   if (items.some(i => i.branch) && pos["ob-sustainment"] && pos["ob-review90"]) {
     const fy = pos["ob-sustainment"], jy = pos["ob-review90"];
-    svg += `<path d="M ${X} ${fy} C ${X} ${fy + 20}, ${BX} ${fy + 10}, ${BX} ${fy + 30} V ${jy - 30} C ${BX} ${jy - 10}, ${X} ${jy - 20}, ${X} ${jy}" stroke="#7030a0" stroke-width="4" fill="none"/>`;
+    svg += `<path d="M ${X} ${fy + 22} C ${X} ${fy + 34}, ${BX} ${fy + 26}, ${BX} ${fy + 40} V ${jy - 30} C ${BX} ${jy - 10}, ${X} ${jy - 20}, ${X} ${jy}" stroke="#7030a0" stroke-width="4" fill="none"/>`;
   }
   if (show.loops) {
     const lanes = [];
@@ -29753,6 +29777,44 @@ function renderOnboardingJourneyMap() {
       if (emphasised) svg += `<path d="${d}" stroke="#fdba74" stroke-width="8" fill="none" opacity=".55"/>`;
       svg += `<path class="obj-loop" data-loop-from="${l.from}" data-loop-to="${l.to}" d="${d}" stroke="${color}" stroke-width="${emphasised ? 2.8 : 1.6}" fill="none"${l.tone === "expire" ? ' stroke-dasharray="5 4"' : ""} marker-end="url(#${l.tone === "cycle" ? "objArrowCycle" : "objArrowHold"})" opacity="${on ? (emphasised ? 1 : .7) : .25}"><title>${escapeHtml(l.label || "Loop-back")}</title></path>`;
       if (l.tone === "expire") svg += `<text x="${lx - 5}" y="${(pos[l.from] + pos[l.to]) / 2}" font-size="10" fill="#c2410c" font-style="italic" text-anchor="middle" transform="rotate(-90 ${lx - 5} ${(pos[l.from] + pos[l.to]) / 2})">approval expires</text>`;
+    });
+  }
+  // Lifecycle state lane: the states named on stages run as coloured segments from where they
+  // start; states a stage's text, a loop-back or a gate outcome moves to sit beside the lane.
+  if (show.states) {
+    const L = route.laneX, main = [];
+    items.forEach(i => (i.lifecycle || []).forEach(st => main.push({ id: i.id, st })));
+    const mainStates = new Set(main.map(m => m.st));
+    const endY = pos[items[items.length - 1].id];
+    const color = st => JOURNEY_STATE_COLORS[st] || "#475569";
+    svg += `<text x="${L}" y="${bands[0].start + 12}" text-anchor="middle" font-size="10" font-weight="800" fill="#475569" letter-spacing=".05em">STATE</text><text x="${L}" y="${bands[0].start + 24}" text-anchor="middle" font-size="8.5" fill="#64748b" font-family="ui-monospace,Menlo,monospace">${escapeHtml(route.stateCode.replace(/^TAX-/, ""))}</text>`;
+    main.forEach((m, k) => {
+      const a = pos[m.id], z = k + 1 < main.length ? pos[main[k + 1].id] : endY;
+      svg += `<g class="obj-state-seg" data-item-link="${m.id}" data-state="${escapeHtml(m.st)}"><title>${escapeHtml(`${m.st} from ${model.byId[m.id].name}`)}</title><rect x="${L - 4}" y="${a}" width="8" height="${Math.max(z - a, 8)}" rx="4" fill="${color(m.st)}"/>`;
+      if (z - a > m.st.length * 7 + 16) svg += `<text x="${L + 13}" y="${a + 6}" transform="rotate(90 ${L + 13} ${a + 6})" font-size="10" font-weight="800" fill="${color(m.st)}" letter-spacing=".06em">${escapeHtml(m.st)}</text>`;
+      svg += `</g>`;
+    });
+    const sides = {};
+    const addSide = (id, st, end) => { if (pos[id] && !mainStates.has(st)) (sides[id] = sides[id] || []).push({ st, end }); };
+    items.forEach(i => {
+      (i.sideStates || []).forEach(st => addSide(i.id, st, false));
+      (i.outcomes || []).forEach(o => o.states.forEach(st => addSide(i.id, st, o.tone === "stop")));
+    });
+    model.loops.forEach(l => (l.states || []).forEach(st => addSide(l.from, st, false)));
+    Object.entries(sides).forEach(([id, list]) => {
+      // Beside the lane, stacked (onboarding); or in one row under the item, reading left to right.
+      const widths = list.map(sd => sd.st.length * 6.2 + 14);
+      let x = L - 10 - widths.reduce((a, b) => a + b + 6, -6);
+      list.forEach((sd, k) => {
+        const w = widths[k];
+        const y0 = route.sideRight ? pos[id] + k * 18 - 9 : pos[id] + 18;
+        const x0 = route.sideRight ? L + 12 : x;
+        if (!route.sideRight) x += w + 6;
+        const c = color(sd.st);
+        svg += `<g class="obj-state-side" data-item-link="${id}" data-state="${escapeHtml(sd.st)}"><title>${escapeHtml(`${sd.st} at ${model.byId[id].name}`)}</title>`
+          + (route.sideRight ? `<path d="M ${L + 4} ${y0 + 7.5} H ${x0}" stroke="${c}" stroke-width="1.5"/>` : "")
+          + `<rect x="${x0}" y="${y0}" width="${w}" height="15" rx="7.5" fill="${sd.end ? "#fee2e2" : "#fff"}" stroke="${c}"${sd.end ? "" : ' stroke-dasharray="3 2"'}/><text x="${x0 + w / 2}" y="${y0 + 10.5}" text-anchor="middle" font-size="9" font-weight="800" fill="${c}">${escapeHtml(sd.st)}</text></g>`;
+      });
     });
   }
   if (rail) {
@@ -29787,6 +29849,12 @@ function renderOnboardingJourneyMap() {
       if (item.tags.length) svg += `<text x="${tx}" y="${cy + 20}" font-size="10.5" fill="#64748b" font-family="ui-monospace,Menlo,monospace">${escapeHtml(item.tags[0])}</text>`;
       const state = item.states.filter(s => s !== "GO-LIVE").pop();
       if (state) { const w = state.length * 7 + 14, r = route.pillRight; svg += `<rect x="${r - w}" y="${cy - 9}" width="${w}" height="18" rx="9" fill="#fff" stroke="#94a3b8"/><text x="${r - w / 2}" y="${cy + 4}" text-anchor="middle" font-size="10" font-weight="800" fill="#475569">${escapeHtml(state)}</text>`; }
+      // Feeds in: a chip on the station each one feeds (indices shortened to their initials).
+      if (show.feeds) item.feeds.forEach((f, k) => {
+        const label = /Index$/.test(f.title) ? f.title.split(/\s+/).filter(w => /^[A-Z]/.test(w)).map(w => w[0]).join("") + (f.tags[0] ? ` · ${f.tags[0]}` : "") : f.title;
+        const fy = item.feeds.length > 1 ? cy + k * 17 : cy + 17, tw = label.length * 5.6 + 22, fx = route.pillRight - 8 - tw;
+        svg += `<g class="obj-feed"><title>${escapeHtml(`Feeds in: ${f.title}`)}</title><rect x="${fx}" y="${fy - 8}" width="${tw}" height="16" rx="8" fill="#ecfeff" stroke="#67e8f9"/><path d="M ${fx + 9} ${fy - 4} L ${fx + 5} ${fy} L ${fx + 9} ${fy + 4}" stroke="#0e7490" stroke-width="1.6" fill="none"/><text x="${fx + 13}" y="${fy + 3.5}" font-size="9.8" font-weight="700" fill="#0e7490">${escapeHtml(label)}</text></g>`;
+      });
     } else {
       svg += `<polygon points="${X},${cy - 8} ${X + 8},${cy} ${X},${cy + 8} ${X - 8},${cy}" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>`;
       svg += `<text x="${tx}" y="${cy + 4}" font-size="12" font-weight="700" fill="#b45309">${escapeHtml(item.name)}</text>`;
@@ -29823,13 +29891,21 @@ function renderOnboardingJourneyInspector() {
   const chips = `<div class="obj-crumbs"><span class="obj-chip" style="background:${item.phase.color};color:${item.phase.tab}">${escapeHtml(item.phase.label)}</span>`
     + `<span class="obj-chip">${item.type === "gate" ? `Gate ${gates.indexOf(item) + 1} of ${gates.length}` : `Stage ${stages.indexOf(item) + 1} of ${stages.length}`}</span>`
     + (item.branch ? '<span class="obj-chip" style="background:#f3e8ff;color:#7030a0">Post-go-live branch</span>' : "") + `</div>`;
-  const tagChips = (tags, states = []) => tags.length || states.length ? `<div class="obj-tags">${tags.map(t => `<span class="obj-tag">${escapeHtml(t)}</span>`).join("")}${states.map(s => `<span class="obj-state">${escapeHtml(s)}</span>`).join("")}</div>` : "";
+  // Each TAX code is a button: hover shows its taxonomy term, click opens it in Onboard taxonomy.
+  const taxChip = part => {
+    const m = part.match(/^(?:TAX-)?(\d{2}(?:\.\d{2})*)/);
+    const code = m ? `TAX-${m[1]}` : "";
+    return code && typeof nodeIndex !== "undefined" && nodeIndex.has(code)
+      ? `<button type="button" class="obj-tag obj-tax" data-tax="${code}">${escapeHtml(part)}</button>`
+      : `<span class="obj-tag">${escapeHtml(part)}</span>`;
+  };
+  const tagChips = (tags, states = []) => tags.length || states.length ? `<div class="obj-tags">${tags.flatMap(t => t.split("/").map(x => x.trim()).filter(Boolean)).map(taxChip).join("")}${states.map(s => `<span class="obj-state">${escapeHtml(s)}</span>`).join("")}</div>` : "";
   // Where this step meets the other route.
   const linksOut = (item.links || []).filter(l => j.models.onboarding?.byId[l.to]).map(l => `<div class="obj-outcome"><span class="obj-badge obj-badge-link">${l.dir === "out" ? "STARTS" : "NEEDS"}</span><span class="obj-outcome-text">${escapeHtml(l.title)}<small>${escapeHtml(l.text)}</small></span><button type="button" class="obj-link" data-route-link="${l.to}">Show ${escapeHtml(j.models.onboarding.byId[l.to].name)} on the log source journey &rsaquo;</button></div>`);
   const linksIn = j.route === "onboarding" && j.models.detection ? j.models.detection.links.filter(l => l.to === item.id).map(l => `<div class="obj-outcome"><span class="obj-badge obj-badge-link">DETECTION</span><span class="obj-outcome-text">${escapeHtml(l.title)}<small>${escapeHtml(l.text)}</small></span><button type="button" class="obj-link" data-detection-link="${l.from}">Show ${escapeHtml(j.models.detection.byId[l.from].name)} in the detection lifecycle &rsaquo;</button></div>`) : [];
   const linkSection = linksOut.length || linksIn.length ? `<div class="obj-sec">${j.route === "detection" ? "On the log source journey" : "In the detection lifecycle"}</div>${[...linksOut, ...linksIn].join("")}` : "";
   const stageBody = st => `${tagChips(st.tags, st.states)}${st.paragraphs.map(p => `<p class="obj-text">${escapeHtml(p)}</p>`).join("")}`
-    + (st.feeds.length ? `<div class="obj-sec">Feeds in</div><ul class="obj-feeds">${st.feeds.map(f => `<li>${escapeHtml(f)}</li>`).join("")}</ul>` : "")
+    + (st.feeds.length ? `<div class="obj-sec">Feeds in</div><ul class="obj-feeds">${st.feeds.map(f => `<li><b>${escapeHtml(f.title)}</b> ${escapeHtml(f.text)}</li>`).join("")}</ul>` : "")
     + `<div class="obj-actions">${st.actions.map(a => `<button type="button" class="obj-action" data-reference="${escapeHtml(a.detail)}">${escapeHtml(a.label)} &rsaquo;</button>`).join("")}<button type="button" class="obj-action" data-scroll="${st.id}">Open full stage detail &darr;</button></div>`;
   let body;
   if (item.type === "gate") {
@@ -29857,7 +29933,7 @@ function renderOnboardingJourneyInspector() {
     body = `<div class="obj-kind obj-kind-stage">&#9679; Stage</div><h3>${escapeHtml(item.title)}</h3>${stageBody(item)}${linkSection}`
       + (gate ? `<div class="obj-sec">Decided at</div><button type="button" class="obj-action" data-item-link="${gate.id}">&#9670; ${escapeHtml(gate.name)} &rsaquo;</button>` : "");
   }
-  return `<div class="obj-inspector-inner"><button type="button" class="obj-sheet-close" aria-label="Close">&times;</button>${chips}${body}
+  return `<div class="obj-inspector-inner"><button type="button" class="obj-sheet-close" aria-label="Close">&times;</button><div class="obj-tax-pop" id="objTaxPop" role="tooltip" hidden></div>${chips}${body}
     <div class="obj-pager"><button type="button" data-item-link="${prev?.id || ""}"${prev ? "" : " disabled"}>&lsaquo; ${escapeHtml(prev?.name || "")}</button><button type="button" data-item-link="${next?.id || ""}"${next ? "" : " disabled"}>${escapeHtml(next?.name || "")} &rsaquo;</button></div></div>`;
 }
 function renderOnboardingJourney(focusSelected) {
@@ -29914,8 +29990,9 @@ function initOnboardingFlowMap() {
   j.narrow = narrow.matches;
   narrow.addEventListener?.("change", event => { j.narrow = event.matches; j.open = false; renderOnboardingJourney(); });
   root.addEventListener("click", event => {
-    const target = event.target.closest("[data-item], [data-item-link], [data-route], [data-route-link], [data-detection-link], [data-phase], [data-layer], [data-reference], [data-scroll], .obj-sheet-close");
+    const target = event.target.closest("[data-tax], [data-item], [data-item-link], [data-route], [data-route-link], [data-detection-link], [data-phase], [data-layer], [data-reference], [data-scroll], .obj-sheet-close");
     if (!target || !root.contains(target)) return;
+    if (target.dataset.tax) { setActivePage("taxonomy"); selectTaxNodeFromTable(target.dataset.tax); return; }
     if (target.matches(".obj-sheet-close")) { j.open = false; renderOnboardingJourney(); return; }
     if (target.dataset.route) {
       if (!j.models[target.dataset.route] || j.route === target.dataset.route) return;
@@ -29960,6 +30037,24 @@ function initOnboardingFlowMap() {
     const next = items[items.findIndex(i => i.id === journeySelected()) + step];
     if (next) { event.preventDefault(); selectOnboardingJourneyItem(next.id, true); }
   });
+  const showTax = event => {
+    const chip = event.target.closest?.("[data-tax]");
+    const pop = document.getElementById("objTaxPop");
+    if (!chip || !pop) return;
+    const node = nodeIndex.get(chip.dataset.tax);
+    if (!node) return;
+    pop.innerHTML = `<span class="obj-tax-code">${escapeHtml(node.code)}</span><b>${escapeHtml(node.term)}</b><span>${escapeHtml(node.definition || "")}</span><em>Open in Onboard taxonomy &rsaquo;</em>`;
+    const inner = pop.parentElement.getBoundingClientRect(), r = chip.getBoundingClientRect();
+    pop.style.top = `${r.bottom - inner.top + 6}px`;
+    pop.style.left = `${Math.max(0, Math.min(r.left - inner.left, inner.width - 300))}px`;
+    pop.hidden = false;
+  };
+  const hideTax = event => { if (event.target.closest?.("[data-tax]")) { const pop = document.getElementById("objTaxPop"); if (pop) pop.hidden = true; } };
+  const inspectorEl = document.getElementById("objInspector");
+  inspectorEl.addEventListener("mouseover", showTax);
+  inspectorEl.addEventListener("focusin", showTax);
+  inspectorEl.addEventListener("mouseout", hideTax);
+  inspectorEl.addEventListener("focusout", hideTax);
   const search = document.getElementById("objSearch");
   search.addEventListener("input", () => { j.query = search.value.trim(); renderOnboardingJourney(); });
   search.addEventListener("keydown", event => {
