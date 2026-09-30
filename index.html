@@ -3978,16 +3978,99 @@
     .flow-badge.gate { background:#e0e7ff; color:#3730a3; }
     .onboarding-legend { display:flex; flex-wrap:wrap; gap:8px 18px; margin:0 0 26px; font-size:12.5px; color:#64748b; align-items:center; }
     .onboarding-legend span.flow-badge { margin-right:6px; }
-    .onboarding-flow-map { border:1px solid var(--border); border-radius:16px; background:#fff; box-shadow:0 6px 18px rgba(15,23,42,.05); padding:16px 18px 8px; margin-bottom:26px; }
-    .onboarding-flow-map-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 12px; margin-bottom:10px; }
-    .onboarding-flow-map-head strong { font-size:13px; color:#0f172a; }
-    .onboarding-flow-map-head span { font-size:11.5px; color:#64748b; line-height:1.5; }
-    .onboarding-flow-map-canvas { overflow-x:auto; }
-    .onboarding-flow-map-svg { display:block; min-width:640px; }
-    .ob-map-node { cursor:pointer; }
-    .ob-map-node rect { transition:filter .12s ease; }
-    .ob-map-node:hover rect, .ob-map-node:focus-visible rect { filter:brightness(1.2); }
-    .ob-map-node:focus-visible { outline:2px solid #0e7490; outline-offset:2px; }
+    .onboarding-flow-map { border:1px solid var(--border); border-radius:16px; background:#fff; box-shadow:0 6px 18px rgba(15,23,42,.05); margin-bottom:26px; }
+    .obj-top { display:grid; gap:10px; padding:14px 18px 12px; border-bottom:1px solid var(--border); }
+    .obj-top-row { display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; }
+    .obj-title { font-size:15px; color:#0f172a; }
+    .obj-stats { display:flex; flex-wrap:wrap; gap:6px; }
+    .obj-stat { font-size:11.5px; font-weight:700; color:#334155; background:#f8fafc; border:1px solid var(--border); border-radius:999px; padding:1px 9px; }
+    .obj-stat b { color:#0f172a; }
+    .obj-search { margin-left:auto; display:flex; align-items:center; gap:6px; border:1px solid var(--border); border-radius:10px; padding:4px 10px; color:#64748b; min-width:min(100%, 280px); }
+    .obj-search input { border:0; outline:0; padding:3px 0; min-width:0; flex:1; font-size:13px; background:transparent; box-shadow:none; }
+    .obj-search:focus-within { border-color:#7030a0; box-shadow:0 0 0 3px rgba(112,48,160,.15); }
+    .obj-search-count { font-size:11px; font-weight:700; white-space:nowrap; }
+    .obj-stepper { display:grid; grid-template-columns:repeat(6, minmax(0, 1fr)); gap:6px; }
+    .obj-step { display:block; min-width:0; text-align:left; border:1px solid transparent; border-radius:10px; padding:6px 9px 7px; cursor:pointer; font:inherit; }
+    .obj-step-name { display:flex; align-items:center; gap:6px; font-weight:800; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .obj-step-letter { display:inline-grid; place-items:center; flex:0 0 auto; width:19px; height:19px; border-radius:50%; color:#fff; font-size:10.5px; }
+    .obj-step-bar { display:flex; gap:2px; margin-top:5px; }
+    .obj-step-bar i { flex:1; height:4px; border-radius:2px; opacity:.3; }
+    .obj-step-bar i.done { opacity:1; }
+    .obj-step-meta { display:block; font-size:10.5px; color:#64748b; margin-top:2px; }
+    .obj-step[aria-current="true"] { box-shadow:0 0 0 2px currentColor inset; }
+    .obj-toggles { display:flex; flex-wrap:wrap; gap:6px; align-items:center; font-size:12px; color:#64748b; }
+    .obj-toggle { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); border-radius:999px; padding:2px 10px; font-size:12px; font-weight:700; color:#94a3b8; background:#fff; cursor:pointer; }
+    .obj-toggle[aria-pressed="true"] { color:#334155; background:#f8fafc; border-color:#cbd5e1; }
+    .obj-swatch { display:inline-block; width:16px; border-top:2.5px solid; }
+    .obj-swatch-hold { border-color:#c2410c; } .obj-swatch-stop { border-color:#b91c1c; } .obj-swatch-branch { border-color:#7030a0; }
+    .obj-keys { margin-left:auto; }
+    .obj-keys kbd { font:700 10px ui-monospace,Menlo,monospace; border:1px solid #cbd5e1; border-bottom-width:2px; border-radius:4px; padding:0 4px; color:#64748b; background:#fff; }
+    .obj-main { display:grid; grid-template-columns:minmax(0, 1fr) minmax(300px, 400px); }
+    .obj-map { padding:8px 0 14px; border-right:1px solid var(--border); min-width:0; }
+    .obj-map svg { display:block; width:100%; max-width:760px; height:auto; }
+    .obj-item { cursor:pointer; outline:none; }
+    .obj-item .obj-hit { fill:transparent; }
+    .obj-item:hover .obj-hit { fill:rgba(15,23,42,.04); }
+    .obj-item:focus-visible .obj-hit { fill:rgba(112,48,160,.08); stroke:#7030a0; stroke-width:2; }
+    .obj-dim { opacity:.28; }
+    .obj-inspector { padding:16px 18px 18px; min-width:0; }
+    .obj-inspector-inner { position:sticky; top:12px; }
+    .obj-crumbs { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+    .obj-chip { font-size:11px; font-weight:800; border-radius:999px; padding:2px 9px; background:#f1f5f9; color:#334155; }
+    .obj-kind { font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#b45309; }
+    .obj-kind-stage { color:#1f4e78; }
+    .obj-inspector h3 { margin:2px 0 6px; font-size:19px; line-height:1.25; color:#0f172a; }
+    .obj-why { margin:0 0 12px; color:#64748b; font-size:12.5px; }
+    .obj-tags { display:flex; flex-wrap:wrap; gap:4px; margin:0 0 8px; }
+    .obj-tag { font:700 10.5px ui-monospace,Menlo,monospace; background:#e0e7ff; color:#3730a3; border-radius:5px; padding:1px 6px; }
+    .obj-state { font-size:10px; font-weight:800; border:1px solid #94a3b8; color:#475569; border-radius:999px; padding:0 7px; }
+    .obj-outcome { display:grid; grid-template-columns:auto minmax(0, 1fr); gap:3px 10px; align-items:start; border:1px solid var(--border); border-radius:12px; padding:9px 11px; margin-bottom:7px; }
+    .obj-badge { font-size:10px; font-weight:800; letter-spacing:.05em; border-radius:6px; padding:3px 7px; margin-top:1px; }
+    .obj-badge-proceed { background:#dcfce7; color:#15803d; } .obj-badge-hold { background:#ffedd5; color:#c2410c; } .obj-badge-stop { background:#fee2e2; color:#b91c1c; }
+    .obj-outcome-text { font-size:13px; color:#334155; overflow-wrap:anywhere; }
+    .obj-outcome-text small { display:block; color:#64748b; font-size:11.5px; }
+    .obj-link { grid-column:2; justify-self:start; border:0; background:transparent; padding:0; font-size:12px; font-weight:800; color:#1d4ed8; cursor:pointer; text-align:left; }
+    .obj-link:hover { text-decoration:underline; }
+    .obj-sec { margin:14px 0 6px; font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#64748b; }
+    .obj-stagebox { border-radius:12px; background:#f8fafc; border:1px solid var(--border); padding:11px 13px; }
+    .obj-stagebox h4 { margin:0 0 6px; font-size:14.5px; }
+    .obj-stagebox p, .obj-inspector > .obj-inspector-inner > p.obj-text { margin:0 0 8px; font-size:13px; color:#334155; line-height:1.55; }
+    .obj-feeds { margin:0 0 8px; padding-left:18px; font-size:12.5px; color:#334155; }
+    .obj-actions { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+    .obj-action { max-width:100%; white-space:normal; overflow-wrap:anywhere; font-size:12px; font-weight:700; color:#1d4ed8; background:#fff; border:1px solid #bfdbfe; border-radius:8px; padding:5px 9px; cursor:pointer; text-align:left; }
+    .obj-pager { display:flex; justify-content:space-between; gap:8px; margin-top:14px; padding-top:12px; border-top:1px solid var(--border); }
+    .obj-pager button { flex:0 1 48%; min-width:0; white-space:normal; overflow-wrap:anywhere; font-size:12px; font-weight:700; border:1px solid var(--border); background:#fff; border-radius:9px; padding:6px 10px; color:#334155; cursor:pointer; text-align:left; }
+    .obj-pager button:last-child { text-align:right; }
+    .obj-pager button:disabled { visibility:hidden; }
+    .obj-sheet-close { display:none; }
+    .obj-list { display:grid; gap:6px; padding:10px 12px; }
+    .obj-list-phase { display:flex; justify-content:space-between; align-items:center; width:100%; border:0; border-radius:10px; padding:8px 10px; font-size:12.5px; font-weight:800; cursor:pointer; text-align:left; }
+    .obj-list-item { display:flex; align-items:center; gap:9px; width:100%; border:0; background:transparent; padding:6px 6px; border-radius:8px; font-size:13px; color:#0f172a; cursor:pointer; text-align:left; }
+    .obj-list-item.obj-gate { color:#b45309; font-weight:700; }
+    .obj-list-item[aria-current="true"] { background:#fff7ed; }
+    .obj-list-dot { flex:0 0 auto; width:12px; height:12px; border-radius:50%; border:3px solid #1f4e78; background:#fff; }
+    .obj-gate .obj-list-dot { width:10px; height:10px; border-radius:2px; transform:rotate(45deg); border:2px solid #b45309; background:#fffbeb; }
+    .obj-branch .obj-list-dot { border-color:#7030a0; }
+    @media (max-width: 1000px) {
+      .obj-main { grid-template-columns:minmax(0, 1fr); }
+      .obj-map { border-right:0; border-bottom:1px solid var(--border); }
+      .obj-inspector-inner { position:static; }
+    }
+    @media (max-width: 760px) {
+      .obj-stepper { display:flex; overflow-x:auto; padding-bottom:2px; }
+      .obj-step { flex:0 0 auto; }
+      .obj-step-bar, .obj-step-meta, .obj-keys { display:none; }
+      .obj-search { margin-left:0; flex:1 1 100%; }
+      .obj-map { border-bottom:0; padding:0; }
+      .obj-inspector { position:fixed; left:0; right:0; bottom:0; z-index:60; max-height:72vh; overflow-y:auto; background:#fff; border-radius:18px 18px 0 0; box-shadow:0 -12px 30px rgba(15,23,42,.2); padding:14px 16px 18px; transform:translateY(105%); transition:transform .2s ease; }
+      .obj-inspector.obj-open { transform:none; }
+      .obj-sheet-close { display:block; position:absolute; top:8px; right:10px; border:0; background:#f1f5f9; border-radius:999px; width:30px; height:30px; font-size:16px; cursor:pointer; }
+    }
+    @media print {
+      .obj-toggles, .obj-search, .obj-inspector { display:none !important; }
+      .obj-main { grid-template-columns:1fr; }
+      .obj-map { border:0; }
+    }
     .onboarding-flow { display:flex; flex-direction:column; align-items:center; gap:0; }
     .onboarding-stage, .onboarding-gate { width:100%; max-width:660px; border-radius:14px; padding:16px 20px; }
     .onboarding-stage { border:1px solid var(--border); background:#fff; box-shadow:0 6px 18px rgba(15,23,42,.05); }
@@ -4493,7 +4576,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.30 &middot; build 142</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.30 &middot; build 143</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -4659,12 +4742,26 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <span><span class="flow-badge state">STATE</span>Lifecycle state, TAX-06.04.01</span>
     </div>
 
-    <div class="onboarding-flow-map" aria-label="Compact onboarding flow map">
-      <div class="onboarding-flow-map-head">
-        <strong>Flow map</strong>
-        <span>Click any stage to jump to its detail below. Orange lines are HOLD loop-backs; purple lines are the post-go-live Detection Engineering branch; red marks are STOP/reject points.</span>
+    <div class="onboarding-flow-map ob-journey" id="onboardingJourney" aria-label="Onboarding journey map">
+      <div class="obj-top">
+        <div class="obj-top-row">
+          <strong class="obj-title">Onboarding journey</strong>
+          <div class="obj-stats" id="objStats"></div>
+          <label class="obj-search"><span aria-hidden="true">&#128269;</span><input type="search" id="objSearch" placeholder="Find a stage, gate or TAX code" autocomplete="off" spellcheck="false" aria-label="Find a stage, gate or TAX code"><span id="objSearchCount" class="obj-search-count" aria-live="polite"></span></label>
+        </div>
+        <div class="obj-stepper" id="objStepper" role="group" aria-label="Phases"></div>
+        <div class="obj-toggles" role="group" aria-label="Show on the map">
+          <span class="obj-toggles-label">Show:</span>
+          <button type="button" class="obj-toggle" data-layer="loops" aria-pressed="true"><i class="obj-swatch obj-swatch-hold"></i>Loop-backs</button>
+          <button type="button" class="obj-toggle" data-layer="stops" aria-pressed="true"><i class="obj-swatch obj-swatch-stop"></i>Stop points</button>
+          <button type="button" class="obj-toggle" data-layer="branch" aria-pressed="true"><i class="obj-swatch obj-swatch-branch"></i>Post-go-live branch</button>
+          <span class="obj-keys">Select a stage or gate for its detail &middot; step with <kbd>&uarr;</kbd> <kbd>&darr;</kbd></span>
+        </div>
       </div>
-      <div id="onboardingFlowMapWrap" class="onboarding-flow-map-canvas"></div>
+      <div class="obj-main">
+        <div class="obj-map" id="onboardingFlowMapWrap"></div>
+        <aside class="obj-inspector" id="objInspector" aria-live="polite" aria-label="Selected stage or gate"></aside>
+      </div>
     </div>
 
     <div class="onboarding-flow">
@@ -4694,7 +4791,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
         <h5>Gate &middot; Viability Decision <span class="assessment-tag">TAX-07.01.04</span></h5>
         <div class="onboarding-branches">
           <div class="onboarding-branch"><span class="flow-badge stop">STOP</span>Not Justified / Not Currently Viable &rarr; reject or park</div>
-          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Further Investigation Required &rarr; back to viability scoring</div>
+          <div class="onboarding-branch" data-to="ob-viability"><span class="flow-badge hold">HOLD</span>Further Investigation Required &rarr; back to viability scoring</div>
           <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Viable / Viable with Conditions &rarr; continue</div>
         </div>
       </div>
@@ -4746,7 +4843,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <div class="onboarding-gate">
         <h5>Gate &middot; Connectivity Succeeded?</h5>
         <div class="onboarding-branches">
-          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Firewall, TLS, authentication or routing failure &rarr; back to topology/collection component configuration</div>
+          <div class="onboarding-branch" data-to="ob-topology"><span class="flow-badge hold">HOLD</span>Firewall, TLS, authentication or routing failure &rarr; back to topology/collection component configuration</div>
           <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Transport succeeds securely &rarr; continue to engineering build</div>
         </div>
       </div>
@@ -4784,7 +4881,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <div class="onboarding-gate">
         <h5>Gate &middot; Ingestion Confirmed?</h5>
         <div class="onboarding-branches">
-          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Missing events, wrong index or sourcetype &rarr; back to engineering build</div>
+          <div class="onboarding-branch" data-to="ob-build"><span class="flow-badge hold">HOLD</span>Missing events, wrong index or sourcetype &rarr; back to engineering build</div>
           <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Consistently searchable in the intended index &rarr; continue to data quality assessment</div>
         </div>
       </div>
@@ -4800,7 +4897,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <div class="onboarding-gate">
         <h5>Gate &middot; Quality gates pass?</h5>
         <div class="onboarding-branches">
-          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>No &rarr; back to engineering build</div>
+          <div class="onboarding-branch" data-to="ob-build"><span class="flow-badge hold">HOLD</span>No &rarr; back to engineering build</div>
           <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Yes &rarr; pre-ingest cyber-value gates</div>
         </div>
       </div>
@@ -4816,7 +4913,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <div class="onboarding-gate">
         <h5>Gate &middot; Overall Gate Result <span class="assessment-tag">TAX-06.05.02.04</span></h5>
         <div class="onboarding-branches">
-          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Fail &rarr; remediate, then back to engineering build</div>
+          <div class="onboarding-branch" data-to="ob-build"><span class="flow-badge hold">HOLD</span>Fail &rarr; remediate, then back to engineering build</div>
           <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Pass &rarr; cyber value scoring</div>
         </div>
       </div>
@@ -4847,7 +4944,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <div class="onboarding-gate">
         <h5>Gate &middot; Build &amp; Acceptance Result</h5>
         <div class="onboarding-branches">
-          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Outstanding actions &rarr; back to implementation</div>
+          <div class="onboarding-branch" data-to="ob-implementation"><span class="flow-badge hold">HOLD</span>Outstanding actions &rarr; back to implementation</div>
           <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Accepted &rarr; governance approval</div>
         </div>
       </div>
@@ -4863,7 +4960,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
         <h5>Gate &middot; Approval Decision <span class="assessment-tag">TAX-02.03.03</span></h5>
         <div class="onboarding-branches">
           <div class="onboarding-branch"><span class="flow-badge stop">STOP</span>Rejected &rarr; does not proceed to production</div>
-          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Approved with conditions &rarr; resolve conditions, then re-submit</div>
+          <div class="onboarding-branch" data-to="ob-governance"><span class="flow-badge hold">HOLD</span>Approved with conditions &rarr; resolve conditions, then re-submit</div>
           <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Approved &rarr; operational readiness</div>
         </div>
       </div>
@@ -4878,7 +4975,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <div class="onboarding-gate">
         <h5>Gate &middot; Operational Readiness Confirmed?</h5>
         <div class="onboarding-branches">
-          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>No monitoring, runbook or owner &rarr; back to implementation</div>
+          <div class="onboarding-branch" data-to="ob-implementation"><span class="flow-badge hold">HOLD</span>No monitoring, runbook or owner &rarr; back to implementation</div>
           <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Established &rarr; SOC readiness</div>
         </div>
       </div>
@@ -4893,7 +4990,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <div class="onboarding-gate">
         <h5>Gate &middot; SOC Ready?</h5>
         <div class="onboarding-branches">
-          <div class="onboarding-branch"><span class="flow-badge hold">HOLD</span>Detection/investigation cannot reliably use the data &rarr; back to engineering build</div>
+          <div class="onboarding-branch" data-to="ob-build"><span class="flow-badge hold">HOLD</span>Detection/investigation cannot reliably use the data &rarr; back to engineering build</div>
           <div class="onboarding-branch"><span class="flow-badge proceed">PROCEED</span>Investigation workflow succeeds &rarr; go live</div>
         </div>
       </div>
@@ -4910,7 +5007,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
         <p>Operational maturity, health &amp; monitoring coverage, and review/improvement actions &mdash; backed by reusable health checks (TAX-04.10) and assurance roll-ups (TAX-06.03). This is what the Operational Assurance Index (OAI) scores. A failing health check or assurance roll-up moves the lifecycle state to <span class="flow-badge state">DEGRADED</span> until remediated.</p>
       </div>
 
-      <div class="onboarding-loopback">
+      <div class="onboarding-loopback" data-from="ob-sustainment" data-to="ob-governance">
         <span class="flow-badge state">EXPIRED</span>
         <div>
           <strong>Governance approval expiry</strong>
@@ -4957,7 +5054,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <div class="onboarding-gate">
         <h5>Gate &middot; Retain, Filter or Retire Decision</h5>
         <div class="onboarding-branches">
-          <div class="onboarding-branch"><span class="flow-badge proceed">RETAIN</span>Continue in sustainment</div>
+          <div class="onboarding-branch" data-to="ob-sustainment"><span class="flow-badge proceed">RETAIN</span>Continue in sustainment</div>
           <div class="onboarding-branch"><span class="flow-badge hold">FILTER</span>Adjust pre-ingest filtering, then continue</div>
           <div class="onboarding-branch"><span class="flow-badge stop">RETIRE</span>Offboard the source <span class="flow-badge state">RETIRED</span></div>
         </div>
@@ -29330,76 +29427,13 @@ function expandReferenceSection(id) {
   if (toggle) toggle.setAttribute("aria-expanded", "true");
 }
 
-const ONBOARDING_MAP_ROWS = [
-  { id: "ob-candidate", label: "Candidate log source identified", badge: "PLANNED" },
-  { id: "ob-viability", label: "Phase 1: Viability Assessment" },
-  { id: "ob-worthiness", label: "Log Worthiness" },
-  { id: "ob-topology", label: "Select pattern & topology" },
-  { id: "ob-connectivity", label: "Connectivity validation" },
-  { id: "ob-build", label: "Engineering build" },
-  { id: "ob-ingestion", label: "Ingestion check" },
-  { id: "ob-quality", label: "Data quality assessment" },
-  { id: "ob-preingest", label: "Pre-ingest cyber-value gates" },
-  { id: "ob-cybervalue", label: "Cyber value scoring" },
-  { id: "ob-implementation", label: "Log Implementation" },
-  { id: "ob-governance", label: "Governance approval" },
-  { id: "ob-opsready", label: "Operational readiness" },
-  { id: "ob-socready", label: "SOC readiness" },
-  { id: "ob-golive", label: "GO-LIVE", badge: "ACTIVE" },
-  { id: "ob-sustainment", label: "Log Sustainment", note: "Value expires → loops back to Governance approval for re-approval" },
-  { id: "ob-review90", label: "90-day value review" },
-];
-// Each gate is a decision point that sits in the gap right after its stage.
-// "outcomes" lists only the exceptional branches (a plain pass-through down to
-// the next stage is implied and not listed); tone "stop" ends the flow, tone
-// "loop" sends it back to an earlier stage for rework.
-const ONBOARDING_MAP_GATES = [
-  { after: "ob-candidate", label: "Platform Registered?" },
-  { after: "ob-viability", label: "Viability Decision", outcomes: [
-    { tone: "stop", text: "Fail → Stop: Not viable" },
-    { tone: "loop", text: "Rework → retry viability assessment" },
-  ] },
-  { after: "ob-worthiness", label: "Worthiness Decision", outcomes: [
-    { tone: "stop", text: "Fail → Stop: Not worth building" },
-  ] },
-  { after: "ob-connectivity", label: "Connectivity Succeeded?", outcomes: [
-    { tone: "loop", text: "Fail → Hold, return to Select pattern & topology" },
-  ] },
-  { after: "ob-ingestion", label: "Ingestion Confirmed?", outcomes: [
-    { tone: "loop", text: "Fail → Hold, return to Engineering build" },
-  ] },
-  { after: "ob-quality", label: "Quality Gates Pass?", outcomes: [
-    { tone: "loop", text: "Fail → Hold, return to Engineering build" },
-  ] },
-  { after: "ob-preingest", label: "Overall Gate Result", outcomes: [
-    { tone: "loop", text: "Fail → Hold, return to Engineering build" },
-  ] },
-  { after: "ob-cybervalue", label: "Ingestion Decision", outcomes: [
-    { tone: "stop", text: "Fail → Stop: Reject" },
-  ] },
-  { after: "ob-implementation", label: "Build & Acceptance Result", outcomes: [
-    { tone: "loop", text: "Fail → retry build & acceptance" },
-  ] },
-  { after: "ob-governance", label: "Approval Decision", outcomes: [
-    { tone: "stop", text: "Rejected → Stop" },
-    { tone: "loop", text: "Returned → retry approval" },
-  ] },
-  { after: "ob-opsready", label: "Operational Readiness Confirmed?", outcomes: [
-    { tone: "loop", text: "Fail → Hold, return to Log Implementation" },
-  ] },
-  { after: "ob-socready", label: "SOC Ready?", outcomes: [
-    { tone: "loop", text: "Fail → Hold, return to Engineering build" },
-  ] },
-  { after: "ob-review90", label: "Retain / Filter / Retire Decision", terminal: true, outcomes: [
-    { tone: "loop", text: "Retain → continue Log Sustainment" },
-    { tone: "loop", text: "Filter → return to Pre-ingest cyber-value gates" },
-    { tone: "stop", text: "Retire → Stop" },
-  ] },
-];
-const ONBOARDING_MAP_BRANCH = [
-  { id: "ob-detection", label: "Detection Engineering" },
-  { id: "ob-response", label: "Response readiness" },
-];
+// --- Onboarding journey map ---
+// A route map with an inspector beside it. Everything comes from the stage and gate detail
+// below it (the .onboarding-flow markup), so the map can't drift from that text: a branch's
+// data-to names the stage it loops back to, and the approval-expiry loop-back carries
+// data-from / data-to. Only short station names and the phase grouping live here.
+const ONBOARDING_JOURNEY_NAMES = { "ob-viability": "Viability Assessment", "ob-topology": "Select pattern & topology", "ob-golive": "GO-LIVE" };
+const ONBOARDING_JOURNEY_BRANCH = new Set(["ob-detection", "ob-response"]);
 const ONBOARDING_MAP_PHASES = [
   { letter: "A", short: "Intake & Viability", label: "A · Intake & Viability", color: "#eef2ff", tab: "#4338ca", from: "ob-candidate", to: "ob-viability" },
   { letter: "B", short: "Worthiness & Design", label: "B · Worthiness & Design", color: "#ecfdf5", tab: "#047857", from: "ob-worthiness", to: "ob-connectivity" },
@@ -29408,131 +29442,277 @@ const ONBOARDING_MAP_PHASES = [
   { letter: "E", short: "Production Ready", label: "E · Production Readiness", color: "#f0fdf4", tab: "#15803d", from: "ob-opsready", to: "ob-golive" },
   { letter: "F", short: "Sustainment & Value", label: "F · Sustainment & Value Realisation", color: "#faf5ff", tab: "#7030a0", from: "ob-sustainment", to: "ob-review90" },
 ];
-
-function renderOnboardingFlowMap() {
-  const rows = ONBOARDING_MAP_ROWS;
-  const rowH = 30, pitch = 92, topPad = 26;
-  const nodeX = 30, nodeW = 232;
-  const idxOf = {};
-  rows.forEach((r, i) => { idxOf[r.id] = i; });
-  const yOf = i => topPad + i * pitch;
-  const halfGap = (pitch - rowH) / 2;
-  // a gate sits in the gap after its stage; the terminal gate (after the last row) sits just below it
-  const gateYOf = afterId => yOf(idxOf[afterId]) + rowH + halfGap;
-
-  const statusX = nodeX + nodeW + 16, statusWidth = 250;
-  const branchX = statusX + statusWidth + 40, branchW = 196;
-  const sustIdx = idxOf["ob-sustainment"];
-  const branchYs = ONBOARDING_MAP_BRANCH.map((b, i) => topPad + sustIdx * pitch + (i + 1) * pitch);
-
-  const mainColumnHeight = gateYOf(rows[rows.length - 1].id) + 30;
-  const branchColumnHeight = branchYs.length ? branchYs[branchYs.length - 1] + rowH + 24 : 0;
-  const totalHeight = Math.max(mainColumnHeight, branchColumnHeight);
-  const totalWidth = branchX + branchW + 16;
-
-  const phaseBands = ONBOARDING_MAP_PHASES.map((p, pi) => {
-    const isLast = pi === ONBOARDING_MAP_PHASES.length - 1;
-    const top = yOf(idxOf[p.from]) - 18;
-    const bottom = isLast ? totalHeight - 6 : yOf(idxOf[p.to]) + rowH + 5;
-    const height = bottom - top;
-    const width = totalWidth - 8;
-    // horizontal label sits over the node column only, clear of both the gate
-    // status text column (starts at statusX) and the row-badge text (right-
-    // aligned above the node) so none of the three ever collide
-    const labelX = nodeX + 4, labelY = top + 13;
-    return `<g>
-      <title>${escapeHtml(p.label)}</title>
-      <rect x="4" y="${top}" width="${width}" height="${height}" rx="8" fill="${p.color}" />
-      <rect x="4" y="${top}" width="4" height="${height}" fill="${p.tab}" />
-      <text x="${labelX}" y="${labelY}" text-anchor="start" font-size="11" font-weight="800" fill="${p.tab}" letter-spacing="0.2">${p.letter} &middot; ${escapeHtml(p.short)}</text>
-    </g>`;
-  }).join("");
-
-  const nodesSvg = rows.map((r, i) => {
-    const y = yOf(i);
-    const fill = r.id === "ob-golive" ? "#166534" : "#1f4e78";
-    return `<g class="ob-map-node" data-jump="${r.id}" tabindex="0" role="button" aria-label="Jump to ${escapeHtml(r.label)}">
-      <rect x="${nodeX}" y="${y}" width="${nodeW}" height="${rowH}" rx="7" fill="${fill}" />
-      <text x="${nodeX + nodeW / 2}" y="${y + rowH / 2 + 4}" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">${escapeHtml(r.label)}</text>
-      ${r.badge ? `<text x="${nodeX + nodeW - 8}" y="${y - 4}" text-anchor="end" font-size="9" fill="#166534" font-weight="700">${escapeHtml(r.badge)}</text>` : ""}
-    </g>
-    ${r.note ? `<text x="${nodeX + nodeW / 2}" y="${y + rowH + 13}" text-anchor="middle" font-size="7.6" fill="#c2410c" font-style="italic">${escapeHtml(r.note)}</text>` : ""}`;
-  }).join("");
-
-  let mainArrows = "";
-  for (let i = 0; i < rows.length - 1; i++) {
-    const x = nodeX + nodeW / 2;
-    mainArrows += `<line x1="${x}" y1="${yOf(i) + rowH}" x2="${x}" y2="${yOf(i + 1)}" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#obArrow)" />`;
-  }
-  // the terminal gate (after the last row) has no next stage below it -- draw its short stub arrow down into the diamond
-  const lastGateY = gateYOf(rows[rows.length - 1].id);
-  mainArrows += `<line x1="${nodeX + nodeW / 2}" y1="${yOf(rows.length - 1) + rowH}" x2="${nodeX + nodeW / 2}" y2="${lastGateY - 7}" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#obArrow)" />`;
-
-  // Each gate renders as a diamond plus a title + status text block placed just
-  // to its right -- title always shown, status lines cover every possible
-  // outcome of the decision (a plain pass-through is implied unless the gate
-  // is terminal, where every outcome is spelled out explicitly).
-  const gateSize = 9;
-  const TONE_COLOR = { pass: "#475569", stop: "#b91c1c", loop: "#c2410c" };
-  const gatesSvg = ONBOARDING_MAP_GATES.map(g => {
-    const cx = nodeX + nodeW / 2, cy = gateYOf(g.after);
-    const pts = `${cx},${cy - gateSize} ${cx + gateSize},${cy} ${cx},${cy + gateSize} ${cx - gateSize},${cy}`;
-    const lines = g.terminal ? [] : [{ tone: "pass", text: "Pass → continue" }];
-    (g.outcomes || []).forEach(o => lines.push(o));
-    const lineH = 10;
-    const totalLines = lines.length + 1; // +1 for the title line
-    const blockTop = cy - (totalLines * lineH) / 2 + lineH * 0.8;
-    const titleText = `<text x="${statusX}" y="${blockTop}" font-size="8.6" font-weight="700" fill="#1f2937">${escapeHtml(g.label)}</text>`;
-    const statusLines = lines.map((l, i) => `<text x="${statusX}" y="${blockTop + lineH * (i + 1)}" font-size="7.5" fill="${TONE_COLOR[l.tone]}">${escapeHtml(l.text)}</text>`).join("");
-    return `<g><title>Gate &middot; ${escapeHtml(g.label)}</title><polygon points="${pts}" fill="#fffbeb" stroke="#b45309" stroke-width="1.4" /></g>
-      ${titleText}
-      ${statusLines}`;
-  }).join("");
-
-  let branchPaths = "";
-  let branchNodes = "";
-  let prevX = nodeX + nodeW, prevY = yOf(sustIdx) + rowH / 2;
-  ONBOARDING_MAP_BRANCH.forEach((b, i) => {
-    const y = branchYs[i];
-    branchPaths += `<path d="M ${prevX} ${prevY} L ${branchX - 14} ${prevY} L ${branchX - 14} ${y + rowH / 2} L ${branchX} ${y + rowH / 2}" fill="none" stroke="#7030a0" stroke-width="1.3" marker-end="url(#obArrowPurple)" />`;
-    branchNodes += `<g class="ob-map-node" data-jump="${b.id}" tabindex="0" role="button" aria-label="Jump to ${escapeHtml(b.label)}">
-        <rect x="${branchX}" y="${y}" width="${branchW}" height="${rowH}" rx="7" fill="#7030a0" />
-        <text x="${branchX + branchW / 2}" y="${y + rowH / 2 + 4}" text-anchor="middle" fill="#fff" font-size="10.5" font-weight="600">${escapeHtml(b.label)}</text>
-      </g>`;
-    prevX = branchX + branchW; prevY = y + rowH / 2;
+function onboardingJourneyModel(flow) {
+  const text = el => (el ? el.textContent.replace(/\s+/g, " ").trim() : "");
+  const without = (el, selector) => { const copy = el.cloneNode(true); copy.querySelectorAll(selector).forEach(x => x.remove()); return text(copy); };
+  const items = [], loops = [];
+  let stage = null, phaseIndex = -1;
+  [...flow.children].forEach(el => {
+    if (el.matches(".onboarding-stage[id]")) {
+      const next = ONBOARDING_MAP_PHASES[phaseIndex + 1];
+      if (next && next.from === el.id) phaseIndex += 1;
+      const h4 = el.querySelector("h4");
+      stage = {
+        type: "stage", id: el.id, phase: ONBOARDING_MAP_PHASES[Math.max(phaseIndex, 0)], branch: ONBOARDING_JOURNEY_BRANCH.has(el.id),
+        title: without(h4, ".assessment-tag, .flow-badge"),
+        tags: [...h4.querySelectorAll(".assessment-tag")].map(text),
+        states: [...h4.querySelectorAll(".flow-badge")].map(text),
+        paragraphs: [...el.querySelectorAll(":scope > p")].map(text),
+        actions: [...el.querySelectorAll("[data-open-reference-detail]")].map(b => ({ label: text(b), detail: b.dataset.openReferenceDetail })),
+        feeds: []
+      };
+      stage.name = ONBOARDING_JOURNEY_NAMES[el.id] || stage.title;
+      items.push(stage);
+    } else if (el.matches(".onboarding-gate") && stage) {
+      const h5 = el.querySelector("h5");
+      items.push({
+        type: "gate", id: `gate-${stage.id}`, after: stage.id, phase: stage.phase,
+        name: without(h5, ".assessment-tag").replace(/^Gate\s*·\s*/, ""),
+        tags: [...h5.querySelectorAll(".assessment-tag")].map(text),
+        outcomes: [...el.querySelectorAll(".onboarding-branch")].map(branch => {
+          const badge = branch.querySelector(".flow-badge");
+          const tone = ["proceed", "hold", "stop"].find(t => badge?.classList.contains(t)) || "hold";
+          return { tone, badge: text(badge), text: without(branch, ".flow-badge"), states: [...branch.querySelectorAll(".flow-badge.state")].map(text), to: branch.dataset.to || "" };
+        })
+      });
+    } else if (el.matches(".onboarding-feed") && stage) {
+      stage.feeds.push(text(el.querySelector("strong")));
+    } else if (el.matches(".onboarding-loopback[data-to]")) {
+      loops.push({ from: el.dataset.from, to: el.dataset.to, tone: "expire", label: text(el.querySelector("strong")) });
+    }
   });
-  const reviewY = yOf(idxOf["ob-review90"]) + rowH / 2;
-  branchPaths += `<path d="M ${prevX} ${prevY} L ${branchX + branchW + 14} ${prevY} L ${branchX + branchW + 14} ${reviewY} L ${nodeX + nodeW} ${reviewY}" fill="none" stroke="#7030a0" stroke-width="1.3" marker-end="url(#obArrowPurple)" />`;
-  const branchSvg = branchPaths + branchNodes;
-
-  return `<svg class="onboarding-flow-map-svg" viewBox="0 0 ${totalWidth} ${totalHeight}" width="${totalWidth}" height="${totalHeight}" role="img" aria-label="Onboarding flow map: click a stage to jump to its detail">
-    <defs>
-      <marker id="obArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
-      <marker id="obArrowPurple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7030a0"/></marker>
-    </defs>
-    ${phaseBands}
-    ${mainArrows}
-    ${gatesSvg}
-    ${branchSvg}
-    ${nodesSvg}
-  </svg>`;
+  items.filter(i => i.type === "gate").forEach(g => g.outcomes.filter(o => o.to).forEach(o => loops.unshift({ gate: g.id, from: g.id, to: o.to, tone: o.tone === "proceed" ? "cycle" : "hold" })));
+  return { items, loops, byId: Object.fromEntries(items.map(i => [i.id, i])) };
+}
+const onboardingJourney = { model: null, selected: "", query: "", show: { loops: true, stops: true, branch: true }, narrow: false, open: false };
+function onboardingJourneyMatches(item, q) {
+  if (!q) return true;
+  const hay = [item.name, item.title || "", ...(item.tags || []), ...(item.paragraphs || []), ...(item.outcomes || []).map(o => o.text)].join(" ").toLowerCase();
+  return hay.includes(q.toLowerCase());
+}
+function onboardingJourneyVisible() {
+  const { model, show } = onboardingJourney;
+  return model.items.filter(i => show.branch || !i.branch);
+}
+// The route as an SVG: one line, phase header rows, loop-backs as lanes to its left and
+// stop points as red terminators to its right. The selected gate's loops are emphasised.
+function renderOnboardingJourneyMap() {
+  const { model, selected, query, show } = onboardingJourney;
+  const items = onboardingJourneyVisible();
+  const W = 640, X = 170, BX = X + 30;
+  const pos = {}, bands = [];
+  let y = 14, phase = null;
+  items.forEach(item => {
+    if (item.phase !== phase) { if (bands.length) bands[bands.length - 1].end = y - 4; bands.push({ p: item.phase, start: y }); y += 34; phase = item.phase; }
+    pos[item.id] = y + (item.type === "stage" ? 16 : 14);
+    y += item.type === "stage" ? (item.tags.length ? 46 : 38) : 34;
+  });
+  if (bands.length) bands[bands.length - 1].end = y + 6;
+  const H = y + 14;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="group" aria-label="Onboarding route: ${items.length} stages and gates" font-family="system-ui,-apple-system,Segoe UI,sans-serif">
+    <defs><marker id="objArrowHold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#c2410c"/></marker>
+    <marker id="objArrowCycle" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#15803d"/></marker></defs>`;
+  bands.forEach(b => {
+    svg += `<rect x="10" y="${b.start}" width="${W - 20}" height="${b.end - b.start}" rx="12" fill="${b.p.color}" opacity=".8"/>
+      <circle cx="34" cy="${b.start + 17}" r="12" fill="${b.p.tab}"/><text x="34" y="${b.start + 21.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">${b.p.letter}</text>
+      <text x="${X + 24}" y="${b.start + 21}" font-size="11.5" font-weight="800" fill="${b.p.tab}" letter-spacing=".06em">${escapeHtml(b.p.label.replace(/^[A-F] · /, "").toUpperCase())}</text>`;
+  });
+  const main = items.filter(i => !i.branch);
+  svg += `<path d="M ${X} ${pos[main[0].id]} V ${pos[main[main.length - 1].id]}" stroke="#1f4e78" stroke-width="5" stroke-linecap="round" fill="none"/>`;
+  const branch = items.filter(i => i.branch);
+  if (branch.length && pos["ob-sustainment"] && pos["ob-review90"]) {
+    const fy = pos["ob-sustainment"], jy = pos["ob-review90"];
+    svg += `<path d="M ${X} ${fy} C ${X} ${fy + 20}, ${BX} ${fy + 10}, ${BX} ${fy + 30} V ${jy - 30} C ${BX} ${jy - 10}, ${X} ${jy - 20}, ${X} ${jy}" stroke="#7030a0" stroke-width="4" fill="none"/>`;
+  }
+  if (show.loops) {
+    const lanes = [];
+    const paths = model.loops.filter(l => pos[l.from] && pos[l.to]).map(l => {
+      const fromY = pos[l.from], toY = pos[l.to];
+      let lane = lanes.findIndex(L => L.every(o => o.to === l.to || o.hi < toY - 6 || o.lo > fromY + 6));
+      if (lane === -1) { lanes.push([]); lane = lanes.length - 1; }
+      lanes[lane].push({ lo: toY, hi: fromY, to: l.to });
+      const lx = X - 26 - lane * 15, r = 8;
+      return { l, lx, d: `M ${X - 9} ${fromY} H ${lx + r} Q ${lx} ${fromY} ${lx} ${fromY - r} V ${toY + r} Q ${lx} ${toY} ${lx + r} ${toY} H ${X - 10}` };
+    });
+    const focus = selected && model.byId[selected]?.type === "gate" ? selected : "";
+    paths.forEach(({ l, d, lx }) => {
+      const on = focus ? l.from === focus : true, emphasised = focus && l.from === focus;
+      const color = l.tone === "cycle" ? "#15803d" : "#c2410c";
+      if (emphasised) svg += `<path d="${d}" stroke="#fdba74" stroke-width="8" fill="none" opacity=".55"/>`;
+      svg += `<path class="obj-loop" data-loop-from="${l.from}" data-loop-to="${l.to}" d="${d}" stroke="${color}" stroke-width="${emphasised ? 2.8 : 1.6}" fill="none"${l.tone === "expire" ? ' stroke-dasharray="5 4"' : ""} marker-end="url(#${l.tone === "cycle" ? "objArrowCycle" : "objArrowHold"})" opacity="${on ? (emphasised ? 1 : .7) : .25}"><title>${escapeHtml(l.label || "Loop-back")}</title></path>`;
+      if (l.tone === "expire") svg += `<text x="${lx - 5}" y="${(pos[l.from] + pos[l.to]) / 2}" font-size="10" fill="#c2410c" font-style="italic" text-anchor="middle" transform="rotate(-90 ${lx - 5} ${(pos[l.from] + pos[l.to]) / 2})">approval expires</text>`;
+    });
+  }
+  items.forEach(item => {
+    const cy = pos[item.id], sx = item.branch ? BX : X, tx = sx + 24;
+    const dim = query && !onboardingJourneyMatches(item, query) ? " obj-dim" : "";
+    const isSel = item.id === selected;
+    const label = item.type === "stage" ? `Stage: ${item.name}` : `Gate: ${item.name}`;
+    svg += `<g class="obj-item${dim}" data-item="${item.id}" tabindex="0" role="button" aria-label="${escapeHtml(label)}" aria-pressed="${isSel}">`;
+    svg += `<rect class="obj-hit" x="${X - 16}" y="${cy - 16}" width="${W - X}" height="32" rx="9"${isSel ? ' style="fill:#fff7ed;stroke:#f59e0b;stroke-width:2"' : ""}/>`;
+    if (item.type === "stage") {
+      const golive = item.id === "ob-golive";
+      const color = item.branch ? "#7030a0" : golive ? "#15803d" : "#1f4e78";
+      svg += `<circle cx="${sx}" cy="${cy}" r="${golive ? 10 : 8}" fill="#fff" stroke="${color}" stroke-width="4"/>`;
+      svg += `<text x="${tx}" y="${cy + 4.5}" font-size="13.5" font-weight="${golive ? 800 : 650}" fill="${golive ? "#15803d" : "#0f172a"}">${escapeHtml(item.name)}</text>`;
+      if (item.tags.length) svg += `<text x="${tx}" y="${cy + 20}" font-size="10.5" fill="#64748b" font-family="ui-monospace,Menlo,monospace">${escapeHtml(item.tags[0])}</text>`;
+      const state = item.states.filter(s => s !== "GO-LIVE").pop();
+      if (state) { const w = state.length * 7 + 14; svg += `<rect x="${W - 30 - w}" y="${cy - 9}" width="${w}" height="18" rx="9" fill="#fff" stroke="#94a3b8"/><text x="${W - 30 - w / 2}" y="${cy + 4}" text-anchor="middle" font-size="10" font-weight="800" fill="#475569">${escapeHtml(state)}</text>`; }
+    } else {
+      svg += `<polygon points="${X},${cy - 8} ${X + 8},${cy} ${X},${cy + 8} ${X - 8},${cy}" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>`;
+      svg += `<text x="${tx}" y="${cy + 4}" font-size="12" font-weight="700" fill="#b45309">${escapeHtml(item.name)}</text>`;
+      if (show.stops && item.outcomes.some(o => o.tone === "stop")) svg += `<g class="obj-stop"><title>Stop point</title><line x1="${W - 70}" y1="${cy}" x2="${W - 44}" y2="${cy}" stroke="#b91c1c" stroke-width="2"/><circle cx="${W - 36}" cy="${cy}" r="8" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/><line x1="${W - 41}" y1="${cy + 5}" x2="${W - 31}" y2="${cy - 5}" stroke="#b91c1c" stroke-width="2"/></g>`;
+    }
+    svg += `</g>`;
+  });
+  return svg + `</svg>`;
+}
+// Phone width: the selected phase as a list, other phases collapsed; the inspector is a sheet.
+function renderOnboardingJourneyList() {
+  const { selected, query } = onboardingJourney;
+  const items = onboardingJourneyVisible();
+  const current = onboardingJourney.model.byId[selected]?.phase || ONBOARDING_MAP_PHASES[0];
+  return `<div class="obj-list">${ONBOARDING_MAP_PHASES.map(p => {
+    const inPhase = items.filter(i => i.phase === p && onboardingJourneyMatches(i, query));
+    if (!inPhase.length) return "";
+    if (p !== current && !query) return `<button type="button" class="obj-list-phase" data-phase="${p.letter}" style="background:${p.color};color:${p.tab}"><span>${p.letter} &middot; ${escapeHtml(p.short)}</span><span style="color:#64748b;font-weight:600">${inPhase.filter(i => i.type === "stage").length} stages &rsaquo;</span></button>`;
+    return `<div class="obj-list-phase" style="background:${p.color};color:${p.tab};cursor:default"><span>${escapeHtml(p.label)}</span></div>`
+      + inPhase.map(i => `<button type="button" class="obj-list-item${i.type === "gate" ? " obj-gate" : ""}${i.branch ? " obj-branch" : ""}" data-item="${i.id}" aria-current="${i.id === selected}"><span class="obj-list-dot"></span>${escapeHtml(i.name)}</button>`).join("");
+  }).join("")}</div>`;
+}
+function renderOnboardingJourneyInspector() {
+  const { model, selected } = onboardingJourney;
+  const item = model.byId[selected];
+  if (!item) return "";
+  const items = onboardingJourneyVisible();
+  const index = items.indexOf(item), prev = items[index - 1], next = items[index + 1];
+  const mainStages = model.items.filter(i => i.type === "stage" && !i.branch);
+  const name = id => model.byId[id]?.name || id;
+  const chips = `<div class="obj-crumbs"><span class="obj-chip" style="background:${item.phase.color};color:${item.phase.tab}">${escapeHtml(item.phase.label)}</span>`
+    + `<span class="obj-chip">${item.type === "gate" ? `Gate ${model.items.filter(i => i.type === "gate").indexOf(item) + 1} of ${model.items.filter(i => i.type === "gate").length}` : `Stage ${model.items.filter(i => i.type === "stage").indexOf(item) + 1} of ${model.items.filter(i => i.type === "stage").length}`}</span>`
+    + (item.branch ? '<span class="obj-chip" style="background:#f3e8ff;color:#7030a0">Post-go-live branch</span>' : "") + `</div>`;
+  const tagChips = (tags, states = []) => tags.length || states.length ? `<div class="obj-tags">${tags.map(t => `<span class="obj-tag">${escapeHtml(t)}</span>`).join("")}${states.map(s => `<span class="obj-state">${escapeHtml(s)}</span>`).join("")}</div>` : "";
+  const stageBody = st => `${tagChips(st.tags, st.states)}${st.paragraphs.map(p => `<p class="obj-text">${escapeHtml(p)}</p>`).join("")}`
+    + (st.feeds.length ? `<div class="obj-sec">Feeds in</div><ul class="obj-feeds">${st.feeds.map(f => `<li>${escapeHtml(f)}</li>`).join("")}</ul>` : "")
+    + `<div class="obj-actions">${st.actions.map(a => `<button type="button" class="obj-action" data-reference="${escapeHtml(a.detail)}">${escapeHtml(a.label)} &rsaquo;</button>`).join("")}<button type="button" class="obj-action" data-scroll="${st.id}">Open full stage detail &darr;</button></div>`;
+  let body;
+  if (item.type === "gate") {
+    const judged = model.byId[item.after];
+    const nextStage = model.items.slice(model.items.indexOf(item) + 1).find(i => i.type === "stage" && !i.branch);
+    const outcome = o => {
+      let where = "", link = "";
+      if (o.to) {
+        const back = mainStages.findIndex(s => s.id === item.after) - mainStages.findIndex(s => s.id === o.to) + 1;
+        where = o.to === item.after ? `Loops back to redo ${name(o.to)}` : o.tone === "proceed" ? `Back to ${name(o.to)}` : `Loops back to ${name(o.to)} -- ${back} stages to redo`;
+        link = o.to;
+      } else if (o.tone === "stop") where = "Ends the journey here";
+      else if (nextStage && o.tone === "proceed") { where = `Continues to ${nextStage.name}`; link = nextStage.id; }
+      else if (nextStage) where = `Then continues to ${nextStage.name}`;
+      return `<div class="obj-outcome"><span class="obj-badge obj-badge-${o.tone}">${escapeHtml(o.badge)}</span><span class="obj-outcome-text">${escapeHtml(o.text)}<small>${escapeHtml(where)}</small></span>${link ? `<button type="button" class="obj-link" data-item-link="${link}">Show ${escapeHtml(name(link))} &rsaquo;</button>` : ""}</div>`;
+    };
+    body = `<div class="obj-kind">&#9670; Decision gate</div><h3>${escapeHtml(item.name)}</h3>${tagChips(item.tags)}
+      <p class="obj-why">Decides the outcome of <b>${escapeHtml(judged.name)}</b>. Every outcome is drawn on the map.</p>
+      ${item.outcomes.map(outcome).join("")}
+      <div class="obj-sec">Assessed in the stage before</div><div class="obj-stagebox"><h4>${escapeHtml(judged.title)}</h4>${stageBody(judged)}</div>`;
+  } else {
+    const gate = model.byId[`gate-${item.id}`];
+    body = `<div class="obj-kind obj-kind-stage">&#9679; Stage</div><h3>${escapeHtml(item.title)}</h3>${stageBody(item)}`
+      + (gate ? `<div class="obj-sec">Decided at</div><button type="button" class="obj-action" data-item-link="${gate.id}">&#9670; ${escapeHtml(gate.name)} &rsaquo;</button>` : "");
+  }
+  return `<div class="obj-inspector-inner"><button type="button" class="obj-sheet-close" aria-label="Close">&times;</button>${chips}${body}
+    <div class="obj-pager"><button type="button" data-item-link="${prev?.id || ""}"${prev ? "" : " disabled"}>&lsaquo; ${escapeHtml(prev?.name || "")}</button><button type="button" data-item-link="${next?.id || ""}"${next ? "" : " disabled"}>${escapeHtml(next?.name || "")} &rsaquo;</button></div></div>`;
+}
+function renderOnboardingJourney(focusSelected) {
+  const j = onboardingJourney, model = j.model;
+  const items = onboardingJourneyVisible();
+  const sel = model.byId[j.selected];
+  const current = sel?.phase;
+  document.getElementById("objStepper").innerHTML = ONBOARDING_MAP_PHASES.map(p => {
+    const inPhase = items.filter(i => i.phase === p);
+    const on = p === current;
+    const reached = sel ? items.indexOf(sel) : -1;
+    return `<button type="button" class="obj-step" data-phase="${p.letter}" aria-current="${on}" style="background:${p.color};color:${p.tab}"><span class="obj-step-name"><span class="obj-step-letter" style="background:${p.tab}">${p.letter}</span>${escapeHtml(p.short)}</span>`
+      + `<span class="obj-step-bar">${inPhase.map(i => `<i class="${items.indexOf(i) <= reached ? "done" : ""}" style="background:${p.tab}"></i>`).join("")}</span>`
+      + `<span class="obj-step-meta">${inPhase.filter(i => i.type === "stage").length} stages &middot; ${inPhase.filter(i => i.type === "gate").length} gates</span></button>`;
+  }).join("");
+  const wrap = document.getElementById("onboardingFlowMapWrap");
+  wrap.innerHTML = j.narrow ? renderOnboardingJourneyList() : renderOnboardingJourneyMap();
+  const inspector = document.getElementById("objInspector");
+  inspector.innerHTML = renderOnboardingJourneyInspector();
+  inspector.classList.toggle("obj-open", j.narrow && j.open);
+  const count = j.query ? items.filter(i => onboardingJourneyMatches(i, j.query)).length : null;
+  document.getElementById("objSearchCount").textContent = count === null ? "" : `${count} match${count === 1 ? "" : "es"}`;
+  if (focusSelected) {
+    const node = wrap.querySelector(`[data-item="${j.selected}"]`);
+    node?.focus({ preventScroll: true });
+    node?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
+}
+function selectOnboardingJourneyItem(id, focus = false) {
+  const j = onboardingJourney;
+  if (!j.model.byId[id]) return;
+  j.selected = id;
+  j.open = true;
+  renderOnboardingJourney(focus);
 }
 function initOnboardingFlowMap() {
-  const wrap = document.getElementById("onboardingFlowMapWrap");
-  if (!wrap) return;
-  wrap.innerHTML = renderOnboardingFlowMap();
-  const jumpTo = id => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  wrap.addEventListener("click", event => {
-    const node = event.target.closest("[data-jump]");
-    if (node) jumpTo(node.dataset.jump);
+  const root = document.getElementById("onboardingJourney");
+  const flow = document.querySelector("#onboardingPage .onboarding-flow") || document.querySelector(".onboarding-flow");
+  if (!root || !flow) return;
+  const j = onboardingJourney;
+  j.model = onboardingJourneyModel(flow);
+  j.selected = j.model.items[0]?.id || "";
+  const stats = [[j.model.items.filter(i => i.type === "stage").length, "stages"], [j.model.items.filter(i => i.type === "gate").length, "gates"],
+    [j.model.items.filter(i => i.type === "gate" && i.outcomes.some(o => o.tone === "stop")).length, "stop points"], [j.model.loops.length, "loop-backs"]];
+  document.getElementById("objStats").innerHTML = stats.map(([n, t]) => `<span class="obj-stat"><b>${n}</b> ${t}</span>`).join("");
+  const narrow = window.matchMedia("(max-width: 760px)");
+  j.narrow = narrow.matches;
+  narrow.addEventListener?.("change", event => { j.narrow = event.matches; j.open = false; renderOnboardingJourney(); });
+  root.addEventListener("click", event => {
+    const target = event.target.closest("[data-item], [data-item-link], [data-phase], [data-layer], [data-reference], [data-scroll], .obj-sheet-close");
+    if (!target || !root.contains(target)) return;
+    if (target.matches(".obj-sheet-close")) { j.open = false; renderOnboardingJourney(); return; }
+    if (target.dataset.layer) {
+      j.show[target.dataset.layer] = !j.show[target.dataset.layer];
+      target.setAttribute("aria-pressed", String(j.show[target.dataset.layer]));
+      if (!j.show.branch && j.model.byId[j.selected]?.branch) j.selected = "ob-sustainment";
+      renderOnboardingJourney();
+      return;
+    }
+    if (target.dataset.phase) {
+      const first = onboardingJourneyVisible().find(i => i.phase.letter === target.dataset.phase);
+      if (first) { selectOnboardingJourneyItem(first.id); j.open = false; renderOnboardingJourney(); document.querySelector(`#onboardingFlowMapWrap [data-item="${first.id}"]`)?.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+      return;
+    }
+    if (target.dataset.reference) { showReferenceDetail(target.dataset.reference); return; }
+    if (target.dataset.scroll) { j.open = false; renderOnboardingJourney(); document.getElementById(target.dataset.scroll)?.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+    const id = target.dataset.item || target.dataset.itemLink;
+    if (id) {
+      // Focus follows the selection onto the map, so the arrow keys keep working after a link
+      // in the inspector (which is redrawn) is used.
+      selectOnboardingJourneyItem(id, !j.narrow || !!target.dataset.item);
+    }
   });
-  wrap.addEventListener("keydown", event => {
-    if (event.key !== "Enter" && event.key !== " ") return;
-    const node = event.target.closest("[data-jump]");
-    if (!node) return;
-    event.preventDefault();
-    jumpTo(node.dataset.jump);
+  root.addEventListener("keydown", event => {
+    if (event.target.matches("input, textarea, select")) return;
+    const item = event.target.closest("[data-item]");
+    if (item && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); selectOnboardingJourneyItem(item.dataset.item, true); return; }
+    if (event.key === "Escape" && j.open) { j.open = false; renderOnboardingJourney(); return; }
+    const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[event.key];
+    if (!step || !event.target.closest("#onboardingFlowMapWrap, #objInspector")) return;
+    const items = onboardingJourneyVisible();
+    const next = items[items.findIndex(i => i.id === j.selected) + step];
+    if (next) { event.preventDefault(); selectOnboardingJourneyItem(next.id, true); }
   });
+  const search = document.getElementById("objSearch");
+  search.addEventListener("input", () => { j.query = search.value.trim(); renderOnboardingJourney(); });
+  search.addEventListener("keydown", event => {
+    if (event.key !== "Enter") return;
+    const hit = onboardingJourneyVisible().find(i => onboardingJourneyMatches(i, j.query));
+    if (hit) { event.preventDefault(); selectOnboardingJourneyItem(hit.id); document.querySelector(`#onboardingFlowMapWrap [data-item="${hit.id}"]`)?.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+  });
+  j.open = false;
+  renderOnboardingJourney();
 }
 document.querySelectorAll("[data-open-reference-detail]").forEach(button=>button.addEventListener("click",()=>showReferenceDetail(button.dataset.openReferenceDetail)));
 document.querySelectorAll("[data-open-prompt-panel]").forEach(button=>button.addEventListener("click",()=>{
