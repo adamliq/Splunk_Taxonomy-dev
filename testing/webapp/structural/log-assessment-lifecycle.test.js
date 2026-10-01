@@ -12,8 +12,8 @@ const text = readIndexHtml();
 const start = text.indexOf('const LAL_LENS = ');
 const end = text.indexOf('function lalRefTitle(', start);
 const data = {};
-vm.runInNewContext(`${text.slice(start, end)}\nthis.d = { LAL_LENS, LAL_LAYERS, LAL_ROWS, LAL_DOMAINS, LAL_OUTPUTS, LAL_STEPS, LAL_REFS, LAL_LAYER_REFS, LAL_DOMAIN_SECTIONS };`, data);
-const { LAL_LENS, LAL_LAYERS, LAL_ROWS, LAL_DOMAINS, LAL_OUTPUTS, LAL_STEPS, LAL_REFS, LAL_LAYER_REFS, LAL_DOMAIN_SECTIONS } = data.d;
+vm.runInNewContext(`${text.slice(start, end)}\nthis.d = { LAL_LENS, LAL_LAYERS, LAL_ROWS, LAL_DOMAINS, LAL_OUTPUTS, LAL_STEPS, LAL_REFS, LAL_LAYER_REFS, LAL_DOMAIN_SECTIONS, LAL_LAYER_JOURNEY, LAL_DOMAIN_ICONS };`, data);
+const { LAL_LENS, LAL_LAYERS, LAL_ROWS, LAL_DOMAINS, LAL_OUTPUTS, LAL_STEPS, LAL_REFS, LAL_LAYER_REFS, LAL_DOMAIN_SECTIONS, LAL_LAYER_JOURNEY, LAL_DOMAIN_ICONS } = data.d;
 
 test('the page is a Reference page with its own hash', () => {
   assert.match(text, /<button id="showLogAssessmentLifecyclePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="logAssessmentLifecyclePage">Log assessment lifecycle<\/button>/);
@@ -25,7 +25,7 @@ test('the page is a Reference page with its own hash', () => {
     /refLogAssessmentLifecycle: "Log assessment lifecycle"/,
     /"refSplunkTimezone", "refLogAssessmentLifecycle", "refQuestions"/,
     /selected === "refLogAssessmentLifecycle"\n\s+\? "#log-assessment-lifecycle"/,
-    /location\.hash === "#log-assessment-lifecycle"\) return "refLogAssessmentLifecycle"/,
+    /\^#log-assessment-lifecycle\(\\\?\|\$\)\/\.test\(location\.hash\)\) return "refLogAssessmentLifecycle"/,
     /\{ key: "refLogAssessmentLifecycle", label: "Log assessment lifecycle" \}/,
     /\ninitLogAssessmentLifecycle\(\);\n/,
   ]) assert.match(text, pattern);
@@ -66,4 +66,14 @@ test('every reference link opens a real article, and every domain section exists
     assert.ok(LAL_DOMAINS.some(d => d.n === +n), `section for unknown domain ${n}`);
     assert.match(article, new RegExp(`<section id="${section}"`), `domain ${n}: no section ${section}`);
   }
+});
+
+test('every layer links to real log source journey stages, and every domain has an icon', () => {
+  const flowStart = text.indexOf('<div class="onboarding-flow" data-journey="onboarding">');
+  const flow = text.slice(flowStart, text.indexOf('<div class="onboarding-flow" data-journey="detection">'));
+  for (const l of LAL_LAYERS) {
+    assert.ok((LAL_LAYER_JOURNEY[l.id] || []).length, `${l.id} has no journey stages`);
+    for (const id of LAL_LAYER_JOURNEY[l.id]) assert.match(flow, new RegExp(`<div class="onboarding-stage" id="${id}"`), `${l.id}: no stage ${id}`);
+  }
+  for (const d of LAL_DOMAINS) assert.ok(LAL_DOMAIN_ICONS[d.n], `domain ${d.name} has no icon`);
 });
