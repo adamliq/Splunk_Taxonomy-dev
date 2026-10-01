@@ -1409,9 +1409,14 @@
     .lal-btn { border:1px solid var(--border); background:#fff; border-radius:9px; padding:6px 12px; font-weight:800; font-size:12.5px; cursor:pointer; color:#334155; }
     .lal-btn-primary { background:#0b2a5b; border-color:#0b2a5b; color:#fff; }
     .lal-layout { display:grid; grid-template-columns:minmax(0, 1fr) minmax(300px, 380px); gap:14px; align-items:start; }
-    .lal-main { display:grid; gap:14px; min-width:0; }
-    .lal-top { display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:14px; align-items:start; }
-    #lalPyramid svg { max-width:360px; margin:0 auto; }
+    .lal-main { display:grid; gap:14px; min-width:0; position:relative; }
+    .lal-flows { position:absolute; top:0; left:0; pointer-events:none; z-index:2; overflow:visible; }
+    .lal-keys { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px; align-items:start; }
+    .lal-key-list { list-style:none; margin:0; padding:0; display:grid; gap:6px; font-size:12.5px; color:#334155; }
+    .lal-key-list li { display:flex; align-items:center; gap:8px; }
+    .lal-key-list li > span { display:inline-grid; place-items:center; width:22px; font-size:16px; }
+    #logAssessmentLifecyclePage .lal-key-list svg { display:inline-block; flex:0 0 auto; width:22px; height:22px; }
+    #lalPyramid svg { max-width:470px; margin:0; }
     #lalWheel svg { max-width:640px; margin:0 auto; }
     .lal-aside { position:sticky; top:12px; min-width:0; }
     .lal-detail-card { max-height:calc(100vh - 24px); overflow-y:auto; position:relative; }
@@ -1431,9 +1436,8 @@
     .lal-dim { opacity:.28; transition:opacity .15s; }
     .lal-lit .lal-shape { filter:drop-shadow(0 0 6px rgba(245,158,11,.9)); }
     .lal-sel .lal-shape { stroke:#0f172a; stroke-width:3; }
-    .lal-legend { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:12px; color:#334155; margin-top:6px; }
-    .lal-legend span { display:inline-flex; align-items:center; gap:5px; }
-    .lal-outputs { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px; }
+    .lal-outputs { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
+    .lal-wide .lal-outputs { grid-template-columns:repeat(4, minmax(0, 1fr)); }
     .lal-out { border:1px solid var(--border); border-radius:12px; padding:9px 11px; background:#fff; }
     .lal-out.lal-lit { box-shadow:0 0 0 2px #f59e0b; }
     .lal-out-head { display:flex; gap:8px; align-items:center; width:100%; border:0; background:transparent; padding:0; cursor:pointer; text-align:left; white-space:normal; }
@@ -1481,6 +1485,7 @@
     .lal-narrow .lal-detail-card { max-height:65vh; border-radius:18px 18px 0 0; box-shadow:0 -12px 30px rgba(15,23,42,.2); }
     .lal-narrow .lal-sheet-close { display:block; position:absolute; top:8px; right:10px; border:0; background:#f1f5f9; border-radius:999px; width:30px; height:30px; font-size:16px; cursor:pointer; }
     .lal-compact #lalWheel { display:none; }
+    .lal-compact .lal-outputs { grid-template-columns:minmax(0, 1fr); }
     .lal-compact .lal-domain-list { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:6px; }
     .lal-dl-item { display:flex; align-items:center; gap:8px; width:100%; border:1px solid var(--border); border-radius:10px; background:#fff; padding:7px 9px; text-align:left; white-space:normal; cursor:pointer; font-size:12.5px; font-weight:700; }
     .lal-dl-item b { display:grid; place-items:center; flex:0 0 auto; width:22px; height:22px; border-radius:50%; color:#fff; font-size:11px; }
@@ -4686,7 +4691,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.01 &middot; build 147</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.01 &middot; build 148</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -11852,12 +11857,29 @@ INGEST PROCESSOR
     </div>
     <div class="lal-layout">
       <div class="lal-main">
-        <div class="lal-top">
-          <section class="lal-card" aria-label="Lifecycle layers"><h3 class="lal-card-title">Lifecycle layers</h3><div id="lalPyramid"></div><div class="lal-legend" id="lalLensLegend"></div></section>
-          <section class="lal-card"><h3 class="lal-card-title">How the framework works</h3><ol class="lal-steps" id="lalSteps"></ol></section>
-        </div>
+        <svg id="lalFlows" class="lal-flows" aria-hidden="true"></svg>
+        <section class="lal-card" aria-label="Lifecycle layers"><h3 class="lal-card-title">Lifecycle layers</h3><div id="lalPyramid"></div></section>
         <section class="lal-card" aria-label="Log Assessment Framework domains"><div class="lal-band"><b>LOG ASSESSMENT FRAMEWORK (Stage 3)</b><span>Comprehensive analysis of raw logs across the assessment domains &mdash; select one</span></div><div id="lalWheel"></div><div id="lalDomainList" class="lal-domain-list"></div></section>
-        <section aria-label="Framework outputs"><div class="lal-band"><b>FRAMEWORK OUTPUTS FEED MULTIPLE AREAS</b></div><div class="lal-outputs" id="lalOutputs"></div></section>
+        <section aria-label="Framework outputs"><div class="lal-band lal-outputs-band"><b>FRAMEWORK OUTPUTS FEED MULTIPLE AREAS</b></div><div class="lal-outputs" id="lalOutputs"></div></section>
+        <div class="lal-keys">
+          <section class="lal-card" aria-label="Terms key"><h3 class="lal-card-title">Terms key</h3><ul class="lal-key-list">
+            <li><span style="color:#dc2626">&#127919;</span>Collection / Intake</li>
+            <li><span style="color:#f97316">&#128269;</span>Analysis / Assessment</li>
+            <li><span style="color:#65a30d">&#9881;</span>Engineering / Build</li>
+            <li><span style="color:#0d9488">&#128737;</span>Quality / Assurance</li>
+            <li><span style="color:#ea580c">&#127941;</span>Scoring / Value</li>
+            <li><span style="color:#6d28d9">&#128640;</span>Implementation / Operations</li>
+            <li><span style="color:#334155">&#128196;</span>Outputs / Deliverables</li>
+          </ul></section>
+          <section class="lal-card"><h3 class="lal-card-title">How the framework works</h3><ol class="lal-steps" id="lalSteps"></ol></section>
+          <section class="lal-card" aria-label="Legend"><h3 class="lal-card-title">Legend</h3><ul class="lal-key-list">
+            <li><svg width="22" height="22" aria-hidden="true"><circle cx="11" cy="11" r="9" fill="#1d4ed8"/><text x="11" y="15" text-anchor="middle" font-size="11" font-weight="900" fill="#fff">1</text></svg>Framework domain</li>
+            <li><svg width="22" height="22" aria-hidden="true"><path d="M 15 3 h -6 V 19 h 6" stroke="#0b2a5b" stroke-width="2" fill="none"/></svg>Lifecycle stage</li>
+            <li><svg width="22" height="22" aria-hidden="true"><path d="M 2 11 H 17" stroke="#0b2a5b" stroke-width="2.2"/><path d="M 14 6 L 20 11 L 14 16 z" fill="#0b2a5b"/></svg>Flow / progression</li>
+            <li><svg width="22" height="22" aria-hidden="true"><path d="M 2 11 H 17" stroke="#0d9488" stroke-width="2" stroke-dasharray="4 3"/><path d="M 14 6 L 20 11 L 14 16 z" fill="#0d9488"/></svg>Feedback / feeds</li>
+            <li><svg width="22" height="22" aria-hidden="true"><rect x="3" y="5" width="16" height="12" rx="3" fill="#fff" stroke="#94a3b8" stroke-width="1.6"/></svg>Outputs</li>
+          </ul></section>
+        </div>
       </div>
       <aside class="lal-aside" id="lalAside" aria-label="Selected item">
         <div class="lal-card lal-detail-card"><button type="button" class="lal-sheet-close" id="lalSheetClose" aria-label="Close">&times;</button><div id="lalDetail" aria-live="polite"></div></div>
@@ -28846,19 +28868,30 @@ function lalOpenReference(name, section) {
 // diagram, which numbers 1-9 and 11 and leaves Line Analysis unnumbered. Which domains feed
 // which output items is indicative (see the note on the page).
 const lalState = { sel: { kind: "layer", id: "L3" }, step: -1, query: "", timer: null };
+// Lifecycle-stage labels drawn beside each layer, as in the source diagram.
+const LAL_STAGE_LABELS = {
+  L12: { lines: ["DISCOVERY"], stages: "Stages 1–2" }, L3: { lines: ["ANALYSIS"], stages: "Stage 3" }, L4: { lines: ["ENGINEERING"], stages: "Stage 4" },
+  L59: { lines: ["ASSURANCE &", "CYBER VALUE"], stages: "Stages 5–9" }, L1011: { lines: ["IMPLEMENTATION", "& OPERATIONS"], stages: "Stages 10–11" },
+};
+const LAL_PYR_W = 482;
 function lalRenderPyramid() {
-  const W = 340, H = 5 * 76 + 10, top = 70;
-  let s = `<svg viewBox="0 0 ${W} ${H}" role="group" aria-label="Lifecycle layers">`;
+  const H = 5 * 76 + 10, cx = 140 + 169;
+  let s = `<svg viewBox="0 0 ${LAL_PYR_W} ${H}" role="group" aria-label="Lifecycle layers">`;
   LAL_LAYERS.forEach((L, i) => {
-    const y0 = 5 + i * 76, y1 = y0 + 70, cx = W / 2;
-    const hw0 = i === 0 ? 22 : top / 2 + i * 32, hw1 = top / 2 + (i + 1) * 32 + 4;
+    const y0 = 5 + i * 76, y1 = y0 + 70, my = (y0 + y1) / 2;
+    const hw0 = i === 0 ? 20 : 35 + i * 26, hw1 = 35 + (i + 1) * 26 + 4;
+    const lens = LAL_LENS[L.lens], label = LAL_STAGE_LABELS[L.id];
+    const lineY = k => my - (label.lines.length - 1) * 7 + k * 14 - 5;
     s += `<g class="lal-hit lal-layer" data-lal-layer="${L.id}" tabindex="0" role="button" aria-label="Stage ${L.num}: ${escapeHtml(L.title)}">
-      <polygon class="lal-shape" points="${cx - hw0},${y0} ${cx + hw0},${y0} ${cx + hw1},${y1} ${cx - hw1},${y1}" fill="${L.color}" stroke="#fff" stroke-width="2"/>
+      <text x="14" y="${my + 6}" text-anchor="middle" font-size="17">${lens.icon}</text>
+      ${label.lines.map((t, k) => `<text x="30" y="${lineY(k)}" font-size="11" font-weight="800" fill="${L.color}">${escapeHtml(t)}</text>`).join("")}
+      <text x="30" y="${lineY(label.lines.length - 1) + 14}" font-size="10" fill="#475569">(${escapeHtml(label.stages)})</text>
+      <path d="M ${cx - hw1 - 8} ${y0 + 6} h -6 V ${y1 - 6} h 6" stroke="${L.color}" stroke-width="1.6" fill="none"/>
+      <polygon class="lal-shape" data-rx="${cx + (hw0 + hw1) / 2}" data-my="${my}" points="${cx - hw0},${y0} ${cx + hw0},${y0} ${cx + hw1},${y1} ${cx - hw1},${y1}" fill="${L.color}" stroke="#fff" stroke-width="2"/>
       <text x="${cx}" y="${y0 + 27}" text-anchor="middle" fill="#fff" font-size="${i === 0 ? 19 : 23}" font-weight="900">${L.num}</text>
       ${L.short.map((t, k) => `<text x="${cx}" y="${y0 + 45 + k * 13}" text-anchor="middle" fill="#fff" font-size="${i === 0 ? 9.5 : 11}" font-weight="800">${escapeHtml(t)}</text>`).join("")}</g>`;
   });
   document.getElementById("lalPyramid").innerHTML = s + `</svg>`;
-  document.getElementById("lalLensLegend").innerHTML = Object.values(LAL_LENS).map(l => `<span><span style="color:${l.color}">${l.icon}</span>${escapeHtml(l.name)}</span>`).join("");
 }
 function lalRenderWheel() {
   const C = 300, r0 = 105, r1 = 288, span = 360 / LAL_DOMAINS.length;
@@ -28883,6 +28916,12 @@ function lalRenderWheel() {
       <text x="${bx}" y="${by + 5.5}" text-anchor="middle" font-size="15" font-weight="900" fill="${d.unnumbered ? d.color : "#fff"}">${label}</text>
       ${lines.map((l, k) => `<text x="${tx}" y="${ty + (k - (lines.length - 1) / 2) * 17 + 4}" text-anchor="middle" font-size="${fit}" font-weight="800" fill="${d.color}">${escapeHtml(l.toUpperCase())}</text>`).join("")}
       <text x="${tx}" y="${ty + (lines.length / 2) * 17 + 14}" text-anchor="middle" font-size="12" fill="#64748b">${d.checks.length} checks</text></g>`;
+  });
+  // Flow from the raw log sample out to each domain.
+  s += `<defs><marker id="lalArrowGrey" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0L10,5L0,10z" fill="#94a3b8"/></marker></defs>`;
+  LAL_DOMAINS.forEach((d, i) => {
+    const mid = -90 + i * span, [ax, ay] = pt(r0 - 6, mid), [bx2, by2] = pt(r0 + 14, mid);
+    s += `<line class="lal-radial" x1="${ax}" y1="${ay}" x2="${bx2}" y2="${by2}" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#lalArrowGrey)"/>`;
   });
   s += `<g class="lal-hit" data-lal-layer="L3" tabindex="0" role="button" aria-label="Raw log sample: Stage 3"><circle class="lal-shape" cx="${C}" cy="${C}" r="${r0 - 8}" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
     <text x="${C}" y="${C - 18}" text-anchor="middle" font-size="26">&#128196;</text>
@@ -28973,6 +29012,7 @@ function lalPaint() {
   if (q) hits += root.querySelectorAll(".lal-domain.lal-lit, .lal-layer.lal-lit").length;
   document.getElementById("lalCount").textContent = q ? `${hits} match${hits === 1 ? "" : "es"}` : "";
   lalRenderDetail();
+  lalDrawFlows();
   document.getElementById("lalSteps").innerHTML = LAL_STEPS.map((s, i) => `<li><button type="button" data-lal-step="${i}" aria-current="${i === step}"><b>${i + 1}</b><span>${escapeHtml(s.text)}</span></button></li>`).join("");
 }
 function lalRenderDetail() {
@@ -29016,6 +29056,51 @@ function lalRenderDetail() {
       ${refs(items.map(([t]) => LAL_REFS[t]))}`;
   }
 }
+// Arrows between the pyramid, the wheel and the output areas, drawn over the main column and
+// redrawn when its layout changes: the raw log sample flows from layer 3 into the framework,
+// the framework flows into the output areas, and dashed feedback runs back to layers 5-9 and
+// 10-11. Not drawn on a compact page, where the wheel is a list.
+function lalDrawFlows() {
+  const root = document.getElementById("logAssessmentLifecyclePage");
+  const main = root?.querySelector(".lal-main"), ov = document.getElementById("lalFlows");
+  if (!main || !ov) return;
+  if (root.hidden || root.classList.contains("lal-compact") || !main.clientWidth) { ov.innerHTML = ""; return; }
+  const box = main.getBoundingClientRect();
+  const rel = el => { const r = el.getBoundingClientRect(); return { l: r.left - box.left, t: r.top - box.top, r: r.right - box.left, b: r.bottom - box.top }; };
+  const pyr = document.querySelector("#lalPyramid svg"), pr = rel(pyr), k = (pr.r - pr.l) / LAL_PYR_W;
+  const layer = id => { const poly = pyr.querySelector(`[data-lal-layer="${id}"] polygon`); return { x: pr.l + +poly.dataset.rx * k, y: pr.t + +poly.dataset.my * k }; };
+  const wheelCard = rel(document.getElementById("lalWheel").closest(".lal-card"));
+  const wheelSvg = rel(document.querySelector("#lalWheel svg"));
+  const band = rel(document.querySelector(".lal-outputs-band"));
+  const lit = new Set([...root.querySelectorAll(".lal-out")].filter(c => c.classList.contains("lal-lit") || c.querySelector("button.lal-lit, button.lal-sel")).map(c => c.dataset.lalOut));
+  const lane = Math.min(pr.r + 14, box.width - 44);
+  const L3 = layer("L3"), L59 = layer("L59"), L1011 = layer("L1011");
+  const raw = LAL_LAYERS.find(l => l.id === "L3").color;
+  let svg = `<defs>
+    <marker id="lalFlowRaw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="${raw}"/></marker>
+    <marker id="lalFlowNavy" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#0b2a5b"/></marker>
+    <marker id="lalFlowLit" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#f59e0b"/></marker>
+    ${["L59", "L1011"].map(id => `<marker id="lalFlow${id}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="${LAL_LAYERS.find(l => l.id === id).color}"/></marker>`).join("")}</defs>`;
+  // Raw log sample: layer 3 -> the framework.
+  svg += `<path class="lal-flow lal-flow-raw" d="M ${L3.x + 4} ${L3.y} H ${lane} V ${wheelCard.t - 2}" stroke="${raw}" stroke-width="2.4" fill="none" marker-end="url(#lalFlowRaw)"/>`;
+  svg += `<text x="${L3.x + 8}" y="${L3.y - 6}" font-size="10" font-weight="800" fill="${raw}">Raw log sample</text>`;
+  // Feedback: the framework -> assurance (5-9) and implementation (10-11).
+  [[L59, "L59", 20], [L1011, "L1011", 32]].forEach(([pt, id, dx]) => {
+    const color = LAL_LAYERS.find(l => l.id === id).color;
+    svg += `<path class="lal-flow lal-flow-feed" data-lal-flow="${id}" d="M ${lane + dx} ${wheelCard.t + 2} V ${pt.y} H ${pt.x + 6}" stroke="${color}" stroke-width="1.8" stroke-dasharray="6 4" fill="none" marker-end="url(#lalFlow${id})"/>`;
+  });
+  // The framework -> the output areas, one arrow per output column.
+  const cols = [...new Map([...root.querySelectorAll(".lal-out")].map(c => { const r = rel(c); return [Math.round((r.l + r.r) / 2), c.dataset.lalOut]; })).entries()];
+  const colIds = x => [...root.querySelectorAll(".lal-out")].filter(c => { const r = rel(c); return Math.round((r.l + r.r) / 2) === x; }).map(c => c.dataset.lalOut);
+  cols.forEach(([x]) => {
+    const on = colIds(x).some(id => lit.has(id));
+    svg += `<path class="lal-flow lal-flow-out" d="M ${x} ${wheelSvg.b - 4} V ${band.t - 2}" stroke="${on ? "#f59e0b" : "#0b2a5b"}" stroke-width="${on ? 3 : 2}" fill="none" marker-end="url(#${on ? "lalFlowLit" : "lalFlowNavy"})"/>`;
+  });
+  ov.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
+  ov.setAttribute("width", box.width);
+  ov.setAttribute("height", box.height);
+  ov.innerHTML = svg;
+}
 function lalStopPlay() {
   if (!lalState.timer) return;
   clearInterval(lalState.timer);
@@ -29051,8 +29136,12 @@ function initLogAssessmentLifecycle() {
     if (!w) return;
     root.classList.toggle("lal-narrow", w < 900);
     root.classList.toggle("lal-compact", w < 560);
+    root.classList.toggle("lal-wide", w >= 1400);
   };
-  if (window.ResizeObserver) new ResizeObserver(fit).observe(root);
+  if (window.ResizeObserver) {
+    new ResizeObserver(fit).observe(root);
+    new ResizeObserver(() => lalDrawFlows()).observe(root.querySelector(".lal-main"));
+  }
   else window.addEventListener("resize", fit);
   fit();
   const q = document.getElementById("lalSearch");

@@ -135,3 +135,22 @@ test('Log assessment lifecycle: reference links, and the detail sheet on a narro
     assert.deepEqual(pageErrors, []);
   });
 });
+
+test('Log assessment lifecycle: stage labels, flow arrows and both keys', async () => {
+  await withServerAndPage(async ({ page, baseUrl, pageErrors }) => {
+    await page.goto(`${baseUrl}/index.html#log-assessment-lifecycle`, { waitUntil: 'load' });
+    await page.waitForTimeout(400);
+    const pyramid = await page.textContent('#lalPyramid');
+    for (const label of ['DISCOVERY', '(Stages 1–2)', 'ANALYSIS', '(Stage 3)', 'ENGINEERING', 'CYBER VALUE', '(Stages 5–9)', '& OPERATIONS', '(Stages 10–11)']) assert.ok(pyramid.includes(label), `missing ${label}`);
+    assert.equal(await page.locator('#lalFlows .lal-flow-raw').count(), 1);
+    assert.equal(await page.locator('#lalFlows .lal-flow-feed').count(), 2);
+    assert.ok(await page.locator('#lalFlows .lal-flow-out').count() >= 2);
+    assert.equal(await page.locator('#lalWheel .lal-radial').count(), 10);
+    await page.click('.lal-domain[data-lal-domain="2"]');
+    assert.equal(await page.locator('#lalFlows .lal-flow-out[stroke="#f59e0b"]').count(), 1, 'the arrow into Data Quality lights up');
+    const keys = await page.$$eval('.lal-key-list li', els => els.map(e => [...e.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('').trim()));
+    assert.deepEqual(keys, ['Collection / Intake', 'Analysis / Assessment', 'Engineering / Build', 'Quality / Assurance', 'Scoring / Value', 'Implementation / Operations', 'Outputs / Deliverables',
+      'Framework domain', 'Lifecycle stage', 'Flow / progression', 'Feedback / feeds', 'Outputs']);
+    assert.deepEqual(pageErrors, []);
+  });
+});
