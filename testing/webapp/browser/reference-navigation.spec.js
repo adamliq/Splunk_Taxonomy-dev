@@ -102,7 +102,7 @@ test('Log assessment lifecycle: selections link the pyramid, wheel, outputs and 
     await page.click('#lalDetail [data-lal-reference="log-assessment-framework"]');
     assert.equal(await page.isVisible('#logAssessmentFrameworkReferenceView'), true);
     await page.click('#logAssessmentFrameworkReferenceView [data-open-lal]');
-    assert.equal(await page.evaluate(() => location.hash), '#log-assessment-lifecycle');
+    assert.match(await page.evaluate(() => location.hash), /^#log-assessment-lifecycle(\?|$)/);
     assert.deepEqual(pageErrors, []);
   });
 });

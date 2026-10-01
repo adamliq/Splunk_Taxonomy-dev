@@ -1411,6 +1411,15 @@
     .lal-layout { display:grid; grid-template-columns:minmax(0, 1fr) minmax(300px, 380px); gap:14px; align-items:start; }
     .lal-main { display:grid; gap:14px; min-width:0; position:relative; }
     .lal-flows { position:absolute; top:0; left:0; pointer-events:none; z-index:2; overflow:visible; }
+    .lal-glance { display:none; margin-top:12px; }
+    .lal-all .lal-glance { display:block; }
+    .lal-glance-domains { display:none; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:8px; }
+    .lal-all .lal-glance-domains { display:grid; }
+    .lal-glance-domain { border:1px solid; border-radius:10px; padding:7px 9px; font-size:12px; color:#334155; }
+    .lal-glance-domain ul { margin:4px 0 0; padding-left:16px; line-height:1.45; }
+    .lal-glance-link { border:0; background:transparent; padding:0; font-weight:800; font-size:12.5px; cursor:pointer; text-align:left; white-space:normal; }
+    .lal-glance-table td { font-size:12px; }
+    .lal-dl-item span { font-size:14px; }
     .lal-keys { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px; align-items:start; }
     .lal-key-list { list-style:none; margin:0; padding:0; display:grid; gap:6px; font-size:12.5px; color:#334155; }
     .lal-key-list li { display:flex; align-items:center; gap:8px; }
@@ -1486,14 +1495,25 @@
     .lal-narrow .lal-sheet-close { display:block; position:absolute; top:8px; right:10px; border:0; background:#f1f5f9; border-radius:999px; width:30px; height:30px; font-size:16px; cursor:pointer; }
     .lal-compact #lalWheel { display:none; }
     .lal-compact .lal-outputs { grid-template-columns:minmax(0, 1fr); }
-    .lal-compact .lal-domain-list { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:6px; }
-    .lal-dl-item { display:flex; align-items:center; gap:8px; width:100%; border:1px solid var(--border); border-radius:10px; background:#fff; padding:7px 9px; text-align:left; white-space:normal; cursor:pointer; font-size:12.5px; font-weight:700; }
+    .lal-compact .lal-domain-list { display:grid; grid-template-columns:repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap:6px; }
+    .lal-dl-item { display:flex; align-items:center; gap:7px; width:100%; min-width:0; overflow-wrap:anywhere; border:1px solid var(--border); border-radius:10px; background:#fff; padding:7px 9px; text-align:left; white-space:normal; cursor:pointer; font-size:12.5px; font-weight:700; }
     .lal-dl-item b { display:grid; place-items:center; flex:0 0 auto; width:22px; height:22px; border-radius:50%; color:#fff; font-size:11px; }
     .lal-dl-item.lal-lit { box-shadow:0 0 0 2px #f59e0b; }
     .lal-dl-item.lal-sel { background:#0b2a5b; color:#fff !important; }
     .lal-dl-item.lal-dim { opacity:.45; }
     .lal-compact .lal-table td.lal-label { width:auto; }
-    @media print { .lal-aside, .lal-toolbar { display:none !important; } .lal-layout { grid-template-columns:1fr; } }
+    @media print {
+      .lal-aside, .lal-toolbar, #lalFlows, .lal-domain-list { display:none !important; }
+      .lal-layout { grid-template-columns:1fr; }
+      #lalWheel { display:block !important; }
+      #lalWheel svg { max-width:520px; }
+      .lal-glance { display:block !important; }
+      .lal-glance-domains { display:grid !important; }
+      .lal-card, .lal-out, .lal-glance-domain, .lal-table tr { break-inside:avoid; }
+      .lal-dim { opacity:1 !important; }
+      .ob-show-on-map, .obj-routes button[aria-selected="false"] { display:none !important; }
+      .obj-map svg { max-width:100%; }
+    }
     .tz-precedence { list-style: none; margin: 18px 0 10px; padding: 0; display: grid; gap: 10px; }
     .tz-step { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
     .tz-rank { display: grid; place-items: center; flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%; background: var(--primary); color: #fff; font-weight: 800; font-size: 14px; }
@@ -4111,6 +4131,8 @@
     .obj-toggles { display:flex; flex-wrap:wrap; gap:6px; align-items:center; font-size:12px; color:#64748b; }
     .obj-toggle { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); border-radius:999px; padding:2px 10px; font-size:12px; font-weight:700; color:#94a3b8; background:#fff; cursor:pointer; }
     .obj-toggle[hidden] { display:none; }
+    .ob-show-on-map { margin-left:auto; border:1px solid #e9d5ff; background:#faf5ff; color:#7030a0; border-radius:999px; padding:2px 10px; font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap; }
+    .onboarding-gate h5 { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .obj-toggle[aria-pressed="true"] { color:#334155; background:#f8fafc; border-color:#cbd5e1; }
     .obj-swatch { display:inline-block; width:16px; border-top:2.5px solid; }
     .obj-swatch-hold { border-color:#c2410c; } .obj-swatch-stop { border-color:#b91c1c; } .obj-swatch-branch { border-color:#7030a0; }
@@ -4691,7 +4713,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.01 &middot; build 148</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.01 &middot; build 150</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -11853,13 +11875,14 @@ INGEST PROCESSOR
     <div class="lal-toolbar">
       <label class="lal-search"><span aria-hidden="true">&#128269;</span><input type="search" id="lalSearch" placeholder="Find a term: timestamp, HEC, CVI, multiline" autocomplete="off" spellcheck="false" aria-label="Find a term"><span id="lalCount" class="lal-count" aria-live="polite"></span></label>
       <button type="button" class="lal-btn lal-btn-primary" id="lalPlay">&#9654; How it works</button>
+      <button type="button" class="lal-btn" id="lalShowAll" aria-pressed="false">Show all details</button>
       <button type="button" class="lal-btn" id="lalReset">Reset</button>
     </div>
     <div class="lal-layout">
       <div class="lal-main">
         <svg id="lalFlows" class="lal-flows" aria-hidden="true"></svg>
-        <section class="lal-card" aria-label="Lifecycle layers"><h3 class="lal-card-title">Lifecycle layers</h3><div id="lalPyramid"></div></section>
-        <section class="lal-card" aria-label="Log Assessment Framework domains"><div class="lal-band"><b>LOG ASSESSMENT FRAMEWORK (Stage 3)</b><span>Comprehensive analysis of raw logs across the assessment domains &mdash; select one</span></div><div id="lalWheel"></div><div id="lalDomainList" class="lal-domain-list"></div></section>
+        <section class="lal-card" aria-label="Lifecycle layers"><h3 class="lal-card-title">Lifecycle layers</h3><div id="lalPyramid"></div><div class="lal-glance eccs-table-wrap" id="lalLayersGlance" role="region" aria-label="Every layer at a glance" tabindex="0"></div></section>
+        <section class="lal-card" aria-label="Log Assessment Framework domains"><div class="lal-band"><b>LOG ASSESSMENT FRAMEWORK (Stage 3)</b><span>Comprehensive analysis of raw logs across the assessment domains &mdash; select one</span></div><div id="lalWheel"></div><div id="lalDomainList" class="lal-domain-list"></div><div class="lal-glance lal-glance-domains" id="lalDomainsGlance"></div></section>
         <section aria-label="Framework outputs"><div class="lal-band lal-outputs-band"><b>FRAMEWORK OUTPUTS FEED MULTIPLE AREAS</b></div><div class="lal-outputs" id="lalOutputs"></div></section>
         <div class="lal-keys">
           <section class="lal-card" aria-label="Terms key"><h3 class="lal-card-title">Terms key</h3><ul class="lal-key-list">
@@ -28035,6 +28058,8 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
     history.replaceState(null, "", hash);
     if (selected === "portsMatrix") updatePortsMatrixHash();
     if (selected === "splunkApi") updateSplunkApiHash();
+    if (selected === "onboarding") updateJourneyHash();
+    if (selected === "refLogAssessmentLifecycle") lalUpdateHash();
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
   updateBackToTopVisibility();
@@ -28853,11 +28878,23 @@ const LAL_REFS = {
 };
 const LAL_LAYER_REFS = { L12: [], L3: ["log-assessment-framework"], L4: [], L59: ["cyber-value-index", "response-readiness", "operational-assurance", "log-source-cyber-value"], L1011: ["implementation-complexity", "operational-assurance"] };
 const LAL_DOMAIN_SECTIONS = { 1: "log-af-definition", 2: "log-af-dimensions", 3: "log-af-dimensions", 4: "log-af-procedure", 5: "log-af-procedure", 6: "log-af-fingerprint", 7: "log-af-scoring", 8: "log-af-dimensions", 11: "log-af-template" };
+// The log source onboarding journey steps each lifecycle layer covers (Onboarding flow page).
+const LAL_LAYER_JOURNEY = { L12: ["ob-worthiness", "ob-topology"], L3: ["ob-quality"], L4: ["ob-build"], L59: ["ob-preingest", "ob-cybervalue"], L1011: ["ob-implementation"] };
+const LAL_DOMAIN_ICONS = { 1: "&#128452;", 2: "&#128338;", 3: "&#129482;", 4: "&#128291;", 5: "&#9986;", 6: "&#129516;", 7: "&#128202;", 8: "&#128207;", 9: "&#9889;", 11: "&#128203;" };
 function lalRefTitle(name) {
   const view = name.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase()) + "ReferenceView";
   return document.querySelector(`#${view} h2`)?.textContent.trim() || name;
 }
 // Open an article, and optionally one of its sections.
+function lalJourneyName(id) {
+  return (typeof onboardingJourney !== "undefined" && onboardingJourney.models.onboarding?.byId[id]?.name) || document.getElementById(id)?.querySelector("h4")?.firstChild?.textContent.trim() || id;
+}
+// Open the lifecycle page on a layer (used from the onboarding journey).
+function lalShowLayer(id) {
+  setActivePage("refLogAssessmentLifecycle");
+  lalChoose("layer", id);
+  lalOpenSheet(false);
+}
 function lalOpenReference(name, section) {
   showReferenceDetail(name);
   if (section) setTimeout(() => document.getElementById(section)?.scrollIntoView({ behavior: "smooth", block: "start" }), 150);
@@ -28923,6 +28960,11 @@ function lalRenderWheel() {
     const mid = -90 + i * span, [ax, ay] = pt(r0 - 6, mid), [bx2, by2] = pt(r0 + 14, mid);
     s += `<line class="lal-radial" x1="${ax}" y1="${ay}" x2="${bx2}" y2="${by2}" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#lalArrowGrey)"/>`;
   });
+  // Domain icons, just inside each segment.
+  LAL_DOMAINS.forEach((d, i) => {
+    const [ix, iy] = pt(r0 + 34, -90 + i * span);
+    s += `<text class="lal-domain-icon" data-lal-icon="${d.n}" x="${ix}" y="${iy + 6}" text-anchor="middle" font-size="17" pointer-events="none">${LAL_DOMAIN_ICONS[d.n] || ""}</text>`;
+  });
   s += `<g class="lal-hit" data-lal-layer="L3" tabindex="0" role="button" aria-label="Raw log sample: Stage 3"><circle class="lal-shape" cx="${C}" cy="${C}" r="${r0 - 8}" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
     <text x="${C}" y="${C - 18}" text-anchor="middle" font-size="26">&#128196;</text>
     <text x="${C}" y="${C + 10}" text-anchor="middle" font-size="16" font-weight="900" fill="#0b2a5b">RAW LOG SAMPLE</text>
@@ -28930,7 +28972,12 @@ function lalRenderWheel() {
     <text x="${C}" y="${C + 42}" text-anchor="middle" font-size="11.5" fill="#334155">logical events</text></g>`;
   document.getElementById("lalWheel").innerHTML = s + `</svg>`;
   // Phone width: the same domains as a list of buttons.
-  document.getElementById("lalDomainList").innerHTML = LAL_DOMAINS.map(d => `<button type="button" class="lal-dl-item" data-lal-domain="${d.n}" style="color:${d.color}"><b style="background:${d.color}">${d.unnumbered ? "?" : d.n}</b>${escapeHtml(d.name)}</button>`).join("");
+  document.getElementById("lalDomainList").innerHTML = LAL_DOMAINS.map(d => `<button type="button" class="lal-dl-item" data-lal-domain="${d.n}" style="color:${d.color}"><b style="background:${d.color}">${d.unnumbered ? "?" : d.n}</b><span aria-hidden="true">${LAL_DOMAIN_ICONS[d.n] || ""}</span>${escapeHtml(d.name)}</button>`).join("");
+}
+// "Show all details": every layer's activities and outputs, and every domain's checks, at once.
+function lalRenderGlance() {
+  document.getElementById("lalLayersGlance").innerHTML = `<table class="lal-table lal-glance-table"><thead><tr><th scope="col">Layer</th><th scope="col">Stages &amp; activities</th><th scope="col">Key outputs</th></tr></thead><tbody>${LAL_LAYERS.map(l => `<tr><td><button type="button" class="lal-glance-link" data-lal-layer-link="${l.id}" style="color:${l.color}">${escapeHtml(l.num)} · ${escapeHtml(l.title)}</button></td><td>${l.stages.map(escapeHtml).join("<br>")}<div class="lal-muted">${escapeHtml(l.text)}</div></td><td>${l.outputs.map(escapeHtml).join("<br>")}</td></tr>`).join("")}</tbody></table>`;
+  document.getElementById("lalDomainsGlance").innerHTML = LAL_DOMAINS.map(d => `<div class="lal-glance-domain" style="border-color:${d.color}55"><button type="button" class="lal-glance-link" data-lal-domain-link="${d.n}" style="color:${d.color}">${LAL_DOMAIN_ICONS[d.n] || ""} ${d.unnumbered ? "" : d.n + " · "}${escapeHtml(d.name)}</button><ul>${d.checks.map(c => `<li>${escapeHtml(c)}</li>`).join("")}</ul></div>`).join("");
 }
 function lalRenderStatic() {
   document.getElementById("lalOutputs").innerHTML = LAL_OUTPUTS.map(o => `<div class="lal-out" data-lal-out="${o.id}"><button type="button" class="lal-out-head" data-lal-area="${o.id}"><span class="lal-ic" style="background:${o.color}">${o.icon}</span><span><b style="color:${o.color}">${escapeHtml(o.title)}</b><small>${escapeHtml(o.stage)}</small></span></button>
@@ -28983,6 +29030,8 @@ function lalPaint() {
     g.classList.toggle("lal-lit", on && !isSel); g.classList.toggle("lal-sel", isSel);
     g.classList.toggle("lal-dim", q ? !on : !(on || isSel) && L.domains.size > 0);
     g.setAttribute("aria-pressed", String(isSel));
+    const icon = document.querySelector(`#lalWheel [data-lal-icon="${d.n}"]`);
+    if (icon) icon.setAttribute("opacity", g.classList.contains("lal-dim") ? ".28" : "1");
     g.setAttribute("transform", isSel ? `translate(${g.dataset.ox} ${g.dataset.oy})` : "");
     g.querySelector(".lal-shape").setAttribute("fill", isSel ? d.color + "55" : d.color + "22");
   });
@@ -29036,7 +29085,8 @@ function lalRenderDetail() {
       <div class="lal-sec">Key outputs</div><div class="lal-chips">${l.outputs.map(plain).join("")}</div>
       <div class="lal-sec">Key terms</div><div class="lal-chips">${LAL_ROWS.filter(r => r.layer === l.id).flatMap(r => r.terms).map(plain).join("")}</div>
       ${l.id === "L3" ? `<div class="lal-sec">Assessment domains</div><div class="lal-chips">${LAL_DOMAINS.map(d => chip(domainName(d), `data-lal-domain-link="${d.n}"`, d.color)).join("")}</div>` : ""}
-      ${refs([...(LAL_LAYER_REFS[l.id] || []), ...LAL_ROWS.filter(r => r.layer === l.id).flatMap(r => r.terms).map(t => LAL_REFS[t]), ...LAL_OUTPUTS.filter(o => o.layer === l.id).flatMap(o => o.items.map(([t]) => LAL_REFS[t]))])}`;
+      ${refs([...(LAL_LAYER_REFS[l.id] || []), ...LAL_ROWS.filter(r => r.layer === l.id).flatMap(r => r.terms).map(t => LAL_REFS[t]), ...LAL_OUTPUTS.filter(o => o.layer === l.id).flatMap(o => o.items.map(([t]) => LAL_REFS[t]))])}
+      <div class="lal-sec">On the onboarding journey</div><div class="lal-chips">${(LAL_LAYER_JOURNEY[l.id] || []).map(id => chip(`${lalJourneyName(id)} ›`, `data-lal-journey="${id}"`, "#1f4e78")).join("")}</div>`;
   } else if (sel.kind === "domain") {
     const d = LAL_DOMAINS.find(x => x.n === sel.id);
     const feeds = LAL_OUTPUTS.flatMap(o => o.items.map(([t, from], k) => from.includes(d.n) ? chip(`${o.title} · ${t}`, `data-lal-item-link="${o.id}:${k}"`, o.color) : "")).join("");
@@ -29081,6 +29131,10 @@ function lalDrawFlows() {
     <marker id="lalFlowNavy" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#0b2a5b"/></marker>
     <marker id="lalFlowLit" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#f59e0b"/></marker>
     ${["L59", "L1011"].map(id => `<marker id="lalFlow${id}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="${LAL_LAYERS.find(l => l.id === id).color}"/></marker>`).join("")}</defs>`;
+  // With "Show all details" on, the at-a-glance tables fill the space these arrows would cross,
+  // so only the arrows into the output areas are drawn, starting below the domain cards.
+  const all = root.classList.contains("lal-all");
+  if (!all) {
   // Raw log sample: layer 3 -> the framework.
   svg += `<path class="lal-flow lal-flow-raw" d="M ${L3.x + 4} ${L3.y} H ${lane} V ${wheelCard.t - 2}" stroke="${raw}" stroke-width="2.4" fill="none" marker-end="url(#lalFlowRaw)"/>`;
   svg += `<text x="${L3.x + 8}" y="${L3.y - 6}" font-size="10" font-weight="800" fill="${raw}">Raw log sample</text>`;
@@ -29089,12 +29143,14 @@ function lalDrawFlows() {
     const color = LAL_LAYERS.find(l => l.id === id).color;
     svg += `<path class="lal-flow lal-flow-feed" data-lal-flow="${id}" d="M ${lane + dx} ${wheelCard.t + 2} V ${pt.y} H ${pt.x + 6}" stroke="${color}" stroke-width="1.8" stroke-dasharray="6 4" fill="none" marker-end="url(#lalFlow${id})"/>`;
   });
+  }
+  const outStart = all ? rel(document.getElementById("lalDomainsGlance")).b + 2 : wheelSvg.b - 4;
   // The framework -> the output areas, one arrow per output column.
   const cols = [...new Map([...root.querySelectorAll(".lal-out")].map(c => { const r = rel(c); return [Math.round((r.l + r.r) / 2), c.dataset.lalOut]; })).entries()];
   const colIds = x => [...root.querySelectorAll(".lal-out")].filter(c => { const r = rel(c); return Math.round((r.l + r.r) / 2) === x; }).map(c => c.dataset.lalOut);
   cols.forEach(([x]) => {
     const on = colIds(x).some(id => lit.has(id));
-    svg += `<path class="lal-flow lal-flow-out" d="M ${x} ${wheelSvg.b - 4} V ${band.t - 2}" stroke="${on ? "#f59e0b" : "#0b2a5b"}" stroke-width="${on ? 3 : 2}" fill="none" marker-end="url(#${on ? "lalFlowLit" : "lalFlowNavy"})"/>`;
+    svg += `<path class="lal-flow lal-flow-out" d="M ${x} ${outStart} V ${band.t - 2}" stroke="${on ? "#f59e0b" : "#0b2a5b"}" stroke-width="${on ? 3 : 2}" fill="none" marker-end="url(#${on ? "lalFlowLit" : "lalFlowNavy"})"/>`;
   });
   ov.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
   ov.setAttribute("width", box.width);
@@ -29107,17 +29163,44 @@ function lalStopPlay() {
   lalState.timer = null;
   document.getElementById("lalPlay").innerHTML = "&#9654; How it works";
 }
-function lalChoose(kind, id) { lalStopPlay(); lalState.step = -1; lalState.sel = { kind, id }; lalPaint(); lalOpenSheet(true); }
+function lalChoose(kind, id) { lalStopPlay(); lalState.step = -1; lalState.sel = { kind, id }; lalPaint(); lalOpenSheet(true); lalUpdateHash(); }
+// Shareable link: #log-assessment-lifecycle?layer=L4 | domain=6 | item=dq:0 | area=dq. The default
+// selection (layer 3) is the plain hash.
+function lalHash() {
+  const { kind, id } = lalState.sel;
+  return kind === "layer" && id === "L3" ? "#log-assessment-lifecycle" : `#log-assessment-lifecycle?${new URLSearchParams({ [kind]: String(id) })}`;
+}
+function lalUpdateHash() {
+  if (!history.replaceState || !/^#log-assessment-lifecycle(\?|$)/.test(location.hash)) return;
+  const next = lalHash();
+  if (location.hash !== next) history.replaceState(null, "", next);
+}
+// Applies a link's selection; unknown values fall back to layer 3.
+function lalApplyHash() {
+  const m = location.hash.match(/^#log-assessment-lifecycle\?(.*)$/), params = new URLSearchParams(m ? m[1] : "");
+  let sel = { kind: "layer", id: "L3" };
+  const layer = params.get("layer"), domain = +params.get("domain"), item = params.get("item"), area = params.get("area");
+  if (layer && LAL_LAYERS.some(l => l.id === layer)) sel = { kind: "layer", id: layer };
+  else if (domain && LAL_DOMAINS.some(d => d.n === domain)) sel = { kind: "domain", id: domain };
+  else if (item && /^[a-z]+:\d+$/.test(item) && LAL_OUTPUTS.find(o => o.id === item.split(":")[0])?.items[+item.split(":")[1]]) sel = { kind: "item", id: item };
+  else if (area && LAL_OUTPUTS.some(o => o.id === area)) sel = { kind: "area", id: area };
+  lalStopPlay();
+  lalState.step = -1;
+  lalState.sel = sel;
+  lalPaint();
+  lalUpdateHash();
+}
 // On narrow screens the detail panel is a bottom sheet; selecting something opens it.
 function lalOpenSheet(open) { document.getElementById("lalAside")?.classList.toggle("lal-open", open); }
 function initLogAssessmentLifecycle() {
   const root = document.getElementById("logAssessmentLifecyclePage");
   if (!root) return;
-  lalRenderPyramid(); lalRenderWheel(); lalRenderStatic();
+  lalRenderPyramid(); lalRenderWheel(); lalRenderStatic(); lalRenderGlance();
   root.addEventListener("click", e => {
-    const t = e.target.closest("[data-lal-layer], [data-lal-domain], [data-lal-item], [data-lal-area], [data-lal-row], [data-lal-step], [data-lal-domain-link], [data-lal-item-link], [data-lal-layer-link], [data-lal-reference]");
+    const t = e.target.closest("[data-lal-journey], [data-lal-layer], [data-lal-domain], [data-lal-item], [data-lal-area], [data-lal-row], [data-lal-step], [data-lal-domain-link], [data-lal-item-link], [data-lal-layer-link], [data-lal-reference]");
     if (!t) return;
     const d = t.dataset;
+    if (d.lalJourney) { lalStopPlay(); lalOpenSheet(false); showOnJourneyMap(d.lalJourney, "onboarding"); return; }
     if (d.lalReference) { lalStopPlay(); lalOpenReference(d.lalReference, d.lalSection); return; }
     if (d.lalStep) { lalStopPlay(); lalState.step = +d.lalStep; lalPaint(); lalOpenSheet(true); return; }
     if (d.lalLayer || d.lalLayerLink) return lalChoose("layer", d.lalLayer || d.lalLayerLink);
@@ -29131,6 +29214,12 @@ function initLogAssessmentLifecycle() {
     if ((e.key === "Enter" || e.key === " ") && e.target.matches(".lal-hit, tr.lal-row")) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent("click", { bubbles: true })); }
   });
   document.getElementById("lalSheetClose").addEventListener("click", () => lalOpenSheet(false));
+  document.getElementById("lalShowAll").addEventListener("click", event => {
+    const on = !root.classList.contains("lal-all");
+    root.classList.toggle("lal-all", on);
+    event.currentTarget.setAttribute("aria-pressed", String(on));
+    lalDrawFlows();
+  });
   const fit = () => {
     const w = root.clientWidth;
     if (!w) return;
@@ -29159,7 +29248,7 @@ function initLogAssessmentLifecycle() {
   });
   // The Log Assessment Framework article links here.
   document.querySelectorAll("[data-open-lal]").forEach(button => button.addEventListener("click", () => setActivePage("refLogAssessmentLifecycle")));
-  lalPaint();
+  lalApplyHash();
 }
 function jumpToConfigSetting(entry){
   showReferenceDetail(configDetailNameFromArticleId(entry.articleId));
@@ -30395,6 +30484,12 @@ function renderOnboardingJourneyList() {
       + inPhase.map(i => `<button type="button" class="obj-list-item${i.type === "gate" ? " obj-gate" : ""}${i.branch ? " obj-branch" : ""}" data-item="${i.id}" aria-current="${i.id === selected}"><span class="obj-list-dot"></span>${escapeHtml(i.name)}</button>`).join("");
   }).join("")}</div>`;
 }
+// Log source steps that a Log assessment lifecycle layer covers link back to that layer.
+function journeyLifecycleLinks(item) {
+  if (onboardingJourney.route !== "onboarding" || typeof LAL_LAYER_JOURNEY === "undefined") return "";
+  const layers = LAL_LAYERS.filter(l => (LAL_LAYER_JOURNEY[l.id] || []).includes(item.id));
+  return layers.length ? `<div class="obj-sec">In the log assessment lifecycle</div>` + layers.map(l => `<div class="obj-outcome"><span class="obj-badge obj-badge-link" style="background:${l.color}22;color:${l.color}">STAGE ${escapeHtml(l.num)}</span><span class="obj-outcome-text">${escapeHtml(l.title)}<small>${escapeHtml(l.text)}</small></span><button type="button" class="obj-link" data-lal-open="${l.id}">Show in the Log assessment lifecycle &rsaquo;</button></div>`).join("") : "";
+}
 function renderOnboardingJourneyInspector() {
   const j = onboardingJourney, model = journeyModel(), selected = journeySelected();
   const item = model.byId[selected];
@@ -30419,7 +30514,8 @@ function renderOnboardingJourneyInspector() {
   // Where this step meets the other route.
   const linksOut = (item.links || []).filter(l => j.models.onboarding?.byId[l.to]).map(l => `<div class="obj-outcome"><span class="obj-badge obj-badge-link">${l.dir === "out" ? "STARTS" : "NEEDS"}</span><span class="obj-outcome-text">${escapeHtml(l.title)}<small>${escapeHtml(l.text)}</small></span><button type="button" class="obj-link" data-route-link="${l.to}">Show ${escapeHtml(j.models.onboarding.byId[l.to].name)} on the log source journey &rsaquo;</button></div>`);
   const linksIn = j.route === "onboarding" && j.models.detection ? j.models.detection.links.filter(l => l.to === item.id).map(l => `<div class="obj-outcome"><span class="obj-badge obj-badge-link">DETECTION</span><span class="obj-outcome-text">${escapeHtml(l.title)}<small>${escapeHtml(l.text)}</small></span><button type="button" class="obj-link" data-detection-link="${l.from}">Show ${escapeHtml(j.models.detection.byId[l.from].name)} in the detection lifecycle &rsaquo;</button></div>`) : [];
-  const linkSection = linksOut.length || linksIn.length ? `<div class="obj-sec">${j.route === "detection" ? "On the log source journey" : "In the detection lifecycle"}</div>${[...linksOut, ...linksIn].join("")}` : "";
+  const linkSection = (linksOut.length || linksIn.length ? `<div class="obj-sec">${j.route === "detection" ? "On the log source journey" : "In the detection lifecycle"}</div>${[...linksOut, ...linksIn].join("")}` : "")
+    + journeyLifecycleLinks(item);
   const stageBody = st => `${tagChips(st.tags, st.states)}${st.paragraphs.map(p => `<p class="obj-text">${escapeHtml(p)}</p>`).join("")}`
     + (st.feeds.length ? `<div class="obj-sec">Feeds in</div><ul class="obj-feeds">${st.feeds.map(f => `<li><b>${escapeHtml(f.title)}</b> ${escapeHtml(f.text)}</li>`).join("")}</ul>` : "")
     + `<div class="obj-actions">${st.actions.map(a => `<button type="button" class="obj-action" data-reference="${escapeHtml(a.detail)}">${escapeHtml(a.label)} &rsaquo;</button>`).join("")}<button type="button" class="obj-action" data-scroll="${st.id}">Open full stage detail &darr;</button></div>`;
@@ -30477,11 +30573,49 @@ function renderOnboardingJourney(focusSelected) {
   inspector.classList.toggle("obj-open", j.narrow && j.open);
   const count = j.query ? items.filter(i => onboardingJourneyMatches(i, j.query)).length : null;
   document.getElementById("objSearchCount").textContent = count === null ? "" : `${count} match${count === 1 ? "" : "es"}`;
+  updateJourneyHash();
   if (focusSelected) {
     const node = wrap.querySelector(`[data-item="${journeySelected()}"]`);
     node?.focus({ preventScroll: true });
     node?.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }
+}
+// Shareable link: #onboarding-flow?route=detection&step=<id>. The default (the first step of the
+// log source route) is the plain #onboarding-flow.
+function journeyHash() {
+  const j = onboardingJourney, route = j.route, step = journeySelected(), first = j.models[route]?.items[0]?.id;
+  const params = new URLSearchParams();
+  if (route !== "onboarding") params.set("route", route);
+  if (step && step !== first) params.set("step", step);
+  const query = params.toString();
+  return query ? `#onboarding-flow?${query}` : "#onboarding-flow";
+}
+function updateJourneyHash() {
+  if (!history.replaceState || !onboardingJourney.models.onboarding || !/^#onboarding-flow(\?|$)/.test(location.hash)) return;
+  const next = journeyHash();
+  if (location.hash !== next) history.replaceState(null, "", next);
+}
+// Applies a link's route and step; unknown values are ignored.
+function applyJourneyHash() {
+  const j = onboardingJourney, m = location.hash.match(/^#onboarding-flow\?(.*)$/);
+  if (!j.models.onboarding) return;
+  const params = new URLSearchParams(m ? m[1] : "");
+  j.route = j.models[params.get("route")] ? params.get("route") : "onboarding";
+  const step = params.get("step");
+  if (step && j.models[j.route].byId[step]) j.selected[j.route] = step;
+  j.open = false;
+  renderOnboardingJourney();
+}
+// Select a step from outside the map (global search, the lifecycle page, a detail card) and
+// bring the map into view.
+function showOnJourneyMap(id, route = "onboarding") {
+  // The smooth scroll back up passes other cards; keep the scroll-spy from re-selecting them.
+  onboardingJourney.spyPausedUntil = Date.now() + 1500;
+  if (pageNameFromHash() !== "onboarding" || document.getElementById("onboardingPage")?.hidden) setActivePage("onboarding");
+  selectOnboardingJourneyItem(id, false, route);
+  onboardingJourney.open = false;
+  renderOnboardingJourney();
+  setTimeout(() => document.getElementById("onboardingJourney")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
 }
 function selectOnboardingJourneyItem(id, focus = false, route = onboardingJourney.route) {
   const j = onboardingJourney;
@@ -30506,8 +30640,9 @@ function initOnboardingFlowMap() {
   j.narrow = narrow.matches;
   narrow.addEventListener?.("change", event => { j.narrow = event.matches; j.open = false; renderOnboardingJourney(); });
   root.addEventListener("click", event => {
-    const target = event.target.closest("[data-tax], [data-item], [data-item-link], [data-route], [data-route-link], [data-detection-link], [data-phase], [data-layer], [data-reference], [data-scroll], .obj-sheet-close");
+    const target = event.target.closest("[data-lal-open], [data-tax], [data-item], [data-item-link], [data-route], [data-route-link], [data-detection-link], [data-phase], [data-layer], [data-reference], [data-scroll], .obj-sheet-close");
     if (!target || !root.contains(target)) return;
+    if (target.dataset.lalOpen) { lalShowLayer(target.dataset.lalOpen); return; }
     if (target.dataset.tax) { setActivePage("taxonomy"); selectTaxNodeFromTable(target.dataset.tax); return; }
     if (target.matches(".obj-sheet-close")) { j.open = false; renderOnboardingJourney(); return; }
     if (target.dataset.route) {
@@ -30579,7 +30714,40 @@ function initOnboardingFlowMap() {
     if (hit) { event.preventDefault(); selectOnboardingJourneyItem(hit.id); document.querySelector(`#onboardingFlowMapWrap [data-item="${hit.id}"]`)?.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
   });
   j.open = false;
-  renderOnboardingJourney();
+  applyJourneyHash();
+  // Each detail card gets "Show on map"; scrolling the cards moves the map's selection while the
+  // map itself is off screen, so it is on the step you were reading when you scroll back up.
+  const cards = [];
+  Object.keys(JOURNEY_ROUTES).forEach(route => {
+    let lastStage = "";
+    document.querySelectorAll(`#onboardingPage .onboarding-flow[data-journey="${route}"] > .onboarding-stage[id], #onboardingPage .onboarding-flow[data-journey="${route}"] > .onboarding-gate`).forEach(card => {
+      const id = card.id || `gate-${lastStage}`;
+      if (card.id) lastStage = card.id;
+      if (!j.models[route]?.byId[id]) return;
+      card.dataset.mapRoute = route;
+      card.dataset.mapItem = id;
+      card.querySelector("h4, h5")?.insertAdjacentHTML("beforeend", `<button type="button" class="ob-show-on-map" data-map-route="${route}" data-map-item="${id}">&#9678; Show on map</button>`);
+      cards.push(card);
+    });
+  });
+  document.getElementById("onboardingPage").addEventListener("click", event => {
+    const button = event.target.closest(".ob-show-on-map");
+    if (button) showOnJourneyMap(button.dataset.mapItem, button.dataset.mapRoute);
+  });
+  if (window.IntersectionObserver) {
+    let mapVisible = true;
+    new IntersectionObserver(entries => { mapVisible = entries[entries.length - 1].isIntersecting; }).observe(root);
+    const spy = new IntersectionObserver(entries => {
+      if (mapVisible || document.getElementById("onboardingPage").hidden || Date.now() < (j.spyPausedUntil || 0)) return;
+      const hit = entries.find(e => e.isIntersecting)?.target;
+      if (!hit) return;
+      j.route = hit.dataset.mapRoute;
+      j.selected[j.route] = hit.dataset.mapItem;
+      j.open = false;
+      renderOnboardingJourney();
+    }, { rootMargin: "-35% 0px -55% 0px" });
+    cards.forEach(card => spy.observe(card));
+  }
 }
 document.querySelectorAll("[data-open-reference-detail]").forEach(button=>button.addEventListener("click",()=>showReferenceDetail(button.dataset.openReferenceDetail)));
 document.querySelectorAll("[data-open-prompt-panel]").forEach(button=>button.addEventListener("click",()=>{
@@ -30638,7 +30806,7 @@ document.querySelectorAll("[data-copy-prompt]").forEach(button => button.addEven
 
 function pageNameFromHash() {
   if (location.hash === "#info") return "info";
-  if (location.hash === "#onboarding-flow") return "onboarding";
+  if (/^#onboarding-flow(\?|$)/.test(location.hash)) return "onboarding";
   if (location.hash === "#taxonomy") return "taxonomy";
   if (location.hash === "#object-taxonomy") return "objectTaxonomy";
   if (location.hash === "#assessments") return "assessments";
@@ -30676,7 +30844,7 @@ function pageNameFromHash() {
   if (/^#roles(\?|$)/.test(location.hash)) return "refRoles";
   if (location.hash === "#splunk-bin") return "refSplunkBin";
   if (location.hash === "#splunk-timezone") return "refSplunkTimezone";
-  if (location.hash === "#log-assessment-lifecycle") return "refLogAssessmentLifecycle";
+  if (/^#log-assessment-lifecycle(\?|$)/.test(location.hash)) return "refLogAssessmentLifecycle";
   if (location.hash === "#questions") return "refQuestions";
   if (location.hash === "#naming-convention") return "refNamingConvention";
   return "info";
@@ -47250,6 +47418,8 @@ window.addEventListener("hashchange", () => {
   if (hashPage === "portsMatrix" && portsMatrixHashHandler) portsMatrixHashHandler();
   if (hashPage === "splunkApi") applySplunkApiHash();
   if (hashPage === "refRoles") applyRolesHash();
+  if (hashPage === "onboarding") applyJourneyHash();
+  if (hashPage === "refLogAssessmentLifecycle") lalApplyHash();
 });
 
 advisorForm.addEventListener("submit", event => {
@@ -52137,6 +52307,26 @@ const GLOBAL_SEARCH_DOMAINS = [
     text: e => [e.settingText, e.descText, e.fileTitle, e.sectionTitle].join(" "),
     title: e => e.settingText, subtitle: e => e.fileTitle + (e.sectionTitle ? " — " + e.sectionTitle : ""), snippet: e => e.descText || "",
     go: e => jumpToConfigSetting(e)
+  },
+  {
+    id: "lifecycle", label: "Log assessment lifecycle",
+    getItems: () => [
+      ...LAL_LAYERS.map(l => ({ kind: "layer", id: l.id, title: `${l.num} · ${l.title}`, subtitle: "Lifecycle layer", snippet: l.text,
+        text: [l.title, l.text, ...l.stages, ...l.outputs, ...LAL_ROWS.filter(r => r.layer === l.id).flatMap(r => r.terms)].join(" ") })),
+      ...LAL_DOMAINS.map(d => ({ kind: "domain", id: d.n, title: d.name, subtitle: `Assessment domain${d.unnumbered ? "" : " " + d.n} · Stage 3`, snippet: d.checks.join(", "),
+        text: [d.name, ...d.checks].join(" ") })),
+    ],
+    text: x => x.text, title: x => x.title, subtitle: x => x.subtitle, snippet: x => x.snippet,
+    go: x => { setActivePage("refLogAssessmentLifecycle"); lalChoose(x.kind, x.id); lalOpenSheet(false); }
+  },
+  {
+    id: "journey", label: "Onboarding & detection journeys",
+    getItems: () => Object.entries(onboardingJourney.models).flatMap(([route, model]) => model.items.map(item => ({ route, item }))),
+    text: x => [x.item.name, x.item.title || "", ...(x.item.tags || []), ...(x.item.states || []), ...(x.item.paragraphs || []), ...(x.item.outcomes || []).map(o => o.text)].join(" "),
+    title: x => `${x.item.type === "gate" ? "\u25C6 " : ""}${x.item.name}`,
+    subtitle: x => `${JOURNEY_ROUTES[x.route].label} · ${x.item.phase.label}`,
+    snippet: x => (x.item.paragraphs?.[0] || (x.item.outcomes || []).map(o => `${o.badge}: ${o.text}`).join(" · ")).slice(0, 140),
+    go: x => showOnJourneyMap(x.item.id, x.route)
   },
   {
     id: "splunkbin", label: "Splunk bin CLI commands",
