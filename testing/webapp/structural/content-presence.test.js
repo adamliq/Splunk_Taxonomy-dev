@@ -577,12 +577,20 @@ describe('Health Checks Table: Splunk platform security/upgrade-readiness + oper
     assert.match(groupNode.term, /Current entries \(678\)/);
   });
 
-  test('every health-check Test ID is unique across all 561 rows', () => {
+  test('every health-check Test ID is unique across all 678 rows', () => {
     const ids = health.map(n => n.fields['Test ID']);
     const seen = new Set();
     const dupes = ids.filter(id => (seen.has(id) ? true : (seen.add(id), false)));
     assert.deepEqual(dupes, []);
   });
+
+  // Rows added after the original 561 that the source left unprioritised ("TBD") or without an
+  // SPL query. They are tracked here as known gaps: a new row with either gap fails the tests.
+  const AWAITING_PRIORITY = ['TC-LIC-002', 'TC-LIC-003', 'TC-MOD-006', 'TC-AEH-006', 'TC-PLT-036', 'TC-PLT-037', 'TC-PLT-038', 'TC-MH-021', 'TC-DBX-006', 'TC-DBX-007',
+    'TC-SHL-044', 'TC-SHL-045', 'TC-SHL-046', 'TC-IDX-035', 'TC-DS-006', 'TC-IP-021', 'TC-FWP-021', 'TC-SSF-015', 'TC-RTC-017',
+    'TC-CMC-001', 'TC-CMC-002', 'TC-CMC-003', 'TC-CMC-004', 'TC-CMC-005', 'TC-CMC-006', 'TC-CMC-007', 'TC-CMC-008', 'TC-CMC-009', 'TC-CMC-010',
+    'TC-CMC-011', 'TC-CMC-012', 'TC-CMC-013', 'TC-CMC-014', 'TC-CMC-015'];
+  const AWAITING_SPL = ['TC-LIC-002', 'TC-LIC-003', 'TC-PLT-036', 'TC-PLT-037', 'TC-PLT-038', 'TC-SHL-044', 'TC-SHL-045', 'TC-SHL-046', 'TC-IDX-035', 'TC-DS-006', 'TC-FWP-021'];
 
   test('9 new Input Types are present with the expected row counts', () => {
     const counts = {};
@@ -592,12 +600,12 @@ describe('Health Checks Table: Splunk platform security/upgrade-readiness + oper
     }
     const expected = {
       'Splunk Platform Security / Upgrade Readiness': 26,
-      'Search Head': 43,
-      'Indexer / Indexer Cluster': 34,
-      'Forwarder Platform': 20,
-      'Splunk Platform (All Roles)': 35,
-      'Deployment Server': 5,
-      'License Master': 1,
+      'Search Head': 46,
+      'Indexer / Indexer Cluster': 35,
+      'Forwarder Platform': 21,
+      'Splunk Platform (All Roles)': 38,
+      'Deployment Server': 6,
+      'License Master': 3,
       'Cluster Master': 2,
       'Monitoring Console': 5,
     };
@@ -606,14 +614,16 @@ describe('Health Checks Table: Splunk platform security/upgrade-readiness + oper
     }
   });
 
-  test('Priority values roll up to 299 Critical / 215 High / 47 Medium across all 561 rows', () => {
-    const counts = { Critical: 0, High: 0, Medium: 0 };
+  test('Priority values roll up to 321 Critical / 252 High / 70 Medium / 1 Low, with 34 awaiting a priority', () => {
+    const counts = { Critical: 0, High: 0, Medium: 0, Low: 0, TBD: 0 };
     for (const n of health) {
       const p = n.fields['Priority'];
       assert.ok(p in counts, `unexpected Priority value "${p}" on ${n.fields['Test ID']}`);
       counts[p]++;
     }
-    assert.deepEqual(counts, { Critical: 299, High: 215, Medium: 47 });
+    assert.deepEqual(counts, { Critical: 321, High: 252, Medium: 70, Low: 1, TBD: 34 });
+    assert.deepEqual(health.filter(n => n.fields['Priority'] === 'TBD').map(n => n.fields['Test ID']).sort(), [...AWAITING_PRIORITY].sort(),
+      'only the known rows may still be awaiting a priority');
   });
 
   test('every new health-check row has a non-empty Test Description, Pass Criteria and SPL preview', () => {
@@ -622,11 +632,11 @@ describe('Health Checks Table: Splunk platform security/upgrade-readiness + oper
       'Forwarder Platform', 'Splunk Platform (All Roles)', 'Deployment Server', 'License Master',
       'Cluster Master', 'Monitoring Console',
     ].includes(n.fields['Input Type']));
-    assert.equal(newRows.length, 171);
+    assert.equal(newRows.length, 182);
     for (const n of newRows) {
       assert.ok(n.fields['Test Description'], `${n.fields['Test ID']} missing Test Description`);
       assert.ok(n.fields['Pass Criteria'], `${n.fields['Test ID']} missing Pass Criteria`);
-      assert.ok(n.fields['Definition: SPL Query (truncated)'], `${n.fields['Test ID']} missing SPL preview`);
+      if (!AWAITING_SPL.includes(n.fields['Test ID'])) assert.ok(n.fields['Definition: SPL Query (truncated)'], `${n.fields['Test ID']} missing SPL preview`);
     }
   });
 
@@ -640,10 +650,10 @@ describe('Health Checks Table: Splunk platform security/upgrade-readiness + oper
   });
 
   test('hero text and stat badges reflect the new totals', () => {
-    assert.match(text, /Review all 561 reusable health-check templates/);
-    assert.match(text, /<strong id="healthVisibleCount">561<\/strong>/);
-    assert.match(text, /<strong id="healthCriticalCount">299<\/strong>/);
-    assert.match(text, /<strong id="healthAutomatedCount">561<\/strong>/);
-    assert.match(text, /<strong id="healthInputTypeCount">55<\/strong>/);
+    assert.match(text, /Review all 678 reusable health-check templates/);
+    assert.match(text, /<strong id="healthVisibleCount">678<\/strong>/);
+    assert.match(text, /<strong id="healthCriticalCount">321<\/strong>/);
+    assert.match(text, /<strong id="healthAutomatedCount">644<\/strong>/);
+    assert.match(text, /<strong id="healthInputTypeCount">58<\/strong>/);
   });
 });
