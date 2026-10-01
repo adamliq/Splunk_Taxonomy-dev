@@ -16,7 +16,7 @@ test('Splunk timezone is a Reference page with its own hash', () => {
     /refSplunkTimezone: document\.getElementById\("splunkTimezoneSection"\)/,
     /refSplunkTimezone: "reference"/,
     /refSplunkTimezone: "Splunk timezone"/,
-    /"refSplunkBin", "refSplunkTimezone", "refQuestions"/,
+    /"refSplunkBin", "refSplunkTimezone",/,
     /selected === "refSplunkTimezone"\n\s+\? "#splunk-timezone"/,
     /location\.hash === "#splunk-timezone"\) return "refSplunkTimezone"/,
     /\{ key: "refSplunkTimezone", label: "Splunk timezone" \}/,

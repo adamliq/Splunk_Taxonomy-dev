@@ -89,3 +89,46 @@ test('the detection lifecycle route and its links to the log source journey', as
     assert.deepEqual(pageErrors, []);
   });
 });
+
+test('feeds, the lifecycle state lane and clickable TAX codes', async () => {
+  await withServerAndPage(async ({ page, baseUrl, pageErrors }) => {
+    await page.goto(`${baseUrl}/index.html#onboarding-flow`, { waitUntil: 'load' });
+    await page.waitForTimeout(300);
+    const lane = () => page.evaluate(() => ({
+      feeds: document.querySelectorAll('#onboardingFlowMapWrap .obj-feed').length,
+      segments: [...document.querySelectorAll('.obj-state-seg')].map(g => g.dataset.state),
+      sides: [...document.querySelectorAll('.obj-state-side')].map(g => `${g.dataset.state}@${g.dataset.itemLink}`),
+    }));
+    assert.deepEqual(await lane(), {
+      feeds: 6,
+      segments: ['PLANNED', 'ONBOARDING', 'ACTIVE'],
+      sides: ['DEGRADED@ob-sustainment', 'EXPIRED@ob-sustainment', 'RETIRED@gate-ob-review90'],
+    });
+
+    // The detection link on an onboarding step shows its explanation, not the badge text.
+    await page.click('.obj-state-side[data-state="DEGRADED"]');
+    assert.equal(await heading(page), 'Log Sustainment');
+    assert.match(await page.textContent('#objInspector .obj-outcome small'), /moves the source to DEGRADED/);
+
+    await page.hover('#objInspector [data-tax="TAX-07.04"]');
+    assert.equal(await page.isHidden('#objTaxPop'), false);
+    assert.match(await page.textContent('#objTaxPop'), /Log Sustainment/);
+
+    await page.click('[data-layer="feeds"]');
+    await page.click('[data-layer="states"]');
+    assert.deepEqual(await lane(), { feeds: 0, segments: [], sides: [] });
+    await page.click('[data-layer="feeds"]');
+    await page.click('[data-layer="states"]');
+
+    await page.click('#objRoutes [data-route="detection"]');
+    const detection = await lane();
+    assert.equal(detection.feeds, 1);
+    assert.deepEqual(detection.segments, ['PROPOSED', 'DEVELOPMENT', 'TESTING', 'PEER REVIEW', 'PRODUCTION', 'MONITORING']);
+    assert.deepEqual(detection.sides, ['TUNING@gate-dl-drift', 'REVALIDATION@gate-dl-drift', 'DEPRECATED@gate-dl-drift', 'RETIRED@gate-dl-drift']);
+
+    await page.click('#objInspector [data-tax="TAX-05.01.01"]');
+    await page.waitForTimeout(200);
+    assert.equal(await page.evaluate(() => location.hash), '#taxonomy');
+    assert.deepEqual(pageErrors, []);
+  });
+});

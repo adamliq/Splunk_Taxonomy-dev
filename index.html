@@ -1401,6 +1401,99 @@
     .xref-method { font: 800 9.5px var(--mono); color: #475569; }
     .xref-op { font-size: 10.5px; color: var(--muted); }
     .xref-note { margin: 4px 0 12px; font-size: 13px; color: #334155; }
+    .lal-toolbar { display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin:14px 0; }
+    .lal-search { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid var(--border); border-radius:10px; padding:4px 10px; min-width:min(100%, 320px); }
+    .lal-search input { border:0; outline:0; flex:1; min-width:0; font-size:13.5px; background:transparent; box-shadow:none; padding:3px 0; }
+    .lal-search:focus-within { border-color:#1d4ed8; box-shadow:0 0 0 3px rgba(29,78,216,.15); }
+    .lal-count { font-size:11.5px; font-weight:800; color:#64748b; white-space:nowrap; }
+    .lal-btn { border:1px solid var(--border); background:#fff; border-radius:9px; padding:6px 12px; font-weight:800; font-size:12.5px; cursor:pointer; color:#334155; }
+    .lal-btn-primary { background:#0b2a5b; border-color:#0b2a5b; color:#fff; }
+    .lal-layout { display:grid; grid-template-columns:minmax(0, 1fr) minmax(300px, 380px); gap:14px; align-items:start; }
+    .lal-main { display:grid; gap:14px; min-width:0; position:relative; }
+    .lal-flows { position:absolute; top:0; left:0; pointer-events:none; z-index:2; overflow:visible; }
+    .lal-keys { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px; align-items:start; }
+    .lal-key-list { list-style:none; margin:0; padding:0; display:grid; gap:6px; font-size:12.5px; color:#334155; }
+    .lal-key-list li { display:flex; align-items:center; gap:8px; }
+    .lal-key-list li > span { display:inline-grid; place-items:center; width:22px; font-size:16px; }
+    #logAssessmentLifecyclePage .lal-key-list svg { display:inline-block; flex:0 0 auto; width:22px; height:22px; }
+    #lalPyramid svg { max-width:470px; margin:0; }
+    #lalWheel svg { max-width:640px; margin:0 auto; }
+    .lal-aside { position:sticky; top:12px; min-width:0; }
+    .lal-detail-card { max-height:calc(100vh - 24px); overflow-y:auto; position:relative; }
+    .lal-sheet-close { display:none; }
+    .lal-domain-list { display:none; }
+    .lal-ref { border-style:dashed !important; }
+    .lal-ref::after { content:" \2197"; font-size:10px; }
+    button.lal-term { border:0; background:transparent; padding:0; font:inherit; color:#1d4ed8; cursor:pointer; text-decoration:underline; text-decoration-style:dotted; text-underline-offset:2px; white-space:normal; text-align:left; }
+    .lal-card { background:#fff; border:1px solid var(--border); border-radius:16px; box-shadow:0 6px 18px rgba(15,23,42,.05); padding:12px 14px; min-width:0; }
+    .lal-card h3.lal-card-title { margin:0 0 8px; font-size:11.5px; letter-spacing:.07em; text-transform:uppercase; color:#64748b; }
+    .lal-band { background:#0b2a5b; color:#fff; border-radius:12px; padding:8px 14px; text-align:center; margin-bottom:8px; }
+    .lal-band b { display:block; font-size:14px; letter-spacing:.03em; }
+    .lal-band span { font-size:11.5px; opacity:.85; }
+    #logAssessmentLifecyclePage svg { display:block; width:100%; height:auto; }
+    .lal-hit { cursor:pointer; outline:none; }
+    .lal-hit:focus-visible .lal-shape { stroke:#0f172a; stroke-width:3; }
+    .lal-dim { opacity:.28; transition:opacity .15s; }
+    .lal-lit .lal-shape { filter:drop-shadow(0 0 6px rgba(245,158,11,.9)); }
+    .lal-sel .lal-shape { stroke:#0f172a; stroke-width:3; }
+    .lal-outputs { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
+    .lal-wide .lal-outputs { grid-template-columns:repeat(4, minmax(0, 1fr)); }
+    .lal-out { border:1px solid var(--border); border-radius:12px; padding:9px 11px; background:#fff; }
+    .lal-out.lal-lit { box-shadow:0 0 0 2px #f59e0b; }
+    .lal-out-head { display:flex; gap:8px; align-items:center; width:100%; border:0; background:transparent; padding:0; cursor:pointer; text-align:left; white-space:normal; }
+    .lal-ic { display:grid; place-items:center; width:30px; height:30px; border-radius:9px; color:#fff; font-size:15px; flex:0 0 auto; }
+    .lal-out-head b { display:block; font-size:13.5px; }
+    .lal-out-head small { display:block; color:#64748b; font-size:11.5px; }
+    .lal-out ul { list-style:none; margin:7px 0 0; padding:0; display:grid; gap:3px; }
+    .lal-out li button { width:100%; text-align:left; white-space:normal; border:0; background:transparent; border-radius:7px; padding:2px 6px; font-size:12.5px; color:#334155; cursor:pointer; }
+    .lal-out li button:hover { background:#f1f5f9; }
+    .lal-out li button.lal-lit { background:#fef3c7; color:#92400e; font-weight:700; }
+    .lal-out li button.lal-sel { background:#0b2a5b; color:#fff; }
+    #lalDetail { min-height:120px; }
+    #lalDetail h3 { margin:2px 0 6px; font-size:19px; color:#0f172a; }
+    #lalDetail p { margin:0 0 6px; color:#334155; font-size:13.5px; }
+    .lal-muted { color:#64748b !important; }
+    .lal-kicker { font-size:11px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; }
+    .lal-sec { margin:10px 0 4px; font-size:10.5px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:#64748b; }
+    .lal-chips { display:flex; flex-wrap:wrap; gap:5px; }
+    .lal-chip { border:1px solid var(--border); background:#f8fafc; border-radius:999px; padding:2px 10px; font-size:12px; cursor:pointer; white-space:normal; text-align:left; color:#334155; }
+    .lal-chip.lal-static { cursor:default; }
+    .lal-chip, .lal-out li button, .lal-steps button span { font-weight:500; }
+    .lal-out li button.lal-lit { font-weight:700; }
+    .lal-steps { list-style:none; margin:0; padding:0; display:grid; gap:5px; }
+    .lal-steps button { display:flex; gap:9px; align-items:flex-start; width:100%; border:1px solid transparent; background:transparent; border-radius:10px; padding:6px 8px; text-align:left; white-space:normal; cursor:pointer; font-size:13px; color:#334155; }
+    .lal-steps button b { display:grid; place-items:center; flex:0 0 auto; width:22px; height:22px; border-radius:50%; background:#0b2a5b; color:#fff; font-size:11.5px; }
+    .lal-steps button[aria-current="true"] { background:#eff6ff; border-color:#bfdbfe; }
+    .lal-table { width:100%; border-collapse:collapse; font-size:12.5px; }
+    .lal-table th { background:#0b2a5b; color:#fff; text-align:left; padding:7px 10px; font-size:12px; }
+    .lal-table td { border-bottom:1px solid var(--border); padding:7px 10px; vertical-align:top; color:#334155; }
+    .lal-table tr.lal-row { cursor:pointer; }
+    .lal-table tr.lal-row:hover td { background:#f8fafc; }
+    .lal-table tr.lal-row.lal-sel td { background:#eff6ff; }
+    .lal-table td.lal-stage { color:#fff !important; font-weight:900; font-size:16px; text-align:center; width:56px; }
+    .lal-table td.lal-label { font-weight:800; width:170px; }
+    .lal-term { border-radius:4px; }
+    .lal-term.lal-lit { background:#fde68a; box-shadow:0 0 0 2px #fde68a; }
+    .lal-banner { margin-top:14px; background:#0b2a5b; color:#fff; border-radius:12px; padding:10px 16px; display:flex; flex-wrap:wrap; gap:6px 18px; justify-content:center; font-size:13.5px; }
+    .lal-note { margin-top:12px; font-size:12px; color:#64748b; line-height:1.55; }
+    /* Breakpoints follow the page's own width (set from script), since the sidebar takes a share
+       of the window: lal-narrow stacks the layout and makes the detail panel a bottom sheet;
+       lal-compact swaps the wheel for a list of domains. */
+    .lal-narrow .lal-layout { grid-template-columns:minmax(0, 1fr); }
+    .lal-narrow .lal-aside { position:fixed; left:0; right:0; bottom:0; top:auto; z-index:60; transform:translateY(105%); transition:transform .2s ease; }
+    .lal-narrow .lal-aside.lal-open { transform:none; }
+    .lal-narrow .lal-detail-card { max-height:65vh; border-radius:18px 18px 0 0; box-shadow:0 -12px 30px rgba(15,23,42,.2); }
+    .lal-narrow .lal-sheet-close { display:block; position:absolute; top:8px; right:10px; border:0; background:#f1f5f9; border-radius:999px; width:30px; height:30px; font-size:16px; cursor:pointer; }
+    .lal-compact #lalWheel { display:none; }
+    .lal-compact .lal-outputs { grid-template-columns:minmax(0, 1fr); }
+    .lal-compact .lal-domain-list { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:6px; }
+    .lal-dl-item { display:flex; align-items:center; gap:8px; width:100%; border:1px solid var(--border); border-radius:10px; background:#fff; padding:7px 9px; text-align:left; white-space:normal; cursor:pointer; font-size:12.5px; font-weight:700; }
+    .lal-dl-item b { display:grid; place-items:center; flex:0 0 auto; width:22px; height:22px; border-radius:50%; color:#fff; font-size:11px; }
+    .lal-dl-item.lal-lit { box-shadow:0 0 0 2px #f59e0b; }
+    .lal-dl-item.lal-sel { background:#0b2a5b; color:#fff !important; }
+    .lal-dl-item.lal-dim { opacity:.45; }
+    .lal-compact .lal-table td.lal-label { width:auto; }
+    @media print { .lal-aside, .lal-toolbar { display:none !important; } .lal-layout { grid-template-columns:1fr; } }
     .tz-precedence { list-style: none; margin: 18px 0 10px; padding: 0; display: grid; gap: 10px; }
     .tz-step { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
     .tz-rank { display: grid; place-items: center; flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%; background: var(--primary); color: #fff; font-weight: 800; font-size: 14px; }
@@ -3985,6 +4078,16 @@
     .obj-routes button { border:0; background:transparent; border-radius:8px; padding:5px 12px; font-size:12.5px; font-weight:800; color:#475569; cursor:pointer; }
     .obj-routes button[aria-selected="true"] { background:#fff; color:#0f172a; box-shadow:0 1px 3px rgba(15,23,42,.14); }
     .obj-swatch-link { border-color:#0e7490; border-top-style:dashed; }
+    .obj-swatch-feed { width:14px; height:10px; border:1px solid #67e8f9; border-radius:6px; background:#ecfeff; }
+    .obj-swatch-state { width:6px; height:14px; border:0; border-radius:3px; background:linear-gradient(#64748b 33%, #1d4ed8 33% 66%, #15803d 66%); }
+    .obj-state-seg, .obj-state-side { cursor:pointer; }
+    button.obj-tax { border:0; cursor:pointer; text-decoration:underline; text-decoration-style:dotted; text-underline-offset:2px; }
+    button.obj-tax:hover, button.obj-tax:focus-visible { background:#c7d2fe; }
+    .obj-tax-pop { position:absolute; z-index:5; width:300px; max-width:100%; background:#fff; border:1px solid #cbd5e1; border-radius:10px; box-shadow:0 10px 24px rgba(15,23,42,.16); padding:9px 12px; font-size:12px; color:#334155; pointer-events:none; }
+    .obj-tax-pop b { display:block; font-size:13px; color:#0f172a; }
+    .obj-tax-pop span { display:block; margin:2px 0 5px; line-height:1.45; }
+    .obj-tax-pop .obj-tax-code { font:800 10.5px ui-monospace,Menlo,monospace; color:#3730a3; margin:0; }
+    .obj-tax-pop em { font-style:normal; font-weight:800; color:#1d4ed8; }
     .obj-badge-link { background:#cffafe; color:#0e7490; }
     .obj-check { list-style:none; margin:0 0 6px; padding:0; display:grid; gap:3px; font-size:12.5px; color:#334155; }
     .obj-check li { display:flex; gap:7px; align-items:flex-start; }
@@ -3998,7 +4101,7 @@
     .obj-search-count { font-size:11px; font-weight:700; white-space:nowrap; }
     .obj-stepper { display:grid; grid-template-columns:repeat(6, minmax(0, 1fr)); gap:6px; }
     .obj-step { display:block; min-width:0; text-align:left; border:1px solid transparent; border-radius:10px; padding:6px 9px 7px; cursor:pointer; font:inherit; }
-    .obj-step-name { display:flex; align-items:center; gap:6px; font-weight:800; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .obj-step-name { display:flex; align-items:flex-start; gap:6px; font-weight:800; font-size:11.5px; line-height:1.3; white-space:normal; hyphens:auto; min-width:0; }
     .obj-step-letter { display:inline-grid; place-items:center; flex:0 0 auto; width:19px; height:19px; border-radius:50%; color:#fff; font-size:10.5px; }
     .obj-step-bar { display:flex; gap:2px; margin-top:5px; }
     .obj-step-bar i { flex:1; height:4px; border-radius:2px; opacity:.3; }
@@ -4062,11 +4165,12 @@
     @media (max-width: 1000px) {
       .obj-main { grid-template-columns:minmax(0, 1fr); }
       .obj-map { border-right:0; border-bottom:1px solid var(--border); }
-      .obj-inspector-inner { position:static; }
+      .obj-inspector-inner { position:relative; }
     }
     @media (max-width: 760px) {
       .obj-stepper { display:flex; overflow-x:auto; padding-bottom:2px; }
       .obj-step { flex:0 0 auto; }
+      .obj-step-name { white-space:nowrap; }
       .obj-step-bar, .obj-step-meta, .obj-keys { display:none; }
       .obj-search { margin-left:0; flex:1 1 100%; }
       .obj-map { border-bottom:0; padding:0; }
@@ -4587,7 +4691,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.30 &middot; build 144</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.01 &middot; build 148</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -4646,6 +4750,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
         <button id="showCmeiPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cmeiPage">Framework</button>
         <button id="showFrameworkOverviewPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="frameworkOverview">Framework overview</button>
         <button id="showHealthChecksPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="healthChecksPage">Health checks table</button>
+        <button id="showLogAssessmentLifecyclePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="logAssessmentLifecyclePage">Log assessment lifecycle</button>
         <button id="showLoggingPatternAdvisorPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="loggingPatternAdvisorPage">Logging pattern advisor</button>
         <button id="showPatternsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="patternsPage">Logging patterns table</button>
         <button id="showNamingConventionPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="namingConventionSection">Naming convention</button>
@@ -4767,6 +4872,8 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
           <button type="button" class="obj-toggle" data-layer="stops" aria-pressed="true"><i class="obj-swatch obj-swatch-stop"></i>Stop points</button>
           <button type="button" class="obj-toggle" data-layer="branch" aria-pressed="true"><i class="obj-swatch obj-swatch-branch"></i>Post-go-live branch</button>
           <button type="button" class="obj-toggle" data-layer="links" aria-pressed="true" hidden><i class="obj-swatch obj-swatch-link"></i>Links to the log source journey</button>
+          <button type="button" class="obj-toggle" data-layer="feeds" aria-pressed="true"><i class="obj-swatch obj-swatch-feed"></i>Feeds in</button>
+          <button type="button" class="obj-toggle" data-layer="states" aria-pressed="true"><i class="obj-swatch obj-swatch-state"></i>Lifecycle states</button>
           <span class="obj-keys">Select a stage or gate for its detail &middot; step with <kbd>&uarr;</kbd> <kbd>&darr;</kbd></span>
         </div>
       </div>
@@ -9802,6 +9909,7 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
         <div class="eyebrow">References / Detailed reference</div>
         <h2 id="logAssessmentFrameworkReferenceTitle">Log Assessment Framework</h2>
         <p>A reusable, source-agnostic procedure for assessing the structure, format consistency and data quality of a raw log file at both the physical-line and logical-event level. It derives the dominant convention from the data itself -- the majority baseline -- and measures every deviation from it, rather than checking against an external spec.</p>
+        <div class="xref-line"><span class="xref-label">See also</span><button type="button" class="xref-chip" data-open-lal>Log assessment lifecycle &amp; framework map</button></div>
         <nav class="eccs-anchor-nav" aria-label="Log Assessment Framework reference sections"><a href="#log-af-definition">Definition</a><a href="#log-af-dimensions">Assessment dimensions</a><a href="#log-af-procedure">Procedure</a><a href="#log-af-scoring">Conformance scoring</a><a href="#log-af-fingerprint">Structural fingerprinting</a><a href="#log-af-pitfalls">Common pitfalls</a><a href="#log-af-template">Assessment template</a><a href="#log-af-relationship">Relationship to other assessments</a></nav>
       </div>
       <section id="log-af-definition" class="eccs-detail-section">
@@ -11733,6 +11841,53 @@ INGEST PROCESSOR
       </ul>
       <p class="tz-source">Official reference: <a href="https://help.splunk.com/en/?resourceId=Splunk_Data_Applytimezoneoffsetstotimestamps" target="_blank" rel="noopener noreferrer">Specify time zones for timestamps</a> (Splunk Docs).</p>
     </section>
+  </section>
+<section id="logAssessmentLifecyclePage" class="page-view reference-page" role="tabpanel" aria-labelledby="showLogAssessmentLifecyclePage" hidden>
+    <div class="patterns-hero">
+      <div>
+        <div class="eyebrow">Assessment reference</div>
+        <h2>Log assessment lifecycle &amp; framework</h2>
+        <p>End-to-end progression from raw log intake to governance approval, powered by the Log Assessment Framework. Select a lifecycle layer, an assessment domain or an output to see how they connect.</p>
+      </div>
+    </div>
+    <div class="lal-toolbar">
+      <label class="lal-search"><span aria-hidden="true">&#128269;</span><input type="search" id="lalSearch" placeholder="Find a term: timestamp, HEC, CVI, multiline" autocomplete="off" spellcheck="false" aria-label="Find a term"><span id="lalCount" class="lal-count" aria-live="polite"></span></label>
+      <button type="button" class="lal-btn lal-btn-primary" id="lalPlay">&#9654; How it works</button>
+      <button type="button" class="lal-btn" id="lalReset">Reset</button>
+    </div>
+    <div class="lal-layout">
+      <div class="lal-main">
+        <svg id="lalFlows" class="lal-flows" aria-hidden="true"></svg>
+        <section class="lal-card" aria-label="Lifecycle layers"><h3 class="lal-card-title">Lifecycle layers</h3><div id="lalPyramid"></div></section>
+        <section class="lal-card" aria-label="Log Assessment Framework domains"><div class="lal-band"><b>LOG ASSESSMENT FRAMEWORK (Stage 3)</b><span>Comprehensive analysis of raw logs across the assessment domains &mdash; select one</span></div><div id="lalWheel"></div><div id="lalDomainList" class="lal-domain-list"></div></section>
+        <section aria-label="Framework outputs"><div class="lal-band lal-outputs-band"><b>FRAMEWORK OUTPUTS FEED MULTIPLE AREAS</b></div><div class="lal-outputs" id="lalOutputs"></div></section>
+        <div class="lal-keys">
+          <section class="lal-card" aria-label="Terms key"><h3 class="lal-card-title">Terms key</h3><ul class="lal-key-list">
+            <li><span style="color:#dc2626">&#127919;</span>Collection / Intake</li>
+            <li><span style="color:#f97316">&#128269;</span>Analysis / Assessment</li>
+            <li><span style="color:#65a30d">&#9881;</span>Engineering / Build</li>
+            <li><span style="color:#0d9488">&#128737;</span>Quality / Assurance</li>
+            <li><span style="color:#ea580c">&#127941;</span>Scoring / Value</li>
+            <li><span style="color:#6d28d9">&#128640;</span>Implementation / Operations</li>
+            <li><span style="color:#334155">&#128196;</span>Outputs / Deliverables</li>
+          </ul></section>
+          <section class="lal-card"><h3 class="lal-card-title">How the framework works</h3><ol class="lal-steps" id="lalSteps"></ol></section>
+          <section class="lal-card" aria-label="Legend"><h3 class="lal-card-title">Legend</h3><ul class="lal-key-list">
+            <li><svg width="22" height="22" aria-hidden="true"><circle cx="11" cy="11" r="9" fill="#1d4ed8"/><text x="11" y="15" text-anchor="middle" font-size="11" font-weight="900" fill="#fff">1</text></svg>Framework domain</li>
+            <li><svg width="22" height="22" aria-hidden="true"><path d="M 15 3 h -6 V 19 h 6" stroke="#0b2a5b" stroke-width="2" fill="none"/></svg>Lifecycle stage</li>
+            <li><svg width="22" height="22" aria-hidden="true"><path d="M 2 11 H 17" stroke="#0b2a5b" stroke-width="2.2"/><path d="M 14 6 L 20 11 L 14 16 z" fill="#0b2a5b"/></svg>Flow / progression</li>
+            <li><svg width="22" height="22" aria-hidden="true"><path d="M 2 11 H 17" stroke="#0d9488" stroke-width="2" stroke-dasharray="4 3"/><path d="M 14 6 L 20 11 L 14 16 z" fill="#0d9488"/></svg>Feedback / feeds</li>
+            <li><svg width="22" height="22" aria-hidden="true"><rect x="3" y="5" width="16" height="12" rx="3" fill="#fff" stroke="#94a3b8" stroke-width="1.6"/></svg>Outputs</li>
+          </ul></section>
+        </div>
+      </div>
+      <aside class="lal-aside" id="lalAside" aria-label="Selected item">
+        <div class="lal-card lal-detail-card"><button type="button" class="lal-sheet-close" id="lalSheetClose" aria-label="Close">&times;</button><div id="lalDetail" aria-live="polite"></div></div>
+      </aside>
+    </div>
+    <section class="lal-card" style="margin-top:14px"><h3 class="lal-card-title">Stages, key terms and outputs</h3><div class="eccs-table-wrap" role="region" aria-label="Stages, key terms and outputs" tabindex="0"><table class="lal-table"><thead><tr><th scope="col">Stage</th><th scope="col">Stage label</th><th scope="col">Key terms / assessments (not exhaustive)</th><th scope="col">Key outputs</th></tr></thead><tbody id="lalTable"></tbody></table></div></section>
+    <div class="lal-banner"><span>&#128161; The Log Assessment Framework establishes the evidence base for every decision.</span><span>Consistent application ensures reliable, valuable and operationally effective logging.</span></div>
+    <p class="lal-note">Domain numbering follows the source diagram, which numbers the domains 1&ndash;9 and 11 and leaves Line Analysis unnumbered (shown as &ldquo;8?&rdquo;). Which domains feed which output items is indicative.</p>
   </section>
 <section id="questionsSection" class="page-view reference-page" role="tabpanel" aria-labelledby="showQuestionsPage" hidden>
     <div class="patterns-hero">
@@ -26137,6 +26292,7 @@ const pageTabs = {
   refRoles: document.getElementById("showRolesPage"),
   refSplunkBin: document.getElementById("showSplunkBinPage"),
   refSplunkTimezone: document.getElementById("showSplunkTimezonePage"),
+  refLogAssessmentLifecycle: document.getElementById("showLogAssessmentLifecyclePage"),
   refQuestions: document.getElementById("showQuestionsPage"),
   refNamingConvention: document.getElementById("showNamingConventionPage"),
   prompts: document.getElementById("showPromptLibraryPage"),
@@ -26170,6 +26326,7 @@ const pageViews = {
   refRoles: document.getElementById("rolesSection"),
   refSplunkBin: document.getElementById("splunkBinSection"),
   refSplunkTimezone: document.getElementById("splunkTimezoneSection"),
+  refLogAssessmentLifecycle: document.getElementById("logAssessmentLifecyclePage"),
   refQuestions: document.getElementById("questionsSection"),
   refNamingConvention: document.getElementById("namingConventionSection"),
   prompts: document.getElementById("promptLibraryPage"),
@@ -26190,7 +26347,7 @@ const pageViews = {
 const SIDEBAR_GROUP_MAP = {
   onboarding: "onboarding", taxonomy: "onboarding", objectTaxonomy: "onboarding", assessments: "onboarding",
   sizing: "calculators", s3calc: "calculators",
-  reference: "reference", refFrameworkOverview: "reference", refConceptDefinitions: "reference", refAssessmentMethods: "reference", refStandardsReferences: "reference", refConfigFileReferences: "reference", refNetworkReference: "reference", refRoles: "reference", refSplunkBin: "reference", refSplunkTimezone: "reference", refQuestions: "reference", refNamingConvention: "reference",
+  reference: "reference", refFrameworkOverview: "reference", refConceptDefinitions: "reference", refAssessmentMethods: "reference", refStandardsReferences: "reference", refConfigFileReferences: "reference", refNetworkReference: "reference", refRoles: "reference", refSplunkBin: "reference", refSplunkTimezone: "reference", refLogAssessmentLifecycle: "reference", refQuestions: "reference", refNamingConvention: "reference",
   prompts: "reference", cmei: "reference", catalogue: "reference", patterns: "reference", refLoggingPatternAdvisor: "reference", health: "reference", portsMatrix: "reference", dataPipeline: "reference",
   splunkApi: "reference",
   inputCoverage: "coverage", metrics: "coverage"
@@ -26207,7 +26364,7 @@ const PAGE_LABELS = {
   refFrameworkOverview: "Framework overview", refConceptDefinitions: "Concepts & definitions",
   refAssessmentMethods: "Assessment methodologies", refStandardsReferences: "Standards & references",
   refConfigFileReferences: "Configuration file reference", dataPipeline: "Data pipeline",
-  refNetworkReference: "Network reference", refRoles: "Roles", refSplunkBin: "Splunk bin", refSplunkTimezone: "Splunk timezone",
+  refNetworkReference: "Network reference", refRoles: "Roles", refSplunkBin: "Splunk bin", refSplunkTimezone: "Splunk timezone", refLogAssessmentLifecycle: "Log assessment lifecycle",
   refQuestions: "Questions", refNamingConvention: "Naming convention", prompts: "Prompt library",
   cmei: "Framework", catalogue: "Data source catalogue", patterns: "Logging patterns table",
   refLoggingPatternAdvisor: "Logging pattern advisor", health: "Health checks table",
@@ -27780,7 +27937,7 @@ function exportViabilityCalculator(event) {
 
 let currentActivePageKey = "info";
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "refFrameworkOverview", "refConceptDefinitions", "refAssessmentMethods", "refStandardsReferences", "refConfigFileReferences", "dataPipeline", "refNetworkReference", "refRoles", "refSplunkBin", "refSplunkTimezone", "refQuestions", "refNamingConvention", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "refLoggingPatternAdvisor", "health", "portsMatrix", "externalTools", "splunkApi", "inputCoverage", "metrics"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "refFrameworkOverview", "refConceptDefinitions", "refAssessmentMethods", "refStandardsReferences", "refConfigFileReferences", "dataPipeline", "refNetworkReference", "refRoles", "refSplunkBin", "refSplunkTimezone", "refLogAssessmentLifecycle", "refQuestions", "refNamingConvention", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "refLoggingPatternAdvisor", "health", "portsMatrix", "externalTools", "splunkApi", "inputCoverage", "metrics"].includes(pageName) ? pageName : "info";
   currentActivePageKey = selected;
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#file-mon-/.test(location.hash) ? "file-monitoring-profile" : /^#rest-api-/.test(location.hash) ? "rest-api-collection-profile" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : /^#eda-/.test(location.hash) ? "eda-playbook" : "");
@@ -27840,6 +27997,8 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
           ? "#splunk-bin"
         : selected === "refSplunkTimezone"
           ? "#splunk-timezone"
+        : selected === "refLogAssessmentLifecycle"
+          ? "#log-assessment-lifecycle"
         : selected === "refQuestions"
           ? "#questions"
         : selected === "refNamingConvention"
@@ -28631,6 +28790,376 @@ function initConfMerge() {
     if (link) openConfMerge(link.dataset.openMerge);
   });
   renderConfMergeControls(); renderConfMergeLayers(); renderConfMergeResult();
+}
+const LAL_LENS = {
+  discovery: { name: "Discovery", icon: "&#127919;", color: "#dc2626" },
+  analysis: { name: "Analysis", icon: "&#128269;", color: "#f97316" },
+  engineering: { name: "Engineering", icon: "&#9881;", color: "#65a30d" },
+  assurance: { name: "Assurance & cyber value", icon: "&#128737;", color: "#0d9488" },
+  implementation: { name: "Implementation & operations", icon: "&#128640;", color: "#6d28d9" },
+};
+const LAL_LAYERS = [
+  { id: "L12", num: "1–2", short: ["DISCOVERY", "& INTAKE"], title: "Discovery & Intake", lens: "discovery", color: "#dc2626", rows: ["1", "2"], stages: ["1 · Worthiness Decision", "2 · Logging Pattern & Architecture Selection"], text: "Decide whether the source is worth onboarding, then choose how it will be collected and transported.", outputs: ["Business justification", "Collection architecture", "Data prerequisites", "Collection topology", "Transport design"] },
+  { id: "L3", num: "3", short: ["LOG ASSESSMENT", "FRAMEWORK"], title: "Log Assessment Framework", lens: "analysis", color: "#f97316", rows: ["3"], stages: ["3 · Log Assessment Framework"], text: "Comprehensive analysis of raw log samples to establish baseline, structure, content, quality and behaviour.", outputs: ["Baseline profile", "Conformance metrics", "Structural fingerprints", "Engineering recommendations"] },
+  { id: "L4", num: "4", short: ["DATA", "ENGINEERING"], title: "Data Engineering", lens: "engineering", color: "#65a30d", rows: ["4"], stages: ["4 · Data Engineering"], text: "Design and build parsing, extraction, normalisation and identity for reliable, consistent and performant ingestion.", outputs: ["Working parser", "Working sourcetype", "Extraction rules", "Normalisation mappings"] },
+  { id: "L59", num: "5–9", short: ["ASSURANCE", "FRAMEWORK"], title: "Assurance Framework", lens: "assurance", color: "#0d9488", rows: ["5-9"], stages: ["5–9 · Assurance Framework"], text: "Assess quality, investigation readiness, detection value and operational assurance. Apply gates and score overall cyber value.", outputs: ["Overall scores (CVI, ECCS, RFC, ETC, DQS, RRI, OAI)", "Candidate ranking", "Go / No-Go decision"] },
+  { id: "L1011", num: "10–11", short: ["IMPLEMENTATION", "OPERATIONS"], title: "Implementation Operations", lens: "implementation", color: "#6d28d9", rows: ["10-11"], stages: ["10–11 · Implementation & Operations"], text: "Deploy, validate, operate and hand over with monitoring, documentation and governance acceptance.", outputs: ["Production onboarding", "Operational monitoring", "Governance acceptance"] },
+];
+const LAL_ROWS = [
+  { stage: "1", layer: "L12", label: "Worthiness Decision", terms: ["Business Value", "Security Value", "Feasibility", "Use Cases", "Data Availability", "Documentation", "Sample Availability", "Vendor Support", "Worth Building", "Not Worth Building"], outputs: "Business justification, Decision (Stop / Proceed)" },
+  { stage: "2", layer: "L12", label: "Logging Pattern & Architecture Selection", terms: ["Logging Pattern", "Collection Method", "Transport", "Authentication", "Firewall", "Agent/Agentless", "HEC", "Syslog", "Forwarder", "API", "Event Hub", "Lambda", "Queue", "Polling", "Push"], outputs: "Collection architecture, Topology, Transport design" },
+  { stage: "3", layer: "L3", label: "Log Assessment Framework", terms: ["Sample Analysis", "Timestamp", "Structure", "Format", "Event Boundary", "Fingerprinting", "Profiling", "Volume", "Line Analysis", "Anomalies", "Complexity", "Recommendations"], outputs: "Baseline profile, Conformance metrics, Fingerprints, Engineering recommendations" },
+  { stage: "4", layer: "L4", label: "Data Engineering", terms: ["Event Breaking", "Datetime Parsing", "Parsing", "Extraction", "Normalisation", "Sourcetype Strategy", "CIM/ECS Mapping", "Performance"], outputs: "Working parser, Extraction rules, Sourcetype definition" },
+  { stage: "5-9", layer: "L59", label: "Assurance Framework", terms: ["Timestamp Quality", "Log Format Quality", "RFC", "ETC", "DQS", "ECCS", "ICD", "Pivot Density", "Pivot Breadth", "Identity Diversity", "Event Diversity", "Detection Coverage", "Noise %", "Gates (Quality, Pre-Ingest, Overall)"], outputs: "Scores, Candidate ranking, Go / No-Go decision" },
+  { stage: "10-11", layer: "L1011", label: "Implementation & Operations", terms: ["Deployment", "Integration", "Validation", "UAT", "Monitoring", "Health Checks", "Documentation", "Handover", "Governance Approval"], outputs: "Production onboarding, Operational monitoring, Governance acceptance" },
+];
+const LAL_DOMAINS = [
+  { n: 1, name: "Sample Analysis", color: "#2563eb", checks: ["Sample Collection", "Physical Line Analysis", "Logical Event Analysis"] },
+  { n: 2, name: "Timestamp Analysis", color: "#1d4ed8", checks: ["Timestamp Detection", "Timestamp Standards", "Timestamp Quality", "Timezone Detection", "Multiple Timestamp Detection", "Timestamp Consistency", "Timestamp Precision", "Timestamp Correctness"] },
+  { n: 3, name: "Structure Analysis", color: "#0d9488", checks: ["Structured", "Semi-Structured", "Unstructured", "Serialization Detection"] },
+  { n: 4, name: "Format Detection", color: "#65a30d", checks: ["JSON, XML", "CSV, TSV", "CEF, CLF, ELF", "Syslog, YAML", "Plain Text", "Log Format Detection", "Log Format Parsing"] },
+  { n: 5, name: "Event Boundary Analysis", color: "#ea580c", checks: ["Event Boundary Detection", "Line Breaking", "Multiline Detection", "Event Separation", "Logical Event Reconstruction"] },
+  { n: 6, name: "Fingerprinting", color: "#dc2626", checks: ["Structural Fingerprinting", "Structural Fingerprint Count", "Record Type Detection", "Distinct Record Types", "Variant Detection", "Format/Timestamp Combination Detection"] },
+  { n: 7, name: "Profiling & Baseline", color: "#be123c", checks: ["Majority Baseline", "Dominant Format", "Conformance Scoring", "Baseline Profile", "Outlier Detection", "Unknown Format Detection", "Sample Profiling"] },
+  { n: 8, name: "Line Analysis", color: "#7c3aed", unnumbered: true, checks: ["Line Length", "Line Length Quality", "Character Count", "Byte Count", "Per-Line Dimension Extraction"] },
+  { n: 9, name: "Volume & Performance", color: "#6d28d9", checks: ["Event Volume Profile", "EPS (Events Per Second)", "Daily Event Volume", "Average Event Size", "Parsing Performance", "Parsing Complexity"] },
+  { n: 11, name: "Recommendations & Outputs", color: "#15803d", checks: ["Parsing Strategy", "Sourcetype Strategy", "Sourcetype Identity", "Single vs Multiple Sourcetypes", "Engineering Recommendations", "Baseline Profile", "Conformance Metrics", "Structural Fingerprints"] },
+];
+const LAL_OUTPUTS = [
+  { id: "eng", title: "Engineering", stage: "Stage 4", layer: "L4", icon: "&#9881;", color: "#1d4ed8", items: [["Event boundaries", [5]], ["Parsing rules", [4, 11]], ["Field extraction", [3, 11]], ["Sourcetype strategy", [11]], ["Performance design", [9]]] },
+  { id: "dq", title: "Data Quality", stage: "Stage 5", layer: "L59", icon: "&#128737;", color: "#15803d", items: [["Timestamp quality", [2]], ["Log format quality", [4, 7]], ["Line length quality", [8]], ["Required fields", [1, 3]], ["Event type coverage", [6]]] },
+  { id: "cv", title: "Cyber Value", stage: "Stages 6–9", layer: "L59", icon: "&#127919;", color: "#ea580c", items: [["Context completeness", [1, 6]], ["Detection coverage", [6, 7]], ["Pivot density & breadth", [3]], ["Identity & event diversity", [6]], ["CVI & overall scoring", [7, 11]]] },
+  { id: "impl", title: "Implementation", stage: "Stages 10–11", layer: "L1011", icon: "&#128640;", color: "#6d28d9", items: [["Ingestion planning", [9]], ["Validation strategy", [7, 11]], ["Monitoring design", [9]], ["Operational readiness", [11]]] },
+];
+const LAL_STEPS = [
+  { text: "Raw log sample is analysed across the assessment domains.", light: { domains: LAL_DOMAINS.map(d => d.n), layers: ["L3"] } },
+  { text: "Outputs create the evidence base for decisions.", light: { domains: [7, 11], layers: ["L3"] } },
+  { text: "Evidence feeds engineering, quality, value scoring and implementation.", light: { outputs: ["eng", "dq", "cv", "impl"] } },
+  { text: "Gates ensure only high-quality, valuable data progresses.", light: { layers: ["L59"], outputs: ["dq", "cv"] } },
+  { text: "Implementation operationalises and monitors the solution.", light: { layers: ["L1011"], outputs: ["impl"] } },
+];
+// Terms on the page that have their own reference article (detail names), the extra articles
+// each layer relates to, and the Log Assessment Framework section each domain is covered in.
+const LAL_REFS = {
+  "Transport": "transport-delivery-patterns", "Timestamp": "timestamp-quality", "Format": "log-format-parse", "Event Boundary": "line-break", "Line Analysis": "line-length",
+  "Event Breaking": "line-break", "Datetime Parsing": "datetime-parse", "Extraction": "field-extraction", "Normalisation": "field-normalisation",
+  "Timestamp Quality": "timestamp-quality", "Log Format Quality": "log-format-quality", "RFC": "required-field-coverage", "ETC": "event-type-coverage", "DQS": "data-quality-score",
+  "ECCS": "eccs", "ICD": "icd", "Pivot Density": "pivot", "Pivot Breadth": "pivot", "Identity Diversity": "identity-diversity", "Noise %": "investigative-noise-percentage", "Detection Coverage": "threat-detection",
+  "Timestamp Standards": "datetime-format", "Log Format Detection": "log-format-parse", "Log Format Parsing": "log-format-parse", "Event Boundary Detection": "line-break", "Line Breaking": "line-break",
+  "Multiline Detection": "line-break", "Line Length": "line-length", "Line Length Quality": "line-length",
+  "Event boundaries": "line-break", "Parsing rules": "log-format-parse", "Field extraction": "field-extraction", "Timestamp quality": "timestamp-quality", "Log format quality": "log-format-quality",
+  "Line length quality": "line-length", "Required fields": "required-field-coverage", "Event type coverage": "event-type-coverage", "Context completeness": "eccs", "Detection coverage": "threat-detection",
+  "Pivot density & breadth": "pivot", "Identity & event diversity": "identity-diversity", "CVI & overall scoring": "cyber-value-index",
+};
+const LAL_LAYER_REFS = { L12: [], L3: ["log-assessment-framework"], L4: [], L59: ["cyber-value-index", "response-readiness", "operational-assurance", "log-source-cyber-value"], L1011: ["implementation-complexity", "operational-assurance"] };
+const LAL_DOMAIN_SECTIONS = { 1: "log-af-definition", 2: "log-af-dimensions", 3: "log-af-dimensions", 4: "log-af-procedure", 5: "log-af-procedure", 6: "log-af-fingerprint", 7: "log-af-scoring", 8: "log-af-dimensions", 11: "log-af-template" };
+function lalRefTitle(name) {
+  const view = name.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase()) + "ReferenceView";
+  return document.querySelector(`#${view} h2`)?.textContent.trim() || name;
+}
+// Open an article, and optionally one of its sections.
+function lalOpenReference(name, section) {
+  showReferenceDetail(name);
+  if (section) setTimeout(() => document.getElementById(section)?.scrollIntoView({ behavior: "smooth", block: "start" }), 150);
+}
+// --- Log assessment lifecycle (Reference page) ---
+// The lifecycle pyramid, the Stage 3 assessment-domain wheel and the output areas, linked:
+// selecting any part lights the parts it relates to. Domain numbering follows the source
+// diagram, which numbers 1-9 and 11 and leaves Line Analysis unnumbered. Which domains feed
+// which output items is indicative (see the note on the page).
+const lalState = { sel: { kind: "layer", id: "L3" }, step: -1, query: "", timer: null };
+// Lifecycle-stage labels drawn beside each layer, as in the source diagram.
+const LAL_STAGE_LABELS = {
+  L12: { lines: ["DISCOVERY"], stages: "Stages 1–2" }, L3: { lines: ["ANALYSIS"], stages: "Stage 3" }, L4: { lines: ["ENGINEERING"], stages: "Stage 4" },
+  L59: { lines: ["ASSURANCE &", "CYBER VALUE"], stages: "Stages 5–9" }, L1011: { lines: ["IMPLEMENTATION", "& OPERATIONS"], stages: "Stages 10–11" },
+};
+const LAL_PYR_W = 482;
+function lalRenderPyramid() {
+  const H = 5 * 76 + 10, cx = 140 + 169;
+  let s = `<svg viewBox="0 0 ${LAL_PYR_W} ${H}" role="group" aria-label="Lifecycle layers">`;
+  LAL_LAYERS.forEach((L, i) => {
+    const y0 = 5 + i * 76, y1 = y0 + 70, my = (y0 + y1) / 2;
+    const hw0 = i === 0 ? 20 : 35 + i * 26, hw1 = 35 + (i + 1) * 26 + 4;
+    const lens = LAL_LENS[L.lens], label = LAL_STAGE_LABELS[L.id];
+    const lineY = k => my - (label.lines.length - 1) * 7 + k * 14 - 5;
+    s += `<g class="lal-hit lal-layer" data-lal-layer="${L.id}" tabindex="0" role="button" aria-label="Stage ${L.num}: ${escapeHtml(L.title)}">
+      <text x="14" y="${my + 6}" text-anchor="middle" font-size="17">${lens.icon}</text>
+      ${label.lines.map((t, k) => `<text x="30" y="${lineY(k)}" font-size="11" font-weight="800" fill="${L.color}">${escapeHtml(t)}</text>`).join("")}
+      <text x="30" y="${lineY(label.lines.length - 1) + 14}" font-size="10" fill="#475569">(${escapeHtml(label.stages)})</text>
+      <path d="M ${cx - hw1 - 8} ${y0 + 6} h -6 V ${y1 - 6} h 6" stroke="${L.color}" stroke-width="1.6" fill="none"/>
+      <polygon class="lal-shape" data-rx="${cx + (hw0 + hw1) / 2}" data-my="${my}" points="${cx - hw0},${y0} ${cx + hw0},${y0} ${cx + hw1},${y1} ${cx - hw1},${y1}" fill="${L.color}" stroke="#fff" stroke-width="2"/>
+      <text x="${cx}" y="${y0 + 27}" text-anchor="middle" fill="#fff" font-size="${i === 0 ? 19 : 23}" font-weight="900">${L.num}</text>
+      ${L.short.map((t, k) => `<text x="${cx}" y="${y0 + 45 + k * 13}" text-anchor="middle" fill="#fff" font-size="${i === 0 ? 9.5 : 11}" font-weight="800">${escapeHtml(t)}</text>`).join("")}</g>`;
+  });
+  document.getElementById("lalPyramid").innerHTML = s + `</svg>`;
+}
+function lalRenderWheel() {
+  const C = 300, r0 = 105, r1 = 288, span = 360 / LAL_DOMAINS.length;
+  const pt = (r, a) => [C + r * Math.cos(a * Math.PI / 180), C + r * Math.sin(a * Math.PI / 180)];
+  let s = `<svg viewBox="0 0 600 600" role="group" aria-label="Assessment domains">`;
+  LAL_DOMAINS.forEach((d, i) => {
+    const a0 = -90 - span / 2 + i * span + 1, a1 = a0 + span - 2, mid = (a0 + a1) / 2;
+    const [x0, y0] = pt(r1, a0), [x1, y1] = pt(r1, a1), [x2, y2] = pt(r0, a1), [x3, y3] = pt(r0, a0);
+    const [bx, by] = pt(r1 - 26, mid), [tx, ty] = pt((r0 + r1) / 2 - 6, mid);
+    const lines = [];
+    let line = "";
+    d.name.split(" ").forEach(w => { if ((line + " " + w).trim().length > 11 && line) { lines.push(line); line = w; } else line = (line + " " + w).trim(); });
+    lines.push(line);
+    const [ox, oy] = pt(10, mid).map(v => v - C);
+    // Shrink the name only as far as its longest line needs to fit across the segment.
+    const chord = 2 * ((r0 + r1) / 2 - 6) * Math.sin(span / 2 * Math.PI / 180) - 8;
+    const fit = Math.min(14.5, +(chord / (Math.max(...lines.map(l => l.length)) * 0.68)).toFixed(1));
+    const label = d.unnumbered ? "8?" : d.n;
+    s += `<g class="lal-hit lal-domain" data-lal-domain="${d.n}" tabindex="0" role="button" aria-label="Domain ${d.unnumbered ? "" : d.n + ": "}${escapeHtml(d.name)}" data-ox="${ox}" data-oy="${oy}">
+      <path class="lal-shape" d="M ${x0} ${y0} A ${r1} ${r1} 0 0 1 ${x1} ${y1} L ${x2} ${y2} A ${r0} ${r0} 0 0 0 ${x3} ${y3} Z" fill="${d.color}22" stroke="${d.color}" stroke-width="1.5"/>
+      <circle cx="${bx}" cy="${by}" r="16" fill="${d.unnumbered ? "#fff" : d.color}" stroke="${d.color}" stroke-width="2"${d.unnumbered ? ' stroke-dasharray="3 2"' : ""}/>
+      <text x="${bx}" y="${by + 5.5}" text-anchor="middle" font-size="15" font-weight="900" fill="${d.unnumbered ? d.color : "#fff"}">${label}</text>
+      ${lines.map((l, k) => `<text x="${tx}" y="${ty + (k - (lines.length - 1) / 2) * 17 + 4}" text-anchor="middle" font-size="${fit}" font-weight="800" fill="${d.color}">${escapeHtml(l.toUpperCase())}</text>`).join("")}
+      <text x="${tx}" y="${ty + (lines.length / 2) * 17 + 14}" text-anchor="middle" font-size="12" fill="#64748b">${d.checks.length} checks</text></g>`;
+  });
+  // Flow from the raw log sample out to each domain.
+  s += `<defs><marker id="lalArrowGrey" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0L10,5L0,10z" fill="#94a3b8"/></marker></defs>`;
+  LAL_DOMAINS.forEach((d, i) => {
+    const mid = -90 + i * span, [ax, ay] = pt(r0 - 6, mid), [bx2, by2] = pt(r0 + 14, mid);
+    s += `<line class="lal-radial" x1="${ax}" y1="${ay}" x2="${bx2}" y2="${by2}" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#lalArrowGrey)"/>`;
+  });
+  s += `<g class="lal-hit" data-lal-layer="L3" tabindex="0" role="button" aria-label="Raw log sample: Stage 3"><circle class="lal-shape" cx="${C}" cy="${C}" r="${r0 - 8}" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="${C}" y="${C - 18}" text-anchor="middle" font-size="26">&#128196;</text>
+    <text x="${C}" y="${C + 10}" text-anchor="middle" font-size="16" font-weight="900" fill="#0b2a5b">RAW LOG SAMPLE</text>
+    <text x="${C}" y="${C + 28}" text-anchor="middle" font-size="11.5" fill="#334155">Physical lines &amp;</text>
+    <text x="${C}" y="${C + 42}" text-anchor="middle" font-size="11.5" fill="#334155">logical events</text></g>`;
+  document.getElementById("lalWheel").innerHTML = s + `</svg>`;
+  // Phone width: the same domains as a list of buttons.
+  document.getElementById("lalDomainList").innerHTML = LAL_DOMAINS.map(d => `<button type="button" class="lal-dl-item" data-lal-domain="${d.n}" style="color:${d.color}"><b style="background:${d.color}">${d.unnumbered ? "?" : d.n}</b>${escapeHtml(d.name)}</button>`).join("");
+}
+function lalRenderStatic() {
+  document.getElementById("lalOutputs").innerHTML = LAL_OUTPUTS.map(o => `<div class="lal-out" data-lal-out="${o.id}"><button type="button" class="lal-out-head" data-lal-area="${o.id}"><span class="lal-ic" style="background:${o.color}">${o.icon}</span><span><b style="color:${o.color}">${escapeHtml(o.title)}</b><small>${escapeHtml(o.stage)}</small></span></button>
+    <ul>${o.items.map(([t], k) => `<li><button type="button" data-lal-item="${o.id}:${k}">${escapeHtml(t)}</button></li>`).join("")}</ul></div>`).join("");
+  document.getElementById("lalTable").innerHTML = LAL_ROWS.map(r => {
+    const L = LAL_LAYERS.find(l => l.id === r.layer);
+    return `<tr class="lal-row" data-lal-row="${r.stage}" tabindex="0"><td class="lal-stage" style="background:${L.color}">${r.stage.replace("-", "–")}</td><td class="lal-label" style="color:${L.color}">${escapeHtml(r.label)}</td><td>${r.terms.map(t => LAL_REFS[t] ? `<button type="button" class="lal-term" data-lal-reference="${LAL_REFS[t]}" title="${escapeHtml(lalRefTitle(LAL_REFS[t]))}">${escapeHtml(t)}</button>` : `<span class="lal-term">${escapeHtml(t)}</span>`).join(", ")}</td><td>${escapeHtml(r.outputs)}</td></tr>`;
+  }).join("");
+}
+function lalLights() {
+  const { sel, step } = lalState;
+  const L = { layers: new Set(), domains: new Set(), outputs: new Set(), items: new Set(), rows: new Set() };
+  if (step >= 0) {
+    const s = LAL_STEPS[step].light;
+    (s.layers || []).forEach(x => L.layers.add(x)); (s.domains || []).forEach(x => L.domains.add(x)); (s.outputs || []).forEach(x => L.outputs.add(x));
+    return L;
+  }
+  if (sel.kind === "layer") {
+    L.layers.add(sel.id);
+    LAL_ROWS.filter(r => r.layer === sel.id).forEach(r => L.rows.add(r.stage));
+    if (sel.id === "L3") LAL_DOMAINS.forEach(d => L.domains.add(d.n));
+    LAL_OUTPUTS.filter(o => o.layer === sel.id).forEach(o => L.outputs.add(o.id));
+  } else if (sel.kind === "domain") {
+    L.domains.add(sel.id); L.layers.add("L3"); L.rows.add("3");
+    LAL_OUTPUTS.forEach(o => o.items.forEach(([, from], k) => { if (from.includes(sel.id)) L.items.add(`${o.id}:${k}`); }));
+  } else if (sel.kind === "item") {
+    const [oid, k] = sel.id.split(":"), o = LAL_OUTPUTS.find(x => x.id === oid);
+    L.items.add(sel.id); o.items[k][1].forEach(n => L.domains.add(n)); L.layers.add(o.layer);
+  } else if (sel.kind === "area") {
+    const o = LAL_OUTPUTS.find(x => x.id === sel.id);
+    L.outputs.add(o.id); L.layers.add(o.layer);
+    o.items.forEach(([, from], k) => { L.items.add(`${o.id}:${k}`); from.forEach(n => L.domains.add(n)); });
+  }
+  return L;
+}
+function lalPaint() {
+  const { sel, step, query } = lalState, L = lalLights(), q = !!query, root = document.getElementById("logAssessmentLifecyclePage");
+  const matches = text => q && text.toLowerCase().includes(query.toLowerCase());
+  root.querySelectorAll(".lal-layer").forEach(g => {
+    const l = LAL_LAYERS.find(x => x.id === g.dataset.lalLayer);
+    const on = q ? matches(l.title) || l.outputs.some(matches) || matches(l.text) || LAL_ROWS.filter(r => r.layer === l.id).some(r => r.terms.some(matches) || matches(r.label)) : L.layers.has(l.id);
+    g.classList.toggle("lal-lit", on);
+    g.classList.toggle("lal-sel", !q && step < 0 && sel.kind === "layer" && sel.id === l.id);
+    g.classList.toggle("lal-dim", q ? !on : (step >= 0 || sel.kind !== "layer") && !on);
+  });
+  root.querySelectorAll(".lal-domain").forEach(g => {
+    const d = LAL_DOMAINS.find(x => x.n === +g.dataset.lalDomain);
+    const on = q ? matches(d.name) || d.checks.some(matches) : L.domains.has(d.n);
+    const isSel = !q && step < 0 && sel.kind === "domain" && sel.id === d.n;
+    g.classList.toggle("lal-lit", on && !isSel); g.classList.toggle("lal-sel", isSel);
+    g.classList.toggle("lal-dim", q ? !on : !(on || isSel) && L.domains.size > 0);
+    g.setAttribute("aria-pressed", String(isSel));
+    g.setAttribute("transform", isSel ? `translate(${g.dataset.ox} ${g.dataset.oy})` : "");
+    g.querySelector(".lal-shape").setAttribute("fill", isSel ? d.color + "55" : d.color + "22");
+  });
+  root.querySelectorAll(".lal-dl-item").forEach(btn => {
+    const d = LAL_DOMAINS.find(x => x.n === +btn.dataset.lalDomain);
+    const on = q ? matches(d.name) || d.checks.some(matches) : L.domains.has(d.n);
+    const isSel = !q && step < 0 && sel.kind === "domain" && sel.id === d.n;
+    btn.classList.toggle("lal-lit", on && !isSel); btn.classList.toggle("lal-sel", isSel);
+    btn.classList.toggle("lal-dim", q ? !on : !(on || isSel) && L.domains.size > 0);
+    btn.setAttribute("aria-pressed", String(isSel));
+  });
+  let hits = 0;
+  root.querySelectorAll(".lal-out").forEach(card => {
+    const o = LAL_OUTPUTS.find(x => x.id === card.dataset.lalOut);
+    card.classList.toggle("lal-lit", L.outputs.has(o.id) && !q);
+    card.querySelectorAll("[data-lal-item]").forEach(b => {
+      const k = +b.dataset.lalItem.split(":")[1], on = q ? matches(o.items[k][0]) : L.items.has(b.dataset.lalItem);
+      const isSel = !q && sel.kind === "item" && sel.id === b.dataset.lalItem;
+      if (q && on) hits++;
+      b.classList.toggle("lal-lit", on && !isSel); b.classList.toggle("lal-sel", isSel);
+    });
+  });
+  root.querySelectorAll("tr.lal-row").forEach(tr => {
+    tr.classList.toggle("lal-sel", !q && L.rows.has(tr.dataset.lalRow));
+    tr.querySelectorAll(".lal-term").forEach(t => { const on = matches(t.textContent); if (on) hits++; t.classList.toggle("lal-lit", on); });
+  });
+  if (q) hits += root.querySelectorAll(".lal-domain.lal-lit, .lal-layer.lal-lit").length;
+  document.getElementById("lalCount").textContent = q ? `${hits} match${hits === 1 ? "" : "es"}` : "";
+  lalRenderDetail();
+  lalDrawFlows();
+  document.getElementById("lalSteps").innerHTML = LAL_STEPS.map((s, i) => `<li><button type="button" data-lal-step="${i}" aria-current="${i === step}"><b>${i + 1}</b><span>${escapeHtml(s.text)}</span></button></li>`).join("");
+}
+function lalRenderDetail() {
+  const el = document.getElementById("lalDetail"), { sel, step } = lalState;
+  const chip = (text, attrs = "", color = "") => `<button type="button" class="lal-chip" ${attrs}${color ? ` style="border-color:${color};color:${color}"` : ""}>${escapeHtml(text)}</button>`;
+  // A term with an article becomes a link to it.
+  const plain = text => LAL_REFS[text] ? `<button type="button" class="lal-chip lal-ref" data-lal-reference="${LAL_REFS[text]}" title="${escapeHtml(lalRefTitle(LAL_REFS[text]))}">${escapeHtml(text)}</button>` : `<span class="lal-chip lal-static">${escapeHtml(text)}</span>`;
+  const refs = (names, sections = {}) => {
+    const unique = [...new Set(names.filter(Boolean))];
+    return unique.length ? `<div class="lal-sec">Related references</div><div class="lal-chips">${unique.map(n => `<button type="button" class="lal-chip lal-ref" data-lal-reference="${n}"${sections[n] ? ` data-lal-section="${sections[n]}"` : ""}>${escapeHtml(lalRefTitle(n))}${sections[n] ? ` · ${escapeHtml(document.getElementById(sections[n])?.querySelector("h3")?.textContent.trim() || "")}` : ""}</button>`).join("")}</div>` : "";
+  };
+  const domainName = d => `${d.unnumbered ? "" : d.n + " · "}${d.name}`;
+  if (step >= 0) {
+    el.innerHTML = `<div class="lal-kicker" style="color:#0b2a5b">How it works · step ${step + 1} of ${LAL_STEPS.length}</div><h3>${escapeHtml(LAL_STEPS[step].text)}</h3><p class="lal-muted">Highlighted on the pyramid, wheel and output areas.</p>`;
+    return;
+  }
+  if (sel.kind === "layer") {
+    const l = LAL_LAYERS.find(x => x.id === sel.id), lens = LAL_LENS[l.lens];
+    el.innerHTML = `<div class="lal-kicker" style="color:${l.color}">${lens.icon} ${escapeHtml(lens.name)} · Stage ${l.num}</div><h3>${escapeHtml(l.title)}</h3><p>${escapeHtml(l.text)}</p>
+      <div class="lal-sec">Stages &amp; activities</div><div class="lal-chips">${l.stages.map(plain).join("")}</div>
+      <div class="lal-sec">Key outputs</div><div class="lal-chips">${l.outputs.map(plain).join("")}</div>
+      <div class="lal-sec">Key terms</div><div class="lal-chips">${LAL_ROWS.filter(r => r.layer === l.id).flatMap(r => r.terms).map(plain).join("")}</div>
+      ${l.id === "L3" ? `<div class="lal-sec">Assessment domains</div><div class="lal-chips">${LAL_DOMAINS.map(d => chip(domainName(d), `data-lal-domain-link="${d.n}"`, d.color)).join("")}</div>` : ""}
+      ${refs([...(LAL_LAYER_REFS[l.id] || []), ...LAL_ROWS.filter(r => r.layer === l.id).flatMap(r => r.terms).map(t => LAL_REFS[t]), ...LAL_OUTPUTS.filter(o => o.layer === l.id).flatMap(o => o.items.map(([t]) => LAL_REFS[t]))])}`;
+  } else if (sel.kind === "domain") {
+    const d = LAL_DOMAINS.find(x => x.n === sel.id);
+    const feeds = LAL_OUTPUTS.flatMap(o => o.items.map(([t, from], k) => from.includes(d.n) ? chip(`${o.title} · ${t}`, `data-lal-item-link="${o.id}:${k}"`, o.color) : "")).join("");
+    el.innerHTML = `<div class="lal-kicker" style="color:${d.color}">Assessment domain ${d.unnumbered ? "(unnumbered in the source diagram)" : d.n} · Stage 3</div><h3>${escapeHtml(d.name)}</h3>
+      <div class="lal-sec">What it checks</div><div class="lal-chips">${d.checks.map(plain).join("")}</div>
+      <div class="lal-sec">Feeds</div><div class="lal-chips">${feeds || plain("Recommendations only")}</div>
+      ${refs(["log-assessment-framework", ...d.checks.map(c => LAL_REFS[c])], LAL_DOMAIN_SECTIONS[d.n] ? { "log-assessment-framework": LAL_DOMAIN_SECTIONS[d.n] } : {})}`;
+  } else {
+    const [oid, k] = sel.kind === "item" ? sel.id.split(":") : [sel.id, null];
+    const o = LAL_OUTPUTS.find(x => x.id === oid), l = LAL_LAYERS.find(x => x.id === o.layer);
+    const items = k === null ? o.items : [o.items[k]];
+    const from = [...new Set(items.flatMap(([, f]) => f))].map(n => LAL_DOMAINS.find(d => d.n === n));
+    el.innerHTML = `<div class="lal-kicker" style="color:${o.color}">${o.icon} ${escapeHtml(o.title)} · ${escapeHtml(o.stage)}</div><h3>${escapeHtml(k === null ? o.title : o.items[k][0])}</h3>
+      ${k === null ? `<div class="lal-sec">Items</div><div class="lal-chips">${o.items.map(([t], j) => chip(t, `data-lal-item-link="${o.id}:${j}"`)).join("")}</div>` : ""}
+      <div class="lal-sec">Fed by domains</div><div class="lal-chips">${from.map(d => chip(domainName(d), `data-lal-domain-link="${d.n}"`, d.color)).join("")}</div>
+      <div class="lal-sec">Used in lifecycle stage</div><div class="lal-chips">${chip(`${l.num} · ${l.title}`, `data-lal-layer-link="${l.id}"`, l.color)}</div>
+      ${refs(items.map(([t]) => LAL_REFS[t]))}`;
+  }
+}
+// Arrows between the pyramid, the wheel and the output areas, drawn over the main column and
+// redrawn when its layout changes: the raw log sample flows from layer 3 into the framework,
+// the framework flows into the output areas, and dashed feedback runs back to layers 5-9 and
+// 10-11. Not drawn on a compact page, where the wheel is a list.
+function lalDrawFlows() {
+  const root = document.getElementById("logAssessmentLifecyclePage");
+  const main = root?.querySelector(".lal-main"), ov = document.getElementById("lalFlows");
+  if (!main || !ov) return;
+  if (root.hidden || root.classList.contains("lal-compact") || !main.clientWidth) { ov.innerHTML = ""; return; }
+  const box = main.getBoundingClientRect();
+  const rel = el => { const r = el.getBoundingClientRect(); return { l: r.left - box.left, t: r.top - box.top, r: r.right - box.left, b: r.bottom - box.top }; };
+  const pyr = document.querySelector("#lalPyramid svg"), pr = rel(pyr), k = (pr.r - pr.l) / LAL_PYR_W;
+  const layer = id => { const poly = pyr.querySelector(`[data-lal-layer="${id}"] polygon`); return { x: pr.l + +poly.dataset.rx * k, y: pr.t + +poly.dataset.my * k }; };
+  const wheelCard = rel(document.getElementById("lalWheel").closest(".lal-card"));
+  const wheelSvg = rel(document.querySelector("#lalWheel svg"));
+  const band = rel(document.querySelector(".lal-outputs-band"));
+  const lit = new Set([...root.querySelectorAll(".lal-out")].filter(c => c.classList.contains("lal-lit") || c.querySelector("button.lal-lit, button.lal-sel")).map(c => c.dataset.lalOut));
+  const lane = Math.min(pr.r + 14, box.width - 44);
+  const L3 = layer("L3"), L59 = layer("L59"), L1011 = layer("L1011");
+  const raw = LAL_LAYERS.find(l => l.id === "L3").color;
+  let svg = `<defs>
+    <marker id="lalFlowRaw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="${raw}"/></marker>
+    <marker id="lalFlowNavy" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#0b2a5b"/></marker>
+    <marker id="lalFlowLit" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#f59e0b"/></marker>
+    ${["L59", "L1011"].map(id => `<marker id="lalFlow${id}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="${LAL_LAYERS.find(l => l.id === id).color}"/></marker>`).join("")}</defs>`;
+  // Raw log sample: layer 3 -> the framework.
+  svg += `<path class="lal-flow lal-flow-raw" d="M ${L3.x + 4} ${L3.y} H ${lane} V ${wheelCard.t - 2}" stroke="${raw}" stroke-width="2.4" fill="none" marker-end="url(#lalFlowRaw)"/>`;
+  svg += `<text x="${L3.x + 8}" y="${L3.y - 6}" font-size="10" font-weight="800" fill="${raw}">Raw log sample</text>`;
+  // Feedback: the framework -> assurance (5-9) and implementation (10-11).
+  [[L59, "L59", 20], [L1011, "L1011", 32]].forEach(([pt, id, dx]) => {
+    const color = LAL_LAYERS.find(l => l.id === id).color;
+    svg += `<path class="lal-flow lal-flow-feed" data-lal-flow="${id}" d="M ${lane + dx} ${wheelCard.t + 2} V ${pt.y} H ${pt.x + 6}" stroke="${color}" stroke-width="1.8" stroke-dasharray="6 4" fill="none" marker-end="url(#lalFlow${id})"/>`;
+  });
+  // The framework -> the output areas, one arrow per output column.
+  const cols = [...new Map([...root.querySelectorAll(".lal-out")].map(c => { const r = rel(c); return [Math.round((r.l + r.r) / 2), c.dataset.lalOut]; })).entries()];
+  const colIds = x => [...root.querySelectorAll(".lal-out")].filter(c => { const r = rel(c); return Math.round((r.l + r.r) / 2) === x; }).map(c => c.dataset.lalOut);
+  cols.forEach(([x]) => {
+    const on = colIds(x).some(id => lit.has(id));
+    svg += `<path class="lal-flow lal-flow-out" d="M ${x} ${wheelSvg.b - 4} V ${band.t - 2}" stroke="${on ? "#f59e0b" : "#0b2a5b"}" stroke-width="${on ? 3 : 2}" fill="none" marker-end="url(#${on ? "lalFlowLit" : "lalFlowNavy"})"/>`;
+  });
+  ov.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
+  ov.setAttribute("width", box.width);
+  ov.setAttribute("height", box.height);
+  ov.innerHTML = svg;
+}
+function lalStopPlay() {
+  if (!lalState.timer) return;
+  clearInterval(lalState.timer);
+  lalState.timer = null;
+  document.getElementById("lalPlay").innerHTML = "&#9654; How it works";
+}
+function lalChoose(kind, id) { lalStopPlay(); lalState.step = -1; lalState.sel = { kind, id }; lalPaint(); lalOpenSheet(true); }
+// On narrow screens the detail panel is a bottom sheet; selecting something opens it.
+function lalOpenSheet(open) { document.getElementById("lalAside")?.classList.toggle("lal-open", open); }
+function initLogAssessmentLifecycle() {
+  const root = document.getElementById("logAssessmentLifecyclePage");
+  if (!root) return;
+  lalRenderPyramid(); lalRenderWheel(); lalRenderStatic();
+  root.addEventListener("click", e => {
+    const t = e.target.closest("[data-lal-layer], [data-lal-domain], [data-lal-item], [data-lal-area], [data-lal-row], [data-lal-step], [data-lal-domain-link], [data-lal-item-link], [data-lal-layer-link], [data-lal-reference]");
+    if (!t) return;
+    const d = t.dataset;
+    if (d.lalReference) { lalStopPlay(); lalOpenReference(d.lalReference, d.lalSection); return; }
+    if (d.lalStep) { lalStopPlay(); lalState.step = +d.lalStep; lalPaint(); lalOpenSheet(true); return; }
+    if (d.lalLayer || d.lalLayerLink) return lalChoose("layer", d.lalLayer || d.lalLayerLink);
+    if (d.lalDomain || d.lalDomainLink) return lalChoose("domain", +(d.lalDomain || d.lalDomainLink));
+    if (d.lalItem || d.lalItemLink) return lalChoose("item", d.lalItem || d.lalItemLink);
+    if (d.lalArea) return lalChoose("area", d.lalArea);
+    if (d.lalRow) return lalChoose("layer", LAL_ROWS.find(r => r.stage === d.lalRow).layer);
+  });
+  root.addEventListener("keydown", e => {
+    if (e.key === "Escape") lalOpenSheet(false);
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches(".lal-hit, tr.lal-row")) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent("click", { bubbles: true })); }
+  });
+  document.getElementById("lalSheetClose").addEventListener("click", () => lalOpenSheet(false));
+  const fit = () => {
+    const w = root.clientWidth;
+    if (!w) return;
+    root.classList.toggle("lal-narrow", w < 900);
+    root.classList.toggle("lal-compact", w < 560);
+    root.classList.toggle("lal-wide", w >= 1400);
+  };
+  if (window.ResizeObserver) {
+    new ResizeObserver(fit).observe(root);
+    new ResizeObserver(() => lalDrawFlows()).observe(root.querySelector(".lal-main"));
+  }
+  else window.addEventListener("resize", fit);
+  fit();
+  const q = document.getElementById("lalSearch");
+  q.addEventListener("input", () => { lalState.query = q.value.trim(); lalStopPlay(); lalState.step = -1; lalPaint(); });
+  document.getElementById("lalReset").addEventListener("click", () => { q.value = ""; lalState.query = ""; lalChoose("layer", "L3"); lalOpenSheet(false); });
+  document.getElementById("lalPlay").addEventListener("click", () => {
+    if (lalState.timer) return lalStopPlay();
+    lalState.step = 0; lalPaint();
+    document.getElementById("lalPlay").innerHTML = "&#10074;&#10074; Pause";
+    lalState.timer = setInterval(() => {
+      // Stop when the page is left.
+      if (root.hidden) return lalStopPlay();
+      lalState.step = (lalState.step + 1) % LAL_STEPS.length; lalPaint();
+    }, 2600);
+  });
+  // The Log Assessment Framework article links here.
+  document.querySelectorAll("[data-open-lal]").forEach(button => button.addEventListener("click", () => setActivePage("refLogAssessmentLifecycle")));
+  lalPaint();
 }
 function jumpToConfigSetting(entry){
   showReferenceDetail(configDetailNameFromArticleId(entry.articleId));
@@ -29639,8 +30168,14 @@ const DETECTION_MAP_PHASES = [
 // Layout per route. The detection route is wider: its right-hand strip shows where it meets
 // the log source journey.
 const JOURNEY_ROUTES = {
-  onboarding: { label: "Log source onboarding", phases: ONBOARDING_MAP_PHASES, names: ONBOARDING_JOURNEY_NAMES, branch: ONBOARDING_JOURNEY_BRANCH, line: "#1f4e78", W: 640, X: 170, pillRight: 610, stopX: 604 },
-  detection: { label: "Detection lifecycle", phases: DETECTION_MAP_PHASES, names: {}, branch: new Set(), line: "#0e7490", W: 830, X: 150, pillRight: 505, stopX: 480, railX: 592 },
+  onboarding: { label: "Log source onboarding", phases: ONBOARDING_MAP_PHASES, names: ONBOARDING_JOURNEY_NAMES, branch: ONBOARDING_JOURNEY_BRANCH, line: "#1f4e78", W: 722, X: 170, pillRight: 610, stopX: 604, laneX: 638, sideRight: true, stateCode: "TAX-06.04.01" },
+  detection: { label: "Detection lifecycle", phases: DETECTION_MAP_PHASES, names: {}, branch: new Set(), line: "#0e7490", W: 842, X: 150, pillRight: 505, stopX: 480, laneX: 532, sideRight: false, stateCode: "TAX-05.03.02", railX: 604 },
+};
+// Lifecycle state colours for the state lane (TAX-06.04.01 and TAX-05.03.02).
+const JOURNEY_STATE_COLORS = {
+  PLANNED: "#64748b", ONBOARDING: "#1d4ed8", ACTIVE: "#15803d", DEGRADED: "#d97706", EXPIRED: "#c2410c", RETIRED: "#b91c1c",
+  PROPOSED: "#64748b", DEVELOPMENT: "#c2410c", TESTING: "#1d4ed8", "PEER REVIEW": "#4338ca", PRODUCTION: "#15803d", MONITORING: "#0e7490",
+  TUNING: "#d97706", REVALIDATION: "#7c3aed", DEPRECATED: "#64748b"
 };
 function onboardingJourneyModel(flow, route) {
   const text = el => (el ? el.textContent.replace(/\s+/g, " ").trim() : "");
@@ -29657,6 +30192,8 @@ function onboardingJourneyModel(flow, route) {
         title: without(h4, ".assessment-tag, .flow-badge"),
         tags: [...h4.querySelectorAll(".assessment-tag")].map(text),
         states: [...h4.querySelectorAll(".flow-badge")].map(text),
+        lifecycle: [...h4.querySelectorAll(".flow-badge.state")].map(text),
+        sideStates: [...el.querySelectorAll(":scope > p .flow-badge.state")].map(text),
         paragraphs: [...el.querySelectorAll(":scope > p")].map(text),
         actions: [...el.querySelectorAll("[data-open-reference-detail]")].map(b => ({ label: text(b), detail: b.dataset.openReferenceDetail })),
         feeds: [], links: []
@@ -29679,19 +30216,20 @@ function onboardingJourneyModel(flow, route) {
       };
       items.push(last);
     } else if (el.matches(".onboarding-link[data-link]") && last) {
-      const link = { from: last.id, to: el.dataset.link, dir: el.dataset.dir || "in", title: text(el.querySelector("strong")), text: text(el.querySelector("div > span")) };
+      const link = { from: last.id, to: el.dataset.link, dir: el.dataset.dir || "in", title: text(el.querySelector("strong")), text: text(el.querySelector(":scope > div > span")) };
       last.links.push(link);
       links.push(link);
     } else if (el.matches(".onboarding-feed") && stage) {
-      stage.feeds.push(text(el.querySelector("strong")));
+      const detail = el.querySelector(":scope > div > span");
+      stage.feeds.push({ title: text(el.querySelector("strong")), text: text(detail), tags: detail ? [...detail.querySelectorAll(".assessment-tag")].map(text) : [] });
     } else if (el.matches(".onboarding-loopback[data-to]")) {
-      loops.push({ from: el.dataset.from, to: el.dataset.to, tone: "expire", label: text(el.querySelector("strong")) });
+      loops.push({ from: el.dataset.from, to: el.dataset.to, tone: "expire", label: text(el.querySelector("strong")), states: [...el.querySelectorAll(".flow-badge.state")].map(text) });
     }
   });
   items.filter(i => i.type === "gate").forEach(g => g.outcomes.filter(o => o.to).forEach(o => loops.unshift({ gate: g.id, from: g.id, to: o.to, tone: o.tone === "proceed" ? "cycle" : "hold" })));
   return { items, loops, links, byId: Object.fromEntries(items.map(i => [i.id, i])) };
 }
-const onboardingJourney = { route: "onboarding", models: {}, selected: {}, query: "", show: { loops: true, stops: true, branch: true, links: true }, narrow: false, open: false };
+const onboardingJourney = { route: "onboarding", models: {}, selected: {}, query: "", show: { loops: true, stops: true, branch: true, links: true, feeds: true, states: true }, narrow: false, open: false };
 const journeyModel = () => onboardingJourney.models[onboardingJourney.route];
 const journeySelected = () => onboardingJourney.selected[onboardingJourney.route];
 function onboardingJourneyMatches(item, q) {
@@ -29718,9 +30256,11 @@ function renderOnboardingJourneyMap() {
     pos[item.id] = y + (item.type === "stage" ? 16 : 14);
     y += (item.type === "stage" ? (item.tags.length ? 46 : 38) : 34) + (rail ? Math.max(0, item.links.length - 1) * 30 : 0);
   });
-  if (bands.length) bands[bands.length - 1].end = y + 6;
-  const H = y + 14;
-  const bandRight = rail ? route.railX - 24 : W - 10;
+  // Side states drawn below the last row (detection route) need room.
+  const lastSides = show.states && !route.sideRight ? 30 : 0;
+  if (bands.length) bands[bands.length - 1].end = y + 6 + lastSides;
+  const H = y + 14 + lastSides;
+  const bandRight = Math.min(rail ? route.railX - 24 : W - 10, show.states ? route.laneX - 14 : Infinity);
   let svg = `<svg viewBox="0 0 ${W} ${H}" role="group" aria-label="${escapeHtml(route.label)} route: ${items.length} stages and gates" font-family="system-ui,-apple-system,Segoe UI,sans-serif">
     <defs><marker id="objArrowHold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#c2410c"/></marker>
     <marker id="objArrowCycle" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#15803d"/></marker>
@@ -29734,7 +30274,7 @@ function renderOnboardingJourneyMap() {
   svg += `<path d="M ${X} ${pos[main[0].id]} V ${pos[main[main.length - 1].id]}" stroke="${route.line}" stroke-width="5" stroke-linecap="round" fill="none"/>`;
   if (items.some(i => i.branch) && pos["ob-sustainment"] && pos["ob-review90"]) {
     const fy = pos["ob-sustainment"], jy = pos["ob-review90"];
-    svg += `<path d="M ${X} ${fy} C ${X} ${fy + 20}, ${BX} ${fy + 10}, ${BX} ${fy + 30} V ${jy - 30} C ${BX} ${jy - 10}, ${X} ${jy - 20}, ${X} ${jy}" stroke="#7030a0" stroke-width="4" fill="none"/>`;
+    svg += `<path d="M ${X} ${fy + 22} C ${X} ${fy + 34}, ${BX} ${fy + 26}, ${BX} ${fy + 40} V ${jy - 30} C ${BX} ${jy - 10}, ${X} ${jy - 20}, ${X} ${jy}" stroke="#7030a0" stroke-width="4" fill="none"/>`;
   }
   if (show.loops) {
     const lanes = [];
@@ -29753,6 +30293,44 @@ function renderOnboardingJourneyMap() {
       if (emphasised) svg += `<path d="${d}" stroke="#fdba74" stroke-width="8" fill="none" opacity=".55"/>`;
       svg += `<path class="obj-loop" data-loop-from="${l.from}" data-loop-to="${l.to}" d="${d}" stroke="${color}" stroke-width="${emphasised ? 2.8 : 1.6}" fill="none"${l.tone === "expire" ? ' stroke-dasharray="5 4"' : ""} marker-end="url(#${l.tone === "cycle" ? "objArrowCycle" : "objArrowHold"})" opacity="${on ? (emphasised ? 1 : .7) : .25}"><title>${escapeHtml(l.label || "Loop-back")}</title></path>`;
       if (l.tone === "expire") svg += `<text x="${lx - 5}" y="${(pos[l.from] + pos[l.to]) / 2}" font-size="10" fill="#c2410c" font-style="italic" text-anchor="middle" transform="rotate(-90 ${lx - 5} ${(pos[l.from] + pos[l.to]) / 2})">approval expires</text>`;
+    });
+  }
+  // Lifecycle state lane: the states named on stages run as coloured segments from where they
+  // start; states a stage's text, a loop-back or a gate outcome moves to sit beside the lane.
+  if (show.states) {
+    const L = route.laneX, main = [];
+    items.forEach(i => (i.lifecycle || []).forEach(st => main.push({ id: i.id, st })));
+    const mainStates = new Set(main.map(m => m.st));
+    const endY = pos[items[items.length - 1].id];
+    const color = st => JOURNEY_STATE_COLORS[st] || "#475569";
+    svg += `<text x="${L}" y="${bands[0].start + 12}" text-anchor="middle" font-size="10" font-weight="800" fill="#475569" letter-spacing=".05em">STATE</text><text x="${L}" y="${bands[0].start + 24}" text-anchor="middle" font-size="8.5" fill="#64748b" font-family="ui-monospace,Menlo,monospace">${escapeHtml(route.stateCode.replace(/^TAX-/, ""))}</text>`;
+    main.forEach((m, k) => {
+      const a = pos[m.id], z = k + 1 < main.length ? pos[main[k + 1].id] : endY;
+      svg += `<g class="obj-state-seg" data-item-link="${m.id}" data-state="${escapeHtml(m.st)}"><title>${escapeHtml(`${m.st} from ${model.byId[m.id].name}`)}</title><rect x="${L - 4}" y="${a}" width="8" height="${Math.max(z - a, 8)}" rx="4" fill="${color(m.st)}"/>`;
+      if (z - a > m.st.length * 7 + 16) svg += `<text x="${L + 13}" y="${a + 6}" transform="rotate(90 ${L + 13} ${a + 6})" font-size="10" font-weight="800" fill="${color(m.st)}" letter-spacing=".06em">${escapeHtml(m.st)}</text>`;
+      svg += `</g>`;
+    });
+    const sides = {};
+    const addSide = (id, st, end) => { if (pos[id] && !mainStates.has(st)) (sides[id] = sides[id] || []).push({ st, end }); };
+    items.forEach(i => {
+      (i.sideStates || []).forEach(st => addSide(i.id, st, false));
+      (i.outcomes || []).forEach(o => o.states.forEach(st => addSide(i.id, st, o.tone === "stop")));
+    });
+    model.loops.forEach(l => (l.states || []).forEach(st => addSide(l.from, st, false)));
+    Object.entries(sides).forEach(([id, list]) => {
+      // Beside the lane, stacked (onboarding); or in one row under the item, reading left to right.
+      const widths = list.map(sd => sd.st.length * 6.2 + 14);
+      let x = L - 10 - widths.reduce((a, b) => a + b + 6, -6);
+      list.forEach((sd, k) => {
+        const w = widths[k];
+        const y0 = route.sideRight ? pos[id] + k * 18 - 9 : pos[id] + 18;
+        const x0 = route.sideRight ? L + 12 : x;
+        if (!route.sideRight) x += w + 6;
+        const c = color(sd.st);
+        svg += `<g class="obj-state-side" data-item-link="${id}" data-state="${escapeHtml(sd.st)}"><title>${escapeHtml(`${sd.st} at ${model.byId[id].name}`)}</title>`
+          + (route.sideRight ? `<path d="M ${L + 4} ${y0 + 7.5} H ${x0}" stroke="${c}" stroke-width="1.5"/>` : "")
+          + `<rect x="${x0}" y="${y0}" width="${w}" height="15" rx="7.5" fill="${sd.end ? "#fee2e2" : "#fff"}" stroke="${c}"${sd.end ? "" : ' stroke-dasharray="3 2"'}/><text x="${x0 + w / 2}" y="${y0 + 10.5}" text-anchor="middle" font-size="9" font-weight="800" fill="${c}">${escapeHtml(sd.st)}</text></g>`;
+      });
     });
   }
   if (rail) {
@@ -29787,6 +30365,12 @@ function renderOnboardingJourneyMap() {
       if (item.tags.length) svg += `<text x="${tx}" y="${cy + 20}" font-size="10.5" fill="#64748b" font-family="ui-monospace,Menlo,monospace">${escapeHtml(item.tags[0])}</text>`;
       const state = item.states.filter(s => s !== "GO-LIVE").pop();
       if (state) { const w = state.length * 7 + 14, r = route.pillRight; svg += `<rect x="${r - w}" y="${cy - 9}" width="${w}" height="18" rx="9" fill="#fff" stroke="#94a3b8"/><text x="${r - w / 2}" y="${cy + 4}" text-anchor="middle" font-size="10" font-weight="800" fill="#475569">${escapeHtml(state)}</text>`; }
+      // Feeds in: a chip on the station each one feeds (indices shortened to their initials).
+      if (show.feeds) item.feeds.forEach((f, k) => {
+        const label = /Index$/.test(f.title) ? f.title.split(/\s+/).filter(w => /^[A-Z]/.test(w)).map(w => w[0]).join("") + (f.tags[0] ? ` · ${f.tags[0]}` : "") : f.title;
+        const fy = item.feeds.length > 1 ? cy + k * 17 : cy + 17, tw = label.length * 5.6 + 22, fx = route.pillRight - 8 - tw;
+        svg += `<g class="obj-feed"><title>${escapeHtml(`Feeds in: ${f.title}`)}</title><rect x="${fx}" y="${fy - 8}" width="${tw}" height="16" rx="8" fill="#ecfeff" stroke="#67e8f9"/><path d="M ${fx + 9} ${fy - 4} L ${fx + 5} ${fy} L ${fx + 9} ${fy + 4}" stroke="#0e7490" stroke-width="1.6" fill="none"/><text x="${fx + 13}" y="${fy + 3.5}" font-size="9.8" font-weight="700" fill="#0e7490">${escapeHtml(label)}</text></g>`;
+      });
     } else {
       svg += `<polygon points="${X},${cy - 8} ${X + 8},${cy} ${X},${cy + 8} ${X - 8},${cy}" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>`;
       svg += `<text x="${tx}" y="${cy + 4}" font-size="12" font-weight="700" fill="#b45309">${escapeHtml(item.name)}</text>`;
@@ -29823,13 +30407,21 @@ function renderOnboardingJourneyInspector() {
   const chips = `<div class="obj-crumbs"><span class="obj-chip" style="background:${item.phase.color};color:${item.phase.tab}">${escapeHtml(item.phase.label)}</span>`
     + `<span class="obj-chip">${item.type === "gate" ? `Gate ${gates.indexOf(item) + 1} of ${gates.length}` : `Stage ${stages.indexOf(item) + 1} of ${stages.length}`}</span>`
     + (item.branch ? '<span class="obj-chip" style="background:#f3e8ff;color:#7030a0">Post-go-live branch</span>' : "") + `</div>`;
-  const tagChips = (tags, states = []) => tags.length || states.length ? `<div class="obj-tags">${tags.map(t => `<span class="obj-tag">${escapeHtml(t)}</span>`).join("")}${states.map(s => `<span class="obj-state">${escapeHtml(s)}</span>`).join("")}</div>` : "";
+  // Each TAX code is a button: hover shows its taxonomy term, click opens it in Onboard taxonomy.
+  const taxChip = part => {
+    const m = part.match(/^(?:TAX-)?(\d{2}(?:\.\d{2})*)/);
+    const code = m ? `TAX-${m[1]}` : "";
+    return code && typeof nodeIndex !== "undefined" && nodeIndex.has(code)
+      ? `<button type="button" class="obj-tag obj-tax" data-tax="${code}">${escapeHtml(part)}</button>`
+      : `<span class="obj-tag">${escapeHtml(part)}</span>`;
+  };
+  const tagChips = (tags, states = []) => tags.length || states.length ? `<div class="obj-tags">${tags.flatMap(t => t.split("/").map(x => x.trim()).filter(Boolean)).map(taxChip).join("")}${states.map(s => `<span class="obj-state">${escapeHtml(s)}</span>`).join("")}</div>` : "";
   // Where this step meets the other route.
   const linksOut = (item.links || []).filter(l => j.models.onboarding?.byId[l.to]).map(l => `<div class="obj-outcome"><span class="obj-badge obj-badge-link">${l.dir === "out" ? "STARTS" : "NEEDS"}</span><span class="obj-outcome-text">${escapeHtml(l.title)}<small>${escapeHtml(l.text)}</small></span><button type="button" class="obj-link" data-route-link="${l.to}">Show ${escapeHtml(j.models.onboarding.byId[l.to].name)} on the log source journey &rsaquo;</button></div>`);
   const linksIn = j.route === "onboarding" && j.models.detection ? j.models.detection.links.filter(l => l.to === item.id).map(l => `<div class="obj-outcome"><span class="obj-badge obj-badge-link">DETECTION</span><span class="obj-outcome-text">${escapeHtml(l.title)}<small>${escapeHtml(l.text)}</small></span><button type="button" class="obj-link" data-detection-link="${l.from}">Show ${escapeHtml(j.models.detection.byId[l.from].name)} in the detection lifecycle &rsaquo;</button></div>`) : [];
   const linkSection = linksOut.length || linksIn.length ? `<div class="obj-sec">${j.route === "detection" ? "On the log source journey" : "In the detection lifecycle"}</div>${[...linksOut, ...linksIn].join("")}` : "";
   const stageBody = st => `${tagChips(st.tags, st.states)}${st.paragraphs.map(p => `<p class="obj-text">${escapeHtml(p)}</p>`).join("")}`
-    + (st.feeds.length ? `<div class="obj-sec">Feeds in</div><ul class="obj-feeds">${st.feeds.map(f => `<li>${escapeHtml(f)}</li>`).join("")}</ul>` : "")
+    + (st.feeds.length ? `<div class="obj-sec">Feeds in</div><ul class="obj-feeds">${st.feeds.map(f => `<li><b>${escapeHtml(f.title)}</b> ${escapeHtml(f.text)}</li>`).join("")}</ul>` : "")
     + `<div class="obj-actions">${st.actions.map(a => `<button type="button" class="obj-action" data-reference="${escapeHtml(a.detail)}">${escapeHtml(a.label)} &rsaquo;</button>`).join("")}<button type="button" class="obj-action" data-scroll="${st.id}">Open full stage detail &darr;</button></div>`;
   let body;
   if (item.type === "gate") {
@@ -29857,7 +30449,7 @@ function renderOnboardingJourneyInspector() {
     body = `<div class="obj-kind obj-kind-stage">&#9679; Stage</div><h3>${escapeHtml(item.title)}</h3>${stageBody(item)}${linkSection}`
       + (gate ? `<div class="obj-sec">Decided at</div><button type="button" class="obj-action" data-item-link="${gate.id}">&#9670; ${escapeHtml(gate.name)} &rsaquo;</button>` : "");
   }
-  return `<div class="obj-inspector-inner"><button type="button" class="obj-sheet-close" aria-label="Close">&times;</button>${chips}${body}
+  return `<div class="obj-inspector-inner"><button type="button" class="obj-sheet-close" aria-label="Close">&times;</button><div class="obj-tax-pop" id="objTaxPop" role="tooltip" hidden></div>${chips}${body}
     <div class="obj-pager"><button type="button" data-item-link="${prev?.id || ""}"${prev ? "" : " disabled"}>&lsaquo; ${escapeHtml(prev?.name || "")}</button><button type="button" data-item-link="${next?.id || ""}"${next ? "" : " disabled"}>${escapeHtml(next?.name || "")} &rsaquo;</button></div></div>`;
 }
 function renderOnboardingJourney(focusSelected) {
@@ -29914,8 +30506,9 @@ function initOnboardingFlowMap() {
   j.narrow = narrow.matches;
   narrow.addEventListener?.("change", event => { j.narrow = event.matches; j.open = false; renderOnboardingJourney(); });
   root.addEventListener("click", event => {
-    const target = event.target.closest("[data-item], [data-item-link], [data-route], [data-route-link], [data-detection-link], [data-phase], [data-layer], [data-reference], [data-scroll], .obj-sheet-close");
+    const target = event.target.closest("[data-tax], [data-item], [data-item-link], [data-route], [data-route-link], [data-detection-link], [data-phase], [data-layer], [data-reference], [data-scroll], .obj-sheet-close");
     if (!target || !root.contains(target)) return;
+    if (target.dataset.tax) { setActivePage("taxonomy"); selectTaxNodeFromTable(target.dataset.tax); return; }
     if (target.matches(".obj-sheet-close")) { j.open = false; renderOnboardingJourney(); return; }
     if (target.dataset.route) {
       if (!j.models[target.dataset.route] || j.route === target.dataset.route) return;
@@ -29960,6 +30553,24 @@ function initOnboardingFlowMap() {
     const next = items[items.findIndex(i => i.id === journeySelected()) + step];
     if (next) { event.preventDefault(); selectOnboardingJourneyItem(next.id, true); }
   });
+  const showTax = event => {
+    const chip = event.target.closest?.("[data-tax]");
+    const pop = document.getElementById("objTaxPop");
+    if (!chip || !pop) return;
+    const node = nodeIndex.get(chip.dataset.tax);
+    if (!node) return;
+    pop.innerHTML = `<span class="obj-tax-code">${escapeHtml(node.code)}</span><b>${escapeHtml(node.term)}</b><span>${escapeHtml(node.definition || "")}</span><em>Open in Onboard taxonomy &rsaquo;</em>`;
+    const inner = pop.parentElement.getBoundingClientRect(), r = chip.getBoundingClientRect();
+    pop.style.top = `${r.bottom - inner.top + 6}px`;
+    pop.style.left = `${Math.max(0, Math.min(r.left - inner.left, inner.width - 300))}px`;
+    pop.hidden = false;
+  };
+  const hideTax = event => { if (event.target.closest?.("[data-tax]")) { const pop = document.getElementById("objTaxPop"); if (pop) pop.hidden = true; } };
+  const inspectorEl = document.getElementById("objInspector");
+  inspectorEl.addEventListener("mouseover", showTax);
+  inspectorEl.addEventListener("focusin", showTax);
+  inspectorEl.addEventListener("mouseout", hideTax);
+  inspectorEl.addEventListener("focusout", hideTax);
   const search = document.getElementById("objSearch");
   search.addEventListener("input", () => { j.query = search.value.trim(); renderOnboardingJourney(); });
   search.addEventListener("keydown", event => {
@@ -30065,6 +30676,7 @@ function pageNameFromHash() {
   if (/^#roles(\?|$)/.test(location.hash)) return "refRoles";
   if (location.hash === "#splunk-bin") return "refSplunkBin";
   if (location.hash === "#splunk-timezone") return "refSplunkTimezone";
+  if (location.hash === "#log-assessment-lifecycle") return "refLogAssessmentLifecycle";
   if (location.hash === "#questions") return "refQuestions";
   if (location.hash === "#naming-convention") return "refNamingConvention";
   return "info";
@@ -40947,6 +41559,7 @@ initSplunkApiPage();
 initApiRequestBuilder();
 initConfChecker();
 initConfMerge();
+initLogAssessmentLifecycle();
 applySplunkApiHash();
 renderSplunkPortsTable();
 renderNetworkFlowsTable();
@@ -51334,6 +51947,7 @@ const GLOBAL_SEARCH_PAGES = [
   { key: "cmei", label: "Framework" },
   { key: "refFrameworkOverview", label: "Framework overview" },
   { key: "health", label: "Health checks table" },
+  { key: "refLogAssessmentLifecycle", label: "Log assessment lifecycle" },
   { key: "refLoggingPatternAdvisor", label: "Logging pattern advisor" },
   { key: "patterns", label: "Logging patterns table" },
   { key: "refNamingConvention", label: "Naming convention" },
