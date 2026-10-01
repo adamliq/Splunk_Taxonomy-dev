@@ -1401,6 +1401,69 @@
     .xref-method { font: 800 9.5px var(--mono); color: #475569; }
     .xref-op { font-size: 10.5px; color: var(--muted); }
     .xref-note { margin: 4px 0 12px; font-size: 13px; color: #334155; }
+    .lal-toolbar { display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; margin:14px 0; }
+    .lal-search { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid var(--border); border-radius:10px; padding:4px 10px; min-width:min(100%, 320px); }
+    .lal-search input { border:0; outline:0; flex:1; min-width:0; font-size:13.5px; background:transparent; box-shadow:none; padding:3px 0; }
+    .lal-search:focus-within { border-color:#1d4ed8; box-shadow:0 0 0 3px rgba(29,78,216,.15); }
+    .lal-count { font-size:11.5px; font-weight:800; color:#64748b; white-space:nowrap; }
+    .lal-btn { border:1px solid var(--border); background:#fff; border-radius:9px; padding:6px 12px; font-weight:800; font-size:12.5px; cursor:pointer; color:#334155; }
+    .lal-btn-primary { background:#0b2a5b; border-color:#0b2a5b; color:#fff; }
+    .lal-grid { display:grid; grid-template-columns:minmax(260px, 340px) minmax(0, 1fr) minmax(220px, 280px); gap:14px; align-items:start; }
+    .lal-card { background:#fff; border:1px solid var(--border); border-radius:16px; box-shadow:0 6px 18px rgba(15,23,42,.05); padding:12px 14px; min-width:0; }
+    .lal-card h3.lal-card-title { margin:0 0 8px; font-size:11.5px; letter-spacing:.07em; text-transform:uppercase; color:#64748b; }
+    .lal-band { background:#0b2a5b; color:#fff; border-radius:12px; padding:8px 14px; text-align:center; margin-bottom:8px; }
+    .lal-band b { display:block; font-size:14px; letter-spacing:.03em; }
+    .lal-band span { font-size:11.5px; opacity:.85; }
+    #logAssessmentLifecyclePage svg { display:block; width:100%; height:auto; }
+    .lal-hit { cursor:pointer; outline:none; }
+    .lal-hit:focus-visible .lal-shape { stroke:#0f172a; stroke-width:3; }
+    .lal-dim { opacity:.28; transition:opacity .15s; }
+    .lal-lit .lal-shape { filter:drop-shadow(0 0 6px rgba(245,158,11,.9)); }
+    .lal-sel .lal-shape { stroke:#0f172a; stroke-width:3; }
+    .lal-legend { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:12px; color:#334155; margin-top:6px; }
+    .lal-legend span { display:inline-flex; align-items:center; gap:5px; }
+    .lal-outputs { display:grid; gap:10px; }
+    .lal-out { border:1px solid var(--border); border-radius:12px; padding:9px 11px; background:#fff; }
+    .lal-out.lal-lit { box-shadow:0 0 0 2px #f59e0b; }
+    .lal-out-head { display:flex; gap:8px; align-items:center; width:100%; border:0; background:transparent; padding:0; cursor:pointer; text-align:left; white-space:normal; }
+    .lal-ic { display:grid; place-items:center; width:30px; height:30px; border-radius:9px; color:#fff; font-size:15px; flex:0 0 auto; }
+    .lal-out-head b { display:block; font-size:13.5px; }
+    .lal-out-head small { display:block; color:#64748b; font-size:11.5px; }
+    .lal-out ul { list-style:none; margin:7px 0 0; padding:0; display:grid; gap:3px; }
+    .lal-out li button { width:100%; text-align:left; white-space:normal; border:0; background:transparent; border-radius:7px; padding:2px 6px; font-size:12.5px; color:#334155; cursor:pointer; }
+    .lal-out li button:hover { background:#f1f5f9; }
+    .lal-out li button.lal-lit { background:#fef3c7; color:#92400e; font-weight:700; }
+    .lal-out li button.lal-sel { background:#0b2a5b; color:#fff; }
+    .lal-detail-row { display:grid; grid-template-columns:minmax(0, 1.3fr) minmax(0, 1fr); gap:14px; margin-top:14px; }
+    #lalDetail { min-height:170px; }
+    #lalDetail h3 { margin:2px 0 6px; font-size:19px; color:#0f172a; }
+    #lalDetail p { margin:0 0 6px; color:#334155; font-size:13.5px; }
+    .lal-muted { color:#64748b !important; }
+    .lal-kicker { font-size:11px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; }
+    .lal-sec { margin:10px 0 4px; font-size:10.5px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:#64748b; }
+    .lal-chips { display:flex; flex-wrap:wrap; gap:5px; }
+    .lal-chip { border:1px solid var(--border); background:#f8fafc; border-radius:999px; padding:2px 10px; font-size:12px; cursor:pointer; white-space:normal; text-align:left; color:#334155; }
+    .lal-chip.lal-static { cursor:default; }
+    .lal-chip, .lal-out li button, .lal-steps button span { font-weight:500; }
+    .lal-out li button.lal-lit { font-weight:700; }
+    .lal-steps { list-style:none; margin:0; padding:0; display:grid; gap:5px; }
+    .lal-steps button { display:flex; gap:9px; align-items:flex-start; width:100%; border:1px solid transparent; background:transparent; border-radius:10px; padding:6px 8px; text-align:left; white-space:normal; cursor:pointer; font-size:13px; color:#334155; }
+    .lal-steps button b { display:grid; place-items:center; flex:0 0 auto; width:22px; height:22px; border-radius:50%; background:#0b2a5b; color:#fff; font-size:11.5px; }
+    .lal-steps button[aria-current="true"] { background:#eff6ff; border-color:#bfdbfe; }
+    .lal-table { width:100%; border-collapse:collapse; font-size:12.5px; }
+    .lal-table th { background:#0b2a5b; color:#fff; text-align:left; padding:7px 10px; font-size:12px; }
+    .lal-table td { border-bottom:1px solid var(--border); padding:7px 10px; vertical-align:top; color:#334155; }
+    .lal-table tr.lal-row { cursor:pointer; }
+    .lal-table tr.lal-row:hover td { background:#f8fafc; }
+    .lal-table tr.lal-row.lal-sel td { background:#eff6ff; }
+    .lal-table td.lal-stage { color:#fff !important; font-weight:900; font-size:16px; text-align:center; width:56px; }
+    .lal-table td.lal-label { font-weight:800; width:170px; }
+    .lal-term { border-radius:4px; }
+    .lal-term.lal-lit { background:#fde68a; box-shadow:0 0 0 2px #fde68a; }
+    .lal-banner { margin-top:14px; background:#0b2a5b; color:#fff; border-radius:12px; padding:10px 16px; display:flex; flex-wrap:wrap; gap:6px 18px; justify-content:center; font-size:13.5px; }
+    .lal-note { margin-top:12px; font-size:12px; color:#64748b; line-height:1.55; }
+    @media (max-width: 1180px) { .lal-grid { grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); } .lal-outputs-col { grid-column:1 / -1; } .lal-outputs { grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); } }
+    @media (max-width: 760px) { .lal-grid, .lal-detail-row { grid-template-columns:1fr; } .lal-table td.lal-label { width:auto; } }
     .tz-precedence { list-style: none; margin: 18px 0 10px; padding: 0; display: grid; gap: 10px; }
     .tz-step { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
     .tz-rank { display: grid; place-items: center; flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%; background: var(--primary); color: #fff; font-weight: 800; font-size: 14px; }
@@ -4598,7 +4661,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.09.30 &middot; build 145</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.01 &middot; build 146</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -4657,6 +4720,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
         <button id="showCmeiPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="cmeiPage">Framework</button>
         <button id="showFrameworkOverviewPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="frameworkOverview">Framework overview</button>
         <button id="showHealthChecksPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="healthChecksPage">Health checks table</button>
+        <button id="showLogAssessmentLifecyclePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="logAssessmentLifecyclePage">Log assessment lifecycle</button>
         <button id="showLoggingPatternAdvisorPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="loggingPatternAdvisorPage">Logging pattern advisor</button>
         <button id="showPatternsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="patternsPage">Logging patterns table</button>
         <button id="showNamingConventionPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="namingConventionSection">Naming convention</button>
@@ -9815,6 +9879,7 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
         <div class="eyebrow">References / Detailed reference</div>
         <h2 id="logAssessmentFrameworkReferenceTitle">Log Assessment Framework</h2>
         <p>A reusable, source-agnostic procedure for assessing the structure, format consistency and data quality of a raw log file at both the physical-line and logical-event level. It derives the dominant convention from the data itself -- the majority baseline -- and measures every deviation from it, rather than checking against an external spec.</p>
+        <div class="xref-line"><span class="xref-label">See also</span><button type="button" class="xref-chip" data-open-lal>Log assessment lifecycle &amp; framework map</button></div>
         <nav class="eccs-anchor-nav" aria-label="Log Assessment Framework reference sections"><a href="#log-af-definition">Definition</a><a href="#log-af-dimensions">Assessment dimensions</a><a href="#log-af-procedure">Procedure</a><a href="#log-af-scoring">Conformance scoring</a><a href="#log-af-fingerprint">Structural fingerprinting</a><a href="#log-af-pitfalls">Common pitfalls</a><a href="#log-af-template">Assessment template</a><a href="#log-af-relationship">Relationship to other assessments</a></nav>
       </div>
       <section id="log-af-definition" class="eccs-detail-section">
@@ -11746,6 +11811,32 @@ INGEST PROCESSOR
       </ul>
       <p class="tz-source">Official reference: <a href="https://help.splunk.com/en/?resourceId=Splunk_Data_Applytimezoneoffsetstotimestamps" target="_blank" rel="noopener noreferrer">Specify time zones for timestamps</a> (Splunk Docs).</p>
     </section>
+  </section>
+<section id="logAssessmentLifecyclePage" class="page-view reference-page" role="tabpanel" aria-labelledby="showLogAssessmentLifecyclePage" hidden>
+    <div class="patterns-hero">
+      <div>
+        <div class="eyebrow">Assessment reference</div>
+        <h2>Log assessment lifecycle &amp; framework</h2>
+        <p>End-to-end progression from raw log intake to governance approval, powered by the Log Assessment Framework. Select a lifecycle layer, an assessment domain or an output to see how they connect.</p>
+      </div>
+    </div>
+    <div class="lal-toolbar">
+      <label class="lal-search"><span aria-hidden="true">&#128269;</span><input type="search" id="lalSearch" placeholder="Find a term: timestamp, HEC, CVI, multiline" autocomplete="off" spellcheck="false" aria-label="Find a term"><span id="lalCount" class="lal-count" aria-live="polite"></span></label>
+      <button type="button" class="lal-btn lal-btn-primary" id="lalPlay">&#9654; How it works</button>
+      <button type="button" class="lal-btn" id="lalReset">Reset</button>
+    </div>
+    <div class="lal-grid">
+      <section class="lal-card" aria-label="Lifecycle layers"><h3 class="lal-card-title">Lifecycle layers</h3><div id="lalPyramid"></div><div class="lal-legend" id="lalLensLegend"></div></section>
+      <section class="lal-card" aria-label="Log Assessment Framework domains"><div class="lal-band"><b>LOG ASSESSMENT FRAMEWORK (Stage 3)</b><span>Comprehensive analysis of raw logs across the assessment domains &mdash; select one</span></div><div id="lalWheel"></div></section>
+      <section class="lal-outputs-col" aria-label="Framework outputs"><div class="lal-band"><b>FRAMEWORK OUTPUTS FEED MULTIPLE AREAS</b></div><div class="lal-outputs" id="lalOutputs"></div></section>
+    </div>
+    <div class="lal-detail-row">
+      <section class="lal-card" id="lalDetail" aria-live="polite"></section>
+      <section class="lal-card"><h3 class="lal-card-title">How the framework works</h3><ol class="lal-steps" id="lalSteps"></ol></section>
+    </div>
+    <section class="lal-card" style="margin-top:14px"><h3 class="lal-card-title">Stages, key terms and outputs</h3><div class="eccs-table-wrap" role="region" aria-label="Stages, key terms and outputs" tabindex="0"><table class="lal-table"><thead><tr><th scope="col">Stage</th><th scope="col">Stage label</th><th scope="col">Key terms / assessments (not exhaustive)</th><th scope="col">Key outputs</th></tr></thead><tbody id="lalTable"></tbody></table></div></section>
+    <div class="lal-banner"><span>&#128161; The Log Assessment Framework establishes the evidence base for every decision.</span><span>Consistent application ensures reliable, valuable and operationally effective logging.</span></div>
+    <p class="lal-note">Domain numbering follows the source diagram, which numbers the domains 1&ndash;9 and 11 and leaves Line Analysis unnumbered (shown as &ldquo;8?&rdquo;). Which domains feed which output items is indicative.</p>
   </section>
 <section id="questionsSection" class="page-view reference-page" role="tabpanel" aria-labelledby="showQuestionsPage" hidden>
     <div class="patterns-hero">
@@ -26150,6 +26241,7 @@ const pageTabs = {
   refRoles: document.getElementById("showRolesPage"),
   refSplunkBin: document.getElementById("showSplunkBinPage"),
   refSplunkTimezone: document.getElementById("showSplunkTimezonePage"),
+  refLogAssessmentLifecycle: document.getElementById("showLogAssessmentLifecyclePage"),
   refQuestions: document.getElementById("showQuestionsPage"),
   refNamingConvention: document.getElementById("showNamingConventionPage"),
   prompts: document.getElementById("showPromptLibraryPage"),
@@ -26183,6 +26275,7 @@ const pageViews = {
   refRoles: document.getElementById("rolesSection"),
   refSplunkBin: document.getElementById("splunkBinSection"),
   refSplunkTimezone: document.getElementById("splunkTimezoneSection"),
+  refLogAssessmentLifecycle: document.getElementById("logAssessmentLifecyclePage"),
   refQuestions: document.getElementById("questionsSection"),
   refNamingConvention: document.getElementById("namingConventionSection"),
   prompts: document.getElementById("promptLibraryPage"),
@@ -26203,7 +26296,7 @@ const pageViews = {
 const SIDEBAR_GROUP_MAP = {
   onboarding: "onboarding", taxonomy: "onboarding", objectTaxonomy: "onboarding", assessments: "onboarding",
   sizing: "calculators", s3calc: "calculators",
-  reference: "reference", refFrameworkOverview: "reference", refConceptDefinitions: "reference", refAssessmentMethods: "reference", refStandardsReferences: "reference", refConfigFileReferences: "reference", refNetworkReference: "reference", refRoles: "reference", refSplunkBin: "reference", refSplunkTimezone: "reference", refQuestions: "reference", refNamingConvention: "reference",
+  reference: "reference", refFrameworkOverview: "reference", refConceptDefinitions: "reference", refAssessmentMethods: "reference", refStandardsReferences: "reference", refConfigFileReferences: "reference", refNetworkReference: "reference", refRoles: "reference", refSplunkBin: "reference", refSplunkTimezone: "reference", refLogAssessmentLifecycle: "reference", refQuestions: "reference", refNamingConvention: "reference",
   prompts: "reference", cmei: "reference", catalogue: "reference", patterns: "reference", refLoggingPatternAdvisor: "reference", health: "reference", portsMatrix: "reference", dataPipeline: "reference",
   splunkApi: "reference",
   inputCoverage: "coverage", metrics: "coverage"
@@ -26220,7 +26313,7 @@ const PAGE_LABELS = {
   refFrameworkOverview: "Framework overview", refConceptDefinitions: "Concepts & definitions",
   refAssessmentMethods: "Assessment methodologies", refStandardsReferences: "Standards & references",
   refConfigFileReferences: "Configuration file reference", dataPipeline: "Data pipeline",
-  refNetworkReference: "Network reference", refRoles: "Roles", refSplunkBin: "Splunk bin", refSplunkTimezone: "Splunk timezone",
+  refNetworkReference: "Network reference", refRoles: "Roles", refSplunkBin: "Splunk bin", refSplunkTimezone: "Splunk timezone", refLogAssessmentLifecycle: "Log assessment lifecycle",
   refQuestions: "Questions", refNamingConvention: "Naming convention", prompts: "Prompt library",
   cmei: "Framework", catalogue: "Data source catalogue", patterns: "Logging patterns table",
   refLoggingPatternAdvisor: "Logging pattern advisor", health: "Health checks table",
@@ -27793,7 +27886,7 @@ function exportViabilityCalculator(event) {
 
 let currentActivePageKey = "info";
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "refFrameworkOverview", "refConceptDefinitions", "refAssessmentMethods", "refStandardsReferences", "refConfigFileReferences", "dataPipeline", "refNetworkReference", "refRoles", "refSplunkBin", "refSplunkTimezone", "refQuestions", "refNamingConvention", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "refLoggingPatternAdvisor", "health", "portsMatrix", "externalTools", "splunkApi", "inputCoverage", "metrics"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "refFrameworkOverview", "refConceptDefinitions", "refAssessmentMethods", "refStandardsReferences", "refConfigFileReferences", "dataPipeline", "refNetworkReference", "refRoles", "refSplunkBin", "refSplunkTimezone", "refLogAssessmentLifecycle", "refQuestions", "refNamingConvention", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "refLoggingPatternAdvisor", "health", "portsMatrix", "externalTools", "splunkApi", "inputCoverage", "metrics"].includes(pageName) ? pageName : "info";
   currentActivePageKey = selected;
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
   if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#file-mon-/.test(location.hash) ? "file-monitoring-profile" : /^#rest-api-/.test(location.hash) ? "rest-api-collection-profile" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : /^#eda-/.test(location.hash) ? "eda-playbook" : "");
@@ -27853,6 +27946,8 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
           ? "#splunk-bin"
         : selected === "refSplunkTimezone"
           ? "#splunk-timezone"
+        : selected === "refLogAssessmentLifecycle"
+          ? "#log-assessment-lifecycle"
         : selected === "refQuestions"
           ? "#questions"
         : selected === "refNamingConvention"
@@ -28644,6 +28739,252 @@ function initConfMerge() {
     if (link) openConfMerge(link.dataset.openMerge);
   });
   renderConfMergeControls(); renderConfMergeLayers(); renderConfMergeResult();
+}
+const LAL_LENS = {
+  discovery: { name: "Discovery", icon: "&#127919;", color: "#dc2626" },
+  analysis: { name: "Analysis", icon: "&#128269;", color: "#f97316" },
+  engineering: { name: "Engineering", icon: "&#9881;", color: "#65a30d" },
+  assurance: { name: "Assurance & cyber value", icon: "&#128737;", color: "#0d9488" },
+  implementation: { name: "Implementation & operations", icon: "&#128640;", color: "#6d28d9" },
+};
+const LAL_LAYERS = [
+  { id: "L12", num: "1–2", short: ["DISCOVERY", "& INTAKE"], title: "Discovery & Intake", lens: "discovery", color: "#dc2626", rows: ["1", "2"], stages: ["1 · Worthiness Decision", "2 · Logging Pattern & Architecture Selection"], text: "Decide whether the source is worth onboarding, then choose how it will be collected and transported.", outputs: ["Business justification", "Collection architecture", "Data prerequisites", "Collection topology", "Transport design"] },
+  { id: "L3", num: "3", short: ["LOG ASSESSMENT", "FRAMEWORK"], title: "Log Assessment Framework", lens: "analysis", color: "#f97316", rows: ["3"], stages: ["3 · Log Assessment Framework"], text: "Comprehensive analysis of raw log samples to establish baseline, structure, content, quality and behaviour.", outputs: ["Baseline profile", "Conformance metrics", "Structural fingerprints", "Engineering recommendations"] },
+  { id: "L4", num: "4", short: ["DATA", "ENGINEERING"], title: "Data Engineering", lens: "engineering", color: "#65a30d", rows: ["4"], stages: ["4 · Data Engineering"], text: "Design and build parsing, extraction, normalisation and identity for reliable, consistent and performant ingestion.", outputs: ["Working parser", "Working sourcetype", "Extraction rules", "Normalisation mappings"] },
+  { id: "L59", num: "5–9", short: ["ASSURANCE", "FRAMEWORK"], title: "Assurance Framework", lens: "assurance", color: "#0d9488", rows: ["5-9"], stages: ["5–9 · Assurance Framework"], text: "Assess quality, investigation readiness, detection value and operational assurance. Apply gates and score overall cyber value.", outputs: ["Overall scores (CVI, ECCS, RFC, ETC, DQS, RRI, OAI)", "Candidate ranking", "Go / No-Go decision"] },
+  { id: "L1011", num: "10–11", short: ["IMPLEMENTATION", "OPERATIONS"], title: "Implementation Operations", lens: "implementation", color: "#6d28d9", rows: ["10-11"], stages: ["10–11 · Implementation & Operations"], text: "Deploy, validate, operate and hand over with monitoring, documentation and governance acceptance.", outputs: ["Production onboarding", "Operational monitoring", "Governance acceptance"] },
+];
+const LAL_ROWS = [
+  { stage: "1", layer: "L12", label: "Worthiness Decision", terms: ["Business Value", "Security Value", "Feasibility", "Use Cases", "Data Availability", "Documentation", "Sample Availability", "Vendor Support", "Worth Building", "Not Worth Building"], outputs: "Business justification, Decision (Stop / Proceed)" },
+  { stage: "2", layer: "L12", label: "Logging Pattern & Architecture Selection", terms: ["Logging Pattern", "Collection Method", "Transport", "Authentication", "Firewall", "Agent/Agentless", "HEC", "Syslog", "Forwarder", "API", "Event Hub", "Lambda", "Queue", "Polling", "Push"], outputs: "Collection architecture, Topology, Transport design" },
+  { stage: "3", layer: "L3", label: "Log Assessment Framework", terms: ["Sample Analysis", "Timestamp", "Structure", "Format", "Event Boundary", "Fingerprinting", "Profiling", "Volume", "Line Analysis", "Anomalies", "Complexity", "Recommendations"], outputs: "Baseline profile, Conformance metrics, Fingerprints, Engineering recommendations" },
+  { stage: "4", layer: "L4", label: "Data Engineering", terms: ["Event Breaking", "Datetime Parsing", "Parsing", "Extraction", "Normalisation", "Sourcetype Strategy", "CIM/ECS Mapping", "Performance"], outputs: "Working parser, Extraction rules, Sourcetype definition" },
+  { stage: "5-9", layer: "L59", label: "Assurance Framework", terms: ["Timestamp Quality", "Log Format Quality", "RFC", "ETC", "DQS", "ECCS", "ICD", "Pivot Density", "Pivot Breadth", "Identity Diversity", "Event Diversity", "Detection Coverage", "Noise %", "Gates (Quality, Pre-Ingest, Overall)"], outputs: "Scores, Candidate ranking, Go / No-Go decision" },
+  { stage: "10-11", layer: "L1011", label: "Implementation & Operations", terms: ["Deployment", "Integration", "Validation", "UAT", "Monitoring", "Health Checks", "Documentation", "Handover", "Governance Approval"], outputs: "Production onboarding, Operational monitoring, Governance acceptance" },
+];
+const LAL_DOMAINS = [
+  { n: 1, name: "Sample Analysis", color: "#2563eb", checks: ["Sample Collection", "Physical Line Analysis", "Logical Event Analysis"] },
+  { n: 2, name: "Timestamp Analysis", color: "#1d4ed8", checks: ["Timestamp Detection", "Timestamp Standards", "Timestamp Quality", "Timezone Detection", "Multiple Timestamp Detection", "Timestamp Consistency", "Timestamp Precision", "Timestamp Correctness"] },
+  { n: 3, name: "Structure Analysis", color: "#0d9488", checks: ["Structured", "Semi-Structured", "Unstructured", "Serialization Detection"] },
+  { n: 4, name: "Format Detection", color: "#65a30d", checks: ["JSON, XML", "CSV, TSV", "CEF, CLF, ELF", "Syslog, YAML", "Plain Text", "Log Format Detection", "Log Format Parsing"] },
+  { n: 5, name: "Event Boundary Analysis", color: "#ea580c", checks: ["Event Boundary Detection", "Line Breaking", "Multiline Detection", "Event Separation", "Logical Event Reconstruction"] },
+  { n: 6, name: "Fingerprinting", color: "#dc2626", checks: ["Structural Fingerprinting", "Structural Fingerprint Count", "Record Type Detection", "Distinct Record Types", "Variant Detection", "Format/Timestamp Combination Detection"] },
+  { n: 7, name: "Profiling & Baseline", color: "#be123c", checks: ["Majority Baseline", "Dominant Format", "Conformance Scoring", "Baseline Profile", "Outlier Detection", "Unknown Format Detection", "Sample Profiling"] },
+  { n: 8, name: "Line Analysis", color: "#7c3aed", unnumbered: true, checks: ["Line Length", "Line Length Quality", "Character Count", "Byte Count", "Per-Line Dimension Extraction"] },
+  { n: 9, name: "Volume & Performance", color: "#6d28d9", checks: ["Event Volume Profile", "EPS (Events Per Second)", "Daily Event Volume", "Average Event Size", "Parsing Performance", "Parsing Complexity"] },
+  { n: 11, name: "Recommendations & Outputs", color: "#15803d", checks: ["Parsing Strategy", "Sourcetype Strategy", "Sourcetype Identity", "Single vs Multiple Sourcetypes", "Engineering Recommendations", "Baseline Profile", "Conformance Metrics", "Structural Fingerprints"] },
+];
+const LAL_OUTPUTS = [
+  { id: "eng", title: "Engineering", stage: "Stage 4", layer: "L4", icon: "&#9881;", color: "#1d4ed8", items: [["Event boundaries", [5]], ["Parsing rules", [4, 11]], ["Field extraction", [3, 11]], ["Sourcetype strategy", [11]], ["Performance design", [9]]] },
+  { id: "dq", title: "Data Quality", stage: "Stage 5", layer: "L59", icon: "&#128737;", color: "#15803d", items: [["Timestamp quality", [2]], ["Log format quality", [4, 7]], ["Line length quality", [8]], ["Required fields", [1, 3]], ["Event type coverage", [6]]] },
+  { id: "cv", title: "Cyber Value", stage: "Stages 6–9", layer: "L59", icon: "&#127919;", color: "#ea580c", items: [["Context completeness", [1, 6]], ["Detection coverage", [6, 7]], ["Pivot density & breadth", [3]], ["Identity & event diversity", [6]], ["CVI & overall scoring", [7, 11]]] },
+  { id: "impl", title: "Implementation", stage: "Stages 10–11", layer: "L1011", icon: "&#128640;", color: "#6d28d9", items: [["Ingestion planning", [9]], ["Validation strategy", [7, 11]], ["Monitoring design", [9]], ["Operational readiness", [11]]] },
+];
+const LAL_STEPS = [
+  { text: "Raw log sample is analysed across the assessment domains.", light: { domains: LAL_DOMAINS.map(d => d.n), layers: ["L3"] } },
+  { text: "Outputs create the evidence base for decisions.", light: { domains: [7, 11], layers: ["L3"] } },
+  { text: "Evidence feeds engineering, quality, value scoring and implementation.", light: { outputs: ["eng", "dq", "cv", "impl"] } },
+  { text: "Gates ensure only high-quality, valuable data progresses.", light: { layers: ["L59"], outputs: ["dq", "cv"] } },
+  { text: "Implementation operationalises and monitors the solution.", light: { layers: ["L1011"], outputs: ["impl"] } },
+];
+// --- Log assessment lifecycle (Reference page) ---
+// The lifecycle pyramid, the Stage 3 assessment-domain wheel and the output areas, linked:
+// selecting any part lights the parts it relates to. Domain numbering follows the source
+// diagram, which numbers 1-9 and 11 and leaves Line Analysis unnumbered. Which domains feed
+// which output items is indicative (see the note on the page).
+const lalState = { sel: { kind: "layer", id: "L3" }, step: -1, query: "", timer: null };
+function lalRenderPyramid() {
+  const W = 340, H = 5 * 76 + 10, top = 70;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="group" aria-label="Lifecycle layers">`;
+  LAL_LAYERS.forEach((L, i) => {
+    const y0 = 5 + i * 76, y1 = y0 + 70, cx = W / 2;
+    const hw0 = i === 0 ? 22 : top / 2 + i * 32, hw1 = top / 2 + (i + 1) * 32 + 4;
+    s += `<g class="lal-hit lal-layer" data-lal-layer="${L.id}" tabindex="0" role="button" aria-label="Stage ${L.num}: ${escapeHtml(L.title)}">
+      <polygon class="lal-shape" points="${cx - hw0},${y0} ${cx + hw0},${y0} ${cx + hw1},${y1} ${cx - hw1},${y1}" fill="${L.color}" stroke="#fff" stroke-width="2"/>
+      <text x="${cx}" y="${y0 + 27}" text-anchor="middle" fill="#fff" font-size="${i === 0 ? 19 : 23}" font-weight="900">${L.num}</text>
+      ${L.short.map((t, k) => `<text x="${cx}" y="${y0 + 45 + k * 13}" text-anchor="middle" fill="#fff" font-size="${i === 0 ? 9.5 : 11}" font-weight="800">${escapeHtml(t)}</text>`).join("")}</g>`;
+  });
+  document.getElementById("lalPyramid").innerHTML = s + `</svg>`;
+  document.getElementById("lalLensLegend").innerHTML = Object.values(LAL_LENS).map(l => `<span><span style="color:${l.color}">${l.icon}</span>${escapeHtml(l.name)}</span>`).join("");
+}
+function lalRenderWheel() {
+  const C = 300, r0 = 105, r1 = 288, span = 360 / LAL_DOMAINS.length;
+  const pt = (r, a) => [C + r * Math.cos(a * Math.PI / 180), C + r * Math.sin(a * Math.PI / 180)];
+  let s = `<svg viewBox="0 0 600 600" role="group" aria-label="Assessment domains">`;
+  LAL_DOMAINS.forEach((d, i) => {
+    const a0 = -90 - span / 2 + i * span + 1, a1 = a0 + span - 2, mid = (a0 + a1) / 2;
+    const [x0, y0] = pt(r1, a0), [x1, y1] = pt(r1, a1), [x2, y2] = pt(r0, a1), [x3, y3] = pt(r0, a0);
+    const [bx, by] = pt(r1 - 26, mid), [tx, ty] = pt((r0 + r1) / 2 - 6, mid);
+    const lines = [];
+    let line = "";
+    d.name.split(" ").forEach(w => { if ((line + " " + w).trim().length > 12 && line) { lines.push(line); line = w; } else line = (line + " " + w).trim(); });
+    lines.push(line);
+    const [ox, oy] = pt(10, mid).map(v => v - C);
+    const label = d.unnumbered ? "8?" : d.n;
+    s += `<g class="lal-hit lal-domain" data-lal-domain="${d.n}" tabindex="0" role="button" aria-label="Domain ${d.unnumbered ? "" : d.n + ": "}${escapeHtml(d.name)}" data-ox="${ox}" data-oy="${oy}">
+      <path class="lal-shape" d="M ${x0} ${y0} A ${r1} ${r1} 0 0 1 ${x1} ${y1} L ${x2} ${y2} A ${r0} ${r0} 0 0 0 ${x3} ${y3} Z" fill="${d.color}22" stroke="${d.color}" stroke-width="1.5"/>
+      <circle cx="${bx}" cy="${by}" r="14" fill="${d.unnumbered ? "#fff" : d.color}" stroke="${d.color}" stroke-width="2"${d.unnumbered ? ' stroke-dasharray="3 2"' : ""}/>
+      <text x="${bx}" y="${by + 5}" text-anchor="middle" font-size="13" font-weight="900" fill="${d.unnumbered ? d.color : "#fff"}">${label}</text>
+      ${lines.map((l, k) => `<text x="${tx}" y="${ty + (k - (lines.length - 1) / 2) * 14 + 4}" text-anchor="middle" font-size="12" font-weight="800" fill="${d.color}">${escapeHtml(l.toUpperCase())}</text>`).join("")}
+      <text x="${tx}" y="${ty + (lines.length / 2) * 14 + 12}" text-anchor="middle" font-size="10" fill="#64748b">${d.checks.length} checks</text></g>`;
+  });
+  s += `<g class="lal-hit" data-lal-layer="L3" tabindex="0" role="button" aria-label="Raw log sample: Stage 3"><circle class="lal-shape" cx="${C}" cy="${C}" r="${r0 - 8}" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="${C}" y="${C - 18}" text-anchor="middle" font-size="26">&#128196;</text>
+    <text x="${C}" y="${C + 10}" text-anchor="middle" font-size="16" font-weight="900" fill="#0b2a5b">RAW LOG SAMPLE</text>
+    <text x="${C}" y="${C + 28}" text-anchor="middle" font-size="11.5" fill="#334155">Physical lines &amp;</text>
+    <text x="${C}" y="${C + 42}" text-anchor="middle" font-size="11.5" fill="#334155">logical events</text></g>`;
+  document.getElementById("lalWheel").innerHTML = s + `</svg>`;
+}
+function lalRenderStatic() {
+  document.getElementById("lalOutputs").innerHTML = LAL_OUTPUTS.map(o => `<div class="lal-out" data-lal-out="${o.id}"><button type="button" class="lal-out-head" data-lal-area="${o.id}"><span class="lal-ic" style="background:${o.color}">${o.icon}</span><span><b style="color:${o.color}">${escapeHtml(o.title)}</b><small>${escapeHtml(o.stage)}</small></span></button>
+    <ul>${o.items.map(([t], k) => `<li><button type="button" data-lal-item="${o.id}:${k}">${escapeHtml(t)}</button></li>`).join("")}</ul></div>`).join("");
+  document.getElementById("lalTable").innerHTML = LAL_ROWS.map(r => {
+    const L = LAL_LAYERS.find(l => l.id === r.layer);
+    return `<tr class="lal-row" data-lal-row="${r.stage}" tabindex="0"><td class="lal-stage" style="background:${L.color}">${r.stage.replace("-", "–")}</td><td class="lal-label" style="color:${L.color}">${escapeHtml(r.label)}</td><td>${r.terms.map(t => `<span class="lal-term">${escapeHtml(t)}</span>`).join(", ")}</td><td>${escapeHtml(r.outputs)}</td></tr>`;
+  }).join("");
+}
+function lalLights() {
+  const { sel, step } = lalState;
+  const L = { layers: new Set(), domains: new Set(), outputs: new Set(), items: new Set(), rows: new Set() };
+  if (step >= 0) {
+    const s = LAL_STEPS[step].light;
+    (s.layers || []).forEach(x => L.layers.add(x)); (s.domains || []).forEach(x => L.domains.add(x)); (s.outputs || []).forEach(x => L.outputs.add(x));
+    return L;
+  }
+  if (sel.kind === "layer") {
+    L.layers.add(sel.id);
+    LAL_ROWS.filter(r => r.layer === sel.id).forEach(r => L.rows.add(r.stage));
+    if (sel.id === "L3") LAL_DOMAINS.forEach(d => L.domains.add(d.n));
+    LAL_OUTPUTS.filter(o => o.layer === sel.id).forEach(o => L.outputs.add(o.id));
+  } else if (sel.kind === "domain") {
+    L.domains.add(sel.id); L.layers.add("L3"); L.rows.add("3");
+    LAL_OUTPUTS.forEach(o => o.items.forEach(([, from], k) => { if (from.includes(sel.id)) L.items.add(`${o.id}:${k}`); }));
+  } else if (sel.kind === "item") {
+    const [oid, k] = sel.id.split(":"), o = LAL_OUTPUTS.find(x => x.id === oid);
+    L.items.add(sel.id); o.items[k][1].forEach(n => L.domains.add(n)); L.layers.add(o.layer);
+  } else if (sel.kind === "area") {
+    const o = LAL_OUTPUTS.find(x => x.id === sel.id);
+    L.outputs.add(o.id); L.layers.add(o.layer);
+    o.items.forEach(([, from], k) => { L.items.add(`${o.id}:${k}`); from.forEach(n => L.domains.add(n)); });
+  }
+  return L;
+}
+function lalPaint() {
+  const { sel, step, query } = lalState, L = lalLights(), q = !!query, root = document.getElementById("logAssessmentLifecyclePage");
+  const matches = text => q && text.toLowerCase().includes(query.toLowerCase());
+  root.querySelectorAll(".lal-layer").forEach(g => {
+    const l = LAL_LAYERS.find(x => x.id === g.dataset.lalLayer);
+    const on = q ? matches(l.title) || l.outputs.some(matches) || matches(l.text) || LAL_ROWS.filter(r => r.layer === l.id).some(r => r.terms.some(matches) || matches(r.label)) : L.layers.has(l.id);
+    g.classList.toggle("lal-lit", on);
+    g.classList.toggle("lal-sel", !q && step < 0 && sel.kind === "layer" && sel.id === l.id);
+    g.classList.toggle("lal-dim", q ? !on : (step >= 0 || sel.kind !== "layer") && !on);
+  });
+  root.querySelectorAll(".lal-domain").forEach(g => {
+    const d = LAL_DOMAINS.find(x => x.n === +g.dataset.lalDomain);
+    const on = q ? matches(d.name) || d.checks.some(matches) : L.domains.has(d.n);
+    const isSel = !q && step < 0 && sel.kind === "domain" && sel.id === d.n;
+    g.classList.toggle("lal-lit", on && !isSel); g.classList.toggle("lal-sel", isSel);
+    g.classList.toggle("lal-dim", q ? !on : !(on || isSel) && L.domains.size > 0);
+    g.setAttribute("transform", isSel ? `translate(${g.dataset.ox} ${g.dataset.oy})` : "");
+    g.querySelector(".lal-shape").setAttribute("fill", isSel ? d.color + "55" : d.color + "22");
+  });
+  let hits = 0;
+  root.querySelectorAll(".lal-out").forEach(card => {
+    const o = LAL_OUTPUTS.find(x => x.id === card.dataset.lalOut);
+    card.classList.toggle("lal-lit", L.outputs.has(o.id) && !q);
+    card.querySelectorAll("[data-lal-item]").forEach(b => {
+      const k = +b.dataset.lalItem.split(":")[1], on = q ? matches(o.items[k][0]) : L.items.has(b.dataset.lalItem);
+      const isSel = !q && sel.kind === "item" && sel.id === b.dataset.lalItem;
+      if (q && on) hits++;
+      b.classList.toggle("lal-lit", on && !isSel); b.classList.toggle("lal-sel", isSel);
+    });
+  });
+  root.querySelectorAll("tr.lal-row").forEach(tr => {
+    tr.classList.toggle("lal-sel", !q && L.rows.has(tr.dataset.lalRow));
+    tr.querySelectorAll(".lal-term").forEach(t => { const on = matches(t.textContent); if (on) hits++; t.classList.toggle("lal-lit", on); });
+  });
+  if (q) hits += root.querySelectorAll(".lal-domain.lal-lit, .lal-layer.lal-lit").length;
+  document.getElementById("lalCount").textContent = q ? `${hits} match${hits === 1 ? "" : "es"}` : "";
+  lalRenderDetail();
+  document.getElementById("lalSteps").innerHTML = LAL_STEPS.map((s, i) => `<li><button type="button" data-lal-step="${i}" aria-current="${i === step}"><b>${i + 1}</b><span>${escapeHtml(s.text)}</span></button></li>`).join("");
+}
+function lalRenderDetail() {
+  const el = document.getElementById("lalDetail"), { sel, step } = lalState;
+  const chip = (text, attrs = "", color = "") => `<button type="button" class="lal-chip" ${attrs}${color ? ` style="border-color:${color};color:${color}"` : ""}>${escapeHtml(text)}</button>`;
+  const plain = text => `<span class="lal-chip lal-static">${escapeHtml(text)}</span>`;
+  const domainName = d => `${d.unnumbered ? "" : d.n + " · "}${d.name}`;
+  if (step >= 0) {
+    el.innerHTML = `<div class="lal-kicker" style="color:#0b2a5b">How it works · step ${step + 1} of ${LAL_STEPS.length}</div><h3>${escapeHtml(LAL_STEPS[step].text)}</h3><p class="lal-muted">Highlighted on the pyramid, wheel and output areas.</p>`;
+    return;
+  }
+  if (sel.kind === "layer") {
+    const l = LAL_LAYERS.find(x => x.id === sel.id), lens = LAL_LENS[l.lens];
+    el.innerHTML = `<div class="lal-kicker" style="color:${l.color}">${lens.icon} ${escapeHtml(lens.name)} · Stage ${l.num}</div><h3>${escapeHtml(l.title)}</h3><p>${escapeHtml(l.text)}</p>
+      <div class="lal-sec">Stages &amp; activities</div><div class="lal-chips">${l.stages.map(plain).join("")}</div>
+      <div class="lal-sec">Key outputs</div><div class="lal-chips">${l.outputs.map(plain).join("")}</div>
+      <div class="lal-sec">Key terms</div><div class="lal-chips">${LAL_ROWS.filter(r => r.layer === l.id).flatMap(r => r.terms).map(plain).join("")}</div>
+      ${l.id === "L3" ? `<div class="lal-sec">Assessment domains</div><div class="lal-chips">${LAL_DOMAINS.map(d => chip(domainName(d), `data-lal-domain-link="${d.n}"`, d.color)).join("")}</div>
+      <div class="lal-sec">Reference</div><div class="lal-chips">${chip("Log Assessment Framework article ›", 'data-lal-reference="log-assessment-framework"')}</div>` : ""}`;
+  } else if (sel.kind === "domain") {
+    const d = LAL_DOMAINS.find(x => x.n === sel.id);
+    const feeds = LAL_OUTPUTS.flatMap(o => o.items.map(([t, from], k) => from.includes(d.n) ? chip(`${o.title} · ${t}`, `data-lal-item-link="${o.id}:${k}"`, o.color) : "")).join("");
+    el.innerHTML = `<div class="lal-kicker" style="color:${d.color}">Assessment domain ${d.unnumbered ? "(unnumbered in the source diagram)" : d.n} · Stage 3</div><h3>${escapeHtml(d.name)}</h3>
+      <div class="lal-sec">What it checks</div><div class="lal-chips">${d.checks.map(plain).join("")}</div>
+      <div class="lal-sec">Feeds</div><div class="lal-chips">${feeds || plain("Recommendations only")}</div>
+      <div class="lal-sec">Reference</div><div class="lal-chips">${chip("Log Assessment Framework article ›", 'data-lal-reference="log-assessment-framework"')}</div>`;
+  } else {
+    const [oid, k] = sel.kind === "item" ? sel.id.split(":") : [sel.id, null];
+    const o = LAL_OUTPUTS.find(x => x.id === oid), l = LAL_LAYERS.find(x => x.id === o.layer);
+    const items = k === null ? o.items : [o.items[k]];
+    const from = [...new Set(items.flatMap(([, f]) => f))].map(n => LAL_DOMAINS.find(d => d.n === n));
+    el.innerHTML = `<div class="lal-kicker" style="color:${o.color}">${o.icon} ${escapeHtml(o.title)} · ${escapeHtml(o.stage)}</div><h3>${escapeHtml(k === null ? o.title : o.items[k][0])}</h3>
+      ${k === null ? `<div class="lal-sec">Items</div><div class="lal-chips">${o.items.map(([t], j) => chip(t, `data-lal-item-link="${o.id}:${j}"`)).join("")}</div>` : ""}
+      <div class="lal-sec">Fed by domains</div><div class="lal-chips">${from.map(d => chip(domainName(d), `data-lal-domain-link="${d.n}"`, d.color)).join("")}</div>
+      <div class="lal-sec">Used in lifecycle stage</div><div class="lal-chips">${chip(`${l.num} · ${l.title}`, `data-lal-layer-link="${l.id}"`, l.color)}</div>`;
+  }
+}
+function lalStopPlay() {
+  if (!lalState.timer) return;
+  clearInterval(lalState.timer);
+  lalState.timer = null;
+  document.getElementById("lalPlay").innerHTML = "&#9654; How it works";
+}
+function lalChoose(kind, id) { lalStopPlay(); lalState.step = -1; lalState.sel = { kind, id }; lalPaint(); }
+function initLogAssessmentLifecycle() {
+  const root = document.getElementById("logAssessmentLifecyclePage");
+  if (!root) return;
+  lalRenderPyramid(); lalRenderWheel(); lalRenderStatic();
+  root.addEventListener("click", e => {
+    const t = e.target.closest("[data-lal-layer], [data-lal-domain], [data-lal-item], [data-lal-area], [data-lal-row], [data-lal-step], [data-lal-domain-link], [data-lal-item-link], [data-lal-layer-link], [data-lal-reference]");
+    if (!t) return;
+    const d = t.dataset;
+    if (d.lalReference) { lalStopPlay(); showReferenceDetail(d.lalReference); return; }
+    if (d.lalStep) { lalStopPlay(); lalState.step = +d.lalStep; lalPaint(); return; }
+    if (d.lalLayer || d.lalLayerLink) return lalChoose("layer", d.lalLayer || d.lalLayerLink);
+    if (d.lalDomain || d.lalDomainLink) return lalChoose("domain", +(d.lalDomain || d.lalDomainLink));
+    if (d.lalItem || d.lalItemLink) return lalChoose("item", d.lalItem || d.lalItemLink);
+    if (d.lalArea) return lalChoose("area", d.lalArea);
+    if (d.lalRow) return lalChoose("layer", LAL_ROWS.find(r => r.stage === d.lalRow).layer);
+  });
+  root.addEventListener("keydown", e => {
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches(".lal-hit, tr.lal-row")) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent("click", { bubbles: true })); }
+  });
+  const q = document.getElementById("lalSearch");
+  q.addEventListener("input", () => { lalState.query = q.value.trim(); lalStopPlay(); lalState.step = -1; lalPaint(); });
+  document.getElementById("lalReset").addEventListener("click", () => { q.value = ""; lalState.query = ""; lalChoose("layer", "L3"); });
+  document.getElementById("lalPlay").addEventListener("click", () => {
+    if (lalState.timer) return lalStopPlay();
+    lalState.step = 0; lalPaint();
+    document.getElementById("lalPlay").innerHTML = "&#10074;&#10074; Pause";
+    lalState.timer = setInterval(() => {
+      // Stop when the page is left.
+      if (root.hidden) return lalStopPlay();
+      lalState.step = (lalState.step + 1) % LAL_STEPS.length; lalPaint();
+    }, 2600);
+  });
+  // The Log Assessment Framework article links here.
+  document.querySelectorAll("[data-open-lal]").forEach(button => button.addEventListener("click", () => setActivePage("refLogAssessmentLifecycle")));
+  lalPaint();
 }
 function jumpToConfigSetting(entry){
   showReferenceDetail(configDetailNameFromArticleId(entry.articleId));
@@ -30160,6 +30501,7 @@ function pageNameFromHash() {
   if (/^#roles(\?|$)/.test(location.hash)) return "refRoles";
   if (location.hash === "#splunk-bin") return "refSplunkBin";
   if (location.hash === "#splunk-timezone") return "refSplunkTimezone";
+  if (location.hash === "#log-assessment-lifecycle") return "refLogAssessmentLifecycle";
   if (location.hash === "#questions") return "refQuestions";
   if (location.hash === "#naming-convention") return "refNamingConvention";
   return "info";
@@ -41042,6 +41384,7 @@ initSplunkApiPage();
 initApiRequestBuilder();
 initConfChecker();
 initConfMerge();
+initLogAssessmentLifecycle();
 applySplunkApiHash();
 renderSplunkPortsTable();
 renderNetworkFlowsTable();
@@ -51429,6 +51772,7 @@ const GLOBAL_SEARCH_PAGES = [
   { key: "cmei", label: "Framework" },
   { key: "refFrameworkOverview", label: "Framework overview" },
   { key: "health", label: "Health checks table" },
+  { key: "refLogAssessmentLifecycle", label: "Log assessment lifecycle" },
   { key: "refLoggingPatternAdvisor", label: "Logging pattern advisor" },
   { key: "patterns", label: "Logging patterns table" },
   { key: "refNamingConvention", label: "Naming convention" },
