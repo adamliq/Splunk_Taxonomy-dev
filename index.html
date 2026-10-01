@@ -4195,6 +4195,12 @@
     .obj-item:focus-visible .obj-hit { fill:rgba(112,48,160,.08); stroke:#7030a0; stroke-width:2; }
     .obj-dim { opacity:.28; }
     .obj-inspector { padding:16px 18px 18px; min-width:0; }
+    .obj-inspector-inner { position:relative; }
+    /* Side by side with the map: the inspector stays in view however far down the map the
+       selected station is, scrolling on its own when its content is taller than the screen. */
+    @media (min-width: 1001px) {
+      .obj-inspector { position:sticky; top:12px; align-self:start; max-height:calc(100vh - 24px); overflow-y:auto; overscroll-behavior:contain; }
+    }
     .obj-inspector-inner { position:sticky; top:12px; }
     .obj-crumbs { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
     .obj-chip { font-size:11px; font-weight:800; border-radius:999px; padding:2px 9px; background:#f1f5f9; color:#334155; }
@@ -4235,7 +4241,6 @@
     @media (max-width: 1000px) {
       .obj-main { grid-template-columns:minmax(0, 1fr); }
       .obj-map { border-right:0; border-bottom:1px solid var(--border); }
-      .obj-inspector-inner { position:relative; }
     }
     @media (max-width: 760px) {
       .obj-stepper { display:flex; overflow-x:auto; padding-bottom:2px; }
@@ -4269,7 +4274,8 @@
     .onboarding-feed { width:100%; max-width:660px; border-radius:12px; padding:13px 18px; border:1px dashed #67e8f9; background:#ecfeff; display:flex; gap:10px; align-items:flex-start; }
     .onboarding-feed .flow-badge { flex:none; margin-top:2px; }
     .onboarding-feed strong { display:block; color:#0e7490; font-size:12.5px; }
-    .onboarding-feed span { display:block; margin-top:3px; color:#155e75; font-size:12px; line-height:1.55; }
+    .onboarding-feed > div > span { display:block; margin-top:3px; color:#155e75; font-size:12px; line-height:1.55; }
+    .onboarding-feed > div > span .assessment-tag { display:inline-block; padding:1px 7px; margin:0 1px; line-height:1.5; vertical-align:baseline; }
     .onboarding-branch-arrow { display:flex; align-items:center; gap:8px; color:#0e7490; font-size:13px; font-weight:700; padding:8px 0; }
     .onboarding-branch-arrow .glyph { font-size:20px; font-weight:900; }
     .onboarding-branch-arrow em { color:#64748b; font-weight:500; font-style:normal; font-size:11.5px; }
@@ -4761,7 +4767,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.01 &middot; build 154</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.01 &middot; build 155</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -30691,7 +30697,9 @@ function renderOnboardingJourney(focusSelected) {
   const wrap = document.getElementById("onboardingFlowMapWrap");
   wrap.innerHTML = j.narrow ? renderOnboardingJourneyList() : renderOnboardingJourneyMap();
   const inspector = document.getElementById("objInspector");
+  const shown = `${j.route}:${journeySelected()}`;
   inspector.innerHTML = renderOnboardingJourneyInspector();
+  if (inspector.dataset.shown !== shown) { inspector.scrollTop = 0; inspector.dataset.shown = shown; }
   inspector.classList.toggle("obj-open", j.narrow && j.open);
   const count = j.query ? items.filter(i => onboardingJourneyMatches(i, j.query)).length : null;
   document.getElementById("objSearchCount").textContent = count === null ? "" : `${count} match${count === 1 ? "" : "es"}`;
@@ -30699,8 +30707,23 @@ function renderOnboardingJourney(focusSelected) {
   if (focusSelected) {
     const node = wrap.querySelector(`[data-item="${journeySelected()}"]`);
     node?.focus({ preventScroll: true });
-    node?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    if (node) journeyReveal(node, inspector);
   }
+}
+// Scroll the selected station into view. The pinned inspector cannot move past the end of the
+// map, so near the bottom it is pushed up off screen; scroll no further than keeps its top in
+// view when the station still fits on screen too.
+function journeyReveal(node, inspector) {
+  const r = node.getBoundingClientRect(), margin = 12;
+  let y = scrollY;
+  if (r.top < margin) y += r.top - margin;
+  else if (r.bottom > innerHeight - margin) y += r.bottom - innerHeight + margin;
+  if (getComputedStyle(inspector).position === "sticky") {
+    const limit = inspector.parentElement.getBoundingClientRect().bottom + scrollY - inspector.offsetHeight - margin;
+    const lowest = r.bottom + scrollY - innerHeight + margin;
+    if (y > limit && limit >= lowest) y = limit;
+  }
+  if (Math.abs(y - scrollY) > 1) scrollTo({ top: y, behavior: "smooth" });
 }
 // Shareable link: #onboarding-flow?route=detection&step=<id>. The default (the first step of the
 // log source route) is the plain #onboarding-flow.
@@ -30737,7 +30760,12 @@ function showOnJourneyMap(id, route = "onboarding") {
   selectOnboardingJourneyItem(id, false, route);
   onboardingJourney.open = false;
   renderOnboardingJourney();
-  setTimeout(() => document.getElementById("onboardingJourney")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+  setTimeout(() => {
+    // Beside the pinned inspector, go to the station itself; stacked layouts show the map's top.
+    const inspector = document.getElementById("objInspector"), node = document.querySelector(`#onboardingFlowMapWrap svg [data-item="${journeySelected()}"]`);
+    if (node && inspector && getComputedStyle(inspector).position === "sticky") journeyReveal(node, inspector);
+    else document.getElementById("onboardingJourney")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 60);
 }
 function selectOnboardingJourneyItem(id, focus = false, route = onboardingJourney.route) {
   const j = onboardingJourney;
