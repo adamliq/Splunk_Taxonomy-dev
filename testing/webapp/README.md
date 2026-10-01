@@ -100,13 +100,15 @@ every primary tab and a sample of Reference entry-point buttons (the real
 underlying JS function) and assert nothing throws. Shallow on purpose --
 it exists to catch the class of mistake none of the narrower tests would.
 
-**`browser/accessibility-pages.spec.js`** and
-**`browser/accessibility-articles.spec.js`** -- run axe-core's WCAG 2.1 A/AA
-rules against the sidebar and header, every page (plus the journey map's
-detection route) and all 101 reference articles, at desktop width and in
+**`browser/accessibility-pages.spec.js`**,
+**`browser/accessibility-articles.spec.js`** and their **`-phone`** twins --
+run axe-core's WCAG 2.1 A/AA rules against the sidebar and header (and, at
+phone width, the open menu drawer), every page (plus the journey map's
+detection route) and all 101 reference articles, at 1400px and at 393px, in
 each view's default state. One page load covers every view: other page views
-are detached while each is checked (`lib/axe-audit.js`). Any violation fails
-with the rule and the first few elements it found.
+are detached while each is checked (`lib/axe-audit.js`). The four files run
+in parallel, about 2-3 minutes each. Any violation fails with the rule and the
+first few elements it found.
 
 **`browser/deferred-renders.spec.js`** -- the large tables on pages that start
 hidden are built when the page first opens; checks they are absent at load and
