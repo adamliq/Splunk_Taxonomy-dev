@@ -28,7 +28,7 @@ test('shareable links restore the selection on both pages, and reject unknown va
     await page.goto(`${baseUrl}/index.html#onboarding-flow?route=detection&step=gate-dl-review`, { waitUntil: 'load' });
     await page.reload({ waitUntil: 'load' });
     await page.waitForTimeout(300);
-    assert.equal(await page.getAttribute('#objRoutes [data-route="detection"]', 'aria-selected'), 'true');
+    assert.equal(await page.getAttribute('#objRoutes [data-route="detection"]', 'aria-pressed'), 'true');
     assert.equal(await text(page, '#objInspector h3'), 'Detection Quality Gate');
     await page.click('#objRoutes [data-route="onboarding"]');
     await page.click('#onboardingFlowMapWrap [data-item="ob-quality"]');

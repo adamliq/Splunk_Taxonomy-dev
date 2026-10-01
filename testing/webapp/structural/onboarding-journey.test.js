@@ -54,5 +54,17 @@ test('the detection lifecycle route loops within itself and links to real log so
     assert.match(detection, new RegExp(`<span class="flow-badge state">${state}</span>`), `lifecycle state ${state} (TAX-05.03.02) missing`);
   }
   assert.equal((detection.match(/<ul class="onboarding-checklist" data-tier="standard">/g) || []).length, 1);
-  assert.match(text, /<button type="button" data-route="detection" aria-selected="false">Detection lifecycle<\/button>/);
+  assert.match(text, /<button type="button" data-route="detection" aria-pressed="false">Detection lifecycle<\/button>/);
+});
+
+test('the journey tracker stays in this browser and offers the taxonomy lifecycle states', () => {
+  const start = text.indexOf('// --- Journey tracker ---');
+  assert.ok(start !== -1, 'tracker code not found');
+  const code = text.slice(start, text.indexOf('function initOnboardingFlowMap()', start));
+  assert.doesNotMatch(code, /fetch\(|XMLHttpRequest|sendBeacon|WebSocket/);
+  assert.match(code, /const JOURNEY_TRACKER_KEY = "latchJourneyTracker\.v1";/);
+  assert.match(code, /onboarding: \["PLANNED", "ONBOARDING", "ACTIVE", "DEGRADED", "EXPIRED", "RETIRED", "EXCEPTION"\]/);
+  assert.match(code, /detection: \["PROPOSED", "DEVELOPMENT", "TESTING", "PEER REVIEW", "PRODUCTION", "MONITORING", "TUNING", "REVALIDATION", "DEPRECATED", "RETIRED"\]/);
+  assert.match(text, /Saved only in this browser &mdash; nothing is sent anywhere\./);
+  assert.match(text, /\ninitOnboardingFlowMap\(\);\ninitJourneyTracker\(\);\n/);
 });
