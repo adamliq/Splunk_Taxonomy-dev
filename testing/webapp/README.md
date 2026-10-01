@@ -22,7 +22,7 @@ exact instance) gets caught next time.
 
 ```bash
 cd testing/webapp
-npm install              # only needed once, for Playwright + its browser
+npm install              # only needed once, for Playwright, its browser and axe-core
 ./run-all.sh             # structural + browser (a few minutes, mostly the browser suite)
 ./run-all.sh --structural  # fast path: no browser needed, runs in under a second
 ./run-all.sh --browser     # just the Playwright suite
@@ -99,6 +99,23 @@ every primary tab and a sample of Reference entry-point buttons (the real
 `<button data-open-reference-detail>` click path, not just calling the
 underlying JS function) and assert nothing throws. Shallow on purpose --
 it exists to catch the class of mistake none of the narrower tests would.
+
+**`browser/accessibility-pages.spec.js`** and
+**`browser/accessibility-articles.spec.js`** -- run axe-core's WCAG 2.1 A/AA
+rules against the sidebar and header, every page (plus the journey map's
+detection route) and all 101 reference articles, at desktop width and in
+each view's default state. One page load covers every view: other page views
+are detached while each is checked (`lib/axe-audit.js`). Any violation fails
+with the rule and the first few elements it found.
+
+**`browser/deferred-renders.spec.js`** -- the large tables on pages that start
+hidden are built when the page first opens; checks they are absent at load and
+complete when opened by navigation or a direct link.
+
+**`browser/journey-tracker.spec.js`** -- the Onboarding flow tracker: add,
+save across a reload, map badge and its layer toggle, Advance and Edit from
+the inspector, remove, and CSV export/import (quoting, the formula guard, and
+skipped rows).
 
 ## Regenerating after a change to index.html
 

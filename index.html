@@ -1512,7 +1512,7 @@
       .lal-glance-domains { display:grid !important; }
       .lal-card, .lal-out, .lal-glance-domain, .lal-table tr { break-inside:avoid; }
       .lal-dim { opacity:1 !important; }
-      .ob-show-on-map, .obj-routes button[aria-pressed="false"] { display:none !important; }
+      .ob-show-on-map, .obj-routes button[aria-pressed="false"], .obj-tracker-btn, .obj-tracker, .obj-tracker-status { display:none !important; }
       .obj-map svg { max-width:100%; }
     }
     .tz-precedence { list-style: none; margin: 18px 0 10px; padding: 0; display: grid; gap: 10px; }
@@ -4133,6 +4133,38 @@
     .obj-toggles { display:flex; flex-wrap:wrap; gap:6px; align-items:center; font-size:12px; color:#64748b; }
     .obj-toggle { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); border-radius:999px; padding:2px 10px; font-size:12px; font-weight:700; color:#94a3b8; background:#fff; cursor:pointer; }
     .obj-toggle[hidden] { display:none; }
+    .visually-hidden { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+    .obj-swatch-tracked { width:14px; height:10px; border:0; border-radius:5px; background:#be185d; }
+    .obj-tracker-btn { border:1px solid #f9a8d4; background:#fdf2f8; color:#9d174d; border-radius:999px; padding:3px 12px; font-size:12px; font-weight:800; cursor:pointer; }
+    .obj-tracker-btn[aria-expanded="true"] { background:#be185d; border-color:#be185d; color:#fff; }
+    .obj-tracker-status { font-size:12px; color:#475569; }
+    .obj-tracker { container-type:inline-size; display:grid; gap:10px; border:1px solid #fbcfe8; background:#fffafd; border-radius:12px; padding:12px 14px; }
+    .obj-tracker[hidden] { display:none; }
+    .obj-tracker h3 { margin:0; font-size:14px; color:#0f172a; }
+    .obj-tracker-intro { margin:2px 0 0; font-size:12.5px; color:#475569; line-height:1.45; }
+    .obj-tracker-form { display:grid; grid-template-columns:repeat(auto-fit, minmax(min(170px, 100%), 1fr)); gap:8px 10px; align-items:end; }
+    .obj-tracker-form label { display:grid; gap:3px; min-width:0; font-size:11.5px; font-weight:700; color:#334155; }
+    .obj-tracker-form input, .obj-tracker-form select { width:100%; min-width:0; font:inherit; font-size:13px; font-weight:400; padding:5px 8px; border:1px solid #cbd5e1; border-radius:8px; background:#fff; color:#0f172a; }
+    .obj-tracker-buttons, .obj-tracker-foot { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .obj-tracker-buttons button, .obj-tracker-foot button, .obj-tracker-import { font-size:12.5px; font-weight:700; border:1px solid #cbd5e1; background:#fff; color:#0f172a; border-radius:8px; padding:6px 12px; cursor:pointer; white-space:normal; }
+    .obj-tracker-buttons button[type="submit"] { background:#be185d; border-color:#be185d; color:#fff; }
+    .obj-tracker-import:focus-within { outline:2px solid #1d4ed8; outline-offset:2px; }
+    .obj-tracker-table { width:100%; border-collapse:collapse; font-size:12.5px; }
+    .obj-tracker-table th { text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:#475569; border-bottom:1px solid var(--border); padding:4px 6px; }
+    .obj-tracker-table td { border-bottom:1px solid #f1f5f9; padding:6px; vertical-align:top; overflow-wrap:anywhere; color:#0f172a; }
+    .obj-tracker-notes { color:#475569; font-size:11.5px; }
+    .obj-tracker-actions { display:flex; flex-wrap:wrap; gap:4px 12px; }
+    .obj-tracked-row .obj-tracker-actions { grid-column:2; }
+    .obj-link.obj-danger, .obj-tracker-foot .obj-danger { color:#b91c1c; }
+    .obj-tracker-empty { margin:0; font-size:12.5px; color:#475569; }
+    .obj-list-tracked { margin-left:auto; background:#be185d; color:#fff; border-radius:999px; padding:0 7px; font-size:11px; font-weight:800; }
+    @container (max-width: 620px) {
+      .obj-tracker-table thead { display:none; }
+      .obj-tracker-table tr { display:grid; grid-template-columns:1fr auto; gap:2px 10px; padding:8px 0; border-bottom:1px solid #f1f5f9; }
+      .obj-tracker-table td { border:0; padding:0; }
+      .obj-tracker-table td:nth-child(1) { grid-column:1 / -1; }
+      .obj-tracker-table td:nth-child(5), .obj-tracker-table td:nth-child(6) { grid-column:1 / -1; }
+    }
     .ob-show-on-map { margin-left:auto; border:1px solid #e9d5ff; background:#faf5ff; color:#7030a0; border-radius:999px; padding:2px 10px; font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap; }
     .onboarding-gate h5 { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .obj-toggle[aria-pressed="true"] { color:#334155; background:#f8fafc; border-color:#cbd5e1; }
@@ -4715,7 +4747,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.01 &middot; build 150</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.01 &middot; build 152</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -4887,6 +4919,8 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
         <div class="obj-top-row">
           <div class="obj-routes" id="objRoutes" role="group" aria-label="Route"><button type="button" data-route="onboarding" aria-pressed="true">Log source onboarding</button><button type="button" data-route="detection" aria-pressed="false">Detection lifecycle</button></div>
           <div class="obj-stats" id="objStats"></div>
+          <button type="button" class="obj-tracker-btn" id="objTrackerBtn" aria-expanded="false" aria-controls="objTracker">Tracker (<span id="objTrackerCount">0</span>)</button>
+          <span class="obj-tracker-status" id="objTrackerStatus" role="status" aria-live="polite"></span>
           <label class="obj-search"><span aria-hidden="true">&#128269;</span><input type="search" id="objSearch" placeholder="Find a stage, gate or TAX code" autocomplete="off" spellcheck="false" aria-label="Find a stage, gate or TAX code"><span id="objSearchCount" class="obj-search-count" aria-live="polite"></span></label>
         </div>
         <div class="obj-stepper" id="objStepper" role="group" aria-label="Phases"></div>
@@ -4898,8 +4932,29 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
           <button type="button" class="obj-toggle" data-layer="links" aria-pressed="true" hidden><i class="obj-swatch obj-swatch-link"></i>Links to the log source journey</button>
           <button type="button" class="obj-toggle" data-layer="feeds" aria-pressed="true"><i class="obj-swatch obj-swatch-feed"></i>Feeds in</button>
           <button type="button" class="obj-toggle" data-layer="states" aria-pressed="true"><i class="obj-swatch obj-swatch-state"></i>Lifecycle states</button>
+          <button type="button" class="obj-toggle" data-layer="tracked" aria-pressed="true"><i class="obj-swatch obj-swatch-tracked"></i>Tracked items</button>
           <span class="obj-keys">Select a stage or gate for its detail &middot; step with <kbd>&uarr;</kbd> <kbd>&darr;</kbd></span>
         </div>
+        <section class="obj-tracker" id="objTracker" aria-labelledby="objTrackerTitle" hidden>
+          <div>
+            <h3 id="objTrackerTitle">Track log sources and detections</h3>
+            <p class="obj-tracker-intro">Record where each item is on its journey and its lifecycle state; tracked items show as a count on the map. Saved only in this browser &mdash; nothing is sent anywhere. Export a CSV to back up or share.</p>
+          </div>
+          <form class="obj-tracker-form" id="objTrackerForm">
+            <label>Name<input name="name" type="text" maxlength="120" autocomplete="off" placeholder="e.g. Okta system log"></label>
+            <label>Route<select name="route"><option value="onboarding">Log source onboarding</option><option value="detection">Detection lifecycle</option></select></label>
+            <label>Step<select name="step"></select></label>
+            <label>State<select name="state"></select></label>
+            <label class="obj-tracker-wide">Notes<input name="notes" type="text" maxlength="500" autocomplete="off" placeholder="Optional: owner, ticket, blocker"></label>
+            <div class="obj-tracker-buttons"><button type="submit">Add</button><button type="button" id="objTrackerCancel" hidden>Cancel</button></div>
+          </form>
+          <div class="obj-tracker-list" id="objTrackerList"></div>
+          <div class="obj-tracker-foot">
+            <button type="button" id="objTrackerExport">Export CSV</button>
+            <label class="obj-tracker-import">Import CSV<input type="file" id="objTrackerImport" class="visually-hidden" accept=".csv,text/csv"></label>
+            <button type="button" id="objTrackerClear" class="obj-danger">Clear all</button>
+          </div>
+        </section>
       </div>
       <div class="obj-main">
         <div class="obj-map" id="onboardingFlowMapWrap"></div>
@@ -30344,7 +30399,7 @@ function onboardingJourneyModel(flow, route) {
   items.filter(i => i.type === "gate").forEach(g => g.outcomes.filter(o => o.to).forEach(o => loops.unshift({ gate: g.id, from: g.id, to: o.to, tone: o.tone === "proceed" ? "cycle" : "hold" })));
   return { items, loops, links, byId: Object.fromEntries(items.map(i => [i.id, i])) };
 }
-const onboardingJourney = { route: "onboarding", models: {}, selected: {}, query: "", show: { loops: true, stops: true, branch: true, links: true, feeds: true, states: true }, narrow: false, open: false };
+const onboardingJourney = { route: "onboarding", models: {}, selected: {}, query: "", show: { loops: true, stops: true, branch: true, links: true, feeds: true, states: true, tracked: true }, narrow: false, open: false };
 const journeyModel = () => onboardingJourney.models[onboardingJourney.route];
 const journeySelected = () => onboardingJourney.selected[onboardingJourney.route];
 function onboardingJourneyMatches(item, q) {
@@ -30469,7 +30524,8 @@ function renderOnboardingJourneyMap() {
     const cy = pos[item.id], sx = item.branch ? BX : X, tx = sx + 24;
     const dim = query && !onboardingJourneyMatches(item, query) ? " obj-dim" : "";
     const isSel = item.id === selected;
-    const label = item.type === "stage" ? `Stage: ${item.name}` : `Gate: ${item.name}`;
+    const tracked = show.tracked ? journeyTrackerAt(j.route, item.id).length : 0;
+    const label = (item.type === "stage" ? `Stage: ${item.name}` : `Gate: ${item.name}`) + (tracked ? `, ${tracked} tracked` : "");
     svg += `<g class="obj-item${dim}" data-item="${item.id}" tabindex="0" role="button" aria-label="${escapeHtml(label)}" aria-pressed="${isSel}">`;
     svg += `<rect class="obj-hit" x="${X - 16}" y="${cy - 16}" width="${route.pillRight - X + 26}" height="32" rx="9"${isSel ? ' style="fill:#fff7ed;stroke:#f59e0b;stroke-width:2"' : ""}/>`;
     if (item.type === "stage") {
@@ -30477,6 +30533,7 @@ function renderOnboardingJourneyMap() {
       const color = item.branch ? "#7030a0" : golive || item.states.includes("PRODUCTION") ? "#15803d" : route.line;
       svg += `<circle cx="${sx}" cy="${cy}" r="${golive ? 10 : 8}" fill="#fff" stroke="${color}" stroke-width="4"/>`;
       svg += `<text x="${tx}" y="${cy + 4.5}" font-size="13.5" font-weight="${golive ? 800 : 650}" fill="${golive ? "#15803d" : "#0f172a"}">${escapeHtml(item.name)}</text>`;
+      if (tracked) svg += journeyTrackedBadge(j.route, item, tx + journeyTextWidth(item.name, `${golive ? 800 : 650} 13.5px system-ui,-apple-system,Segoe UI,sans-serif`) + 8, cy);
       if (item.tags.length) svg += `<text x="${tx}" y="${cy + 20}" font-size="10.5" fill="#64748b" font-family="ui-monospace,Menlo,monospace">${escapeHtml(item.tags[0])}</text>`;
       const state = item.states.filter(s => s !== "GO-LIVE").pop();
       if (state) { const w = state.length * 7 + 14, r = route.pillRight; svg += `<rect x="${r - w}" y="${cy - 9}" width="${w}" height="18" rx="9" fill="#fff" stroke="#94a3b8"/><text x="${r - w / 2}" y="${cy + 4}" text-anchor="middle" font-size="10" font-weight="800" fill="#475569">${escapeHtml(state)}</text>`; }
@@ -30489,6 +30546,7 @@ function renderOnboardingJourneyMap() {
     } else {
       svg += `<polygon points="${X},${cy - 8} ${X + 8},${cy} ${X},${cy + 8} ${X - 8},${cy}" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>`;
       svg += `<text x="${tx}" y="${cy + 4}" font-size="12" font-weight="700" fill="#b45309">${escapeHtml(item.name)}</text>`;
+      if (tracked) svg += journeyTrackedBadge(j.route, item, tx + journeyTextWidth(item.name, "700 12px system-ui,-apple-system,Segoe UI,sans-serif") + 8, cy);
       const c = route.stopX;
       if (show.stops && item.outcomes.some(o => o.tone === "stop")) svg += `<g class="obj-stop"><title>Stop point</title><line x1="${c - 34}" y1="${cy}" x2="${c - 8}" y2="${cy}" stroke="#b91c1c" stroke-width="2"/><circle cx="${c}" cy="${cy}" r="8" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/><line x1="${c - 5}" y1="${cy + 5}" x2="${c + 5}" y2="${cy - 5}" stroke="#b91c1c" stroke-width="2"/></g>`;
     }
@@ -30505,9 +30563,9 @@ function renderOnboardingJourneyList() {
   return `<div class="obj-list">${phases.map(p => {
     const inPhase = items.filter(i => i.phase === p && onboardingJourneyMatches(i, query));
     if (!inPhase.length) return "";
-    if (p !== current && !query) return `<button type="button" class="obj-list-phase" data-phase="${p.letter}" style="background:${p.color};color:${p.tab}"><span>${p.letter} &middot; ${escapeHtml(p.short)}</span><span style="color:#64748b;font-weight:600">${inPhase.filter(i => i.type === "stage").length} stages &rsaquo;</span></button>`;
+    if (p !== current && !query) return `<button type="button" class="obj-list-phase" data-phase="${p.letter}" style="background:${p.color};color:${p.tab}"><span>${p.letter} &middot; ${escapeHtml(p.short)}</span><span style="color:#475569;font-weight:600">${inPhase.filter(i => i.type === "stage").length} stages &rsaquo;</span></button>`;
     return `<div class="obj-list-phase" style="background:${p.color};color:${p.tab};cursor:default"><span>${escapeHtml(p.label)}</span></div>`
-      + inPhase.map(i => `<button type="button" class="obj-list-item${i.type === "gate" ? " obj-gate" : ""}${i.branch ? " obj-branch" : ""}" data-item="${i.id}" aria-current="${i.id === selected}"><span class="obj-list-dot"></span>${escapeHtml(i.name)}</button>`).join("");
+      + inPhase.map(i => `<button type="button" class="obj-list-item${i.type === "gate" ? " obj-gate" : ""}${i.branch ? " obj-branch" : ""}" data-item="${i.id}" aria-current="${i.id === selected}"><span class="obj-list-dot"></span>${escapeHtml(i.name)}${onboardingJourney.show.tracked && journeyTrackerAt(onboardingJourney.route, i.id).length ? `<span class="obj-list-tracked">${journeyTrackerAt(onboardingJourney.route, i.id).length}<span class="visually-hidden"> tracked</span></span>` : ""}</button>`).join("");
   }).join("")}</div>`;
 }
 // Log source steps that a Log assessment lifecycle layer covers link back to that layer.
@@ -30571,7 +30629,7 @@ function renderOnboardingJourneyInspector() {
     body = `<div class="obj-kind obj-kind-stage">&#9679; Stage</div><h3>${escapeHtml(item.title)}</h3>${stageBody(item)}${linkSection}`
       + (gate ? `<div class="obj-sec">Decided at</div><button type="button" class="obj-action" data-item-link="${gate.id}">&#9670; ${escapeHtml(gate.name)} &rsaquo;</button>` : "");
   }
-  return `<div class="obj-inspector-inner"><button type="button" class="obj-sheet-close" aria-label="Close">&times;</button><div class="obj-tax-pop" id="objTaxPop" role="tooltip" hidden></div>${chips}${body}
+  return `<div class="obj-inspector-inner"><button type="button" class="obj-sheet-close" aria-label="Close">&times;</button><div class="obj-tax-pop" id="objTaxPop" role="tooltip" hidden></div>${chips}${body}${journeyTrackerInspector(j.route, item)}
     <div class="obj-pager"><button type="button" data-item-link="${prev?.id || ""}"${prev ? "" : " disabled"}>&lsaquo; ${escapeHtml(prev?.name || "")}</button><button type="button" data-item-link="${next?.id || ""}"${next ? "" : " disabled"}>${escapeHtml(next?.name || "")} &rsaquo;</button></div></div>`;
 }
 function renderOnboardingJourney(focusSelected) {
@@ -30650,6 +30708,199 @@ function selectOnboardingJourneyItem(id, focus = false, route = onboardingJourne
   j.selected[route] = id;
   j.open = true;
   renderOnboardingJourney(focus);
+}
+// --- Journey tracker ---
+// Track log sources and detections through the journey: each tracked item sits on a step of a
+// route with a lifecycle state. Saved only in this browser (localStorage); export/import as CSV.
+const JOURNEY_TRACKER_KEY = "latchJourneyTracker.v1";
+// Status & Lifecycle State (TAX-06.04.01) and Detection Lifecycle State (TAX-05.03.02).
+const JOURNEY_TRACKER_STATES = {
+  onboarding: ["PLANNED", "ONBOARDING", "ACTIVE", "DEGRADED", "EXPIRED", "RETIRED", "EXCEPTION"],
+  detection: ["PROPOSED", "DEVELOPMENT", "TESTING", "PEER REVIEW", "PRODUCTION", "MONITORING", "TUNING", "REVALIDATION", "DEPRECATED", "RETIRED"],
+};
+let journeyTracker = [];
+let journeyTrackerEditing = "";
+function journeyTrackerLoad() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(JOURNEY_TRACKER_KEY) || "[]");
+    journeyTracker = (Array.isArray(saved) ? saved : []).filter(t => t && typeof t.id === "string" && typeof t.name === "string" && typeof t.step === "string" && JOURNEY_ROUTES[t.route])
+      .map(t => ({ id: t.id, name: t.name, route: t.route, step: t.step, state: String(t.state || ""), notes: String(t.notes || ""), updated: String(t.updated || "") }));
+  }
+  catch (e) { journeyTracker = []; }
+}
+function journeyTrackerSave() {
+  try { localStorage.setItem(JOURNEY_TRACKER_KEY, JSON.stringify(journeyTracker)); } catch (e) { /* storage unavailable: kept for this visit only */ }
+}
+// The state a step implies: the last lifecycle state named on a stage at or before it.
+function journeyTrackerDefaultState(route, step) {
+  const items = onboardingJourney.models[route]?.items || [];
+  const upto = items.slice(0, Math.max(0, items.findIndex(i => i.id === step)) + 1);
+  const named = upto.flatMap(i => i.lifecycle || []).filter(s => JOURNEY_TRACKER_STATES[route].includes(s));
+  return named.pop() || JOURNEY_TRACKER_STATES[route][0];
+}
+function journeyTrackerAt(route, step) { return journeyTracker.filter(t => t.route === route && t.step === step); }
+function journeyTrackerStepName(route, step) { return onboardingJourney.models[route]?.byId[step]?.name || step; }
+function journeyTrackerCsv() {
+  // A leading ' stops a spreadsheet treating text such as "=cmd" as a formula; import removes it.
+  const q = v => { let x = String(v); if (/^[=+\-@\t\r]/.test(x)) x = "'" + x; return /[",\n\r]/.test(x) ? `"${x.replace(/"/g, '""')}"` : x; };
+  return ["name,route,step,step_name,state,notes,updated", ...journeyTracker.map(t => [t.name, t.route, t.step, journeyTrackerStepName(t.route, t.step), t.state, t.notes || "", t.updated].map(q).join(","))].join("\n");
+}
+function journeyTrackerParseCsv(text) {
+  const rows = [];
+  let row = [], field = "", quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (quoted) {
+      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+      else if (c === '"') quoted = false;
+      else field += c;
+    } else if (c === '"') quoted = true;
+    else if (c === ",") { row.push(field); field = ""; }
+    else if (c === "\n" || c === "\r") { if (c === "\r" && text[i + 1] === "\n") i++; row.push(field); rows.push(row); row = []; field = ""; }
+    else field += c;
+  }
+  if (field || row.length) { row.push(field); rows.push(row); }
+  return rows.filter(r => r.some(x => x.trim()));
+}
+// Import keeps rows whose route and step exist; returns [added, skipped].
+function journeyTrackerImport(text) {
+  const rows = journeyTrackerParseCsv(text);
+  const head = (rows.shift() || []).map(h => h.trim().toLowerCase());
+  const col = name => head.indexOf(name);
+  const cell = (r, name) => (r[col(name)] || "").replace(/^'(?=[=+\-@\t\r])/, "");
+  let added = 0, skipped = 0;
+  rows.forEach(r => {
+    const route = cell(r, "route").trim(), step = cell(r, "step").trim(), name = cell(r, "name").trim();
+    if (!name || !onboardingJourney.models[route]?.byId[step]) { skipped++; return; }
+    const state = cell(r, "state").trim().toUpperCase();
+    journeyTracker.push({ id: `t${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`, name: name.slice(0, 120), route, step,
+      state: JOURNEY_TRACKER_STATES[route].includes(state) ? state : journeyTrackerDefaultState(route, step), notes: cell(r, "notes").slice(0, 500), updated: cell(r, "updated").trim().slice(0, 32) || new Date().toISOString().slice(0, 10) });
+    added++;
+  });
+  journeyTrackerSave();
+  return [added, skipped];
+}
+function renderJourneyTracker() {
+  const panel = document.getElementById("objTracker");
+  if (!panel) return;
+  document.getElementById("objTrackerCount").textContent = String(journeyTracker.length);
+  const form = document.getElementById("objTrackerForm");
+  const routeSel = form.elements.route, stepSel = form.elements.step, stateSel = form.elements.state;
+  const route = routeSel.value || "onboarding";
+  const items = onboardingJourney.models[route]?.items || [];
+  const keepStep = stepSel.value;
+  stepSel.innerHTML = items.map(i => `<option value="${escapeHtml(i.id)}">${i.type === "gate" ? "◆ " : ""}${escapeHtml(i.name)}</option>`).join("");
+  if (items.some(i => i.id === keepStep)) stepSel.value = keepStep;
+  const keepState = stateSel.value;
+  stateSel.innerHTML = JOURNEY_TRACKER_STATES[route].map(s => `<option>${s}</option>`).join("");
+  stateSel.value = JOURNEY_TRACKER_STATES[route].includes(keepState) ? keepState : journeyTrackerDefaultState(route, stepSel.value);
+  form.querySelector("[type=submit]").textContent = journeyTrackerEditing ? "Save changes" : "Add";
+  document.getElementById("objTrackerCancel").hidden = !journeyTrackerEditing;
+  const rows = journeyTracker.slice().sort((a, b) => a.name.localeCompare(b.name));
+  document.getElementById("objTrackerList").innerHTML = rows.length
+    ? `<table class="obj-tracker-table"><thead><tr><th scope="col">Name</th><th scope="col">Route</th><th scope="col">Step</th><th scope="col">State</th><th scope="col">Updated</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead><tbody>${rows.map(t => `<tr>
+        <td><b>${escapeHtml(t.name)}</b>${t.notes ? `<div class="obj-tracker-notes">${escapeHtml(t.notes)}</div>` : ""}</td>
+        <td>${escapeHtml(JOURNEY_ROUTES[t.route].label)}</td><td>${escapeHtml(journeyTrackerStepName(t.route, t.step))}</td>
+        <td><span class="obj-state">${escapeHtml(t.state)}</span></td><td>${escapeHtml(t.updated)}</td>
+        <td class="obj-tracker-actions"><button type="button" class="obj-link" data-track-show="${escapeHtml(t.id)}">Show on map</button> <button type="button" class="obj-link" data-track-edit="${escapeHtml(t.id)}">Edit</button> <button type="button" class="obj-link obj-danger" data-track-remove="${escapeHtml(t.id)}">Remove</button></td></tr>`).join("")}</tbody></table>`
+    : '<p class="obj-tracker-empty">Nothing tracked yet. Add a log source or detection above.</p>';
+}
+function initJourneyTracker() {
+  const panel = document.getElementById("objTracker"), toggle = document.getElementById("objTrackerBtn");
+  if (!panel || !toggle) return;
+  journeyTrackerLoad();
+  const form = document.getElementById("objTrackerForm"), status = document.getElementById("objTrackerStatus");
+  const say = text => { status.textContent = text; };
+  toggle.addEventListener("click", () => {
+    const open = panel.hidden;
+    panel.hidden = !open;
+    toggle.setAttribute("aria-expanded", String(open));
+    if (open) { renderJourneyTracker(); form.elements.name.focus(); }
+  });
+  form.elements.route.addEventListener("change", () => { form.elements.step.value = ""; form.elements.state.value = ""; renderJourneyTracker(); });
+  form.elements.step.addEventListener("change", () => { form.elements.state.value = journeyTrackerDefaultState(form.elements.route.value, form.elements.step.value); });
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    const name = form.elements.name.value.trim();
+    if (!name) { say("Enter a name."); form.elements.name.focus(); return; }
+    const entry = { name: name.slice(0, 120), route: form.elements.route.value, step: form.elements.step.value, state: form.elements.state.value, notes: form.elements.notes.value.trim().slice(0, 500), updated: new Date().toISOString().slice(0, 10) };
+    if (journeyTrackerEditing) {
+      Object.assign(journeyTracker.find(t => t.id === journeyTrackerEditing) || {}, entry);
+      say(`Saved ${entry.name}.`);
+      journeyTrackerEditing = "";
+    } else {
+      journeyTracker.push({ id: `t${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`, ...entry });
+      say(`Added ${entry.name} at ${journeyTrackerStepName(entry.route, entry.step)}.`);
+    }
+    form.elements.name.value = ""; form.elements.notes.value = "";
+    journeyTrackerSave(); renderJourneyTracker(); renderOnboardingJourney();
+  });
+  document.getElementById("objTrackerCancel").addEventListener("click", () => { journeyTrackerEditing = ""; form.reset(); renderJourneyTracker(); });
+  document.getElementById("objTrackerExport").addEventListener("click", () => {
+    const url = URL.createObjectURL(new Blob([journeyTrackerCsv()], { type: "text/csv" }));
+    const a = Object.assign(document.createElement("a"), { href: url, download: "latch-journey-tracker.csv" });
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    say(`Exported ${journeyTracker.length} item${journeyTracker.length === 1 ? "" : "s"}.`);
+  });
+  document.getElementById("objTrackerImport").addEventListener("change", async event => {
+    const file = event.target.files[0];
+    if (!file) return;
+    const [added, skipped] = journeyTrackerImport(await file.text());
+    event.target.value = "";
+    say(`Imported ${added} item${added === 1 ? "" : "s"}${skipped ? `; skipped ${skipped} row${skipped === 1 ? "" : "s"} with an unknown route or step` : ""}.`);
+    renderJourneyTracker(); renderOnboardingJourney();
+  });
+  document.getElementById("objTrackerClear").addEventListener("click", () => {
+    if (!journeyTracker.length || !confirm(`Remove all ${journeyTracker.length} tracked items from this browser?`)) return;
+    journeyTracker = []; journeyTrackerSave(); renderJourneyTracker(); renderOnboardingJourney(); say("Cleared.");
+  });
+  document.getElementById("onboardingJourney").addEventListener("click", event => {
+    const b = event.target.closest("[data-track-show], [data-track-edit], [data-track-remove], [data-track-advance]");
+    if (!b) return;
+    const t = journeyTracker.find(x => x.id === (b.dataset.trackShow || b.dataset.trackEdit || b.dataset.trackRemove || b.dataset.trackAdvance));
+    if (!t) return;
+    if (b.dataset.trackShow) { showOnJourneyMap(t.step, t.route); return; }
+    if (b.dataset.trackRemove) { journeyTracker = journeyTracker.filter(x => x !== t); journeyTrackerSave(); renderJourneyTracker(); renderOnboardingJourney(); say(`Removed ${t.name}.`); return; }
+    if (b.dataset.trackAdvance) {
+      const items = onboardingJourney.models[t.route].items, next = items[items.findIndex(i => i.id === t.step) + 1];
+      if (!next) return;
+      t.step = next.id; t.state = journeyTrackerDefaultState(t.route, next.id); t.updated = new Date().toISOString().slice(0, 10);
+      journeyTrackerSave(); renderJourneyTracker(); renderOnboardingJourney(); say(`Moved ${t.name} to ${next.name}.`);
+      return;
+    }
+    journeyTrackerEditing = t.id;
+    panel.hidden = false; toggle.setAttribute("aria-expanded", "true");
+    form.elements.route.value = t.route; renderJourneyTracker();
+    form.elements.step.value = t.step; form.elements.state.value = t.state;
+    form.elements.name.value = t.name; form.elements.notes.value = t.notes || "";
+    renderJourneyTracker();
+    form.scrollIntoView({ block: "nearest", behavior: "smooth" }); form.elements.name.focus();
+  });
+  renderJourneyTracker();
+  // The map was drawn before the saved items were loaded.
+  if (journeyTracker.length) renderOnboardingJourney();
+}
+// Station names vary in width; the tracked-count badge sits just after the name.
+let journeyMeasureCtx = null;
+function journeyTextWidth(text, font) {
+  try {
+    journeyMeasureCtx = journeyMeasureCtx || document.createElement("canvas").getContext("2d");
+    journeyMeasureCtx.font = font;
+    return journeyMeasureCtx.measureText(text).width;
+  } catch (e) { return text.length * 7; }
+}
+function journeyTrackedBadge(route, item, x, cy) {
+  const here = journeyTrackerAt(route, item.id);
+  if (!here.length) return "";
+  const label = String(here.length), w = label.length * 7 + 14;
+  return `<g class="obj-tracked"><title>${escapeHtml(`Tracked here: ${here.map(t => `${t.name} (${t.state})`).join(", ")}`)}</title><rect x="${x}" y="${cy - 9}" width="${w}" height="18" rx="9" fill="#be185d"/><text x="${x + w / 2}" y="${cy + 4}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff">${label}</text></g>`;
+}
+function journeyTrackerInspector(route, item) {
+  const here = journeyTrackerAt(route, item.id);
+  if (!here.length) return "";
+  const items = onboardingJourney.models[route].items, next = items[items.indexOf(item) + 1];
+  return `<div class="obj-sec">Tracked here (${here.length})</div>` + here.map(t => `<div class="obj-outcome obj-tracked-row"><span class="obj-state">${escapeHtml(t.state)}</span><span class="obj-outcome-text">${escapeHtml(t.name)}<small>${escapeHtml([t.notes, t.updated && `updated ${t.updated}`].filter(Boolean).join(" · "))}</small></span><span class="obj-tracker-actions">${next ? `<button type="button" class="obj-link" data-track-advance="${escapeHtml(t.id)}">Advance to ${escapeHtml(next.name)} &rsaquo;</button>` : ""}<button type="button" class="obj-link" data-track-edit="${escapeHtml(t.id)}">Edit</button></span></div>`).join("");
 }
 function initOnboardingFlowMap() {
   const root = document.getElementById("onboardingJourney");
@@ -47818,6 +48069,7 @@ renderTree();
 renderDetail();
 initCollapsibleReferenceSections();
 initOnboardingFlowMap();
+initJourneyTracker();
 
 /* =========================================================================
    S3 Cost & Size Calculator (Splunk Cloud -> Ingest Processor -> S3 -> Federated Search)
