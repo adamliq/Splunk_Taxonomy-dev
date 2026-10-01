@@ -54,5 +54,5 @@ test('the detection lifecycle route loops within itself and links to real log so
     assert.match(detection, new RegExp(`<span class="flow-badge state">${state}</span>`), `lifecycle state ${state} (TAX-05.03.02) missing`);
   }
   assert.equal((detection.match(/<ul class="onboarding-checklist" data-tier="standard">/g) || []).length, 1);
-  assert.match(text, /<button type="button" data-route="detection" aria-selected="false">Detection lifecycle<\/button>/);
+  assert.match(text, /<button type="button" data-route="detection" aria-pressed="false">Detection lifecycle<\/button>/);
 });

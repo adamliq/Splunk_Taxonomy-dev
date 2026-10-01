@@ -78,12 +78,12 @@ test('the detection lifecycle route and its links to the log source journey', as
 
     await page.click('#onboardingFlowMapWrap [data-item="gate-dl-data"]');
     await page.click('#objInspector [data-route-link="ob-candidate"]');
-    assert.equal(await page.getAttribute('#objRoutes [data-route="onboarding"]', 'aria-selected'), 'true');
+    assert.equal(await page.getAttribute('#objRoutes [data-route="onboarding"]', 'aria-pressed'), 'true');
     assert.equal(await heading(page), 'Candidate log source identified');
 
     await page.click('#onboardingFlowMapWrap [data-item="ob-detection"]');
     await page.click('#objInspector [data-detection-link="dl-analytic"]');
-    assert.equal(await page.getAttribute('#objRoutes [data-route="detection"]', 'aria-selected'), 'true');
+    assert.equal(await page.getAttribute('#objRoutes [data-route="detection"]', 'aria-pressed'), 'true');
     assert.equal(await heading(page), 'Detection analytic & rule');
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth), 0);
     assert.deepEqual(pageErrors, []);
