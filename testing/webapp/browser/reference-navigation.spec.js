@@ -99,10 +99,39 @@ test('Log assessment lifecycle: selections link the pyramid, wheel, outputs and 
     assert.equal(await page.textContent('#lalCount'), '3 matches');
     await page.fill('#lalSearch', '');
     await page.click('.lal-domain[data-lal-domain="2"]');
-    await page.click('#lalDetail [data-lal-reference]');
+    await page.click('#lalDetail [data-lal-reference="log-assessment-framework"]');
     assert.equal(await page.isVisible('#logAssessmentFrameworkReferenceView'), true);
     await page.click('#logAssessmentFrameworkReferenceView [data-open-lal]');
     assert.equal(await page.evaluate(() => location.hash), '#log-assessment-lifecycle');
+    assert.deepEqual(pageErrors, []);
+  });
+});
+
+test('Log assessment lifecycle: reference links, and the detail sheet on a narrow page', async () => {
+  await withServerAndPage(async ({ page, baseUrl, pageErrors }) => {
+    await page.goto(`${baseUrl}/index.html#log-assessment-lifecycle`, { waitUntil: 'load' });
+    await page.waitForTimeout(300);
+    await page.click('.lal-domain[data-lal-domain="6"]');
+    await page.click('#lalDetail [data-lal-section="log-af-fingerprint"]');
+    await page.waitForTimeout(500);
+    assert.equal(await page.isVisible('#logAssessmentFrameworkReferenceView'), true);
+    await page.goto(`${baseUrl}/index.html#log-assessment-lifecycle`, { waitUntil: 'load' });
+    await page.waitForTimeout(300);
+    await page.click('tr.lal-row[data-lal-row="5-9"] button.lal-term[data-lal-reference="eccs"]');
+    assert.equal(await page.isVisible('#eccsReferenceView'), true);
+
+    await page.setViewportSize({ width: 393, height: 852 });
+    await page.goto(`${baseUrl}/index.html#log-assessment-lifecycle`, { waitUntil: 'load' });
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForTimeout(300);
+    assert.equal(await page.isVisible('#lalWheel'), false, 'the wheel gives way to a list on a phone');
+    assert.equal(await page.$eval('#lalAside', el => el.classList.contains('lal-open')), false);
+    await page.click('.lal-dl-item[data-lal-domain="2"]');
+    assert.equal(await page.$eval('#lalAside', el => el.classList.contains('lal-open')), true);
+    assert.equal(await page.textContent('#lalDetail h3'), 'Timestamp Analysis');
+    await page.click('#lalSheetClose');
+    assert.equal(await page.$eval('#lalAside', el => el.classList.contains('lal-open')), false);
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth), 0);
     assert.deepEqual(pageErrors, []);
   });
 });

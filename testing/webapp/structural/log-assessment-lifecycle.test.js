@@ -10,10 +10,10 @@ const { readIndexHtml } = require('../lib/parse-index');
 
 const text = readIndexHtml();
 const start = text.indexOf('const LAL_LENS = ');
-const end = text.indexOf('// --- Log assessment lifecycle (Reference page) ---', start);
+const end = text.indexOf('function lalRefTitle(', start);
 const data = {};
-vm.runInNewContext(`${text.slice(start, end)}\nthis.d = { LAL_LENS, LAL_LAYERS, LAL_ROWS, LAL_DOMAINS, LAL_OUTPUTS, LAL_STEPS };`, data);
-const { LAL_LENS, LAL_LAYERS, LAL_ROWS, LAL_DOMAINS, LAL_OUTPUTS, LAL_STEPS } = data.d;
+vm.runInNewContext(`${text.slice(start, end)}\nthis.d = { LAL_LENS, LAL_LAYERS, LAL_ROWS, LAL_DOMAINS, LAL_OUTPUTS, LAL_STEPS, LAL_REFS, LAL_LAYER_REFS, LAL_DOMAIN_SECTIONS };`, data);
+const { LAL_LENS, LAL_LAYERS, LAL_ROWS, LAL_DOMAINS, LAL_OUTPUTS, LAL_STEPS, LAL_REFS, LAL_LAYER_REFS, LAL_DOMAIN_SECTIONS } = data.d;
 
 test('the page is a Reference page with its own hash', () => {
   assert.match(text, /<button id="showLogAssessmentLifecyclePage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="logAssessmentLifecyclePage">Log assessment lifecycle<\/button>/);
@@ -52,4 +52,18 @@ test('layers, rows, domains, outputs and steps reference each other consistently
     for (const n of s.light.domains || []) assert.ok(domainIds.has(n));
   }
   assert.equal(LAL_DOMAINS.filter(d => d.unnumbered).map(d => d.name).join(), 'Line Analysis');
+});
+
+test('every reference link opens a real article, and every domain section exists in the article', () => {
+  const articles = new Set([...text.matchAll(/<article id="(\w+)ReferenceView"/g)].map(m => m[1]));
+  const view = name => name.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
+  const names = [...Object.values(LAL_REFS), ...Object.values(LAL_LAYER_REFS).flat()];
+  for (const name of names) assert.ok(articles.has(view(name)), `no article for ${name}`);
+  const pageTerms = new Set([...LAL_ROWS.flatMap(r => r.terms), ...LAL_DOMAINS.flatMap(d => d.checks), ...LAL_OUTPUTS.flatMap(o => o.items.map(([t]) => t))]);
+  for (const term of Object.keys(LAL_REFS)) assert.ok(pageTerms.has(term), `LAL_REFS term "${term}" is not on the page`);
+  const article = text.slice(text.indexOf('<article id="logAssessmentFrameworkReferenceView"'), text.indexOf('</article>', text.indexOf('<article id="logAssessmentFrameworkReferenceView"')));
+  for (const [n, section] of Object.entries(LAL_DOMAIN_SECTIONS)) {
+    assert.ok(LAL_DOMAINS.some(d => d.n === +n), `section for unknown domain ${n}`);
+    assert.match(article, new RegExp(`<section id="${section}"`), `domain ${n}: no section ${section}`);
+  }
 });

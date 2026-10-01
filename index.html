@@ -1408,7 +1408,18 @@
     .lal-count { font-size:11.5px; font-weight:800; color:#64748b; white-space:nowrap; }
     .lal-btn { border:1px solid var(--border); background:#fff; border-radius:9px; padding:6px 12px; font-weight:800; font-size:12.5px; cursor:pointer; color:#334155; }
     .lal-btn-primary { background:#0b2a5b; border-color:#0b2a5b; color:#fff; }
-    .lal-grid { display:grid; grid-template-columns:minmax(260px, 340px) minmax(0, 1fr) minmax(220px, 280px); gap:14px; align-items:start; }
+    .lal-layout { display:grid; grid-template-columns:minmax(0, 1fr) minmax(300px, 380px); gap:14px; align-items:start; }
+    .lal-main { display:grid; gap:14px; min-width:0; }
+    .lal-top { display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:14px; align-items:start; }
+    #lalPyramid svg { max-width:360px; margin:0 auto; }
+    #lalWheel svg { max-width:640px; margin:0 auto; }
+    .lal-aside { position:sticky; top:12px; min-width:0; }
+    .lal-detail-card { max-height:calc(100vh - 24px); overflow-y:auto; position:relative; }
+    .lal-sheet-close { display:none; }
+    .lal-domain-list { display:none; }
+    .lal-ref { border-style:dashed !important; }
+    .lal-ref::after { content:" \2197"; font-size:10px; }
+    button.lal-term { border:0; background:transparent; padding:0; font:inherit; color:#1d4ed8; cursor:pointer; text-decoration:underline; text-decoration-style:dotted; text-underline-offset:2px; white-space:normal; text-align:left; }
     .lal-card { background:#fff; border:1px solid var(--border); border-radius:16px; box-shadow:0 6px 18px rgba(15,23,42,.05); padding:12px 14px; min-width:0; }
     .lal-card h3.lal-card-title { margin:0 0 8px; font-size:11.5px; letter-spacing:.07em; text-transform:uppercase; color:#64748b; }
     .lal-band { background:#0b2a5b; color:#fff; border-radius:12px; padding:8px 14px; text-align:center; margin-bottom:8px; }
@@ -1422,7 +1433,7 @@
     .lal-sel .lal-shape { stroke:#0f172a; stroke-width:3; }
     .lal-legend { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:12px; color:#334155; margin-top:6px; }
     .lal-legend span { display:inline-flex; align-items:center; gap:5px; }
-    .lal-outputs { display:grid; gap:10px; }
+    .lal-outputs { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px; }
     .lal-out { border:1px solid var(--border); border-radius:12px; padding:9px 11px; background:#fff; }
     .lal-out.lal-lit { box-shadow:0 0 0 2px #f59e0b; }
     .lal-out-head { display:flex; gap:8px; align-items:center; width:100%; border:0; background:transparent; padding:0; cursor:pointer; text-align:left; white-space:normal; }
@@ -1434,8 +1445,7 @@
     .lal-out li button:hover { background:#f1f5f9; }
     .lal-out li button.lal-lit { background:#fef3c7; color:#92400e; font-weight:700; }
     .lal-out li button.lal-sel { background:#0b2a5b; color:#fff; }
-    .lal-detail-row { display:grid; grid-template-columns:minmax(0, 1.3fr) minmax(0, 1fr); gap:14px; margin-top:14px; }
-    #lalDetail { min-height:170px; }
+    #lalDetail { min-height:120px; }
     #lalDetail h3 { margin:2px 0 6px; font-size:19px; color:#0f172a; }
     #lalDetail p { margin:0 0 6px; color:#334155; font-size:13.5px; }
     .lal-muted { color:#64748b !important; }
@@ -1462,8 +1472,23 @@
     .lal-term.lal-lit { background:#fde68a; box-shadow:0 0 0 2px #fde68a; }
     .lal-banner { margin-top:14px; background:#0b2a5b; color:#fff; border-radius:12px; padding:10px 16px; display:flex; flex-wrap:wrap; gap:6px 18px; justify-content:center; font-size:13.5px; }
     .lal-note { margin-top:12px; font-size:12px; color:#64748b; line-height:1.55; }
-    @media (max-width: 1180px) { .lal-grid { grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); } .lal-outputs-col { grid-column:1 / -1; } .lal-outputs { grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); } }
-    @media (max-width: 760px) { .lal-grid, .lal-detail-row { grid-template-columns:1fr; } .lal-table td.lal-label { width:auto; } }
+    /* Breakpoints follow the page's own width (set from script), since the sidebar takes a share
+       of the window: lal-narrow stacks the layout and makes the detail panel a bottom sheet;
+       lal-compact swaps the wheel for a list of domains. */
+    .lal-narrow .lal-layout { grid-template-columns:minmax(0, 1fr); }
+    .lal-narrow .lal-aside { position:fixed; left:0; right:0; bottom:0; top:auto; z-index:60; transform:translateY(105%); transition:transform .2s ease; }
+    .lal-narrow .lal-aside.lal-open { transform:none; }
+    .lal-narrow .lal-detail-card { max-height:65vh; border-radius:18px 18px 0 0; box-shadow:0 -12px 30px rgba(15,23,42,.2); }
+    .lal-narrow .lal-sheet-close { display:block; position:absolute; top:8px; right:10px; border:0; background:#f1f5f9; border-radius:999px; width:30px; height:30px; font-size:16px; cursor:pointer; }
+    .lal-compact #lalWheel { display:none; }
+    .lal-compact .lal-domain-list { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:6px; }
+    .lal-dl-item { display:flex; align-items:center; gap:8px; width:100%; border:1px solid var(--border); border-radius:10px; background:#fff; padding:7px 9px; text-align:left; white-space:normal; cursor:pointer; font-size:12.5px; font-weight:700; }
+    .lal-dl-item b { display:grid; place-items:center; flex:0 0 auto; width:22px; height:22px; border-radius:50%; color:#fff; font-size:11px; }
+    .lal-dl-item.lal-lit { box-shadow:0 0 0 2px #f59e0b; }
+    .lal-dl-item.lal-sel { background:#0b2a5b; color:#fff !important; }
+    .lal-dl-item.lal-dim { opacity:.45; }
+    .lal-compact .lal-table td.lal-label { width:auto; }
+    @media print { .lal-aside, .lal-toolbar { display:none !important; } .lal-layout { grid-template-columns:1fr; } }
     .tz-precedence { list-style: none; margin: 18px 0 10px; padding: 0; display: grid; gap: 10px; }
     .tz-step { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
     .tz-rank { display: grid; place-items: center; flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%; background: var(--primary); color: #fff; font-weight: 800; font-size: 14px; }
@@ -4661,7 +4686,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.01 &middot; build 146</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.01 &middot; build 147</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -11825,14 +11850,18 @@ INGEST PROCESSOR
       <button type="button" class="lal-btn lal-btn-primary" id="lalPlay">&#9654; How it works</button>
       <button type="button" class="lal-btn" id="lalReset">Reset</button>
     </div>
-    <div class="lal-grid">
-      <section class="lal-card" aria-label="Lifecycle layers"><h3 class="lal-card-title">Lifecycle layers</h3><div id="lalPyramid"></div><div class="lal-legend" id="lalLensLegend"></div></section>
-      <section class="lal-card" aria-label="Log Assessment Framework domains"><div class="lal-band"><b>LOG ASSESSMENT FRAMEWORK (Stage 3)</b><span>Comprehensive analysis of raw logs across the assessment domains &mdash; select one</span></div><div id="lalWheel"></div></section>
-      <section class="lal-outputs-col" aria-label="Framework outputs"><div class="lal-band"><b>FRAMEWORK OUTPUTS FEED MULTIPLE AREAS</b></div><div class="lal-outputs" id="lalOutputs"></div></section>
-    </div>
-    <div class="lal-detail-row">
-      <section class="lal-card" id="lalDetail" aria-live="polite"></section>
-      <section class="lal-card"><h3 class="lal-card-title">How the framework works</h3><ol class="lal-steps" id="lalSteps"></ol></section>
+    <div class="lal-layout">
+      <div class="lal-main">
+        <div class="lal-top">
+          <section class="lal-card" aria-label="Lifecycle layers"><h3 class="lal-card-title">Lifecycle layers</h3><div id="lalPyramid"></div><div class="lal-legend" id="lalLensLegend"></div></section>
+          <section class="lal-card"><h3 class="lal-card-title">How the framework works</h3><ol class="lal-steps" id="lalSteps"></ol></section>
+        </div>
+        <section class="lal-card" aria-label="Log Assessment Framework domains"><div class="lal-band"><b>LOG ASSESSMENT FRAMEWORK (Stage 3)</b><span>Comprehensive analysis of raw logs across the assessment domains &mdash; select one</span></div><div id="lalWheel"></div><div id="lalDomainList" class="lal-domain-list"></div></section>
+        <section aria-label="Framework outputs"><div class="lal-band"><b>FRAMEWORK OUTPUTS FEED MULTIPLE AREAS</b></div><div class="lal-outputs" id="lalOutputs"></div></section>
+      </div>
+      <aside class="lal-aside" id="lalAside" aria-label="Selected item">
+        <div class="lal-card lal-detail-card"><button type="button" class="lal-sheet-close" id="lalSheetClose" aria-label="Close">&times;</button><div id="lalDetail" aria-live="polite"></div></div>
+      </aside>
     </div>
     <section class="lal-card" style="margin-top:14px"><h3 class="lal-card-title">Stages, key terms and outputs</h3><div class="eccs-table-wrap" role="region" aria-label="Stages, key terms and outputs" tabindex="0"><table class="lal-table"><thead><tr><th scope="col">Stage</th><th scope="col">Stage label</th><th scope="col">Key terms / assessments (not exhaustive)</th><th scope="col">Key outputs</th></tr></thead><tbody id="lalTable"></tbody></table></div></section>
     <div class="lal-banner"><span>&#128161; The Log Assessment Framework establishes the evidence base for every decision.</span><span>Consistent application ensures reliable, valuable and operationally effective logging.</span></div>
@@ -28787,6 +28816,30 @@ const LAL_STEPS = [
   { text: "Gates ensure only high-quality, valuable data progresses.", light: { layers: ["L59"], outputs: ["dq", "cv"] } },
   { text: "Implementation operationalises and monitors the solution.", light: { layers: ["L1011"], outputs: ["impl"] } },
 ];
+// Terms on the page that have their own reference article (detail names), the extra articles
+// each layer relates to, and the Log Assessment Framework section each domain is covered in.
+const LAL_REFS = {
+  "Transport": "transport-delivery-patterns", "Timestamp": "timestamp-quality", "Format": "log-format-parse", "Event Boundary": "line-break", "Line Analysis": "line-length",
+  "Event Breaking": "line-break", "Datetime Parsing": "datetime-parse", "Extraction": "field-extraction", "Normalisation": "field-normalisation",
+  "Timestamp Quality": "timestamp-quality", "Log Format Quality": "log-format-quality", "RFC": "required-field-coverage", "ETC": "event-type-coverage", "DQS": "data-quality-score",
+  "ECCS": "eccs", "ICD": "icd", "Pivot Density": "pivot", "Pivot Breadth": "pivot", "Identity Diversity": "identity-diversity", "Noise %": "investigative-noise-percentage", "Detection Coverage": "threat-detection",
+  "Timestamp Standards": "datetime-format", "Log Format Detection": "log-format-parse", "Log Format Parsing": "log-format-parse", "Event Boundary Detection": "line-break", "Line Breaking": "line-break",
+  "Multiline Detection": "line-break", "Line Length": "line-length", "Line Length Quality": "line-length",
+  "Event boundaries": "line-break", "Parsing rules": "log-format-parse", "Field extraction": "field-extraction", "Timestamp quality": "timestamp-quality", "Log format quality": "log-format-quality",
+  "Line length quality": "line-length", "Required fields": "required-field-coverage", "Event type coverage": "event-type-coverage", "Context completeness": "eccs", "Detection coverage": "threat-detection",
+  "Pivot density & breadth": "pivot", "Identity & event diversity": "identity-diversity", "CVI & overall scoring": "cyber-value-index",
+};
+const LAL_LAYER_REFS = { L12: [], L3: ["log-assessment-framework"], L4: [], L59: ["cyber-value-index", "response-readiness", "operational-assurance", "log-source-cyber-value"], L1011: ["implementation-complexity", "operational-assurance"] };
+const LAL_DOMAIN_SECTIONS = { 1: "log-af-definition", 2: "log-af-dimensions", 3: "log-af-dimensions", 4: "log-af-procedure", 5: "log-af-procedure", 6: "log-af-fingerprint", 7: "log-af-scoring", 8: "log-af-dimensions", 11: "log-af-template" };
+function lalRefTitle(name) {
+  const view = name.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase()) + "ReferenceView";
+  return document.querySelector(`#${view} h2`)?.textContent.trim() || name;
+}
+// Open an article, and optionally one of its sections.
+function lalOpenReference(name, section) {
+  showReferenceDetail(name);
+  if (section) setTimeout(() => document.getElementById(section)?.scrollIntoView({ behavior: "smooth", block: "start" }), 150);
+}
 // --- Log assessment lifecycle (Reference page) ---
 // The lifecycle pyramid, the Stage 3 assessment-domain wheel and the output areas, linked:
 // selecting any part lights the parts it relates to. Domain numbering follows the source
@@ -28817,16 +28870,19 @@ function lalRenderWheel() {
     const [bx, by] = pt(r1 - 26, mid), [tx, ty] = pt((r0 + r1) / 2 - 6, mid);
     const lines = [];
     let line = "";
-    d.name.split(" ").forEach(w => { if ((line + " " + w).trim().length > 12 && line) { lines.push(line); line = w; } else line = (line + " " + w).trim(); });
+    d.name.split(" ").forEach(w => { if ((line + " " + w).trim().length > 11 && line) { lines.push(line); line = w; } else line = (line + " " + w).trim(); });
     lines.push(line);
     const [ox, oy] = pt(10, mid).map(v => v - C);
+    // Shrink the name only as far as its longest line needs to fit across the segment.
+    const chord = 2 * ((r0 + r1) / 2 - 6) * Math.sin(span / 2 * Math.PI / 180) - 8;
+    const fit = Math.min(14.5, +(chord / (Math.max(...lines.map(l => l.length)) * 0.68)).toFixed(1));
     const label = d.unnumbered ? "8?" : d.n;
     s += `<g class="lal-hit lal-domain" data-lal-domain="${d.n}" tabindex="0" role="button" aria-label="Domain ${d.unnumbered ? "" : d.n + ": "}${escapeHtml(d.name)}" data-ox="${ox}" data-oy="${oy}">
       <path class="lal-shape" d="M ${x0} ${y0} A ${r1} ${r1} 0 0 1 ${x1} ${y1} L ${x2} ${y2} A ${r0} ${r0} 0 0 0 ${x3} ${y3} Z" fill="${d.color}22" stroke="${d.color}" stroke-width="1.5"/>
-      <circle cx="${bx}" cy="${by}" r="14" fill="${d.unnumbered ? "#fff" : d.color}" stroke="${d.color}" stroke-width="2"${d.unnumbered ? ' stroke-dasharray="3 2"' : ""}/>
-      <text x="${bx}" y="${by + 5}" text-anchor="middle" font-size="13" font-weight="900" fill="${d.unnumbered ? d.color : "#fff"}">${label}</text>
-      ${lines.map((l, k) => `<text x="${tx}" y="${ty + (k - (lines.length - 1) / 2) * 14 + 4}" text-anchor="middle" font-size="12" font-weight="800" fill="${d.color}">${escapeHtml(l.toUpperCase())}</text>`).join("")}
-      <text x="${tx}" y="${ty + (lines.length / 2) * 14 + 12}" text-anchor="middle" font-size="10" fill="#64748b">${d.checks.length} checks</text></g>`;
+      <circle cx="${bx}" cy="${by}" r="16" fill="${d.unnumbered ? "#fff" : d.color}" stroke="${d.color}" stroke-width="2"${d.unnumbered ? ' stroke-dasharray="3 2"' : ""}/>
+      <text x="${bx}" y="${by + 5.5}" text-anchor="middle" font-size="15" font-weight="900" fill="${d.unnumbered ? d.color : "#fff"}">${label}</text>
+      ${lines.map((l, k) => `<text x="${tx}" y="${ty + (k - (lines.length - 1) / 2) * 17 + 4}" text-anchor="middle" font-size="${fit}" font-weight="800" fill="${d.color}">${escapeHtml(l.toUpperCase())}</text>`).join("")}
+      <text x="${tx}" y="${ty + (lines.length / 2) * 17 + 14}" text-anchor="middle" font-size="12" fill="#64748b">${d.checks.length} checks</text></g>`;
   });
   s += `<g class="lal-hit" data-lal-layer="L3" tabindex="0" role="button" aria-label="Raw log sample: Stage 3"><circle class="lal-shape" cx="${C}" cy="${C}" r="${r0 - 8}" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
     <text x="${C}" y="${C - 18}" text-anchor="middle" font-size="26">&#128196;</text>
@@ -28834,13 +28890,15 @@ function lalRenderWheel() {
     <text x="${C}" y="${C + 28}" text-anchor="middle" font-size="11.5" fill="#334155">Physical lines &amp;</text>
     <text x="${C}" y="${C + 42}" text-anchor="middle" font-size="11.5" fill="#334155">logical events</text></g>`;
   document.getElementById("lalWheel").innerHTML = s + `</svg>`;
+  // Phone width: the same domains as a list of buttons.
+  document.getElementById("lalDomainList").innerHTML = LAL_DOMAINS.map(d => `<button type="button" class="lal-dl-item" data-lal-domain="${d.n}" style="color:${d.color}"><b style="background:${d.color}">${d.unnumbered ? "?" : d.n}</b>${escapeHtml(d.name)}</button>`).join("");
 }
 function lalRenderStatic() {
   document.getElementById("lalOutputs").innerHTML = LAL_OUTPUTS.map(o => `<div class="lal-out" data-lal-out="${o.id}"><button type="button" class="lal-out-head" data-lal-area="${o.id}"><span class="lal-ic" style="background:${o.color}">${o.icon}</span><span><b style="color:${o.color}">${escapeHtml(o.title)}</b><small>${escapeHtml(o.stage)}</small></span></button>
     <ul>${o.items.map(([t], k) => `<li><button type="button" data-lal-item="${o.id}:${k}">${escapeHtml(t)}</button></li>`).join("")}</ul></div>`).join("");
   document.getElementById("lalTable").innerHTML = LAL_ROWS.map(r => {
     const L = LAL_LAYERS.find(l => l.id === r.layer);
-    return `<tr class="lal-row" data-lal-row="${r.stage}" tabindex="0"><td class="lal-stage" style="background:${L.color}">${r.stage.replace("-", "–")}</td><td class="lal-label" style="color:${L.color}">${escapeHtml(r.label)}</td><td>${r.terms.map(t => `<span class="lal-term">${escapeHtml(t)}</span>`).join(", ")}</td><td>${escapeHtml(r.outputs)}</td></tr>`;
+    return `<tr class="lal-row" data-lal-row="${r.stage}" tabindex="0"><td class="lal-stage" style="background:${L.color}">${r.stage.replace("-", "–")}</td><td class="lal-label" style="color:${L.color}">${escapeHtml(r.label)}</td><td>${r.terms.map(t => LAL_REFS[t] ? `<button type="button" class="lal-term" data-lal-reference="${LAL_REFS[t]}" title="${escapeHtml(lalRefTitle(LAL_REFS[t]))}">${escapeHtml(t)}</button>` : `<span class="lal-term">${escapeHtml(t)}</span>`).join(", ")}</td><td>${escapeHtml(r.outputs)}</td></tr>`;
   }).join("");
 }
 function lalLights() {
@@ -28885,8 +28943,17 @@ function lalPaint() {
     const isSel = !q && step < 0 && sel.kind === "domain" && sel.id === d.n;
     g.classList.toggle("lal-lit", on && !isSel); g.classList.toggle("lal-sel", isSel);
     g.classList.toggle("lal-dim", q ? !on : !(on || isSel) && L.domains.size > 0);
+    g.setAttribute("aria-pressed", String(isSel));
     g.setAttribute("transform", isSel ? `translate(${g.dataset.ox} ${g.dataset.oy})` : "");
     g.querySelector(".lal-shape").setAttribute("fill", isSel ? d.color + "55" : d.color + "22");
+  });
+  root.querySelectorAll(".lal-dl-item").forEach(btn => {
+    const d = LAL_DOMAINS.find(x => x.n === +btn.dataset.lalDomain);
+    const on = q ? matches(d.name) || d.checks.some(matches) : L.domains.has(d.n);
+    const isSel = !q && step < 0 && sel.kind === "domain" && sel.id === d.n;
+    btn.classList.toggle("lal-lit", on && !isSel); btn.classList.toggle("lal-sel", isSel);
+    btn.classList.toggle("lal-dim", q ? !on : !(on || isSel) && L.domains.size > 0);
+    btn.setAttribute("aria-pressed", String(isSel));
   });
   let hits = 0;
   root.querySelectorAll(".lal-out").forEach(card => {
@@ -28911,7 +28978,12 @@ function lalPaint() {
 function lalRenderDetail() {
   const el = document.getElementById("lalDetail"), { sel, step } = lalState;
   const chip = (text, attrs = "", color = "") => `<button type="button" class="lal-chip" ${attrs}${color ? ` style="border-color:${color};color:${color}"` : ""}>${escapeHtml(text)}</button>`;
-  const plain = text => `<span class="lal-chip lal-static">${escapeHtml(text)}</span>`;
+  // A term with an article becomes a link to it.
+  const plain = text => LAL_REFS[text] ? `<button type="button" class="lal-chip lal-ref" data-lal-reference="${LAL_REFS[text]}" title="${escapeHtml(lalRefTitle(LAL_REFS[text]))}">${escapeHtml(text)}</button>` : `<span class="lal-chip lal-static">${escapeHtml(text)}</span>`;
+  const refs = (names, sections = {}) => {
+    const unique = [...new Set(names.filter(Boolean))];
+    return unique.length ? `<div class="lal-sec">Related references</div><div class="lal-chips">${unique.map(n => `<button type="button" class="lal-chip lal-ref" data-lal-reference="${n}"${sections[n] ? ` data-lal-section="${sections[n]}"` : ""}>${escapeHtml(lalRefTitle(n))}${sections[n] ? ` · ${escapeHtml(document.getElementById(sections[n])?.querySelector("h3")?.textContent.trim() || "")}` : ""}</button>`).join("")}</div>` : "";
+  };
   const domainName = d => `${d.unnumbered ? "" : d.n + " · "}${d.name}`;
   if (step >= 0) {
     el.innerHTML = `<div class="lal-kicker" style="color:#0b2a5b">How it works · step ${step + 1} of ${LAL_STEPS.length}</div><h3>${escapeHtml(LAL_STEPS[step].text)}</h3><p class="lal-muted">Highlighted on the pyramid, wheel and output areas.</p>`;
@@ -28923,15 +28995,15 @@ function lalRenderDetail() {
       <div class="lal-sec">Stages &amp; activities</div><div class="lal-chips">${l.stages.map(plain).join("")}</div>
       <div class="lal-sec">Key outputs</div><div class="lal-chips">${l.outputs.map(plain).join("")}</div>
       <div class="lal-sec">Key terms</div><div class="lal-chips">${LAL_ROWS.filter(r => r.layer === l.id).flatMap(r => r.terms).map(plain).join("")}</div>
-      ${l.id === "L3" ? `<div class="lal-sec">Assessment domains</div><div class="lal-chips">${LAL_DOMAINS.map(d => chip(domainName(d), `data-lal-domain-link="${d.n}"`, d.color)).join("")}</div>
-      <div class="lal-sec">Reference</div><div class="lal-chips">${chip("Log Assessment Framework article ›", 'data-lal-reference="log-assessment-framework"')}</div>` : ""}`;
+      ${l.id === "L3" ? `<div class="lal-sec">Assessment domains</div><div class="lal-chips">${LAL_DOMAINS.map(d => chip(domainName(d), `data-lal-domain-link="${d.n}"`, d.color)).join("")}</div>` : ""}
+      ${refs([...(LAL_LAYER_REFS[l.id] || []), ...LAL_ROWS.filter(r => r.layer === l.id).flatMap(r => r.terms).map(t => LAL_REFS[t]), ...LAL_OUTPUTS.filter(o => o.layer === l.id).flatMap(o => o.items.map(([t]) => LAL_REFS[t]))])}`;
   } else if (sel.kind === "domain") {
     const d = LAL_DOMAINS.find(x => x.n === sel.id);
     const feeds = LAL_OUTPUTS.flatMap(o => o.items.map(([t, from], k) => from.includes(d.n) ? chip(`${o.title} · ${t}`, `data-lal-item-link="${o.id}:${k}"`, o.color) : "")).join("");
     el.innerHTML = `<div class="lal-kicker" style="color:${d.color}">Assessment domain ${d.unnumbered ? "(unnumbered in the source diagram)" : d.n} · Stage 3</div><h3>${escapeHtml(d.name)}</h3>
       <div class="lal-sec">What it checks</div><div class="lal-chips">${d.checks.map(plain).join("")}</div>
       <div class="lal-sec">Feeds</div><div class="lal-chips">${feeds || plain("Recommendations only")}</div>
-      <div class="lal-sec">Reference</div><div class="lal-chips">${chip("Log Assessment Framework article ›", 'data-lal-reference="log-assessment-framework"')}</div>`;
+      ${refs(["log-assessment-framework", ...d.checks.map(c => LAL_REFS[c])], LAL_DOMAIN_SECTIONS[d.n] ? { "log-assessment-framework": LAL_DOMAIN_SECTIONS[d.n] } : {})}`;
   } else {
     const [oid, k] = sel.kind === "item" ? sel.id.split(":") : [sel.id, null];
     const o = LAL_OUTPUTS.find(x => x.id === oid), l = LAL_LAYERS.find(x => x.id === o.layer);
@@ -28940,7 +29012,8 @@ function lalRenderDetail() {
     el.innerHTML = `<div class="lal-kicker" style="color:${o.color}">${o.icon} ${escapeHtml(o.title)} · ${escapeHtml(o.stage)}</div><h3>${escapeHtml(k === null ? o.title : o.items[k][0])}</h3>
       ${k === null ? `<div class="lal-sec">Items</div><div class="lal-chips">${o.items.map(([t], j) => chip(t, `data-lal-item-link="${o.id}:${j}"`)).join("")}</div>` : ""}
       <div class="lal-sec">Fed by domains</div><div class="lal-chips">${from.map(d => chip(domainName(d), `data-lal-domain-link="${d.n}"`, d.color)).join("")}</div>
-      <div class="lal-sec">Used in lifecycle stage</div><div class="lal-chips">${chip(`${l.num} · ${l.title}`, `data-lal-layer-link="${l.id}"`, l.color)}</div>`;
+      <div class="lal-sec">Used in lifecycle stage</div><div class="lal-chips">${chip(`${l.num} · ${l.title}`, `data-lal-layer-link="${l.id}"`, l.color)}</div>
+      ${refs(items.map(([t]) => LAL_REFS[t]))}`;
   }
 }
 function lalStopPlay() {
@@ -28949,7 +29022,9 @@ function lalStopPlay() {
   lalState.timer = null;
   document.getElementById("lalPlay").innerHTML = "&#9654; How it works";
 }
-function lalChoose(kind, id) { lalStopPlay(); lalState.step = -1; lalState.sel = { kind, id }; lalPaint(); }
+function lalChoose(kind, id) { lalStopPlay(); lalState.step = -1; lalState.sel = { kind, id }; lalPaint(); lalOpenSheet(true); }
+// On narrow screens the detail panel is a bottom sheet; selecting something opens it.
+function lalOpenSheet(open) { document.getElementById("lalAside")?.classList.toggle("lal-open", open); }
 function initLogAssessmentLifecycle() {
   const root = document.getElementById("logAssessmentLifecyclePage");
   if (!root) return;
@@ -28958,8 +29033,8 @@ function initLogAssessmentLifecycle() {
     const t = e.target.closest("[data-lal-layer], [data-lal-domain], [data-lal-item], [data-lal-area], [data-lal-row], [data-lal-step], [data-lal-domain-link], [data-lal-item-link], [data-lal-layer-link], [data-lal-reference]");
     if (!t) return;
     const d = t.dataset;
-    if (d.lalReference) { lalStopPlay(); showReferenceDetail(d.lalReference); return; }
-    if (d.lalStep) { lalStopPlay(); lalState.step = +d.lalStep; lalPaint(); return; }
+    if (d.lalReference) { lalStopPlay(); lalOpenReference(d.lalReference, d.lalSection); return; }
+    if (d.lalStep) { lalStopPlay(); lalState.step = +d.lalStep; lalPaint(); lalOpenSheet(true); return; }
     if (d.lalLayer || d.lalLayerLink) return lalChoose("layer", d.lalLayer || d.lalLayerLink);
     if (d.lalDomain || d.lalDomainLink) return lalChoose("domain", +(d.lalDomain || d.lalDomainLink));
     if (d.lalItem || d.lalItemLink) return lalChoose("item", d.lalItem || d.lalItemLink);
@@ -28967,11 +29042,22 @@ function initLogAssessmentLifecycle() {
     if (d.lalRow) return lalChoose("layer", LAL_ROWS.find(r => r.stage === d.lalRow).layer);
   });
   root.addEventListener("keydown", e => {
+    if (e.key === "Escape") lalOpenSheet(false);
     if ((e.key === "Enter" || e.key === " ") && e.target.matches(".lal-hit, tr.lal-row")) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent("click", { bubbles: true })); }
   });
+  document.getElementById("lalSheetClose").addEventListener("click", () => lalOpenSheet(false));
+  const fit = () => {
+    const w = root.clientWidth;
+    if (!w) return;
+    root.classList.toggle("lal-narrow", w < 900);
+    root.classList.toggle("lal-compact", w < 560);
+  };
+  if (window.ResizeObserver) new ResizeObserver(fit).observe(root);
+  else window.addEventListener("resize", fit);
+  fit();
   const q = document.getElementById("lalSearch");
   q.addEventListener("input", () => { lalState.query = q.value.trim(); lalStopPlay(); lalState.step = -1; lalPaint(); });
-  document.getElementById("lalReset").addEventListener("click", () => { q.value = ""; lalState.query = ""; lalChoose("layer", "L3"); });
+  document.getElementById("lalReset").addEventListener("click", () => { q.value = ""; lalState.query = ""; lalChoose("layer", "L3"); lalOpenSheet(false); });
   document.getElementById("lalPlay").addEventListener("click", () => {
     if (lalState.timer) return lalStopPlay();
     lalState.step = 0; lalPaint();
