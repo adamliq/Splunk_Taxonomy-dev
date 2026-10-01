@@ -1496,13 +1496,27 @@
     .lal-narrow .lal-sheet-close { display:block; position:absolute; top:8px; right:10px; border:0; background:#f1f5f9; border-radius:999px; width:30px; height:30px; font-size:16px; cursor:pointer; }
     .lal-compact #lalWheel { display:none; }
     .lal-compact .lal-outputs { grid-template-columns:minmax(0, 1fr); }
-    .lal-compact .lal-domain-list { display:grid; grid-template-columns:repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap:6px; }
-    .lal-dl-item { display:flex; align-items:center; gap:7px; width:100%; min-width:0; overflow-wrap:anywhere; border:1px solid var(--border); border-radius:10px; background:#fff; padding:7px 9px; text-align:left; white-space:normal; cursor:pointer; font-size:12.5px; font-weight:700; }
+    /* Two columns only when each is wide enough for the longest name ("Recommendations"). */
+    .lal-compact .lal-domain-list { display:grid; grid-template-columns:repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap:6px; }
+    .lal-dl-item { display:flex; align-items:center; gap:7px; width:100%; min-width:0; overflow-wrap:break-word; hyphens:auto; border:1px solid var(--border); border-radius:10px; background:#fff; padding:7px 9px; text-align:left; white-space:normal; cursor:pointer; font-size:12.5px; font-weight:700; }
     .lal-dl-item b { display:grid; place-items:center; flex:0 0 auto; width:22px; height:22px; border-radius:50%; color:#fff; font-size:11px; }
     .lal-dl-item.lal-lit { box-shadow:0 0 0 2px #f59e0b; }
     .lal-dl-item.lal-sel { background:#0b2a5b; color:#fff !important; }
     .lal-dl-item.lal-dim { opacity:.45; }
     .lal-compact .lal-table td.lal-label { width:auto; }
+    .lal-pyr-lenses { list-style:none; margin:8px 0 0; padding:0; display:grid; gap:4px; font-size:12.5px; color:#334155; }
+    .lal-pyr-lenses li { display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 7px; }
+    .lal-pyr-stages { color:#475569; font-size:12px; }
+    /* Phone: each stage is a card, so the table no longer scrolls inside the page. */
+    .lal-compact .lal-stages-wrap { max-height:none; overflow:visible; }
+    .lal-compact .lal-table:not(.lal-glance-table) thead { display:none; }
+    .lal-compact .lal-table:not(.lal-glance-table), .lal-compact .lal-table:not(.lal-glance-table) tbody { display:block; }
+    .lal-compact .lal-table tr.lal-row { display:grid; grid-template-columns:auto minmax(0, 1fr); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:8px; }
+    .lal-compact .lal-table tr.lal-row td { border:0; padding:6px 10px; }
+    .lal-compact .lal-table tr.lal-row td.lal-stage { width:auto; min-width:44px; display:grid; place-items:center; font-size:15px; }
+    .lal-compact .lal-table tr.lal-row td.lal-label { display:flex; align-items:center; font-size:13.5px; }
+    .lal-compact .lal-table tr.lal-row td[data-label] { grid-column:1 / -1; }
+    .lal-compact .lal-table tr.lal-row td[data-label]::before { content:attr(data-label); display:block; margin-bottom:2px; font-size:10.5px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:#475569; }
     @media print {
       .lal-aside, .lal-toolbar, #lalFlows, .lal-domain-list { display:none !important; }
       .lal-layout { grid-template-columns:1fr; }
@@ -4747,7 +4761,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.01 &middot; build 153</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.01 &middot; build 154</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -11965,7 +11979,7 @@ INGEST PROCESSOR
         <div class="lal-card lal-detail-card"><button type="button" class="lal-sheet-close" id="lalSheetClose" aria-label="Close">&times;</button><div id="lalDetail" aria-live="polite"></div></div>
       </aside>
     </div>
-    <section class="lal-card" style="margin-top:14px"><h3 class="lal-card-title">Stages, key terms and outputs</h3><div class="eccs-table-wrap" role="region" aria-label="Stages, key terms and outputs" tabindex="0"><table class="lal-table"><thead><tr><th scope="col">Stage</th><th scope="col">Stage label</th><th scope="col">Key terms / assessments (not exhaustive)</th><th scope="col">Key outputs</th></tr></thead><tbody id="lalTable"></tbody></table></div></section>
+    <section class="lal-card" style="margin-top:14px"><h3 class="lal-card-title">Stages, key terms and outputs</h3><div class="eccs-table-wrap lal-stages-wrap" role="region" aria-label="Stages, key terms and outputs" tabindex="0"><table class="lal-table"><thead><tr><th scope="col">Stage</th><th scope="col">Stage label</th><th scope="col">Key terms / assessments (not exhaustive)</th><th scope="col">Key outputs</th></tr></thead><tbody id="lalTable"></tbody></table></div></section>
     <div class="lal-banner"><span>&#128161; The Log Assessment Framework establishes the evidence base for every decision.</span><span>Consistent application ensures reliable, valuable and operationally effective logging.</span></div>
     <p class="lal-note">Domain numbering follows the source diagram, which numbers the domains 1&ndash;9 and 11 and leaves Line Analysis unnumbered (shown as &ldquo;8?&rdquo;). Which domains feed which output items is indicative.</p>
   </section>
@@ -29008,22 +29022,29 @@ const LAL_STAGE_LABELS = {
 const LAL_PYR_W = 482;
 function lalRenderPyramid() {
   const H = 5 * 76 + 10, cx = 140 + 169;
-  let s = `<svg viewBox="0 0 ${LAL_PYR_W} ${H}" role="group" aria-label="Lifecycle layers">`;
+  // On a phone the side labels would shrink to ~7px, so the pyramid is cropped to its shape
+  // (drawn near full size) and the lenses are listed underneath instead.
+  const compact = document.getElementById("logAssessmentLifecyclePage")?.classList.contains("lal-compact");
+  let s = `<svg viewBox="${compact ? `${cx - 172} 0 344` : `0 0 ${LAL_PYR_W}`} ${H}" role="group" aria-label="Lifecycle layers">`;
   LAL_LAYERS.forEach((L, i) => {
     const y0 = 5 + i * 76, y1 = y0 + 70, my = (y0 + y1) / 2;
     const hw0 = i === 0 ? 20 : 35 + i * 26, hw1 = 35 + (i + 1) * 26 + 4;
     const lens = LAL_LENS[L.lens], label = LAL_STAGE_LABELS[L.id];
     const lineY = k => my - (label.lines.length - 1) * 7 + k * 14 - 5;
     s += `<g class="lal-hit lal-layer" data-lal-layer="${L.id}" tabindex="0" role="button" aria-label="Stage ${L.num}: ${escapeHtml(L.title)}">
-      <text x="14" y="${my + 6}" text-anchor="middle" font-size="17">${lens.icon}</text>
+      ${compact ? "" : `<text x="14" y="${my + 6}" text-anchor="middle" font-size="17">${lens.icon}</text>
       ${label.lines.map((t, k) => `<text x="30" y="${lineY(k)}" font-size="11" font-weight="800" fill="${L.color}">${escapeHtml(t)}</text>`).join("")}
       <text x="30" y="${lineY(label.lines.length - 1) + 14}" font-size="10" fill="#475569">(${escapeHtml(label.stages)})</text>
-      <path d="M ${cx - hw1 - 8} ${y0 + 6} h -6 V ${y1 - 6} h 6" stroke="${L.color}" stroke-width="1.6" fill="none"/>
+      <path d="M ${cx - hw1 - 8} ${y0 + 6} h -6 V ${y1 - 6} h 6" stroke="${L.color}" stroke-width="1.6" fill="none"/>`}
       <polygon class="lal-shape" data-rx="${cx + (hw0 + hw1) / 2}" data-my="${my}" points="${cx - hw0},${y0} ${cx + hw0},${y0} ${cx + hw1},${y1} ${cx - hw1},${y1}" fill="${L.color}" stroke="#fff" stroke-width="2"/>
       <text x="${cx}" y="${y0 + 27}" text-anchor="middle" fill="#fff" font-size="${i === 0 ? 19 : 23}" font-weight="900">${L.num}</text>
       ${L.short.map((t, k) => `<text x="${cx}" y="${y0 + 45 + k * 13}" text-anchor="middle" fill="#fff" font-size="${i === 0 ? 9.5 : 11}" font-weight="800">${escapeHtml(t)}</text>`).join("")}</g>`;
   });
-  document.getElementById("lalPyramid").innerHTML = s + `</svg>`;
+  const lenses = compact ? `<ul class="lal-pyr-lenses">${LAL_LAYERS.map(L => {
+    const lens = LAL_LENS[L.lens], label = LAL_STAGE_LABELS[L.id];
+    return `<li><span aria-hidden="true">${lens.icon}</span><b style="color:${lalInk(L.color)}">${escapeHtml(label.lines.join(" "))}</b> <span class="lal-pyr-stages">${escapeHtml(label.stages)}</span></li>`;
+  }).join("")}</ul>` : "";
+  document.getElementById("lalPyramid").innerHTML = s + `</svg>` + lenses;
 }
 function lalRenderWheel() {
   const C = 300, r0 = 105, r1 = 288, span = 360 / LAL_DOMAINS.length;
@@ -29079,7 +29100,7 @@ function lalRenderStatic() {
     <ul>${o.items.map(([t], k) => `<li><button type="button" data-lal-item="${o.id}:${k}">${escapeHtml(t)}</button></li>`).join("")}</ul></div>`).join("");
   document.getElementById("lalTable").innerHTML = LAL_ROWS.map(r => {
     const L = LAL_LAYERS.find(l => l.id === r.layer);
-    return `<tr class="lal-row" data-lal-row="${r.stage}" tabindex="0"><td class="lal-stage" style="background:${lalInk(L.color)}">${r.stage.replace("-", "–")}</td><td class="lal-label" style="color:${lalInk(L.color)}">${escapeHtml(r.label)}</td><td>${r.terms.map(t => LAL_REFS[t] ? `<button type="button" class="lal-term" data-lal-reference="${LAL_REFS[t]}" title="${escapeHtml(lalRefTitle(LAL_REFS[t]))}">${escapeHtml(t)}</button>` : `<span class="lal-term">${escapeHtml(t)}</span>`).join(", ")}</td><td>${escapeHtml(r.outputs)}</td></tr>`;
+    return `<tr class="lal-row" data-lal-row="${r.stage}" tabindex="0"><td class="lal-stage" style="background:${lalInk(L.color)}">${r.stage.replace("-", "–")}</td><td class="lal-label" style="color:${lalInk(L.color)}">${escapeHtml(r.label)}</td><td data-label="Key terms / assessments">${r.terms.map(t => LAL_REFS[t] ? `<button type="button" class="lal-term" data-lal-reference="${LAL_REFS[t]}" title="${escapeHtml(lalRefTitle(LAL_REFS[t]))}">${escapeHtml(t)}</button>` : `<span class="lal-term">${escapeHtml(t)}</span>`).join(", ")}</td><td data-label="Key outputs">${escapeHtml(r.outputs)}</td></tr>`;
   }).join("");
 }
 function lalLights() {
@@ -29318,9 +29339,11 @@ function initLogAssessmentLifecycle() {
   const fit = () => {
     const w = root.clientWidth;
     if (!w) return;
+    const wasCompact = root.classList.contains("lal-compact");
     root.classList.toggle("lal-narrow", w < 900);
     root.classList.toggle("lal-compact", w < 560);
     root.classList.toggle("lal-wide", w >= 1400);
+    if (wasCompact !== root.classList.contains("lal-compact")) { lalRenderPyramid(); lalPaint(); }
   };
   if (window.ResizeObserver) {
     new ResizeObserver(fit).observe(root);
