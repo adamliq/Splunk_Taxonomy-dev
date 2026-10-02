@@ -164,6 +164,14 @@ down, 100 rows at a time (25 on a phone) with "Show more" / "Show all", a filter
 starting the count again, revealing a row past the first page, labelled phone
 cards, and the Roles toolbar fitting its page (plus an axe check).
 
+**`browser/long-pages.spec.js`** -- the readability pass: no visible page text
+under 11px at desktop or phone width (the S3 calculator's charts included);
+every page opening with a banner and its own h2; Framework overview's steps
+opening their pages; the S3 calculator's folded sections, "Go to section", sticky
+live total and Expand/Collapse all; Concepts folding by category (chips, search
+and concept links open the group they need); and the Configuration file
+reference's compact list, row links and remembered Cards choice (plus axe checks).
+
 **`browser/lifecycle-phone-layout.spec.js`** -- the Log assessment lifecycle at
 phone width: stage cards instead of a scroll box, no domain name split mid-word,
 a readable pyramid, and the redraw when crossing the breakpoint.
