@@ -31,6 +31,8 @@ test('links to a term, and the selection is brought into view', async () => {
     assert.equal(await page.evaluate(() => state.selectedCode), 'TAX-02.06.03', 'unknown code ignored');
 
     await page.click('#taxShowTableView');
+    await injectAxe(page);
+    assert.deepEqual(await auditVisible(page, 'page'), [], 'table view');
     await page.evaluate(() => selectTaxNodeFromTable('TAX-06.04.01'));
     await page.waitForTimeout(900);
     assert.ok(await inView(page, '#taxTableBody tr.selected'), 'table row in view');
