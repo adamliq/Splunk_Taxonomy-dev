@@ -214,6 +214,34 @@
     button:hover { background: #f8fafc; }
     .stats { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 18px; color: #475569; font-size: 13px; }
     .stat { background: #fff; border: 1px solid var(--border); padding: 7px 10px; border-radius: 999px; }
+    /* Onboard taxonomy toolbar: the search gets the room; the buttons wrap to the next line. */
+    #taxonomyPage .toolbar { display: flex; flex-wrap: wrap; }
+    #taxonomyPage .toolbar #search { flex: 1 1 280px; width: auto; min-width: 0; }
+    #taxonomyPage .toolbar #domainFilter { flex: 0 1 260px; width: auto; min-width: 0; }
+    #taxonomyPage .toolbar .button-group { flex: 0 1 auto; }
+    .tax-search-count { margin: -6px 0 14px; font-size: 12.5px; color: #475569; }
+    .tax-search-count:empty { display: none; }
+    #tree mark, #taxTableBody mark { background: #fef08a; color: #1e293b; border-radius: 3px; padding: 0 1px; }
+    /* Cards kept only to show where matches sit: shaded, without their description. */
+    .node-card.tax-context { background: #f8fafc; box-shadow: none; }
+    .node-card.tax-context:not(.selected) .node-description { display: none; }
+    .tax-match-hint { font-size: 11px; font-weight: 700; color: #92400e; background: #fef3c7; border-radius: 999px; padding: 2px 8px; }
+    .tax-sheet-close { display: none; }
+    @media (max-width: 760px) {
+      #taxonomyPage .toolbar #domainFilter, #taxonomyPage .toolbar .button-group { flex: 1 1 100%; }
+      #taxonomyPage .toolbar .button-group button { flex: 1 1 auto; padding: 9px 10px; }
+      #taxonomyPage .stats { gap: 6px; font-size: 12px; }
+      #taxonomyPage .stat { padding: 4px 9px; }
+    }
+    /* Single-column layout (980px and below): the detail is a bottom sheet instead of sitting
+       below the whole tree. */
+    @media (max-width: 980px) {
+      #detail.detail-panel { position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 60; max-height: 78vh; overflow-y: auto; border-radius: 18px 18px 0 0; box-shadow: 0 -12px 30px rgba(15,23,42,.2); transform: translateY(105%); transition: transform .2s ease; min-height: 0; }
+      #detail.detail-panel.tax-sheet-open { transform: none; }
+      #detail .tax-sheet-close { display: block; position: absolute; top: 8px; right: 10px; z-index: 2; border: 0; background: #f1f5f9; border-radius: 999px; width: 32px; height: 32px; padding: 0; font-size: 18px; line-height: 1; }
+      #detail .detail-header { padding-right: 52px; }
+    }
+    @media print { #detail.detail-panel { position: static; transform: none; } .tax-sheet-close { display: none !important; } }
     .layout {
       display: grid;
       grid-template-columns: minmax(0, 1.55fr) minmax(340px, .8fr);
@@ -4839,7 +4867,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.02 &middot; build 157</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.02 &middot; build 158</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -16770,8 +16798,8 @@ E. Assumptions and unresolved inputs</pre>
     <span class="stat"><strong id="statSourceFamilies">&ndash;</strong> reference source families</span>
     <span class="stat"><strong id="statLoggingPatterns">&ndash;</strong> governed logging patterns</span>
     <span class="stat"><strong id="statHealthChecks">&ndash;</strong> reusable health checks</span>
-    <span class="stat">Taxonomy explorer opens fully collapsed</span>
   </div>
+  <p class="tax-search-count" id="taxSearchCount" role="status" aria-live="polite"></p>
   <div class="view-tabs" role="tablist">
     <button type="button" id="taxShowTreeView" class="active" role="tab" aria-selected="true" aria-controls="taxTreeViewPanel">Tree Explorer</button>
     <button type="button" id="taxShowTableView" role="tab" aria-selected="false" aria-controls="taxTableViewPanel">Table View</button>
@@ -19555,8 +19583,28 @@ function renderDetailValue(value) {
   }
   return escapeHtml(text);
 }
+// Escaped text with each case-insensitive occurrence of the search wrapped in <mark>.
+function taxHighlight(text, query) {
+  const raw = String(text ?? ""), q = String(query || "").trim();
+  if (!q) return escapeHtml(raw);
+  const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
+  let out = "", last = 0;
+  for (const m of raw.matchAll(re)) { out += escapeHtml(raw.slice(last, m.index)) + `<mark>${escapeHtml(m[0])}</mark>`; last = m.index + m[0].length; }
+  return out + escapeHtml(raw.slice(last));
+}
+function taxSearchCount() {
+  const el = document.getElementById("taxSearchCount");
+  if (!el) return;
+  const q = state.query.trim().toLowerCase();
+  if (!q) { el.textContent = ""; return; }
+  const hits = nodes.filter(n => (!state.domain || n.domain === state.domain) && searchableText(n).includes(q));
+  const terms = hits.filter(n => n.nodeType === "taxonomy").length, entries = hits.filter(n => n.nodeType === "instance").length;
+  const count = (n, one, many) => `${n.toLocaleString("en")} ${n === 1 ? one : many}`;
+  el.textContent = `${count(terms, "taxonomy term", "taxonomy terms")} and ${count(entries, "current entry", "current entries")} match \u201c${state.query.trim()}\u201d${state.domain ? ` in ${state.domain}` : ""}.${hits.length ? " Matches are highlighted; the shaded cards show where they sit." : ""}`;
+}
 function renderTree() {
   const visibleTree = filterTree(roots, state.query.trim(), state.domain);
+  taxSearchCount();
   treeElement.innerHTML = "";
   if (!visibleTree.length) {
     treeElement.innerHTML = '<div class="empty">No taxonomy terms or current entries match the filters.</div>';
@@ -19604,14 +19652,22 @@ function renderNode(node, depth) {
 
   const content = document.createElement("div");
   content.className = "node-content";
+  // While searching, show the matched words; a taxonomy term that matched only on fields not
+  // shown here says so (current entries are records, so that is expected), and the cards kept
+  // for context (ancestors) are shaded.
+  const q = state.query.trim(), ql = q.toLowerCase();
+  const direct = q && searchableText(node).includes(ql);
+  const visibleHit = q && [codeLabel, node.term, node.definition].some(t => String(t || "").toLowerCase().includes(ql));
+  if (q && !direct) card.classList.add("tax-context");
   content.innerHTML = `
     <div class="node-title">
-      ${codeLabel ? `<span class="node-code" style="color:${colors.ink}">${escapeHtml(codeLabel)}</span>` : ""}
-      <strong class="node-term">${escapeHtml(node.term)}</strong>
+      ${codeLabel ? `<span class="node-code" style="color:${colors.ink}">${taxHighlight(codeLabel, q)}</span>` : ""}
+      <strong class="node-term">${taxHighlight(node.term, q)}</strong>
       ${countBadge}
       ${typeBadge}
+      ${direct && !visibleHit && node.nodeType !== "instance" ? '<span class="tax-match-hint">match in record details</span>' : ""}
     </div>
-    <div class="node-description">${escapeHtml(node.definition || "")}</div>
+    <div class="node-description">${taxHighlight(node.definition || "", q)}</div>
   `;
 
   row.appendChild(toggle);
@@ -19621,6 +19677,8 @@ function renderNode(node, depth) {
     state.selectedCode = node.code;
     renderTree();
     renderDetail();
+    taxUpdateHash();
+    taxOpenSheet(true);
   });
   wrapper.appendChild(card);
 
@@ -19672,6 +19730,7 @@ function renderDetail() {
     .filter(([, value]) => value !== undefined && value !== null && value !== "");
 
   detailElement.innerHTML = `
+    <button type="button" class="tax-sheet-close" aria-label="Close detail">&times;</button>
     <div class="detail-header" style="background:${colors.soft}; border-bottom-color:${colors.accent}">
       <div class="detail-code" style="color:${colors.ink}">${escapeHtml(displayCode)}</div>
       <h2 class="detail-title">${escapeHtml(item.term)}</h2>
@@ -19754,7 +19813,9 @@ function getVisibleTaxonomyRows() {
   });
 }
 
-function selectTaxNodeFromTable(code) {
+// Select a term. From anywhere but the table itself (links, global search, the journey map's TAX
+// chips) the selection is also brought into view.
+function selectTaxNodeFromTable(code, reveal = true) {
   const target = nodeIndex.get(code);
   if (!target) return;
   state.selectedCode = code;
@@ -19768,7 +19829,48 @@ function selectTaxNodeFromTable(code) {
   renderDetail();
   renderTree();
   renderTaxTable();
+  taxUpdateHash();
+  if (reveal) taxReveal();
+  taxOpenSheet(true);
 }
+
+// Shareable link: #taxonomy?code=TAX-04.10.01 (the first domain, selected by default, is plain
+// #taxonomy). Unknown codes are ignored.
+function taxHash() {
+  return state.selectedCode && state.selectedCode !== "TAX-01" ? `#taxonomy?code=${encodeURIComponent(state.selectedCode)}` : "#taxonomy";
+}
+function taxUpdateHash() {
+  if (!history.replaceState || !/^#taxonomy(\?|$)/.test(location.hash)) return;
+  const next = taxHash();
+  if (location.hash !== next) history.replaceState(null, "", next);
+}
+function applyTaxHash() {
+  const code = new URLSearchParams((location.hash.match(/^#taxonomy\?(.*)$/) || [])[1] || "").get("code");
+  if (code && nodeIndex.has(code) && code !== state.selectedCode) selectTaxNodeFromTable(code);
+}
+// Bring the selection into view in whichever view is showing -- the tree card, or the table
+// row inside its scrolling shell -- when it was chosen from elsewhere (a link, global search).
+function taxReveal() {
+  requestAnimationFrame(() => {
+    const target = taxActiveView === "table"
+      ? document.querySelector("#taxTableBody tr.selected")
+      : document.querySelector("#tree .node-card.selected");
+    if (!target || document.getElementById("taxonomyPage").hidden) return;
+    const shell = target.closest(".table-shell");
+    if (shell) shell.scrollTop += target.getBoundingClientRect().top - shell.getBoundingClientRect().top - shell.clientHeight / 3;
+    // Always, and smooth: opening the page starts a smooth scroll to the top, which this replaces.
+    target.scrollIntoView({ block: "center", behavior: "smooth" });
+  });
+}
+// Single-column widths: the detail panel is a bottom sheet, opened by a selection and closed by
+// its button or Escape.
+function taxOpenSheet(open) {
+  const panel = document.getElementById("detail");
+  if (!panel) return;
+  panel.classList.toggle("tax-sheet-open", open && window.matchMedia("(max-width: 980px)").matches);
+}
+document.getElementById("detail").addEventListener("click", event => { if (event.target.closest(".tax-sheet-close")) taxOpenSheet(false); });
+document.addEventListener("keydown", event => { if (event.key === "Escape" && document.getElementById("detail").classList.contains("tax-sheet-open")) taxOpenSheet(false); });
 
 function renderTaxTable() {
   const visible = getVisibleTaxonomyRows();
@@ -19778,8 +19880,8 @@ function renderTaxTable() {
   } else {
     tbody.innerHTML = visible.map(node => `
       <tr data-code="${escapeHtml(node.code)}" class="${state.selectedCode === node.code ? 'selected' : ''}">
-        <td class="config-file">${escapeHtml(node.code)}</td>
-        <td class="obj-name">${escapeHtml(node.term)}</td>
+        <td class="config-file">${taxHighlight(node.code, state.query)}</td>
+        <td class="obj-name">${taxHighlight(node.term, state.query)}</td>
         <td>${escapeHtml(node.domain)}</td>
         <td>${escapeHtml(node.entityType)}</td>
         <td>${escapeHtml(node.status)}</td>
@@ -19787,7 +19889,7 @@ function renderTaxTable() {
     `).join("");
   }
   tbody.querySelectorAll("tr[data-code]").forEach(tr => {
-    tr.addEventListener("click", () => selectTaxNodeFromTable(tr.getAttribute("data-code")));
+    tr.addEventListener("click", () => selectTaxNodeFromTable(tr.getAttribute("data-code"), false));
   });
 }
 
@@ -19873,6 +19975,7 @@ function validateNamingValue() {
 
 function renderNamingConventionDetail(item, colors) {
   detailElement.innerHTML = `
+    <button type="button" class="tax-sheet-close" aria-label="Close detail">&times;</button>
     <div class="detail-header" style="background:${colors.soft}; border-bottom-color:${colors.accent}">
       <div class="detail-code" style="color:${colors.ink}">${escapeHtml(item.code)}</div>
       <h2 class="detail-title">${escapeHtml(item.term)}</h2>
@@ -28243,6 +28346,7 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
     if (selected === "portsMatrix") updatePortsMatrixHash();
     if (selected === "splunkApi") updateSplunkApiHash();
     if (selected === "onboarding") updateJourneyHash();
+    if (selected === "taxonomy") taxUpdateHash();
     if (selected === "refLogAssessmentLifecycle") lalUpdateHash();
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -31351,7 +31455,7 @@ document.querySelectorAll("[data-copy-prompt]").forEach(button => button.addEven
 function pageNameFromHash() {
   if (location.hash === "#info") return "info";
   if (/^#onboarding-flow(\?|$)/.test(location.hash)) return "onboarding";
-  if (location.hash === "#taxonomy") return "taxonomy";
+  if (/^#taxonomy(\?|$)/.test(location.hash)) return "taxonomy";
   if (location.hash === "#object-taxonomy") return "objectTaxonomy";
   if (location.hash === "#assessments") return "assessments";
   if (location.hash === "#s3-calculator") return "s3calc";
@@ -47972,6 +48076,7 @@ window.addEventListener("hashchange", () => {
   if (hashPage === "splunkApi") applySplunkApiHash();
   if (hashPage === "refRoles") applyRolesHash();
   if (hashPage === "onboarding") applyJourneyHash();
+  if (hashPage === "taxonomy") applyTaxHash();
   if (hashPage === "refLogAssessmentLifecycle") lalApplyHash();
 });
 
@@ -49514,6 +49619,7 @@ window.addEventListener("beforeprint", () => { fillPrintHeader(); fitTablesForPr
 window.addEventListener("afterprint", () => { unfitTablesAfterPrint(); clearPrintScope(); });
 
 setActivePage(pageNameFromHash(), false);
+if (pageNameFromHash() === "taxonomy") applyTaxHash();
 
 
 // Log Source Cyber Value calculator
