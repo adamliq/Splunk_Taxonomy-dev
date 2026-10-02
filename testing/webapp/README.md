@@ -157,6 +157,13 @@ and highlights (plus an axe check), A-Z and per-command links, global search
 clearing the filter, and caution badges only where a command's own examples
 say it removes something.
 
+**`browser/flow-tables.spec.js`** -- the big reference tables (questions,
+health checks, SOC metrics, roles, Splunk API, logging patterns, Splunk ports):
+no inner scroll box or page overflow, a header row that follows the reader
+down, 100 rows at a time (25 on a phone) with "Show more" / "Show all", a filter
+starting the count again, revealing a row past the first page, labelled phone
+cards, and the Roles toolbar fitting its page (plus an axe check).
+
 **`browser/lifecycle-phone-layout.spec.js`** -- the Log assessment lifecycle at
 phone width: stage cards instead of a scroll box, no domain name split mid-word,
 a readable pyramid, and the redraw when crossing the breakpoint.
