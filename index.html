@@ -4665,7 +4665,7 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  color: var(--muted);
+  color: #475569;
   white-space: nowrap;
 }
 .table-shell tbody td {
@@ -4676,6 +4676,7 @@
 .table-shell tbody tr { cursor: pointer; }
 .table-shell tbody tr:hover { background: var(--primary-light); }
 .table-shell tbody tr.selected { background: #dbeafe; }
+.table-shell tbody tr.selected .config-file { color: #155e75; }
 .obj-name { font-weight: 600; color: var(--text); }
 .pill {
   display: inline-block;
@@ -4702,6 +4703,25 @@
   cursor: pointer;
 }
 .ref-pill:hover { background: #dbeafe; }
+button.ref-pill { font: inherit; font-size: 12px; font-weight: 600; line-height: 1.4; white-space: normal; text-align: left; }
+.ref-pill.ref-missing { cursor: default; background: #fff; border-style: dashed; color: #475569; }
+.ref-pill.ref-missing:hover { background: #fff; }
+.sot-not-recorded { margin: 8px 0 0; font-size: 12px; color: #475569; line-height: 1.5; }
+.sot-life { display: inline-block; margin-left: 6px; padding: 0 7px; border-radius: 999px; font-size: 10.5px; font-weight: 800; color: #92400e; background: #fef3c7; border: 1px solid #fcd34d; vertical-align: 1px; }
+button.sot-stat-filter { font: inherit; font-size: 13px; text-align: left; cursor: pointer; color: #475569; white-space: normal; }
+button.sot-stat-filter:hover { border-color: #93c5fd; }
+button.sot-stat-filter[aria-pressed="true"] { border-color: var(--primary); background: #eff6ff; box-shadow: 0 0 0 1px var(--primary) inset; }
+.sot-stat-shown { border-color: #93c5fd; }
+.sot-life-filter { display: flex; flex-direction: column; gap: 2px; }
+.sot-life-filter select { font: inherit; font-size: 13px; padding: 2px 4px; border: 1px solid var(--border); border-radius: 6px; width: auto; }
+#sotTreeShell mark, #sotTableBody mark { background: #fef08a; color: #1e293b; border-radius: 3px; padding: 0 1px; }
+.sot-sheet-close { display: none; }
+@media (max-width: 900px) {
+  .sot-detail-panel { position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 60; max-height: 78vh; border-radius: 18px 18px 0 0; box-shadow: 0 -12px 30px rgba(15,23,42,.2); transform: translateY(105%); transition: transform .2s ease; }
+  .sot-detail-panel.sot-sheet-open { transform: none; }
+  .sot-detail-panel .sot-sheet-close { display: block; position: sticky; top: 0; float: right; margin: -8px -8px 0 8px; z-index: 2; border: 0; background: #f1f5f9; border-radius: 999px; width: 32px; height: 32px; padding: 0; font-size: 18px; line-height: 1; cursor: pointer; }
+}
+@media print { .sot-detail-panel { position: static !important; transform: none !important; } .sot-sheet-close { display: none !important; } }
 .ref-pill.ref-empty { color: var(--muted); font-weight: 400; font-style: italic; cursor: default; background: none; border: none; padding: 0; }
 .config-file { font-family: var(--mono); font-size: 12px; color: var(--accent); }
 .empty-row td { text-align: center; color: var(--muted); padding: 30px; }
@@ -4867,7 +4887,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.02 &middot; build 158</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.02 &middot; build 159</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -16854,6 +16874,7 @@ E. Assumptions and unresolved inputs</pre>
         <button id="sotTreeCollapseAll" type="button">Collapse all</button>
         <button id="sotTreeExportBtn" class="primary" type="button">Export visible CSV</button>
       </div>
+      <p class="tax-search-count" id="sotTreeCount" role="status" aria-live="polite"></p>
       <div class="tree-layout">
         <div class="tree-shell" id="sotTreeShell" tabindex="0" aria-label="Splunk Object Taxonomy tree"></div>
         <aside class="sot-detail-panel" id="sotTreeDetailPanel">
@@ -19752,7 +19773,7 @@ function renderDetail() {
       ${item.relatedSot && item.relatedSot.length ? `
         <div class="detail-row">
           <div class="detail-label">Related SOT Objects (Splunk Object Taxonomy)</div>
-          <div class="detail-value"><div class="ref-pills">${item.relatedSot.map(code => `<span class="ref-pill" data-jump-sot="${escapeHtml(code)}">${escapeHtml(code)}</span>`).join("")}</div></div>
+          <div class="detail-value"><div class="ref-pills">${item.relatedSot.map(code => `<button type="button" class="ref-pill" data-jump-sot="${escapeHtml(code)}">${escapeHtml(code)}</button>`).join("")}</div></div>
         </div>
       ` : ""}
     </div>
@@ -28347,6 +28368,7 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
     if (selected === "splunkApi") updateSplunkApiHash();
     if (selected === "onboarding") updateJourneyHash();
     if (selected === "taxonomy") taxUpdateHash();
+    if (selected === "objectTaxonomy") sotUpdateHash();
     if (selected === "refLogAssessmentLifecycle") lalUpdateHash();
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -31456,7 +31478,7 @@ function pageNameFromHash() {
   if (location.hash === "#info") return "info";
   if (/^#onboarding-flow(\?|$)/.test(location.hash)) return "onboarding";
   if (/^#taxonomy(\?|$)/.test(location.hash)) return "taxonomy";
-  if (location.hash === "#object-taxonomy") return "objectTaxonomy";
+  if (/^#object-taxonomy(\?|$)/.test(location.hash)) return "objectTaxonomy";
   if (location.hash === "#assessments") return "assessments";
   if (location.hash === "#s3-calculator") return "s3calc";
   if (location.hash === "#reference") return "reference";
@@ -48077,6 +48099,7 @@ window.addEventListener("hashchange", () => {
   if (hashPage === "refRoles") applyRolesHash();
   if (hashPage === "onboarding") applyJourneyHash();
   if (hashPage === "taxonomy") applyTaxHash();
+  if (hashPage === "objectTaxonomy") applySotHash();
   if (hashPage === "refLogAssessmentLifecycle") lalApplyHash();
 });
 
@@ -49779,6 +49802,7 @@ const SOT_DOMAINS = [
   "SOT-11 — Platform Administration & Operational Objects",
   "SOT-12 — Integration & Ecosystem Objects",
   "SOT-13 — Legacy & Deprecated Objects",
+  "SOT-14 — Splunk Success Framework & Organizational Governance Objects",
 ];
 
 const SOT_OBJECTS = [
@@ -52194,12 +52218,19 @@ function pillClass(type) {
 }
 
 
+// Object type (the class counts) and lifecycle filters, shared by the tree and the table.
+const sotFilters = { type: "", lifecycle: "" };
+const sotPassesFilters = o => (!sotFilters.type || o.type === sotFilters.type) && (!sotFilters.lifecycle || (sotFilters.lifecycle === "not-active" ? o.lifecycle !== "Active" : o.lifecycle === sotFilters.lifecycle));
+function sotLifecycleBadge(o) {
+  return o.lifecycle && o.lifecycle !== "Active" ? ` <span class="sot-life">${escapeHtml(o.lifecycle)}</span>` : "";
+}
 function getVisible() {
   const q = document.getElementById("sotSearchBox").value.trim().toLowerCase();
   const sotTypeFilter = document.getElementById("sotTypeFilter").value;
   const sotScopeFilter = document.getElementById("sotScopeFilter").value;
   return SOT_OBJECTS.filter(o => {
     if (sotCurrentDomain && o.domain !== sotCurrentDomain) return false;
+    if (sotFilters.lifecycle && !sotPassesFilters({ ...o, type: sotFilters.type || o.type })) return false;
     if (sotTypeFilter && o.type !== sotTypeFilter) return false;
     if (sotScopeFilter && o.scope !== sotScopeFilter) return false;
     if (!q) return true;
@@ -52208,22 +52239,43 @@ function getVisible() {
   });
 }
 
+// The class counts filter both views (pressed = active); the lifecycle filter sits beside them.
+// "Shown" appears only while something narrows the list.
 function renderStats(visible) {
-  const sotStatsBar = document.getElementById("sotStatsBar");
-  const knowledgeCount = SOT_OBJECTS.filter(o => o.type === "Knowledge Object").length;
-  const platformCount = SOT_OBJECTS.filter(o => o.type === "Platform Object").length;
-  const hybridCount = SOT_OBJECTS.filter(o => o.type === "Hybrid (Knowledge + Platform)").length;
-  const externalCount = SOT_OBJECTS.filter(o => o.type === "External Platform Object").length;
-  sotStatsBar.innerHTML = `
+  const bar = document.getElementById("sotStatsBar");
+  const count = type => SOT_OBJECTS.filter(o => o.type === type).length;
+  const chip = (type, label) => `<button type="button" class="sot-stat sot-stat-filter" data-sot-type="${escapeHtml(type)}" aria-pressed="${sotFilters.type === type}"><strong>${count(type)}</strong>${label}</button>`;
+  const lifecycles = [...new Set(SOT_OBJECTS.map(o => o.lifecycle))];
+  const notActive = SOT_OBJECTS.filter(o => o.lifecycle !== "Active").length;
+  const shown = sotActiveView === "tree" ? sotTreeShownCount() : visible.length;
+  const narrowed = sotFilters.type || sotFilters.lifecycle || (sotActiveView === "tree" ? sotTreeQuery.trim() : visible.length !== SOT_OBJECTS.length);
+  const focused = document.activeElement?.id === "sotLifecycleFilter";
+  bar.innerHTML = `
     <div class="sot-stat"><strong>${SOT_OBJECTS.length}</strong>total objects</div>
-    <div class="sot-stat"><strong>${visible.length}</strong>visible</div>
+    ${narrowed ? `<div class="sot-stat sot-stat-shown"><strong>${shown}</strong>shown</div>` : ""}
     <div class="sot-stat"><strong>${SOT_DOMAINS.length}</strong>SOT domains</div>
-    <div class="sot-stat"><strong>${knowledgeCount}</strong>knowledge objects</div>
-    <div class="sot-stat"><strong>${platformCount}</strong>platform objects</div>
-    <div class="sot-stat"><strong>${hybridCount}</strong>hybrid</div>
-    <div class="sot-stat"><strong>${externalCount}</strong>external (SOAR/UEBA/Observability)</div>
-  `;
+    ${chip("Knowledge Object", "knowledge objects")}${chip("Platform Object", "platform objects")}${chip("Hybrid (Knowledge + Platform)", "hybrid")}${chip("External Platform Object", "external (SOAR/UEBA/Observability)")}
+    <label class="sot-stat sot-life-filter">Lifecycle<select id="sotLifecycleFilter">
+      <option value="">All (${SOT_OBJECTS.length})</option>
+      <option value="not-active"${sotFilters.lifecycle === "not-active" ? " selected" : ""}>Not active (${notActive})</option>
+      ${lifecycles.map(l => `<option value="${escapeHtml(l)}"${sotFilters.lifecycle === l ? " selected" : ""}>${escapeHtml(l)} (${SOT_OBJECTS.filter(o => o.lifecycle === l).length})</option>`).join("")}
+    </select></label>`;
+  if (focused) document.getElementById("sotLifecycleFilter").focus();
 }
+document.getElementById("sotStatsBar").addEventListener("click", event => {
+  const chip = event.target.closest("[data-sot-type]");
+  if (!chip) return;
+  sotFilters.type = sotFilters.type === chip.dataset.sotType ? "" : chip.dataset.sotType;
+  document.getElementById("sotTypeFilter").value = sotFilters.type;
+  sotRefresh();
+  document.querySelector(`#sotStatsBar [data-sot-type="${CSS.escape(chip.dataset.sotType)}"]`)?.focus();
+});
+document.getElementById("sotStatsBar").addEventListener("change", event => {
+  if (event.target.id !== "sotLifecycleFilter") return;
+  sotFilters.lifecycle = event.target.value;
+  sotRefresh();
+});
+function sotRefresh() { render(); sotRenderTree(); }
 
 function render() {
   const visible = getVisible();
@@ -52234,7 +52286,7 @@ function render() {
   } else {
     tbody.innerHTML = visible.map(o => `
       <tr data-id="${escapeHtml(o.name)}" class="${sotSelectedId === o.name ? 'selected' : ''}">
-        <td class="obj-name">${escapeHtml(o.name)}</td>
+        <td class="obj-name">${taxHighlight(o.name, document.getElementById("sotSearchBox").value)}${sotLifecycleBadge(o)}</td>
         <td class="config-file">${escapeHtml(o.sotCode)}</td>
         <td>${escapeHtml(o.domain)}</td>
         <td><span class="pill ${pillClass(o.type)}">${escapeHtml(o.type)}</span></td>
@@ -52246,6 +52298,7 @@ function render() {
   tbody.querySelectorAll("tr[data-id]").forEach(tr => {
     tr.addEventListener("click", () => {
       sotSelectedId = tr.getAttribute("data-id");
+      sotSetLinked({ object: sotSelectedId });
       render();
       sotRenderDetail(SOT_OBJECTS.find(o => o.name === sotSelectedId));
     });
@@ -52270,44 +52323,21 @@ function isKnowledgeObjectType(obj) {
 
 function renderObjectAttributesTable(obj) {
   const knowledgeObject = isKnowledgeObjectType(obj);
-  const sharingRows = knowledgeObject ? `
-    ${attrRow("Description", SOT_TBC)}
-    ${attrRow("Sharing", SOT_TBC)}
-    ${attrRow("Read roles", SOT_TBC)}
-    ${attrRow("Write roles", SOT_TBC)}
-    ${attrRow("Disabled", SOT_TBC)}
-    ${attrRow("Updated", SOT_TBC)}
-  ` : "";
-  const governanceRows = knowledgeObject ? `
-    ${attrRow("Fingerprint / hash", SOT_TBC)}
-    ${attrRow("Environment", SOT_TBC)}
-    ${attrRow("Deployment status", SOT_TBC)}
-  ` : "";
-  return `<table class="attr-table">
-    ${attrRow("SOT code", obj.sotCode, true)}
-    ${attrRow("Instance ID", obj.instanceId, true)}
-    ${attrRow("Object class", obj.objectClass)}
-    ${attrRow("Product", obj.product)}
-    ${attrRow("Platform", SOT_TBC)}
-    ${attrRow("Configuration artifact", obj.config, true)}
-    ${attrRow("REST endpoint", obj.restEndpoint, true)}
-    ${obj.restEndpointCloud ? attrRow("REST endpoint (Splunk Cloud / ACS)", obj.restEndpointCloud, true) : ""}
-    ${attrRow("Scope", obj.scope)}
-    ${attrRow("Namespace / App", SOT_TBC)}
-    ${attrRow("Owner", SOT_TBC)}
-    ${attrRow("Lifecycle", obj.lifecycle)}
-    ${attrRow("Cloud support", SOT_TBC)}
-    ${attrRow("Enterprise support", SOT_TBC)}
-    ${attrRow("Created by", SOT_TBC)}
-    ${attrRow("Mutable", SOT_TBC)}
-    ${attrRow("Exportable", SOT_TBC)}
-    ${attrRow("Security relevance", SOT_TBC)}
-    ${attrRow("Configuration layer", SOT_TBC)}
-    ${sharingRows}
-    ${governanceRows}
-    ${attrRow("Validation method", obj.validationMethod)}
-    ${attrRow("Primary key", "Object name (unique within this taxonomy)")}
-  </table>`;
+  // [label, value, mono]; values still to be researched are listed once, under the table.
+  const rows = [
+    ["SOT code", obj.sotCode, true], ["Instance ID", obj.instanceId, true], ["Object class", obj.objectClass], ["Product", obj.product],
+    ["Platform", SOT_TBC], ["Configuration artifact", obj.config, true], ["REST endpoint", obj.restEndpoint, true],
+    ...(obj.restEndpointCloud ? [["REST endpoint (Splunk Cloud / ACS)", obj.restEndpointCloud, true]] : []),
+    ["Scope", obj.scope], ["Namespace / App", SOT_TBC], ["Owner", SOT_TBC], ["Lifecycle", obj.lifecycle],
+    ["Cloud support", SOT_TBC], ["Enterprise support", SOT_TBC], ["Created by", SOT_TBC], ["Mutable", SOT_TBC],
+    ["Exportable", SOT_TBC], ["Security relevance", SOT_TBC], ["Configuration layer", SOT_TBC],
+    ...(knowledgeObject ? [["Description", SOT_TBC], ["Sharing", SOT_TBC], ["Read roles", SOT_TBC], ["Write roles", SOT_TBC], ["Disabled", SOT_TBC], ["Updated", SOT_TBC],
+      ["Fingerprint / hash", SOT_TBC], ["Environment", SOT_TBC], ["Deployment status", SOT_TBC]] : []),
+    ["Validation method", obj.validationMethod], ["Primary key", "Object name (unique within this taxonomy)"],
+  ];
+  const known = rows.filter(([, v]) => v && v !== SOT_TBC), unknown = rows.filter(([, v]) => !v || v === SOT_TBC).map(([l]) => l);
+  return `<table class="attr-table">${known.map(([l, v, mono]) => attrRow(l, v, mono)).join("")}</table>`
+    + (unknown.length ? `<p class="sot-not-recorded"><b>Not yet recorded:</b> ${escapeHtml(unknown.join(", "))}.</p>` : "");
 }
 
 function renderObjectDetailBody(obj) {
@@ -52317,8 +52347,9 @@ function renderObjectDetailBody(obj) {
     ${obj.notes ? `<div class="sot-detail-row"><div class="label">Notes</div><div class="value">${escapeHtml(obj.notes)}</div></div>` : ""}
     <div class="sot-detail-row"><div class="label">Depends on</div><div class="value">${renderRefPills(obj.deps)}</div></div>
     <div class="sot-detail-row"><div class="label">Feeds / consumers</div><div class="value">${renderRefPills(obj.feeds)}</div></div>
-    ${obj.relatedTax && obj.relatedTax.length ? `<div class="sot-detail-row"><div class="label">Related TAX-XX (LATCH taxonomy)</div><div class="value"><div class="ref-pills">${obj.relatedTax.map(code => `<span class="ref-pill" data-jump-tax="${escapeHtml(code)}">${escapeHtml(code)}</span>`).join("")}</div></div></div>` : ""}
-    ${obj.referenceDetail ? `<div class="sot-detail-row"><div class="label">${Array.isArray(obj.referenceDetail) && obj.referenceDetail.length > 1 ? "Detailed references" : "Detailed reference"}</div><div class="value"><div class="ref-pills">${(Array.isArray(obj.referenceDetail) ? obj.referenceDetail : [obj.referenceDetail]).map(key => `<span class="ref-pill" data-open-reference-detail="${escapeHtml(key)}">Open ${escapeHtml(detailViewLabels[key] || "stanzas & settings reference")} &rarr;</span>`).join("")}</div></div></div>` : ""}
+    ${(by => by.length ? `<div class="sot-detail-row"><div class="label">Used by (lists it as a dependency)</div><div class="value">${renderRefPills(by.map(o => o.name))}</div></div>` : "")(sotUsedBy(obj))}
+    ${obj.relatedTax && obj.relatedTax.length ? `<div class="sot-detail-row"><div class="label">Related TAX-XX (LATCH taxonomy)</div><div class="value"><div class="ref-pills">${obj.relatedTax.map(code => `<button type="button" class="ref-pill" data-jump-tax="${escapeHtml(code)}">${escapeHtml(code)}</button>`).join("")}</div></div></div>` : ""}
+    ${obj.referenceDetail ? `<div class="sot-detail-row"><div class="label">${Array.isArray(obj.referenceDetail) && obj.referenceDetail.length > 1 ? "Detailed references" : "Detailed reference"}</div><div class="value"><div class="ref-pills">${(Array.isArray(obj.referenceDetail) ? obj.referenceDetail : [obj.referenceDetail]).map(key => `<button type="button" class="ref-pill" data-open-reference-detail="${escapeHtml(key)}">Open ${escapeHtml(detailViewLabels[key] || "stanzas & settings reference")} &rarr;</button>`).join("")}</div></div></div>` : ""}
   `;
 }
 
@@ -52345,12 +52376,13 @@ function sotRenderDetail(obj) {
     panel.innerHTML = `<p class="placeholder">Select an object from the table to see its full definition, notes and config-file details.</p>`;
     return;
   }
-  panel.innerHTML = `
+  panel.innerHTML = SOT_SHEET_CLOSE + `
     <div class="domain-label">${escapeHtml(obj.domain)}</div>
     <h2>${escapeHtml(obj.name)}</h2>
     <div style="margin-bottom:16px;"><span class="pill ${pillClass(obj.type)}">${escapeHtml(obj.type)}</span></div>
     ${renderObjectDetailBody(obj)}
   `;
+  sotOpenSheet(panel, true);
   panel.querySelectorAll(".ref-pill[data-ref]").forEach(pill => {
     pill.addEventListener("click", () => selectByName(pill.getAttribute("data-ref")));
   });
@@ -52362,9 +52394,29 @@ function sotRenderDetail(obj) {
   });
 }
 
+// Dependency and consumer lists hold plain names. Most match an object exactly; a short form
+// of exactly one object ("Universal Forwarder" for "Universal Forwarder (UF)", "Data Input
+// (General)" for "Data Input") links to it; anything else stays unlinked and is marked.
+const SOT_BY_NAME = new Map(SOT_OBJECTS.map(o => [o.name, o]));
+function sotResolve(name) {
+  if (SOT_BY_NAME.has(name)) return SOT_BY_NAME.get(name);
+  const general = name.replace(/\s*\(General\)$/, "");
+  if (general !== name && SOT_BY_NAME.has(general)) return SOT_BY_NAME.get(general);
+  const longer = SOT_OBJECTS.filter(o => o.name.startsWith(`${name} (`));
+  return longer.length === 1 ? longer[0] : null;
+}
+// Objects that list this one as a dependency.
+function sotUsedBy(obj) {
+  return SOT_OBJECTS.filter(o => o !== obj && (o.deps || []).some(d => sotResolve(d) === obj));
+}
 function renderRefPills(names) {
   if (!names || !names.length) return `<span class="ref-pill ref-empty">None recorded</span>`;
-  return `<div class="ref-pills">${names.map(n => `<span class="ref-pill" data-ref="${escapeHtml(n)}">${escapeHtml(n)}</span>`).join("")}</div>`;
+  return `<div class="ref-pills">${names.map(n => {
+    const o = sotResolve(n);
+    return o
+      ? `<button type="button" class="ref-pill" data-ref="${escapeHtml(o.name)}"${o.name !== n ? ` title="${escapeHtml(o.name)}"` : ""}>${escapeHtml(n)}</button>`
+      : `<span class="ref-pill ref-missing" title="Not an object in this taxonomy">${escapeHtml(n)}</span>`;
+  }).join("")}</div>`;
 }
 
 function selectByName(name) {
@@ -52381,6 +52433,7 @@ function selectByName(name) {
   document.querySelectorAll(".domain-nav button").forEach(b => b.classList.remove("active"));
   document.querySelector('.domain-nav button[data-domain=""]').classList.add("active");
   sotSelectedId = name;
+  sotSetLinked({ object: name });
   render();
   sotRenderDetail(obj);
   const row = document.querySelector(`tr[data-id="${CSS.escape(name)}"]`);
@@ -52409,16 +52462,17 @@ function exportRowsAsCsv(rows, filename) {
 }
 
 document.getElementById("sotSearchBox").addEventListener("input", render);
-document.getElementById("sotTypeFilter").addEventListener("change", render);
+document.getElementById("sotTypeFilter").addEventListener("change", event => { sotFilters.type = event.target.value; sotRefresh(); });
 document.getElementById("sotScopeFilter").addEventListener("change", render);
 document.getElementById("sotResetBtn").addEventListener("click", () => {
+  sotFilters.type = ""; sotFilters.lifecycle = "";
   document.getElementById("sotSearchBox").value = "";
   document.getElementById("sotTypeFilter").value = "";
   document.getElementById("sotScopeFilter").value = "";
   sotCurrentDomain = "";
   document.querySelectorAll(".domain-nav button").forEach(b => b.classList.remove("active"));
   document.querySelector('.domain-nav button[data-domain=""]').classList.add("active");
-  render();
+  sotRefresh();
 });
 document.getElementById("sotExportBtn").addEventListener("click", exportCsv);
 
@@ -52441,25 +52495,26 @@ function objSearchText(o) {
 
 function computeTreeModel() {
   const q = sotTreeQuery.trim().toLowerCase();
-  const searching = q.length > 0;
+  const filtering = !!(sotFilters.type || sotFilters.lifecycle);
+  const searching = q.length > 0 || filtering;
   const domains = [];
   for (const [dcode, dom] of Object.entries(SOT_TREE)) {
     const classes = [];
     for (const [ccode, cls] of Object.entries(dom.classes)) {
       const subclasses = [];
       for (const [scode, slabel] of Object.entries(cls.subclasses)) {
-        const allObjs = SOT_OBJECTS_BY_LEAF[scode] || [];
-        const labelMatch = !searching || slabel.toLowerCase().includes(q) || scode.toLowerCase().includes(q);
-        const objs = (searching && !labelMatch) ? allObjs.filter(o => objSearchText(o).includes(q)) : allObjs;
-        if (searching && !labelMatch && objs.length === 0) continue;
+        const allObjs = (SOT_OBJECTS_BY_LEAF[scode] || []).filter(sotPassesFilters);
+        const labelMatch = !q || slabel.toLowerCase().includes(q) || scode.toLowerCase().includes(q);
+        const objs = !labelMatch ? allObjs.filter(o => objSearchText(o).includes(q)) : allObjs;
+        if (((q && !labelMatch) || filtering) && objs.length === 0) continue;
         subclasses.push({ code: scode, label: slabel, objects: objs, totalCount: allObjs.length });
       }
-      const classLabelMatch = !searching || cls.label.toLowerCase().includes(q) || ccode.toLowerCase().includes(q);
-      if (searching && !classLabelMatch && subclasses.length === 0) continue;
+      const classLabelMatch = !q || cls.label.toLowerCase().includes(q) || ccode.toLowerCase().includes(q);
+      if (((q && !classLabelMatch) || filtering) && subclasses.length === 0) continue;
       classes.push({ code: ccode, label: cls.label, desc: cls.desc, subclasses });
     }
-    const domLabelMatch = !searching || dom.label.toLowerCase().includes(q) || dcode.toLowerCase().includes(q);
-    if (searching && !domLabelMatch && classes.length === 0) continue;
+    const domLabelMatch = !q || dom.label.toLowerCase().includes(q) || dcode.toLowerCase().includes(q);
+    if (((q && !domLabelMatch) || filtering) && classes.length === 0) continue;
     domains.push({ code: dcode, label: dom.label, desc: dom.desc, classes });
   }
   return { domains, searching };
@@ -52476,8 +52531,8 @@ function toggleRowHtml(level, code, label, count, hasChildren, expanded, selecte
   const toggleCls = hasChildren ? (expanded ? "tree-toggle expanded" : "tree-toggle") : "tree-toggle leafless";
   return `<div class="tree-row${selected ? " selected" : ""}" data-level="${level}" data-code="${escapeHtml(code)}">
     <span class="${toggleCls}">${hasChildren ? "&#9656;" : ""}</span>
-    <span class="tree-code">${escapeHtml(code)}</span>
-    <span class="tree-label">${escapeHtml(label)}</span>
+    <span class="tree-code">${taxHighlight(code, sotTreeQuery)}</span>
+    <span class="tree-label">${taxHighlight(label, sotTreeQuery)}</span>
     <span class="tree-count">${count}</span>
   </div>`;
 }
@@ -52491,8 +52546,8 @@ function renderObjectRow(o) {
   return `<li class="sot-tree-node" data-level="object">
     <div class="tree-row${selected ? " selected" : ""}" data-level="object" data-name="${escapeHtml(o.name)}">
       <span class="tree-toggle leafless"></span>
-      <span class="tree-code">${escapeHtml(o.instanceId)}</span>
-      <span class="tree-label">${escapeHtml(o.name)}</span>
+      <span class="tree-code">${taxHighlight(o.instanceId, sotTreeQuery)}</span>
+      <span class="tree-label">${taxHighlight(o.name, sotTreeQuery)}${sotLifecycleBadge(o)}</span>
       <span class="pill ${pillClass(o.type)}" style="font-size:10px;">${escapeHtml(o.type === "Hybrid (Knowledge + Platform)" ? "Hybrid" : o.type.replace(" Object", "").replace("External Platform", "External"))}</span>
     </div>
   </li>`;
@@ -52536,9 +52591,16 @@ function renderDomainNode(d, searching) {
   return html;
 }
 
+function sotTreeShownCount() {
+  return computeTreeModel().domains.reduce((n, d) => n + countObjects(d, "domain"), 0);
+}
 function sotRenderTree() {
   const { domains, searching } = computeTreeModel();
   const shell = document.getElementById("sotTreeShell");
+  const q = sotTreeQuery.trim();
+  const shown = domains.reduce((n, d) => n + countObjects(d, "domain"), 0);
+  document.getElementById("sotTreeCount").textContent = q ? `${shown} object${shown === 1 ? "" : "s"} match or sit under a matching domain, class or subclass for \u201c${q}\u201d.` : "";
+  if (sotActiveView === "tree") renderStats(getVisible());
   if (!domains.length) {
     shell.innerHTML = `<p class="placeholder" style="padding:16px;">No domains, classes, subclasses or objects match "${escapeHtml(sotTreeQuery)}".</p>`;
     return;
@@ -52550,11 +52612,13 @@ function sotRenderTree() {
       if (level === "object") {
         const name = row.getAttribute("data-name");
         sotTreeSelected = { level: "object", code: null, name };
+        sotSetLinked({ object: name });
         renderTreeDetailForObject(SOT_OBJECTS.find(o => o.name === name));
       } else {
         const code = row.getAttribute("data-code");
         if (sotTreeExpanded.has(code)) sotTreeExpanded.delete(code); else sotTreeExpanded.add(code);
         sotTreeSelected = { level, code, name: null };
+        sotSetLinked({ code });
         renderTreeDetailForNode(level, code);
       }
       sotRenderTree();
@@ -52596,15 +52660,16 @@ function breadcrumbHtml(parts) {
 
 function renderTreeDetailForNode(level, code) {
   const panel = document.getElementById("sotTreeDetailPanel");
+  sotOpenSheet(panel, true);
   if (level === "domain") {
     const dom = SOT_TREE[code];
     const classEntries = Object.entries(dom.classes);
-    panel.innerHTML = `
+    panel.innerHTML = SOT_SHEET_CLOSE + `
       ${breadcrumbHtml([code])}
       <h2>${escapeHtml(dom.label)}</h2>
       <p style="color:var(--muted); font-size:14px; line-height:1.6;">${escapeHtml(dom.desc)}</p>
       <div class="sot-detail-row"><div class="label">Classes (${classEntries.length})</div><div class="value">
-        <div class="ref-pills">${classEntries.map(([ccode, cls]) => `<span class="ref-pill" data-jump-class="${escapeHtml(ccode)}">${escapeHtml(ccode)} ${escapeHtml(cls.label)}</span>`).join("")}</div>
+        <div class="ref-pills">${classEntries.map(([ccode, cls]) => `<button type="button" class="ref-pill" data-jump-class="${escapeHtml(ccode)}">${escapeHtml(ccode)} ${escapeHtml(cls.label)}</button>`).join("")}</div>
       </div></div>
     `;
     panel.querySelectorAll("[data-jump-class]").forEach(el => el.addEventListener("click", () => jumpToNode("class", el.getAttribute("data-jump-class"))));
@@ -52614,12 +52679,12 @@ function renderTreeDetailForNode(level, code) {
     const path = pathToLeaf(code);
     const cls = path.cls;
     const subEntries = Object.entries(cls.subclasses);
-    panel.innerHTML = `
+    panel.innerHTML = SOT_SHEET_CLOSE + `
       ${breadcrumbHtml([path.domainCode, code])}
       <h2>${escapeHtml(cls.label)}</h2>
       <p style="color:var(--muted); font-size:14px; line-height:1.6;">${escapeHtml(cls.desc)}</p>
       <div class="sot-detail-row"><div class="label">Subclasses (${subEntries.length})</div><div class="value">
-        <div class="ref-pills">${subEntries.map(([scode, slabel]) => `<span class="ref-pill" data-jump-sub="${escapeHtml(scode)}">${escapeHtml(scode)} ${escapeHtml(slabel)} (${(SOT_OBJECTS_BY_LEAF[scode]||[]).length})</span>`).join("")}</div>
+        <div class="ref-pills">${subEntries.map(([scode, slabel]) => `<button type="button" class="ref-pill" data-jump-sub="${escapeHtml(scode)}">${escapeHtml(scode)} ${escapeHtml(slabel)} (${(SOT_OBJECTS_BY_LEAF[scode]||[]).length})</button>`).join("")}</div>
       </div></div>
     `;
     panel.querySelectorAll("[data-jump-sub]").forEach(el => el.addEventListener("click", () => jumpToNode("subclass", el.getAttribute("data-jump-sub"))));
@@ -52628,11 +52693,11 @@ function renderTreeDetailForNode(level, code) {
   if (level === "subclass") {
     const path = pathToLeaf(code);
     const objs = SOT_OBJECTS_BY_LEAF[code] || [];
-    panel.innerHTML = `
+    panel.innerHTML = SOT_SHEET_CLOSE + `
       ${breadcrumbHtml([path.domainCode, path.classCode, code])}
       <h2>${escapeHtml(path.subclassLabel)}</h2>
       <div class="sot-detail-row"><div class="label">Cataloged objects (${objs.length})</div><div class="value">
-        ${objs.length ? `<div class="ref-pills">${objs.map(o => `<span class="ref-pill" data-jump-obj="${escapeHtml(o.name)}">${escapeHtml(o.instanceId)} ${escapeHtml(o.name)}</span>`).join("")}</div>` : `<span class="ref-pill ref-empty">No cataloged objects yet in this subclass -- a valid classification with no current instances.</span>`}
+        ${objs.length ? `<div class="ref-pills">${objs.map(o => `<button type="button" class="ref-pill" data-jump-obj="${escapeHtml(o.name)}">${escapeHtml(o.instanceId)} ${escapeHtml(o.name)}</button>`).join("")}</div>` : `<span class="ref-pill ref-empty">No cataloged objects yet in this subclass -- a valid classification with no current instances.</span>`}
       </div></div>
     `;
     panel.querySelectorAll("[data-jump-obj]").forEach(el => el.addEventListener("click", () => selectObjectInTree(el.getAttribute("data-jump-obj"))));
@@ -52644,12 +52709,13 @@ function renderTreeDetailForObject(obj) {
   const panel = document.getElementById("sotTreeDetailPanel");
   if (!obj) return;
   const path = pathToObjectSot(obj.sotCode);
-  panel.innerHTML = `
+  panel.innerHTML = SOT_SHEET_CLOSE + `
     ${breadcrumbHtml([path.domainCode, path.classCode, obj.sotCode])}
     <h2>${escapeHtml(obj.name)}</h2>
     <div style="margin-bottom:16px;"><span class="pill ${pillClass(obj.type)}">${escapeHtml(obj.type)}</span></div>
     ${renderObjectDetailBody(obj)}
   `;
+  sotOpenSheet(panel, true);
   panel.querySelectorAll(".ref-pill[data-ref]").forEach(pill => {
     pill.addEventListener("click", () => selectObjectInTree(pill.getAttribute("data-ref")));
   });
@@ -52663,6 +52729,7 @@ function renderTreeDetailForObject(obj) {
 
 function jumpToNode(level, code) {
   sotTreeSelected = { level, code, name: null };
+  sotSetLinked({ code });
   sotTreeExpanded.add(code);
   const path = pathToLeaf(code);
   if (path) { sotTreeExpanded.add(path.domainCode); if (path.classCode) sotTreeExpanded.add(path.classCode); }
@@ -52671,9 +52738,36 @@ function jumpToNode(level, code) {
   scrollTreeRowIntoView(level, code, null);
 }
 
+// Shareable link: #object-taxonomy?object=<name> for an object, ?code=SOT-01.02 for a domain,
+// class or subclass; unknown values are ignored.
+let sotLinked = null;
+function sotSetLinked(value) { sotLinked = value; sotUpdateHash(); }
+function sotUpdateHash() {
+  if (!history.replaceState || !/^#object-taxonomy(\?|$)/.test(location.hash)) return;
+  const next = !sotLinked ? "#object-taxonomy" : sotLinked.object ? `#object-taxonomy?object=${encodeURIComponent(sotLinked.object)}` : `#object-taxonomy?code=${encodeURIComponent(sotLinked.code)}`;
+  if (location.hash !== next) history.replaceState(null, "", next);
+}
+function applySotHash() {
+  const params = new URLSearchParams((location.hash.match(/^#object-taxonomy\?(.*)$/) || [])[1] || "");
+  const name = params.get("object"), code = params.get("code");
+  if (name && SOT_BY_NAME.has(name)) { setActiveView("tree"); selectObjectInTree(name); return; }
+  if (!code) return;
+  const path = pathToLeaf(code);
+  const level = SOT_TREE[code] ? "domain" : path?.subclassCode === code ? "subclass" : path?.classCode === code ? "class" : "";
+  if (level) { setActiveView("tree"); jumpToNode(level, code); }
+}
+// At single-column widths (900px and below) each detail panel is a bottom sheet.
+function sotOpenSheet(panel, open) {
+  panel?.classList.toggle("sot-sheet-open", open && window.matchMedia("(max-width: 900px)").matches);
+}
+const SOT_SHEET_CLOSE = '<button type="button" class="sot-sheet-close" aria-label="Close detail">&times;</button>';
+document.addEventListener("click", event => { const close = event.target.closest(".sot-sheet-close"); if (close) sotOpenSheet(close.closest(".sot-detail-panel"), false); });
+document.addEventListener("keydown", event => { if (event.key === "Escape") document.querySelectorAll(".sot-detail-panel.sot-sheet-open").forEach(p => sotOpenSheet(p, false)); });
+
 function selectObjectInTree(name) {
   const obj = SOT_OBJECTS.find(o => o.name === name);
   if (!obj) return;
+  sotSetLinked({ object: name });
   const path = pathToObjectSot(obj.sotCode);
   sotTreeExpanded.add(path.domainCode);
   sotTreeExpanded.add(path.classCode);
@@ -52691,7 +52785,8 @@ function scrollTreeRowIntoView(level, code, name) {
   if (level === "object") selector = `.tree-row[data-level="object"][data-name="${CSS.escape(name)}"]`;
   else selector = `.tree-row[data-level="${level}"][data-code="${CSS.escape(code)}"]`;
   const row = document.querySelector(selector);
-  if (row) row.scrollIntoView({ block: "center" });
+  // Smooth, so it replaces the scroll to the top that opening the page starts.
+  if (row) row.scrollIntoView({ block: "center", behavior: "smooth" });
 }
 
 document.getElementById("sotTreeSearch").addEventListener("input", e => {
@@ -52731,12 +52826,14 @@ function setActiveView(view) {
   document.getElementById("sotTreeViewPanel").classList.toggle("active", view === "tree");
   document.getElementById("sotTableViewPanel").classList.toggle("active", view === "table");
 }
-document.getElementById("sotShowTreeView").addEventListener("click", () => setActiveView("tree"));
-document.getElementById("sotShowTableView").addEventListener("click", () => setActiveView("table"));
+document.getElementById("sotShowTreeView").addEventListener("click", () => { setActiveView("tree"); renderStats(getVisible()); });
+document.getElementById("sotShowTableView").addEventListener("click", () => { setActiveView("table"); renderStats(getVisible()); });
 
 initFilters();
 render();
 sotRenderTree();
+// A link to an object or node (#object-taxonomy?object=...), now that the tree exists.
+if (pageNameFromHash() === "objectTaxonomy") applySotHash();
 
 /* ---------------------------------------------------------------------- *
  * Global cross-app search

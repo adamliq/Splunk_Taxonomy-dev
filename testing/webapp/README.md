@@ -142,6 +142,14 @@ scrolled into view in the tree and the table, search counts and highlights
 (with an axe check of that state, and typed markup escaped), and the bottom
 sheet for the detail at phone width.
 
+**`browser/object-taxonomy.spec.js`** -- Splunk Object Taxonomy: all 14
+domains counted and filterable, per-object and per-node links, dependency names
+resolved to objects (short forms such as "Universal Forwarder" -> "Universal
+Forwarder (UF)"; unknown names unlinked) with a "Used by" list, the
+"Not yet recorded" summary, class-count and lifecycle filters across both
+views (with axe checks of the filtered tree and the table view), search
+highlights and the phone bottom sheet.
+
 **`browser/lifecycle-phone-layout.spec.js`** -- the Log assessment lifecycle at
 phone width: stage cards instead of a scroll box, no domain name split mid-word,
 a readable pyramid, and the redraw when crossing the breakpoint.
