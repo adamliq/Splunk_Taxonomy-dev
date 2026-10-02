@@ -4138,6 +4138,40 @@
       .ports-matrix-wrap .eccs-matrix td:first-child { min-width:96px; }
       .ports-matrix-legend { font-size:11px; gap:4px 8px; }
     }
+    /* Splunk bin CLI reference */
+    .bin-ref { margin-top: 16px; border: 1px solid var(--border); border-radius: 12px; background: #fff; padding: 16px; }
+    .bin-title { margin: 0 0 4px; font-size: 16px; color: #0f172a; }
+    .bin-intro { margin: 0 0 12px; color: #475569; font-size: 13px; line-height: 1.55; }
+    .bin-toolbar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 10px; }
+    .bin-toolbar input { flex: 1 1 280px; width: auto; min-width: 0; }
+    .bin-count { font-size: 12.5px; color: #475569; }
+    .bin-index { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 0 0 12px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+    .bin-index a { color: #1d4ed8; text-decoration: none; }
+    .bin-index a:hover, .bin-index a:focus-visible { text-decoration: underline; }
+    .bin-index a[hidden] { display: none; }
+    .bin-table-wrap { max-height: none; overflow: visible; }
+    .bin-table { width: 100%; min-width: 0; table-layout: fixed; }
+    .bin-tok { white-space: nowrap; }
+    .bin-table td { vertical-align: top; overflow-wrap: break-word; }
+    .bin-table tr[hidden] { display: none; }
+    .bin-table tbody tr { scroll-margin-top: 52px; }
+    .bin-table tr.bin-target td { background: #fefce8; }
+    .bin-link { text-decoration: none; }
+    .bin-link:hover code, .bin-link:focus-visible code { text-decoration: underline; }
+    .bin-caution { display: inline-block; margin: 4px 0 0; padding: 0 7px; border-radius: 999px; font-size: 10.5px; font-weight: 800; color: #9a3412; background: #ffedd5; border: 1px solid #fdba74; cursor: help; }
+    .bin-cmd { display: flex; align-items: flex-start; gap: 6px; margin: 3px 0 9px; }
+    .bin-cmd code { flex: 1 1 auto; min-width: 0; display: block; white-space: normal; overflow-wrap: break-word; word-break: normal; background: #f1f5f9; color: #0f172a; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 1.5; }
+    .bin-copy { flex: 0 0 auto; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+    #binTable mark { background: #fef08a; color: #1e293b; border-radius: 3px; padding: 0 1px; }
+    @media (max-width: 760px) {
+      .bin-table, .bin-table tbody { display: block; table-layout: auto; }
+      .bin-table thead { display: none; }
+      .bin-table tr { display: block; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; }
+      .bin-table td { display: block; border: 0 !important; width: auto !important; }
+      .bin-table td[data-label]::before { content: attr(data-label); display: block; font-size: 10.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #475569; margin-bottom: 2px; }
+      .bin-ref { padding: 12px; }
+    }
+    @media print { .bin-copy, .bin-toolbar, .bin-index { display: none !important; } }
     .eccs-examples { display:grid; gap:10px; }
     .eccs-examples details { border:1px solid var(--border); border-radius:12px; background:#fff; overflow:hidden; }
     .eccs-examples summary { padding:14px 16px; cursor:pointer; color:#0f172a; font-weight:900; }
@@ -4887,7 +4921,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.02 &middot; build 159</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.02 &middot; build 160</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -11960,12 +11994,15 @@ INGEST PROCESSOR
       </div>
     </div>
 
-    <div class="eccs-examples" style="margin-top:16px">
-      <details>
-        <summary>Complete CLI command reference (all verbs &amp; objects)</summary>
-        <div class="eccs-example-body">
-          <p>The full <code>splunk</code> command-line verb catalogue -- every top-level command, the objects it operates on, and worked examples.</p>
-          <div class="eccs-table-wrap" role="region" aria-label="Complete Splunk CLI command reference" tabindex="0"><table class="eccs-matrix" style="min-width:1100px"><thead><tr><th style="width:14%">Command</th><th style="width:28%">Objects</th><th>Examples</th></tr></thead><tbody>
+    <div class="bin-ref">
+        <h3 class="bin-title">Complete CLI command reference (all verbs &amp; objects)</h3>
+        <p class="bin-intro">Every top-level <code>splunk</code> command, the objects it operates on, and worked examples. Each example command has a Copy button; a command name is a link you can share.</p>
+        <div class="bin-toolbar">
+          <input type="search" id="binSearch" placeholder="Find a command, object or example…" aria-label="Find a Splunk CLI command" autocomplete="off">
+          <span class="bin-count" id="binCount" role="status" aria-live="polite"></span>
+        </div>
+        <nav class="bin-index" id="binIndex" aria-label="Commands A to Z"></nav>
+          <div class="eccs-table-wrap bin-table-wrap" role="region" aria-label="Complete Splunk CLI command reference"><table class="eccs-matrix bin-table" id="binTable"><thead><tr><th scope="col" style="width:16%">Command</th><th scope="col" style="width:24%">Objects</th><th scope="col">Examples</th></tr></thead><tbody>
             <tr><td><code>add</code></td><td>exec, forward-server, index, licenser-pools, licenses, manager, monitor, oneshot, saved-search, search-server, tcp, udp, user</td><td>1. Adds monitor directory and file inputs to source /var/log.<br><code>./splunk add monitor /var/log/</code><br>2. Adds another indexer cluster manager node to the list of instances the search head searches across.<br><code>./splunk add cluster-manager https://127.0.0.1:8089 -secret testsecret -multisite false</code></td></tr>
             <tr><td><code>anonymize</code></td><td>source</td><td>1. Replaces identifying data, such as usernames and IP addresses, in the file located at /tmp/messages.<br><code>./splunk anonymize file -source /tmp/messages</code><br>2. Anonymizes Mynames.txt using name-terms, a file containing a list of common English personal names.<br><code>./splunk anonymize file -source /tmp/messages -name_terms $SPLUNK_HOME/bin/Mynames.txt</code></td></tr>
             <tr><td><code>apply</code></td><td>cluster-bundle, shcluster-bundle</td><td>1. Makes validated bundle active on peers.<br><code>./splunk apply cluster-bundle</code><br>2. Skip-validation is an optional argument to skip bundle validation on the indexer cluster manager and peers.<br><code>./splunk apply cluster-bundle --skip-validation</code><br>3. For shcluster-bundle examples, see Deploy a configuration bundle in the Distributed Search manual.</td></tr>
@@ -12006,8 +12043,6 @@ INGEST PROCESSOR
             <tr><td><code>status</code></td><td>splunkd, splunkweb</td><td>Checks if splunkd is running and shows the PID.</td></tr>
             <tr><td><code>validate</code></td><td>index, files, cluster-bundle</td><td>1. Validates the main index and verifies the index paths specified in indexes.conf.<br><code>./splunk validate index main</code><br>2. For files examples, see Check the integrity of your Splunk software files.<br>3. For cluster-bundle examples, see Update common peer configurations and apps in the Managing Indexers and Clusters of Indexers manual.</td></tr>
           </tbody></table></div>
-        </div>
-      </details>
     </div>
   </section>
 <section id="splunkTimezoneSection" class="page-view reference-page" role="tabpanel" aria-labelledby="showSplunkTimezonePage" hidden>
@@ -31512,7 +31547,7 @@ function pageNameFromHash() {
   if (location.hash === "#splunk-ports") return "refNetworkReference";
   if (location.hash === "#network-flows") return "refNetworkReference";
   if (/^#roles(\?|$)/.test(location.hash)) return "refRoles";
-  if (location.hash === "#splunk-bin") return "refSplunkBin";
+  if (/^#splunk-bin(\?|$)/.test(location.hash)) return "refSplunkBin";
   if (location.hash === "#splunk-timezone") return "refSplunkTimezone";
   if (/^#log-assessment-lifecycle(\?|$)/.test(location.hash)) return "refLogAssessmentLifecycle";
   if (location.hash === "#questions") return "refQuestions";
@@ -42397,6 +42432,104 @@ initSplunkApiPage();
 initApiRequestBuilder();
 initConfChecker();
 initConfMerge();
+
+/* ---------------------------------------------------------------------- *
+ * Splunk bin CLI reference: each example command becomes a block with a
+ * Copy button, rows can be filtered and highlighted, every command has a
+ * link (#splunk-bin?command=clean) and an A-Z index, and a command whose
+ * own examples say it removes something carries a caution badge quoting it.
+ * ---------------------------------------------------------------------- */
+const binRows = [];
+function initSplunkBin() {
+  const table = document.getElementById("binTable");
+  if (!table) return;
+  table.querySelectorAll("tbody tr").forEach(tr => {
+    const [cmdCell, objCell, exCell] = tr.cells;
+    const command = cmdCell.textContent.trim();
+    tr.id = `bin-${command}`;
+    objCell.dataset.label = "Objects";
+    exCell.dataset.label = "Examples";
+    // Example commands: a block with a Copy button; the line breaks around them go.
+    exCell.querySelectorAll("code").forEach(code => {
+      // Only a command on its own line (between line breaks) is an example to copy; a command
+      // named inside a sentence stays inline.
+      const own = n => !n || n.nodeName === "BR";
+      if (!own(code.previousSibling) || !own(code.nextSibling)) return;
+      [code.previousSibling, code.nextSibling].forEach(n => { if (n && n.nodeName === "BR") n.remove(); });
+      // Lines may break between the parts of a command but not inside one (browsers otherwise
+      // break after a hyphen, splitting "-multisite"); only a very long path may still wrap.
+      code.innerHTML = code.textContent.split(" ").map(t => t.length <= 40 ? `<span class="bin-tok">${escapeHtml(t)}</span>` : escapeHtml(t)).join(" ");
+      const block = document.createElement("span");
+      block.className = "bin-cmd";
+      code.replaceWith(block);
+      block.append(code);
+      block.insertAdjacentHTML("beforeend", `<button type="button" class="bin-copy" aria-label="Copy: ${escapeHtml(code.textContent)}">Copy</button>`);
+    });
+    // The example descriptions (the text outside the command blocks), one per number.
+    const prose = [...exCell.childNodes].filter(n => !(n.nodeType === 1 && n.matches(".bin-cmd"))).map(n => n.textContent).join(" ");
+    const removes = prose.split(/(?=\b\d+\.\s)/).map(t => t.trim()).filter(t => /^\d+\.\s+(Removes|Deletes)\b/.test(t));
+    cmdCell.innerHTML = `<a class="bin-link" href="#splunk-bin?command=${encodeURIComponent(command)}"><code>${escapeHtml(command)}</code></a>`
+      + (removes.length ? `<span class="bin-caution" title="${escapeHtml(`From its examples: ${removes.map(t => t.replace(/^\d+\.\s+/, "")).join(" / ")}`)}">Removes</span>` : "");
+    binRows.push({ tr, command, html: tr.innerHTML, text: tr.textContent.replace(/\bCopy\b/g, " ").toLowerCase() });
+  });
+  document.getElementById("binIndex").innerHTML = binRows.map(r => `<a href="#splunk-bin?command=${encodeURIComponent(r.command)}">${escapeHtml(r.command)}</a>`).join("");
+  document.getElementById("binSearch").addEventListener("input", binFilter);
+  table.addEventListener("click", event => { const b = event.target.closest(".bin-copy"); if (b) binCopy(b); });
+}
+function binClearFilter() {
+  const box = document.getElementById("binSearch");
+  if (box && box.value) { box.value = ""; binFilter(); }
+}
+// Show matching rows, with the matched text marked (never inside the Copy buttons).
+function binFilter() {
+  const raw = document.getElementById("binSearch").value.trim(), q = raw.toLowerCase();
+  let shown = 0;
+  binRows.forEach(r => {
+    const hit = !q || r.text.includes(q);
+    r.tr.hidden = !hit;
+    r.tr.innerHTML = r.html;
+    if (hit) shown++;
+    if (hit && q) {
+      const walker = document.createTreeWalker(r.tr, NodeFilter.SHOW_TEXT, { acceptNode: n => n.parentElement.closest(".bin-copy") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+      const textNodes = [];
+      while (walker.nextNode()) textNodes.push(walker.currentNode);
+      textNodes.forEach(node => {
+        if (!node.nodeValue.toLowerCase().includes(q)) return;
+        const span = document.createElement("span");
+        span.innerHTML = taxHighlight(node.nodeValue, raw);
+        node.replaceWith(...span.childNodes);
+      });
+    }
+  });
+  document.getElementById("binCount").textContent = q ? `${shown} of ${binRows.length} commands match` : "";
+  document.querySelectorAll("#binIndex a").forEach((a, i) => { a.hidden = !!binRows[i].tr.hidden; });
+}
+async function binCopy(button) {
+  const text = button.previousElementSibling.textContent;
+  let ok = false;
+  try { await navigator.clipboard.writeText(text); ok = true; }
+  catch (e) {
+    const area = Object.assign(document.createElement("textarea"), { value: text });
+    area.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+    document.body.appendChild(area); area.select();
+    try { ok = document.execCommand("copy"); } catch (e2) { ok = false; }
+    area.remove();
+  }
+  document.getElementById("binCount").textContent = ok ? `Copied: ${text}` : "Could not copy -- select the command and copy it yourself.";
+  button.textContent = ok ? "Copied" : "Copy";
+  setTimeout(() => { button.textContent = "Copy"; }, 1500);
+}
+function applyBinHash() {
+  const command = new URLSearchParams((location.hash.match(/^#splunk-bin\?(.*)$/) || [])[1] || "").get("command");
+  const row = command && document.getElementById(`bin-${command}`);
+  if (!row) return;
+  binClearFilter();
+  document.querySelectorAll("#binTable tr.bin-target").forEach(tr => tr.classList.remove("bin-target"));
+  row.classList.add("bin-target");
+  // Smooth, so it replaces the scroll to the top that opening the page starts.
+  requestAnimationFrame(() => row.scrollIntoView({ block: "start", behavior: "smooth" }));
+}
+initSplunkBin();
 // Prompt and code blocks scroll inside a fixed height, so keyboard users must be able to focus them.
 document.querySelectorAll("pre.prompt-body:not([tabindex])").forEach(pre => { pre.tabIndex = 0; });
 let scrollRegionTimer = 0;
@@ -48100,6 +48233,7 @@ window.addEventListener("hashchange", () => {
   if (hashPage === "onboarding") applyJourneyHash();
   if (hashPage === "taxonomy") applyTaxHash();
   if (hashPage === "objectTaxonomy") applySotHash();
+  if (hashPage === "refSplunkBin") applyBinHash();
   if (hashPage === "refLogAssessmentLifecycle") lalApplyHash();
 });
 
@@ -49643,6 +49777,7 @@ window.addEventListener("afterprint", () => { unfitTablesAfterPrint(); clearPrin
 
 setActivePage(pageNameFromHash(), false);
 if (pageNameFromHash() === "taxonomy") applyTaxHash();
+if (pageNameFromHash() === "refSplunkBin") applyBinHash();
 
 
 // Log Source Cyber Value calculator
@@ -53090,7 +53225,7 @@ const GLOBAL_SEARCH_DOMAINS = [
     title: c => c.command, subtitle: c => c.objects, snippet: c => c.examples.replace(/\s+/g, " ").trim().slice(0, 140),
     go: c => {
       setActivePage("refSplunkBin");
-      const details = c.row.closest("details"); if (details) details.open = true;
+      binClearFilter();
       gsHighlightCard(c.row, "tr");
     }
   },

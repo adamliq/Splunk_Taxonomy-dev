@@ -150,6 +150,13 @@ Forwarder (UF)"; unknown names unlinked) with a "Used by" list, the
 views (with axe checks of the filtered tree and the table view), search
 highlights and the phone bottom sheet.
 
+**`browser/splunk-bin.spec.js`** -- the Splunk bin CLI reference: shown
+open and growing with the page (no inner scroll box, phone cards), Copy buttons
+that copy the exact command, no option split across lines, search with count
+and highlights (plus an axe check), A-Z and per-command links, global search
+clearing the filter, and caution badges only where a command's own examples
+say it removes something.
+
 **`browser/lifecycle-phone-layout.spec.js`** -- the Log assessment lifecycle at
 phone width: stage cards instead of a scroll box, no domain name split mid-word,
 a readable pyramid, and the redraw when crossing the breakpoint.
