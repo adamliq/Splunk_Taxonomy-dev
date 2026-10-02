@@ -128,7 +128,7 @@ test('feeds, the lifecycle state lane and clickable TAX codes', async () => {
 
     await page.click('#objInspector [data-tax="TAX-05.01.01"]');
     await page.waitForTimeout(200);
-    assert.equal(await page.evaluate(() => location.hash), '#taxonomy');
+    assert.equal(await page.evaluate(() => location.hash), '#taxonomy?code=TAX-05.01.01');
     assert.deepEqual(pageErrors, []);
   });
 });
