@@ -1,7 +1,9 @@
 'use strict';
 // Journey tracker: items added on the Onboarding flow page are saved in this browser only,
 // shown as a count on their station, listed in the inspector with Advance and Edit, and
-// exported to / imported from CSV (rows with an unknown route or step are skipped).
+// exported to / imported from CSV (rows with an unknown route or step are skipped). Items at a
+// gate with a go / no-go checklist, or the stage it decides, can tick it; progress shows in the
+// list and inspector and travels in the CSV.
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
@@ -96,7 +98,7 @@ test('CSV export quotes and neutralises formulas; import skips unknown steps', a
 
     const out = await page.evaluate(() => journeyTrackerCsv());
     const lines = out.split('\n');
-    assert.equal(lines[0], 'name,route,step,step_name,state,notes,updated');
+    assert.equal(lines[0], 'name,route,step,step_name,state,notes,updated,checklist');
     assert.match(lines[1], /^"Brute force, admin",detection,/);
     assert.match(lines[1], /,"says ""hi""",/);
     assert.match(lines[2], /^"'=HYPERLINK\(""x""\)",detection,/);
@@ -104,6 +106,50 @@ test('CSV export quotes and neutralises formulas; import skips unknown steps', a
     // Round trip: re-importing the export gives the same names (the formula guard is removed).
     await page.evaluate(text => { journeyTracker = []; journeyTrackerImport(text); }, out);
     assert.deepEqual(await page.evaluate(() => journeyTracker.map(t => t.name)), ['Brute force, admin', '=HYPERLINK("x")']);
+    assert.deepEqual(pageErrors, []);
+  });
+});
+
+test('go / no-go checklist ticks per tracked item, with progress and CSV round trip', async () => {
+  await withServerAndPage(async ({ page, baseUrl, pageErrors }) => {
+    await page.goto(`${baseUrl}/index.html#onboarding-flow`, { waitUntil: 'load' });
+    await page.evaluate(() => localStorage.setItem('latchJourneyTracker.v1', JSON.stringify([
+      { id: 'a', name: 'Brute force admin', route: 'detection', step: 'dl-review', state: 'PEER REVIEW', updated: '2026-10-01' },
+      { id: 'b', name: 'Impossible travel', route: 'detection', step: 'gate-dl-review', state: 'PEER REVIEW', updated: '2026-10-01' },
+    ])));
+    await page.goto(`${baseUrl}/index.html#onboarding-flow?route=detection&step=gate-dl-review`, { waitUntil: 'load' });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('#onboardingFlowMapWrap [data-item="gate-dl-review"]');
+    const standard = page.locator('#objInspector [data-check^="s"]');
+    assert.equal(await standard.count(), 14);
+    assert.equal(await page.locator('#objInspector [data-check^="e"]').count(), 5);
+
+    // Ticks belong to the chosen item; the other starts empty.
+    assert.equal(await page.inputValue('#objInspector [data-check-for]'), 'a');
+    await standard.nth(0).check();
+    await standard.nth(2).check();
+    await page.locator('#objInspector [data-check="e1"]').check();
+    assert.equal(await page.evaluate(() => document.activeElement.dataset.check), 'e1', 'focus stays on the box');
+    assert.match(await page.textContent('#objTrackerStatus'), /Brute force admin: 2 of 14 checks done at Detection Quality Gate/);
+    assert.equal(await page.textContent('#objInspector .obj-check-for .obj-check-progress'), '\u2713 2/14');
+    await page.selectOption('#objInspector [data-check-for]', 'b');
+    assert.equal(await page.locator('#objInspector [data-check]:checked').count(), 0);
+
+    // Saved, and shown in the tracker list after a reload.
+    await page.reload({ waitUntil: 'load' });
+    await page.click('#objTrackerBtn');
+    assert.match(await page.textContent('#objTrackerList'), /Brute force admin[\s\S]*\u2713 2\/14/);
+    assert.deepEqual(await page.evaluate(() => journeyTracker.find(t => t.id === 'a').checks), { 'gate-dl-review': ['s0', 's2', 'e1'] });
+
+    // CSV carries the ticks; import keeps valid ones and drops unknown gates and indices.
+    const csv = await page.evaluate(() => journeyTrackerCsv());
+    assert.match(csv, /,gate-dl-review:s0 s2 e1$/m);
+    const imported = await page.evaluate(() => {
+      journeyTracker = [];
+      journeyTrackerImport('name,route,step,checklist\nX,detection,dl-review,"gate-dl-review:s1 s99 e4 x1; gate-nope:s0; dl-review:s0"');
+      return journeyTracker[0].checks;
+    });
+    assert.deepEqual(imported, { 'gate-dl-review': ['s1', 'e4'] });
     assert.deepEqual(pageErrors, []);
   });
 });
