@@ -130,6 +130,12 @@ card).
 pinned beside the map: the selected station and the inspector title are both on
 screen, including at the last gate and after "Show on map".
 
+**`browser/info-page.spec.js`** -- the Info page: the release line matches
+the header badge, the at-a-glance counts equal the app's own data, every card,
+step and tile opens its page (two land on a section), and each grid fills its
+rows at 1400, 1100, 900 and 393px without changing Companion tools, which
+shares the card classes.
+
 **`browser/lifecycle-phone-layout.spec.js`** -- the Log assessment lifecycle at
 phone width: stage cards instead of a scroll box, no domain name split mid-word,
 a readable pyramid, and the redraw when crossing the breakpoint.
