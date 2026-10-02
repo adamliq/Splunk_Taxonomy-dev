@@ -1745,9 +1745,12 @@
     .api-group-label small { color:var(--muted); font-size:11px; font-weight:700; }
     .api-about p, #apiAbout p { margin:0 0 10px; font-size:13px; line-height:1.55; color:#334155; }
     #apiAbout ul { margin:0 0 10px; padding-left:18px; font-size:12.5px; color:#334155; }
-    .patterns-toolbar.roles-toolbar {
-      grid-template-columns: minmax(150px, 1fr) minmax(130px, 180px) minmax(150px, 190px) minmax(178px, 210px) minmax(200px, 230px) minmax(100px, 150px) auto;
-    }
+    /* Seven controls: a wrapping row rather than fixed grid columns, which added up to more than
+       the page width once the sidebar takes its share. */
+    .patterns-toolbar.roles-toolbar { display: flex; flex-wrap: wrap; }
+    .patterns-toolbar.roles-toolbar > input { flex: 2 1 240px; min-width: 0; width: auto; }
+    .patterns-toolbar.roles-toolbar > select { flex: 1 1 160px; min-width: 0; width: auto; }
+    .patterns-toolbar.roles-toolbar > .button-group, .patterns-toolbar.roles-toolbar > button { flex: 0 0 auto; }
     .patterns-stats {
       display: flex;
       gap: 9px;
@@ -1763,6 +1766,25 @@
       font-size: 12px;
     }
     .patterns-stat strong { color: #1e293b; }
+    /* Big reference tables (see initFlowTables) */
+    .flow-table { max-height: none !important; overflow-y: visible; }
+    .flow-table thead th { transform: translateY(var(--flow-shift, 0px)); }
+    .flow-table tr.flow-cut { display: none; }
+    .flow-more { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 10px 0 0; font-size: 13px; color: #475569; }
+    .flow-more:empty { display: none; }
+    .flow-more button { font-size: 12.5px; padding: 6px 12px; }
+    @media (max-width: 760px) {
+      .flow-table { overflow: visible; border: 0; box-shadow: none; background: transparent; }
+      .flow-table table { min-width: 0 !important; width: 100%; table-layout: auto; }
+      .flow-table table, .flow-table tbody, .flow-table tr, .flow-table td { display: block; }
+      .flow-table thead { display: none; }
+      .flow-table tbody tr { border: 1px solid var(--border); border-radius: 10px; background: #fff; margin-bottom: 10px; padding: 6px 0; }
+      .flow-table tbody tr.flow-cut { display: none; }
+      .flow-table tbody td { border: 0 !important; padding: 4px 12px; position: static !important; box-shadow: none !important; width: auto !important; min-width: 0 !important; }
+      .flow-table tbody td:empty { display: none; }
+      .flow-table tbody td[data-label]::before { content: attr(data-label); display: block; font-size: 10.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #475569; margin-bottom: 1px; }
+    }
+    @media print { .flow-more { display: none !important; } .flow-table thead th { transform: none !important; } }
     .pattern-table-shell {
       overflow: auto;
       max-height: calc(100vh - 275px);
@@ -4921,7 +4943,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.02 &middot; build 160</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.02 &middot; build 161</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -53256,6 +53278,7 @@ const GLOBAL_SEARCH_DOMAINS = [
 
 function gsHighlightCard(el, tag) {
   if (!el) return;
+  flowReveal(el);
   const scope = tag === "tr" ? (el.closest("table") || document.body) : document.body;
   const selector = tag === "tr" ? "tr.highlight" : ".highlight";
   scope.querySelectorAll(selector).forEach(x => x.classList.remove("highlight"));
@@ -53509,6 +53532,74 @@ document.addEventListener("keydown", event => {
     gsInput.select();
   }
 });
+
+/* ---------------------------------------------------------------------- *
+ * Big reference tables: no fixed-height box -- the table grows with the page
+ * and its header row follows you down (moved with a transform, because a
+ * table may still scroll sideways inside its wrapper, where position:sticky
+ * cannot stick to the page). The first 100 rows (25 on a phone) show, with "Show more"; the
+ * count resets when a filter re-renders the rows. On phones each row is a
+ * card labelled from the column headers.
+ * ---------------------------------------------------------------------- */
+const FLOW_TABLE_BODIES = ["questionsTableBody", "healthTableBody", "socMetricsTableBody", "rolesTableBody", "apiTableBody", "patternTableBody", "splunkPortsTableBody"];
+// 100 rows at a time; 25 on a phone, where each row is a tall card.
+const FLOW_PAGE = window.matchMedia("(max-width: 760px)").matches ? 25 : 100;
+const flowTables = [];
+function initFlowTables() {
+  FLOW_TABLE_BODIES.forEach(id => {
+    const tbody = document.getElementById(id), table = tbody?.closest("table"), wrap = table?.parentElement;
+    if (!wrap || !table.tHead) return;
+    wrap.classList.add("flow-table");
+    const more = document.createElement("div");
+    more.className = "flow-more";
+    wrap.after(more);
+    const ft = { tbody, table, wrap, more, limit: FLOW_PAGE, heads: [...table.tHead.rows[0].cells].map(th => th.textContent.trim()) };
+    flowTables.push(ft);
+    new MutationObserver(() => { ft.limit = FLOW_PAGE; flowApply(ft); }).observe(tbody, { childList: true });
+    more.addEventListener("click", event => {
+      const button = event.target.closest("button");
+      if (!button) return;
+      ft.limit = button.dataset.all ? Infinity : ft.limit + FLOW_PAGE;
+      flowApply(ft);
+    });
+    flowApply(ft);
+  });
+  let pending = false;
+  const onScroll = () => { if (pending) return; pending = true; requestAnimationFrame(() => { pending = false; flowHeaders(); }); };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+}
+function flowApply(ft) {
+  const rows = [...ft.tbody.rows].filter(r => r.cells.length > 1);
+  rows.forEach((row, i) => {
+    row.classList.toggle("flow-cut", i >= ft.limit);
+    if (!row.dataset.flowLabelled) {
+      [...row.cells].forEach((td, c) => { if (ft.heads[c]) td.dataset.label = ft.heads[c]; });
+      row.dataset.flowLabelled = "1";
+    }
+  });
+  const left = rows.length - Math.min(ft.limit, rows.length);
+  const n = x => x.toLocaleString("en");
+  ft.more.innerHTML = left > 0
+    ? `<span>Showing ${n(ft.limit)} of ${n(rows.length)} rows</span><button type="button">Show ${n(Math.min(FLOW_PAGE, left))} more</button><button type="button" data-all="1">Show all ${n(rows.length)}</button>`
+    : "";
+  flowHeaders();
+}
+// Keep each visible table's header row in view while the table passes under the top of the screen.
+function flowHeaders() {
+  flowTables.forEach(ft => {
+    if (!ft.wrap.offsetParent) return;
+    const box = ft.wrap.getBoundingClientRect(), head = ft.table.tHead.offsetHeight;
+    const shift = Math.max(0, Math.min(-box.top, box.height - head - 48));
+    ft.table.tHead.style.setProperty("--flow-shift", `${Math.round(shift)}px`);
+  });
+}
+// Show every row of the table a row sits in (search results and links may point past the first 100).
+function flowReveal(el) {
+  const ft = el && flowTables.find(f => f.tbody.contains(el));
+  if (ft && el.closest("tr")?.classList.contains("flow-cut")) { ft.limit = Infinity; flowApply(ft); }
+}
+initFlowTables();
 
 // Info page: the release line repeats the header badge (set by scripts/release/set_version.py),
 // and the at-a-glance tiles count what the app actually holds, so neither can go stale.
