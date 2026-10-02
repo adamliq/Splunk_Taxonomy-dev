@@ -66,6 +66,8 @@ test('global search finds lifecycle domains and journey steps, and detail cards 
     await page.fill('#globalSearchInput', '');
 
     assert.equal(await page.locator('.ob-show-on-map').count(), 51);
+    // The detail is folded by phase; governance approval is in phase D.
+    await page.click('.ob-fold[data-fold="onboarding:D"]');
     await page.click('#ob-governance .ob-show-on-map');
     await page.waitForTimeout(900);
     assert.equal(await text(page, '#objInspector h3'), 'Governance approval');

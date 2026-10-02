@@ -1496,13 +1496,27 @@
     .lal-narrow .lal-sheet-close { display:block; position:absolute; top:8px; right:10px; border:0; background:#f1f5f9; border-radius:999px; width:30px; height:30px; font-size:16px; cursor:pointer; }
     .lal-compact #lalWheel { display:none; }
     .lal-compact .lal-outputs { grid-template-columns:minmax(0, 1fr); }
-    .lal-compact .lal-domain-list { display:grid; grid-template-columns:repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap:6px; }
-    .lal-dl-item { display:flex; align-items:center; gap:7px; width:100%; min-width:0; overflow-wrap:anywhere; border:1px solid var(--border); border-radius:10px; background:#fff; padding:7px 9px; text-align:left; white-space:normal; cursor:pointer; font-size:12.5px; font-weight:700; }
+    /* Two columns only when each is wide enough for the longest name ("Recommendations"). */
+    .lal-compact .lal-domain-list { display:grid; grid-template-columns:repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap:6px; }
+    .lal-dl-item { display:flex; align-items:center; gap:7px; width:100%; min-width:0; overflow-wrap:break-word; hyphens:auto; border:1px solid var(--border); border-radius:10px; background:#fff; padding:7px 9px; text-align:left; white-space:normal; cursor:pointer; font-size:12.5px; font-weight:700; }
     .lal-dl-item b { display:grid; place-items:center; flex:0 0 auto; width:22px; height:22px; border-radius:50%; color:#fff; font-size:11px; }
     .lal-dl-item.lal-lit { box-shadow:0 0 0 2px #f59e0b; }
     .lal-dl-item.lal-sel { background:#0b2a5b; color:#fff !important; }
     .lal-dl-item.lal-dim { opacity:.45; }
     .lal-compact .lal-table td.lal-label { width:auto; }
+    .lal-pyr-lenses { list-style:none; margin:8px 0 0; padding:0; display:grid; gap:4px; font-size:12.5px; color:#334155; }
+    .lal-pyr-lenses li { display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 7px; }
+    .lal-pyr-stages { color:#475569; font-size:12px; }
+    /* Phone: each stage is a card, so the table no longer scrolls inside the page. */
+    .lal-compact .lal-stages-wrap { max-height:none; overflow:visible; }
+    .lal-compact .lal-table:not(.lal-glance-table) thead { display:none; }
+    .lal-compact .lal-table:not(.lal-glance-table), .lal-compact .lal-table:not(.lal-glance-table) tbody { display:block; }
+    .lal-compact .lal-table tr.lal-row { display:grid; grid-template-columns:auto minmax(0, 1fr); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:8px; }
+    .lal-compact .lal-table tr.lal-row td { border:0; padding:6px 10px; }
+    .lal-compact .lal-table tr.lal-row td.lal-stage { width:auto; min-width:44px; display:grid; place-items:center; font-size:15px; }
+    .lal-compact .lal-table tr.lal-row td.lal-label { display:flex; align-items:center; font-size:13.5px; }
+    .lal-compact .lal-table tr.lal-row td[data-label] { grid-column:1 / -1; }
+    .lal-compact .lal-table tr.lal-row td[data-label]::before { content:attr(data-label); display:block; margin-bottom:2px; font-size:10.5px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:#475569; }
     @media print {
       .lal-aside, .lal-toolbar, #lalFlows, .lal-domain-list { display:none !important; }
       .lal-layout { grid-template-columns:1fr; }
@@ -4157,6 +4171,14 @@
     .obj-tracked-row .obj-tracker-actions { grid-column:2; }
     .obj-link.obj-danger, .obj-tracker-foot .obj-danger { color:#b91c1c; }
     .obj-tracker-empty { margin:0; font-size:12.5px; color:#475569; }
+    .obj-check-progress { display:inline-block; margin-left:6px; font-size:10.5px; font-weight:800; color:#9d174d; background:#fdf2f8; border:1px solid #f9a8d4; border-radius:999px; padding:0 7px; white-space:nowrap; }
+    .obj-check-progress.obj-check-done { color:#166534; background:#f0fdf4; border-color:#86efac; }
+    .obj-check-for { display:flex; flex-wrap:wrap; align-items:center; gap:4px 8px; margin:0 0 6px; font-size:12px; color:#334155; }
+    .obj-check-for select { font:inherit; font-size:12px; padding:2px 6px; border:1px solid #cbd5e1; border-radius:6px; max-width:100%; }
+    .obj-check-hint { margin:0 0 6px; font-size:11.5px; color:#475569; font-style:italic; }
+    .obj-check.obj-check-live li::before { display:none; }
+    .obj-check.obj-check-live label { display:flex; gap:7px; align-items:flex-start; cursor:pointer; }
+    .obj-check.obj-check-live input { margin:3px 0 0; flex:0 0 auto; width:14px; height:14px; accent-color:#be185d; }
     .obj-list-tracked { margin-left:auto; background:#be185d; color:#fff; border-radius:999px; padding:0 7px; font-size:11px; font-weight:800; }
     @container (max-width: 620px) {
       .obj-tracker-table thead { display:none; }
@@ -4181,6 +4203,12 @@
     .obj-item:focus-visible .obj-hit { fill:rgba(112,48,160,.08); stroke:#7030a0; stroke-width:2; }
     .obj-dim { opacity:.28; }
     .obj-inspector { padding:16px 18px 18px; min-width:0; }
+    .obj-inspector-inner { position:relative; }
+    /* Side by side with the map: the inspector stays in view however far down the map the
+       selected station is, scrolling on its own when its content is taller than the screen. */
+    @media (min-width: 1001px) {
+      .obj-inspector { position:sticky; top:12px; align-self:start; max-height:calc(100vh - 24px); overflow-y:auto; overscroll-behavior:contain; }
+    }
     .obj-inspector-inner { position:sticky; top:12px; }
     .obj-crumbs { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
     .obj-chip { font-size:11px; font-weight:800; border-radius:999px; padding:2px 9px; background:#f1f5f9; color:#334155; }
@@ -4221,13 +4249,17 @@
     @media (max-width: 1000px) {
       .obj-main { grid-template-columns:minmax(0, 1fr); }
       .obj-map { border-right:0; border-bottom:1px solid var(--border); }
-      .obj-inspector-inner { position:relative; }
     }
     @media (max-width: 760px) {
-      .obj-stepper { display:flex; overflow-x:auto; padding-bottom:2px; }
-      .obj-step { flex:0 0 auto; }
-      .obj-step-name { white-space:nowrap; }
-      .obj-step-bar, .obj-step-meta, .obj-keys { display:none; }
+      /* The phase list below does the stepper's job on a phone. */
+      .obj-stepper, .obj-keys { display:none; }
+      .obj-top { grid-template-columns:minmax(0, 1fr); padding:12px 14px 10px; }
+      .obj-top-row { gap:5px 6px; }
+      .obj-routes { width:100%; }
+      .obj-routes button { flex:1 1 0; min-width:0; white-space:normal; padding:5px 8px; }
+      /* Stats and the Tracker button share rows instead of one each. */
+      .obj-stats { display:contents; }
+      .obj-stat { font-size:11px; padding:0 7px; }
       .obj-search { margin-left:0; flex:1 1 100%; }
       .obj-map { border-bottom:0; padding:0; }
       .obj-inspector { position:fixed; left:0; right:0; bottom:0; z-index:60; max-height:72vh; overflow-y:auto; background:#fff; border-radius:18px 18px 0 0; box-shadow:0 -12px 30px rgba(15,23,42,.2); padding:14px 16px 18px; transform:translateY(105%); transition:transform .2s ease; }
@@ -4240,6 +4272,17 @@
       .obj-map { border:0; }
     }
     .onboarding-flow { display:flex; flex-direction:column; align-items:center; gap:0; }
+    .ob-fold-bar { max-width:660px; margin:0 auto 8px; display:flex; flex-wrap:wrap; gap:6px 12px; align-items:center; justify-content:space-between; font-size:12.5px; color:#475569; }
+    .ob-fold-all { font:inherit; font-size:12.5px; font-weight:700; color:#1d4ed8; background:#fff; border:1px solid #bfdbfe; border-radius:8px; padding:4px 11px; cursor:pointer; }
+    .ob-fold { width:100%; max-width:660px; display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; margin:5px 0; padding:10px 14px; border:1px solid var(--border); border-radius:12px; background:var(--fold-bg); color:var(--fold-ink); font:inherit; font-size:14.5px; font-weight:800; text-align:left; white-space:normal; cursor:pointer; }
+    .ob-fold:hover { box-shadow:0 0 0 2px var(--fold-ink) inset; }
+    .ob-fold-letter { display:inline-grid; place-items:center; flex:0 0 auto; width:24px; height:24px; border-radius:50%; background:var(--fold-ink); color:#fff; font-size:12px; }
+    .ob-fold-name { flex:1 1 auto; min-width:0; }
+    .ob-fold-meta { font-size:12px; font-weight:700; color:#475569; }
+    .ob-fold-chev { flex:0 0 auto; transition:transform .15s ease; }
+    .ob-fold[aria-expanded="false"] .ob-fold-chev { transform:rotate(-90deg); }
+    @media screen { .ob-folded { display:none !important; } }
+    @media print { .ob-fold-bar, .ob-fold-chev { display:none !important; } .ob-fold { border:0; padding:6px 0; } }
     .onboarding-stage, .onboarding-gate { width:100%; max-width:660px; border-radius:14px; padding:16px 20px; }
     .onboarding-stage { border:1px solid var(--border); background:#fff; box-shadow:0 6px 18px rgba(15,23,42,.05); }
     .onboarding-stage h4 { margin:0; font-size:15px; color:#0f172a; display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
@@ -4255,7 +4298,8 @@
     .onboarding-feed { width:100%; max-width:660px; border-radius:12px; padding:13px 18px; border:1px dashed #67e8f9; background:#ecfeff; display:flex; gap:10px; align-items:flex-start; }
     .onboarding-feed .flow-badge { flex:none; margin-top:2px; }
     .onboarding-feed strong { display:block; color:#0e7490; font-size:12.5px; }
-    .onboarding-feed span { display:block; margin-top:3px; color:#155e75; font-size:12px; line-height:1.55; }
+    .onboarding-feed > div > span { display:block; margin-top:3px; color:#155e75; font-size:12px; line-height:1.55; }
+    .onboarding-feed > div > span .assessment-tag { display:inline-block; padding:1px 7px; margin:0 1px; line-height:1.5; vertical-align:baseline; }
     .onboarding-branch-arrow { display:flex; align-items:center; gap:8px; color:#0e7490; font-size:13px; font-weight:700; padding:8px 0; }
     .onboarding-branch-arrow .glyph { font-size:20px; font-weight:900; }
     .onboarding-branch-arrow em { color:#64748b; font-weight:500; font-style:normal; font-size:11.5px; }
@@ -4747,7 +4791,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.01 &middot; build 153</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.02 &middot; build 156</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -11965,7 +12009,7 @@ INGEST PROCESSOR
         <div class="lal-card lal-detail-card"><button type="button" class="lal-sheet-close" id="lalSheetClose" aria-label="Close">&times;</button><div id="lalDetail" aria-live="polite"></div></div>
       </aside>
     </div>
-    <section class="lal-card" style="margin-top:14px"><h3 class="lal-card-title">Stages, key terms and outputs</h3><div class="eccs-table-wrap" role="region" aria-label="Stages, key terms and outputs" tabindex="0"><table class="lal-table"><thead><tr><th scope="col">Stage</th><th scope="col">Stage label</th><th scope="col">Key terms / assessments (not exhaustive)</th><th scope="col">Key outputs</th></tr></thead><tbody id="lalTable"></tbody></table></div></section>
+    <section class="lal-card" style="margin-top:14px"><h3 class="lal-card-title">Stages, key terms and outputs</h3><div class="eccs-table-wrap lal-stages-wrap" role="region" aria-label="Stages, key terms and outputs" tabindex="0"><table class="lal-table"><thead><tr><th scope="col">Stage</th><th scope="col">Stage label</th><th scope="col">Key terms / assessments (not exhaustive)</th><th scope="col">Key outputs</th></tr></thead><tbody id="lalTable"></tbody></table></div></section>
     <div class="lal-banner"><span>&#128161; The Log Assessment Framework establishes the evidence base for every decision.</span><span>Consistent application ensures reliable, valuable and operationally effective logging.</span></div>
     <p class="lal-note">Domain numbering follows the source diagram, which numbers the domains 1&ndash;9 and 11 and leaves Line Analysis unnumbered (shown as &ldquo;8?&rdquo;). Which domains feed which output items is indicative.</p>
   </section>
@@ -29008,22 +29052,29 @@ const LAL_STAGE_LABELS = {
 const LAL_PYR_W = 482;
 function lalRenderPyramid() {
   const H = 5 * 76 + 10, cx = 140 + 169;
-  let s = `<svg viewBox="0 0 ${LAL_PYR_W} ${H}" role="group" aria-label="Lifecycle layers">`;
+  // On a phone the side labels would shrink to ~7px, so the pyramid is cropped to its shape
+  // (drawn near full size) and the lenses are listed underneath instead.
+  const compact = document.getElementById("logAssessmentLifecyclePage")?.classList.contains("lal-compact");
+  let s = `<svg viewBox="${compact ? `${cx - 172} 0 344` : `0 0 ${LAL_PYR_W}`} ${H}" role="group" aria-label="Lifecycle layers">`;
   LAL_LAYERS.forEach((L, i) => {
     const y0 = 5 + i * 76, y1 = y0 + 70, my = (y0 + y1) / 2;
     const hw0 = i === 0 ? 20 : 35 + i * 26, hw1 = 35 + (i + 1) * 26 + 4;
     const lens = LAL_LENS[L.lens], label = LAL_STAGE_LABELS[L.id];
     const lineY = k => my - (label.lines.length - 1) * 7 + k * 14 - 5;
     s += `<g class="lal-hit lal-layer" data-lal-layer="${L.id}" tabindex="0" role="button" aria-label="Stage ${L.num}: ${escapeHtml(L.title)}">
-      <text x="14" y="${my + 6}" text-anchor="middle" font-size="17">${lens.icon}</text>
+      ${compact ? "" : `<text x="14" y="${my + 6}" text-anchor="middle" font-size="17">${lens.icon}</text>
       ${label.lines.map((t, k) => `<text x="30" y="${lineY(k)}" font-size="11" font-weight="800" fill="${L.color}">${escapeHtml(t)}</text>`).join("")}
       <text x="30" y="${lineY(label.lines.length - 1) + 14}" font-size="10" fill="#475569">(${escapeHtml(label.stages)})</text>
-      <path d="M ${cx - hw1 - 8} ${y0 + 6} h -6 V ${y1 - 6} h 6" stroke="${L.color}" stroke-width="1.6" fill="none"/>
+      <path d="M ${cx - hw1 - 8} ${y0 + 6} h -6 V ${y1 - 6} h 6" stroke="${L.color}" stroke-width="1.6" fill="none"/>`}
       <polygon class="lal-shape" data-rx="${cx + (hw0 + hw1) / 2}" data-my="${my}" points="${cx - hw0},${y0} ${cx + hw0},${y0} ${cx + hw1},${y1} ${cx - hw1},${y1}" fill="${L.color}" stroke="#fff" stroke-width="2"/>
       <text x="${cx}" y="${y0 + 27}" text-anchor="middle" fill="#fff" font-size="${i === 0 ? 19 : 23}" font-weight="900">${L.num}</text>
       ${L.short.map((t, k) => `<text x="${cx}" y="${y0 + 45 + k * 13}" text-anchor="middle" fill="#fff" font-size="${i === 0 ? 9.5 : 11}" font-weight="800">${escapeHtml(t)}</text>`).join("")}</g>`;
   });
-  document.getElementById("lalPyramid").innerHTML = s + `</svg>`;
+  const lenses = compact ? `<ul class="lal-pyr-lenses">${LAL_LAYERS.map(L => {
+    const lens = LAL_LENS[L.lens], label = LAL_STAGE_LABELS[L.id];
+    return `<li><span aria-hidden="true">${lens.icon}</span><b style="color:${lalInk(L.color)}">${escapeHtml(label.lines.join(" "))}</b> <span class="lal-pyr-stages">${escapeHtml(label.stages)}</span></li>`;
+  }).join("")}</ul>` : "";
+  document.getElementById("lalPyramid").innerHTML = s + `</svg>` + lenses;
 }
 function lalRenderWheel() {
   const C = 300, r0 = 105, r1 = 288, span = 360 / LAL_DOMAINS.length;
@@ -29079,7 +29130,7 @@ function lalRenderStatic() {
     <ul>${o.items.map(([t], k) => `<li><button type="button" data-lal-item="${o.id}:${k}">${escapeHtml(t)}</button></li>`).join("")}</ul></div>`).join("");
   document.getElementById("lalTable").innerHTML = LAL_ROWS.map(r => {
     const L = LAL_LAYERS.find(l => l.id === r.layer);
-    return `<tr class="lal-row" data-lal-row="${r.stage}" tabindex="0"><td class="lal-stage" style="background:${lalInk(L.color)}">${r.stage.replace("-", "–")}</td><td class="lal-label" style="color:${lalInk(L.color)}">${escapeHtml(r.label)}</td><td>${r.terms.map(t => LAL_REFS[t] ? `<button type="button" class="lal-term" data-lal-reference="${LAL_REFS[t]}" title="${escapeHtml(lalRefTitle(LAL_REFS[t]))}">${escapeHtml(t)}</button>` : `<span class="lal-term">${escapeHtml(t)}</span>`).join(", ")}</td><td>${escapeHtml(r.outputs)}</td></tr>`;
+    return `<tr class="lal-row" data-lal-row="${r.stage}" tabindex="0"><td class="lal-stage" style="background:${lalInk(L.color)}">${r.stage.replace("-", "–")}</td><td class="lal-label" style="color:${lalInk(L.color)}">${escapeHtml(r.label)}</td><td data-label="Key terms / assessments">${r.terms.map(t => LAL_REFS[t] ? `<button type="button" class="lal-term" data-lal-reference="${LAL_REFS[t]}" title="${escapeHtml(lalRefTitle(LAL_REFS[t]))}">${escapeHtml(t)}</button>` : `<span class="lal-term">${escapeHtml(t)}</span>`).join(", ")}</td><td data-label="Key outputs">${escapeHtml(r.outputs)}</td></tr>`;
   }).join("");
 }
 function lalLights() {
@@ -29318,9 +29369,11 @@ function initLogAssessmentLifecycle() {
   const fit = () => {
     const w = root.clientWidth;
     if (!w) return;
+    const wasCompact = root.classList.contains("lal-compact");
     root.classList.toggle("lal-narrow", w < 900);
     root.classList.toggle("lal-compact", w < 560);
     root.classList.toggle("lal-wide", w >= 1400);
+    if (wasCompact !== root.classList.contains("lal-compact")) { lalRenderPyramid(); lalPaint(); }
   };
   if (window.ResizeObserver) {
     new ResizeObserver(fit).observe(root);
@@ -30634,7 +30687,7 @@ function renderOnboardingJourneyInspector() {
       if (o.states.length) where += ` · state: ${o.states.join(" → ")}`;
       return `<div class="obj-outcome"><span class="obj-badge obj-badge-${o.tone}">${escapeHtml(o.badge)}</span><span class="obj-outcome-text">${escapeHtml(o.text)}<small>${escapeHtml(where)}</small></span>${link ? `<button type="button" class="obj-link" data-item-link="${link}">Show ${escapeHtml(name(link))} &rsaquo;</button>` : ""}</div>`;
     };
-    const checklist = item.checklist.map(c => `<div class="obj-sec">${c.tier === "enhanced" ? "Enhanced tier (optional)" : "Go / no-go checklist"}</div><ul class="obj-check">${c.items.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul>`).join("");
+    const checklist = journeyChecklistHtml(j.route, item);
     body = `<div class="obj-kind">&#9670; Decision gate</div><h3>${escapeHtml(item.name)}</h3>${tagChips(item.tags)}
       <p class="obj-why">Decides the outcome of <b>${escapeHtml(judged.name)}</b>. Every outcome is drawn on the map.</p>
       ${item.outcomes.map(outcome).join("")}${checklist}${linkSection}
@@ -30668,7 +30721,9 @@ function renderOnboardingJourney(focusSelected) {
   const wrap = document.getElementById("onboardingFlowMapWrap");
   wrap.innerHTML = j.narrow ? renderOnboardingJourneyList() : renderOnboardingJourneyMap();
   const inspector = document.getElementById("objInspector");
+  const shown = `${j.route}:${journeySelected()}`;
   inspector.innerHTML = renderOnboardingJourneyInspector();
+  if (inspector.dataset.shown !== shown) { inspector.scrollTop = 0; inspector.dataset.shown = shown; }
   inspector.classList.toggle("obj-open", j.narrow && j.open);
   const count = j.query ? items.filter(i => onboardingJourneyMatches(i, j.query)).length : null;
   document.getElementById("objSearchCount").textContent = count === null ? "" : `${count} match${count === 1 ? "" : "es"}`;
@@ -30676,8 +30731,23 @@ function renderOnboardingJourney(focusSelected) {
   if (focusSelected) {
     const node = wrap.querySelector(`[data-item="${journeySelected()}"]`);
     node?.focus({ preventScroll: true });
-    node?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    if (node) journeyReveal(node, inspector);
   }
+}
+// Scroll the selected station into view. The pinned inspector cannot move past the end of the
+// map, so near the bottom it is pushed up off screen; scroll no further than keeps its top in
+// view when the station still fits on screen too.
+function journeyReveal(node, inspector) {
+  const r = node.getBoundingClientRect(), margin = 12;
+  let y = scrollY;
+  if (r.top < margin) y += r.top - margin;
+  else if (r.bottom > innerHeight - margin) y += r.bottom - innerHeight + margin;
+  if (getComputedStyle(inspector).position === "sticky") {
+    const limit = inspector.parentElement.getBoundingClientRect().bottom + scrollY - inspector.offsetHeight - margin;
+    const lowest = r.bottom + scrollY - innerHeight + margin;
+    if (y > limit && limit >= lowest) y = limit;
+  }
+  if (Math.abs(y - scrollY) > 1) scrollTo({ top: y, behavior: "smooth" });
 }
 // Shareable link: #onboarding-flow?route=detection&step=<id>. The default (the first step of the
 // log source route) is the plain #onboarding-flow.
@@ -30714,7 +30784,12 @@ function showOnJourneyMap(id, route = "onboarding") {
   selectOnboardingJourneyItem(id, false, route);
   onboardingJourney.open = false;
   renderOnboardingJourney();
-  setTimeout(() => document.getElementById("onboardingJourney")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+  setTimeout(() => {
+    // Beside the pinned inspector, go to the station itself; stacked layouts show the map's top.
+    const inspector = document.getElementById("objInspector"), node = document.querySelector(`#onboardingFlowMapWrap svg [data-item="${journeySelected()}"]`);
+    if (node && inspector && getComputedStyle(inspector).position === "sticky") journeyReveal(node, inspector);
+    else document.getElementById("onboardingJourney")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 60);
 }
 function selectOnboardingJourneyItem(id, focus = false, route = onboardingJourney.route) {
   const j = onboardingJourney;
@@ -30739,7 +30814,7 @@ function journeyTrackerLoad() {
   try {
     const saved = JSON.parse(localStorage.getItem(JOURNEY_TRACKER_KEY) || "[]");
     journeyTracker = (Array.isArray(saved) ? saved : []).filter(t => t && typeof t.id === "string" && typeof t.name === "string" && typeof t.step === "string" && JOURNEY_ROUTES[t.route])
-      .map(t => ({ id: t.id, name: t.name, route: t.route, step: t.step, state: String(t.state || ""), notes: String(t.notes || ""), updated: String(t.updated || "") }));
+      .map(t => ({ id: t.id, name: t.name, route: t.route, step: t.step, state: String(t.state || ""), notes: String(t.notes || ""), updated: String(t.updated || ""), checks: journeyTrackerCleanChecks(t.checks) }));
   }
   catch (e) { journeyTracker = []; }
 }
@@ -30753,12 +30828,57 @@ function journeyTrackerDefaultState(route, step) {
   const named = upto.flatMap(i => i.lifecycle || []).filter(s => JOURNEY_TRACKER_STATES[route].includes(s));
   return named.pop() || JOURNEY_TRACKER_STATES[route][0];
 }
+// Go / no-go checklist ticks: { "gate-id": ["s0", "e2"] } -- s = standard tier, e = enhanced.
+function journeyTrackerCleanChecks(checks) {
+  const out = {};
+  if (checks && typeof checks === "object" && !Array.isArray(checks)) Object.entries(checks).forEach(([gate, keys]) => {
+    if (typeof gate === "string" && Array.isArray(keys)) { const ok = [...new Set(keys.filter(k => typeof k === "string" && /^[se]\d{1,2}$/.test(k)))]; if (ok.length) out[gate] = ok; }
+  });
+  return out;
+}
+// The gate whose checklist a tracked item is working through: the gate it is at, or the gate
+// that decides the stage it is at.
+function journeyTrackerGate(t) {
+  const model = onboardingJourney.models[t.route], item = model?.byId[t.step];
+  const gate = item?.type === "gate" ? item : model?.byId[`gate-${t.step}`];
+  return gate && gate.checklist?.length ? gate : null;
+}
+const journeyChecklistKey = tier => (tier === "enhanced" ? "e" : "s");
+// Standard-tier progress at the item's gate, e.g. { done: 3, total: 6, gate }.
+function journeyTrackerProgress(t) {
+  const gate = journeyTrackerGate(t);
+  const standard = gate?.checklist.find(c => c.tier !== "enhanced");
+  if (!standard) return null;
+  const ticked = new Set(t.checks?.[gate.id] || []);
+  return { gate, done: standard.items.filter((x, i) => ticked.has(`s${i}`)).length, total: standard.items.length };
+}
+function journeyTrackerProgressChip(t) {
+  const p = journeyTrackerProgress(t);
+  return p ? ` <span class="obj-check-progress${p.done === p.total ? " obj-check-done" : ""}" title="${escapeHtml(`Go / no-go checklist at ${p.gate.name}`)}">&#10003; ${p.done}/${p.total}</span>` : "";
+}
+// The checklists of a gate in the inspector. Items tracked at the gate, or at the stage it
+// decides, can be ticked; one of them is chosen when there are several.
+function journeyChecklistHtml(route, gate) {
+  const owners = journeyTracker.filter(t => t.route === route && (t.step === gate.id || t.step === gate.after));
+  const who = owners.find(t => t.id === onboardingJourney.checkFor) || owners[0];
+  const ticked = new Set(who?.checks?.[gate.id] || []);
+  const picker = !who ? (onboardingJourney.show.tracked ? '<p class="obj-check-hint">Track a log source at this gate, or the stage before it, to tick its checklist.</p>' : "")
+    : `<div class="obj-check-for">${owners.length > 1
+      ? `<label>Ticking for <select data-check-for>${owners.map(t => `<option value="${escapeHtml(t.id)}"${t === who ? " selected" : ""}>${escapeHtml(t.name)}</option>`).join("")}</select></label>`
+      : `<span>Ticking for <b>${escapeHtml(who.name)}</b></span>`}${journeyTrackerProgressChip(who)}</div>`;
+  return gate.checklist.map((c, n) => `<div class="obj-sec">${c.tier === "enhanced" ? "Enhanced tier (optional)" : "Go / no-go checklist"}</div>${n === 0 ? picker : ""}<ul class="obj-check${who ? " obj-check-live" : ""}">${c.items.map((x, i) => {
+    const key = `${journeyChecklistKey(c.tier)}${i}`;
+    return who ? `<li><label><input type="checkbox" data-check="${key}" data-check-gate="${escapeHtml(gate.id)}" data-check-owner="${escapeHtml(who.id)}"${ticked.has(key) ? " checked" : ""}> <span>${escapeHtml(x)}</span></label></li>` : `<li>${escapeHtml(x)}</li>`;
+  }).join("")}</ul>`).join("");
+}
 function journeyTrackerAt(route, step) { return journeyTracker.filter(t => t.route === route && t.step === step); }
 function journeyTrackerStepName(route, step) { return onboardingJourney.models[route]?.byId[step]?.name || step; }
 function journeyTrackerCsv() {
   // A leading ' stops a spreadsheet treating text such as "=cmd" as a formula; import removes it.
   const q = v => { let x = String(v); if (/^[=+\-@\t\r]/.test(x)) x = "'" + x; return /[",\n\r]/.test(x) ? `"${x.replace(/"/g, '""')}"` : x; };
-  return ["name,route,step,step_name,state,notes,updated", ...journeyTracker.map(t => [t.name, t.route, t.step, journeyTrackerStepName(t.route, t.step), t.state, t.notes || "", t.updated].map(q).join(","))].join("\n");
+  // checklist: "gate-id:s0 s2 e1; gate-id:..." -- the ticks at each gate.
+  const checks = t => Object.entries(t.checks || {}).map(([gate, keys]) => `${gate}:${keys.join(" ")}`).join("; ");
+  return ["name,route,step,step_name,state,notes,updated,checklist", ...journeyTracker.map(t => [t.name, t.route, t.step, journeyTrackerStepName(t.route, t.step), t.state, t.notes || "", t.updated, checks(t)].map(q).join(","))].join("\n");
 }
 function journeyTrackerParseCsv(text) {
   const rows = [];
@@ -30788,8 +30908,17 @@ function journeyTrackerImport(text) {
     const route = cell(r, "route").trim(), step = cell(r, "step").trim(), name = cell(r, "name").trim();
     if (!name || !onboardingJourney.models[route]?.byId[step]) { skipped++; return; }
     const state = cell(r, "state").trim().toUpperCase();
+    // Keep ticks only for gates on this route and items their checklists have.
+    const checks = {};
+    cell(r, "checklist").split(";").forEach(part => {
+      const [gateId, keys = ""] = part.split(":").map(x => x.trim());
+      const gate = onboardingJourney.models[route].byId[gateId];
+      if (gate?.type !== "gate") return;
+      const ok = keys.split(/\s+/).filter(k => { const c = gate.checklist.find(c => journeyChecklistKey(c.tier) === k[0]); return c && /^[se]\d+$/.test(k) && +k.slice(1) < c.items.length; });
+      if (ok.length) checks[gateId] = [...new Set(ok)];
+    });
     journeyTracker.push({ id: `t${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`, name: name.slice(0, 120), route, step,
-      state: JOURNEY_TRACKER_STATES[route].includes(state) ? state : journeyTrackerDefaultState(route, step), notes: cell(r, "notes").slice(0, 500), updated: cell(r, "updated").trim().slice(0, 32) || new Date().toISOString().slice(0, 10) });
+      state: JOURNEY_TRACKER_STATES[route].includes(state) ? state : journeyTrackerDefaultState(route, step), notes: cell(r, "notes").slice(0, 500), updated: cell(r, "updated").trim().slice(0, 32) || new Date().toISOString().slice(0, 10), checks });
     added++;
   });
   journeyTrackerSave();
@@ -30816,7 +30945,7 @@ function renderJourneyTracker() {
     ? `<table class="obj-tracker-table"><thead><tr><th scope="col">Name</th><th scope="col">Route</th><th scope="col">Step</th><th scope="col">State</th><th scope="col">Updated</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead><tbody>${rows.map(t => `<tr>
         <td><b>${escapeHtml(t.name)}</b>${t.notes ? `<div class="obj-tracker-notes">${escapeHtml(t.notes)}</div>` : ""}</td>
         <td>${escapeHtml(JOURNEY_ROUTES[t.route].label)}</td><td>${escapeHtml(journeyTrackerStepName(t.route, t.step))}</td>
-        <td><span class="obj-state">${escapeHtml(t.state)}</span></td><td>${escapeHtml(t.updated)}</td>
+        <td><span class="obj-state">${escapeHtml(t.state)}</span>${journeyTrackerProgressChip(t)}</td><td>${escapeHtml(t.updated)}</td>
         <td class="obj-tracker-actions"><button type="button" class="obj-link" data-track-show="${escapeHtml(t.id)}">Show on map</button> <button type="button" class="obj-link" data-track-edit="${escapeHtml(t.id)}">Edit</button> <button type="button" class="obj-link obj-danger" data-track-remove="${escapeHtml(t.id)}">Remove</button></td></tr>`).join("")}</tbody></table>`
     : '<p class="obj-tracker-empty">Nothing tracked yet. Add a log source or detection above.</p>';
 }
@@ -30844,7 +30973,7 @@ function initJourneyTracker() {
       say(`Saved ${entry.name}.`);
       journeyTrackerEditing = "";
     } else {
-      journeyTracker.push({ id: `t${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`, ...entry });
+      journeyTracker.push({ id: `t${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`, ...entry, checks: {} });
       say(`Added ${entry.name} at ${journeyTrackerStepName(entry.route, entry.step)}.`);
     }
     form.elements.name.value = ""; form.elements.notes.value = "";
@@ -30869,6 +30998,22 @@ function initJourneyTracker() {
   document.getElementById("objTrackerClear").addEventListener("click", () => {
     if (!journeyTracker.length || !confirm(`Remove all ${journeyTracker.length} tracked items from this browser?`)) return;
     journeyTracker = []; journeyTrackerSave(); renderJourneyTracker(); renderOnboardingJourney(); say("Cleared.");
+  });
+  document.getElementById("onboardingJourney").addEventListener("change", event => {
+    const box = event.target.closest("[data-check]"), pick = event.target.closest("[data-check-for]");
+    if (pick) { onboardingJourney.checkFor = pick.value; renderOnboardingJourney(); document.querySelector("#objInspector [data-check-for]")?.focus(); return; }
+    if (!box) return;
+    const t = journeyTracker.find(x => x.id === box.dataset.checkOwner), gate = box.dataset.checkGate, key = box.dataset.check;
+    if (!t) return;
+    const keys = new Set(t.checks[gate] || []);
+    if (box.checked) keys.add(key); else keys.delete(key);
+    if (keys.size) t.checks[gate] = [...keys]; else delete t.checks[gate];
+    t.updated = new Date().toISOString().slice(0, 10);
+    onboardingJourney.checkFor = t.id;
+    journeyTrackerSave(); renderJourneyTracker(); renderOnboardingJourney();
+    document.querySelector(`#objInspector [data-check="${key}"]`)?.focus();
+    const p = journeyTrackerProgress(t);
+    if (p && p.gate.id === gate) say(`${t.name}: ${p.done} of ${p.total} checks done at ${p.gate.name}.`);
   });
   document.getElementById("onboardingJourney").addEventListener("click", event => {
     const b = event.target.closest("[data-track-show], [data-track-edit], [data-track-remove], [data-track-advance]");
@@ -30909,13 +31054,13 @@ function journeyTrackedBadge(route, item, x, cy) {
   const here = journeyTrackerAt(route, item.id);
   if (!here.length) return "";
   const label = String(here.length), w = label.length * 7 + 14;
-  return `<g class="obj-tracked"><title>${escapeHtml(`Tracked here: ${here.map(t => `${t.name} (${t.state})`).join(", ")}`)}</title><rect x="${x}" y="${cy - 9}" width="${w}" height="18" rx="9" fill="#be185d"/><text x="${x + w / 2}" y="${cy + 4}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff">${label}</text></g>`;
+  return `<g class="obj-tracked"><title>${escapeHtml(`Tracked here: ${here.map(t => { const p = journeyTrackerProgress(t); return `${t.name} (${t.state}${p ? `, checklist ${p.done}/${p.total}` : ""})`; }).join(", ")}`)}</title><rect x="${x}" y="${cy - 9}" width="${w}" height="18" rx="9" fill="#be185d"/><text x="${x + w / 2}" y="${cy + 4}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff">${label}</text></g>`;
 }
 function journeyTrackerInspector(route, item) {
   const here = journeyTrackerAt(route, item.id);
   if (!here.length) return "";
   const items = onboardingJourney.models[route].items, next = items[items.indexOf(item) + 1];
-  return `<div class="obj-sec">Tracked here (${here.length})</div>` + here.map(t => `<div class="obj-outcome obj-tracked-row"><span class="obj-state">${escapeHtml(t.state)}</span><span class="obj-outcome-text">${escapeHtml(t.name)}<small>${escapeHtml([t.notes, t.updated && `updated ${t.updated}`].filter(Boolean).join(" · "))}</small></span><span class="obj-tracker-actions">${next ? `<button type="button" class="obj-link" data-track-advance="${escapeHtml(t.id)}">Advance to ${escapeHtml(next.name)} &rsaquo;</button>` : ""}<button type="button" class="obj-link" data-track-edit="${escapeHtml(t.id)}">Edit</button></span></div>`).join("");
+  return `<div class="obj-sec">Tracked here (${here.length})</div>` + here.map(t => `<div class="obj-outcome obj-tracked-row"><span class="obj-state">${escapeHtml(t.state)}</span><span class="obj-outcome-text">${escapeHtml(t.name)}${journeyTrackerProgressChip(t)}<small>${escapeHtml([t.notes, t.updated && `updated ${t.updated}`].filter(Boolean).join(" · "))}</small></span><span class="obj-tracker-actions">${next ? `<button type="button" class="obj-link" data-track-advance="${escapeHtml(t.id)}">Advance to ${escapeHtml(next.name)} &rsaquo;</button>` : ""}<button type="button" class="obj-link" data-track-edit="${escapeHtml(t.id)}">Edit</button></span></div>`).join("");
 }
 function initOnboardingFlowMap() {
   const root = document.getElementById("onboardingJourney");
@@ -30958,7 +31103,7 @@ function initOnboardingFlowMap() {
       return;
     }
     if (target.dataset.reference) { showReferenceDetail(target.dataset.reference); return; }
-    if (target.dataset.scroll) { j.open = false; renderOnboardingJourney(); document.getElementById(target.dataset.scroll)?.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+    if (target.dataset.scroll) { j.open = false; renderOnboardingJourney(); journeyUnfold(document.getElementById(target.dataset.scroll))?.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
     const id = target.dataset.item || target.dataset.itemLink;
     // Focus follows the selection onto the map, so the arrow keys keep working after a link
     // in the inspector (which is redrawn) is used.
@@ -31040,6 +31185,59 @@ function initOnboardingFlowMap() {
     }, { rootMargin: "-35% 0px -55% 0px" });
     cards.forEach(card => spy.observe(card));
   }
+  initJourneyDetailFolds();
+}
+// The stage and gate detail below the map repeats it at length, so each phase folds under a
+// heading, closed at first. Print shows everything; "Open full stage detail" opens its phase.
+function initJourneyDetailFolds() {
+  const page = document.getElementById("onboardingPage");
+  Object.entries(JOURNEY_ROUTES).forEach(([route, R]) => {
+    const flow = page?.querySelector(`.onboarding-flow[data-journey="${route}"]`), model = onboardingJourney.models[route];
+    if (!flow || !model || flow.querySelector(".ob-fold")) return;
+    const bar = document.createElement("div");
+    bar.className = "ob-fold-bar";
+    bar.innerHTML = `<span>Full detail of every stage and gate, by phase</span><button type="button" class="ob-fold-all" data-fold-all="${route}">Expand all</button>`;
+    flow.before(bar);
+    let key = "";
+    [...flow.children].forEach(el => {
+      const phase = R.phases.find(p => p.from === el.id);
+      if (phase) {
+        key = `${route}:${phase.letter}`;
+        const inPhase = model.items.filter(i => i.phase === phase);
+        const head = document.createElement("button");
+        head.type = "button";
+        head.className = "ob-fold";
+        head.dataset.fold = key;
+        head.setAttribute("aria-expanded", "false");
+        head.style.cssText = `--fold-bg:${phase.color};--fold-ink:${phase.tab}`;
+        head.innerHTML = `<span class="ob-fold-letter">${phase.letter}</span><span class="ob-fold-name">${escapeHtml(phase.label.replace(/^[A-F] · /, ""))}</span>`
+          + `<span class="ob-fold-meta">${[[inPhase.filter(i => i.type === "stage").length, "stage"], [inPhase.filter(i => i.type === "gate").length, "gate"]].filter(([n]) => n).map(([n, w]) => `${n} ${w}${n === 1 ? "" : "s"}`).join(" &middot; ")}</span><span class="ob-fold-chev" aria-hidden="true">&#9662;</span>`;
+        el.before(head);
+      }
+      if (key) { el.dataset.foldIn = key; el.classList.add("ob-folded"); }
+    });
+  });
+  page?.addEventListener("click", event => {
+    const head = event.target.closest(".ob-fold"), all = event.target.closest(".ob-fold-all");
+    if (head) journeySetFold(head.dataset.fold, head.getAttribute("aria-expanded") !== "true");
+    if (all) {
+      const open = all.textContent === "Expand all";
+      page.querySelectorAll(`.ob-fold[data-fold^="${all.dataset.foldAll}:"]`).forEach(h => journeySetFold(h.dataset.fold, open));
+    }
+  });
+}
+function journeySetFold(key, open) {
+  const page = document.getElementById("onboardingPage");
+  page.querySelector(`.ob-fold[data-fold="${key}"]`)?.setAttribute("aria-expanded", String(open));
+  page.querySelectorAll(`[data-fold-in="${key}"]`).forEach(el => el.classList.toggle("ob-folded", !open));
+  const route = key.split(":")[0], heads = [...page.querySelectorAll(`.ob-fold[data-fold^="${route}:"]`)];
+  const all = page.querySelector(`.ob-fold-all[data-fold-all="${route}"]`);
+  if (all) all.textContent = heads.every(h => h.getAttribute("aria-expanded") === "true") ? "Collapse all" : "Expand all";
+}
+// Open the phase an element of the detail sits in (before scrolling to it).
+function journeyUnfold(el) {
+  if (el?.dataset.foldIn) journeySetFold(el.dataset.foldIn, true);
+  return el;
 }
 document.querySelectorAll("[data-open-reference-detail]").forEach(button=>button.addEventListener("click",()=>showReferenceDetail(button.dataset.openReferenceDetail)));
 document.querySelectorAll("[data-open-prompt-panel]").forEach(button=>button.addEventListener("click",()=>{
@@ -31066,7 +31264,7 @@ function selectPromptLibraryItem(targetId) {
   document.querySelectorAll("[data-prompt-target]").forEach(button => {
     const active = button.dataset.promptTarget === targetId;
     button.classList.toggle("active", active);
-    button.setAttribute("aria-selected", String(active));
+    button.setAttribute("aria-pressed", String(active));
   });
   const activePanel = document.getElementById(targetId);
   if (activePanel) activePanel.scrollIntoView({ behavior: "smooth", block: "start" });

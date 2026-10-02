@@ -117,7 +117,22 @@ complete when opened by navigation or a direct link.
 **`browser/journey-tracker.spec.js`** -- the Onboarding flow tracker: add,
 save across a reload, map badge and its layer toggle, Advance and Edit from
 the inspector, remove, and CSV export/import (quoting, the formula guard, and
-skipped rows).
+skipped rows), and ticking a gate's go / no-go checklist for a tracked item
+(progress in the list and inspector, saved, and carried in the CSV).
+
+**`browser/journey-detail-folds.spec.js`** -- the stage and gate detail below
+the journey map folds under a heading per phase: closed at load, opened by its
+heading, Expand all or the inspector's "Open full stage detail", and shown in
+full when printed; plus the phone header (no stepper, nothing wider than the
+card).
+
+**`browser/journey-inspector-pinned.spec.js`** -- the desktop inspector stays
+pinned beside the map: the selected station and the inspector title are both on
+screen, including at the last gate and after "Show on map".
+
+**`browser/lifecycle-phone-layout.spec.js`** -- the Log assessment lifecycle at
+phone width: stage cards instead of a scroll box, no domain name split mid-word,
+a readable pyramid, and the redraw when crossing the breakpoint.
 
 ## Regenerating after a change to index.html
 
