@@ -75,13 +75,13 @@ describe('every nav class used has a click handler wired up (regression: .eccs-s
 });
 
 describe('showReferenceDetail routing completeness', () => {
-  test('every *ReferenceView article id has a matching key in detailConfig', () => {
-    const m = text.match(/const detailConfig=\{([\s\S]*?)\};/);
-    assert.ok(m, 'detailConfig object not found');
+  test('every *ReferenceView article id has a matching key in REFERENCE_DETAILS', () => {
+    const m = text.match(/const REFERENCE_DETAILS=\{([\s\S]*?)\};/);
+    assert.ok(m, 'REFERENCE_DETAILS object not found');
     const body = m[1];
     const configuredViews = new Set((body.match(/view:"([a-zA-Z]+)"/g) || []).map(s => s.match(/"([^"]+)"/)[1]));
     for (const { id } of articles) {
-      assert.ok(configuredViews.has(id), `article #${id} has no entry in showReferenceDetail's detailConfig`);
+      assert.ok(configuredViews.has(id), `article #${id} has no entry in REFERENCE_DETAILS (showReferenceDetail's article table)`);
     }
   });
 

@@ -9,7 +9,7 @@ const { withServerAndPage } = require('../lib/browser-harness');
 
 const TABLES = {
   questions: '#questionsTableBody tr',
-  'concept-definitions': '#conceptGrid > *',
+  'concept-definitions': '#conceptGrid .concept-card',
   'input-coverage': '#msPermissionsTableBody tr',
 };
 
