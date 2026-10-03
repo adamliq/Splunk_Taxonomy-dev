@@ -181,6 +181,13 @@ one page as they are built; and on a phone: record bottom sheets, compact cards
 with "More details", folded banners and filters, cards for every wide table but
 the ports matrix, and 24px controls (plus axe checks with a sheet open).
 
+**`browser/diagram-labels.spec.js`** -- diagram labels at 11px or more: the
+onboarding journey map (both routes) from 1600px down to 770px -- no overlaps,
+nothing off the map, beside the inspector where it fits and otherwise full width
+with the inspector as a bottom sheet (the picked station stays visible above it,
+plus an axe check) -- and the lifecycle pyramid's labels clearing their brackets
+and staying inside their layers.
+
 **`browser/lifecycle-phone-layout.spec.js`** -- the Log assessment lifecycle at
 phone width: stage cards instead of a scroll box, no domain name split mid-word,
 a readable pyramid, and the redraw when crossing the breakpoint.
