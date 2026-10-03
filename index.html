@@ -1770,6 +1770,7 @@
     .flow-table { max-height: none !important; overflow-y: visible; }
     .flow-table thead th { transform: translateY(var(--flow-shift, 0px)); }
     .flow-table tr.flow-cut { display: none; }
+    .flow-table td.flow-card-more { display: none; }
     .flow-more { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 10px 0 0; font-size: 13px; color: #475569; }
     .flow-more:empty { display: none; }
     .flow-more button { font-size: 12.5px; padding: 6px 12px; }
@@ -1782,9 +1783,101 @@
       .flow-table tbody tr.flow-cut { display: none; }
       .flow-table tbody td { border: 0 !important; padding: 4px 12px; position: static !important; box-shadow: none !important; width: auto !important; min-width: 0 !important; }
       .flow-table tbody td:empty { display: none; }
+      .flow-table tbody tr:not(.flow-open) td.flow-extra { display: none; }
+      .phone-cards-wrap { overflow: visible !important; max-height: none !important; border: 0 !important; box-shadow: none !important; background: transparent !important; }
+      table.phone-cards { min-width: 0 !important; width: 100% !important; table-layout: auto; }
+      table.phone-cards, table.phone-cards > tbody, table.phone-cards > tbody > tr, table.phone-cards > tbody > tr > td { display: block; }
+      table.phone-cards > thead { display: none; }
+      table.phone-cards > tbody > tr { margin-bottom: 10px; padding: 6px 0; border: 1px solid var(--border); border-radius: 10px; background: #fff; }
+      table.phone-cards > tbody > tr.selected { border-color: #1f4e78; box-shadow: inset 0 0 0 1px #1f4e78; }
+      table.phone-cards > tbody > tr > td { padding: 4px 12px; border: 0 !important; position: static !important; box-shadow: none !important; width: auto !important; min-width: 0 !important; max-width: none !important; white-space: normal !important; overflow-wrap: anywhere; }
+      table.phone-cards > tbody > tr > td:empty { display: none; }
+      table.phone-cards > tbody > tr > td[data-label]::before { content: attr(data-label); display: block; margin-bottom: 2px; color: #475569; font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+      table.phone-cards > tbody > tr > td input, table.phone-cards > tbody > tr > td select { max-width: 100%; }
+      [class*="scroll-hint"]:has(+ .phone-cards-wrap) { display: none !important; }
+      .assurance-detail-tabs { flex-wrap: wrap; overflow-x: visible; }
+      /* Record lists: the card carries the key fields; tapping it opens the full record. */
+      #catalogueTableBody > tr > td[data-label]:not([data-label="Source"]):not([data-label="Priority"]):not([data-label="Coverage"]):not([data-label="Assurance"]) { display: none; }
+      #assuranceTableBody > tr > td[data-label]:not([data-label="Component"]):not([data-label="Data source"]):not([data-label="Health"]):not([data-label="Assurance"]) { display: none; }
+      #viabilityTableBody > tr > td[data-label]:not([data-label="Assessment"]):not([data-label="Data source"]):not([data-label="Decision"]):not([data-label="Score"]):not([data-label="Next action"]) { display: none; }
+      #catalogueTableBody > tr[tabindex]::after, #assuranceTableBody > tr[tabindex]::after, #viabilityTableBody > tr[tabindex]::after { content: "Tap for the full record \203A"; display: block; padding: 4px 12px 2px; color: #1f4e78; font-size: 12px; font-weight: 700; }
+      /* The cards don't scroll sideways, so the "Swipe sideways" hint above them goes. */
+      .health-scroll-hint:has(+ .flow-table), .patterns-scroll-hint:has(+ .flow-table) { display: none !important; }
+      .flow-table tbody td.flow-card-more { display: block; padding-top: 6px; }
+      .flow-card-more button { min-height: 36px; padding: 6px 14px; border: 1px solid #bfd3e6; border-radius: 999px; background: #f1f7fd; color: #1f4e78; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
       .flow-table tbody td[data-label]::before { content: attr(data-label); display: block; font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #475569; margin-bottom: 1px; }
     }
     @media print { .flow-more { display: none !important; } .flow-table thead th { transform: none !important; } }
+    .hero-more, .filter-toggle, .controls-fold-toggle { display: none; }
+    @media (max-width: 760px) {
+      .hero-folded .hero-text { display: -webkit-box; overflow: hidden; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+      .hero-folded .hero-text-more { display: none; }
+      .hero-foldable .hero-more:not([hidden]) { display: inline-flex; align-items: center; min-height: 32px; margin-top: 6px; padding: 4px 14px; border: 1px solid currentColor; border-radius: 999px; background: transparent; color: inherit; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; opacity: .9; }
+      .filter-bar > .filter-toggle { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 6px 16px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: #1f4e78; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+      .filter-bar > .filter-toggle[aria-expanded="true"] { background: var(--primary-light); border-color: #93c5fd; }
+      .filter-bar:not(.filters-open) > select { display: none !important; }
+      .controls-fold-toggle { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 6px 16px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: #1f4e78; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+      .controls-fold-toggle[aria-expanded="true"] { background: var(--primary-light); border-color: #93c5fd; }
+      .catalogue-export-panel.controls-folded > select, .catalogue-export-panel.controls-folded > button:not(.controls-fold-toggle), .catalogue-export-panel.controls-folded .catalogue-export-copy span { display: none; }
+      #portsMatrixGridView.controls-folded > .ports-pattern-toolbar { display: none; }
+      #portsMatrixGridView > .controls-fold-toggle { margin: 0 0 10px; }
+      /* Summary tiles: three across, figure and label only. */
+      .assurance-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 6px; }
+      .assurance-kpis > .assurance-kpi { padding: 9px 10px; min-width: 0; overflow-wrap: anywhere; }
+      .assurance-kpis > .assurance-kpi strong { font-size: 20px; }
+      .assurance-kpis > .assurance-kpi small { display: none; }
+      /* Splunk API products: name and count only, with the selected product's details. */
+      .api-products { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .api-product { padding: 9px 11px; }
+      .api-product:not(.active) > :not(.api-product-head) { display: none; }
+      .api-product.active { grid-column: 1 / -1; }
+    }
+    /* Touch screens and phones: every control is at least 24px tall (WCAG 2.5.8), most 28px+.
+       Links and term buttons inside running text are left at text size. */
+    @media (max-width: 760px), (pointer: coarse) {
+      .pattern-id-button, .pattern-matrix-link, .row-copy-link, .detail-copy-link, .api-req-open, .assurance-mini-link, .lal-chip, .obj-toggle, .obj-tracker-btn, .legend-swatch-btn, .xref-chip, .bin-copy, .framework-more button {
+        min-height: 28px; display: inline-flex; align-items: center; padding-top: 3px; padding-bottom: 3px; box-sizing: border-box;
+      }
+      .lal-chip, .obj-toggle, .obj-tracker-btn, .legend-swatch-btn { display: flex; }
+      .bin-index { gap: 4px 6px; }
+      .bin-index a { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; min-height: 28px; padding: 0 4px; }
+      .bin-link { display: inline-flex; align-items: center; min-height: 28px; }
+      #splunkApiPage summary { min-height: 28px; display: flex; align-items: center; gap: 6px; }
+      #splunkApiPage summary::before { content: "\25B8"; }
+      #splunkApiPage details[open] > summary::before { content: "\25BE"; }
+      .sizing-grid input[type="checkbox"], #s3CalcPage input[type="checkbox"] { flex: 0 0 20px; width: 20px; min-width: 20px; height: 20px; }
+      .bin-link { min-width: 28px; }
+      #logAssessmentLifecyclePage li > button[data-lal-item] { min-height: 28px; }
+      #onboardingPage input[type="search"], #logAssessmentLifecyclePage input[type="search"] { min-height: 36px; }
+      #objectTaxonomyPage select { min-height: 32px; }
+    }
+    .row-copy-link { display: inline-block; margin: 4px 0 0 6px; padding: 1px 8px; border: 1px solid #cbd5e1; border-radius: 999px; background: #fff; color: #1f4e78; font: inherit; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .row-copy-link:hover { border-color: #93c5fd; background: #f8fbff; }
+    .detail-copy-link { margin-left: auto; padding: 4px 12px; border: 1px solid rgba(255,255,255,.55); border-radius: 999px; background: rgba(255,255,255,.12); color: #fff; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .detail-copy-link:hover { background: rgba(255,255,255,.22); }
+    .assurance-detail-badges:has(.detail-copy-link) { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    tr.row-linked > td { background: #fef9c3 !important; }
+    @media print { .row-copy-link, .detail-copy-link { display: none !important; } }
+    .detail-sheet-close { display: none; position: sticky; top: 8px; float: right; z-index: 3; width: 36px; height: 36px; margin: 8px 8px -44px 0; padding: 0; border: 0; border-radius: 999px; background: #f1f5f9; color: #0f172a; font-size: 20px; line-height: 1; cursor: pointer; }
+    @media (max-width: 1180px) {
+      #catalogueDetail { position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 60; min-height: 0; max-height: 80vh; overflow-y: auto; margin: 0; border-radius: 18px 18px 0 0; background: #fff; box-shadow: 0 -12px 30px rgba(15,23,42,.22); transform: translateY(105%); visibility: hidden; transition: transform .2s ease, visibility 0s linear .2s; }
+      #catalogueDetail.detail-sheet-open { transform: none; visibility: visible; transition: transform .2s ease; }
+      #catalogueDetail > .detail-sheet-close { display: block; }
+      #catalogueDetail .assurance-detail-body { max-height: none; overflow: visible; }
+    }
+    @media (max-width: 1050px) {
+      #assuranceDetail { position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 60; min-height: 0; max-height: 80vh; overflow-y: auto; margin: 0; border-radius: 18px 18px 0 0; background: #fff; box-shadow: 0 -12px 30px rgba(15,23,42,.22); transform: translateY(105%); visibility: hidden; transition: transform .2s ease, visibility 0s linear .2s; }
+      #assuranceDetail.detail-sheet-open { transform: none; visibility: visible; transition: transform .2s ease; }
+      #assuranceDetail > .detail-sheet-close { display: block; }
+      #assuranceDetail .assurance-detail-body { max-height: none; overflow: visible; }
+    }
+    @media (max-width: 1200px) {
+      #viabilityDetail { position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 60; min-height: 0; max-height: 80vh; overflow-y: auto; margin: 0; border-radius: 18px 18px 0 0; background: #fff; box-shadow: 0 -12px 30px rgba(15,23,42,.22); transform: translateY(105%); visibility: hidden; transition: transform .2s ease, visibility 0s linear .2s; }
+      #viabilityDetail.detail-sheet-open { transform: none; visibility: visible; transition: transform .2s ease; }
+      #viabilityDetail > .detail-sheet-close { display: block; }
+      #viabilityDetail .assurance-detail-body { max-height: none; overflow: visible; }
+    }
+    @media print { .detail-sheet { position: static !important; transform: none !important; visibility: visible !important; } .detail-sheet-close { display: none !important; } }
     .pattern-table-shell {
       overflow: auto;
       max-height: calc(100vh - 275px);
@@ -1904,21 +1997,22 @@
     .health-toolbar {
       grid-template-columns: minmax(280px, 1fr) minmax(210px, 290px) minmax(190px, 250px) minmax(160px, 210px) auto;
     }
-    .health-table { min-width: 3560px; }
+    .health-table { min-width: 3735px; }
     .health-table col:nth-child(1) { width: 135px; }
     .health-table col:nth-child(2) { width: 245px; }
     .health-table col:nth-child(3) { width: 285px; }
     .health-table col:nth-child(4) { width: 175px; }
-    .health-table col:nth-child(5) { width: 390px; }
-    .health-table col:nth-child(6) { width: 130px; }
-    .health-table col:nth-child(7) { width: 280px; }
-    .health-table col:nth-child(8) { width: 230px; }
-    .health-table col:nth-child(9) { width: 120px; }
-    .health-table col:nth-child(10) { width: 140px; }
-    .health-table col:nth-child(11) { width: 500px; }
-    .health-table col:nth-child(12) { width: 360px; }
-    .health-table col:nth-child(13) { width: 160px; }
-    .health-table col:nth-child(14) { width: 180px; }
+    .health-table col:nth-child(5) { width: 175px; }
+    .health-table col:nth-child(6) { width: 390px; }
+    .health-table col:nth-child(7) { width: 130px; }
+    .health-table col:nth-child(8) { width: 280px; }
+    .health-table col:nth-child(9) { width: 230px; }
+    .health-table col:nth-child(10) { width: 120px; }
+    .health-table col:nth-child(11) { width: 140px; }
+    .health-table col:nth-child(12) { width: 500px; }
+    .health-table col:nth-child(13) { width: 360px; }
+    .health-table col:nth-child(14) { width: 160px; }
+    .health-table col:nth-child(15) { width: 180px; }
     .health-table th:first-child,
     .health-table td:first-child {
       position: sticky;
@@ -4986,7 +5080,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.02 &middot; build 162</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.03 &middot; build 163</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -11434,7 +11528,7 @@ LOOKUP-severity = severity_lookup status_code OUTPUT severity</pre><p>This maps 
       <div class="eccs-table-wrap" role="region" aria-label="Splunk data pipeline stages" tabindex="0">
         <table class="eccs-table">
           <thead><tr><th>Pipeline</th><th>Stage</th><th>What happens</th><th>Common configuration</th><th>UF</th><th>HF/Indexer</th></tr></thead>
-          <tbody>
+          <tbody id="dataPipelineTableBody">
             <tr><td>Input pipeline</td><td>Source acquisition</td><td>Reads data from monitored files, operating-system inputs, raw TCP/UDP listeners, HEC, scripts or modular inputs.</td><td><code>inputs.conf</code></td><td>Y</td><td>Y</td></tr>
             <tr><td>Input pipeline</td><td>Input checkpointing</td><td>Tracks file offsets, CRC state or input-specific checkpoints so collection can resume without unnecessarily rereading data.</td><td><code>inputs.conf</code>, fishbucket, modular-input checkpoints</td><td>Y</td><td>Y</td></tr>
             <tr><td>Input pipeline</td><td>Input block creation</td><td>Divides the incoming raw stream into blocks for movement through the pipeline. These blocks are not yet individual Splunk events.</td><td>Internal processing</td><td>Y</td><td>Y</td></tr>
@@ -17767,14 +17861,14 @@ E. Assumptions and unresolved inputs</pre>
       <span class="patterns-stat"><strong id="healthInputTypeCount">58</strong> input types</span>
       <span class="patterns-stat"><strong id="healthSplLinkedCount">0</strong> linked to SPL Library</span>
       <span class="patterns-stat"><strong id="healthPersonalNotesCount">0</strong> matched in personal SPL notes</span>
-      <span class="patterns-stat"><strong>16</strong> comparison columns</span>
+      <span class="patterns-stat"><strong>17</strong> comparison columns</span>
     </div>
 
     <p class="health-scroll-hint" aria-hidden="true">&#8596; Swipe sideways to see category, priority, pass criteria, SPL Library cross-reference and more</p>
     <div class="pattern-table-shell" tabindex="0" aria-label="Scrollable health checks table">
       <table class="pattern-table health-table">
-        <colgroup><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /></colgroup>
-        <thead><tr><th scope="col">Test ID</th><th scope="col">Input type</th><th scope="col">Test name</th><th scope="col">Category</th><th scope="col">Description</th><th scope="col">Priority</th><th scope="col">Pass criteria</th><th scope="col">Failure action</th><th scope="col">Automation</th><th scope="col">Frequency</th><th scope="col">SPL query / definition</th><th scope="col">Thresholds</th><th scope="col">Lookback window</th><th scope="col">Owner</th><th scope="col">SPL Library</th><th scope="col">Personal SPL Notes</th></tr></thead>
+        <colgroup><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /></colgroup>
+        <thead><tr><th scope="col">Test ID</th><th scope="col">Input type</th><th scope="col">Test name</th><th scope="col">Category</th><th scope="col">Subcategory</th><th scope="col">Description</th><th scope="col">Priority</th><th scope="col">Pass criteria</th><th scope="col">Failure action</th><th scope="col">Automation</th><th scope="col">Frequency</th><th scope="col">SPL query / definition</th><th scope="col">Thresholds</th><th scope="col">Lookback window</th><th scope="col">Owner</th><th scope="col">SPL Library</th><th scope="col">Personal SPL Notes</th></tr></thead>
         <tbody id="healthTableBody"></tbody>
       </table>
     </div>
@@ -28367,6 +28461,12 @@ function exportViabilityCalculator(event) {
 }
 
 let currentActivePageKey = "info";
+// The app places the scroll itself on every page change and link (top of a page, a linked record
+// or section), so the browser's own restore on reload / Back would only fight it.
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+// Phone "Filters" buttons (built near the end of the script); recounted whenever a page opens.
+const filterToggles = [];
+function refreshFilterToggles() { filterToggles.forEach(t => t.count()); }
 // Tables and worked examples scroll sideways on a narrow screen, and keyboard users need a tab
 // stop on them to scroll. Only wrappers that overflow right now get one, so desktop keeps its tab
 // order; re-checked when a page or article opens, on resize and when a details block toggles.
@@ -28396,9 +28496,12 @@ function runFirstShowRenders(page) {
 }
 function setActivePage(pageName, updateHash = true) {
   const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "assessments", "sizing", "s3calc", "reference", "refFrameworkOverview", "refConceptDefinitions", "refAssessmentMethods", "refStandardsReferences", "refConfigFileReferences", "dataPipeline", "refNetworkReference", "refRoles", "refSplunkBin", "refSplunkTimezone", "refLogAssessmentLifecycle", "refQuestions", "refNamingConvention", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "refLoggingPatternAdvisor", "health", "portsMatrix", "externalTools", "splunkApi", "inputCoverage", "metrics"].includes(pageName) ? pageName : "info";
+  // Moving to another page adds a history entry, so Back returns to the page before; staying on
+  // a page (a filter, a sub-view) only rewrites the current entry.
+  const changedPage = selected !== currentActivePageKey;
   currentActivePageKey = selected;
   Object.entries(pageViews).forEach(([name, view]) => { view.hidden = name !== selected; });
-  if (selected === "reference") setReferenceDetailVisibility(/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#file-mon-/.test(location.hash) ? "file-monitoring-profile" : /^#rest-api-/.test(location.hash) ? "rest-api-collection-profile" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : /^#eda-/.test(location.hash) ? "eda-playbook" : "");
+  if (selected === "reference") setReferenceDetailVisibility(referenceDetailFromHash(location.hash) || (/^#eccs-/.test(location.hash) ? "eccs" : /^#novelty-/.test(location.hash) ? "marginal-novelty" : /^#icd-/.test(location.hash) ? "icd" : /^#pivot-/.test(location.hash) ? "pivot" : /^#timestamp-/.test(location.hash) ? "timestamp-quality" : /^#format-/.test(location.hash) ? "log-format-quality" : /^#datetime-format-/.test(location.hash) ? "datetime-format" : /^#datetime-parse-/.test(location.hash) ? "datetime-parse" : /^#line-break-/.test(location.hash) ? "line-break" : /^#field-extraction-/.test(location.hash) ? "field-extraction" : /^#retention-policy-/.test(location.hash) ? "retention-policy" : /^#access-control-/.test(location.hash) ? "access-control" : /^#file-mon-/.test(location.hash) ? "file-monitoring-profile" : /^#rest-api-/.test(location.hash) ? "rest-api-collection-profile" : /^#field-norm-/.test(location.hash) ? "field-normalisation" : /^#log-format-parse-/.test(location.hash) ? "log-format-parse" : /^#line-length-/.test(location.hash) ? "line-length" : /^#semantic-value-/.test(location.hash) ? "semantic-value" : /^#rri-/.test(location.hash) ? "response-readiness" : /^#oai-/.test(location.hash) ? "operational-assurance" : /^#tdi-/.test(location.hash) ? "threat-detection" : /^#bil-/.test(location.hash) ? "business-impact-level" : /^#cvi-/.test(location.hash) ? "cyber-value-index" : /^#lscv-/.test(location.hash) ? "log-source-cyber-value" : /^#entity-/.test(location.hash) ? "entity-coverage" : /^#identity-/.test(location.hash) ? "identity-diversity" : /^#ibs-/.test(location.hash) ? "investigation-breadth" : /^#cdc-/.test(location.hash) ? "context-dimension-coverage" : /^#inp-/.test(location.hash) ? "investigative-noise-percentage" : /^#dsa-/.test(location.hash) ? "data-source-assurance" : /^#etc-/.test(location.hash) ? "event-type-coverage" : /^#rfc-/.test(location.hash) ? "required-field-coverage" : /^#dqs-/.test(location.hash) ? "data-quality-score" : /^#eda-/.test(location.hash) ? "eda-playbook" : ""));
   
 Object.entries(pageTabs).forEach(([name, tab]) => {
     if (!tab) return;
@@ -28491,7 +28594,8 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
                   : selected === "metrics"
                     ? "#metrics"
                     : "#taxonomy";
-    history.replaceState(null, "", hash);
+    if (changedPage && location.hash !== hash) history.pushState(null, "", hash);
+    else history.replaceState(null, "", hash);
     if (selected === "portsMatrix") updatePortsMatrixHash();
     if (selected === "splunkApi") updateSplunkApiHash();
     if (selected === "onboarding") updateJourneyHash();
@@ -28500,6 +28604,7 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
     if (selected === "refLogAssessmentLifecycle") lalUpdateHash();
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
+  refreshFilterToggles();
   updateBackToTopVisibility();
   renderBreadcrumb();
   syncScrollRegionFocus();
@@ -30651,12 +30756,34 @@ function setReferenceDetailVisibility(detailName){
   if(metricAlertsConf) metricAlertsConf.hidden=detailName!=="metric-alerts-conf";
   if(metricRollupsConf) metricRollupsConf.hidden=detailName!=="metric-rollups-conf";
 }
+// Every reference article: the hash that links to it and its view element.
+const REFERENCE_DETAILS={eccs:{hash:"#eccs-definition",view:"eccsReferenceView"},"marginal-novelty":{hash:"#novelty-definition",view:"marginalNoveltyReferenceView"},icd:{hash:"#icd-definition",view:"icdReferenceView"},pivot:{hash:"#pivot-definition",view:"pivotReferenceView"},"timestamp-quality":{hash:"#timestamp-definition",view:"timestampQualityReferenceView"},"log-format-quality":{hash:"#format-definition",view:"logFormatQualityReferenceView"},"datetime-format":{hash:"#datetime-format-definition",view:"datetimeFormatReferenceView"},"datetime-parse":{hash:"#datetime-parse-definition",view:"datetimeParseReferenceView"},"username-format":{hash:"#username-format-definition",view:"usernameFormatReferenceView"},"line-break":{hash:"#line-break-definition",view:"lineBreakReferenceView"},"field-extraction":{hash:"#field-extraction-definition",view:"fieldExtractionReferenceView"},"search-command-types":{hash:"#search-command-types-definition",view:"searchCommandTypesReferenceView"},"outputs-conf":{hash:"#outputs-conf-definition",view:"outputsConfReferenceView"},"inputs-conf":{hash:"#inputs-conf-definition",view:"inputsConfReferenceView"},"db-inputs-conf":{hash:"#db-inputs-conf-definition",view:"dbInputsConfReferenceView"},"db-outputs-conf":{hash:"#db-outputs-conf-definition",view:"dbOutputsConfReferenceView"},"db-identities-conf":{hash:"#db-identities-conf-definition",view:"dbIdentitiesConfReferenceView"},"dbx-settings-conf":{hash:"#dbx-settings-conf-definition",view:"dbxSettingsConfReferenceView"},"db-connection-types-conf":{hash:"#db-connection-types-conf-definition",view:"dbConnectionTypesConfReferenceView"},"serverclass-conf":{hash:"#serverclass-conf-definition",view:"serverclassConfReferenceView"},"transforms-conf":{hash:"#transforms-conf-definition",view:"transformsConfReferenceView"},"tags-conf":{hash:"#tags-conf-definition",view:"tagsConfReferenceView"},"sourcetypes-conf":{hash:"#sourcetypes-conf-definition",view:"sourcetypesConfReferenceView"},"props-conf":{hash:"#props-conf-definition",view:"propsConfReferenceView"},"app-conf":{hash:"#app-conf-definition",view:"appConfReferenceView"},"authentication-conf":{hash:"#authentication-conf-definition",view:"authenticationConfReferenceView"},"deploymentclient-conf":{hash:"#deploymentclient-conf-definition",view:"deploymentclientConfReferenceView"},"eventtypes-conf":{hash:"#eventtypes-conf-definition",view:"eventtypesConfReferenceView"},"fields-conf":{hash:"#fields-conf-definition",view:"fieldsConfReferenceView"},"savedsearches-conf":{hash:"#savedsearches-conf-definition",view:"savedsearchesConfReferenceView"},"passwords-conf":{hash:"#passwords-conf-definition",view:"passwordsConfReferenceView"},"workflow-actions-conf":{hash:"#workflow-actions-conf-definition",view:"workflowActionsConfReferenceView"},"web-conf":{hash:"#web-conf-definition",view:"webConfReferenceView"},"web-features-conf":{hash:"#web-features-conf-definition",view:"webFeaturesConfReferenceView"},"user-prefs-conf":{hash:"#user-prefs-conf-definition",view:"userPrefsConfReferenceView"},"authorize-conf":{hash:"#authorize-conf-definition",view:"authorizeConfReferenceView"},"alert-actions-conf":{hash:"#alert-actions-conf-definition",view:"alertActionsConfReferenceView"},"collections-conf":{hash:"#collections-conf-definition",view:"collectionsConfReferenceView"},"commands-conf":{hash:"#commands-conf-definition",view:"commandsConfReferenceView"},"datamodels-conf":{hash:"#datamodels-conf-definition",view:"datamodelsConfReferenceView"},"distsearch-conf":{hash:"#distsearch-conf-definition",view:"distsearchConfReferenceView"},"federated-conf":{hash:"#federated-conf-definition",view:"federatedConfReferenceView"},"audit-conf":{hash:"#audit-conf-definition",view:"auditConfReferenceView"},"indexes-conf":{hash:"#indexes-conf-definition",view:"indexesConfReferenceView"},"instance-cfg-conf":{hash:"#instance-cfg-conf-definition",view:"instanceCfgConfReferenceView"},"retention-policy":{hash:"#retention-policy-definition",view:"retentionPolicyReferenceView"},"access-control":{hash:"#access-control-definition",view:"accessControlReferenceView"},"transport-delivery-patterns":{hash:"#tdp-comparison",view:"transportDeliveryPatternsReferenceView"},"file-monitoring-profile":{hash:"#file-mon-definition",view:"fileMonitoringProfileReferenceView"},"rest-api-collection-profile":{hash:"#rest-api-definition",view:"restApiCollectionProfileReferenceView"},"field-normalisation":{hash:"#field-norm-definition",view:"fieldNormalisationReferenceView"},"log-format-parse":{hash:"#log-format-parse-definition",view:"logFormatParseReferenceView"},"line-length":{hash:"#line-length-definition",view:"lineLengthReferenceView"},"semantic-value":{hash:"#semantic-value-definition",view:"semanticValueReferenceView"},"response-readiness":{hash:"#rri-definition",view:"responseReadinessReferenceView"},"operational-assurance":{hash:"#oai-definition",view:"operationalAssuranceReferenceView"},"threat-detection":{hash:"#tdi-definition",view:"threatDetectionReferenceView"},"business-impact-level":{hash:"#bil-definition",view:"businessImpactLevelReferenceView"},"cyber-value-index":{hash:"#cvi-definition",view:"cyberValueIndexReferenceView"},"log-source-cyber-value":{hash:"#lscv-definition",view:"logSourceCyberValueReferenceView"},"entity-coverage":{hash:"#entity-definition",view:"entityCoverageReferenceView"},"identity-diversity":{hash:"#identity-definition",view:"identityDiversityReferenceView"},"investigation-breadth":{hash:"#ibs-definition",view:"investigationBreadthReferenceView"},"context-dimension-coverage":{hash:"#cdc-definition",view:"contextDimensionCoverageReferenceView"},"investigative-noise-percentage":{hash:"#inp-definition",view:"investigativeNoisePercentageReferenceView"},"data-source-assurance":{hash:"#dsa-definition",view:"dataSourceAssuranceReferenceView"},"event-type-coverage":{hash:"#etc-definition",view:"eventTypeCoverageReferenceView"},"required-field-coverage":{hash:"#rfc-definition",view:"requiredFieldCoverageReferenceView"},"data-quality-score":{hash:"#dqs-definition",view:"dataQualityScoreReferenceView"},"log-assessment-framework":{hash:"#log-af-definition",view:"logAssessmentFrameworkReferenceView"},"eda-playbook":{hash:"#eda-definition",view:"edaPlaybookReferenceView"},"implementation-complexity":{hash:"#implementation-complexity-definition",view:"implementationComplexityReferenceView"},"configuration-footprint":{hash:"#configuration-footprint-definition",view:"configurationFootprintReferenceView"},"ingestion-latency":{hash:"#ingestion-latency-definition",view:"ingestionLatencyReferenceView"},"mean-time-to-detect":{hash:"#mean-time-to-detect-definition",view:"meanTimeToDetectReferenceView"},"server-conf":{hash:"#server-conf-definition",view:"serverConfReferenceView"},"limits-conf":{hash:"#limits-conf-definition",view:"limitsConfReferenceView"},"macros-conf":{hash:"#macros-conf-definition",view:"macrosConfReferenceView"},"restmap-conf":{hash:"#restmap-conf-definition",view:"restmapConfReferenceView"},"health-conf":{hash:"#health-conf-definition",view:"healthConfReferenceView"},"log-cfg-conf":{hash:"#log-cfg-conf-definition",view:"logCfgConfReferenceView"},"wmi-conf":{hash:"#wmi-conf-definition",view:"wmiConfReferenceView"},"transactiontypes-conf":{hash:"#transactiontypes-conf-definition",view:"transactiontypesConfReferenceView"},"default-meta-conf":{hash:"#default-meta-conf-definition",view:"defaultMetaConfReferenceView"},"field-filters-conf":{hash:"#field-filters-conf-definition",view:"fieldFiltersConfReferenceView"},"workload-pools-conf":{hash:"#workload-pools-conf-definition",view:"workloadPoolsConfReferenceView"},"workload-rules-conf":{hash:"#workload-rules-conf-definition",view:"workloadRulesConfReferenceView"},"workload-policy-conf":{hash:"#workload-policy-conf-definition",view:"workloadPolicyConfReferenceView"},"splunk-launch-conf":{hash:"#splunk-launch-conf-definition",view:"splunkLaunchConfReferenceView"},"user-seed-conf":{hash:"#user-seed-conf-definition",view:"userSeedConfReferenceView"},"multikv-conf":{hash:"#multikv-conf-definition",view:"multikvConfReferenceView"},"segmenters-conf":{hash:"#segmenters-conf-definition",view:"segmentersConfReferenceView"},"metric-alerts-conf":{hash:"#metric-alerts-conf-definition",view:"metricAlertsConfReferenceView"},"metric-rollups-conf":{hash:"#metric-rollups-conf-definition",view:"metricRollupsConfReferenceView"},"agent-management-conf":{hash:"#agent-management-conf-definition",view:"agentManagementConfReferenceView"},"authentication-node-conf":{hash:"#authentication-node-conf-definition",view:"authenticationNodeConfReferenceView"},"global-banner-conf":{hash:"#global-banner-conf-definition",view:"globalBannerConfReferenceView"},"checklist-conf":{hash:"#checklist-conf-definition",view:"checklistConfReferenceView"},"procmon-filters-conf":{hash:"#procmon-filters-conf-definition",view:"procmonFiltersConfReferenceView"},"source-classifier-conf":{hash:"#source-classifier-conf-definition",view:"sourceClassifierConfReferenceView"},"times-conf":{hash:"#times-conf-definition",view:"timesConfReferenceView"}};
+// Which article a hash points at: its own link (#app-conf-definition) or any section inside it
+// (#outputs-conf-syslog), so links to articles survive a reload, Back and Forward.
+function referenceDetailFromHash(hash){
+  if(!hash||hash.length<2) return "";
+  const own=Object.keys(REFERENCE_DETAILS).find(k=>REFERENCE_DETAILS[k].hash===hash);
+  if(own) return own;
+  let el=null; try{ el=document.getElementById(decodeURIComponent(hash.slice(1))); }catch{}
+  const article=el?.closest("article.eccs-reference");
+  return article ? Object.keys(REFERENCE_DETAILS).find(k=>REFERENCE_DETAILS[k].view===article.id)||"" : "";
+}
+// A link to a section inside an article (#outputs-conf-syslog) lands on that section.
+function revealReferenceSection(){
+  const detail=referenceDetailFromHash(location.hash);
+  if(!detail||REFERENCE_DETAILS[detail].hash===location.hash) return;
+  const el=document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  if(el) requestAnimationFrame(()=>el.scrollIntoView({behavior:"smooth",block:"start"}));
+}
 function showReferenceDetail(detailName){
-  setActivePage("reference");
+  // Opening another article from one already open adds a history entry, like changing page.
+  const fromArticle=currentActivePageKey==="reference"&&!!referenceDetailFromHash(location.hash);
+  // From an article, leave its history entry as it is (the new article gets its own below).
+  setActivePage("reference",!fromArticle);
   setReferenceDetailVisibility(detailName);
-  const detailConfig={eccs:{hash:"#eccs-definition",view:"eccsReferenceView"},"marginal-novelty":{hash:"#novelty-definition",view:"marginalNoveltyReferenceView"},icd:{hash:"#icd-definition",view:"icdReferenceView"},pivot:{hash:"#pivot-definition",view:"pivotReferenceView"},"timestamp-quality":{hash:"#timestamp-definition",view:"timestampQualityReferenceView"},"log-format-quality":{hash:"#format-definition",view:"logFormatQualityReferenceView"},"datetime-format":{hash:"#datetime-format-definition",view:"datetimeFormatReferenceView"},"datetime-parse":{hash:"#datetime-parse-definition",view:"datetimeParseReferenceView"},"username-format":{hash:"#username-format-definition",view:"usernameFormatReferenceView"},"line-break":{hash:"#line-break-definition",view:"lineBreakReferenceView"},"field-extraction":{hash:"#field-extraction-definition",view:"fieldExtractionReferenceView"},"search-command-types":{hash:"#search-command-types-definition",view:"searchCommandTypesReferenceView"},"outputs-conf":{hash:"#outputs-conf-definition",view:"outputsConfReferenceView"},"inputs-conf":{hash:"#inputs-conf-definition",view:"inputsConfReferenceView"},"db-inputs-conf":{hash:"#db-inputs-conf-definition",view:"dbInputsConfReferenceView"},"db-outputs-conf":{hash:"#db-outputs-conf-definition",view:"dbOutputsConfReferenceView"},"db-identities-conf":{hash:"#db-identities-conf-definition",view:"dbIdentitiesConfReferenceView"},"dbx-settings-conf":{hash:"#dbx-settings-conf-definition",view:"dbxSettingsConfReferenceView"},"db-connection-types-conf":{hash:"#db-connection-types-conf-definition",view:"dbConnectionTypesConfReferenceView"},"serverclass-conf":{hash:"#serverclass-conf-definition",view:"serverclassConfReferenceView"},"transforms-conf":{hash:"#transforms-conf-definition",view:"transformsConfReferenceView"},"tags-conf":{hash:"#tags-conf-definition",view:"tagsConfReferenceView"},"sourcetypes-conf":{hash:"#sourcetypes-conf-definition",view:"sourcetypesConfReferenceView"},"props-conf":{hash:"#props-conf-definition",view:"propsConfReferenceView"},"app-conf":{hash:"#app-conf-definition",view:"appConfReferenceView"},"authentication-conf":{hash:"#authentication-conf-definition",view:"authenticationConfReferenceView"},"deploymentclient-conf":{hash:"#deploymentclient-conf-definition",view:"deploymentclientConfReferenceView"},"eventtypes-conf":{hash:"#eventtypes-conf-definition",view:"eventtypesConfReferenceView"},"fields-conf":{hash:"#fields-conf-definition",view:"fieldsConfReferenceView"},"savedsearches-conf":{hash:"#savedsearches-conf-definition",view:"savedsearchesConfReferenceView"},"passwords-conf":{hash:"#passwords-conf-definition",view:"passwordsConfReferenceView"},"workflow-actions-conf":{hash:"#workflow-actions-conf-definition",view:"workflowActionsConfReferenceView"},"web-conf":{hash:"#web-conf-definition",view:"webConfReferenceView"},"web-features-conf":{hash:"#web-features-conf-definition",view:"webFeaturesConfReferenceView"},"user-prefs-conf":{hash:"#user-prefs-conf-definition",view:"userPrefsConfReferenceView"},"authorize-conf":{hash:"#authorize-conf-definition",view:"authorizeConfReferenceView"},"alert-actions-conf":{hash:"#alert-actions-conf-definition",view:"alertActionsConfReferenceView"},"collections-conf":{hash:"#collections-conf-definition",view:"collectionsConfReferenceView"},"commands-conf":{hash:"#commands-conf-definition",view:"commandsConfReferenceView"},"datamodels-conf":{hash:"#datamodels-conf-definition",view:"datamodelsConfReferenceView"},"distsearch-conf":{hash:"#distsearch-conf-definition",view:"distsearchConfReferenceView"},"federated-conf":{hash:"#federated-conf-definition",view:"federatedConfReferenceView"},"audit-conf":{hash:"#audit-conf-definition",view:"auditConfReferenceView"},"indexes-conf":{hash:"#indexes-conf-definition",view:"indexesConfReferenceView"},"instance-cfg-conf":{hash:"#instance-cfg-conf-definition",view:"instanceCfgConfReferenceView"},"retention-policy":{hash:"#retention-policy-definition",view:"retentionPolicyReferenceView"},"access-control":{hash:"#access-control-definition",view:"accessControlReferenceView"},"transport-delivery-patterns":{hash:"#tdp-comparison",view:"transportDeliveryPatternsReferenceView"},"file-monitoring-profile":{hash:"#file-mon-definition",view:"fileMonitoringProfileReferenceView"},"rest-api-collection-profile":{hash:"#rest-api-definition",view:"restApiCollectionProfileReferenceView"},"field-normalisation":{hash:"#field-norm-definition",view:"fieldNormalisationReferenceView"},"log-format-parse":{hash:"#log-format-parse-definition",view:"logFormatParseReferenceView"},"line-length":{hash:"#line-length-definition",view:"lineLengthReferenceView"},"semantic-value":{hash:"#semantic-value-definition",view:"semanticValueReferenceView"},"response-readiness":{hash:"#rri-definition",view:"responseReadinessReferenceView"},"operational-assurance":{hash:"#oai-definition",view:"operationalAssuranceReferenceView"},"threat-detection":{hash:"#tdi-definition",view:"threatDetectionReferenceView"},"business-impact-level":{hash:"#bil-definition",view:"businessImpactLevelReferenceView"},"cyber-value-index":{hash:"#cvi-definition",view:"cyberValueIndexReferenceView"},"log-source-cyber-value":{hash:"#lscv-definition",view:"logSourceCyberValueReferenceView"},"entity-coverage":{hash:"#entity-definition",view:"entityCoverageReferenceView"},"identity-diversity":{hash:"#identity-definition",view:"identityDiversityReferenceView"},"investigation-breadth":{hash:"#ibs-definition",view:"investigationBreadthReferenceView"},"context-dimension-coverage":{hash:"#cdc-definition",view:"contextDimensionCoverageReferenceView"},"investigative-noise-percentage":{hash:"#inp-definition",view:"investigativeNoisePercentageReferenceView"},"data-source-assurance":{hash:"#dsa-definition",view:"dataSourceAssuranceReferenceView"},"event-type-coverage":{hash:"#etc-definition",view:"eventTypeCoverageReferenceView"},"required-field-coverage":{hash:"#rfc-definition",view:"requiredFieldCoverageReferenceView"},"data-quality-score":{hash:"#dqs-definition",view:"dataQualityScoreReferenceView"},"log-assessment-framework":{hash:"#log-af-definition",view:"logAssessmentFrameworkReferenceView"},"eda-playbook":{hash:"#eda-definition",view:"edaPlaybookReferenceView"},"implementation-complexity":{hash:"#implementation-complexity-definition",view:"implementationComplexityReferenceView"},"configuration-footprint":{hash:"#configuration-footprint-definition",view:"configurationFootprintReferenceView"},"ingestion-latency":{hash:"#ingestion-latency-definition",view:"ingestionLatencyReferenceView"},"mean-time-to-detect":{hash:"#mean-time-to-detect-definition",view:"meanTimeToDetectReferenceView"},"server-conf":{hash:"#server-conf-definition",view:"serverConfReferenceView"},"limits-conf":{hash:"#limits-conf-definition",view:"limitsConfReferenceView"},"macros-conf":{hash:"#macros-conf-definition",view:"macrosConfReferenceView"},"restmap-conf":{hash:"#restmap-conf-definition",view:"restmapConfReferenceView"},"health-conf":{hash:"#health-conf-definition",view:"healthConfReferenceView"},"log-cfg-conf":{hash:"#log-cfg-conf-definition",view:"logCfgConfReferenceView"},"wmi-conf":{hash:"#wmi-conf-definition",view:"wmiConfReferenceView"},"transactiontypes-conf":{hash:"#transactiontypes-conf-definition",view:"transactiontypesConfReferenceView"},"default-meta-conf":{hash:"#default-meta-conf-definition",view:"defaultMetaConfReferenceView"},"field-filters-conf":{hash:"#field-filters-conf-definition",view:"fieldFiltersConfReferenceView"},"workload-pools-conf":{hash:"#workload-pools-conf-definition",view:"workloadPoolsConfReferenceView"},"workload-rules-conf":{hash:"#workload-rules-conf-definition",view:"workloadRulesConfReferenceView"},"workload-policy-conf":{hash:"#workload-policy-conf-definition",view:"workloadPolicyConfReferenceView"},"splunk-launch-conf":{hash:"#splunk-launch-conf-definition",view:"splunkLaunchConfReferenceView"},"user-seed-conf":{hash:"#user-seed-conf-definition",view:"userSeedConfReferenceView"},"multikv-conf":{hash:"#multikv-conf-definition",view:"multikvConfReferenceView"},"segmenters-conf":{hash:"#segmenters-conf-definition",view:"segmentersConfReferenceView"},"metric-alerts-conf":{hash:"#metric-alerts-conf-definition",view:"metricAlertsConfReferenceView"},"metric-rollups-conf":{hash:"#metric-rollups-conf-definition",view:"metricRollupsConfReferenceView"},"agent-management-conf":{hash:"#agent-management-conf-definition",view:"agentManagementConfReferenceView"},"authentication-node-conf":{hash:"#authentication-node-conf-definition",view:"authenticationNodeConfReferenceView"},"global-banner-conf":{hash:"#global-banner-conf-definition",view:"globalBannerConfReferenceView"},"checklist-conf":{hash:"#checklist-conf-definition",view:"checklistConfReferenceView"},"procmon-filters-conf":{hash:"#procmon-filters-conf-definition",view:"procmonFiltersConfReferenceView"},"source-classifier-conf":{hash:"#source-classifier-conf-definition",view:"sourceClassifierConfReferenceView"},"times-conf":{hash:"#times-conf-definition",view:"timesConfReferenceView"}};
-  const config=detailConfig[detailName]||detailConfig.eccs;
-  if(history.replaceState) history.replaceState(null,"",config.hash);
+  const config=REFERENCE_DETAILS[detailName]||REFERENCE_DETAILS.eccs;
+  if(fromArticle&&location.hash!==config.hash) history.pushState(null,"",config.hash);
+  else if(history.replaceState) history.replaceState(null,"",config.hash);
   requestAnimationFrame(()=>document.getElementById(config.view)?.scrollIntoView({behavior:"smooth",block:"start"}));
   // setActivePage("reference") above already rendered the breadcrumb once, but from the OLD
   // location.hash -- re-render now that setReferenceDetailVisibility(detailName) has put the
@@ -31655,12 +31782,12 @@ function pageNameFromHash() {
   if (/^#rest-api-/.test(location.hash)) return "reference";
   if (location.hash === "#prompt-library") return "prompts";
   if (location.hash === "#framework" || location.hash === "#cmei") return "cmei";
-  if (location.hash === "#assurance-model") return "assurance";
-  if (location.hash === "#viability-assessment") return "viability";
-  if (location.hash === "#data-source-catalogue") return "catalogue";
-  if (location.hash === "#logging-patterns") return "patterns";
+  if (/^#assurance-model(\?|$)/.test(location.hash)) return "assurance";
+  if (/^#viability-assessment(\?|$)/.test(location.hash)) return "viability";
+  if (/^#data-source-catalogue(\?|$)/.test(location.hash)) return "catalogue";
+  if (/^#logging-patterns(\?|$)/.test(location.hash)) return "patterns";
   if (location.hash === "#logging-pattern-advisor") return "refLoggingPatternAdvisor";
-  if (location.hash === "#health-checks") return "health";
+  if (/^#health-checks(\?|$)/.test(location.hash)) return "health";
   if (/^#ports-matrix/.test(location.hash)) return "portsMatrix";
   if (location.hash === "#my-tools") return "externalTools";
   if (/^#splunk-api(\?|$)/.test(location.hash)) return "splunkApi";
@@ -31682,6 +31809,7 @@ function pageNameFromHash() {
   if (/^#log-assessment-lifecycle(\?|$)/.test(location.hash)) return "refLogAssessmentLifecycle";
   if (location.hash === "#questions") return "refQuestions";
   if (location.hash === "#naming-convention") return "refNamingConvention";
+  if (referenceDetailFromHash(location.hash)) return "reference";
   return "info";
 }
 
@@ -31719,7 +31847,7 @@ function renderLoggingPatternTable() {
     patternTableBody.innerHTML = visibleLoggingPatternRows.map(row => {
       const cells = loggingPatternTableColumns.map(column => {
         if (column === "Pattern ID") {
-          return `<td><button class="pattern-id-button" type="button" data-pattern-id="${escapeHtml(row[column])}" title="Open ${escapeHtml(row[column])} in the taxonomy explorer">${escapeHtml(row[column])}</button><button class="pattern-matrix-link" type="button" data-matrix-pattern-id="${escapeHtml(row[column])}" title="View ${escapeHtml(row[column])} highlighted in the Ports Matrix">View in matrix &rarr;</button></td>`;
+          return `<td><button class="pattern-id-button" type="button" data-pattern-id="${escapeHtml(row[column])}" title="Open ${escapeHtml(row[column])} in the taxonomy explorer">${escapeHtml(row[column])}</button><button class="pattern-matrix-link" type="button" data-matrix-pattern-id="${escapeHtml(row[column])}" title="View ${escapeHtml(row[column])} highlighted in the Ports Matrix">View in matrix &rarr;</button><button class="row-copy-link" type="button" data-copy-hash="#logging-patterns?pattern=${encodeURIComponent(row[column])}" aria-label="Copy link to ${escapeHtml(row[column])}">Copy link</button></td>`;
         }
         if (column === "Destination") return `<td>${patternDestinationBadge(row[column])}</td>`;
         const requirementClass = column.endsWith("requirements") ? ' class="requirement-cell"' : "";
@@ -41364,7 +41492,7 @@ function renderHealthCheckTable() {
     healthTableBody.innerHTML = visibleHealthCheckRows.map(row => {
       const cells = healthCheckTableColumns.map(column => {
         if (column === "Test ID") {
-          return `<td><button class="pattern-id-button" type="button" data-health-check-id="${escapeHtml(row[column])}" title="Open ${escapeHtml(row[column])} in the taxonomy explorer">${escapeHtml(row[column])}</button></td>`;
+          return `<td><button class="pattern-id-button" type="button" data-health-check-id="${escapeHtml(row[column])}" title="Open ${escapeHtml(row[column])} in the taxonomy explorer">${escapeHtml(row[column])}</button><button class="row-copy-link" type="button" data-copy-hash="#health-checks?test=${encodeURIComponent(row[column])}" aria-label="Copy link to ${escapeHtml(row[column])}">Copy link</button></td>`;
         }
         if (column === "Priority") return `<td>${priorityBadge(row[column])}</td>`;
         if (column === "Automation") return `<td>${automationBadge(row[column])}</td>`;
@@ -48152,6 +48280,7 @@ document.getElementById("closeMetricDetail").addEventListener("click", closeMetr
 metricDetailModal.addEventListener("click", event => { if (event.target === metricDetailModal) closeMetricDetail(); });
 document.addEventListener("keydown", event => { if (event.key === "Escape" && metricDetailModal.classList.contains("open")) closeMetricDetail(); });
 socMetricsTableBody.addEventListener("click", event => {
+  if (event.target.closest(".flow-card-more")) return;
   const tr = event.target.closest("tr.metric-row");
   if (!tr) return;
   const row = visibleSocMetricsRows[Number(tr.dataset.rowIndex)];
@@ -48159,6 +48288,7 @@ socMetricsTableBody.addEventListener("click", event => {
 });
 socMetricsTableBody.addEventListener("keydown", event => {
   if (event.key !== "Enter" && event.key !== " ") return;
+  if (event.target.closest(".flow-card-more")) return;
   const tr = event.target.closest("tr.metric-row");
   if (!tr) return;
   event.preventDefault();
@@ -48365,6 +48495,8 @@ window.addEventListener("hashchange", () => {
   if (hashPage === "objectTaxonomy") applySotHash();
   if (hashPage === "refSplunkBin") applyBinHash();
   if (hashPage === "refLogAssessmentLifecycle") lalApplyHash();
+  if (hashPage === "reference") revealReferenceSection();
+  if (["catalogue", "assurance", "viability", "patterns", "health"].includes(hashPage)) applyRecordLink();
 });
 
 advisorForm.addEventListener("submit", event => {
@@ -50008,6 +50140,7 @@ window.addEventListener("beforeprint", () => { fillPrintHeader(); fitTablesForPr
 window.addEventListener("afterprint", () => { unfitTablesAfterPrint(); clearPrintScope(); });
 
 setActivePage(pageNameFromHash(), false);
+if (pageNameFromHash() === "reference") revealReferenceSection();
 if (pageNameFromHash() === "taxonomy") applyTaxHash();
 if (pageNameFromHash() === "refSplunkBin") applyBinHash();
 
@@ -53751,9 +53884,16 @@ document.addEventListener("keydown", event => {
  * count resets when a filter re-renders the rows. On phones each row is a
  * card labelled from the column headers.
  * ---------------------------------------------------------------------- */
-const FLOW_TABLE_BODIES = ["questionsTableBody", "healthTableBody", "socMetricsTableBody", "rolesTableBody", "apiTableBody", "patternTableBody", "splunkPortsTableBody"];
+const FLOW_TABLE_BODIES = ["questionsTableBody", "healthTableBody", "socMetricsTableBody", "rolesTableBody", "rolesUnassignedBody", "apiTableBody", "patternTableBody", "splunkPortsTableBody", "dataPipelineTableBody"];
 // 100 rows at a time; 25 on a phone, where each row is a tall card.
 const FLOW_PAGE = window.matchMedia("(max-width: 760px)").matches ? 25 : 100;
+// On a phone, the wide tables' cards show these fields; the rest open with "More details".
+const FLOW_CARD_KEYS = {
+  healthTableBody: ["Test ID", "Test name", "Category", "Priority", "Automation"],
+  socMetricsTableBody: ["Metric", "What it measures", "Domain", "Indicator Type"],
+  rolesTableBody: ["Role", "Capability", "What it lets you do", "Priv"],
+  patternTableBody: ["Pattern ID", "Pattern", "Category", "Transport", "Destination"],
+};
 const flowTables = [];
 function initFlowTables() {
   FLOW_TABLE_BODIES.forEach(id => {
@@ -53763,9 +53903,23 @@ function initFlowTables() {
     const more = document.createElement("div");
     more.className = "flow-more";
     wrap.after(more);
-    const ft = { tbody, table, wrap, more, limit: FLOW_PAGE, heads: [...table.tHead.rows[0].cells].map(th => th.textContent.trim()) };
+    const ft = { tbody, table, wrap, more, limit: FLOW_PAGE, heads: [...table.tHead.rows[0].cells].map(th => th.textContent.trim()), keys: FLOW_CARD_KEYS[id] };
     flowTables.push(ft);
-    new MutationObserver(() => { ft.limit = FLOW_PAGE; flowApply(ft); }).observe(tbody, { childList: true });
+    if (ft.keys) tbody.addEventListener("click", event => {
+      const button = event.target.closest(".flow-card-more button");
+      if (!button) return;
+      const row = button.closest("tr"), open = !row.classList.contains("flow-open");
+      row.classList.toggle("flow-open", open);
+      button.setAttribute("aria-expanded", String(open));
+      button.textContent = open ? "Fewer details" : `More details (${button.dataset.count})`;
+    });
+    // Cut the rows to one page as they are written, before the browser lays them all out (a
+    // 2,747-row table took ~0.4s to open when the cut came a moment later); the observer covers
+    // any other way rows are added.
+    const html = Object.getOwnPropertyDescriptor(Element.prototype, "innerHTML");
+    Object.defineProperty(tbody, "innerHTML", { configurable: true, get() { return html.get.call(this); },
+      set(value) { html.set.call(this, value); ft.limit = FLOW_PAGE; ft.applied = true; flowApply(ft); } });
+    new MutationObserver(() => { if (ft.applied) { ft.applied = false; return; } ft.limit = FLOW_PAGE; flowApply(ft); }).observe(tbody, { childList: true });
     more.addEventListener("click", event => {
       const button = event.target.closest("button");
       if (!button) return;
@@ -53783,8 +53937,19 @@ function flowApply(ft) {
   const rows = [...ft.tbody.rows].filter(r => r.cells.length > 1);
   rows.forEach((row, i) => {
     row.classList.toggle("flow-cut", i >= ft.limit);
-    if (!row.dataset.flowLabelled) {
-      [...row.cells].forEach((td, c) => { if (ft.heads[c]) td.dataset.label = ft.heads[c]; });
+    // Rows are labelled for the phone cards when they are first shown.
+    if (i < ft.limit && !row.dataset.flowLabelled) {
+      [...row.cells].forEach((td, c) => {
+        if (ft.heads[c]) td.dataset.label = ft.heads[c];
+        if (ft.keys && !ft.keys.includes(ft.heads[c])) td.classList.add("flow-extra");
+      });
+      if (ft.keys) {
+        const extra = [...row.cells].filter(td => td.classList.contains("flow-extra") && td.textContent.trim()).length;
+        // A search match inside a folded field opens the card, so the reason it matched shows.
+        if (row.querySelector(".flow-extra mark")) row.classList.add("flow-open");
+        const open = row.classList.contains("flow-open");
+        if (extra) row.insertAdjacentHTML("beforeend", `<td class="flow-card-more"><button type="button" aria-expanded="${open}" data-count="${extra}">${open ? "Fewer details" : `More details (${extra})`}</button></td>`);
+      }
       row.dataset.flowLabelled = "1";
     }
   });
@@ -53810,6 +53975,219 @@ function flowReveal(el) {
   if (ft && el.closest("tr")?.classList.contains("flow-cut")) { ft.limit = Infinity; flowApply(ft); }
 }
 initFlowTables();
+
+// Phones: a page banner's description folds to three lines (More / Less), so the page's own
+// content starts within the first screen. Notes and warnings in the banner stay as they are.
+const PAGE_HERO_SELECTOR = ".patterns-hero, .reference-hero, .catalogue-hero, .assurance-hero, .viability-hero, .cmei-hero, .assessments-hero, .info-hero";
+(function initHeroFolds() {
+  Object.values(pageViews).forEach(view => {
+    const hero = view.querySelector(PAGE_HERO_SELECTOR);
+    const texts = hero ? [...hero.querySelectorAll("p")].filter(p => !p.closest(".eccs-note, nav, [class*='actions'], [class*='glance']")) : [];
+    if (!texts.length) return;
+    hero.classList.add("hero-foldable", "hero-folded");
+    texts.forEach((p, i) => p.classList.add(i ? "hero-text-more" : "hero-text"));
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "hero-more";
+    button.hidden = true;
+    button.setAttribute("aria-expanded", "false");
+    button.textContent = "More";
+    texts[texts.length - 1].after(button);
+    button.addEventListener("click", () => {
+      const folded = hero.classList.toggle("hero-folded");
+      button.setAttribute("aria-expanded", String(!folded));
+      button.textContent = folded ? "More" : "Less";
+    });
+    // Offer More only when something is folded away (the text can be filled in later).
+    new ResizeObserver(() => {
+      if (!hero.classList.contains("hero-folded")) return;
+      button.hidden = !(texts.length > 1 || texts[0].scrollHeight > texts[0].clientHeight + 2);
+    }).observe(texts[0]);
+  });
+})();
+// Phones: a toolbar with three or more filters keeps its search box and buttons, and puts the
+// filters behind a "Filters" button that counts how many are set.
+(function initFilterToggles() {
+  document.querySelectorAll(".patterns-toolbar, .assurance-toolbar, .viability-toolbar, .catalogue-toolbar").forEach(bar => {
+    const selects = [...bar.querySelectorAll(":scope > select")];
+    if (selects.length < 3) return;
+    bar.classList.add("filter-bar");
+    // A second filter row straight after the first shares its button.
+    const prev = filterToggles.find(t => t.bars.includes(bar.previousElementSibling));
+    if (prev) { prev.bars.push(bar); prev.selects.push(...selects); prev.button.setAttribute("aria-controls", prev.selects.map(s => s.id).join(" ")); prev.count(); return; }
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "filter-toggle";
+    button.setAttribute("aria-expanded", "false");
+    button.setAttribute("aria-controls", selects.map(s => s.id).join(" "));
+    const search = bar.querySelector(":scope > input");
+    if (search) search.after(button); else bar.prepend(button);
+    const toggle = { bars: [bar], selects, button, count: () => {
+      const n = toggle.selects.filter(s => s.selectedIndex > 0).length;
+      button.textContent = n ? `Filters (${n})` : "Filters";
+    } };
+    filterToggles.push(toggle);
+    toggle.count();
+    button.addEventListener("click", () => {
+      const open = !bar.classList.contains("filters-open");
+      toggle.bars.forEach(b => b.classList.toggle("filters-open", open));
+      button.setAttribute("aria-expanded", String(open));
+    });
+    const view = bar.closest(".page-view") || document;
+    view.addEventListener("change", toggle.count);
+    view.addEventListener("input", toggle.count);
+    view.addEventListener("click", () => requestAnimationFrame(toggle.count));
+  });
+})();
+
+// Phones: other blocks of controls fold behind one button -- the catalogue's event-requirement
+// export and the ports matrix's highlight and filter controls.
+function initPhoneControlFold(container, controls, label) {
+  if (!container || !controls.length) return;
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "controls-fold-toggle";
+  button.setAttribute("aria-expanded", "false");
+  button.textContent = label;
+  controls[0].before(button);
+  container.classList.add("controls-folded");
+  button.addEventListener("click", () => {
+    const open = container.classList.toggle("controls-folded") === false;
+    button.setAttribute("aria-expanded", String(open));
+  });
+}
+initPhoneControlFold(document.querySelector(".catalogue-export-panel"),
+  [...document.querySelectorAll(".catalogue-export-panel > select, .catalogue-export-panel > button")], "Export event requirements…");
+initPhoneControlFold(document.getElementById("portsMatrixGridView"),
+  [...document.querySelectorAll("#portsMatrixGridView > .ports-pattern-toolbar")], "Highlight, filter & export");
+
+// Catalogue, assurance and viability: once the list and its detail panel share one column, the
+// detail is a bottom sheet that a row selection opens (instead of appearing below the whole
+// list) and its button or Escape closes.
+const DETAIL_SHEETS = [
+  { panel: "catalogueDetail", rows: "catalogueTableBody", attr: "catalogueId", width: 1180, page: "catalogue" },
+  { panel: "assuranceDetail", rows: "assuranceTableBody", attr: "assuranceId", width: 1050, page: "assurance" },
+  { panel: "viabilityDetail", rows: "viabilityTableBody", attr: "viabilityId", width: 1200, page: "viability" },
+];
+function detailSheetOpen(sheet, open) {
+  const panel = document.getElementById(sheet.panel);
+  if (!panel) return;
+  const on = open && window.matchMedia(`(max-width: ${sheet.width}px)`).matches;
+  panel.classList.toggle("detail-sheet-open", on);
+  if (on) { panel.scrollTop = 0; panel.querySelector(".detail-sheet-close")?.focus({ preventScroll: true }); }
+}
+DETAIL_SHEETS.forEach(sheet => {
+  const panel = document.getElementById(sheet.panel), rows = document.getElementById(sheet.rows);
+  if (!panel || !rows) return;
+  panel.classList.add("detail-sheet");
+  panel.setAttribute("aria-label", "Selected record");
+  // The panel is re-rendered on every selection; keep its close button in place.
+  const addClose = () => {
+    if (!panel.querySelector(":scope > .detail-sheet-close")) panel.insertAdjacentHTML("afterbegin", '<button type="button" class="detail-sheet-close" aria-label="Close detail">&times;</button>');
+    const badges = panel.querySelector(".assurance-detail-badges");
+    if (badges && !badges.querySelector(".detail-copy-link")) badges.insertAdjacentHTML("beforeend", `<button type="button" class="detail-copy-link" data-record-page="${sheet.page}">Copy link</button>`);
+  };
+  addClose();
+  new MutationObserver(addClose).observe(panel, { childList: true });
+  panel.addEventListener("click", event => { if (event.target.closest(".detail-sheet-close")) { detailSheetOpen(sheet, false); rows.querySelector("tr.selected")?.focus({ preventScroll: true }); } });
+  const pick = event => {
+    if (!event.target.closest(`[data-${sheet.attr.replace(/[A-Z]/g, c => "-" + c.toLowerCase())}]`)) return;
+    detailSheetOpen(sheet, true);
+    recordLinkWrite(sheet.page);
+  };
+  rows.addEventListener("click", pick);
+  rows.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") pick(event); });
+});
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") DETAIL_SHEETS.forEach(sheet => {
+    if (!document.getElementById(sheet.panel)?.classList.contains("detail-sheet-open")) return;
+    detailSheetOpen(sheet, false);
+    document.getElementById(sheet.rows)?.querySelector("tr.selected")?.focus({ preventScroll: true });
+  });
+});
+
+// Phones: the remaining wide tables become labelled cards, like the big tables above -- the S3
+// calculator's, naming convention, assurance, viability, catalogue and the ports reference
+// tables. The ports matrix itself is a true grid and keeps its sideways scroll.
+const PHONE_CARD_TABLES = "#s3CalcPage .eccs-table-wrap > table, .naming-table-wrap > table, .assurance-table-wrap > table, .calc-reference-table-wrap > table, .catalogue-table-wrap > table, #patternsPage .eccs-table-wrap > table, #portsMatrixPage .eccs-table-wrap > table:not(#portsMatrixTable)";
+function phoneCardLabel(table, heads) {
+  [...table.tBodies].forEach(body => [...body.rows].forEach(row => {
+    if (row.cells.length < 2) return;
+    let col = 0;
+    [...row.cells].forEach(cell => { if (heads[col] && !cell.dataset.label) cell.dataset.label = heads[col]; col += cell.colSpan || 1; });
+  }));
+}
+document.querySelectorAll(PHONE_CARD_TABLES).forEach(table => {
+  const head = table.tHead?.rows;
+  if (!head || head.length !== 1 || table.closest(".flow-table")) return;
+  const heads = [...head[0].cells].flatMap(th => Array(th.colSpan || 1).fill(th.textContent.trim()));
+  table.classList.add("phone-cards");
+  table.parentElement.classList.add("phone-cards-wrap");
+  phoneCardLabel(table, heads);
+  new MutationObserver(() => phoneCardLabel(table, heads)).observe(table, { childList: true, subtree: true });
+});
+
+// --- Shareable record links ---
+// #data-source-catalogue?source=SRC-003, #assurance-model?record=…, #viability-assessment?record=…,
+// #logging-patterns?pattern=LP-001-SC and #health-checks?test=TC-AEH-001 open the page with that
+// record shown: filters cleared, the record selected (or its row highlighted) and scrolled to.
+const RECORD_LINKS = {
+  catalogue: { hash: "#data-source-catalogue", param: "source", exists: id => sourceCatalogueRecords.some(r => r.sourceId === id),
+    filters: ["catalogueCategoryFilter", "cataloguePriorityFilter", "catalogueCoverageFilter", "catalogueSearch"],
+    select: id => { selectedCatalogueId = id; selectedCatalogueTab = "overview"; renderSourceCatalogueTable(); },
+    row: id => catalogueTableBody.querySelector(`[data-catalogue-id="${CSS.escape(id)}"]`), current: () => selectedCatalogueId },
+  assurance: { hash: "#assurance-model", param: "record", exists: id => assuranceRecords.some(r => r.id === id),
+    filters: ["assuranceInputTypeFilter", "assurancePlatformFilter", "assuranceOwnerFilter", "assuranceStatusFilter", "assuranceSearch"],
+    select: id => { selectedAssuranceId = id; selectedAssuranceTab = "overview"; renderAssuranceTable(); },
+    row: id => assuranceTableBody.querySelector(`[data-assurance-id="${CSS.escape(id)}"]`), current: () => selectedAssuranceId },
+  viability: { hash: "#viability-assessment", param: "record", exists: id => viabilityAssessmentData.some(r => r.id === id),
+    filters: ["viabilityDecisionFilter", "viabilityCustomFilter", "viabilityReverseFilter", "viabilityOwnerFilter", "viabilitySearch"],
+    select: id => { selectedViabilityId = id; renderViabilityTable(); },
+    row: id => viabilityTableBody.querySelector(`[data-viability-id="${CSS.escape(id)}"]`), current: () => selectedViabilityId },
+  patterns: { hash: "#logging-patterns", param: "pattern", exists: id => loggingPatternTableData.some(r => r["Pattern ID"] === id),
+    filters: ["patternCategoryFilter", "patternDestinationFilter", "patternTableSearch"], select: () => renderLoggingPatternTable(),
+    row: id => patternTableBody.querySelector(`[data-pattern-id="${CSS.escape(id)}"]`)?.closest("tr") },
+  health: { hash: "#health-checks", param: "test", exists: id => healthCheckTableData.some(r => r["Test ID"] === id),
+    filters: ["healthInputTypeFilter", "healthCategoryFilter", "healthSubcategoryFilter", "healthPriorityFilter", "healthTableSearch"], select: () => renderHealthCheckTable(),
+    row: id => healthTableBody.querySelector(`[data-health-check-id="${CSS.escape(id)}"]`)?.closest("tr") },
+};
+function recordLinkHash(page, id) { const c = RECORD_LINKS[page]; return `${c.hash}?${c.param}=${encodeURIComponent(id)}`; }
+function recordLinkWrite(page) {
+  const c = RECORD_LINKS[page], id = c?.current?.();
+  if (id && currentActivePageKey === page) history.replaceState(null, "", recordLinkHash(page, id));
+}
+function applyRecordLink() {
+  const page = Object.keys(RECORD_LINKS).find(p => location.hash.startsWith(RECORD_LINKS[p].hash + "?"));
+  if (!page) return;
+  const c = RECORD_LINKS[page], id = new URLSearchParams(location.hash.slice(c.hash.length + 1)).get(c.param);
+  if (!id || !c.exists(id)) return;
+  c.filters.forEach(f => { const el = document.getElementById(f); if (el) el.value = ""; });
+  c.select(id);
+  refreshFilterToggles();
+  const row = c.row(id);
+  if (!row) return;
+  flowReveal(row);
+  document.querySelectorAll("tr.row-linked").forEach(r => r.classList.remove("row-linked"));
+  row.classList.add("row-linked");
+  const sheet = DETAIL_SHEETS.find(d => d.page === page);
+  if (sheet) detailSheetOpen(sheet, true);
+  // Smooth, so it replaces the scroll to the top that opening the page starts.
+  requestAnimationFrame(() => row.scrollIntoView({ block: "center", behavior: "smooth" }));
+}
+document.addEventListener("click", async event => {
+  const button = event.target.closest(".row-copy-link, .detail-copy-link");
+  if (!button) return;
+  const page = button.dataset.recordPage;
+  const hash = button.dataset.copyHash || (page && RECORD_LINKS[page].current() ? recordLinkHash(page, RECORD_LINKS[page].current()) : "");
+  if (!hash) return;
+  const url = location.href.split("#")[0] + hash;
+  let copied = true;
+  try { await navigator.clipboard.writeText(url); } catch { copied = false; history.replaceState(null, "", hash); }
+  // Clipboard access can be blocked; the link is then put in the address bar instead.
+  button.textContent = copied ? "Link copied" : "Link in address bar";
+  setTimeout(() => { button.textContent = "Copy link"; }, 1600);
+});
+applyRecordLink();
 
 // Info page: the release line repeats the header badge (set by scripts/release/set_version.py),
 // and the at-a-glance tiles count what the app actually holds, so neither can go stale.

@@ -172,6 +172,15 @@ live total and Expand/Collapse all; Concepts folding by category (chips, search
 and concept links open the group they need); and the Configuration file
 reference's compact list, row links and remembered Cards choice (plus axe checks).
 
+**`browser/navigation-and-phone.spec.js`** -- the whole-app pass: Back and
+Forward through pages and reference articles (and links to a section inside an
+article); record links (`#data-source-catalogue?source=`, `#assurance-model?record=`,
+`#viability-assessment?record=`, `#logging-patterns?pattern=`, `#health-checks?test=`)
+and Copy link; every table header lining up with its rows; the big tables cut to
+one page as they are built; and on a phone: record bottom sheets, compact cards
+with "More details", folded banners and filters, cards for every wide table but
+the ports matrix, and 24px controls (plus axe checks with a sheet open).
+
 **`browser/lifecycle-phone-layout.spec.js`** -- the Log assessment lifecycle at
 phone width: stage cards instead of a scroll box, no domain name split mid-word,
 a readable pyramid, and the redraw when crossing the breakpoint.
