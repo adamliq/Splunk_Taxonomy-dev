@@ -54,7 +54,7 @@ test('the lifecycle page reads without inner scrolling or tiny text on a phone',
     await page.click('#lalPyramid [data-lal-layer="L4"]');
     await page.setViewportSize({ width: 1400, height: 900 });
     await page.waitForTimeout(400);
-    assert.equal(await page.getAttribute('#lalPyramid svg', 'viewBox'), '0 0 482 390');
+    assert.equal(await page.getAttribute('#lalPyramid svg', 'viewBox'), '0 0 510 390');
     assert.equal(await page.locator('.lal-pyr-lenses').count(), 0);
     assert.equal(await page.getAttribute('#lalPyramid .lal-sel', 'data-lal-layer'), 'L4');
     assert.deepEqual(pageErrors, []);

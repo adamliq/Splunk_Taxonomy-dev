@@ -1454,7 +1454,7 @@
     .lal-key-list li { display:flex; align-items:center; gap:8px; }
     .lal-key-list li > span { display:inline-grid; place-items:center; width:22px; font-size:16px; }
     #logAssessmentLifecyclePage .lal-key-list svg { display:inline-block; flex:0 0 auto; width:22px; height:22px; }
-    #lalPyramid svg { max-width:470px; margin:0; }
+    #lalPyramid svg { max-width:510px; margin:0; }
     #lalWheel svg { max-width:640px; margin:0 auto; }
     .lal-aside { position:sticky; top:12px; min-width:0; }
     .lal-detail-card { max-height:calc(100vh - 24px); overflow-y:auto; position:relative; }
@@ -4463,9 +4463,9 @@
     .obj-swatch-hold { border-color:#c2410c; } .obj-swatch-stop { border-color:#b91c1c; } .obj-swatch-branch { border-color:#7030a0; }
     .obj-keys { margin-left:auto; }
     .obj-keys kbd { font:700 11px ui-monospace,Menlo,monospace; border:1px solid #cbd5e1; border-bottom-width:2px; border-radius:4px; padding:0 4px; color:#64748b; background:#fff; }
-    .obj-main { display:grid; grid-template-columns:minmax(0, 1fr) minmax(300px, 400px); }
-    .obj-map { padding:8px 0 14px; border-right:1px solid var(--border); min-width:0; }
-    .obj-map svg { display:block; width:100%; max-width:760px; height:auto; }
+    .obj-main { display:grid; grid-template-columns:minmax(0, 1fr) minmax(300px, 340px); }
+    .obj-map { padding:8px 0 14px; border-right:1px solid var(--border); min-width:0; overflow-x:auto; }
+    .obj-map svg { display:block; width:100%; height:auto; }
     .obj-item { cursor:pointer; outline:none; }
     .obj-item .obj-hit { fill:transparent; }
     .obj-item:hover .obj-hit { fill:rgba(15,23,42,.04); }
@@ -4507,6 +4507,13 @@
     .obj-pager button:last-child { text-align:right; }
     .obj-pager button:disabled { visibility:hidden; }
     .obj-sheet-close { display:none; }
+    /* Sheet layout (see journeyLayout): the map at full width, the inspector a bottom sheet. */
+    .obj-main.obj-sheet-mode { grid-template-columns:minmax(0, 1fr); }
+    .obj-main.obj-sheet-mode .obj-map { border-right:0; }
+    .obj-main.obj-sheet-mode .obj-inspector { position:fixed; left:0; right:0; bottom:0; top:auto; z-index:60; max-height:56vh; overflow-y:auto; background:#fff; border-radius:18px 18px 0 0; box-shadow:0 -12px 30px rgba(15,23,42,.2); padding:14px 18px 18px; transform:translateY(105%); visibility:hidden; transition:transform .2s ease, visibility 0s linear .2s; }
+    .obj-main.obj-sheet-mode .obj-inspector.obj-open { transform:none; visibility:visible; transition:transform .2s ease; }
+    .obj-main.obj-sheet-mode .obj-inspector-inner { position:static; max-width:760px; margin:0 auto; }
+    .obj-main.obj-sheet-mode .obj-sheet-close { display:block; position:absolute; top:8px; right:10px; z-index:2; border:0; background:#f1f5f9; border-radius:999px; width:32px; height:32px; font-size:16px; cursor:pointer; }
     .obj-list { display:grid; gap:6px; padding:10px 12px; }
     .obj-list-phase { display:flex; justify-content:space-between; align-items:center; width:100%; border:0; border-radius:10px; padding:8px 10px; font-size:12.5px; font-weight:800; cursor:pointer; text-align:left; }
     .obj-list-item { display:flex; align-items:center; gap:9px; width:100%; border:0; background:transparent; padding:6px 6px; border-radius:8px; font-size:13px; color:#0f172a; cursor:pointer; text-align:left; }
@@ -5080,7 +5087,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.03 &middot; build 163</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.03 &middot; build 164</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -29491,9 +29498,11 @@ const LAL_STAGE_LABELS = {
   L12: { lines: ["DISCOVERY"], stages: "Stages 1–2" }, L3: { lines: ["ANALYSIS"], stages: "Stage 3" }, L4: { lines: ["ENGINEERING"], stages: "Stage 4" },
   L59: { lines: ["ASSURANCE &", "CYBER VALUE"], stages: "Stages 5–9" }, L1011: { lines: ["IMPLEMENTATION", "& OPERATIONS"], stages: "Stages 10–11" },
 };
-const LAL_PYR_W = 482;
+// Wide enough for the side labels at 12 units beside the widest layer's bracket; every label in
+// the pyramid is 11.5 units or more, so 11px+ on screen.
+const LAL_PYR_W = 510;
 function lalRenderPyramid() {
-  const H = 5 * 76 + 10, cx = 140 + 169;
+  const H = 5 * 76 + 10, cx = 168 + 169;
   // On a phone the side labels would shrink to ~7px, so the pyramid is cropped to its shape
   // (drawn near full size) and the lenses are listed underneath instead.
   const compact = document.getElementById("logAssessmentLifecyclePage")?.classList.contains("lal-compact");
@@ -29502,15 +29511,16 @@ function lalRenderPyramid() {
     const y0 = 5 + i * 76, y1 = y0 + 70, my = (y0 + y1) / 2;
     const hw0 = i === 0 ? 20 : 35 + i * 26, hw1 = 35 + (i + 1) * 26 + 4;
     const lens = LAL_LENS[L.lens], label = LAL_STAGE_LABELS[L.id];
-    const lineY = k => my - (label.lines.length - 1) * 7 + k * 14 - 5;
+    const lineY = k => my - (label.lines.length - 1) * 7.5 + k * 15 - 6;
     s += `<g class="lal-hit lal-layer" data-lal-layer="${L.id}" tabindex="0" role="button" aria-label="Stage ${L.num}: ${escapeHtml(L.title)}">
+      <rect x="${compact ? cx - 172 : 0}" y="${y0}" width="${compact ? 344 : cx + hw1}" height="70" fill="transparent"/>
       ${compact ? "" : `<text x="14" y="${my + 6}" text-anchor="middle" font-size="17">${lens.icon}</text>
-      ${label.lines.map((t, k) => `<text x="30" y="${lineY(k)}" font-size="11" font-weight="800" fill="${L.color}">${escapeHtml(t)}</text>`).join("")}
-      <text x="30" y="${lineY(label.lines.length - 1) + 14}" font-size="10" fill="#475569">(${escapeHtml(label.stages)})</text>
+      ${label.lines.map((t, k) => `<text x="32" y="${lineY(k)}" font-size="12" font-weight="800" fill="${L.color}">${escapeHtml(t)}</text>`).join("")}
+      <text x="32" y="${lineY(label.lines.length - 1) + 15}" font-size="11.5" fill="#475569">(${escapeHtml(label.stages)})</text>
       <path d="M ${cx - hw1 - 8} ${y0 + 6} h -6 V ${y1 - 6} h 6" stroke="${L.color}" stroke-width="1.6" fill="none"/>`}
       <polygon class="lal-shape" data-rx="${cx + (hw0 + hw1) / 2}" data-my="${my}" points="${cx - hw0},${y0} ${cx + hw0},${y0} ${cx + hw1},${y1} ${cx - hw1},${y1}" fill="${L.color}" stroke="#fff" stroke-width="2"/>
       <text x="${cx}" y="${y0 + 27}" text-anchor="middle" fill="#fff" font-size="${i === 0 ? 19 : 23}" font-weight="900">${L.num}</text>
-      ${L.short.map((t, k) => `<text x="${cx}" y="${y0 + 45 + k * 13}" text-anchor="middle" fill="#fff" font-size="${i === 0 ? 9.5 : 11}" font-weight="800">${escapeHtml(t)}</text>`).join("")}</g>`;
+      ${L.short.map((t, k) => `<text x="${cx}" y="${y0 + 45 + k * 13}" text-anchor="middle" fill="#fff" font-size="11.5" font-weight="800">${escapeHtml(t)}</text>`).join("")}</g>`;
   });
   const lenses = compact ? `<ul class="lal-pyr-lenses">${LAL_LAYERS.map(L => {
     const lens = LAL_LENS[L.lens], label = LAL_STAGE_LABELS[L.id];
@@ -29725,7 +29735,7 @@ function lalDrawFlows() {
   if (!all) {
   // Raw log sample: layer 3 -> the framework.
   svg += `<path class="lal-flow lal-flow-raw" d="M ${L3.x + 4} ${L3.y} H ${lane} V ${wheelCard.t - 2}" stroke="${raw}" stroke-width="2.4" fill="none" marker-end="url(#lalFlowRaw)"/>`;
-  svg += `<text x="${L3.x + 8}" y="${L3.y - 6}" font-size="10" font-weight="800" fill="${raw}">Raw log sample</text>`;
+  svg += `<text x="${L3.x + 8}" y="${L3.y - 6}" font-size="12" font-weight="800" fill="${raw}">Raw log sample</text>`;
   // Feedback: the framework -> assurance (5-9) and implementation (10-11).
   [[L59, "L59", 20], [L1011, "L1011", 32]].forEach(([pt, id, dx]) => {
     const color = LAL_LAYERS.find(l => l.id === id).color;
@@ -30878,8 +30888,9 @@ const DETECTION_MAP_PHASES = [
 ];
 // Layout per route. The detection route is wider: its right-hand strip shows where it meets
 // the log source journey.
+const JOURNEY_FONT = "system-ui,-apple-system,Segoe UI,sans-serif";
 const JOURNEY_ROUTES = {
-  onboarding: { label: "Log source onboarding", phases: ONBOARDING_MAP_PHASES, names: ONBOARDING_JOURNEY_NAMES, branch: ONBOARDING_JOURNEY_BRANCH, line: "#1f4e78", W: 722, X: 170, pillRight: 610, stopX: 604, laneX: 638, sideRight: true, stateCode: "TAX-06.04.01" },
+  onboarding: { label: "Log source onboarding", phases: ONBOARDING_MAP_PHASES, names: ONBOARDING_JOURNEY_NAMES, branch: ONBOARDING_JOURNEY_BRANCH, line: "#1f4e78", W: 770, X: 170, pillRight: 610, stopX: 604, laneX: 638, sideRight: true, stateCode: "TAX-06.04.01" },
   detection: { label: "Detection lifecycle", phases: DETECTION_MAP_PHASES, names: {}, branch: new Set(), line: "#0e7490", W: 842, X: 150, pillRight: 505, stopX: 480, laneX: 532, sideRight: false, stateCode: "TAX-05.03.02", railX: 604 },
 };
 // Lifecycle state colours for the state lane (TAX-06.04.01 and TAX-05.03.02).
@@ -30958,28 +30969,57 @@ function onboardingJourneyVisible() {
 function renderOnboardingJourneyMap() {
   const j = onboardingJourney, model = journeyModel(), route = JOURNEY_ROUTES[j.route], selected = journeySelected(), { query, show } = j;
   const items = onboardingJourneyVisible();
-  const { W, X } = route, BX = X + 30;
+  const { X } = route, BX = X + 30;
   const rail = route.railX && show.links && j.models.onboarding;
+  // Log-source rail labels: a long link title wraps onto two lines; the canvas is as wide as
+  // the widest line.
+  const railTitle = title => {
+    if (journeyTextWidth(title, `600 12.5px ${JOURNEY_FONT}`) <= 225) return [title];
+    const words = title.split(" ");
+    let best = [title], diff = Infinity;
+    for (let k = 1; k < words.length; k++) {
+      const a = words.slice(0, k).join(" "), b = words.slice(k).join(" ");
+      const d = Math.abs(journeyTextWidth(a, `600 12.5px ${JOURNEY_FONT}`) - journeyTextWidth(b, `600 12.5px ${JOURNEY_FONT}`));
+      if (d < diff) { diff = d; best = [a, b]; }
+    }
+    return best;
+  };
+  const W = Math.ceil(Math.max(route.W, ...(rail ? items.flatMap(i => i.links.map(l => route.railX + 22 + Math.max(
+    journeyTextWidth(j.models.onboarding.byId[l.to]?.name || "", `700 12.5px ${JOURNEY_FONT}`), ...railTitle(l.title).map(t => journeyTextWidth(t, `600 12.5px ${JOURNEY_FONT}`))))) : [])));
+  // A "Feeds in" chip drops below the station's TAX codes when the two would meet.
+  const feedChip = f => /Index$/.test(f.title) ? f.title.split(/\s+/).filter(w => /^[A-Z]/.test(w)).map(w => w[0]).join("") + (f.tags[0] ? ` · ${f.tags[0]}` : "") : f.title;
+  const feedDrop = item => {
+    if (item.type !== "stage" || !show.feeds || !item.feeds.length || !item.tags.length) return 0;
+    const tagEnd = (item.branch ? BX : X) + 24 + journeyTextWidth(item.tags[0], "12.5px ui-monospace,Menlo,monospace") + 10;
+    const chipStart = route.pillRight - Math.max(...item.feeds.map(f => journeyTextWidth(feedChip(f), `700 12.5px ${JOURNEY_FONT}`) + 26));
+    return tagEnd > chipStart ? 21 : 0;
+  };
   const pos = {}, bands = [];
   let y = 14, phase = null;
   items.forEach(item => {
     if (item.phase !== phase) { if (bands.length) bands[bands.length - 1].end = y - 4; bands.push({ p: item.phase, start: y }); y += 34; phase = item.phase; }
     pos[item.id] = y + (item.type === "stage" ? 16 : 14);
-    y += (item.type === "stage" ? (item.tags.length ? 46 : 38) : 34) + (rail ? Math.max(0, item.links.length - 1) * 30 : 0);
+    y += (item.type === "stage" ? (item.tags.length || (show.feeds && item.feeds.length) ? 50 : 40) : 36) + (rail ? Math.max(0, item.links.length - 1) * 34 + item.links.reduce((a, l) => a + (railTitle(l.title).length - 1) * 15, 0) : 0) + (show.feeds && (item.feeds || []).length > 1 ? (item.feeds.length - 1) * 21 : 0) + feedDrop(item);
   });
   // Side states drawn below the last row (detection route) need room.
-  const lastSides = show.states && !route.sideRight ? 30 : 0;
+  const lastSides = show.states && !route.sideRight ? 34 : 0;
   if (bands.length) bands[bands.length - 1].end = y + 6 + lastSides;
   const H = y + 14 + lastSides;
   const bandRight = Math.min(rail ? route.railX - 24 : W - 10, show.states ? route.laneX - 14 : Infinity);
-  let svg = `<svg viewBox="0 0 ${W} ${H}" role="group" aria-label="${escapeHtml(route.label)} route: ${items.length} stages and gates" font-family="system-ui,-apple-system,Segoe UI,sans-serif">
+  // Labels are 12.5 units or more: at least 11px on screen at the 0.88 scale the layout keeps the
+  // map at (narrower, the inspector becomes a sheet and the map takes the full width).
+  const textW = (t, f) => journeyTextWidth(t, f);
+  j.mapW = W;
+  // Never drawn below 0.885 of its size (11px labels): where even the full width is narrower than
+  // that, the map scrolls sideways a little instead.
+  let svg = `<svg viewBox="0 0 ${W} ${H}" style="max-width:${W}px;min-width:${Math.round(W * 0.885)}px" role="group" aria-label="${escapeHtml(route.label)} route: ${items.length} stages and gates" font-family="system-ui,-apple-system,Segoe UI,sans-serif">
     <defs><marker id="objArrowHold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#c2410c"/></marker>
     <marker id="objArrowCycle" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#15803d"/></marker>
     <marker id="objArrowLink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#0e7490"/></marker></defs>`;
   bands.forEach(b => {
     svg += `<rect x="10" y="${b.start}" width="${bandRight - 10}" height="${b.end - b.start}" rx="12" fill="${b.p.color}" opacity=".8"/>
-      <circle cx="34" cy="${b.start + 17}" r="12" fill="${b.p.tab}"/><text x="34" y="${b.start + 21.5}" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">${b.p.letter}</text>
-      <text x="${X + 24}" y="${b.start + 21}" font-size="11.5" font-weight="800" fill="${b.p.tab}" letter-spacing=".06em">${escapeHtml(b.p.label.replace(/^[A-F] · /, "").toUpperCase())}</text>`;
+      <circle cx="34" cy="${b.start + 17}" r="12" fill="${b.p.tab}"/><text x="34" y="${b.start + 21.5}" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">${b.p.letter}</text>
+      <text x="${X + 24}" y="${b.start + 21.5}" font-size="12.5" font-weight="800" fill="${b.p.tab}" letter-spacing=".06em">${escapeHtml(b.p.label.replace(/^[A-F] · /, "").toUpperCase())}</text>`;
   });
   const main = items.filter(i => !i.branch);
   svg += `<path d="M ${X} ${pos[main[0].id]} V ${pos[main[main.length - 1].id]}" stroke="${route.line}" stroke-width="5" stroke-linecap="round" fill="none"/>`;
@@ -31003,7 +31043,7 @@ function renderOnboardingJourneyMap() {
       const color = l.tone === "cycle" ? "#15803d" : "#c2410c";
       if (emphasised) svg += `<path d="${d}" stroke="#fdba74" stroke-width="8" fill="none" opacity=".55"/>`;
       svg += `<path class="obj-loop" data-loop-from="${l.from}" data-loop-to="${l.to}" d="${d}" stroke="${color}" stroke-width="${emphasised ? 2.8 : 1.6}" fill="none"${l.tone === "expire" ? ' stroke-dasharray="5 4"' : ""} marker-end="url(#${l.tone === "cycle" ? "objArrowCycle" : "objArrowHold"})" opacity="${on ? (emphasised ? 1 : .7) : .25}"><title>${escapeHtml(l.label || "Loop-back")}</title></path>`;
-      if (l.tone === "expire") svg += `<text x="${lx - 5}" y="${(pos[l.from] + pos[l.to]) / 2}" font-size="10" fill="#c2410c" font-style="italic" text-anchor="middle" transform="rotate(-90 ${lx - 5} ${(pos[l.from] + pos[l.to]) / 2})">approval expires</text>`;
+      if (l.tone === "expire") svg += `<text x="${lx - 5}" y="${(pos[l.from] + pos[l.to]) / 2}" font-size="12.5" fill="#c2410c" font-style="italic" text-anchor="middle" transform="rotate(-90 ${lx - 5} ${(pos[l.from] + pos[l.to]) / 2})">approval expires</text>`;
     });
   }
   // Lifecycle state lane: the states named on stages run as coloured segments from where they
@@ -31014,11 +31054,11 @@ function renderOnboardingJourneyMap() {
     const mainStates = new Set(main.map(m => m.st));
     const endY = pos[items[items.length - 1].id];
     const color = st => JOURNEY_STATE_COLORS[st] || "#475569";
-    svg += `<text x="${L}" y="${bands[0].start + 12}" text-anchor="middle" font-size="10" font-weight="800" fill="#475569" letter-spacing=".05em">STATE</text><text x="${L}" y="${bands[0].start + 24}" text-anchor="middle" font-size="8.5" fill="#64748b" font-family="ui-monospace,Menlo,monospace">${escapeHtml(route.stateCode.replace(/^TAX-/, ""))}</text>`;
+    svg += `<text x="${L}" y="${bands[0].start + 12}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#475569" letter-spacing=".04em">STATE</text><text x="${L}" y="${bands[0].start + 26}" text-anchor="middle" font-size="12.5" fill="#475569" font-family="ui-monospace,Menlo,monospace">${escapeHtml(route.stateCode.replace(/^TAX-/, ""))}</text>`;
     main.forEach((m, k) => {
       const a = pos[m.id], z = k + 1 < main.length ? pos[main[k + 1].id] : endY;
       svg += `<g class="obj-state-seg" data-item-link="${m.id}" data-state="${escapeHtml(m.st)}"><title>${escapeHtml(`${m.st} from ${model.byId[m.id].name}`)}</title><rect x="${L - 4}" y="${a}" width="8" height="${Math.max(z - a, 8)}" rx="4" fill="${color(m.st)}"/>`;
-      if (z - a > m.st.length * 7 + 16) svg += `<text x="${L + 13}" y="${a + 6}" transform="rotate(90 ${L + 13} ${a + 6})" font-size="10" font-weight="800" fill="${color(m.st)}" letter-spacing=".06em">${escapeHtml(m.st)}</text>`;
+      if (z - a > textW(m.st, `800 12.5px ${JOURNEY_FONT}`) + 18) svg += `<text x="${L + 14}" y="${a + 6}" transform="rotate(90 ${L + 14} ${a + 6})" font-size="12.5" font-weight="800" fill="${color(m.st)}" letter-spacing=".06em">${escapeHtml(m.st)}</text>`;
       svg += `</g>`;
     });
     const sides = {};
@@ -31030,35 +31070,36 @@ function renderOnboardingJourneyMap() {
     model.loops.forEach(l => (l.states || []).forEach(st => addSide(l.from, st, false)));
     Object.entries(sides).forEach(([id, list]) => {
       // Beside the lane, stacked (onboarding); or in one row under the item, reading left to right.
-      const widths = list.map(sd => sd.st.length * 6.2 + 14);
+      const widths = list.map(sd => textW(sd.st, `800 12.5px ${JOURNEY_FONT}`) + 16);
       let x = L - 10 - widths.reduce((a, b) => a + b + 6, -6);
       list.forEach((sd, k) => {
         const w = widths[k];
-        const y0 = route.sideRight ? pos[id] + k * 18 - 9 : pos[id] + 18;
+        const y0 = route.sideRight ? pos[id] + k * 22 - 10 : pos[id] + 20;
         const x0 = route.sideRight ? L + 12 : x;
         if (!route.sideRight) x += w + 6;
         const c = color(sd.st);
         svg += `<g class="obj-state-side" data-item-link="${id}" data-state="${escapeHtml(sd.st)}"><title>${escapeHtml(`${sd.st} at ${model.byId[id].name}`)}</title>`
-          + (route.sideRight ? `<path d="M ${L + 4} ${y0 + 7.5} H ${x0}" stroke="${c}" stroke-width="1.5"/>` : "")
-          + `<rect x="${x0}" y="${y0}" width="${w}" height="15" rx="7.5" fill="${sd.end ? "#fee2e2" : "#fff"}" stroke="${c}"${sd.end ? "" : ' stroke-dasharray="3 2"'}/><text x="${x0 + w / 2}" y="${y0 + 10.5}" text-anchor="middle" font-size="9" font-weight="800" fill="${c}">${escapeHtml(sd.st)}</text></g>`;
+          + (route.sideRight ? `<path d="M ${L + 4} ${y0 + 9.5} H ${x0}" stroke="${c}" stroke-width="1.5"/>` : "")
+          + `<rect x="${x0}" y="${y0}" width="${w}" height="19" rx="9.5" fill="${sd.end ? "#fee2e2" : "#fff"}" stroke="${c}"${sd.end ? "" : ' stroke-dasharray="3 2"'}/><text x="${x0 + w / 2}" y="${y0 + 13.5}" text-anchor="middle" font-size="12.5" font-weight="800" fill="${c}">${escapeHtml(sd.st)}</text></g>`;
       });
     });
   }
   if (rail) {
     const R = route.railX, onb = j.models.onboarding;
-    svg += `<text x="${R}" y="${bands[0].start + 12}" text-anchor="middle" font-size="10" font-weight="800" fill="#1f4e78" letter-spacing=".05em">LOG SOURCE</text><text x="${R}" y="${bands[0].start + 25}" text-anchor="middle" font-size="10" font-weight="800" fill="#1f4e78" letter-spacing=".05em">JOURNEY</text>`;
+    svg += `<text x="${R - 10}" y="${bands[0].start + 12}" font-size="12.5" font-weight="800" fill="#1f4e78" letter-spacing=".04em">LOG SOURCE</text><text x="${R - 10}" y="${bands[0].start + 27}" font-size="12.5" font-weight="800" fill="#1f4e78" letter-spacing=".04em">JOURNEY</text>`;
     svg += `<path d="M ${R} ${bands[0].start + 34} V ${H - 12}" stroke="#1f4e78" stroke-width="3" stroke-dasharray="2 5" stroke-linecap="round" opacity=".55"/>`;
     items.forEach(item => item.links.forEach((link, k) => {
       const target = onb.byId[link.to];
       if (!target) return;
-      const ly = pos[item.id] + k * 30, from = route.pillRight + 12;
+      const ly = pos[item.id] + k * 34 + item.links.slice(0, k).reduce((a, l) => a + (railTitle(l.title).length - 1) * 15, 0), from = route.pillRight + 12;
+      const lines = railTitle(link.title);
       const d = link.dir === "out" ? `M ${from} ${pos[item.id]} V ${ly} H ${R - 11}` : `M ${R - 11} ${ly} H ${from + 4}${k ? ` V ${pos[item.id] + 6}` : ""}`;
       svg += `<path class="obj-link-line" d="${d}" stroke="#0e7490" stroke-width="1.8" stroke-dasharray="6 4" fill="none" marker-end="url(#objArrowLink)"/>`;
       svg += `<g class="obj-item obj-rail" data-route-link="${link.to}" tabindex="0" role="button" aria-label="${escapeHtml(`Log source journey: ${target.name} -- ${link.title}`)}">
-        <rect class="obj-hit" x="${R - 12}" y="${ly - 14}" width="${W - R + 8}" height="32" rx="8"/>
+        <rect class="obj-hit" x="${R - 12}" y="${ly - 15}" width="${W - R + 8}" height="${34 + (lines.length - 1) * 15}" rx="8"/>
         <circle cx="${R}" cy="${ly}" r="7" fill="#fff" stroke="#1f4e78" stroke-width="3"/>
-        <text x="${R + 14}" y="${ly + 1}" font-size="11.5" font-weight="700" fill="#1f4e78">${escapeHtml(target.name)}</text>
-        <text x="${R + 14}" y="${ly + 14}" font-size="10" font-weight="600" fill="#0e7490">${escapeHtml(link.title)}</text></g>`;
+        <text x="${R + 14}" y="${ly + 1}" font-size="12.5" font-weight="700" fill="#1f4e78">${escapeHtml(target.name)}</text>
+        <text x="${R + 14}" y="${ly + 16}" font-size="12.5" font-weight="600" fill="#0e7490">${lines.map((t, n) => `<tspan x="${R + 14}" dy="${n ? 15 : 0}">${escapeHtml(t)}</tspan>`).join("")}</text></g>`;
     }));
   }
   items.forEach(item => {
@@ -31068,26 +31109,29 @@ function renderOnboardingJourneyMap() {
     const tracked = show.tracked ? journeyTrackerAt(j.route, item.id).length : 0;
     const label = (item.type === "stage" ? `Stage: ${item.name}` : `Gate: ${item.name}`) + (tracked ? `, ${tracked} tracked` : "");
     svg += `<g class="obj-item${dim}" data-item="${item.id}" tabindex="0" role="button" aria-label="${escapeHtml(label)}" aria-pressed="${isSel}">`;
-    svg += `<rect class="obj-hit" x="${X - 16}" y="${cy - 16}" width="${route.pillRight - X + 26}" height="32" rx="9"${isSel ? ' style="fill:#fff7ed;stroke:#f59e0b;stroke-width:2"' : ""}/>`;
+    // The box takes in the station's TAX codes and feed chips under its name.
+    const hitH = item.type === "stage" && (item.tags.length || (show.feeds && item.feeds.length)) ? 32 + 14 + feedDrop(item) + (show.feeds ? Math.max(0, item.feeds.length - 1) * 21 : 0) : 32;
+    svg += `<rect class="obj-hit" x="${X - 16}" y="${cy - 16}" width="${route.pillRight - X + 26}" height="${hitH}" rx="9"${isSel ? ' style="fill:#fff7ed;stroke:#f59e0b;stroke-width:2"' : ""}/>`;
     if (item.type === "stage") {
       const golive = item.id === "ob-golive";
       const color = item.branch ? "#7030a0" : golive || item.states.includes("PRODUCTION") ? "#15803d" : route.line;
       svg += `<circle cx="${sx}" cy="${cy}" r="${golive ? 10 : 8}" fill="#fff" stroke="${color}" stroke-width="4"/>`;
       svg += `<text x="${tx}" y="${cy + 4.5}" font-size="13.5" font-weight="${golive ? 800 : 650}" fill="${golive ? "#15803d" : "#0f172a"}">${escapeHtml(item.name)}</text>`;
       if (tracked) svg += journeyTrackedBadge(j.route, item, tx + journeyTextWidth(item.name, `${golive ? 800 : 650} 13.5px system-ui,-apple-system,Segoe UI,sans-serif`) + 8, cy);
-      if (item.tags.length) svg += `<text x="${tx}" y="${cy + 20}" font-size="10.5" fill="#64748b" font-family="ui-monospace,Menlo,monospace">${escapeHtml(item.tags[0])}</text>`;
+      if (item.tags.length) svg += `<text x="${tx}" y="${cy + 22}" font-size="12.5" fill="#64748b" font-family="ui-monospace,Menlo,monospace">${escapeHtml(item.tags[0])}</text>`;
       const state = item.states.filter(s => s !== "GO-LIVE").pop();
-      if (state) { const w = state.length * 7 + 14, r = route.pillRight; svg += `<rect x="${r - w}" y="${cy - 9}" width="${w}" height="18" rx="9" fill="#fff" stroke="#94a3b8"/><text x="${r - w / 2}" y="${cy + 4}" text-anchor="middle" font-size="10" font-weight="800" fill="#475569">${escapeHtml(state)}</text>`; }
+      if (state) { const w = textW(state, `800 12.5px ${JOURNEY_FONT}`) + 18, r = route.pillRight; svg += `<rect x="${r - w}" y="${cy - 10.5}" width="${w}" height="21" rx="10.5" fill="#fff" stroke="#94a3b8"/><text x="${r - w / 2}" y="${cy + 4.5}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#475569">${escapeHtml(state)}</text>`; }
       // Feeds in: a chip on the station each one feeds (indices shortened to their initials).
       if (show.feeds) item.feeds.forEach((f, k) => {
-        const label = /Index$/.test(f.title) ? f.title.split(/\s+/).filter(w => /^[A-Z]/.test(w)).map(w => w[0]).join("") + (f.tags[0] ? ` · ${f.tags[0]}` : "") : f.title;
-        const fy = item.feeds.length > 1 ? cy + k * 17 : cy + 17, tw = label.length * 5.6 + 22, fx = route.pillRight - 8 - tw;
-        svg += `<g class="obj-feed"><title>${escapeHtml(`Feeds in: ${f.title}`)}</title><rect x="${fx}" y="${fy - 8}" width="${tw}" height="16" rx="8" fill="#ecfeff" stroke="#67e8f9"/><path d="M ${fx + 9} ${fy - 4} L ${fx + 5} ${fy} L ${fx + 9} ${fy + 4}" stroke="#0e7490" stroke-width="1.6" fill="none"/><text x="${fx + 13}" y="${fy + 3.5}" font-size="9.8" font-weight="700" fill="#0e7490">${escapeHtml(label)}</text></g>`;
+        const label = feedChip(f);
+        // Under the station's state pill (or its TAX codes), one row each.
+        const fy = cy + 22 + feedDrop(item) + k * 21, tw = textW(label, `700 12.5px ${JOURNEY_FONT}`) + 26, fx = route.pillRight - tw;
+        svg += `<g class="obj-feed"><title>${escapeHtml(`Feeds in: ${f.title}`)}</title><rect x="${fx}" y="${fy - 9.5}" width="${tw}" height="19" rx="9.5" fill="#ecfeff" stroke="#67e8f9"/><path d="M ${fx + 10} ${fy - 4} L ${fx + 6} ${fy} L ${fx + 10} ${fy + 4}" stroke="#0e7490" stroke-width="1.6" fill="none"/><text x="${fx + 15}" y="${fy + 4.5}" font-size="12.5" font-weight="700" fill="#0e7490">${escapeHtml(label)}</text></g>`;
       });
     } else {
       svg += `<polygon points="${X},${cy - 8} ${X + 8},${cy} ${X},${cy + 8} ${X - 8},${cy}" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>`;
-      svg += `<text x="${tx}" y="${cy + 4}" font-size="12" font-weight="700" fill="#b45309">${escapeHtml(item.name)}</text>`;
-      if (tracked) svg += journeyTrackedBadge(j.route, item, tx + journeyTextWidth(item.name, "700 12px system-ui,-apple-system,Segoe UI,sans-serif") + 8, cy);
+      svg += `<text x="${tx}" y="${cy + 4.5}" font-size="12.5" font-weight="700" fill="#b45309">${escapeHtml(item.name)}</text>`;
+      if (tracked) svg += journeyTrackedBadge(j.route, item, tx + journeyTextWidth(item.name, `700 12.5px ${JOURNEY_FONT}`) + 8, cy);
       const c = route.stopX;
       if (show.stops && item.outcomes.some(o => o.tone === "stop")) svg += `<g class="obj-stop"><title>Stop point</title><line x1="${c - 34}" y1="${cy}" x2="${c - 8}" y2="${cy}" stroke="#b91c1c" stroke-width="2"/><circle cx="${c}" cy="${cy}" r="8" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/><line x1="${c - 5}" y1="${cy + 5}" x2="${c + 5}" y2="${cy - 5}" stroke="#b91c1c" stroke-width="2"/></g>`;
     }
@@ -31197,7 +31241,7 @@ function renderOnboardingJourney(focusSelected) {
   const shown = `${j.route}:${journeySelected()}`;
   inspector.innerHTML = renderOnboardingJourneyInspector();
   if (inspector.dataset.shown !== shown) { inspector.scrollTop = 0; inspector.dataset.shown = shown; }
-  inspector.classList.toggle("obj-open", j.narrow && j.open);
+  journeyLayout();
   const count = j.query ? items.filter(i => onboardingJourneyMatches(i, j.query)).length : null;
   document.getElementById("objSearchCount").textContent = count === null ? "" : `${count} match${count === 1 ? "" : "es"}`;
   updateJourneyHash();
@@ -31207,14 +31251,34 @@ function renderOnboardingJourney(focusSelected) {
     if (node) journeyReveal(node, inspector);
   }
 }
+// Beside the map the inspector takes 340px and the map must be drawn at 0.885 of its size or more
+// (its labels are 12.5 units, so 11px+). Narrower than that, the map takes the full width and the
+// inspector is a sheet that a selection opens -- as on a phone, where the map is a list.
+function journeyLayout() {
+  const j = onboardingJourney, main = document.querySelector("#onboardingPage .obj-main");
+  if (!main) return;
+  if (main.clientWidth) {
+    const sheet = !j.narrow && main.clientWidth - 341 < 0.885 * (j.mapW || JOURNEY_ROUTES[j.route].W);
+    if (sheet !== !!j.sheet) { j.sheet = sheet; j.open = false; }
+  }
+  main.classList.toggle("obj-sheet-mode", !!j.sheet && !j.narrow);
+  document.getElementById("objInspector").classList.toggle("obj-open", (j.narrow || !!j.sheet) && j.open);
+}
+if (window.ResizeObserver) {
+  const journeyMain = document.querySelector("#onboardingPage .obj-main");
+  if (journeyMain) new ResizeObserver(() => journeyLayout()).observe(journeyMain);
+}
 // Scroll the selected station into view. The pinned inspector cannot move past the end of the
 // map, so near the bottom it is pushed up off screen; scroll no further than keeps its top in
 // view when the station still fits on screen too.
 function journeyReveal(node, inspector) {
   const r = node.getBoundingClientRect(), margin = 12;
+  // With the inspector open as a sheet, only the top of the screen shows the map.
+  const sheetOpen = onboardingJourney.sheet && onboardingJourney.open;
+  const bottom = sheetOpen ? innerHeight * 0.42 : innerHeight;
   let y = scrollY;
   if (r.top < margin) y += r.top - margin;
-  else if (r.bottom > innerHeight - margin) y += r.bottom - innerHeight + margin;
+  else if (r.bottom > bottom - margin) y += r.bottom - bottom + margin;
   if (getComputedStyle(inspector).position === "sticky") {
     const limit = inspector.parentElement.getBoundingClientRect().bottom + scrollY - inspector.offsetHeight - margin;
     const lowest = r.bottom + scrollY - innerHeight + margin;
@@ -31260,7 +31324,7 @@ function showOnJourneyMap(id, route = "onboarding") {
   setTimeout(() => {
     // Beside the pinned inspector, go to the station itself; stacked layouts show the map's top.
     const inspector = document.getElementById("objInspector"), node = document.querySelector(`#onboardingFlowMapWrap svg [data-item="${journeySelected()}"]`);
-    if (node && inspector && getComputedStyle(inspector).position === "sticky") journeyReveal(node, inspector);
+    if (node && inspector && (getComputedStyle(inspector).position === "sticky" || onboardingJourney.sheet)) journeyReveal(node, inspector);
     else document.getElementById("onboardingJourney")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, 60);
 }
@@ -31526,8 +31590,8 @@ function journeyTextWidth(text, font) {
 function journeyTrackedBadge(route, item, x, cy) {
   const here = journeyTrackerAt(route, item.id);
   if (!here.length) return "";
-  const label = String(here.length), w = label.length * 7 + 14;
-  return `<g class="obj-tracked"><title>${escapeHtml(`Tracked here: ${here.map(t => { const p = journeyTrackerProgress(t); return `${t.name} (${t.state}${p ? `, checklist ${p.done}/${p.total}` : ""})`; }).join(", ")}`)}</title><rect x="${x}" y="${cy - 9}" width="${w}" height="18" rx="9" fill="#be185d"/><text x="${x + w / 2}" y="${cy + 4}" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fff">${label}</text></g>`;
+  const label = String(here.length), w = label.length * 8 + 16;
+  return `<g class="obj-tracked"><title>${escapeHtml(`Tracked here: ${here.map(t => { const p = journeyTrackerProgress(t); return `${t.name} (${t.state}${p ? `, checklist ${p.done}/${p.total}` : ""})`; }).join(", ")}`)}</title><rect x="${x}" y="${cy - 10}" width="${w}" height="20" rx="10" fill="#be185d"/><text x="${x + w / 2}" y="${cy + 4.5}" text-anchor="middle" font-size="12.5" font-weight="800" fill="#fff">${label}</text></g>`;
 }
 function journeyTrackerInspector(route, item) {
   const here = journeyTrackerAt(route, item.id);
