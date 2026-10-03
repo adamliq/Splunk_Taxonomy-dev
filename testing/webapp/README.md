@@ -188,6 +188,13 @@ with the inspector as a bottom sheet (the picked station stays visible above it,
 plus an axe check) -- and the lifecycle pyramid's labels clearing their brackets
 and staying inside their layers.
 
+**`browser/phone-views.spec.js`** -- phones: the ports matrix opens on its
+flow table (as cards) instead of the 53-column grid, with `?view=grid` /
+`?view=flows` links choosing either view and desktop keeping the grid; the S3
+calculator's architecture diagram drawn to fit the screen (outputs side by side,
+no sideways scroll, plus an axe check); and the header fitting at 320px on
+every page.
+
 **`browser/lifecycle-phone-layout.spec.js`** -- the Log assessment lifecycle at
 phone width: stage cards instead of a scroll box, no domain name split mid-word,
 a readable pyramid, and the redraw when crossing the breakpoint.

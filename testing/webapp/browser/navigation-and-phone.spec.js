@@ -160,12 +160,12 @@ test('phone: bottom sheets, compact cards, folded banners and filters, cards for
     await more.click();
     assert.equal(await more.getAttribute('aria-expanded'), 'true');
 
-    // Nothing but the ports matrix grid (and the S3 ASCII diagram) scrolls sideways.
+    // Nothing but the ports matrix grid (shown on a phone only when asked for) scrolls sideways.
     const pages = await page.evaluate(() => Object.keys(pageViews));
     for (const name of pages) {
       await page.evaluate(n => { setActivePage(n, false); if (n === 's3calc') document.querySelector('[data-s3c-fold="open"]').click(); }, name);
       await page.waitForTimeout(120);
-      const sideways = await page.evaluate(n => [...pageViews[n].querySelectorAll('*')].filter(e => e.getClientRects().length && /auto|scroll/.test(getComputedStyle(e).overflowX) && e.scrollWidth > e.clientWidth + 4 && e.tagName !== 'PRE' && !e.querySelector('#portsMatrixTable')).map(e => e.className || e.tagName), name);
+      const sideways = await page.evaluate(n => [...pageViews[n].querySelectorAll('*')].filter(e => e.getClientRects().length && /auto|scroll/.test(getComputedStyle(e).overflowX) && e.scrollWidth > e.clientWidth + 4 && !e.querySelector('#portsMatrixTable')).map(e => e.className || e.tagName), name);
       assert.deepEqual(sideways, [], `${name} scrolls sideways`);
       // Controls are at least 24px (links and term buttons inside sentences excepted; a
       // checkbox inside its label counts the label).

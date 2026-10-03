@@ -50,6 +50,9 @@
     .app-header-logo { width: 36px; height: 36px; border-radius: 9px; display: block; flex-shrink: 0; }
     .app-header-corner-icon { width: 32px; height: 32px; border-radius: 8px; display: block; flex-shrink: 0; }
     .app-header-brandtext { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+    /* The smallest phones (320px): the brand may shrink and the version badge wrap, so the header fits. */
+    .app-header-brand, .app-header-brandtext { min-width: 0; }
+    @media (max-width: 360px) { .app-header-brandtext .app-header-version { white-space: normal; text-wrap: balance; } }
     .app-header-wordmark { font-size: 19px; font-weight: 900; letter-spacing: .01em; line-height: 1; }
     .app-header-tagline { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #b7c3d9; }
     .app-header-version { padding: 2px 7px; border: 1px solid rgba(255,255,255,.28); border-radius: 999px; font: 700 11px var(--mono); letter-spacing: .02em; color: #dbe4f0; white-space: nowrap; align-self: center; }
@@ -1831,6 +1834,8 @@
       .api-product { padding: 9px 11px; }
       .api-product:not(.active) > :not(.api-product-head) { display: none; }
       .api-product.active { grid-column: 1 / -1; }
+      .api-product { min-width: 0; }
+      .api-product-head strong { min-width: 0; overflow-wrap: anywhere; }
     }
     /* Touch screens and phones: every control is at least 24px tall (WCAG 2.5.8), most 28px+.
        Links and term buttons inside running text are left at text size. */
@@ -3774,6 +3779,34 @@
     .reference-jump { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 17px; }
     .reference-jump button { border-color: rgba(255,255,255,.34); background: rgba(255,255,255,.1); color: #fff; }
     .reference-jump button:hover { background: rgba(255,255,255,.2); }
+    /* S3 calculator architecture: boxes and arrows that stack on a narrow screen. */
+    .s3c-arch { display:flex; flex-direction:column; align-items:center; margin:0; padding:18px 12px; border-radius:12px; background:#f8fafc; }
+    .s3c-arch-node { width:min(100%, 300px); padding:10px 14px; border:1px solid #cbd5e1; border-top:4px solid #475569; border-radius:10px; background:#fff; color:#334155; font-size:13px; text-align:center; }
+    .s3c-arch-node strong { display:block; color:#0f172a; font-size:14px; }
+    .s3c-arch-node small { display:block; margin-top:2px; color:#475569; font-size:12px; }
+    .s3c-arch-node ul { margin:6px 0 0; padding:0; list-style:none; line-height:1.5; }
+    .s3c-arch-ip { border-top-color:#7030a0; }
+    .s3c-arch-splunk { border-top-color:#15803d; }
+    .s3c-arch-s3 { border-top-color:#c2410c; }
+    .s3c-arch-fs { border-top-color:#1d4ed8; }
+    .s3c-arch-arrow { position:relative; display:flex; justify-content:center; width:100%; min-height:42px; }
+    .s3c-arch-arrow::before { content:""; position:absolute; top:0; bottom:8px; left:50%; width:2px; margin-left:-1px; background:#64748b; }
+    .s3c-arch-arrow::after { content:""; position:absolute; bottom:0; left:50%; margin-left:-6px; border:6px solid transparent; border-top:8px solid #64748b; border-bottom:0; }
+    .s3c-arch-arrow span { position:relative; z-index:1; align-self:center; margin-bottom:6px; padding:1px 8px; border-radius:999px; background:#f8fafc; color:#334155; font-size:12px; font-weight:700; }
+    /* The two outputs stay side by side at every width, joined to Ingest Processor by a fork. */
+    .s3c-arch-split { --gap:28px; position:relative; display:grid; grid-template-columns:1fr 1fr; gap:0 var(--gap); width:min(100%, 640px); padding-top:16px; }
+    .s3c-arch-split::before { content:""; position:absolute; top:0; left:50%; width:2px; height:16px; margin-left:-1px; background:#64748b; }
+    .s3c-arch-split::after { content:""; position:absolute; top:15px; left:calc((100% - var(--gap)) / 4); right:calc((100% - var(--gap)) / 4); height:2px; background:#64748b; }
+    .s3c-arch-branch { display:flex; flex-direction:column; align-items:center; min-width:0; }
+    .s3c-arch-branch .s3c-arch-node { width:100%; }
+    @media (max-width: 640px) {
+      .s3c-arch { padding:14px 8px; }
+      .s3c-arch-split { --gap:10px; }
+      .s3c-arch-node { padding:8px 8px; font-size:12px; overflow-wrap:anywhere; }
+      .s3c-arch-node strong { font-size:13px; }
+      .s3c-arch-node small { font-size:11px; }
+      .s3c-arch-arrow span { font-size:11px; text-align:center; }
+    }
     .reference-section { margin-top: 24px; scroll-margin-top: 18px; }
     .fold-section > .reference-section-heading { margin-bottom: 0; }
     .fold-section > .reference-section-heading > div { flex: 1 1 auto; min-width: 0; }
@@ -5087,7 +5120,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.03 &middot; build 164</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.03 &middot; build 165</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -12586,34 +12619,24 @@ INGEST PROCESSOR
         <div><h4 style="margin:0 0 6px">Read-side optimisation</h4><p style="margin:0;font-size:13px;color:#475569">Optimise partition pruning, time constraints, file layout, dataset selection, SPL search discipline, search frequency and bytes scanned.</p></div>
       </div>
       <div class="eccs-note" style="margin-top:14px"><strong>Security/SOC context.</strong> S3 is generally most economically attractive when data is retained extensively but searched relatively infrequently. High-value, frequently queried telemetry (real-time detections, correlation searches, ES risk/notables, dashboards, active investigations) may be more appropriate for Splunk indexing. S3/Federated Search may be more appropriate for long-term retention, historical investigations, compliance, hunting older telemetry, or lower-value/deferred telemetry. This calculator does not automatically recommend one architecture -- it calculates and compares.</div>
-      <div class="eccs-examples" style="margin-top:16px"><details><summary>Architecture diagram</summary><div class="eccs-example-body"><pre style="overflow-x:auto;font-size:12px;line-height:1.5;background:#0f172a;color:#e2e8f0;padding:16px;border-radius:10px">                         +----------------------+
-                         |     Data Source      |
-                         +----------+-----------+
-                                    | GB/day
-                                    v
-                        +-----------------------+
-                        |   Ingest Processor    |
-                        | Processing cost       |
-                        | Transformation cost   |
-                        | Routing entitlement   |
-                        +-----+-----------+-----+
-                    Indexed   |           | Archive
-                              v           v
-                   +----------------+  +-------------------+
-                   | Splunk Cloud   |  | Amazon S3          |
-                   | Ingest         |  | Sydney ap-southeast-2 |
-                   | Retention      |  | Storage / PUT / KMS|
-                   | Workload       |  | Transfer / Glue/SQS |
-                   +----------------+  +---------+----------+
-                                                  | Historical search
-                                                  v
-                                    +---------------------------+
-                                    |   Federated Search        |
-                                    | Splunk search workload    |
-                                    | S3 GET/LIST, data scanned |
-                                    | Glue/catalog, KMS         |
-                                    | Network transfer          |
-                                    +---------------------------+</pre></div></details></div>
+      <div class="eccs-examples" style="margin-top:16px"><details><summary>Architecture diagram</summary><div class="eccs-example-body">
+        <figure class="s3c-arch" aria-label="Architecture: a data source feeds Ingest Processor, which sends indexed data to Splunk Cloud and archive data to Amazon S3 in Sydney; Federated Search queries the S3 archive for historical search">
+          <div class="s3c-arch-node"><strong>Data Source</strong></div>
+          <div class="s3c-arch-arrow"><span>GB/day</span></div>
+          <div class="s3c-arch-node s3c-arch-ip"><strong>Ingest Processor</strong><ul><li>Processing cost</li><li>Transformation cost</li><li>Routing entitlement</li></ul></div>
+          <div class="s3c-arch-split">
+            <div class="s3c-arch-branch">
+              <div class="s3c-arch-arrow"><span>Indexed</span></div>
+              <div class="s3c-arch-node s3c-arch-splunk"><strong>Splunk Cloud</strong><ul><li>Ingest</li><li>Retention</li><li>Workload</li></ul></div>
+            </div>
+            <div class="s3c-arch-branch">
+              <div class="s3c-arch-arrow"><span>Archive</span></div>
+              <div class="s3c-arch-node s3c-arch-s3"><strong>Amazon S3</strong><small>Sydney &middot; ap-southeast-2</small><ul><li>Storage / PUT / KMS</li><li>Transfer / Glue / SQS</li></ul></div>
+              <div class="s3c-arch-arrow"><span>Historical search</span></div>
+              <div class="s3c-arch-node s3c-arch-fs"><strong>Federated Search</strong><ul><li>Splunk search workload</li><li>S3 GET/LIST, data scanned</li><li>Glue/catalog, KMS</li><li>Network transfer</li></ul></div>
+            </div>
+          </div>
+        </figure></div></details></div>
       <div class="eccs-examples" style="margin-top:10px"><details><summary>Calculation formulas used by this calculator</summary><div class="eccs-example-body">
         <ul style="margin:0;padding-left:20px;line-height:1.9">
           <li><code>Raw GB/year = Raw GB/day &times; 365</code></li>
@@ -18093,7 +18116,7 @@ E. Assumptions and unresolved inputs</pre>
 
     <div id="portsMatrixFlowSchemaView" hidden>
       <h3>Flow Schema Table</h3>
-      <p>The same 191 populated flows from the grid above, one row per flow, expanded into a per-field network-flow-catalog record (Flow ID, ports, protocols, initiator/firewall direction, TLS posture, authentication, Splunk config stanzas, firewall rule text, and return traffic) -- the format commonly used for firewall change requests and network-flow documentation.</p>
+      <p>The same 191 populated flows as the Matrix grid view, one row per flow, expanded into a per-field network-flow-catalog record (Flow ID, ports, protocols, initiator/firewall direction, TLS posture, authentication, Splunk config stanzas, firewall rule text, and return traffic) -- the format commonly used for firewall change requests and network-flow documentation.</p>
       <div class="ports-pattern-toolbar">
         <label for="portsFlowSchemaPatternSelect">Highlight components for logging pattern:</label>
         <select id="portsFlowSchemaPatternSelect" aria-label="Select a logging pattern to highlight its flows in the flow schema table">
@@ -39847,6 +39870,7 @@ function portOverrideSummary(rec) {
 }
 
 let portsMatrixHashHandler = null;
+const portsMatrixPhone = () => window.matchMedia("(max-width: 760px)").matches;
 
 // Shareable URL state. Every control on the page (both views) is encoded, so a copied link
 // reproduces exactly what the sender saw. Pattern, topology, group and search are mutually
@@ -39866,7 +39890,9 @@ function portsMatrixHashFromControls() {
   else if (search) params.set("search", search);
   if (get("portsMatrixHideEmpty")?.checked) params.set("hideEmpty", "1");
   if (get("portsMatrixShowTLS")?.checked) params.set("tls", "1");
-  if (get("portsMatrixFlowSchemaView") && !get("portsMatrixFlowSchemaView").hidden) params.set("view", "flows");
+  const schemaShown = get("portsMatrixFlowSchemaView") && !get("portsMatrixFlowSchemaView").hidden;
+  if (schemaShown) params.set("view", "flows");
+  else if (portsMatrixPhone()) params.set("view", "grid");
   const flowPattern = get("portsFlowSchemaPatternSelect")?.value;
   const flowSearch = get("portsFlowSchemaSearch")?.value.trim();
   if (flowPattern) params.set("flowPattern", flowPattern);
@@ -42036,7 +42062,10 @@ function initPortsFlowSchemaView() {
     if (patternSelect) patternSelect.value = validPattern ? flowPattern : "";
     if (searchInput) searchInput.value = params.get("flowSearch") || "";
     applyPatternHighlight(validPattern ? flowPattern : "");
-    showView(params.get("view") === "flows" ? "schema" : "grid");
+    // A phone opens on the flow table (the 53-column grid only scrolls sideways there); a link
+    // can still ask for either view.
+    const view = params.get("view");
+    showView(view === "flows" || (!view && portsMatrixPhone()) ? "schema" : "grid");
   });
 }
 
