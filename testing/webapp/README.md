@@ -195,6 +195,13 @@ calculator's architecture diagram drawn to fit the screen (outputs side by side,
 no sideways scroll, plus an axe check); and the header fitting at 320px on
 every page.
 
+**`browser/resource-input.spec.js`** -- Input coverage › Microsoft cloud based
+inputs › Resource input: the 19-row Azure resource collection matrix matching
+the supplied workbook (headers, first and last rows, legend), its search, layer
+and primary-path filters, the CSV export, the table growing with the page (plus
+an axe check), and labelled phone cards with the paths two by two at 393px and
+320px.
+
 **`browser/lifecycle-phone-layout.spec.js`** -- the Log assessment lifecycle at
 phone width: stage cards instead of a scroll box, no domain name split mid-word,
 a readable pyramid, and the redraw when crossing the breakpoint.
