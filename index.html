@@ -1795,6 +1795,7 @@
       table.phone-cards > tbody > tr.selected { border-color: #1f4e78; box-shadow: inset 0 0 0 1px #1f4e78; }
       table.phone-cards > tbody > tr > td { padding: 4px 12px; border: 0 !important; position: static !important; box-shadow: none !important; width: auto !important; min-width: 0 !important; max-width: none !important; white-space: normal !important; overflow-wrap: anywhere; }
       table.phone-cards > tbody > tr > td:empty { display: none; }
+      table.phone-cards > tbody > tr > th { display: block; padding: 6px 12px 2px; border: 0 !important; text-align: left; font-size: 15px; position: static !important; }
       table.phone-cards > tbody > tr > td[data-label]::before { content: attr(data-label); display: block; margin-bottom: 2px; color: #475569; font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
       table.phone-cards > tbody > tr > td input, table.phone-cards > tbody > tr > td select { max-width: 100%; }
       [class*="scroll-hint"]:has(+ .phone-cards-wrap) { display: none !important; }
@@ -1863,6 +1864,23 @@
     .assurance-detail-badges:has(.detail-copy-link) { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
     tr.row-linked > td { background: #fef9c3 !important; }
     @media print { .row-copy-link, .detail-copy-link { display: none !important; } }
+    /* Resource input: collection-path status badges (text, not colour alone). */
+    .ri-legend { display:flex; flex-wrap:wrap; gap:8px 18px; margin:0 0 12px; padding:0; list-style:none; font-size:13px; color:#334155; }
+    .ri-legend li { display:flex; align-items:center; gap:8px; }
+    .ri-status { display:inline-block; padding:2px 9px; border-radius:999px; font-size:12px; font-weight:800; white-space:nowrap; }
+    .ri-primary { background:#166534; color:#ffffff; }
+    .ri-secondary { background:#e0f2fe; color:#075985; border:1px solid #7dd3fc; }
+    .ri-none { background:#f1f5f9; color:#475569; font-weight:600; }
+    .ri-table { min-width:900px; }
+    #msResourceInputView .eccs-table-wrap { max-height:none; }
+    /* Phone cards: the four collection paths two by two under the resource and its layer. */
+    @media (max-width: 760px) {
+      #riTable.phone-cards > tbody > tr { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); column-gap:8px; }
+      #riTable.phone-cards > tbody > tr > th, #riTable.phone-cards > tbody > tr > td:first-of-type, #riTable.phone-cards > tbody > tr > td:last-child { grid-column:1 / -1; }
+      #riTable.phone-cards > tbody > tr > td { overflow-wrap:normal; }
+      #riTable.phone-cards > tbody > tr > td:first-of-type, #riTable.phone-cards > tbody > tr > td:last-child { overflow-wrap:anywhere; }
+    }
+    .ri-table tbody th { text-align:left; font-weight:700; }
     .detail-sheet-close { display: none; position: sticky; top: 8px; float: right; z-index: 3; width: 36px; height: 36px; margin: 8px 8px -44px 0; padding: 0; border: 0; border-radius: 999px; background: #f1f5f9; color: #0f172a; font-size: 20px; line-height: 1; cursor: pointer; }
     @media (max-width: 1180px) {
       #catalogueDetail { position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 60; min-height: 0; max-height: 80vh; overflow-y: auto; margin: 0; border-radius: 18px 18px 0 0; background: #fff; box-shadow: 0 -12px 30px rgba(15,23,42,.22); transform: translateY(105%); visibility: hidden; transition: transform .2s ease, visibility 0s linear .2s; }
@@ -5120,7 +5138,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.06 &middot; build 166</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.10.07 &middot; build 167</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -18258,6 +18276,7 @@ E. Assumptions and unresolved inputs</pre>
         <button id="showMsCoverageView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="msCoverageView" data-msview="msCoverage">Coverage</button>
         <button id="showSchemaExplorerView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="schemaExplorerView" data-msview="schemaExplorer">Schema</button>
         <button id="showMsPermissionsView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="msPermissionsView" data-msview="msPermissions">Permissions</button>
+        <button id="showMsResourceInputView" class="page-subtab" type="button" role="tab" aria-selected="false" aria-controls="msResourceInputView" data-msview="msResourceInput">Resource input</button>
       </div>
 
       <div id="msInputsListView" class="subpage-view" role="tabpanel" aria-labelledby="showMsInputsListView">
@@ -18373,6 +18392,31 @@ E. Assumptions and unresolved inputs</pre>
         </div>
 
         <p class="sot-note">Transcribed verbatim from five supplied CSVs, one per app: <code>splunk_o365_permissions.csv</code> (<code>splunk_ta_o365</code>), <code>splunk_cloudservices_permissions.csv</code> (<code>Splunk_TA_microsoft-cloudservices</code>), <code>splunk_aad_permissions.csv</code> (<code>TA-MS-AAD</code>), <code>splunk_mssecurity_permissions.csv</code> (<code>Splunk_TA_MS_Security</code>) and <code>soar_m365defender_permissions.csv</code> (<strong>Splunk SOAR: Microsoft 365 Defender</strong>). The first four are Splunk Enterprise TAs whose rows are modular inputs; the fifth is a Splunk SOAR connector whose "Input" column is really playbook action names (Test Connectivity, On Poll, List/Get/Update Incidents and Alerts, Run Query) -- no verified internal connector package ID was available so it's tagged with this descriptive label rather than a guessed technical name. The <code>splunk_ta_o365</code> rows were redone from a newer, more granular version of its source CSV that lists permissions per literal input stanza name (e.g. <strong>Mailbox:MailboxUsageDetail</strong>) grouped by module family, rather than the earlier Required/Optional/GCC-substitute tiering -- its <code>Input Family</code> pills are colored the same as the other apps' baseline "required" pills since this CSV draws no required/optional distinction. Rows are the distinct App+Input combinations across all five files, columns the distinct individual actions -- a marked cell means that row's input requires that column's action (per its <code>Input Family</code>); some inputs (e.g. <strong>Management Activity:DLP.All</strong>, <strong>All inputs</strong>/<strong>All actions</strong> in any of the five apps, <strong>All ARM-backed inputs</strong>, <strong>Microsoft Entra ID Audit</strong>, <strong>Microsoft Entra ID Identity Protection</strong>) require more than one action and so have multiple marked cells -- a source row whose own Actions cell listed two scopes required together (e.g. TA-MS-AAD's "AuditLog.Read.All; Directory.Read.All", or <code>splunk_ta_o365</code>'s "ActivityFeed.Read; ActivityFeed.ReadDlp") was split into one marked cell per scope, reusing whichever column that scope already has. Splunk_TA_MS_Security's Actions cells instead list two equivalent, alternative permission forms ("X (Graph) or Y (Graph Security)") rather than a joint requirement, so those are kept as a single column carrying the full "X or Y" string rather than split. Splunk SOAR: Microsoft 365 Defender's two Auth mode rows are a third case: each lists a full bundle of scopes required together for that one auth mode via a semicolon-separated Actions cell, but since Application and Delegated auth are mutually exclusive alternatives (not a joint requirement) and both rows share the literal input "All actions", splitting them would have wrongly read as one combined 11-scope ask -- so each bundle is instead kept as its own single, self-labeled column, same treatment as Splunk_TA_MS_Security's OR-style actions. All five apps happen to use the literal input name "All inputs" or "All actions" for their own Splunk/Azure-side prerequisites -- these are kept as separate rows (one per app), not merged. Two Splunk_TA_MS_Security rows are alert-action prerequisites rather than modular inputs (labelled <strong>Alert actions (not inputs)</strong>) and are included for completeness. A sixth file, <code>soar_azure_connectors_permissions.csv</code>, adds eight more Splunk SOAR connectors at once (<code>azuread</code> -- deprecated, retired Sept 2025, migrate to <code>msadgraph</code> -- <code>msadgraph</code>, <code>azuredevops</code>, <code>msgraphforoffice365</code>, <code>microsoftdefenderforendpoint</code>, <code>microsoftonedrive</code>, <code>microsoftazurecompute</code> and <code>microsoftazuresql</code>) and uses a different shape: a Delegated Permission column and an Application Permission column instead of one combined Actions column. Where both list the identical scope, only one shared column/mark is added; where they differ (even by a suffix, e.g. "Machine.Read" vs "Machine.Read.All") each gets its own column, kept distinct per the no-fuzzy-merge rule above; a placeholder cell with no real scope ("N/A", "Not supported", "Not applicable", or "Same" referring back to the other column) is skipped rather than becoming a column. A handful of rows list several scopes required together for one specific action (joined by "+" or ";") and are AND-split as above; three rows instead describe a full scope bundle for an entire legacy connector or an alternative auth method (<code>azuread</code>'s single row, and two of <code>azuredevops</code>'s three) and are kept as one unsplit column each, the same "alternatives, don't split" treatment as Splunk SOAR: Microsoft 365 Defender's Auth mode rows. This file's own final row is a cross-cutting admin-consent note rather than belonging to one app, so it's expanded into one row per app here, for the six apps the source text says it applies to (it explicitly excludes <code>microsoftazurecompute</code> and <code>microsoftazuresql</code>, which don't use Graph consent at all). <code>microsoftazurecompute</code>'s and <code>microsoftazuresql</code>'s Application-permission values are the source file's own inferred guesses (each labelled "- inferred" since neither connector's README documents a required role) -- transcribed verbatim, inferred label intact. &mdash; means not applicable.</p>
+      </section>
+      </div>
+
+      <div id="msResourceInputView" class="subpage-view" role="tabpanel" aria-labelledby="showMsResourceInputView" hidden>
+      <section class="reference-section">
+        <div class="reference-section-heading"><div><h3>Resource input</h3><p>Which collection path normally carries each Azure resource's telemetry into Splunk: a Universal Forwarder (UF), the HTTP Event Collector (HEC), Event Hub or an API.</p></div></div>
+
+        <ul class="ri-legend" aria-label="Legend"><li><span class="ri-status ri-primary">Primary</span> Preferred or normal collection path</li><li><span class="ri-status ri-secondary">Secondary</span> Alternative, supplementary, or service-specific path</li><li><span class="ri-status ri-none">Not normally used</span> Not normally selected for this resource/source</li></ul>
+
+        <div class="se-toolbar">
+          <input id="riSearchBox" type="search" placeholder="Search resource, layer or telemetry…" aria-label="Search Azure resource inputs" />
+          <select id="riLayerFilter" aria-label="Filter by layer / plane"><option value="">All layers</option></select>
+          <select id="riPrimaryFilter" aria-label="Filter by primary collection path"><option value="">Any primary path</option><option value="UF">Primary: UF</option><option value="HEC">Primary: HEC</option><option value="Event Hub">Primary: Event Hub</option><option value="API">Primary: API</option></select>
+          <button id="riExportBtn" class="primary-button" type="button">Export visible CSV</button>
+          <span class="se-result-count" id="riResultCount" aria-live="polite"></span>
+        </div>
+
+        <div class="eccs-table-wrap" role="region" aria-label="Azure resource collection paths" tabindex="0">
+          <table class="eccs-matrix ri-table" id="riTable">
+            <thead><tr><th scope="col">Azure resource / source</th><th scope="col">Layer / plane</th><th scope="col">UF</th><th scope="col">HEC</th><th scope="col">Event Hub</th><th scope="col">API</th><th scope="col">Typical telemetry</th></tr></thead>
+            <tbody id="riTableBody"></tbody>
+          </table>
+        </div>
+
+        <p class="sot-note">Transcribed verbatim from the supplied workbook <code>azure_resource_splunk_collection_crosscut.xlsx</code> (sheets <em>Azure Collection Matrix</em> and <em>Legend</em>).</p>
       </section>
       </div>
     </div>
@@ -43133,6 +43177,61 @@ msCloudInputsViewTabs.forEach(tab => {
   tab.addEventListener("click", () => setActiveMsCloudInputsView(tab.dataset.msview));
 });
 
+// --- Resource input: which collection path carries each Azure resource's telemetry ---
+// Rows transcribed verbatim from azure_resource_splunk_collection_crosscut.xlsx.
+const AZURE_RESOURCE_INPUTS = [{"resource": "Custom web application","layer": "Application","uf": "Primary","hec": "Secondary","eventHub": "Secondary","api": "Not normally used","telemetry": "App, audit, error, business logs"},{"resource": "IIS","layer": "Web / Middleware","uf": "Primary","hec": "Not normally used","eventHub": "Secondary","api": "Not normally used","telemetry": "W3C, errors, FREB, app pools"},{"resource": "Windows Server","layer": "Operating System","uf": "Primary","hec": "Not normally used","eventHub": "Secondary","api": "Not normally used","telemetry": "Security, System, Application, services"},{"resource": "Azure VM","layer": "Compute","uf": "Secondary","hec": "Not normally used","eventHub": "Primary","api": "Secondary","telemetry": "Lifecycle, boot, metrics, resource events"},{"resource": "Managed Disks","layer": "Compute / Storage","uf": "Not normally used","hec": "Not normally used","eventHub": "Primary","api": "Secondary","telemetry": "Metrics and configuration events"},{"resource": "VNet / Subnet / NIC","layer": "Virtual Network","uf": "Not normally used","hec": "Not normally used","eventHub": "Primary","api": "Secondary","telemetry": "Configuration, metrics, diagnostic logs"},{"resource": "NSG","layer": "Virtual Network","uf": "Not normally used","hec": "Not normally used","eventHub": "Primary","api": "Secondary","telemetry": "Flow and configuration telemetry"},{"resource": "Azure Firewall","layer": "Network / Security","uf": "Not normally used","hec": "Not normally used","eventHub": "Primary","api": "Secondary","telemetry": "Network, app, DNS, threat-intel logs"},{"resource": "Application Gateway / WAF","layer": "Edge / Ingress","uf": "Not normally used","hec": "Not normally used","eventHub": "Primary","api": "Secondary","telemetry": "Access, performance, WAF events"},{"resource": "Front Door","layer": "Edge / Ingress","uf": "Not normally used","hec": "Not normally used","eventHub": "Primary","api": "Secondary","telemetry": "Access, health, WAF logs"},{"resource": "Microsoft Entra ID","layer": "Authentication / Identity","uf": "Not normally used","hec": "Not normally used","eventHub": "Primary","api": "Secondary","telemetry": "Sign-in, audit, provisioning, risk"},{"resource": "Azure DevOps","layer": "CI/CD","uf": "Not normally used","hec": "Primary","eventHub": "Not normally used","api": "Secondary","telemetry": "Audit, pipeline, repo, release activity"},{"resource": "Key Vault","layer": "Secrets / Key Management","uf": "Not normally used","hec": "Not normally used","eventHub": "Primary","api": "Secondary","telemetry": "Secret, key and certificate operations"},{"resource": "Storage Account","layer": "Data / Storage","uf": "Not normally used","hec": "Not normally used","eventHub": "Primary","api": "Secondary","telemetry": "Blob/File/Queue/Table access and diagnostics"},{"resource": "Azure SQL","layer": "Data / Storage","uf": "Not normally used","hec": "Not normally used","eventHub": "Primary","api": "Secondary","telemetry": "Audit, authentication, security events"},{"resource": "Application Insights","layer": "Observability","uf": "Not normally used","hec": "Secondary","eventHub": "Primary","api": "Secondary","telemetry": "Requests, exceptions, dependencies, traces"},{"resource": "Activity Log","layer": "Azure Platform / Control Plane","uf": "Not normally used","hec": "Not normally used","eventHub": "Primary","api": "Secondary","telemetry": "Create/update/delete, RBAC, policy changes"},{"resource": "Defender for Cloud / Servers","layer": "Security / Protection","uf": "Secondary","hec": "Not normally used","eventHub": "Secondary","api": "Primary","telemetry": "Alerts, recommendations, vulnerability findings"},{"resource": "Recovery Services / Backup","layer": "Backup / Recovery","uf": "Not normally used","hec": "Not normally used","eventHub": "Primary","api": "Secondary","telemetry": "Backup, restore, failover activity"}];
+const RI_PATHS = [["uf", "UF"], ["hec", "HEC"], ["eventHub", "Event Hub"], ["api", "API"]];
+const RI_STATUS_CLASS = { "Primary": "primary", "Secondary": "secondary", "Not normally used": "none" };
+function riFilteredRows() {
+  const q = (document.getElementById("riSearchBox")?.value || "").trim().toLowerCase();
+  const layer = document.getElementById("riLayerFilter")?.value || "";
+  const primary = document.getElementById("riPrimaryFilter")?.value || "";
+  return AZURE_RESOURCE_INPUTS.filter(r =>
+    (!q || [r.resource, r.layer, r.telemetry].join(" ").toLowerCase().includes(q)) &&
+    (!layer || r.layer === layer) &&
+    (!primary || RI_PATHS.some(([key, label]) => label === primary && r[key] === "Primary")));
+}
+function renderResourceInputs() {
+  const body = document.getElementById("riTableBody");
+  if (!body) return;
+  const rows = riFilteredRows();
+  const q = (document.getElementById("riSearchBox")?.value || "").trim();
+  const cell = status => `<td><span class="ri-status ri-${RI_STATUS_CLASS[status] || "none"}">${escapeHtml(status)}</span></td>`;
+  body.innerHTML = rows.length ? rows.map(r => `<tr><th scope="row">${taxHighlight(r.resource, q)}</th><td>${taxHighlight(r.layer, q)}</td>${RI_PATHS.map(([key]) => cell(r[key])).join("")}<td>${taxHighlight(r.telemetry, q)}</td></tr>`).join("")
+    : `<tr><td colspan="7" class="patterns-empty">No resources match the current filters.</td></tr>`;
+  const count = document.getElementById("riResultCount");
+  if (count) count.textContent = `${rows.length} of ${AZURE_RESOURCE_INPUTS.length} resources`;
+}
+(function initResourceInputs() {
+  const layerSelect = document.getElementById("riLayerFilter");
+  if (!layerSelect) return;
+  [...new Set(AZURE_RESOURCE_INPUTS.map(r => r.layer))].forEach(layer => {
+    const option = document.createElement("option");
+    option.value = option.textContent = layer;
+    layerSelect.appendChild(option);
+  });
+  ["riSearchBox", "riLayerFilter", "riPrimaryFilter"].forEach(id => {
+    const el = document.getElementById(id);
+    el?.addEventListener(el.tagName === "SELECT" ? "change" : "input", renderResourceInputs);
+  });
+  document.getElementById("riExportBtn")?.addEventListener("click", event => {
+    const btn = event.currentTarget;
+    const lines = [["Azure resource / source", "Layer / plane", "UF", "HEC", "Event Hub", "API", "Typical telemetry"].map(csvValue).join(",")];
+    riFilteredRows().forEach(r => lines.push([r.resource, r.layer, r.uf, r.hec, r.eventHub, r.api, r.telemetry].map(csvValue).join(",")));
+    const blob = new Blob(["\ufeff" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "Azure-Resource-Collection-Paths.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(link.href);
+    btn.textContent = "Exported";
+    setTimeout(() => { btn.textContent = "Export visible CSV"; }, 1400);
+  });
+  renderResourceInputs();
+})();
+
 const awsCloudInputsViewTabs = document.querySelectorAll("#awsCloudInputsSubpage .page-subnav.level-3 .page-subtab");
 function setActiveAwsCloudInputsView(viewName) {
   awsCloudInputsViewTabs.forEach(tab => {
@@ -54203,7 +54302,7 @@ document.addEventListener("keydown", event => {
 // Phones: the remaining wide tables become labelled cards, like the big tables above -- the S3
 // calculator's, naming convention, assurance, viability, catalogue and the ports reference
 // tables. The ports matrix itself is a true grid and keeps its sideways scroll.
-const PHONE_CARD_TABLES = "#s3CalcPage .eccs-table-wrap > table, .naming-table-wrap > table, .assurance-table-wrap > table, .calc-reference-table-wrap > table, .catalogue-table-wrap > table, #patternsPage .eccs-table-wrap > table, #portsMatrixPage .eccs-table-wrap > table:not(#portsMatrixTable)";
+const PHONE_CARD_TABLES = "#riTable, #s3CalcPage .eccs-table-wrap > table, .naming-table-wrap > table, .assurance-table-wrap > table, .calc-reference-table-wrap > table, .catalogue-table-wrap > table, #patternsPage .eccs-table-wrap > table, #portsMatrixPage .eccs-table-wrap > table:not(#portsMatrixTable)";
 function phoneCardLabel(table, heads) {
   [...table.tBodies].forEach(body => [...body.rows].forEach(row => {
     if (row.cells.length < 2) return;
