@@ -5138,7 +5138,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 171</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 172</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -50790,6 +50790,31 @@ const SOT_OBJECTS = [
     def: "A continuous entity-discovery and attack-surface capability in Enterprise Security that builds and maintains a living inventory of assets, users and related entities from security events and optional discovery sources, then enriches findings and investigations with attribution, change history and exposure context.",
     notes: "GA from ES 8.5 onward (with deeper insights in 8.6+). Distinct from the classic Asset & Identity Framework (which is primarily lookup/CMDB-driven enrichment): Exposure Analytics continuously discovers and tracks entities from live telemetry, surfaces Entity Discovery Insights / Inventory dashboards, and supplies business- and risk-aware context for prioritisation. Complements Risk Score / Entity Risk Score and feeds agentic SOC workflows. Optional forwarder-side add-ons can supply additional endpoint-derived enrichment.",
     deps: ["Asset & Identity Framework", "Event-based Detection", "Finding", "Index", "Search Head"], feeds: ["Finding", "Investigation", "Entity Risk Score", "AI Agent", "Risk Object / Risk Rule"], sotCode: "SOT-10.01.31", instanceId: "EXPA-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Response Plan Phase", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Embedded in a Response Plan",
+    config: "Defined inside the parent Response Plan (not a standalone .conf object)",
+    def: "An ordered stage within a Response Plan (e.g. Detect, Analyse, Contain, Eradicate, Recover, Review). Groups related Tasks and tracks completion of that stage of the response.",
+    notes: "A phase is complete when all of its tasks are ended. Analysts work phase-by-phase on the Investigation Response tab. Name and description support tokens. Not independently versioned outside the parent plan.",
+    deps: ["Response Plan"], feeds: ["Response Plan Task", "Investigation"], sotCode: "SOT-10.01.32", instanceId: "RPPH-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Response Plan Task", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Embedded in a Response Plan Phase",
+    config: "Defined inside a Phase of a Response Plan",
+    def: "A single actionable step inside a Phase — e.g. 'Quarantine the device' or 'Notify asset owner'. Can have a default owner, require a completion note, carry a Markdown description, embed searches, and trigger Actions or SOAR Playbooks.",
+    notes: "Lifecycle on an investigation: unassigned → started (optionally auto-assigned to the analyst who starts it) → ended. Supporting artefacts at execution time include notes, files/attachments, and run results of embedded searches/actions/playbooks. Tasks are matched by name within their phase for template updates.",
+    deps: ["Response Plan Phase"], feeds: ["SOAR Playbook", "Adaptive Response Action", "Investigation"], sotCode: "SOT-10.01.33", instanceId: "RPTK-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Response Plan Embedded Search", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Embedded in a Response Plan Task",
+    config: "Search definition stored on the task (name, description, SPL)",
+    def: "A named SPL (or SPL2) search attached to a Response Plan Task so analysts can run contextual investigation queries without leaving the Response tab.",
+    notes: "Supports tokens so the same search can adapt to investigation status, urgency, id, etc. Distinct from a saved Report or Dashboard Datasource; it exists only as guidance/tooling inside the task.",
+    deps: ["Response Plan Task"], feeds: ["Report", "Investigation"], sotCode: "SOT-10.01.34", instanceId: "RPSE-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Response Plan Task Action", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Embedded in a Response Plan Task",
+    config: "Configured under the task's Actions section (app + action + parameters)",
+    def: "An automated or semi-automated action (from a SOAR app/connector or Adaptive Response-style integration) that can be run from a Response Plan Task during an investigation.",
+    notes: "Complements SOAR Playbook attachment on the same task. Lets a task both guide the human and trigger a concrete remediation or enrichment step. Distinct from a standalone Adaptive Response Action fired by a correlation search.",
+    deps: ["Response Plan Task", "SOAR App (Connector)", "Adaptive Response Action"], feeds: ["SOAR Action", "Investigation"], sotCode: "SOT-10.01.35", instanceId: "RPACT-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Response Plan Token", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Platform Object", scope: "Per Response Plan field",
+    config: "Predefined tokens substituted at apply/runtime (e.g. status, urgency, sensitivity, investigation_id)",
+    def: "A variable placeholder that can be inserted into Response Plan, Phase, or Task name/description fields and into embedded searches, resolved from the Investigation context when the plan is used.",
+    notes: "Standardises plans across many investigations without hard-coding case-specific values. Not a user-defined knowledge object in the classic sense; a fixed substitution mechanism supplied by the platform.",
+    deps: ["Investigation"], feeds: ["Response Plan", "Response Plan Phase", "Response Plan Task", "Response Plan Embedded Search"], sotCode: "SOT-10.01.36", instanceId: "RPTOK-001", objectClass: "Platform Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
 { name: "Threat Intelligence Framework", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global (Splunk ES)",
     config: "threat_intelligence.conf, inputs.conf (TI modular input)",
     def: "The Enterprise Security module that ingests, normalises and manages threat intelligence feeds (STIX/TAXII/CSV) into searchable lookup tables.",
@@ -50859,10 +50884,10 @@ const SOT_OBJECTS = [
     notes: "Originated in ITSI as a way to visualise service topology with live KPI badges; Enterprise Security adopted the same construct for security architecture and dataflow visualization.",
     deps: [], feeds: [], sotCode: "SOT-10.02.08", instanceId: "GT-001", objectClass: "Knowledge Object", product: "IT Service Intelligence", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
 { name: "Response Plan", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES / Mission Control)",
-    config: "Splunk Enterprise Security (Mission Control)",
-    def: "A standardised incident-response workflow, combining human and automated steps, that Mission Control can attach to a Finding.",
-    notes: "Can trigger a SOAR Cloud Server playbook or a manual Alert Action as one of its steps.",
-    deps: ["Event-based Detection", "Finding"], feeds: ["SOAR Cloud Server"], sotCode: "SOT-10.01.16", instanceId: "RP-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", relatedTax: ["TAX-05.04.01", "TAX-05.04.02", "TAX-05.04.03", "TAX-05.04.04"] },
+    config: "Splunk Enterprise Security (Mission Control) — Security content > Response plans; status Draft or Published",
+    def: "A reusable template of standardised incident-response guidance made of ordered Phases and Tasks. When applied to an Investigation it becomes the working response checklist for that case; changes made on the investigation do not alter the original template.",
+    notes: "Also referred to historically as a Response Template in Mission Control docs. Only Published plans can be attached to investigations. Can be associated with an Investigation Type so new investigations of that type receive the plan automatically. Supports tokens (e.g. $status$, $urgency$, $investigation_id$) in name, description, phase/task fields and embedded searches. Can invoke SOAR Playbooks or Adaptive Response / app Actions from individual tasks.",
+    deps: ["Event-based Detection", "Finding", "Investigation"], feeds: ["SOAR Cloud Server", "Investigation", "Mission Control"], sotCode: "SOT-10.01.16", instanceId: "RP-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
 { name: "Mission Control", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
     config: "Splunk Enterprise Security (Mission Control UI)",
     def: "The unified SOC workspace in Enterprise Security that aggregates Findings, the Analyst Queue, Investigations, Response Plans and SOAR Playbook execution into a single Kanban-style work surface.",
@@ -52775,6 +52800,11 @@ const SOT_TREE = {
       "SOT-10.01.29": "Detection Studio",
       "SOT-10.01.30": "Intermediate Finding",
       "SOT-10.01.31": "Exposure Analytics",
+      "SOT-10.01.32": "Response Plan Phase",
+      "SOT-10.01.33": "Response Plan Task",
+      "SOT-10.01.34": "Response Plan Embedded Search",
+      "SOT-10.01.35": "Response Plan Task Action",
+      "SOT-10.01.36": "Response Plan Token",
     } },
     "SOT-10.02": { label: "IT Service Intelligence", desc: "AIOps/service-monitoring objects specific to ITSI.", subclasses: {
       "SOT-10.02.01": "Service",
