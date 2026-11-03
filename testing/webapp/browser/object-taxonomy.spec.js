@@ -4,7 +4,8 @@
 // Forwarder" -> "Universal Forwarder (UF)"), unknown names stay unlinked, and "Used by" lists
 // the objects that depend on it; empty fields are summarised in one line; the class counts and
 // the lifecycle filter narrow both views; search highlights; phones get a bottom sheet; a
-// component (Response Plan Phase, coded SOT-10.01.16.01) sits under its parent object.
+// component (Response Plan Phase, coded SOT-10.01.16.01; TI Feed, SOT-10.01.08.01) sits under its
+// parent object.
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
@@ -118,7 +119,7 @@ test('at phone width the detail is a bottom sheet', async () => {
   });
 });
 
-test('components sit under their parent object: Response Plan and its five parts', async () => {
+test('components sit under their parent object: Response Plan and Threat Intelligence Framework', async () => {
   await withServerAndPage(async ({ page, baseUrl, pageErrors }) => {
     await page.setViewportSize({ width: 1400, height: 900 });
     await page.goto(`${baseUrl}/index.html#object-taxonomy?object=Response%20Plan`, { waitUntil: 'load' });
@@ -137,6 +138,10 @@ test('components sit under their parent object: Response Plan and its five parts
     assert.deepEqual(tree.codes, ['SOT-10.01.16.01', 'SOT-10.01.16.02', 'SOT-10.01.16.03', 'SOT-10.01.16.04', 'SOT-10.01.16.05']);
     assert.equal(tree.everyObjectPlaced, true);
     assert.match(await page.textContent('#sotTreeDetailPanel'), /Components\s*Response Plan Phase/);
+    // Threat Intelligence Framework holds its feed, lookup, indicator housekeeping and collections.
+    assert.deepEqual(await page.evaluate(() => SOT_OBJECTS.filter(o => o.parent === 'Threat Intelligence Framework').map(o => `${o.sotCode} ${o.name}`)),
+      ['SOT-10.01.08.01 TI Feed', 'SOT-10.01.08.02 TI Lookup', 'SOT-10.01.08.03 Indicator Aging & Deduplication', 'SOT-10.01.08.04 Threatlist Collection']);
+    assert.equal(await page.evaluate(() => SOT_OBJECTS_BY_LEAF['SOT-10.01.08'].length), 5);
 
     // A component names its parent, links back to it and carries the parent's code in its path.
     await page.click('#sotTreeShell .tree-row[data-name="Response Plan Task"]');
