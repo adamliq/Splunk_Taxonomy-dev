@@ -3,7 +3,9 @@
 // own link; dependency names link to their objects (short forms such as "Universal
 // Forwarder" -> "Universal Forwarder (UF)"), unknown names stay unlinked, and "Used by" lists
 // the objects that depend on it; empty fields are summarised in one line; the class counts and
-// the lifecycle filter narrow both views; search highlights; phones get a bottom sheet.
+// the lifecycle filter narrow both views; search highlights; phones get a bottom sheet; a
+// component (Response Plan Phase, coded SOT-10.01.16.01; TI Feed, SOT-10.01.08.01) sits under its
+// parent object.
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
@@ -113,6 +115,50 @@ test('at phone width the detail is a bottom sheet', async () => {
     await page.click('#sotTreeDetailPanel .sot-sheet-close');
     assert.equal((await sheet()).open, false);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth), 0);
+    assert.deepEqual(pageErrors, []);
+  });
+});
+
+test('components sit under their parent object: Response Plan and Threat Intelligence Framework', async () => {
+  await withServerAndPage(async ({ page, baseUrl, pageErrors }) => {
+    await page.setViewportSize({ width: 1400, height: 900 });
+    await page.goto(`${baseUrl}/index.html#object-taxonomy?object=Response%20Plan`, { waitUntil: 'load' });
+    await page.waitForTimeout(400);
+    const tree = await page.evaluate(() => {
+      const row = document.querySelector('#sotTreeShell .tree-row[data-name="Response Plan"]');
+      return {
+        kids: [...row.parentElement.querySelectorAll(':scope > ul > li > .tree-row')].map(r => r.dataset.name),
+        subclass: row.closest('li[data-level="subclass"]').querySelector('.tree-row').dataset.code,
+        codes: SOT_OBJECTS.filter(o => o.parent === 'Response Plan').map(o => o.sotCode),
+        everyObjectPlaced: SOT_OBJECTS.every(o => pathToObjectSot(o)),
+      };
+    });
+    assert.deepEqual(tree.kids, ['Response Plan Phase', 'Response Plan Task', 'Response Plan Embedded Search', 'Response Plan Task Action', 'Response Plan Token']);
+    assert.equal(tree.subclass, 'SOT-10.01.16');
+    assert.deepEqual(tree.codes, ['SOT-10.01.16.01', 'SOT-10.01.16.02', 'SOT-10.01.16.03', 'SOT-10.01.16.04', 'SOT-10.01.16.05']);
+    assert.equal(tree.everyObjectPlaced, true);
+    assert.match(await page.textContent('#sotTreeDetailPanel'), /Components\s*Response Plan Phase/);
+    // Threat Intelligence Framework holds its feed, lookup, aging and dedup policies, collections and indicators.
+    assert.deepEqual(await page.evaluate(() => SOT_OBJECTS.filter(o => o.parent === 'Threat Intelligence Framework').map(o => `${o.sotCode} ${o.name}`)),
+      ['SOT-10.01.08.01 TI Feed', 'SOT-10.01.08.02 TI Lookup', 'SOT-10.01.08.03 Indicator Aging Policy', 'SOT-10.01.08.04 Indicator Deduplication Policy',
+        'SOT-10.01.08.05 Threatlist Collection', 'SOT-10.01.08.06 TI Indicator']);
+    assert.equal(await page.evaluate(() => SOT_OBJECTS_BY_LEAF['SOT-10.01.08'].length), 7);
+
+    // A component names its parent, links back to it and carries the parent's code in its path.
+    await page.click('#sotTreeShell .tree-row[data-name="Response Plan Task"]');
+    assert.equal(await page.textContent('#sotTreeDetailPanel .breadcrumb'), 'SOT-10 › SOT-10.01 › SOT-10.01.16 › SOT-10.01.16.02');
+    await page.click('#sotTreeDetailPanel .ref-pill[data-ref="Response Plan"]');
+    assert.equal(await panelTitle(page), 'Response Plan');
+
+    // A search that matches a component but not its parent still shows the component.
+    await page.fill('#sotTreeSearch', 'variable placeholder');
+    await page.waitForTimeout(300);
+    assert.deepEqual(await page.evaluate(() => [...document.querySelectorAll('#sotTreeShell .tree-row[data-level="object"]')].map(r => r.dataset.name)), ['Response Plan Token']);
+
+    await injectAxe(page);
+    await page.fill('#sotTreeSearch', '');
+    await page.evaluate(() => selectObjectInTree('Response Plan Token'));
+    assert.deepEqual(await auditVisible(page, 'page'), []);
     assert.deepEqual(pageErrors, []);
   });
 });

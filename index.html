@@ -5138,7 +5138,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 172</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 177</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -8769,7 +8769,7 @@ bundles_location = /opt/shared_bundles/searcher01</pre><p>Two search peers reach
       <div class="eccs-reference-hero">
         <div class="eyebrow">References / Splunk platform configuration</div>
         <h2 id="federatedConfReferenceTitle">Federated Search Configuration</h2>
-        <p><code>federated.conf</code> registers federated providers -- remote Splunk deployments a search head can run federated searches against -- and tunes the overall federated-search subsystem: heartbeat monitoring, RBAC, search optimizations, provider capability negotiation, and which SPL commands are blocked on standard- vs. transparent-mode providers. Applies to on-premises Splunk Enterprise; Splunk Cloud/ES use the separate <code>federated-providers.conf</code>/<code>federated-indexes.conf</code> files instead. Backs the Splunk Taxonomy's Federated Search Provider (SOT-06.05.01) and Federated Index (SOT-06.05.02) objects.</p>
+        <p><code>federated.conf</code> registers federated providers -- remote Splunk deployments a search head can run federated searches against -- and tunes the overall federated-search subsystem: heartbeat monitoring, RBAC, search optimizations, provider capability negotiation, and which SPL commands are blocked on standard- vs. transparent-mode providers. Applies to on-premises Splunk Enterprise; Splunk Cloud/ES use the separate <code>federated-providers.conf</code>/<code>federated-indexes.conf</code> files instead. Backs the Splunk Taxonomy's Federated Search Provider (SOT-06.05.01) and Federated Dataset (SOT-06.05.02) objects.</p>
         <nav class="eccs-anchor-nav" aria-label="Federated Search Configuration reference sections"><a href="#federated-conf-definition">Definition</a><a href="#federated-conf-locations">File locations</a><a href="#federated-conf-provider-connection">Provider stanza: connection &amp; identity</a><a href="#federated-conf-provider-mode">Provider stanza: mode &amp; app context</a><a href="#federated-conf-provider-filtering">Provider stanza: index-based filtering</a><a href="#federated-conf-general-heartbeat">General: heartbeat &amp; provider verification</a><a href="#federated-conf-general-rbac">General: RBAC &amp; consent</a><a href="#federated-conf-general-optimization">General: search optimization &amp; preview control</a><a href="#federated-conf-general-legacy">General: retries, timeouts &amp; legacy AWS support</a><a href="#federated-conf-general-support">General: search actions &amp; proxy bundles</a><a href="#federated-conf-features">Feature capability stanza</a><a href="#federated-conf-unsupported-commands">Blocked-command stanzas</a><a href="#federated-conf-example">Example</a><a href="#federated-conf-validation">Validation</a></nav>
       </div>
       <section id="federated-conf-definition" class="eccs-detail-section"><h3>Definition</h3><p>Three stanza families: <code>[provider://&lt;unique-federated-provider-name&gt;]</code> defines one remote federated provider; <code>[general]</code> holds deployment-wide federated-search behavior applicable to every provider and every search head cluster member; and a large set of narrowly-scoped stanzas (<code>[features]</code>, <code>[s2s_standard_mode_unsupported_command:&lt;cmd&gt;]</code>, <code>[s2s_transparent_mode_unsupported_command:&lt;cmd&gt;]</code>, <code>[s2s_unsupported_command:show_source]</code>) control fine-grained command blocking and capability negotiation. A federated index -- the SPL-searchable <code>index=&lt;name&gt;</code> mapping to a provider's dataset -- is defined separately, in <code>indexes.conf</code>. The great majority of <code>[general]</code> settings are explicitly flagged "Do not change ... unless instructed to do so by Splunk Support" -- treat them as support-tunable, not admin-tunable, knobs.</p></section><section id="federated-conf-locations" class="eccs-detail-section"><h3>File locations</h3><p>Configuration file: <code>federated.conf</code>.</p><div class="eccs-table-wrap" role="region" aria-label="federated.conf file locations" tabindex="0"><table class="eccs-table"><thead><tr><th>Scope</th><th>Path</th></tr></thead><tbody><tr><td>System</td><td><code>$SPLUNK_HOME/etc/system/{default,local}/federated.conf</code></td></tr><tr><td>App</td><td><code>$SPLUNK_HOME/etc/apps/&lt;app_name&gt;/{default,local}/federated.conf</code></td></tr></tbody></table></div></section>
@@ -8849,7 +8849,7 @@ sampling.edit = 5</pre><p>Audit events queued into the index pipeline in the new
       <section id="indexes-conf-metrics" class="eccs-detail-section"><h3>Metric indexes</h3><p>Backs the Splunk Taxonomy's Metrics Index object (SOT-06.01.02): an index type optimized for high-volume numeric time-series data rather than full-text events.</p><div class="eccs-table-wrap" role="region" aria-label="Metric index settings" tabindex="0"><table class="eccs-table"><thead><tr><th>Setting</th><th>Description</th></tr></thead><tbody><tr><td><code>datatype</code></td><td><code>event</code> (default) or <code>metric</code> -- switches the index to metrics storage, queried only via <code>mstats</code>/<code>mcatalog</code>, not <code>stats</code>/<code>tstats</code>.</td></tr><tr><td><code>metric.maxHotBuckets</code> / <code>metric.splitByIndexKeys</code></td><td>Metric-index equivalents of <code>maxHotBuckets</code> (default <code>auto</code>, effectively 6) and index-key-based bucket splitting (valid keys include <code>metric_name</code> in addition to host/sourcetype/source).</td></tr><tr><td><code>metric.tsidxTargetSizeMB</code> / <code>metric.timestampResolution</code></td><td>Target msidx file size (default <code>1500</code>MB, max <code>4096</code>) and timestamp precision -- <code>s</code> (default) or <code>ms</code>, the latter at a search-performance cost.</td></tr><tr><td><code>metric.enableFloatingPointCompression</code></td><td>Compresses floating-point metric values; disable only if experiencing high ingest-time CPU usage, at the cost of the disk-space savings compression gives. Default <code>true</code>.</td></tr><tr><td><code>metric.stubOutRawdataJournal</code></td><td>Deletes the rawdata file's contents once a hot bucket rolls to warm (searches over metrics never use rawdata) -- reduces storage and can improve effective tsidx size headroom, at the cost of losing that file for bucket-repair operations. Has no effect on indexes with replication enabled. Default <code>true</code>.</td></tr></tbody></table></div></section>
       <section id="indexes-conf-tsidx" class="eccs-detail-section"><h3>tsidx &amp; performance tuning</h3><p>A cluster of advanced, mostly support-tunable settings governing how tsidx/journal files are written and optimized: <code>journalCompression</code> (<code>gzip</code>/<code>lz4</code>/<code>zstd</code>, default <code>zstd</code>) and <code>zstdCompressionStrategy</code> for the rawdata journal; <code>rawChunkSizeBytes</code> for target raw-slice size; <code>tsidxTargetSizeMB</code> (default <code>1500</code>MB, max <code>4096</code>) for tuning <code>tstats</code> query performance; <code>tsidxDedupPostingsListMaxTermsLimit</code> for compression-vs-memory tradeoffs at <code>tsidxWritingLevel</code> 4+; and <code>enableTsidxReduction</code>/<code>tsidxReductionCheckPeriodInSec</code>/<code>timePeriodInSecBeforeTsidxReduction</code> for shrinking tsidx files on aged warm/cold/thawed buckets of event (not metric) indexes -- explicitly not for use on remote-storage-enabled event indexes.</p></section>
       <section id="indexes-conf-erp" class="eccs-detail-section"><h3>External resource providers &amp; virtual indexes</h3><p>A large, largely legacy Hadoop/Hunk-specific settings family for querying data that lives outside Splunk's own index storage. <code>[provider-family:&lt;name&gt;]</code> holds settings common to multiple providers; <code>[provider:&lt;name&gt;]</code> defines a specific ERP connection (<code>vix.family</code>, <code>vix.command</code>/<code>vix.command.arg.&lt;N&gt;</code> to launch the external search process, <code>vix.env.&lt;var&gt;</code> environment variables, and for the Hadoop family specifically, Java/Kerberos properties, HDFS Name Node/Job Tracker addresses, and Splunk-on-Hadoop setup/replication/heartbeat tuning); a <code>[&lt;virtual-index&gt;]</code> stanza then references a provider via <code>vix.provider</code> and defines <code>vix.input.&lt;id&gt;.*</code> settings describing which Hadoop-filesystem paths to search, how to extract earliest/latest time from the path or file mtime, and (for archiving) where and when to move aged Splunk buckets into the virtual index. Format-specific record-reader/splitter settings exist for sequence files, Avro, Parquet, and Hive tables. This entire family is a specialized, largely legacy capability -- consult Splunk Support/the Hunk documentation before configuring rather than hand-deriving settings from this file alone.</p></section>
-      <section id="indexes-conf-federated" class="eccs-detail-section"><h3>Federated dataset settings</h3><p><code>federated.provider</code> and <code>federated.dataset</code>, set within an index stanza, identify a Federated Search Provider (defined in <code>federated.conf</code>) and a specific remote dataset (an index, metric index, data model, saved search, or AWS Glue Data Catalog table, depending on provider type) that stanza maps to -- the mechanism underlying Federated Index (SOT-06.05.02) and related to Federated Search for Amazon S3 datasets accessed via <code>sdselect</code>.</p></section>
+      <section id="indexes-conf-federated" class="eccs-detail-section"><h3>Federated dataset settings</h3><p><code>federated.provider</code> and <code>federated.dataset</code>, set within an index stanza, identify a Federated Search Provider (defined in <code>federated.conf</code>) and a specific remote dataset (an index, metric index, data model, saved search, or AWS Glue Data Catalog table, depending on provider type) that stanza maps to -- the mechanism underlying Federated Dataset (SOT-06.05.02) and related to Federated Search for Amazon S3 datasets accessed via <code>sdselect</code>.</p></section>
       <section id="indexes-conf-settings" class="eccs-detail-section">
         <h3>All settings</h3>
         <p class="spec-source">Every stanza and setting in <code>indexes.conf.spec</code> from Splunk Enterprise 10.4.2: 336 settings in 12 sections. Descriptions use the spec's own wording -- the first line shows here and <em>More</em> opens the rest. The Default column is filled only where the spec gives a <code>Default:</code> line.</p>
@@ -50505,7 +50505,7 @@ const SOT_OBJECTS = [
     config: "savedsearches.conf; REST endpoint saved/searches/{name}",
     def: "A saved search without a trigger condition or alert action -- a named, reusable SPL query that can be run on demand, scheduled, or embedded in a dashboard panel.",
     notes: "Every Alert (below) is also stored in savedsearches.conf; the distinction is whether alert.* / trigger-condition settings are present on the stanza.",
-    deps: ["Federated Index", "Field Extraction (search-time)", "Index", "Lookup Definition", "Search Head", "Search Macro"], feeds: ["Alert", "Dashboard Datasource"], sotCode: "SOT-01.02.01", instanceId: "REPO-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/servicesNS/-/-/saved/searches/{name}", referenceDetail: "savedsearches-conf" },
+    deps: ["Federated Dataset", "Field Extraction (search-time)", "Index", "Lookup Definition", "Search Head", "Search Macro"], feeds: ["Alert", "Dashboard Datasource"], sotCode: "SOT-01.02.01", instanceId: "REPO-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/servicesNS/-/-/saved/searches/{name}", referenceDetail: "savedsearches-conf" },
   // ---------- SOT-03 — Detection, Alerting & Response Objects ----------
 { name: "Alert", domain: "SOT-03 — Detection, Alerting & Response Objects", type: "Knowledge Object", scope: "Private / App / Global",
     config: "savedsearches.conf, alert_actions.conf; REST endpoint saved/searches/{name} (fired alerts: alerts/fired_alerts)",
@@ -50554,20 +50554,20 @@ const SOT_OBJECTS = [
     notes: "Every SPL command, built-in or custom, is classified into one of six execution-model types describing how it participates in the distributed search pipeline: distributable streaming (runs per-event, in any order, pushed down to every indexer/peer in parallel -- the most efficient); centralized streaming (runs per-event but in a required order, so it must run on the search head as a single stream); transforming (consumes the full result set and reshapes it into a new one, e.g. into a table -- typically ends a search); generating (produces events/results from scratch rather than transforming an input pipeline, optionally chained with a leading pipeline); orchestrating (controls how other commands/the search itself are planned or executed, rather than processing event data directly); and dataset processing (operates on an entire dataset as a unit rather than event-by-event, e.g. commands built on accelerated datasets). A command's stanza in commands.conf declares which type(s) apply via its streaming/generating/type settings.",
     deps: [], feeds: [], sotCode: "SOT-01.05.02", instanceId: "CSC-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API", restEndpoint: "/services/data/commands/{name}", referenceDetail: "commands-conf" },
 { name: "SPL2 Data View", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "Private / App / Global",
-    config: "SPL2 module / view definition (managed via SPL2 Search & Reporting app or API; not classic savedsearches.conf)",
-    def: "A named, permissionable SPL2 view over one or more indexes or datasets. Acts as a reusable, independently ACL-controlled projection of data so consumers can search a curated subset without direct index access or full data movement.",
-    notes: "Key SPL2 construct for secure data sharing and reducing index bloat. Distinct from a classic Report (saved search) or Data Model: the view is defined in SPL2, can be independently permissioned, and participates in the broader SPL2 module system. Also usable as a stable interface for agents and downstream pipelines.",
-    deps: ["Index", "Federated Index", "Search Head"], feeds: ["Report", "Dashboard Datasource", "AI Agent", "Alert"], sotCode: "SOT-01.06.01", instanceId: "SPL2V-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API / UI", restEndpoint: "To be confirmed" },
+    config: "SPL2 module / view definition (platform-managed)",
+    def: "A permissioned, reusable named projection over data expressed in SPL2, analogous to a view in a relational system and usable as a stable interface for searches and pipelines.",
+    notes: "Part of the SPL2 programming model. Distinct from a classic Report or Search Macro; designed for typed, modular reuse and pipeline composition.",
+    deps: ["SPL2 Module", "Index", "Federated Dataset"], feeds: ["Report", "Ingest Processor Pipeline", "Dashboard Datasource"], sotCode: "SOT-01.06.01", instanceId: "SPL2V-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "UI-managed / API", restEndpoint: "To be confirmed" },
 { name: "SPL2 Module", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "Private / App / Global",
-    config: "SPL2 module source (managed via SPL2 editor / API)",
-    def: "A reusable SPL2 compilation unit that can declare datasets, views, functions and data types, enabling modular, versionable search and data-preparation logic across Search & Reporting, Edge Processor and Ingest Processor.",
-    notes: "The packaging unit for SPL2 logic. Complements (but is distinct from) classic macros.conf Search Macros and Custom Search Commands. Supports imports/exports and explicit dependencies.",
-    deps: [], feeds: ["SPL2 Data View", "Custom Search Command", "Ingest Processor Pipeline", "Edge Processor"], sotCode: "SOT-01.06.02", instanceId: "SPL2M-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API / UI", restEndpoint: "To be confirmed" },
+    config: "SPL2 module source (platform-managed)",
+    def: "A compilation and packaging unit for SPL2 that can contain data views, functions, data types and imports/exports, enabling modular SPL2 development.",
+    notes: "Parent container for SPL2 Data Views and related constructs. Supports versioning and reuse across pipelines and searches.",
+    deps: [], feeds: ["SPL2 Data View", "SPL2 Data Type"], sotCode: "SOT-01.06.02", instanceId: "SPL2M-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "UI-managed / API", restEndpoint: "To be confirmed" },
 { name: "SPL2 Data Type", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "Private / App / Global",
-    config: "Declared inside an SPL2 module",
-    def: "A named structural or semantic type (built-in or custom) that can be assigned to datasets or fields in SPL2, enabling validation, quality checks and conditional processing (e.g. drop low-quality data in-stream).",
-    notes: "Used heavily with Edge/Ingest Processor for schema enforcement and data-quality gates. Distinct from classic Field Settings or sourcetype classification.",
-    deps: ["SPL2 Module"], feeds: ["Ingest Processor Pipeline", "Edge Processor", "SPL2 Data View"], sotCode: "SOT-01.06.03", instanceId: "SPL2DT-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "REST API / UI", restEndpoint: "To be confirmed" },
+    config: "Declared within an SPL2 Module",
+    def: "A structural or semantic type definition used by SPL2 for schema validation, quality gates and clearer contracts between producers and consumers of data.",
+    notes: "Supports data-quality and contract enforcement in pipelines and views; complements rather than replaces CIM field normalisation.",
+    deps: ["SPL2 Module"], feeds: ["SPL2 Data View"], sotCode: "SOT-01.06.03", instanceId: "SPL2DT-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "UI-managed / API", restEndpoint: "To be confirmed" },
 { name: "Transaction", domain: "SOT-01 — Search & Analytical Objects", type: "Knowledge Object", scope: "N/A (ad hoc SPL command, not a saved knowledge object)",
     config: "N/A -- ad hoc via the transaction SPL command (grouping key + maxspan/maxpause); a saved Transaction Type (transactiontypes.conf) can predefine those same parameters under a name, managed via the generic config-file endpoint configs/conf-transactiontypes/{name}",
     def: "Groups related raw events into a single multi-line result based on a shared field value and a time constraint (maxspan/maxpause) -- e.g. every event in one user session or one order lifecycle.",
@@ -50771,65 +50771,85 @@ const SOT_OBJECTS = [
     notes: "NOTE – Intermediate Finding: An Intermediate Finding is a related but distinct artifact. It is an anomaly that is never shown as a standalone item in the analyst queue; it exists only to be nested inside a Finding or Finding group and to serve as input to Finding-based Detections. Event-based Detections can be configured to emit either a regular Finding or an Intermediate Finding (but not both). Keeping Intermediate Finding as an explicit note (or a lightweight sibling row) prevents confusion with the primary Finding object that analysts triage.",
     deps: ["Event-based Detection", "Finding-based Detection", "Risk Score", "UEBA Threat"], feeds: ["Automation Rules", "Response Plan", "Investigation"], sotCode: "SOT-10.01.05", instanceId: "FIND-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
 { name: "Entity Risk Score", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
-    config: "Risk framework + continuous entity scoring (builds on Risk Index / Risk Rule)",
-    def: "A continuously maintained risk score for an entity (user, system, etc.) that aggregates risk contributions over time, with calculation details surfaced in dedicated dashboards. Evolution of the classic per-window Risk Score used by Risk-Based Alerting.",
-    notes: "Introduced/emphasized in ES 8.3+. Complements (does not fully replace) the existing Risk Score object; the taxonomy can keep both or treat ERS as the modern primary artifact. Feeds Findings and the analyst queue.",
-    deps: ["Risk Index", "Risk Object / Risk Rule", "Asset & Identity Framework"], feeds: ["Finding", "Investigation"], sotCode: "SOT-10.01.28", instanceId: "ERS-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed / Filesystem (.conf)", restEndpoint: "To be confirmed" },
-{ name: "Detection Studio", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Platform Object", scope: "Private / App / Global (Splunk ES; primarily Cloud)",
-    config: "ES Content Management / Detection Studio UI",
-    def: "A detection-engineering workspace for evaluating, tuning, testing and maintaining detections against an organisation’s actual data and security environment, including versioning and performance feedback.",
-    notes: "GA in later ES 8.x Cloud releases. Sits above individual Event-based and Finding-based Detection objects as the authoring/governance surface. Complements Analytic Story and ESCU content packs.",
-    deps: ["Event-based Detection", "Finding-based Detection", "Correlation Search", "ESCU (Enterprise Security Content Update)"], feeds: ["Event-based Detection", "Finding-based Detection", "Analytic Story"], sotCode: "SOT-10.01.29", instanceId: "DSTU-001", objectClass: "Platform Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    config: "Enterprise Security risk / entity scoring configuration (ES 8.3+)",
+    def: "Continuous entity-level risk score that evolves classic Risk Score into a living per-entity measure used for prioritisation, attribution and agentic triage.",
+    notes: "Evolution of Risk Score (SOT-10.01.04). Prefer treating ERS as the current entity-scoring surface; retain Risk Score row for backward compatibility and note the relationship.",
+    deps: ["Risk Index", "Asset & Identity Framework", "Risk Object / Risk Rule", "Exposure Analytics"], feeds: ["Finding", "Investigation"], sotCode: "SOT-10.01.28", instanceId: "ERS-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Detection Studio", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global (Splunk ES)",
+    config: "Enterprise Security Detection Studio / detection engineering UI",
+    def: "Detection engineering and tuning workspace in Enterprise Security for authoring, validating, versioning and governing detections (Event-based and Finding-based).",
+    notes: "GA from ES 8.4. Sits alongside Correlation Search / Event-based / Finding-based Detection as the authoring and lifecycle surface rather than the scheduled search object itself.",
+    deps: ["Event-based Detection", "Finding-based Detection", "Analytic Story"], feeds: ["Event-based Detection", "Finding-based Detection"], sotCode: "SOT-10.01.29", instanceId: "DSTU-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
 { name: "Intermediate Finding", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
-    config: "Generated by Event-based Detections configured to emit intermediate findings (not a separate .conf type)",
-    def: "An anomaly produced by an Event-based Detection that is deliberately withheld from the analyst queue as a standalone item. It is visible only when nested under a Finding / Finding group and is intended as input for Finding-based Detections or investigation context.",
-    notes: "Introduced with the ES 8.0 findings model. Distinct from a regular Finding: Intermediate Findings never appear alone in the queue and cannot be the sole output of a detection that also produces Findings. Useful for reducing noise while still feeding higher-order correlation.",
-    deps: ["Event-based Detection"], feeds: ["Finding", "Finding-based Detection", "Investigation"], sotCode: "SOT-10.01.30", instanceId: "IFIND-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    config: "Produced by Event-based or Finding-based Detections; not a standalone queue row by default",
+    def: "A detection output that does not appear alone in the analyst queue; it is nested under or consumed by Findings and used as input to further correlation (Finding-based Detections or risk).",
+    notes: "Clarifies the Finding vs Intermediate Finding distinction introduced/restored in ES 8.1+. Explicit row improves inventory and content-design clarity.",
+    deps: ["Event-based Detection", "Finding-based Detection"], feeds: ["Finding", "Finding-based Detection", "Risk Object / Risk Rule"], sotCode: "SOT-10.01.30", instanceId: "IFIND-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
 { name: "Exposure Analytics", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global (Splunk ES)",
-    config: "Enterprise Security Exposure Analytics configuration (entity discovery sources, enrichment, inventory); optional endpoint add-ons (e.g. Splunk Exposure Analytics Add-on for Linux)",
-    def: "A continuous entity-discovery and attack-surface capability in Enterprise Security that builds and maintains a living inventory of assets, users and related entities from security events and optional discovery sources, then enriches findings and investigations with attribution, change history and exposure context.",
-    notes: "GA from ES 8.5 onward (with deeper insights in 8.6+). Distinct from the classic Asset & Identity Framework (which is primarily lookup/CMDB-driven enrichment): Exposure Analytics continuously discovers and tracks entities from live telemetry, surfaces Entity Discovery Insights / Inventory dashboards, and supplies business- and risk-aware context for prioritisation. Complements Risk Score / Entity Risk Score and feeds agentic SOC workflows. Optional forwarder-side add-ons can supply additional endpoint-derived enrichment.",
-    deps: ["Asset & Identity Framework", "Event-based Detection", "Finding", "Index", "Search Head"], feeds: ["Finding", "Investigation", "Entity Risk Score", "AI Agent", "Risk Object / Risk Rule"], sotCode: "SOT-10.01.31", instanceId: "EXPA-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    config: "Enterprise Security Exposure Analytics configuration (entity discovery sources, enrichment, inventory); optional endpoint add-ons",
+    def: "Continuous entity-discovery and attack-surface capability that builds and maintains a living inventory of assets, users and related entities from security events and optional discovery sources, then enriches findings and investigations with attribution, change history and exposure context.",
+    notes: "GA from ES 8.5 (deeper insights in 8.6+). Distinct from classic Asset & Identity Framework (lookup/CMDB-driven). Complements Risk Score / Entity Risk Score and feeds agentic SOC workflows.",
+    deps: ["Asset & Identity Framework", "Event-based Detection", "Finding", "Index", "Search Head"], feeds: ["Finding", "Investigation", "Entity Risk Score", "AI Agent"], sotCode: "SOT-10.01.31", instanceId: "EXPA-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
 { name: "Response Plan Phase", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Embedded in a Response Plan",
-    config: "Defined inside the parent Response Plan (not a standalone .conf object)",
-    def: "An ordered stage within a Response Plan (e.g. Detect, Analyse, Contain, Eradicate, Recover, Review). Groups related Tasks and tracks completion of that stage of the response.",
-    notes: "A phase is complete when all of its tasks are ended. Analysts work phase-by-phase on the Investigation Response tab. Name and description support tokens. Not independently versioned outside the parent plan.",
-    deps: ["Response Plan"], feeds: ["Response Plan Task", "Investigation"], sotCode: "SOT-10.01.32", instanceId: "RPPH-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    config: "Defined inside the parent Response Plan",
+    def: "An ordered stage within a Response Plan (e.g. Contain, Eradicate) that groups related Tasks and tracks completion of that stage of the response.",
+    notes: "A phase is complete when all of its tasks are ended. Name and description support tokens. Not independently versioned outside the parent plan.",
+    deps: ["Response Plan"], feeds: ["Response Plan Task", "Investigation"], sotCode: "SOT-10.01.16.01", instanceId: "RPPH-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", parent: "Response Plan" },
 { name: "Response Plan Task", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Embedded in a Response Plan Phase",
     config: "Defined inside a Phase of a Response Plan",
-    def: "A single actionable step inside a Phase — e.g. 'Quarantine the device' or 'Notify asset owner'. Can have a default owner, require a completion note, carry a Markdown description, embed searches, and trigger Actions or SOAR Playbooks.",
-    notes: "Lifecycle on an investigation: unassigned → started (optionally auto-assigned to the analyst who starts it) → ended. Supporting artefacts at execution time include notes, files/attachments, and run results of embedded searches/actions/playbooks. Tasks are matched by name within their phase for template updates.",
-    deps: ["Response Plan Phase"], feeds: ["SOAR Playbook", "Adaptive Response Action", "Investigation"], sotCode: "SOT-10.01.33", instanceId: "RPTK-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    def: "A single actionable step inside a Phase (e.g. quarantine device, notify owner). May have a default owner, require a completion note, carry a Markdown description, embed searches, and trigger Actions or SOAR Playbooks.",
+    notes: "Runtime lifecycle on an investigation: unassigned → started → ended. Supporting artefacts include notes, files, and results of embedded searches/actions/playbooks.",
+    deps: ["Response Plan Phase"], feeds: ["SOAR Playbook", "Adaptive Response Action", "Investigation"], sotCode: "SOT-10.01.16.02", instanceId: "RPTK-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", parent: "Response Plan" },
 { name: "Response Plan Embedded Search", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Embedded in a Response Plan Task",
-    config: "Search definition stored on the task (name, description, SPL)",
+    config: "Search definition stored on the task",
     def: "A named SPL (or SPL2) search attached to a Response Plan Task so analysts can run contextual investigation queries without leaving the Response tab.",
-    notes: "Supports tokens so the same search can adapt to investigation status, urgency, id, etc. Distinct from a saved Report or Dashboard Datasource; it exists only as guidance/tooling inside the task.",
-    deps: ["Response Plan Task"], feeds: ["Report", "Investigation"], sotCode: "SOT-10.01.34", instanceId: "RPSE-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    notes: "Supports tokens. Distinct from a saved Report; exists only as guidance/tooling inside the task.",
+    deps: ["Response Plan Task"], feeds: ["Report", "Investigation"], sotCode: "SOT-10.01.16.03", instanceId: "RPSE-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", parent: "Response Plan" },
 { name: "Response Plan Task Action", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Embedded in a Response Plan Task",
-    config: "Configured under the task's Actions section (app + action + parameters)",
-    def: "An automated or semi-automated action (from a SOAR app/connector or Adaptive Response-style integration) that can be run from a Response Plan Task during an investigation.",
-    notes: "Complements SOAR Playbook attachment on the same task. Lets a task both guide the human and trigger a concrete remediation or enrichment step. Distinct from a standalone Adaptive Response Action fired by a correlation search.",
-    deps: ["Response Plan Task", "SOAR App (Connector)", "Adaptive Response Action"], feeds: ["SOAR Action", "Investigation"], sotCode: "SOT-10.01.35", instanceId: "RPACT-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    config: "Configured under the task's Actions section",
+    def: "An automated or semi-automated action (SOAR app/connector or Adaptive Response-style integration) that can be run from a Response Plan Task during an investigation.",
+    notes: "Complements SOAR Playbook attachment on the same task. Distinct from a standalone Adaptive Response Action fired by a correlation search.",
+    deps: ["Response Plan Task", "Adaptive Response Action"], feeds: ["SOAR Action", "Investigation"], sotCode: "SOT-10.01.16.04", instanceId: "RPACT-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", parent: "Response Plan" },
 { name: "Response Plan Token", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Platform Object", scope: "Per Response Plan field",
-    config: "Predefined tokens substituted at apply/runtime (e.g. status, urgency, sensitivity, investigation_id)",
-    def: "A variable placeholder that can be inserted into Response Plan, Phase, or Task name/description fields and into embedded searches, resolved from the Investigation context when the plan is used.",
-    notes: "Standardises plans across many investigations without hard-coding case-specific values. Not a user-defined knowledge object in the classic sense; a fixed substitution mechanism supplied by the platform.",
-    deps: ["Investigation"], feeds: ["Response Plan", "Response Plan Phase", "Response Plan Task", "Response Plan Embedded Search"], sotCode: "SOT-10.01.36", instanceId: "RPTOK-001", objectClass: "Platform Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    config: "Predefined tokens substituted at apply/runtime (status, urgency, sensitivity, investigation_id, etc.)",
+    def: "A variable placeholder insertable into Response Plan, Phase or Task name/description fields and embedded searches, resolved from Investigation context when the plan is used.",
+    notes: "Standardises plans across investigations without hard-coding case-specific values.",
+    deps: ["Investigation"], feeds: ["Response Plan", "Response Plan Phase", "Response Plan Task", "Response Plan Embedded Search"], sotCode: "SOT-10.01.16.05", instanceId: "RPTOK-001", objectClass: "Platform Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", parent: "Response Plan" },
 { name: "Threat Intelligence Framework", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global (Splunk ES)",
     config: "threat_intelligence.conf, inputs.conf (TI modular input)",
     def: "The Enterprise Security module that ingests, normalises and manages threat intelligence feeds (STIX/TAXII/CSV) into searchable lookup tables.",
     notes: "Deduplicates and ages out indicators; stores IOCs in KV Store collections surfaced as TI Lookups.",
-    deps: ["Finding", "Lookup Definition", "Modular Input", "Search Head", "TI Feed", "TI Lookup"], feeds: ["TI Lookup"], sotCode: "SOT-10.01.08", instanceId: "TIF-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/nobody/SA-ThreatIntelligence/configs/conf-reviewstatuses", referenceDetail: "inputs-conf" },
+    deps: ["Finding", "Lookup Definition", "Modular Input", "Search Head", "TI Feed", "TI Lookup", "Threatlist Collection", "Indicator Aging Policy"], feeds: ["TI Lookup", "TI Indicator"], sotCode: "SOT-10.01.08", instanceId: "TIF-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/nobody/SA-ThreatIntelligence/configs/conf-reviewstatuses", referenceDetail: "inputs-conf" },
 { name: "TI Feed", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Platform Object", scope: "Instance-level (configured via Threat Intelligence Framework)",
     config: "inputs.conf (TI modular input), threat_intelligence.conf",
-    def: "A configured subscription to an external threat-intelligence source (STIX/TAXII, CSV, or API) providing indicators of compromise -- IPs, domains, hashes, URLs -- ingested into the Threat Intelligence Framework on a schedule.",
-    notes: "Sources include ISAC feeds, commercial TI platforms and open-source lists (e.g. abuse.ch, AlienVault OTX).",
-    deps: [], feeds: ["Threat Intelligence Framework"], sotCode: "SOT-10.01.09", instanceId: "TIF2-001", objectClass: "Platform Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed", referenceDetail: "inputs-conf" },
+    def: "A configured subscription to an external threat-intelligence source (STIX/TAXII, CSV, or API) providing indicators of compromise — IPs, domains, hashes, URLs — ingested into the Threat Intelligence Framework on a schedule.",
+    notes: "Sources include ISAC feeds, commercial TI platforms and open-source lists (e.g. abuse.ch, AlienVault OTX). Each feed maps into one or more Threatlist Collections after parse/normalise.",
+    deps: ["Threat Intelligence Framework"], feeds: ["Threatlist Collection", "TI Indicator"], sotCode: "SOT-10.01.08.01", instanceId: "TIF2-001", objectClass: "Platform Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed", referenceDetail: "inputs-conf", parent: "Threat Intelligence Framework" },
 { name: "TI Lookup", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
     config: "transforms.conf (TI lookup definitions, KV Store-backed)",
     def: "A KV Store-backed lookup table of active indicators generated by the Threat Intelligence Framework, automatically joined against events at search time to flag IOC matches.",
-    notes: "Powers threat-intel correlation searches in both Event-based and Finding-based Detections.",
-    deps: ["Threat Intelligence Framework"], feeds: ["Event-based Detection", "Finding-based Detection", "Lookup Definition"], sotCode: "SOT-10.01.10", instanceId: "TIL-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/-/-/configs/conf-transforms/{name}" },
+    notes: "Powers threat-intel correlation searches in both Event-based and Finding-based Detections. Typically one logical lookup per indicator type or threatlist collection.",
+    deps: ["Threat Intelligence Framework", "Threatlist Collection", "TI Indicator"], feeds: ["Event-based Detection", "Finding-based Detection", "Lookup Definition"], sotCode: "SOT-10.01.08.02", instanceId: "TIL-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/servicesNS/-/-/configs/conf-transforms/{name}", parent: "Threat Intelligence Framework" },
+{ name: "Indicator Aging Policy", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Platform Object", scope: "Framework / deployment-level",
+    config: "Threat Intelligence Framework retention / expiration settings (per list or global)",
+    def: "Rules that determine when an indicator is considered expired or eligible for removal based on age, last-seen time or source-specific TTL, so stale IOCs stop generating matches.",
+    notes: "Complements deduplication: aging removes or deactivates old indicators; dedup prevents the same IOC from appearing multiple times from overlapping feeds. Configure carefully — aggressive aging can drop still-relevant threat data.",
+    deps: ["Threat Intelligence Framework", "Threatlist Collection"], feeds: ["TI Indicator", "TI Lookup"], sotCode: "SOT-10.01.08.03", instanceId: "TIAGE-001", objectClass: "Platform Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", parent: "Threat Intelligence Framework" },
+{ name: "Indicator Deduplication Policy", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Platform Object", scope: "Framework / deployment-level",
+    config: "Threat Intelligence Framework merge / dedup behaviour on ingest",
+    def: "Logic that collapses duplicate or near-duplicate indicators from one or more TI Feeds into a single canonical record in a Threatlist Collection (e.g. same value from multiple sources, updated last-seen and source list).",
+    notes: "Runs at ingest time into the Framework. Without dedup, overlapping feeds inflate collections and can skew match counts and risk. Often paired with Indicator Aging Policy under the same Framework admin surface.",
+    deps: ["Threat Intelligence Framework", "TI Feed"], feeds: ["Threatlist Collection", "TI Indicator"], sotCode: "SOT-10.01.08.04", instanceId: "TIDED-001", objectClass: "Platform Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", parent: "Threat Intelligence Framework" },
+{ name: "Threatlist Collection", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Hybrid (Knowledge + Platform)", scope: "App / Framework-scoped (KV Store)",
+    config: "KV Store collections under SA-ThreatIntelligence (per indicator type / list)",
+    def: "A named KV Store collection that holds the current set of indicators for a given threat list or indicator category (e.g. ip_intel, file_intel, http_intel) after ingest, normalisation and deduplication.",
+    notes: "The physical store behind TI Lookups. Multiple feeds can contribute to the same collection; aging and dedup policies act on documents inside these collections. Distinct from a generic Lookup Table File or ad-hoc KV Store Collection.",
+    deps: ["TI Feed", "Threat Intelligence Framework"], feeds: ["TI Lookup", "TI Indicator"], sotCode: "SOT-10.01.08.05", instanceId: "TLC-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed / REST", restEndpoint: "To be confirmed", parent: "Threat Intelligence Framework" },
+{ name: "TI Indicator", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Stored in Threatlist Collections",
+    config: "Document fields in the relevant Threatlist Collection (indicator value, type, weight, source, first/last seen, expiration, etc.)",
+    def: "A single indicator of compromise (IP, domain, URL, hash, email, etc.) stored as a document in a Threatlist Collection, with metadata used for matching, scoring and lifecycle management.",
+    notes: "The atomic unit that Event-based and Finding-based Detections match against via TI Lookup. Weight/severity and source attribution influence risk and notable generation.",
+    deps: ["Threatlist Collection", "TI Feed"], feeds: ["TI Lookup", "Risk Object / Risk Rule", "Finding"], sotCode: "SOT-10.01.08.06", instanceId: "TIIND-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed / REST", restEndpoint: "To be confirmed", parent: "Threat Intelligence Framework" },
 { name: "Automation Rules", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Private / App / Global (Splunk ES)",
     config: "Splunk Enterprise Security (rule engine)",
     def: "ES-side rules that route a Finding into a SOAR Playbook or the Analyst Queue based on its conditions -- the bridge between detection and orchestrated response.",
@@ -50896,9 +50916,9 @@ const SOT_OBJECTS = [
   // ---------- SOT-04 — Visualization & User Experience Objects ----------
 { name: "Dashboard Datasource", domain: "SOT-04 — Visualization & User Experience Objects", type: "Knowledge Object", scope: "Embedded in a Dashboard (Dashboard Studio)",
     config: "(part of the Dashboard Studio definition, not a standalone .conf object)",
-    def: "A reusable query definition in Dashboard Studio that can point to a local index, a Federated Index, a saved search, or a Data Model pivot -- all through the same underlying SPL.",
+    def: "A reusable query definition in Dashboard Studio that can point to a local index, a Federated Dataset, a saved search, or a Data Model pivot -- all through the same underlying SPL.",
     notes: "",
-    deps: ["Data Model", "Federated Index", "Index", "Report"], feeds: ["Panel"], sotCode: "SOT-04.02.01", instanceId: "DD-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
+    deps: ["Data Model", "Federated Dataset", "Index", "Report"], feeds: ["Panel"], sotCode: "SOT-04.02.01", instanceId: "DD-001", objectClass: "Knowledge Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
   // ---------- SOT-06 — Storage, Indexing & Data Management Objects ----------
 { name: "Index", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level",
     config: "indexes.conf",
@@ -51098,7 +51118,7 @@ const SOT_OBJECTS = [
     config: "server.conf, distsearch.conf",
     def: "An instance responsible for running searches (fanning them out to indexers), rendering results, and hosting most knowledge objects users interact with directly.",
     notes: "",
-    deps: ["Deployment App", "Deployment Server", "Federated Index", "Index", "Indexer"], feeds: ["Alert", "App", "Dashboard (Classic SimpleXML)", "Data Model", "Event-based Detection", "Field Extraction (search-time)", "Report", "Source Type", "Splunk Stream Server"], sotCode: "SOT-08.01.01", instanceId: "SH-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/server/info" },
+    deps: ["Deployment App", "Deployment Server", "Federated Dataset", "Index", "Indexer"], feeds: ["Alert", "App", "Dashboard (Classic SimpleXML)", "Data Model", "Event-based Detection", "Field Extraction (search-time)", "Report", "Source Type", "Splunk Stream Server"], sotCode: "SOT-08.01.01", instanceId: "SH-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/server/info" },
 { name: "Search Head Cluster (SHC)", domain: "SOT-08 — Platform & Distributed Architecture Objects", type: "Platform Object", scope: "Deployment-level",
     config: "server.conf ([shclustering])",
     def: "A set of search heads sharing configuration, scheduler load and search artifacts, presenting a single logical search tier with high availability.",
@@ -51189,52 +51209,52 @@ const SOT_OBJECTS = [
     config: "federated-providers.conf (Splunk Cloud / ES); federated.conf (Splunk Enterprise, on-premises)",
     def: "Registers an external, queryable data source -- a remote Splunk Enterprise/Cloud deployment, an S3-compatible bucket, or an AWS Glue Data Catalog -- letting the Search Head issue SPL against data that was never indexed locally.",
     notes: "Credentials managed via IAM role, access key, or (for a remote-Splunk provider) an auth token; multiple providers can be registered; status visible under Splunk Web Settings -> Federated Search.",
-    deps: [], feeds: ["Federated Index", "Federated Search for Amazon S3 (FS-S3)", "Federated Analytics"], sotCode: "SOT-06.05.01", instanceId: "FSP-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/federated/provider/{federated_provider_name}", referenceDetail: "federated-conf" },
-{ name: "Federated Index", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level",
+    deps: [], feeds: ["Federated Dataset", "Federated Search for Amazon S3 (FS-S3)", "Federated Analytics"], sotCode: "SOT-06.05.01", instanceId: "FSP-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/federated/provider/{federated_provider_name}", referenceDetail: "federated-conf" },
+{ name: "Federated Dataset", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level",
     config: "federated-indexes.conf (Splunk Cloud / ES); federated.conf (Splunk Enterprise, on-premises)",
     def: "A virtual Splunk index that maps SPL syntax (index=<name>) to a Federated Search Provider, letting analysts query a remote Splunk deployment or archived S3 data exactly as they would a local index, with no re-ingestion required.",
     notes: "Transparent to the analyst -- stats, eval, where, rex, lookup all work normally; the search is pushed down to the remote provider and results streamed back to the Search Head.",
     deps: ["Federated Search Provider"], feeds: ["Dashboard Datasource", "Report", "Search Head"], sotCode: "SOT-06.05.02", instanceId: "FI-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "/services/data/federated/index/{federated_index_name}", referenceDetail: "federated-conf" },
 { name: "Federated Search for Amazon S3 (FS-S3)", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud Platform, AWS-region deployments only)",
     config: "Data Management app; federated-providers.conf (S3-type provider) + AWS Glue Data Catalog table registration",
-    def: "A Splunk Cloud Platform capability, surfaced in the Data Management app, for querying data sitting in Amazon S3 buckets directly -- without ingesting or indexing it -- using AWS Glue Data Catalog tables for schema and the SPL2 sdselect (SQL-like) command rather than ordinary SPL against a Federated Index.",
-    notes: "Best suited to low-frequency, ad-hoc searches of historical/archival data, not real-time or high-frequency use -- a more SQL-oriented, self-service sibling of the general Federated Search Provider/Federated Index mechanism. A common pattern: route raw or masked data to S3 via Edge/Ingest Processor, then search it in place later with FS-S3, trading real-time searchability for storage-cost savings.",
+    def: "A Splunk Cloud Platform capability, surfaced in the Data Management app, for querying data sitting in Amazon S3 buckets directly -- without ingesting or indexing it -- using AWS Glue Data Catalog tables for schema and the SPL2 sdselect (SQL-like) command rather than ordinary SPL against a Federated Dataset.",
+    notes: "Best suited to low-frequency, ad-hoc searches of historical/archival data, not real-time or high-frequency use -- a more SQL-oriented, self-service sibling of the general Federated Search Provider/Federated Dataset mechanism. A common pattern: route raw or masked data to S3 via Edge/Ingest Processor, then search it in place later with FS-S3, trading real-time searchability for storage-cost savings.",
     deps: ["Federated Search Provider"], feeds: [], sotCode: "SOT-06.05.03", instanceId: "FSASF-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "Filesystem (.conf)", restEndpoint: "To be confirmed" },
 { name: "Federated Analytics", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud Platform / Enterprise Security, AWS Security Lake)",
     config: "Federated Analytics configuration (Splunk Cloud/ES integration with Amazon Security Lake)",
     def: "A related but distinct federated capability for running threat detection and hunting searches directly against Amazon Security Lake data, rather than the general-purpose ad-hoc querying that Federated Search for Amazon S3 provides.",
     notes: "The security-focused sibling of FS-S3 -- same underlying idea (query AWS data without ingesting it) applied specifically to Security Lake's OCSF-normalised security data for detection and hunting use cases.",
     deps: ["Federated Search Provider"], feeds: [], sotCode: "SOT-06.05.04", instanceId: "FEDA-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
-{ name: "Federated Search Provider – Snowflake", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level",
-    config: "federated-providers.conf (or Cloud Data Management / Catalog equivalent) + connection credentials",
-    def: "A Federated Search Provider configuration that registers a Snowflake account/warehouse so SPL (or SPL2) can query Snowflake tables in place without ingesting the data into Splunk indexes.",
-    notes: "Subtype of the general Federated Search Provider (SOT-06.05.01). Appears in recent Data Fabric / Federated Search expansions. Prefer modelling as a specialised provider rather than a wholly separate top-level object.",
-    deps: ["Federated Search Provider"], feeds: ["Federated Index", "Catalog", "Report", "Dashboard Datasource"], sotCode: "SOT-06.05.05", instanceId: "FSP-002", objectClass: "Platform Object", product: "Splunk Cloud Platform", lifecycle: "Active", validationMethod: "UI-managed / Filesystem (.conf)", restEndpoint: "To be confirmed" },
-{ name: "Federated Search Provider – Databricks", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level",
-    config: "federated-providers.conf (or Cloud Data Management / Catalog equivalent) + connection credentials",
-    def: "A Federated Search Provider configuration that registers a Databricks workspace/SQL warehouse so analysts can run federated queries against Databricks tables without moving the data.",
-    notes: "Subtype of Federated Search Provider. Part of the 2026 Data Fabric federated-search expansions alongside Snowflake and CloudWatch.",
-    deps: ["Federated Search Provider"], feeds: ["Federated Index", "Catalog", "Report"], sotCode: "SOT-06.05.06", instanceId: "FSP-003", objectClass: "Platform Object", product: "Splunk Cloud Platform", lifecycle: "Active", validationMethod: "UI-managed / Filesystem (.conf)", restEndpoint: "To be confirmed" },
-{ name: "Federated Search Provider – CloudWatch Unified Data Store", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level (AWS)",
-    config: "federated-providers.conf / Data Management connection + AWS IAM role",
-    def: "A Federated Search Provider that surfaces Amazon CloudWatch Unified Data Store tables as first-class federated datasets, allowing schema-aware queries without ingestion.",
-    notes: "Recent addition to the standard federation experience. Complements the older Federated Search for Amazon S3 (FS-S3) path.",
-    deps: ["Federated Search Provider"], feeds: ["Federated Index", "Catalog"], sotCode: "SOT-06.05.07", instanceId: "FSP-004", objectClass: "Platform Object", product: "Splunk Cloud Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
-{ name: "Federated Search Provider – Cisco SAL", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level",
-    config: "Federated Search configuration for Cisco Security Analytics and Logging",
-    def: "A Federated Search Provider that brings historical Cisco firewall / Security Analytics and Logging (SAL) telemetry into Splunk investigations without requiring full re-ingestion.",
-    notes: "GA with Splunk Cloud Platform ~10.6.x. Security-focused federated source; pairs naturally with ES detections and Findings.",
-    deps: ["Federated Search Provider", "CIM (Common Information Model)"], feeds: ["Federated Index", "Event-based Detection", "Finding"], sotCode: "SOT-06.05.08", instanceId: "FSP-005", objectClass: "Platform Object", product: "Splunk Cloud Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
-{ name: "Machine Data Lake", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud / Cisco Data Fabric)",
-    config: "Managed via Splunk Cloud Data Management / Catalog UI and ACS-style controls (not classic indexes.conf)",
-    def: "A Splunk-managed, cost-efficient landing and retention tier for full-fidelity machine data at scale. Data can remain in the lake and be promoted on demand into higher-performance searchable tiers (or queried via Federated Search) rather than being fully indexed up-front.",
-    notes: "Core component of the Cisco Data Fabric architecture. Distinct from DDAS/DDAA (managed hot/warm/cold tiers), DDSS (customer-owned self-storage), and from Federated Search for Amazon S3 (which queries external S3 without a Splunk-managed lake). Intended for high-volume, lower-frequency or archival machine data that still needs governed discoverability and selective promotion.",
-    deps: ["Federated Search Provider", "Catalog"], feeds: ["Federated Index", "Catalog", "Dashboard Datasource", "Report"], sotCode: "SOT-06.06.01", instanceId: "MDL-001", objectClass: "Platform Object", product: "Splunk Cloud Platform", lifecycle: "Active", validationMethod: "UI-managed / REST API (ACS)", restEndpoint: "To be confirmed" },
-{ name: "Catalog", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud / Cisco Data Fabric)",
-    config: "Managed via the Catalog UI / Data Management experience; dataset and connection metadata",
-    def: "A metadata and discovery surface that inventories datasets (Machine Data Lake tables, federated providers, S3/Glue tables, external destinations, etc.), their schemas, ownership and lineage so analysts and agents can find and reason about data without knowing physical locations.",
-    notes: "Frequently paired with Machine Data Lake and expanded Federated Search. Also used as the management surface for certain Ingest Processor destinations (e.g. S3 / Azure connections) in recent releases. Distinct from a classic Lookup Definition or Data Model — it is a cross-tier catalog rather than a search-time knowledge object.",
-    deps: ["Machine Data Lake", "Federated Search Provider", "Ingest Processor Pipeline"], feeds: ["Federated Index", "Dashboard Datasource", "Report", "AI Agent"], sotCode: "SOT-06.06.02", instanceId: "CAT-001", objectClass: "Platform Object", product: "Splunk Cloud Platform", lifecycle: "Active", validationMethod: "UI-managed / REST API", restEndpoint: "To be confirmed" },
+{ name: "Federated Search Provider — Snowflake", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "Federated provider / connection configuration for Snowflake",
+    def: "Snowflake as a first-class Federated Search provider, allowing in-place query of Snowflake datasets from Splunk without bulk ingest.",
+    notes: "Subtype of the general Federated Search Provider pattern. Register connection and datasets via Catalog where supported.",
+    deps: ["Catalog", "Federated Dataset"], feeds: ["Federated Dataset", "Report"], sotCode: "SOT-06.05.05", instanceId: "FSP-002", objectClass: "Platform Object", product: "Splunk Cloud Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Federated Search Provider — Databricks", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "Federated provider / connection configuration for Databricks",
+    def: "Databricks as a first-class Federated Search provider for in-place query of Databricks datasets from Splunk.",
+    notes: "Subtype of the general Federated Search Provider pattern.",
+    deps: ["Catalog", "Federated Dataset"], feeds: ["Federated Dataset", "Report"], sotCode: "SOT-06.05.06", instanceId: "FSP-003", objectClass: "Platform Object", product: "Splunk Cloud Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Federated Search Provider — CloudWatch Unified Data Store", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "Federated provider / connection configuration for CloudWatch Unified Data Store",
+    def: "AWS CloudWatch Unified Data Store as a first-class Federated Search provider, with schema/partition awareness from source metadata.",
+    notes: "Subtype of the general Federated Search Provider pattern.",
+    deps: ["Catalog", "Federated Dataset"], feeds: ["Federated Dataset", "Report"], sotCode: "SOT-06.05.07", instanceId: "FSP-004", objectClass: "Platform Object", product: "Splunk Cloud Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Federated Search Provider — Cisco SAL", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level",
+    config: "Federated provider / connection configuration for Cisco Security Analytics and Logging (SAL)",
+    def: "Cisco Security Analytics and Logging (SAL) as a Federated Search provider for in-place query of SAL-held security telemetry.",
+    notes: "Subtype of the general Federated Search Provider pattern; strengthens Cisco Data Fabric cohesion.",
+    deps: ["Catalog", "Federated Dataset"], feeds: ["Federated Dataset", "Report"], sotCode: "SOT-06.05.08", instanceId: "FSP-005", objectClass: "Platform Object", product: "Splunk Cloud Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Machine Data Lake", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud)",
+    config: "Managed by Catalog and Data Fabric services; not a classic indexes.conf stanza",
+    def: "A Splunk-managed low-cost storage tier that retains full-fidelity machine data in catalogued form without requiring it to be fully indexed until promoted for search or analytics.",
+    notes: "Core Cisco Data Fabric capability. Data is discoverable via Catalog and can be promoted into indexes or Iceberg Analytics Tables. Distinct from DDAS/DDAA/DDSS storage tiers and from Federated Search of external lakes.",
+    deps: ["Catalog", "Federated Search Provider"], feeds: ["Catalog", "Index", "Federated Dataset"], sotCode: "SOT-06.06.01", instanceId: "MDL-001", objectClass: "Platform Object", product: "Splunk Cloud Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Catalog", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Deployment-level (Splunk Cloud)",
+    config: "Catalog UI / Data Fabric dataset and connection management",
+    def: "Platform-wide metadata and discovery surface for datasets and connections across Splunk indexes, Machine Data Lake, and supported federated providers, enabling find, understand, promote and govern workflows.",
+    notes: "GA capability of Cisco Data Fabric. Supports management of federated datasets, Machine Data Lake raw tables and connections from a single experience.",
+    deps: ["Machine Data Lake", "Federated Search Provider", "Index"], feeds: ["Federated Dataset", "Dashboard Datasource"], sotCode: "SOT-06.06.02", instanceId: "CAT-001", objectClass: "Platform Object", product: "Splunk Cloud Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
 { name: "Bucket", domain: "SOT-06 — Storage, Indexing & Data Management Objects", type: "Platform Object", scope: "Instance-level",
     config: "Filesystem, governed by indexes.conf",
     def: "The physical on-disk unit of indexed data at a given lifecycle stage -- hot (writable), warm, cold, frozen, or thawed.",
@@ -51619,26 +51639,26 @@ const SOT_OBJECTS = [
     def: "Splunk's formal training and certification program (instructor-led and self-paced courses, certification exams).",
     notes: "",
     deps: [], feeds: [], sotCode: "SOT-12.04.05", instanceId: "SE-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "To be confirmed", restEndpoint: "To be confirmed" },
-{ name: "MCP Server", domain: "SOT-12 — Integration & Ecosystem Objects", type: "Platform Object", scope: "Deployment-level (pre-installed on eligible Cloud stacks from ~10.6)",
-    config: "App configuration + capability/role controls; tool exposure settings",
-    def: "The Model Context Protocol server that exposes Splunk search, index discovery, alerts and other platform tools to external or internal AI agents in a governed way. Pre-installed on recent Splunk Cloud releases so agents can call Splunk without custom connectors.",
-    notes: "Acts as the common integration layer under AI Assistant, Agent Mode, Enterprise Security agent features and third-party MCP clients. Admins retain control over which tools and data scopes agents may use. Distinct from a classic Custom REST Endpoint or SOAR App connector.",
-    deps: ["Role", "Capability", "Auth Token"], feeds: ["AI Agent", "Splunk AI Assistant", "Enterprise Security"], sotCode: "SOT-12.05.01", instanceId: "MCP-001", objectClass: "Platform Object", product: "Splunk Cloud Platform", lifecycle: "Active", validationMethod: "UI-managed / REST API", restEndpoint: "To be confirmed" },
-{ name: "AI Agent", domain: "SOT-12 — Integration & Ecosystem Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global (definition) + runtime",
-    config: "Agent definition (objectives, tools, skills, guardrails) managed via Agent Launchpad / Agent Builder or ES agent surfaces",
-    def: "A configured autonomous or semi-autonomous worker that uses MCP tools, SPL/SPL2, playbooks or domain skills to perform detection engineering, investigation, response, threat hunting or IT operations tasks under human-defined objectives and guardrails.",
-    notes: "Umbrella object covering specialized agents (Detection Builder Agent, investigation agents, etc.). Runtime may be cloud-hosted or on Cisco AI POD / customer infrastructure. Distinct from a classic Alert Action, Adaptive Response Action or SOAR Playbook — an Agent reasons and selects tools rather than executing a fixed sequence.",
-    deps: ["MCP Server", "SPL2 Data View", "Catalog", "Finding", "SOAR Playbook"], feeds: ["Investigation", "Finding", "Response Plan", "Mission Control"], sotCode: "SOT-12.05.02", instanceId: "AGNT-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Splunk Platform / Enterprise Security / Observability", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
-{ name: "Agent Launchpad", domain: "SOT-12 — Integration & Ecosystem Objects", type: "Platform Object", scope: "Deployment-level",
-    config: "Managed via Splunk Cloud / AI Toolkit surfaces (Agent Builder + Launchpad)",
-    def: "The control plane and runtime surface for creating, configuring, deploying and monitoring AI Agents (templates, Model Context Protocol connections, human-in-the-loop controls and skills).",
-    notes: "Also referred to in materials alongside Agent Builder. Provides the governance and lifecycle layer for the agent estate. Complements MCP Server (tool exposure) and individual AI Agent definitions.",
-    deps: ["MCP Server", "AI Agent"], feeds: ["AI Agent"], sotCode: "SOT-12.05.03", instanceId: "AGLP-001", objectClass: "Platform Object", product: "Splunk Cloud Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "MCP Server", domain: "SOT-12 — Integration & Ecosystem Objects", type: "Platform Object", scope: "Instance / Cloud (preinstalled on eligible Splunk Cloud)",
+    config: "MCP Server app configuration and token management",
+    def: "The Model Context Protocol server that exposes Splunk search, knowledge objects, alerts and related capabilities as standardised tools that external and internal AI agents can call under RBAC.",
+    notes: "Acts as the tool layer underneath AI Assistant, Agent Launchpad, ES and ITSI agent integrations. Supports encrypted token management and workload guardrails.",
+    deps: ["Search Head", "Index", "Alert", "Federated Dataset"], feeds: ["AI Agent", "Agent Launchpad"], sotCode: "SOT-12.05.01", instanceId: "MCP-001", objectClass: "Platform Object", product: "Splunk Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "AI Agent", domain: "SOT-12 — Integration & Ecosystem Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global (AI Toolkit / ES)",
+    config: "Agent definition (objectives, skills, tools, model connection) in Agent Launchpad or ES agent surfaces",
+    def: "An autonomous or semi-autonomous worker configured with objectives, skills and tool access (via MCP or product-specific integrations) that can investigate, triage or remediate using Splunk data and actions.",
+    notes: "Generic object covering product agents (e.g. Detection Builder Agent, AI SOC Analyst) and customer-built agents. Specific named agents can be listed in Notes rather than as separate top-level classes.",
+    deps: ["MCP Server", "Agent Launchpad", "Finding", "Investigation"], feeds: ["SOAR Playbook", "Investigation", "Finding"], sotCode: "SOT-12.05.02", instanceId: "AGNT-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Splunk Platform / Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Agent Launchpad", domain: "SOT-12 — Integration & Ecosystem Objects", type: "Platform Object", scope: "App-scoped (AI Toolkit)",
+    config: "Agent Launchpad UI within Splunk AI Toolkit",
+    def: "No-code / low-code surface for building, configuring, invoking and managing operational AI agents inside Splunk, including templates, skills, human-in-the-loop tool approval and chat-based invocation.",
+    notes: "Available as part of the Splunk AI Toolkit. Agents created here can be triggered from alerts and searches and use existing RBAC.",
+    deps: ["MCP Server", "AI Agent"], feeds: ["AI Agent"], sotCode: "SOT-12.05.03", instanceId: "AGLP-001", objectClass: "Platform Object", product: "Splunk Platform (AI Toolkit)", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
 { name: "Agent Observability", domain: "SOT-12 — Integration & Ecosystem Objects", type: "Platform Object", scope: "Deployment-level",
-    config: "Observability Cloud / Agent Observability configuration",
-    def: "Monitoring, guardrails and cost visibility for AI agents and coding tools in production — including behavior evaluation, hallucination/data-leak controls, and Tokenomics (token spend tracking and forecasting).",
-    notes: "Spans both security/IT agents running against Splunk and broader coding/agent workloads. Tokenomics is a notable sub-capability for cost control. Distinct from classic Monitoring Console or Health Report Config.",
-    deps: ["AI Agent", "MCP Server"], feeds: ["Monitoring Console", "Finding"], sotCode: "SOT-12.05.04", instanceId: "AGOB-001", objectClass: "Platform Object", product: "Splunk Observability Cloud / Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    config: "Agent Observability / Tokenomics configuration and telemetry",
+    def: "Capabilities for evaluating, tracing and governing AI agent behaviour — including quality/safety evaluations, span-level tracing, token/cost (tokenomics) tracking and runtime guardrails.",
+    notes: "Complements AI Agent and MCP Server by providing the control and cost plane for agentic workloads.",
+    deps: ["AI Agent", "MCP Server"], feeds: [], sotCode: "SOT-12.05.04", instanceId: "AGOB-001", objectClass: "Platform Object", product: "Splunk Observability / Platform", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
 { name: "System Message", domain: "SOT-11 — Platform Administration & Operational Objects", type: "Platform Object", scope: "Instance-level",
     config: "Ephemeral/persistent messages created by splunkd (license quotas, license expirations, misconfigured indexes, disk space) or created via POST",
     def: "A systemwide notification surfaced as a Splunk Web bulletin-board message, either generated automatically by splunkd or created via the REST API.",
@@ -52623,9 +52643,9 @@ const SOT_TREE = {
       "SOT-06.04.04": "DDAA",
       "SOT-06.04.05": "DDSS",
     } },
-    "SOT-06.05": { label: "Federated Data", desc: "Querying data that was never indexed locally.", subclasses: {
+    "SOT-06.05": { label: "Federated Search", desc: "Querying data that was never indexed locally.", subclasses: {
       "SOT-06.05.01": "Federated Search Provider",
-      "SOT-06.05.02": "Federated Index",
+      "SOT-06.05.02": "Federated Dataset",
       "SOT-06.05.03": "Federated Search for Amazon S3 (FS-S3)",
       "SOT-06.05.04": "Federated Analytics",
       "SOT-06.05.05": "Federated Search Provider (Snowflake)",
@@ -52633,7 +52653,7 @@ const SOT_TREE = {
       "SOT-06.05.07": "Federated Search Provider (CloudWatch UDS)",
       "SOT-06.05.08": "Federated Search Provider (Cisco SAL)",
     } },
-    "SOT-06.06": { label: "Data Lake & Catalog", desc: "Splunk-managed lake storage and the catalog that inventories datasets across tiers.", subclasses: {
+    "SOT-06.06": { label: "Data Fabric Storage", desc: "Splunk-managed lake storage and the catalog that inventories datasets across tiers.", subclasses: {
       "SOT-06.06.01": "Machine Data Lake",
       "SOT-06.06.02": "Catalog",
     } },
@@ -52777,8 +52797,6 @@ const SOT_TREE = {
       "SOT-10.01.06": "Event-based Detection",
       "SOT-10.01.07": "Finding-based Detection",
       "SOT-10.01.08": "Threat Intelligence Framework",
-      "SOT-10.01.09": "Threat Intelligence Feed",
-      "SOT-10.01.10": "Threat Intelligence Lookup",
       "SOT-10.01.11": "Automation Rule",
       "SOT-10.01.12": "Detection Content Package (ESCU)",
       "SOT-10.01.13": "Asset & Identity Framework",
@@ -52800,11 +52818,6 @@ const SOT_TREE = {
       "SOT-10.01.29": "Detection Studio",
       "SOT-10.01.30": "Intermediate Finding",
       "SOT-10.01.31": "Exposure Analytics",
-      "SOT-10.01.32": "Response Plan Phase",
-      "SOT-10.01.33": "Response Plan Task",
-      "SOT-10.01.34": "Response Plan Embedded Search",
-      "SOT-10.01.35": "Response Plan Task Action",
-      "SOT-10.01.36": "Response Plan Token",
     } },
     "SOT-10.02": { label: "IT Service Intelligence", desc: "AIOps/service-monitoring objects specific to ITSI.", subclasses: {
       "SOT-10.02.01": "Service",
@@ -53185,6 +53198,8 @@ function renderObjectDetailBody(obj) {
     ${renderObjectAttributesTable(obj)}
     <div class="sot-detail-row" style="margin-top:14px;"><div class="label">Definition</div><div class="value">${escapeHtml(obj.def)}</div></div>
     ${obj.notes ? `<div class="sot-detail-row"><div class="label">Notes</div><div class="value">${escapeHtml(obj.notes)}</div></div>` : ""}
+    ${obj.parent ? `<div class="sot-detail-row"><div class="label">Part of</div><div class="value">${renderRefPills([obj.parent])}</div></div>` : ""}
+    ${(kids => kids.length ? `<div class="sot-detail-row"><div class="label">Components</div><div class="value">${renderRefPills(kids.map(o => o.name))}</div></div>` : "")(sotChildren(obj))}
     <div class="sot-detail-row"><div class="label">Depends on</div><div class="value">${renderRefPills(obj.deps)}</div></div>
     <div class="sot-detail-row"><div class="label">Feeds / consumers</div><div class="value">${renderRefPills(obj.feeds)}</div></div>
     ${(by => by.length ? `<div class="sot-detail-row"><div class="label">Used by (lists it as a dependency)</div><div class="value">${renderRefPills(by.map(o => o.name))}</div></div>` : "")(sotUsedBy(obj))}
@@ -53238,6 +53253,10 @@ function sotRenderDetail(obj) {
 // of exactly one object ("Universal Forwarder" for "Universal Forwarder (UF)", "Data Input
 // (General)" for "Data Input") links to it; anything else stays unlinked and is marked.
 const SOT_BY_NAME = new Map(SOT_OBJECTS.map(o => [o.name, o]));
+// A component (an object with a parent, coded under it: SOT-10.01.16.01) sits under its parent
+// object in the tree and shares the parent's subclass.
+const sotLeafCode = o => o.parent && SOT_BY_NAME.has(o.parent) ? SOT_BY_NAME.get(o.parent).sotCode : o.sotCode;
+const sotChildren = o => SOT_OBJECTS.filter(c => c.parent === o.name);
 function sotResolve(name) {
   if (SOT_BY_NAME.has(name)) return SOT_BY_NAME.get(name);
   const general = name.replace(/\s*\(General\)$/, "");
@@ -53321,7 +53340,7 @@ document.getElementById("sotExportBtn").addEventListener("click", exportCsv);
  * ---------------------------------------------------------------------- */
 const SOT_OBJECTS_BY_LEAF = {};
 SOT_OBJECTS.forEach(o => {
-  (SOT_OBJECTS_BY_LEAF[o.sotCode] = SOT_OBJECTS_BY_LEAF[o.sotCode] || []).push(o);
+  (SOT_OBJECTS_BY_LEAF[sotLeafCode(o)] = SOT_OBJECTS_BY_LEAF[sotLeafCode(o)] || []).push(o);
 });
 
 let sotActiveView = "tree";
@@ -53381,7 +53400,7 @@ function isSelected(level, code) {
   return !!sotTreeSelected && sotTreeSelected.level === level && sotTreeSelected.code === code;
 }
 
-function renderObjectRow(o) {
+function renderObjectRow(o, kids = []) {
   const selected = !!sotTreeSelected && sotTreeSelected.level === "object" && sotTreeSelected.name === o.name;
   return `<li class="sot-tree-node" data-level="object">
     <div class="tree-row${selected ? " selected" : ""}" data-level="object" data-name="${escapeHtml(o.name)}">
@@ -53390,6 +53409,7 @@ function renderObjectRow(o) {
       <span class="tree-label">${taxHighlight(o.name, sotTreeQuery)}${sotLifecycleBadge(o)}</span>
       <span class="pill ${pillClass(o.type)}" style="font-size:11px;">${escapeHtml(o.type === "Hybrid (Knowledge + Platform)" ? "Hybrid" : o.type.replace(" Object", "").replace("External Platform", "External"))}</span>
     </div>
+    ${kids.length ? `<ul class="tree-list" aria-label="Components of ${escapeHtml(o.name)}">${kids.map(k => renderObjectRow(k)).join("")}</ul>` : ""}
   </li>`;
 }
 
@@ -53399,7 +53419,10 @@ function renderSubclassNode(s, searching) {
   let html = `<li class="sot-tree-node" data-level="subclass">`;
   html += toggleRowHtml("subclass", s.code, s.label, s.objects.length, hasChildren, expanded, isSelected("subclass", s.code));
   if (hasChildren && expanded) {
-    html += `<ul class="tree-list">${s.objects.map(renderObjectRow).join("")}</ul>`;
+    // Components draw under their parent; one whose parent is filtered out stands on its own.
+    const shown = new Set(s.objects.map(o => o.name));
+    const roots = s.objects.filter(o => !o.parent || !shown.has(o.parent));
+    html += `<ul class="tree-list">${roots.map(o => renderObjectRow(o, s.objects.filter(c => c.parent === o.name))).join("")}</ul>`;
   }
   html += `</li>`;
   return html;
@@ -53490,8 +53513,8 @@ function pathToLeaf(code) {
   return null;
 }
 
-function pathToObjectSot(sotCode) {
-  return pathToLeaf(sotCode);
+function pathToObjectSot(obj) {
+  return pathToLeaf(sotLeafCode(obj));
 }
 
 function breadcrumbHtml(parts) {
@@ -53548,9 +53571,9 @@ function renderTreeDetailForNode(level, code) {
 function renderTreeDetailForObject(obj) {
   const panel = document.getElementById("sotTreeDetailPanel");
   if (!obj) return;
-  const path = pathToObjectSot(obj.sotCode);
+  const path = pathToObjectSot(obj);
   panel.innerHTML = SOT_SHEET_CLOSE + `
-    ${breadcrumbHtml([path.domainCode, path.classCode, obj.sotCode])}
+    ${breadcrumbHtml([path.domainCode, path.classCode, ...(obj.parent ? [path.subclassCode] : []), obj.sotCode])}
     <h2>${escapeHtml(obj.name)}</h2>
     <div style="margin-bottom:16px;"><span class="pill ${pillClass(obj.type)}">${escapeHtml(obj.type)}</span></div>
     ${renderObjectDetailBody(obj)}
@@ -53608,10 +53631,10 @@ function selectObjectInTree(name) {
   const obj = SOT_OBJECTS.find(o => o.name === name);
   if (!obj) return;
   sotSetLinked({ object: name });
-  const path = pathToObjectSot(obj.sotCode);
+  const path = pathToObjectSot(obj);
   sotTreeExpanded.add(path.domainCode);
   sotTreeExpanded.add(path.classCode);
-  sotTreeExpanded.add(obj.sotCode);
+  sotTreeExpanded.add(path.subclassCode);
   sotTreeQuery = "";
   document.getElementById("sotTreeSearch").value = "";
   sotTreeSelected = { level: "object", code: null, name };
