@@ -1,5 +1,5 @@
 'use strict';
-// Object taxonomy sunburst: every object in the Splunk object taxonomy appears once, under
+// Splunk object taxonomy sunburst: every object in the Splunk object taxonomy appears once, under
 // domain > class > subclass (a one-object subclass is drawn as its object; components sit
 // outside their parent); an arc zooms in, the arc in focus zooms back out, and the panel's
 // buttons do the same from the keyboard; colour by object type (keyed with counts) or a
@@ -56,7 +56,8 @@ test('the sunburst holds every object once; arcs and the panel zoom in and out',
     assert.equal(key.reduce((a, b) => a + b, 0), await page.evaluate(() => SOT_OBJECTS.length));
     // Colour by product highlights one value; the arcs in blue are exactly those objects.
     await page.selectOption('#sbColorBy', 'product');
-    await page.waitForTimeout(700);
+    // Colours fade in over the transition; wait for the object arcs to settle.
+    await page.waitForFunction(() => [...document.querySelectorAll('#sbChart .slice')].filter(s => s.__data__.data.kind === 'object').every(s => /^rgb\((42, 120, 214|179, 178, 171)\)$/.test(s.querySelector('path.main-arc').style.fill)), null, { timeout: 5000 }).catch(() => {});
     const product = await page.evaluate(() => ({
       value: document.getElementById('sbValue').value, shown: !document.getElementById('sbValueWrap').hidden,
       key: +document.querySelector('#sbLegend .sb-key strong').textContent,

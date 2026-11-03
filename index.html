@@ -1326,7 +1326,7 @@
       background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 58%, #eff6ff 100%);
     }
     .patterns-hero h2 { margin: 4px 0 0; font-size: clamp(24px, 3.5vw, 34px); }
-    /* Object taxonomy sunburst */
+    /* Taxonomy sunbursts (Splunk object taxonomy, onboard taxonomy) */
     .sb-controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; margin: 16px 0 10px; }
     .sb-controls [hidden] { display: none; }
     .sb-controls label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600; color: var(--muted); }
@@ -1346,10 +1346,10 @@
     .sb-swatch { flex: none; display: inline-block; width: 12px; height: 12px; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(11, 11, 11, 0.10); }
     .sb-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 380px); gap: 18px; align-items: start; }
     .sb-chart-wrap { min-width: 0; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; }
-    #sbChart { display: flex; justify-content: center; width: 100%; }
-    #sbChart .sunburst-viz .main-arc { stroke-width: 1.5px; }
-    #sbChart .float-tooltip-kap { padding: 8px 10px; font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color: #ffffff; background: #0f172a; border-radius: 8px; box-shadow: var(--shadow); }
-    #sbChart .float-tooltip-kap .tooltip-title { margin-bottom: 3px; }
+    .sb-chart { display: flex; justify-content: center; width: 100%; }
+    .sb-chart .sunburst-viz .main-arc { stroke-width: 1.5px; }
+    .sb-chart .float-tooltip-kap { padding: 8px 10px; font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color: #ffffff; background: #0f172a; border-radius: 8px; box-shadow: var(--shadow); }
+    .sb-chart .float-tooltip-kap .tooltip-title { margin-bottom: 3px; }
     .sb-tip code { color: #cbd5e1; font-size: 12px; }
     .sb-panel { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; }
     .sb-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; margin-bottom: 6px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
@@ -1378,6 +1378,9 @@
     .sb-children li, .sb-name { min-width: 0; }
     .sb-name { overflow-wrap: anywhere; }
     .sb-n { font-variant-numeric: tabular-nums; color: var(--muted); }
+    .sb-records { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; font-size: 13px; color: var(--text); }
+    .sb-records code { font-size: 12px; color: var(--muted); }
+    .sb-pills { display: flex; flex-wrap: wrap; gap: 2px 10px; }
     @media (max-width: 900px) {
       .sb-layout { grid-template-columns: minmax(0, 1fr); }
       .sb-panel { position: static; max-height: none; }
@@ -5195,7 +5198,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 179</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 180</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -5239,9 +5242,10 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <div class="side-sub" role="tablist" aria-orientation="vertical" aria-label="Onboarding pages">
         <button id="showAssessmentsPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="assessmentsPage">Assessments</button>
         <button id="showTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="taxonomyPage">Onboard taxonomy</button>
+        <button id="showTaxSunburstPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="taxSunburstPage">Onboard taxonomy sunburst</button>
         <button id="showOnboardingPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="onboardingPage">Onboarding flow</button>
         <button id="showObjectTaxonomyPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="objectTaxonomyPage">Splunk object taxonomy</button>
-        <button id="showSotSunburstPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="sotSunburstPage">Object taxonomy sunburst</button>
+        <button id="showSotSunburstPage" class="page-tab" type="button" role="tab" aria-selected="false" aria-controls="sotSunburstPage">Splunk object taxonomy sunburst</button>
       </div>
     </div>
     <div class="side-item" data-group="reference">
@@ -17123,7 +17127,7 @@ E. Assumptions and unresolved inputs</pre>
         <div>
           <div class="eyebrow">Onboarding · TAX records</div>
           <h2>Onboard taxonomy</h2>
-          <p>Every term a log source is described by, from platform and ownership through collection, parsing, detection and lifecycle. Search the terms or the values already recorded, select a term to see its definition, and export the TAX records.</p>
+          <p>Every term a log source is described by, from platform and ownership through collection, parsing, detection and lifecycle. Search the terms or the values already recorded, select a term to see its definition, and export the TAX records. To see the shape of the whole taxonomy at a glance, open the <a href="#taxonomy-sunburst">sunburst</a>.</p>
         </div>
       </div>
   <div class="toolbar">
@@ -17177,6 +17181,52 @@ E. Assumptions and unresolved inputs</pre>
     </div>
     <aside id="detail" class="detail-panel"></aside>
   </div>
+  </section>
+
+  <section id="taxSunburstPage" class="page-view" role="tabpanel" aria-labelledby="showTaxSunburstPage" hidden>
+    <div class="patterns-hero">
+      <div>
+        <div class="eyebrow">Onboarding · TAX records</div>
+        <h2>Onboard taxonomy sunburst</h2>
+        <p>The onboard taxonomy as rings: its seven domains at the centre, then each level of terms outwards, from platform and ownership through collection, parsing, detection and lifecycle. Size the arcs by the terms at the ends of their branches, or by the current records classified beneath them. Click an arc to zoom in to it, and click the arc in the centre to zoom back out; the panel beside the chart lists the same rings, so you can also move through it from the keyboard. For a term's full record, open it in the <a href="#taxonomy">Onboard taxonomy</a>.</p>
+      </div>
+    </div>
+
+    <div class="sb-controls">
+      <label>Size by
+        <select id="tbSizeBy">
+          <option value="terms">Terms</option>
+          <option value="records">Current records</option>
+        </select>
+      </label>
+      <label>Colour by
+        <select id="tbColorBy">
+          <option value="status">Status</option>
+          <option value="records">Has current records</option>
+          <option value="sot">Linked to Splunk objects</option>
+          <option value="owner">Owner</option>
+          <option value="entityType">Entity type</option>
+          <option value="sourceWorksheet">Source worksheet</option>
+        </select>
+      </label>
+      <label id="tbValueWrap" hidden>Highlight
+        <select id="tbValue"></select>
+      </label>
+      <div class="sb-find">
+        <label for="tbSearch">Find</label>
+        <input id="tbSearch" type="search" placeholder="Term or TAX code" autocomplete="off" aria-controls="tbResults">
+        <div id="tbResults" class="sb-results" hidden></div>
+      </div>
+      <button id="tbReset" type="button">Zoom out to all domains</button>
+    </div>
+    <div id="tbLegend" class="sb-legend" aria-label="Colour key"></div>
+
+    <div class="sb-layout">
+      <div class="sb-chart-wrap">
+        <div id="tbChart" class="sb-chart" role="img" aria-label="Sunburst chart of the onboard taxonomy. The panel beside it lists the same domains and terms."></div>
+      </div>
+      <aside id="tbPanel" class="sb-panel" aria-live="polite"></aside>
+    </div>
   </section>
 
   <section id="objectTaxonomyPage" class="page-view" role="tabpanel" aria-labelledby="showObjectTaxonomyPage" hidden>
@@ -17259,7 +17309,7 @@ E. Assumptions and unresolved inputs</pre>
     <div class="patterns-hero">
       <div>
         <div class="eyebrow">Reference · Splunk Object Taxonomy (SOT)</div>
-        <h2>Object taxonomy sunburst</h2>
+        <h2>Splunk object taxonomy sunburst</h2>
         <p>The whole Splunk object taxonomy as rings: the 14 domains at the centre, then their classes, subclasses and objects, with an object's components (such as a Response Plan's phases and tasks) on the outside. Each arc's size is the number of objects beneath it. Click an arc to zoom in to it, and click the arc in the centre to zoom back out; the panel beside the chart lists the same rings, so you can also move through it from the keyboard. For every attribute of an object, open it in the <a href="#object-taxonomy">Tree Explorer</a>.</p>
       </div>
     </div>
@@ -17288,7 +17338,7 @@ E. Assumptions and unresolved inputs</pre>
 
     <div class="sb-layout">
       <div class="sb-chart-wrap">
-        <div id="sbChart" role="img" aria-label="Sunburst chart of the Splunk object taxonomy. The panel beside it lists the same domains, classes, subclasses and objects."></div>
+        <div id="sbChart" class="sb-chart" role="img" aria-label="Sunburst chart of the Splunk object taxonomy. The panel beside it lists the same domains, classes, subclasses and objects."></div>
       </div>
       <aside id="sbPanel" class="sb-panel" aria-live="polite"></aside>
     </div>
@@ -27001,6 +27051,7 @@ const pageTabs = {
   info: document.getElementById("showInfoPage"),
   onboarding: document.getElementById("showOnboardingPage"),
   taxonomy: document.getElementById("showTaxonomyPage"),
+  taxSunburst: document.getElementById("showTaxSunburstPage"),
   objectTaxonomy: document.getElementById("showObjectTaxonomyPage"),
   sotSunburst: document.getElementById("showSotSunburstPage"),
   assessments: document.getElementById("showAssessmentsPage"),
@@ -27035,6 +27086,7 @@ const pageViews = {
   info: document.getElementById("infoPage"),
   onboarding: document.getElementById("onboardingPage"),
   taxonomy: document.getElementById("taxonomyPage"),
+  taxSunburst: document.getElementById("taxSunburstPage"),
   objectTaxonomy: document.getElementById("objectTaxonomyPage"),
   sotSunburst: document.getElementById("sotSunburstPage"),
   assessments: document.getElementById("assessmentsPage"),
@@ -27070,7 +27122,7 @@ const pageViews = {
 };
 
 const SIDEBAR_GROUP_MAP = {
-  onboarding: "onboarding", taxonomy: "onboarding", objectTaxonomy: "onboarding", sotSunburst: "onboarding", assessments: "onboarding",
+  onboarding: "onboarding", taxonomy: "onboarding", taxSunburst: "onboarding", objectTaxonomy: "onboarding", sotSunburst: "onboarding", assessments: "onboarding",
   sizing: "calculators", s3calc: "calculators",
   reference: "reference", refFrameworkOverview: "reference", refConceptDefinitions: "reference", refAssessmentMethods: "reference", refStandardsReferences: "reference", refConfigFileReferences: "reference", refNetworkReference: "reference", refRoles: "reference", refSplunkBin: "reference", refSplunkTimezone: "reference", refLogAssessmentLifecycle: "reference", refQuestions: "reference", refNamingConvention: "reference",
   prompts: "reference", cmei: "reference", catalogue: "reference", patterns: "reference", refLoggingPatternAdvisor: "reference", health: "reference", portsMatrix: "reference", dataPipeline: "reference",
@@ -27084,7 +27136,7 @@ const SIDEBAR_GROUP_LABELS = { calculators: "Calculators", coverage: "Coverage &
 // referencing it from here -- which setActivePage() calls into on every page's first render
 // -- would throw a "used before initialization" error on page load.
 const PAGE_LABELS = {
-  info: "Info", onboarding: "Onboarding flow", taxonomy: "Onboard taxonomy", objectTaxonomy: "Splunk object taxonomy", sotSunburst: "Object taxonomy sunburst",
+  info: "Info", onboarding: "Onboarding flow", taxonomy: "Onboard taxonomy", taxSunburst: "Onboard taxonomy sunburst", objectTaxonomy: "Splunk object taxonomy", sotSunburst: "Splunk object taxonomy sunburst",
   assessments: "Assessments", sizing: "Sizing calculator", s3calc: "S3 cost calculator",
   refFrameworkOverview: "Framework overview", refConceptDefinitions: "Concepts & definitions",
   refAssessmentMethods: "Assessment methodologies", refStandardsReferences: "Standards & references",
@@ -28695,7 +28747,7 @@ function runFirstShowRenders(page) {
   renders.forEach(render => render());
 }
 function setActivePage(pageName, updateHash = true) {
-  const selected = ["info", "onboarding", "taxonomy", "objectTaxonomy", "sotSunburst", "assessments", "sizing", "s3calc", "reference", "refFrameworkOverview", "refConceptDefinitions", "refAssessmentMethods", "refStandardsReferences", "refConfigFileReferences", "dataPipeline", "refNetworkReference", "refRoles", "refSplunkBin", "refSplunkTimezone", "refLogAssessmentLifecycle", "refQuestions", "refNamingConvention", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "refLoggingPatternAdvisor", "health", "portsMatrix", "externalTools", "splunkApi", "inputCoverage", "metrics"].includes(pageName) ? pageName : "info";
+  const selected = ["info", "onboarding", "taxonomy", "taxSunburst", "objectTaxonomy", "sotSunburst", "assessments", "sizing", "s3calc", "reference", "refFrameworkOverview", "refConceptDefinitions", "refAssessmentMethods", "refStandardsReferences", "refConfigFileReferences", "dataPipeline", "refNetworkReference", "refRoles", "refSplunkBin", "refSplunkTimezone", "refLogAssessmentLifecycle", "refQuestions", "refNamingConvention", "prompts", "cmei", "assurance", "viability", "catalogue", "patterns", "refLoggingPatternAdvisor", "health", "portsMatrix", "externalTools", "splunkApi", "inputCoverage", "metrics"].includes(pageName) ? pageName : "info";
   // Moving to another page adds a history entry, so Back returns to the page before; staying on
   // a page (a filter, a sub-view) only rewrites the current entry.
   const changedPage = selected !== currentActivePageKey;
@@ -28717,6 +28769,7 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
   if (activeSidebarGroup) setSidebarGroupOpen(activeSidebarGroup, true);
   runFirstShowRenders(selected);
   if (selected === "sotSunburst") sbShow();
+  if (selected === "taxSunburst") tbShow();
   if (selected === "assurance") renderAssurancePage();
   if (selected === "viability") renderViabilityPage();
   if (selected === "catalogue") renderSourceCataloguePage();
@@ -28792,6 +28845,8 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
                     ? "#object-taxonomy"
                   : selected === "sotSunburst"
                     ? "#object-taxonomy-sunburst"
+                  : selected === "taxSunburst"
+                    ? "#taxonomy-sunburst"
                   : selected === "inputCoverage"
                     ? "#input-coverage"
                   : selected === "metrics"
@@ -28805,6 +28860,7 @@ Object.entries(pageTabs).forEach(([name, tab]) => {
     if (selected === "taxonomy") taxUpdateHash();
     if (selected === "objectTaxonomy") sotUpdateHash();
     if (selected === "sotSunburst") sbUpdateHash();
+    if (selected === "taxSunburst") tbUpdateHash();
     if (selected === "refLogAssessmentLifecycle") lalUpdateHash();
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -32033,6 +32089,7 @@ function pageNameFromHash() {
   if (/^#taxonomy(\?|$)/.test(location.hash)) return "taxonomy";
   if (/^#object-taxonomy(\?|$)/.test(location.hash)) return "objectTaxonomy";
   if (/^#object-taxonomy-sunburst(\?|$)/.test(location.hash)) return "sotSunburst";
+  if (/^#taxonomy-sunburst(\?|$)/.test(location.hash)) return "taxSunburst";
   if (location.hash === "#assessments") return "assessments";
   if (location.hash === "#s3-calculator") return "s3calc";
   if (location.hash === "#reference") return "reference";
@@ -48817,6 +48874,7 @@ window.addEventListener("hashchange", () => {
   if (hashPage === "taxonomy") applyTaxHash();
   if (hashPage === "objectTaxonomy") applySotHash();
   if (hashPage === "sotSunburst") applySbHash();
+  if (hashPage === "taxSunburst") applyTbHash();
   if (hashPage === "refSplunkBin") applyBinHash();
   if (hashPage === "refLogAssessmentLifecycle") lalApplyHash();
   if (hashPage === "reference") revealReferenceSection();
@@ -53843,294 +53901,368 @@ sotRenderTree();
 if (pageNameFromHash() === "objectTaxonomy") applySotHash();
 
 /* ---------------------------------------------------------------------- *
- * Object taxonomy sunburst -- the SOT hierarchy as rings, drawn with the
- * open-source sunburst-chart library (Vasco Asturiano, MIT; bundled above).
- * Rings run domain > class > subclass > object > component; a subclass that
- * holds one object is drawn as that object. Arc size is the number of objects
- * beneath. Clicking an arc zooms into it; clicking the arc in the centre (the
- * one in focus) zooms back out. The panel beside the chart lists the same
- * rings as buttons, so every zoom is reachable from the keyboard.
+ * Taxonomy sunbursts -- a hierarchy as rings, drawn with the open-source
+ * sunburst-chart library (Vasco Asturiano, MIT; bundled at the top of this
+ * script). One builder serves two pages: the Splunk object taxonomy
+ * (domain > class > subclass > object > component) and the onboard taxonomy
+ * (TAX terms, domain outwards). Clicking an arc zooms into it; clicking the
+ * arc in the centre (the one in focus) zooms back out; the background resets.
+ * The panel beside each chart lists the same rings as buttons, so every zoom
+ * is reachable from the keyboard.
  * ---------------------------------------------------------------------- */
-// var, not let: setActivePage can ask for the page before this code has run.
-var sbState;
-// Object type takes the first three categorical slots, which validate as a set when any two
-// can sit side by side (they can, around a ring); External folds to a darker grey that the
-// key names. Every other "colour by" highlights one value in blue against grey.
-const SB_TYPE_COLORS = [
-  ["Knowledge Object", "#2a78d6", "Knowledge"],
-  ["Platform Object", "#eb6834", "Platform"],
-  ["Hybrid (Knowledge + Platform)", "#1baf7a", "Hybrid"],
-  ["External Platform Object", "#7d7b74", "External (SOAR/UEBA/Observability)"],
-];
-const SB_RING = { domain: "#c9c8c1", class: "#dcdbd5", subclass: "#ebeae5" };
+// var, not let: setActivePage can ask for these pages before this code has run.
+var sbState, tbState;
+// Two categories take the first two categorical slots; three take the first three (the
+// most that validate when any two can sit side by side, as they can around a ring). Past
+// that, a mode highlights one value in blue against grey.
 const SB_MATCH = "#2a78d6";
 const SB_OTHER = "#b3b2ab";
-const SB_MODES = {
-  type: { label: "Object type" },
-  product: { label: "Product", field: "product" },
-  lifecycle: { label: "Lifecycle", field: "lifecycle" },
-  validationMethod: { label: "Validation method", field: "validationMethod" },
-  rest: { label: "REST endpoint recorded", test: o => !!o.restEndpoint && o.restEndpoint !== SOT_TBC },
-};
+const SB_RING = { domain: "#c9c8c1", class: "#dcdbd5", subclass: "#ebeae5" };
 
-function sbBuildData() {
-  const byKey = new Map(), parentOf = new Map(), nodes = [];
-  const objectNode = o => {
-    const parts = sotChildren(o).map(c => ({ key: c.instanceId, kind: "object", name: c.name, code: c.sotCode, obj: c, value: 1 }));
-    return { key: o.instanceId, kind: "object", name: o.name, code: o.sotCode, obj: o, value: 1, ...(parts.length ? { children: parts } : {}) };
+function makeSunburst(cfg) {
+  const $ = id => document.getElementById(cfg.prefix + id);
+  const st = { cfg, ready: false, chart: null, focus: null, mode: cfg.defaultMode, value: null, sizeBy: cfg.sizes ? Object.keys(cfg.sizes)[0] : null, size: 0, data: null };
+
+  // Data: cfg.build() returns the root; every node has key, kind, name, children[].
+  const index = root => {
+    const byKey = new Map(), parentOf = new Map(), nodes = [];
+    (function walk(node, parent) {
+      nodes.push(node);
+      byKey.set(node.key, node);
+      (node.aliases || []).forEach(a => byKey.set(a, node));
+      if (parent) parentOf.set(node, parent);
+      (node.children || []).forEach(child => walk(child, node));
+    })(root, null);
+    return { root, byKey, parentOf, nodes };
   };
-  const root = {
-    key: "", kind: "root", name: "All domains", code: "",
+  st.data = index(cfg.build());
+
+  const ownSize = n => cfg.sizes ? cfg.sizes[st.sizeBy].value(n) : (n.value || 0);
+  const total = n => ownSize(n) + (n.children || []).reduce((sum, c) => sum + total(c), 0);
+  const unit = n => cfg.sizes ? cfg.sizes[st.sizeBy].unit(n) : cfg.unit(n);
+  const modeOf = () => cfg.modes[st.mode];
+  const valueOf = (item, mode) => mode.get ? mode.get(item) : item[mode.field];
+  st.matches = item => { const mode = modeOf(); return mode.test ? mode.test(item) : valueOf(item, mode) === st.value; };
+  st.color = n => {
+    const item = cfg.item(n);
+    if (!item) return SB_RING[n.kind] || "#ffffff";
+    const mode = modeOf();
+    if (mode.categories) return (mode.categories.find(c => c[0] === valueOf(item, mode)) || [null, SB_OTHER])[1];
+    return st.matches(item) ? SB_MATCH : SB_OTHER;
+  };
+
+  st.renderLegend = () => {
+    const items = cfg.items(), mode = modeOf();
+    const key = (color, label, n) => `<span class="sb-key"><span class="sb-swatch" style="background:${color}"></span><span>${escapeHtml(label)}</span> <strong>${n}</strong></span>`;
+    let html;
+    if (mode.categories) html = mode.categories.map(([value, color, label]) => key(color, label, items.filter(i => valueOf(i, mode) === value).length)).join("");
+    else {
+      const n = items.filter(st.matches).length;
+      html = key(SB_MATCH, mode.test ? mode.label : `${mode.label}: ${st.value || "(none)"}`, n) + key(SB_OTHER, cfg.otherLabel, items.length - n);
+    }
+    if (cfg.ringKey) html += `<span class="sb-key"><span class="sb-swatch" style="background:${SB_RING.domain}"></span><span class="sb-swatch" style="background:${SB_RING.class}"></span><span class="sb-swatch" style="background:${SB_RING.subclass}"></span><span>${escapeHtml(cfg.ringKey)}</span></span>`;
+    $("Legend").innerHTML = html;
+  };
+
+  st.renderPanel = () => {
+    const node = st.focus || st.data.root;
+    const path = [];
+    for (let n = node; n; n = st.data.parentOf.get(n)) path.unshift(n);
+    const crumb = n => n.kind === "root" ? "All domains" : cfg.code(n);
+    const crumbs = path.map((n, i) => i === path.length - 1
+      ? `<span aria-current="location">${escapeHtml(crumb(n))}</span>`
+      : `<button type="button" data-sb-key="${escapeHtml(n.key)}">${escapeHtml(crumb(n))}</button>`).join('<span class="sb-sep" aria-hidden="true">&rsaquo;</span>');
+    const kids = node.children || [];
+    const list = kids.length ? `<h4>${escapeHtml(cfg.childHeading(node))}</h4>
+      <ul class="sb-children">${kids.map(k => {
+        const n = total(k);
+        const inner = `<span class="sb-swatch" style="background:${st.color(k)}"></span><code>${escapeHtml(cfg.code(k))}</code><span class="sb-name">${escapeHtml(k.name)}</span><span class="sb-n">${n}</span>`;
+        return `<li>${n ? `<button type="button" data-sb-key="${escapeHtml(k.key)}">${inner}</button>` : `<div class="sb-empty" title="Nothing beneath it to size by">${inner}</div>`}</li>`;
+      }).join("")}</ul>` : "";
+    const parent = st.data.parentOf.get(node);
+    const count = total(node);
+    $("Panel").innerHTML = `
+      <nav class="sb-crumbs" aria-label="Zoom path">${crumbs}</nav>
+      <h3>${escapeHtml(node.kind === "root" ? cfg.title : node.name)}</h3>
+      ${cfg.details(node, { count, unit: unit(count), parent })}
+      <div class="sb-actions">
+        ${parent ? `<button type="button" data-sb-key="${escapeHtml(parent.key)}">Zoom out</button>` : ""}
+        <button type="button" data-sb-open>${escapeHtml(cfg.openLabel)}</button>
+      </div>
+      ${list}`;
+  };
+
+  st.focusOn = (node, writeHash = true) => {
+    if (node && node.kind === "root") node = null;
+    st.focus = node;
+    st.chart.focusOnNode(node);
+    st.renderPanel();
+    if (writeHash) st.updateHash();
+  };
+  st.recolor = (writeHash = true) => {
+    st.chart.color(n => st.color(n));
+    if (cfg.sizes) st.chart.size(n => ownSize(n));
+    st.renderLegend();
+    st.renderPanel();
+    if (writeHash) st.updateHash();
+  };
+  st.setMode = (mode, value) => {
+    st.mode = cfg.modes[mode] ? mode : cfg.defaultMode;
+    const m = modeOf(), valueSel = $("Value"), needsValue = !m.test && !m.categories;
+    $("ColorBy").value = st.mode;
+    $("ValueWrap").hidden = !needsValue;
+    if (needsValue) {
+      const counts = new Map();
+      cfg.items().forEach(i => { const v = valueOf(i, m); counts.set(v, (counts.get(v) || 0) + 1); });
+      const values = [...counts].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0])));
+      valueSel.innerHTML = values.map(([v, n]) => `<option value="${escapeHtml(v)}">${escapeHtml(v || "(none)")} (${n})</option>`).join("");
+      st.value = counts.has(value) ? value : values[0][0];
+      valueSel.value = st.value;
+    } else st.value = null;
+  };
+
+  st.create = () => {
+    const el = $("Chart");
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    st.chart = Sunburst()(el)
+      .data(st.data.root)
+      .label("name")
+      .size(n => ownSize(n))
+      .color(n => st.color(n))
+      .strokeColor(() => "#ffffff")
+      .excludeRoot(true)
+      .centerRadius(0.12)
+      .minSliceAngle(0.1)
+      .transitionDuration(reduceMotion ? 0 : 600)
+      .handleNonFittingLabel((label, px) => {
+        const chars = Math.floor(px / 6.8);
+        return chars >= 5 ? `${label.slice(0, chars - 1).trimEnd()}…` : null;
+      })
+      .tooltipTitle(n => escapeHtml(n.name))
+      .tooltipContent(n => { const c = total(n); return `<div class="sb-tip"><div><code>${escapeHtml(cfg.code(n))}</code></div>${cfg.tooltip ? cfg.tooltip(n) : ""}<div><strong>${c}</strong> ${escapeHtml(unit(c))}</div></div>`; })
+      .onClick(n => st.focusOn(!n ? null : n === st.focus ? st.data.parentOf.get(n) : n));
+    if (window.ResizeObserver) new ResizeObserver(st.resize).observe(el);
+    else window.addEventListener("resize", st.resize);
+  };
+  st.resize = () => {
+    if (!st.chart) return;
+    const width = Math.floor($("Chart").clientWidth);
+    if (!width) return; // page hidden
+    const size = Math.min(width, 680);
+    if (size === st.size) return;
+    st.size = size;
+    st.chart.width(size).height(size);
+  };
+  st.show = () => {
+    if (!st.ready) return;
+    if (!st.chart) { st.create(); st.renderLegend(); st.renderPanel(); }
+    st.resize();
+  };
+
+  // <hash>?focus=<key>&color=<mode>&value=<value>&size=<size>
+  const hashRe = new RegExp(`^${cfg.hash}(\\?|$)`);
+  st.updateHash = () => {
+    if (!history.replaceState || !hashRe.test(location.hash)) return;
+    const params = new URLSearchParams();
+    if (st.focus) params.set("focus", st.focus.key);
+    if (st.mode !== cfg.defaultMode) params.set("color", st.mode);
+    if (st.value != null) params.set("value", st.value);
+    if (cfg.sizes && st.sizeBy !== Object.keys(cfg.sizes)[0]) params.set("size", st.sizeBy);
+    const query = params.toString();
+    const next = `${cfg.hash}${query ? `?${query}` : ""}`;
+    if (location.hash !== next) history.replaceState(null, "", next);
+  };
+  st.applyHash = () => {
+    if (!st.chart) return;
+    const params = new URLSearchParams((location.hash.match(new RegExp(`^${cfg.hash}\\?(.*)$`)) || [])[1] || "");
+    st.setMode(params.get("color") || cfg.defaultMode, params.get("value"));
+    if (cfg.sizes) { st.sizeBy = cfg.sizes[params.get("size")] ? params.get("size") : Object.keys(cfg.sizes)[0]; $("SizeBy").value = st.sizeBy; }
+    st.recolor(false);
+    st.focusOn(st.data.byKey.get(params.get("focus") || "") || null);
+  };
+
+  const runSearch = () => {
+    const input = $("Search"), box = $("Results");
+    const q = input.value.trim().toLowerCase();
+    if (!q) { box.hidden = true; box.innerHTML = ""; return []; }
+    const hits = st.data.nodes.filter(n => n.kind !== "root" && cfg.searchText(n).toLowerCase().includes(q)).slice(0, 8);
+    box.innerHTML = hits.length
+      ? hits.map(n => `<button type="button" data-sb-key="${escapeHtml(n.key)}"><code>${escapeHtml(cfg.code(n))}</code><span>${taxHighlight(n.name, input.value.trim())}</span></button>`).join("")
+      : `<p class="sb-none">Nothing in the taxonomy matches.</p>`;
+    box.hidden = false;
+    return hits;
+  };
+  const closeSearch = () => { $("Search").value = ""; $("Results").hidden = true; $("Results").innerHTML = ""; };
+
+  const page = document.getElementById(cfg.page);
+  page.addEventListener("click", event => {
+    const target = event.target.closest("[data-sb-key], [data-sb-open], [data-sb-act]");
+    if (!target || !page.contains(target)) return;
+    if (target.hasAttribute("data-sb-open")) { cfg.open(st.focus); return; }
+    if (target.hasAttribute("data-sb-act")) { cfg.act && cfg.act(target); return; }
+    const node = st.data.byKey.get(target.getAttribute("data-sb-key"));
+    if (!node) return;
+    if (target.closest(`#${cfg.prefix}Results`)) closeSearch();
+    st.focusOn(node);
+  });
+  $("ColorBy").addEventListener("change", event => { st.setMode(event.target.value); st.recolor(); });
+  $("Value").addEventListener("change", event => { st.value = event.target.value; st.recolor(); });
+  if (cfg.sizes) $("SizeBy").addEventListener("change", event => { st.sizeBy = event.target.value; st.recolor(); });
+  $("Reset").addEventListener("click", () => st.focusOn(null));
+  $("Search").addEventListener("input", runSearch);
+  $("Search").addEventListener("keydown", event => {
+    if (event.key === "Enter") { const first = runSearch()[0]; if (first) { closeSearch(); st.focusOn(first); } }
+    else if (event.key === "Escape") closeSearch();
+  });
+  st.ready = true;
+  return st;
+}
+
+/* Splunk object taxonomy: a one-object subclass is drawn as its object; an object's
+ * components sit outside it. Arc size is the number of objects beneath. */
+function sbBuildSot() {
+  const objectNode = o => {
+    const parts = sotChildren(o).map(c => ({ key: c.instanceId, kind: "object", name: c.name, obj: c, value: 1 }));
+    return { key: o.instanceId, kind: "object", name: o.name, obj: o, value: 1, ...(parts.length ? { children: parts } : {}) };
+  };
+  return {
+    key: "", kind: "root", name: "All domains",
     children: Object.entries(SOT_TREE).map(([dc, dom]) => ({
       key: dc, kind: "domain", name: dom.label, code: dc, desc: dom.desc,
       children: Object.entries(dom.classes).map(([cc, cls]) => ({
         key: cc, kind: "class", name: cls.label, code: cc, desc: cls.desc,
         children: Object.entries(cls.subclasses).map(([sc, label]) => {
           const roots = (SOT_OBJECTS_BY_LEAF[sc] || []).filter(o => !o.parent);
-          if (roots.length === 1) return Object.assign(objectNode(roots[0]), { leaf: sc, leafLabel: label });
+          if (roots.length === 1) return Object.assign(objectNode(roots[0]), { aliases: [sc] });
           return { key: sc, kind: "subclass", name: label, code: sc, children: roots.map(objectNode) };
         }),
       })),
     })),
   };
-  (function walk(node, parent) {
-    nodes.push(node);
-    byKey.set(node.key, node);
-    if (node.leaf) byKey.set(node.leaf, node);
-    if (parent) parentOf.set(node, parent);
-    (node.children || []).forEach(child => walk(child, node));
-  })(root, null);
-  return { root, byKey, parentOf, nodes };
 }
-
-const sbCount = n => (n.kind === "object" ? 1 : 0) + (n.children || []).reduce((sum, c) => sum + sbCount(c), 0);
-const sbCodeOf = n => n.kind === "object" ? n.obj.instanceId : n.code;
-function sbMatches(o) {
-  const mode = SB_MODES[sbState.mode];
-  return mode.test ? mode.test(o) : o[mode.field] === sbState.value;
-}
-function sbColor(n) {
-  if (n.kind !== "object") return SB_RING[n.kind] || "#ffffff";
-  if (sbState.mode === "type") return (SB_TYPE_COLORS.find(t => t[0] === n.obj.type) || [null, SB_OTHER])[1];
-  return sbMatches(n.obj) ? SB_MATCH : SB_OTHER;
-}
-
-function sbTooltip(n) {
-  const count = sbCount(n);
-  if (n.kind === "object") {
-    const o = n.obj;
-    return `<div class="sb-tip"><div><code>${escapeHtml(o.sotCode)}</code> ${escapeHtml(o.instanceId)}</div><div>${escapeHtml(o.type)} &middot; ${escapeHtml(o.product)}</div>${n.children ? `<div><strong>${n.children.length}</strong> components</div>` : ""}</div>`;
-  }
-  return `<div class="sb-tip"><div><code>${escapeHtml(n.code)}</code></div><div><strong>${count}</strong> object${count === 1 ? "" : "s"}</div></div>`;
-}
-
-function sbRenderLegend() {
-  const key = (color, label, n) => `<span class="sb-key"><span class="sb-swatch" style="background:${color}"></span><span>${escapeHtml(label)}</span> <strong>${n}</strong></span>`;
-  let html;
-  if (sbState.mode === "type") {
-    html = SB_TYPE_COLORS.map(([type, color, label]) => key(color, label, SOT_OBJECTS.filter(o => o.type === type).length)).join("");
-  } else {
-    const mode = SB_MODES[sbState.mode], n = SOT_OBJECTS.filter(sbMatches).length;
-    html = key(SB_MATCH, mode.test ? mode.label : `${mode.label}: ${sbState.value}`, n) + key(SB_OTHER, "Other objects", SOT_OBJECTS.length - n);
-  }
-  document.getElementById("sbLegend").innerHTML = html +
-    `<span class="sb-key"><span class="sb-swatch" style="background:${SB_RING.domain}"></span><span class="sb-swatch" style="background:${SB_RING.class}"></span><span class="sb-swatch" style="background:${SB_RING.subclass}"></span><span>Domain, class and subclass rings</span></span>`;
-}
-
-function sbRenderPanel() {
-  const node = sbState.focus || sbState.data.root;
-  const path = [];
-  for (let n = node; n; n = sbState.data.parentOf.get(n)) path.unshift(n);
-  const crumb = n => n.kind === "root" ? "All domains" : sbCodeOf(n);
-  const crumbs = path.map((n, i) => i === path.length - 1
-    ? `<span aria-current="location">${escapeHtml(crumb(n))}</span>`
-    : `<button type="button" data-sb-key="${escapeHtml(n.key)}">${escapeHtml(crumb(n))}</button>`).join('<span class="sb-sep" aria-hidden="true">&rsaquo;</span>');
-  const count = sbCount(node);
-  let body;
-  if (node.kind === "object") {
+const SB_SOT_CONFIG = {
+  prefix: "sb", page: "sotSunburstPage", hash: "#object-taxonomy-sunburst", title: "Splunk object taxonomy",
+  build: sbBuildSot,
+  items: () => SOT_OBJECTS,
+  item: n => n.kind === "object" ? n.obj : null,
+  code: n => n.kind === "object" ? n.obj.instanceId : n.code,
+  unit: c => `object${c === 1 ? "" : "s"}`,
+  otherLabel: "Other objects",
+  ringKey: "Domain, class and subclass rings",
+  defaultMode: "type",
+  modes: {
+    // Knowledge, Platform and Hybrid take the first three slots; External folds to a darker
+    // grey that the key names.
+    type: { label: "Object type", field: "type", categories: [
+      ["Knowledge Object", "#2a78d6", "Knowledge"],
+      ["Platform Object", "#eb6834", "Platform"],
+      ["Hybrid (Knowledge + Platform)", "#1baf7a", "Hybrid"],
+      ["External Platform Object", "#7d7b74", "External (SOAR/UEBA/Observability)"],
+    ] },
+    product: { label: "Product", field: "product" },
+    lifecycle: { label: "Lifecycle", field: "lifecycle" },
+    validationMethod: { label: "Validation method", field: "validationMethod" },
+    rest: { label: "REST endpoint recorded", test: o => !!o.restEndpoint && o.restEndpoint !== SOT_TBC },
+  },
+  childHeading: n => n.kind === "object" ? "Components" : n.kind === "root" ? "Domains" : "Contents",
+  searchText: n => `${n.code || ""} ${n.name} ${n.kind === "object" ? `${n.obj.instanceId} ${n.obj.sotCode}` : ""}`,
+  tooltip: n => n.kind === "object" ? `<div>${escapeHtml(n.obj.type)} &middot; ${escapeHtml(n.obj.product)}</div>` : "",
+  details: (node, { count, unit, parent }) => {
+    if (node.kind !== "object") return `<p class="sb-sub"><strong>${count}</strong> ${escapeHtml(unit)}${node.kind === "root" ? ` in ${SOT_DOMAINS.length} domains` : ""}</p>${node.desc ? `<p class="sb-def">${escapeHtml(node.desc)}</p>` : ""}`;
     const o = node.obj;
-    body = `<p class="sb-sub">${escapeHtml(o.instanceId)} &middot; ${escapeHtml(o.type)}</p>
+    return `<p class="sb-sub">${escapeHtml(o.instanceId)} &middot; ${escapeHtml(o.type)}</p>
       <p class="sb-def">${escapeHtml(o.def)}</p>
       <dl class="sb-facts">
         <dt>SOT code</dt><dd>${escapeHtml(o.sotCode)}</dd>
-        ${o.parent ? `<dt>Part of</dt><dd><button type="button" class="sb-link" data-sb-key="${escapeHtml(sbState.data.parentOf.get(node).key)}">${escapeHtml(o.parent)}</button></dd>` : ""}
+        ${o.parent ? `<dt>Part of</dt><dd><button type="button" class="sb-link" data-sb-key="${escapeHtml(parent.key)}">${escapeHtml(o.parent)}</button></dd>` : ""}
         <dt>Product</dt><dd>${escapeHtml(o.product)}</dd>
         <dt>Lifecycle</dt><dd>${escapeHtml(o.lifecycle)}</dd>
         <dt>Validation</dt><dd>${escapeHtml(o.validationMethod)}</dd>
       </dl>`;
-  } else {
-    body = `<p class="sb-sub"><strong>${count}</strong> object${count === 1 ? "" : "s"}${node.kind === "root" ? ` in ${SOT_DOMAINS.length} domains` : ""}</p>${node.desc ? `<p class="sb-def">${escapeHtml(node.desc)}</p>` : ""}`;
-  }
-  const kids = node.children || [];
-  const list = kids.length ? `<h4>${node.kind === "object" ? "Components" : node.kind === "root" ? "Domains" : "Contents"}</h4>
-    <ul class="sb-children">${kids.map(k => {
-      const n = sbCount(k);
-      const inner = `<span class="sb-swatch" style="background:${sbColor(k)}"></span><code>${escapeHtml(sbCodeOf(k))}</code><span class="sb-name">${escapeHtml(k.name)}</span><span class="sb-n">${n}</span>`;
-      return `<li>${n ? `<button type="button" data-sb-key="${escapeHtml(k.key)}">${inner}</button>` : `<div class="sb-empty" title="No objects catalogued in this subclass yet">${inner}</div>`}</li>`;
-    }).join("")}</ul>` : "";
-  const parent = sbState.data.parentOf.get(node);
-  document.getElementById("sbPanel").innerHTML = `
-    <nav class="sb-crumbs" aria-label="Zoom path">${crumbs}</nav>
-    <h3>${escapeHtml(node.kind === "root" ? "Splunk object taxonomy" : node.name)}</h3>
-    ${body}
-    <div class="sb-actions">
-      ${parent ? `<button type="button" data-sb-key="${escapeHtml(parent.key)}">Zoom out</button>` : ""}
-      <button type="button" data-sb-open>Open in Tree Explorer</button>
-    </div>
-    ${list}`;
-}
-
-function sbFocus(node, writeHash = true) {
-  if (node && node.kind === "root") node = null;
-  sbState.focus = node;
-  sbState.chart.focusOnNode(node);
-  sbRenderPanel();
-  if (writeHash) sbUpdateHash();
-}
-
-function sbRecolor(writeHash = true) {
-  sbState.chart.color(n => sbColor(n));
-  sbRenderLegend();
-  sbRenderPanel();
-  if (writeHash) sbUpdateHash();
-}
-
-function sbSetMode(mode, value) {
-  sbState.mode = SB_MODES[mode] ? mode : "type";
-  const field = SB_MODES[sbState.mode].field;
-  const valueSel = document.getElementById("sbValue");
-  document.getElementById("sbColorBy").value = sbState.mode;
-  document.getElementById("sbValueWrap").hidden = !field;
-  if (field) {
-    const counts = new Map();
-    SOT_OBJECTS.forEach(o => counts.set(o[field], (counts.get(o[field]) || 0) + 1));
-    const values = [...counts].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0])));
-    valueSel.innerHTML = values.map(([v, n]) => `<option value="${escapeHtml(v)}">${escapeHtml(v)} (${n})</option>`).join("");
-    sbState.value = counts.has(value) ? value : values[0][0];
-    valueSel.value = sbState.value;
-  } else {
-    sbState.value = null;
-  }
-}
-
-function sbCreate() {
-  const el = document.getElementById("sbChart");
-  const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  sbState.chart = Sunburst()(el)
-    .data(sbState.data.root)
-    .label("name")
-    .size("value")
-    .color(n => sbColor(n))
-    .strokeColor(() => "#ffffff")
-    .excludeRoot(true)
-    .centerRadius(0.12)
-    .minSliceAngle(0.1)
-    .transitionDuration(reduceMotion ? 0 : 600)
-    .handleNonFittingLabel((label, px) => {
-      const chars = Math.floor(px / 6.8);
-      return chars >= 5 ? `${label.slice(0, chars - 1).trimEnd()}…` : null;
-    })
-    .tooltipTitle(n => escapeHtml(n.name))
-    .tooltipContent(n => sbTooltip(n))
-    // An arc zooms in; the arc in focus (drawn in the centre) zooms out one level; the
-    // background zooms out to every domain.
-    .onClick(n => sbFocus(!n ? null : n === sbState.focus ? sbState.data.parentOf.get(n) : n));
-  if (window.ResizeObserver) new ResizeObserver(sbResize).observe(el);
-  else window.addEventListener("resize", sbResize);
-}
-
-function sbResize() {
-  if (!sbState || !sbState.chart) return;
-  const width = Math.floor(document.getElementById("sbChart").clientWidth);
-  if (!width) return; // page hidden
-  const size = Math.min(width, 680);
-  if (size === sbState.size) return;
-  sbState.size = size;
-  sbState.chart.width(size).height(size);
-}
-
-function sbShow() {
-  if (!sbState || !sbState.ready) return;
-  if (!sbState.chart) {
-    sbCreate();
-    sbRenderLegend();
-    sbRenderPanel();
-  }
-  sbResize();
-}
-
-// #object-taxonomy-sunburst?focus=<code or instance ID>&color=<mode>&value=<value>
-function sbUpdateHash() {
-  if (!sbState || !history.replaceState || !/^#object-taxonomy-sunburst(\?|$)/.test(location.hash)) return;
-  const params = new URLSearchParams();
-  if (sbState.focus) params.set("focus", sbState.focus.key);
-  if (sbState.mode !== "type") params.set("color", sbState.mode);
-  if (sbState.value != null) params.set("value", sbState.value);
-  const query = params.toString();
-  const next = `#object-taxonomy-sunburst${query ? `?${query}` : ""}`;
-  if (location.hash !== next) history.replaceState(null, "", next);
-}
-function applySbHash() {
-  if (!sbState || !sbState.chart) return;
-  const params = new URLSearchParams((location.hash.match(/^#object-taxonomy-sunburst\?(.*)$/) || [])[1] || "");
-  sbSetMode(params.get("color") || "type", params.get("value"));
-  sbRecolor(false);
-  sbFocus(sbState.data.byKey.get(params.get("focus") || "") || null);
-}
-
-function sbOpenInTree(node) {
-  setActivePage("objectTaxonomy");
-  setActiveView("tree");
-  if (!node || node.kind === "root") return;
-  if (node.kind === "object") selectObjectInTree(node.obj.name);
-  else jumpToNode(node.kind, node.code);
-}
-
-function sbRunSearch() {
-  const input = document.getElementById("sbSearch"), box = document.getElementById("sbResults");
-  const q = input.value.trim().toLowerCase();
-  if (!q) { box.hidden = true; box.innerHTML = ""; return []; }
-  const hits = sbState.data.nodes.filter(n => n.kind !== "root" &&
-    `${n.code} ${n.name} ${n.kind === "object" ? n.obj.instanceId : ""}`.toLowerCase().includes(q)).slice(0, 8);
-  box.innerHTML = hits.length
-    ? hits.map(n => `<button type="button" data-sb-key="${escapeHtml(n.key)}"><code>${escapeHtml(sbCodeOf(n))}</code><span>${taxHighlight(n.name, input.value.trim())}</span></button>`).join("")
-    : `<p class="sb-none">Nothing in the taxonomy matches.</p>`;
-  box.hidden = false;
-  return hits;
-}
-function sbCloseSearch() {
-  const input = document.getElementById("sbSearch"), box = document.getElementById("sbResults");
-  input.value = "";
-  box.hidden = true;
-  box.innerHTML = "";
-}
-
-(function initSunburst() {
-  sbState = { ready: false, chart: null, focus: null, mode: "type", value: null, size: 0, data: sbBuildData() };
-  const page = document.getElementById("sotSunburstPage");
-  page.addEventListener("click", event => {
-    const target = event.target.closest("[data-sb-key], [data-sb-open]");
-    if (!target || !page.contains(target)) return;
-    if (target.hasAttribute("data-sb-open")) { sbOpenInTree(sbState.focus); return; }
-    const node = sbState.data.byKey.get(target.getAttribute("data-sb-key"));
+  },
+  openLabel: "Open in Tree Explorer",
+  open: node => {
+    setActivePage("objectTaxonomy");
+    setActiveView("tree");
     if (!node) return;
-    if (target.closest("#sbResults")) sbCloseSearch();
-    sbFocus(node);
+    if (node.kind === "object") selectObjectInTree(node.obj.name);
+    else jumpToNode(node.kind, node.code);
+  },
+};
+
+/* Onboard taxonomy: the TAX terms, domain outwards. Arc size is the number of terms at the
+ * ends of its branches, or the current records classified beneath it. */
+function tbBuildTax() {
+  const terms = nodes.filter(n => n.nodeType === "taxonomy");
+  const kids = new Map(), records = new Map();
+  terms.forEach(t => { if (!kids.has(t.parentCode)) kids.set(t.parentCode, []); kids.get(t.parentCode).push(t); });
+  const groups = new Map(nodes.filter(n => n.nodeType === "group").map(g => [g.code, g.parentCode]));
+  nodes.filter(n => n.nodeType === "instance").forEach(i => {
+    const term = groups.get(i.parentCode);
+    if (!records.has(term)) records.set(term, []);
+    records.get(term).push(i);
   });
-  document.getElementById("sbColorBy").addEventListener("change", event => { sbSetMode(event.target.value); sbRecolor(); });
-  document.getElementById("sbValue").addEventListener("change", event => { sbState.value = event.target.value; sbRecolor(); });
-  document.getElementById("sbReset").addEventListener("click", () => sbFocus(null));
-  const search = document.getElementById("sbSearch");
-  search.addEventListener("input", sbRunSearch);
-  search.addEventListener("keydown", event => {
-    if (event.key === "Enter") {
-      const first = sbRunSearch()[0];
-      if (first) { sbCloseSearch(); sbFocus(first); }
-    } else if (event.key === "Escape") sbCloseSearch();
-  });
-  sbState.ready = true;
-  if (currentActivePageKey === "sotSunburst") { sbShow(); applySbHash(); }
-})();
+  const make = t => {
+    const children = (kids.get(t.code) || []).map(make);
+    return { key: t.code, kind: "term", name: t.term, t, records: records.get(t.code) || [], ...(children.length ? { children } : {}) };
+  };
+  return { key: "", kind: "root", name: "All domains", children: (kids.get("") || []).map(make) };
+}
+const TB_TERMS = () => nodes.filter(n => n.nodeType === "taxonomy");
+const TB_CONFIG = {
+  prefix: "tb", page: "taxSunburstPage", hash: "#taxonomy-sunburst", title: "Onboard taxonomy",
+  build: tbBuildTax,
+  items: TB_TERMS,
+  item: n => n.kind === "term" ? n.t : null,
+  code: n => n.kind === "term" ? n.t.code : "",
+  otherLabel: "Other terms",
+  sizes: {
+    terms: { label: "Terms", value: n => n.kind === "term" && !n.children ? 1 : 0, unit: c => `term${c === 1 ? "" : "s"} at the end of its branches` },
+    records: { label: "Current records", value: n => n.kind === "term" ? n.records.length : 0, unit: c => `current record${c === 1 ? "" : "s"}` },
+  },
+  defaultMode: "status",
+  modes: {
+    status: { label: "Status", field: "status", categories: [["Active", "#2a78d6", "Active"], ["Proposed", "#eb6834", "Proposed"]] },
+    records: { label: "Has current records", test: t => (tbState.data.byKey.get(t.code).records || []).length > 0 },
+    sot: { label: "Linked to Splunk objects", test: t => !!(t.relatedSot && t.relatedSot.length) },
+    owner: { label: "Owner", get: t => t.owner || "" },
+    entityType: { label: "Entity type", field: "entityType" },
+    sourceWorksheet: { label: "Source worksheet", field: "sourceWorksheet" },
+  },
+  childHeading: n => n.kind === "root" ? "Domains" : "Contents",
+  searchText: n => `${n.t.code} ${n.name} ${n.t.entityType}`,
+  tooltip: n => `<div>${escapeHtml(n.t.entityType)} &middot; ${escapeHtml(n.t.status)}</div>`,
+  details: (node, { count, unit }) => {
+    if (node.kind === "root") {
+      const terms = TB_TERMS().length, records = nodes.filter(n => n.nodeType === "instance").length;
+      return `<p class="sb-sub"><strong>${terms}</strong> terms in ${node.children.length} domains &middot; <strong>${records}</strong> current records</p>`;
+    }
+    const t = node.t, recs = node.records, shown = recs.slice(0, 8);
+    return `<p class="sb-sub">${escapeHtml(t.entityType)} &middot; ${escapeHtml(t.status)} &middot; <strong>${count}</strong> ${escapeHtml(unit)}</p>
+      <p class="sb-def">${escapeHtml(t.definition)}</p>
+      <dl class="sb-facts">
+        <dt>Code</dt><dd>${escapeHtml(t.code)}</dd>
+        ${t.owner ? `<dt>Owner</dt><dd>${escapeHtml(t.owner)}</dd>` : ""}
+        <dt>Source</dt><dd>${escapeHtml(t.sourceWorksheet)}</dd>
+        ${t.relatedSot && t.relatedSot.length ? `<dt>Splunk objects</dt><dd class="sb-pills">${t.relatedSot.map(code => `<button type="button" class="sb-link" data-sb-act="sot" data-code="${escapeHtml(code)}">${escapeHtml(code)}</button>`).join(" ")}</dd>` : ""}
+      </dl>
+      ${recs.length ? `<h4>Current records (${recs.length})</h4><ul class="sb-records">${shown.map(r => `<li><code>${escapeHtml(r.displayCode || r.primaryKey || "")}</code> ${escapeHtml(r.term)}</li>`).join("")}</ul>${recs.length > shown.length ? `<p class="sb-sub">and ${recs.length - shown.length} more in the Onboard taxonomy.</p>` : ""}` : ""}`;
+  },
+  openLabel: "Open in Onboard taxonomy",
+  open: node => { if (node) jumpToTaxNode(node.t.code); else setActivePage("taxonomy"); },
+  act: target => { if (target.getAttribute("data-sb-act") === "sot") jumpToSotObject(target.getAttribute("data-code")); },
+};
+
+function sbShow() { if (sbState) sbState.show(); }
+function sbUpdateHash() { if (sbState) sbState.updateHash(); }
+function applySbHash() { if (sbState) sbState.applyHash(); }
+function tbShow() { if (tbState) tbState.show(); }
+function tbUpdateHash() { if (tbState) tbState.updateHash(); }
+function applyTbHash() { if (tbState) tbState.applyHash(); }
+sbState = makeSunburst(SB_SOT_CONFIG);
+tbState = makeSunburst(TB_CONFIG);
+if (currentActivePageKey === "sotSunburst") { sbShow(); applySbHash(); }
+if (currentActivePageKey === "taxSunburst") { tbShow(); applyTbHash(); }
 
 /* ---------------------------------------------------------------------- *
  * Global cross-app search
@@ -54158,7 +54290,8 @@ const GLOBAL_SEARCH_PAGES = [
   { key: "taxonomy", label: "Onboard taxonomy" },
   { key: "onboarding", label: "Onboarding flow" },
   { key: "objectTaxonomy", label: "Splunk object taxonomy" },
-  { key: "sotSunburst", label: "Object taxonomy sunburst" },
+  { key: "sotSunburst", label: "Splunk object taxonomy sunburst" },
+  { key: "taxSunburst", label: "Onboard taxonomy sunburst" },
   { key: "refAssessmentMethods", label: "Assessment methodologies" },
   { key: "refConceptDefinitions", label: "Concepts & definitions" },
   { key: "refConfigFileReferences", label: "Configuration file reference" },
