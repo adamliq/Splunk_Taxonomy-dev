@@ -202,6 +202,14 @@ and primary-path filters, the CSV export, the table growing with the page (plus
 an axe check), and labelled phone cards with the paths two by two at 393px and
 320px.
 
+**`browser/sot-sunburst.spec.js`** -- Onboarding › Object taxonomy sunburst:
+every Splunk object taxonomy object drawn once (components outside their parent),
+an arc zooming in and the arc in focus zooming back out, the panel's buttons and
+breadcrumb doing the same, colour by object type (key counts every object) or a
+highlighted product, search by name, code or instance ID, links that open a zoom
+and colour, Open in Tree Explorer and Back, the chart fitting a phone at 393px
+and 320px, and axe checks.
+
 **`browser/lifecycle-phone-layout.spec.js`** -- the Log assessment lifecycle at
 phone width: stage cards instead of a scroll box, no domain name split mid-word,
 a readable pyramid, and the redraw when crossing the breakpoint.
