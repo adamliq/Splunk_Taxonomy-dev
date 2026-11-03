@@ -1326,6 +1326,43 @@
       background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 58%, #eff6ff 100%);
     }
     .patterns-hero h2 { margin: 4px 0 0; font-size: clamp(24px, 3.5vw, 34px); }
+    /* Splunk object taxonomy: Relationships view */
+    .rel-intro { max-width: 900px; margin: 14px 0 8px; color: var(--muted); line-height: 1.55; }
+    .rel-facts { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+    .rel-facts strong { color: var(--text); font-variant-numeric: tabular-nums; }
+    #relGraph { display: block; width: 100%; max-width: 700px; height: auto; margin: 0 auto; }
+    #relGraph .rel-edge { fill: none; stroke: rgba(31, 78, 120, 0.15); stroke-width: 1.2px; }
+    #relGraph.has-sel .rel-edge { stroke: rgba(31, 78, 120, 0.06); }
+    #relGraph .rel-edge.in { stroke: #2a78d6; stroke-width: 2px; }
+    #relGraph .rel-edge.out { stroke: #eb6834; stroke-width: 2px; }
+    #relGraph .rel-edge.one-sided { stroke-dasharray: 5 3; }
+    #relGraph .rel-node { fill: #64748b; }
+    #relGraph .rel-node.sel { fill: #0f172a; }
+    #relGraph .rel-node.in { fill: #2a78d6; }
+    #relGraph .rel-node.out { fill: #eb6834; }
+    #relGraph .rel-hit { fill: transparent; cursor: pointer; }
+    #relGraph .rel-dom { fill: #dcdbd5; }
+    #relGraph .rel-dom-label { font-family: var(--mono); font-size: 13px; fill: #64748b; }
+    #relGraph .rel-sel-label { font-size: 14px; font-weight: 700; fill: #0f172a; paint-order: stroke; stroke: #ffffff; stroke-width: 4px; stroke-linejoin: round; }
+    .rel-key-in { background: #2a78d6; } .rel-key-out { background: #eb6834; } .rel-key-other { background: rgba(31, 78, 120, 0.25); }
+    .sb-panel h4 .sb-swatch { margin-right: 6px; vertical-align: -1px; }
+    .rel-one { display: inline-block; padding: 0 6px; font-size: 11.5px; font-weight: 600; line-height: 18px; color: #7c2d12; background: #fff1e8; border: 1px dashed #eb6834; border-radius: 9px; white-space: nowrap; }
+    .rel-note { margin: 0 0 8px; font-size: 13px; color: var(--muted); }
+    .sb-children button .rel-one { justify-self: end; }
+    .sb-children:has(.rel-one) button { grid-template-columns: 12px auto minmax(0, 1fr) auto; }
+    .rel-none { font-size: 13px; color: var(--muted); padding: 4px 2px; }
+    .rel-unlinked { margin-top: 22px; }
+    .rel-unlinked h3 { margin: 0 0 4px; font-size: 16px; }
+    .rel-unlinked > p { margin: 0 0 10px; max-width: 900px; font-size: 13.5px; color: var(--muted); }
+    #relUnlinked { display: grid; gap: 6px; }
+    .rel-group { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px 12px; }
+    .rel-group summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+    .rel-group summary code { font-size: 12px; color: var(--muted); }
+    .rel-group summary .sb-n { margin-left: auto; }
+    .rel-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; padding: 0; list-style: none; }
+    .rel-chips button { min-height: 30px; padding: 4px 10px; font: inherit; font-size: 13px; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 15px; cursor: pointer; white-space: normal; text-align: left; }
+    .rel-chips button:hover, .rel-chips button:focus-visible { border-color: var(--primary); background: var(--primary-light); }
+    .rel-chips code { font-size: 11.5px; color: var(--muted); }
     /* Taxonomy sunbursts (Splunk object taxonomy, onboard taxonomy) */
     .sb-controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; margin: 16px 0 10px; }
     .sb-controls [hidden] { display: none; }
@@ -5080,7 +5117,8 @@ button.sot-stat-filter[aria-pressed="true"] { border-color: var(--primary); back
 
 .scroll-hint { font-size: 12px; color: var(--muted); margin: 0 0 8px; }
 
-.view-tabs { display: flex; gap: 8px; margin-bottom: 18px; border-bottom: 1px solid var(--border); }
+.view-tabs { display: flex; flex-wrap: wrap; gap: 0 8px; margin-bottom: 18px; border-bottom: 1px solid var(--border); }
+@media (max-width: 420px) { .view-tabs button { padding: 10px 12px; } }
 .view-tabs button {
   padding: 10px 18px;
   border: none;
@@ -5198,7 +5236,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 180</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 181</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -17241,6 +17279,7 @@ E. Assumptions and unresolved inputs</pre>
     <div class="view-tabs" role="tablist">
       <button type="button" id="sotShowTreeView" class="active" role="tab" aria-selected="true" aria-controls="sotTreeViewPanel">Tree Explorer</button>
       <button type="button" id="sotShowTableView" role="tab" aria-selected="false" aria-controls="sotTableViewPanel">Table View</button>
+      <button type="button" id="sotShowRelView" role="tab" aria-selected="false" aria-controls="sotRelViewPanel">Relationships</button>
     </div>
 
     <div class="sot-stats-bar" id="sotStatsBar" aria-live="polite"></div>
@@ -17299,6 +17338,32 @@ E. Assumptions and unresolved inputs</pre>
           <p class="placeholder">Select an object from the table to see its full definition, notes and config-file details.</p>
         </aside>
       </div>
+    </section>
+
+    <section id="sotRelViewPanel" class="view-panel" role="tabpanel" aria-labelledby="sotShowRelView">
+      <p class="rel-intro">Every "Depends on" and "Feeds" link between objects. Linked objects sit around the ring in taxonomy order, grouped by domain, and each link bundles through its domains toward the centre. Pick or point at an object to draw what it depends on in blue and what it feeds in orange. A link recorded on only one of its two objects is marked <span class="rel-one">one side</span>; objects with no links are listed below the chart.</p>
+      <div class="rel-facts" id="relFacts"></div>
+      <div class="sb-controls">
+        <label>Object
+          <select id="relPick"></select>
+        </label>
+        <div class="sb-legend">
+          <span class="sb-key"><span class="sb-swatch rel-key-in"></span>Depends on</span>
+          <span class="sb-key"><span class="sb-swatch rel-key-out"></span>Feeds</span>
+          <span class="sb-key"><span class="sb-swatch rel-key-other"></span>Other links</span>
+        </div>
+      </div>
+      <div class="sb-layout">
+        <div class="sb-chart-wrap">
+          <svg id="relGraph" viewBox="-380 -380 760 760" role="img" aria-label="Links between Splunk objects, grouped by domain around a ring. The panel beside it lists the selected object's links."></svg>
+        </div>
+        <aside id="relPanel" class="sb-panel" aria-live="polite"></aside>
+      </div>
+      <section class="rel-unlinked" aria-labelledby="relUnlinkedHead">
+        <h3 id="relUnlinkedHead">Objects with no links (<span id="relUnlinkedCount"></span>)</h3>
+        <p>No other object lists these under "Depends on" or "Feeds", and they list none themselves: the to-do list for the relationship cleanup. Each opens in the Tree Explorer.</p>
+        <div id="relUnlinked"></div>
+      </section>
     </section>
 
     <p class="sot-note">Object names, config files and scopes reflect Splunk Enterprise/Cloud platform conventions as of Splunk 9.x/10.x; verify against your specific version's documentation before relying on an exact setting name. Attributes shown as <em>To be confirmed</em> (Owner, Cloud/Enterprise support, Namespace/App, Mutable, Exportable, Security relevance, Configuration layer, Platform) have no derivable value in the current catalogue and are placeholders for future enrichment, not fabricated data. A few nodes carry explicit cross-references between this taxonomy and the LATCH <code>TAX-XX</code> taxonomy (e.g. <code>TAX-03.06.03.01 Collection Mode</code> &harr; <code>SOT-05.01.01 Data Input</code>/<code>SOT-05.01.06 Modular Input</code>) -- click a related-code pill on either side to jump across.</p>
@@ -53809,12 +53874,19 @@ let sotLinked = null;
 function sotSetLinked(value) { sotLinked = value; sotUpdateHash(); }
 function sotUpdateHash() {
   if (!history.replaceState || !/^#object-taxonomy(\?|$)/.test(location.hash)) return;
-  const next = !sotLinked ? "#object-taxonomy" : sotLinked.object ? `#object-taxonomy?object=${encodeURIComponent(sotLinked.object)}` : `#object-taxonomy?code=${encodeURIComponent(sotLinked.code)}`;
+  const base = !sotLinked ? "#object-taxonomy" : sotLinked.object ? `#object-taxonomy?object=${encodeURIComponent(sotLinked.object)}` : `#object-taxonomy?code=${encodeURIComponent(sotLinked.code)}`;
+  const next = sotActiveView === "relations" ? `${base}${base.includes("?") ? "&" : "?"}view=relationships` : base;
   if (location.hash !== next) history.replaceState(null, "", next);
 }
 function applySotHash() {
   const params = new URLSearchParams((location.hash.match(/^#object-taxonomy\?(.*)$/) || [])[1] || "");
   const name = params.get("object"), code = params.get("code");
+  if (params.get("view") === "relationships") {
+    setActiveView("relations");
+    if (name && SOT_BY_NAME.has(name)) relSelect(SOT_BY_NAME.get(name), false);
+    sotSetLinked({ object: relState.selected.name });
+    return;
+  }
   if (name && SOT_BY_NAME.has(name)) { setActiveView("tree"); selectObjectInTree(name); return; }
   if (!code) return;
   const path = pathToLeaf(code);
@@ -53888,11 +53960,210 @@ function setActiveView(view) {
   document.getElementById("sotShowTreeView").setAttribute("aria-selected", view === "tree" ? "true" : "false");
   document.getElementById("sotShowTableView").classList.toggle("active", view === "table");
   document.getElementById("sotShowTableView").setAttribute("aria-selected", view === "table" ? "true" : "false");
+  document.getElementById("sotShowRelView").classList.toggle("active", view === "relations");
+  document.getElementById("sotShowRelView").setAttribute("aria-selected", view === "relations" ? "true" : "false");
   document.getElementById("sotTreeViewPanel").classList.toggle("active", view === "tree");
   document.getElementById("sotTableViewPanel").classList.toggle("active", view === "table");
+  document.getElementById("sotRelViewPanel").classList.toggle("active", view === "relations");
+  // The type and lifecycle filters scope the tree and the table, not the relationships.
+  document.getElementById("sotStatsBar").hidden = view === "relations";
+  if (view === "relations") relShow();
 }
-document.getElementById("sotShowTreeView").addEventListener("click", () => { setActiveView("tree"); renderStats(getVisible()); });
-document.getElementById("sotShowTableView").addEventListener("click", () => { setActiveView("table"); renderStats(getVisible()); });
+document.getElementById("sotShowTreeView").addEventListener("click", () => { setActiveView("tree"); renderStats(getVisible()); sotUpdateHash(); });
+document.getElementById("sotShowTableView").addEventListener("click", () => { setActiveView("table"); renderStats(getVisible()); sotUpdateHash(); });
+document.getElementById("sotShowRelView").addEventListener("click", () => { setActiveView("relations"); sotSetLinked({ object: relState.selected.name }); });
+
+/* ---------------------------------------------------------------------- *
+ * Relationships view: every "Depends on" and "Feeds" link between objects,
+ * as a bundled ring (hierarchical edge bundling). Linked objects sit around
+ * the ring in taxonomy order, grouped by domain; each link curves through its
+ * two domains' points and the centre, so busy domains read as thick strands.
+ * Picking or hovering an object draws what it depends on in blue and what it
+ * feeds in orange. A link recorded on only one of its two objects is flagged
+ * for the relationship cleanup, and objects with no links are listed below.
+ * ---------------------------------------------------------------------- */
+// var, not let: setActiveView can ask for the view before this code has run.
+var relState;
+const REL_R = 290;
+
+function relBuild() {
+  // Objects in sunburst order: domain > class > subclass > object, each object's components after it.
+  const order = [];
+  Object.values(SOT_TREE).forEach(dom => Object.values(dom.classes).forEach(cls => Object.keys(cls.subclasses).forEach(sc => {
+    (SOT_OBJECTS_BY_LEAF[sc] || []).filter(o => !o.parent).forEach(o => { order.push(o); order.push(...sotChildren(o)); });
+  })));
+  // A link a -> b means a feeds b (b depends on a); note which side(s) recorded it.
+  const links = new Map();
+  const add = (a, b, side) => {
+    if (!a || !b || a === b) return;
+    const key = `${a.instanceId}>${b.instanceId}`;
+    if (!links.has(key)) links.set(key, { a, b, deps: false, feeds: false });
+    links.get(key)[side] = true;
+  };
+  SOT_OBJECTS.forEach(o => {
+    (o.deps || []).forEach(n => add(sotResolve(n), o, "deps"));
+    (o.feeds || []).forEach(n => add(o, sotResolve(n), "feeds"));
+  });
+  const list = [...links.values()];
+  const linked = new Set(list.flatMap(l => [l.a, l.b]));
+  const leaves = order.filter(o => linked.has(o));
+  // Ring positions, as d3.cluster spaces them: one unit between neighbours, two between domains.
+  const domOf = o => o.domain.slice(0, 6);
+  let unit = 0, prev = null;
+  const units = leaves.map(o => { if (prev && domOf(prev) !== domOf(o)) unit += 1; prev = o; return unit++; });
+  const total = unit + 1; // the gap that closes the ring
+  const pos = new Map(leaves.map((o, i) => [o, units[i] * 360 / total]));
+  const domains = [];
+  leaves.forEach(o => {
+    const d = domOf(o), last = domains[domains.length - 1];
+    if (!last || last.code !== d) domains.push({ code: d, first: pos.get(o), last: pos.get(o) });
+    else last.last = pos.get(o);
+  });
+  domains.forEach(d => { d.mid = (d.first + d.last) / 2; });
+  const domMid = new Map(domains.map(d => [d.code, d.mid]));
+  return { order, list, leaves, linked, pos, domains, domMid, domOf, unlinked: order.filter(o => !linked.has(o)) };
+}
+
+const relXY = (angle, r) => { const a = angle * Math.PI / 180; return [r * Math.sin(a), -r * Math.cos(a)]; };
+// d3.curveBundle(beta) over leaf > domain > centre > domain > leaf: straighten toward the chord,
+// then draw a uniform cubic B-spline (d3.curveBasis).
+function relBundlePath(pts, beta = 0.85) {
+  const n = pts.length - 1, [x0, y0] = pts[0], [xn, yn] = pts[n];
+  const p = pts.map(([x, y], i) => [beta * x + (1 - beta) * (x0 + (i / n) * (xn - x0)), beta * y + (1 - beta) * (y0 + (i / n) * (yn - y0))]);
+  const f = v => v.toFixed(1);
+  let d = `M${f(p[0][0])},${f(p[0][1])}`;
+  const seg = (a, b, c) => { d += `C${f((2 * a[0] + b[0]) / 3)},${f((2 * a[1] + b[1]) / 3)} ${f((a[0] + 2 * b[0]) / 3)},${f((a[1] + 2 * b[1]) / 3)} ${f((a[0] + 4 * b[0] + c[0]) / 6)},${f((a[1] + 4 * b[1] + c[1]) / 6)}`; };
+  d += `L${f((5 * p[0][0] + p[1][0]) / 6)},${f((5 * p[0][1] + p[1][1]) / 6)}`;
+  for (let i = 2; i < p.length; i++) seg(p[i - 2], p[i - 1], p[i]);
+  seg(p[n - 1], p[n], p[n]);
+  d += `L${f(p[n][0])},${f(p[n][1])}`;
+  return d;
+}
+
+function relDraw() {
+  const g = relState.graph, svg = document.getElementById("relGraph");
+  const leafPt = o => relXY(g.pos.get(o), REL_R), domPt = o => relXY(g.domMid.get(g.domOf(o)), REL_R / 2);
+  let html = '<g class="rel-edges">';
+  g.list.forEach((l, i) => {
+    const pts = g.domOf(l.a) === g.domOf(l.b) ? [leafPt(l.a), domPt(l.a), leafPt(l.b)] : [leafPt(l.a), domPt(l.a), [0, 0], domPt(l.b), leafPt(l.b)];
+    html += `<path class="rel-edge" data-i="${i}" d="${relBundlePath(pts)}"></path>`;
+  });
+  html += '</g><g class="rel-arcs">';
+  g.domains.forEach(d => {
+    const a0 = d.first - 0.7, a1 = d.last + 0.7, [x0, y0] = relXY(a0, 300), [x1, y1] = relXY(a1, 300), [x2, y2] = relXY(a1, 308), [x3, y3] = relXY(a0, 308);
+    const large = a1 - a0 > 180 ? 1 : 0;
+    html += `<path class="rel-dom" d="M${x0.toFixed(1)},${y0.toFixed(1)}A300,300 0 ${large} 1 ${x1.toFixed(1)},${y1.toFixed(1)}L${x2.toFixed(1)},${y2.toFixed(1)}A308,308 0 ${large} 0 ${x3.toFixed(1)},${y3.toFixed(1)}Z"><title>${escapeHtml(`${d.code} ${SOT_TREE[d.code].label}`)}</title></path>`;
+    const [lx, ly] = relXY(d.mid, 332);
+    html += `<text class="rel-dom-label" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${d.mid > 200 ? "end" : d.mid < 160 && d.mid > 20 ? "start" : "middle"}" dominant-baseline="middle">${escapeHtml(d.code)}</text>`;
+  });
+  html += '</g><g class="rel-nodes">';
+  g.leaves.forEach(o => {
+    const [x, y] = leafPt(o);
+    html += `<circle class="rel-node" data-id="${escapeHtml(o.instanceId)}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6"></circle>`;
+    html += `<circle class="rel-hit" data-id="${escapeHtml(o.instanceId)}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8"><title>${escapeHtml(`${o.instanceId} ${o.name}`)}</title></circle>`;
+  });
+  html += '</g><g class="rel-label"></g>';
+  svg.innerHTML = html;
+  relState.edgeEls = [...svg.querySelectorAll(".rel-edge")];
+  relState.nodeEls = new Map([...svg.querySelectorAll(".rel-node")].map(c => [c.getAttribute("data-id"), c]));
+}
+
+// Highlight one object's links (a hover preview or the selection).
+function relHighlight(o) {
+  const g = relState.graph, svg = document.getElementById("relGraph"), edgesG = svg.querySelector(".rel-edges");
+  svg.classList.toggle("has-sel", !!o);
+  const ins = new Set(), outs = new Set();
+  g.list.forEach((l, i) => {
+    const el = relState.edgeEls[i], isIn = o && l.b === o, isOut = o && l.a === o;
+    el.setAttribute("class", `rel-edge${isIn ? " in" : isOut ? " out" : ""}${(isIn || isOut) && !(l.deps && l.feeds) ? " one-sided" : ""}`);
+    if (isIn) ins.add(l.a.instanceId);
+    if (isOut) outs.add(l.b.instanceId);
+    if (isIn || isOut) edgesG.appendChild(el);
+  });
+  relState.nodeEls.forEach((c, id) => c.setAttribute("class", `rel-node${o && id === o.instanceId ? " sel" : ins.has(id) ? " in" : outs.has(id) ? " out" : ""}`));
+  const label = svg.querySelector(".rel-label");
+  if (!o) { label.innerHTML = ""; return; }
+  const a = g.pos.get(o), [x, y] = relXY(a, REL_R + 16);
+  label.innerHTML = `<text class="rel-sel-label" x="${Math.max(-372, Math.min(372, x)).toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${a > 180 ? "end" : "start"}" dominant-baseline="middle">${escapeHtml(o.name)}</text>`;
+}
+
+function relRenderPanel() {
+  const o = relState.selected, g = relState.graph, panel = document.getElementById("relPanel");
+  const ins = g.list.filter(l => l.b === o), outs = g.list.filter(l => l.a === o);
+  const item = (other, l, side) => {
+    // A link is fully recorded when the dependant lists it under Depends on and the source under Feeds.
+    const missing = !l.deps ? `${l.b.name} does not list ${l.a.name} under Depends on` : !l.feeds ? `${l.a.name} does not list ${l.b.name} under Feeds` : "";
+    return `<li><button type="button" data-rel-id="${escapeHtml(other.instanceId)}"><span class="sb-swatch rel-key-${side}"></span><code>${escapeHtml(g.domOf(other))}</code><span class="sb-name">${escapeHtml(other.name)}</span>${missing ? `<span class="rel-one" title="${escapeHtml(missing)}">one side</span>` : ""}</button></li>`;
+  };
+  const oneSided = [...ins, ...outs].filter(l => !(l.deps && l.feeds)).length;
+  panel.innerHTML = `
+    <h3>${escapeHtml(o.name)}</h3>
+    <p class="sb-sub"><code>${escapeHtml(o.instanceId)}</code> &middot; ${escapeHtml(o.domain)}</p>
+    ${oneSided ? `<p class="rel-note">${oneSided} of its ${ins.length + outs.length} links ${oneSided === 1 ? "is" : "are"} recorded on one object only, marked <span class="rel-one">one side</span>.</p>` : ""}
+    <h4><span class="sb-swatch rel-key-in"></span>Depends on (${ins.length})</h4>
+    <ul class="sb-children">${ins.map(l => item(l.a, l, "in")).join("") || '<li class="rel-none">Nothing recorded</li>'}</ul>
+    <h4><span class="sb-swatch rel-key-out"></span>Feeds (${outs.length})</h4>
+    <ul class="sb-children">${outs.map(l => item(l.b, l, "out")).join("") || '<li class="rel-none">Nothing recorded</li>'}</ul>
+    <div class="sb-actions"><button type="button" data-rel-open>Open in Tree Explorer</button></div>`;
+}
+
+function relSelect(o, writeHash = true) {
+  if (!o || !relState.graph.linked.has(o)) return false;
+  relState.selected = o;
+  document.getElementById("relPick").value = o.instanceId;
+  relHighlight(o);
+  relRenderPanel();
+  if (writeHash) sotSetLinked({ object: o.name });
+  return true;
+}
+
+function relRenderUnlinked() {
+  const g = relState.graph, byDomain = new Map();
+  g.unlinked.forEach(o => { const d = g.domOf(o); if (!byDomain.has(d)) byDomain.set(d, []); byDomain.get(d).push(o); });
+  document.getElementById("relUnlinkedCount").textContent = g.unlinked.length;
+  document.getElementById("relUnlinked").innerHTML = [...byDomain].map(([d, objs]) => `
+    <details class="rel-group"><summary><code>${escapeHtml(d)}</code> ${escapeHtml(SOT_TREE[d].label)} <span class="sb-n">${objs.length}</span></summary>
+      <ul class="rel-chips">${objs.map(o => `<li><button type="button" data-rel-tree="${escapeHtml(o.name)}"><code>${escapeHtml(o.instanceId)}</code> ${escapeHtml(o.name)}</button></li>`).join("")}</ul>
+    </details>`).join("");
+}
+
+function relShow() {
+  if (!relState) return;
+  if (!relState.drawn) {
+    const g = relState.graph;
+    relDraw();
+    const oneSided = g.list.filter(l => !(l.deps && l.feeds)).length;
+    const cross = g.list.filter(l => g.domOf(l.a) !== g.domOf(l.b)).length;
+    document.getElementById("relFacts").innerHTML = `<span><strong>${g.leaves.length}</strong> of ${SOT_OBJECTS.length} objects linked</span><span><strong>${g.list.length}</strong> links</span><span><strong>${cross}</strong> cross a domain</span><span><strong>${oneSided}</strong> recorded on one object only</span><span><strong>${g.unlinked.length}</strong> objects with no links</span>`;
+    document.getElementById("relPick").innerHTML = [...g.leaves].sort((a, b) => a.name.localeCompare(b.name)).map(o => `<option value="${escapeHtml(o.instanceId)}">${escapeHtml(o.name)}</option>`).join("");
+    relRenderUnlinked();
+    relState.drawn = true;
+  }
+  if (!relState.selected) {
+    // Start on the linked object, or the one with the most links.
+    const linkedName = sotLinked && sotLinked.object;
+    const degree = o => relState.graph.list.filter(l => l.a === o || l.b === o).length;
+    const start = (linkedName && SOT_BY_NAME.get(linkedName)) || relState.graph.leaves.reduce((a, b) => degree(b) > degree(a) ? b : a);
+    if (!relSelect(start, false)) relSelect(relState.graph.leaves.reduce((a, b) => degree(b) > degree(a) ? b : a), false);
+  }
+}
+
+(function initRelationships() {
+  relState = { graph: relBuild(), selected: null, drawn: false, edgeEls: [], nodeEls: new Map() };
+  const byId = id => SOT_OBJECTS.find(o => o.instanceId === id);
+  const svg = document.getElementById("relGraph");
+  svg.addEventListener("click", e => { const hit = e.target.closest(".rel-hit"); if (hit) relSelect(byId(hit.getAttribute("data-id"))); });
+  svg.addEventListener("mouseover", e => { const hit = e.target.closest(".rel-hit"); if (hit) relHighlight(byId(hit.getAttribute("data-id"))); });
+  svg.addEventListener("mouseleave", () => relHighlight(relState.selected));
+  document.getElementById("relPick").addEventListener("change", e => relSelect(byId(e.target.value)));
+  document.getElementById("sotRelViewPanel").addEventListener("click", e => {
+    const pick = e.target.closest("[data-rel-id]"), open = e.target.closest("[data-rel-open]"), tree = e.target.closest("[data-rel-tree]");
+    if (pick) relSelect(byId(pick.getAttribute("data-rel-id")));
+    else if (open) { setActiveView("tree"); selectObjectInTree(relState.selected.name); }
+    else if (tree) { setActiveView("tree"); selectObjectInTree(tree.getAttribute("data-rel-tree")); }
+  });
+  if (sotActiveView === "relations") relShow();
+})();
 
 initFilters();
 render();
