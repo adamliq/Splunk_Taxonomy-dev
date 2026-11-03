@@ -5138,7 +5138,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 174</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 175</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -50794,27 +50794,27 @@ const SOT_OBJECTS = [
     config: "Defined inside the parent Response Plan",
     def: "An ordered stage within a Response Plan (e.g. Contain, Eradicate) that groups related Tasks and tracks completion of that stage of the response.",
     notes: "A phase is complete when all of its tasks are ended. Name and description support tokens. Not independently versioned outside the parent plan.",
-    deps: ["Response Plan"], feeds: ["Response Plan Task", "Investigation"], sotCode: "SOT-10.01.32", instanceId: "RPPH-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    deps: ["Response Plan"], feeds: ["Response Plan Task", "Investigation"], sotCode: "SOT-10.01.16.01", instanceId: "RPPH-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", parent: "Response Plan" },
 { name: "Response Plan Task", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Embedded in a Response Plan Phase",
     config: "Defined inside a Phase of a Response Plan",
     def: "A single actionable step inside a Phase (e.g. quarantine device, notify owner). May have a default owner, require a completion note, carry a Markdown description, embed searches, and trigger Actions or SOAR Playbooks.",
     notes: "Runtime lifecycle on an investigation: unassigned → started → ended. Supporting artefacts include notes, files, and results of embedded searches/actions/playbooks.",
-    deps: ["Response Plan Phase"], feeds: ["SOAR Playbook", "Adaptive Response Action", "Investigation"], sotCode: "SOT-10.01.33", instanceId: "RPTK-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    deps: ["Response Plan Phase"], feeds: ["SOAR Playbook", "Adaptive Response Action", "Investigation"], sotCode: "SOT-10.01.16.02", instanceId: "RPTK-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", parent: "Response Plan" },
 { name: "Response Plan Embedded Search", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Embedded in a Response Plan Task",
     config: "Search definition stored on the task",
     def: "A named SPL (or SPL2) search attached to a Response Plan Task so analysts can run contextual investigation queries without leaving the Response tab.",
     notes: "Supports tokens. Distinct from a saved Report; exists only as guidance/tooling inside the task.",
-    deps: ["Response Plan Task"], feeds: ["Report", "Investigation"], sotCode: "SOT-10.01.34", instanceId: "RPSE-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    deps: ["Response Plan Task"], feeds: ["Report", "Investigation"], sotCode: "SOT-10.01.16.03", instanceId: "RPSE-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", parent: "Response Plan" },
 { name: "Response Plan Task Action", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Knowledge Object", scope: "Embedded in a Response Plan Task",
     config: "Configured under the task's Actions section",
     def: "An automated or semi-automated action (SOAR app/connector or Adaptive Response-style integration) that can be run from a Response Plan Task during an investigation.",
     notes: "Complements SOAR Playbook attachment on the same task. Distinct from a standalone Adaptive Response Action fired by a correlation search.",
-    deps: ["Response Plan Task", "Adaptive Response Action"], feeds: ["SOAR Action", "Investigation"], sotCode: "SOT-10.01.35", instanceId: "RPACT-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    deps: ["Response Plan Task", "Adaptive Response Action"], feeds: ["SOAR Action", "Investigation"], sotCode: "SOT-10.01.16.04", instanceId: "RPACT-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", parent: "Response Plan" },
 { name: "Response Plan Token", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Platform Object", scope: "Per Response Plan field",
     config: "Predefined tokens substituted at apply/runtime (status, urgency, sensitivity, investigation_id, etc.)",
     def: "A variable placeholder insertable into Response Plan, Phase or Task name/description fields and embedded searches, resolved from Investigation context when the plan is used.",
     notes: "Standardises plans across investigations without hard-coding case-specific values.",
-    deps: ["Investigation"], feeds: ["Response Plan", "Response Plan Phase", "Response Plan Task", "Response Plan Embedded Search"], sotCode: "SOT-10.01.36", instanceId: "RPTOK-001", objectClass: "Platform Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+    deps: ["Investigation"], feeds: ["Response Plan", "Response Plan Phase", "Response Plan Task", "Response Plan Embedded Search"], sotCode: "SOT-10.01.16.05", instanceId: "RPTOK-001", objectClass: "Platform Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed", parent: "Response Plan" },
 { name: "Threat Intelligence Framework", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global (Splunk ES)",
     config: "threat_intelligence.conf, inputs.conf (TI modular input)",
     def: "The Enterprise Security module that ingests, normalises and manages threat intelligence feeds (STIX/TAXII/CSV) into searchable lookup tables.",
@@ -52800,11 +52800,6 @@ const SOT_TREE = {
       "SOT-10.01.29": "Detection Studio",
       "SOT-10.01.30": "Intermediate Finding",
       "SOT-10.01.31": "Exposure Analytics",
-      "SOT-10.01.32": "Response Plan Phase",
-      "SOT-10.01.33": "Response Plan Task",
-      "SOT-10.01.34": "Response Plan Embedded Search",
-      "SOT-10.01.35": "Response Plan Task Action",
-      "SOT-10.01.36": "Response Plan Token",
     } },
     "SOT-10.02": { label: "IT Service Intelligence", desc: "AIOps/service-monitoring objects specific to ITSI.", subclasses: {
       "SOT-10.02.01": "Service",
@@ -53185,6 +53180,8 @@ function renderObjectDetailBody(obj) {
     ${renderObjectAttributesTable(obj)}
     <div class="sot-detail-row" style="margin-top:14px;"><div class="label">Definition</div><div class="value">${escapeHtml(obj.def)}</div></div>
     ${obj.notes ? `<div class="sot-detail-row"><div class="label">Notes</div><div class="value">${escapeHtml(obj.notes)}</div></div>` : ""}
+    ${obj.parent ? `<div class="sot-detail-row"><div class="label">Part of</div><div class="value">${renderRefPills([obj.parent])}</div></div>` : ""}
+    ${(kids => kids.length ? `<div class="sot-detail-row"><div class="label">Components</div><div class="value">${renderRefPills(kids.map(o => o.name))}</div></div>` : "")(sotChildren(obj))}
     <div class="sot-detail-row"><div class="label">Depends on</div><div class="value">${renderRefPills(obj.deps)}</div></div>
     <div class="sot-detail-row"><div class="label">Feeds / consumers</div><div class="value">${renderRefPills(obj.feeds)}</div></div>
     ${(by => by.length ? `<div class="sot-detail-row"><div class="label">Used by (lists it as a dependency)</div><div class="value">${renderRefPills(by.map(o => o.name))}</div></div>` : "")(sotUsedBy(obj))}
@@ -53238,6 +53235,10 @@ function sotRenderDetail(obj) {
 // of exactly one object ("Universal Forwarder" for "Universal Forwarder (UF)", "Data Input
 // (General)" for "Data Input") links to it; anything else stays unlinked and is marked.
 const SOT_BY_NAME = new Map(SOT_OBJECTS.map(o => [o.name, o]));
+// A component (an object with a parent, coded under it: SOT-10.01.16.01) sits under its parent
+// object in the tree and shares the parent's subclass.
+const sotLeafCode = o => o.parent && SOT_BY_NAME.has(o.parent) ? SOT_BY_NAME.get(o.parent).sotCode : o.sotCode;
+const sotChildren = o => SOT_OBJECTS.filter(c => c.parent === o.name);
 function sotResolve(name) {
   if (SOT_BY_NAME.has(name)) return SOT_BY_NAME.get(name);
   const general = name.replace(/\s*\(General\)$/, "");
@@ -53321,7 +53322,7 @@ document.getElementById("sotExportBtn").addEventListener("click", exportCsv);
  * ---------------------------------------------------------------------- */
 const SOT_OBJECTS_BY_LEAF = {};
 SOT_OBJECTS.forEach(o => {
-  (SOT_OBJECTS_BY_LEAF[o.sotCode] = SOT_OBJECTS_BY_LEAF[o.sotCode] || []).push(o);
+  (SOT_OBJECTS_BY_LEAF[sotLeafCode(o)] = SOT_OBJECTS_BY_LEAF[sotLeafCode(o)] || []).push(o);
 });
 
 let sotActiveView = "tree";
@@ -53381,7 +53382,7 @@ function isSelected(level, code) {
   return !!sotTreeSelected && sotTreeSelected.level === level && sotTreeSelected.code === code;
 }
 
-function renderObjectRow(o) {
+function renderObjectRow(o, kids = []) {
   const selected = !!sotTreeSelected && sotTreeSelected.level === "object" && sotTreeSelected.name === o.name;
   return `<li class="sot-tree-node" data-level="object">
     <div class="tree-row${selected ? " selected" : ""}" data-level="object" data-name="${escapeHtml(o.name)}">
@@ -53390,6 +53391,7 @@ function renderObjectRow(o) {
       <span class="tree-label">${taxHighlight(o.name, sotTreeQuery)}${sotLifecycleBadge(o)}</span>
       <span class="pill ${pillClass(o.type)}" style="font-size:11px;">${escapeHtml(o.type === "Hybrid (Knowledge + Platform)" ? "Hybrid" : o.type.replace(" Object", "").replace("External Platform", "External"))}</span>
     </div>
+    ${kids.length ? `<ul class="tree-list" aria-label="Components of ${escapeHtml(o.name)}">${kids.map(k => renderObjectRow(k)).join("")}</ul>` : ""}
   </li>`;
 }
 
@@ -53399,7 +53401,10 @@ function renderSubclassNode(s, searching) {
   let html = `<li class="sot-tree-node" data-level="subclass">`;
   html += toggleRowHtml("subclass", s.code, s.label, s.objects.length, hasChildren, expanded, isSelected("subclass", s.code));
   if (hasChildren && expanded) {
-    html += `<ul class="tree-list">${s.objects.map(renderObjectRow).join("")}</ul>`;
+    // Components draw under their parent; one whose parent is filtered out stands on its own.
+    const shown = new Set(s.objects.map(o => o.name));
+    const roots = s.objects.filter(o => !o.parent || !shown.has(o.parent));
+    html += `<ul class="tree-list">${roots.map(o => renderObjectRow(o, s.objects.filter(c => c.parent === o.name))).join("")}</ul>`;
   }
   html += `</li>`;
   return html;
@@ -53490,8 +53495,8 @@ function pathToLeaf(code) {
   return null;
 }
 
-function pathToObjectSot(sotCode) {
-  return pathToLeaf(sotCode);
+function pathToObjectSot(obj) {
+  return pathToLeaf(sotLeafCode(obj));
 }
 
 function breadcrumbHtml(parts) {
@@ -53548,9 +53553,9 @@ function renderTreeDetailForNode(level, code) {
 function renderTreeDetailForObject(obj) {
   const panel = document.getElementById("sotTreeDetailPanel");
   if (!obj) return;
-  const path = pathToObjectSot(obj.sotCode);
+  const path = pathToObjectSot(obj);
   panel.innerHTML = SOT_SHEET_CLOSE + `
-    ${breadcrumbHtml([path.domainCode, path.classCode, obj.sotCode])}
+    ${breadcrumbHtml([path.domainCode, path.classCode, ...(obj.parent ? [path.subclassCode] : []), obj.sotCode])}
     <h2>${escapeHtml(obj.name)}</h2>
     <div style="margin-bottom:16px;"><span class="pill ${pillClass(obj.type)}">${escapeHtml(obj.type)}</span></div>
     ${renderObjectDetailBody(obj)}
@@ -53608,10 +53613,10 @@ function selectObjectInTree(name) {
   const obj = SOT_OBJECTS.find(o => o.name === name);
   if (!obj) return;
   sotSetLinked({ object: name });
-  const path = pathToObjectSot(obj.sotCode);
+  const path = pathToObjectSot(obj);
   sotTreeExpanded.add(path.domainCode);
   sotTreeExpanded.add(path.classCode);
-  sotTreeExpanded.add(obj.sotCode);
+  sotTreeExpanded.add(path.subclassCode);
   sotTreeQuery = "";
   document.getElementById("sotTreeSearch").value = "";
   sotTreeSelected = { level: "object", code: null, name };
