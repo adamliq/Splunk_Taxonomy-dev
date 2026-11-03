@@ -69,7 +69,10 @@ test('record links open their record; picking a record writes its link; Copy lin
       if (detail) assert.ok(r.detail.startsWith(id), `${hash} detail ${r.detail}`);
     }
     await page.evaluate(() => setActivePage('catalogue'));
-    await page.locator('#catalogueTableBody tr[tabindex]').nth(4).click({ position: { x: 10, y: 8 } });
+    // Centre the row first: scrolled only "into view" it can sit under the sticky table header.
+    const fifth = page.locator('#catalogueTableBody tr[tabindex]').nth(4);
+    await fifth.evaluate(r => r.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    await fifth.click({ position: { x: 10, y: 8 } });
     const picked = await page.evaluate(() => sourceCatalogueRecords[4].sourceId);
     assert.equal(await page.evaluate(() => location.hash), `#data-source-catalogue?source=${picked}`);
     await page.click('#catalogueDetail .detail-copy-link');
