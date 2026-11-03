@@ -138,10 +138,11 @@ test('components sit under their parent object: Response Plan and Threat Intelli
     assert.deepEqual(tree.codes, ['SOT-10.01.16.01', 'SOT-10.01.16.02', 'SOT-10.01.16.03', 'SOT-10.01.16.04', 'SOT-10.01.16.05']);
     assert.equal(tree.everyObjectPlaced, true);
     assert.match(await page.textContent('#sotTreeDetailPanel'), /Components\s*Response Plan Phase/);
-    // Threat Intelligence Framework holds its feed, lookup, indicator housekeeping and collections.
+    // Threat Intelligence Framework holds its feed, lookup, aging and dedup policies, collections and indicators.
     assert.deepEqual(await page.evaluate(() => SOT_OBJECTS.filter(o => o.parent === 'Threat Intelligence Framework').map(o => `${o.sotCode} ${o.name}`)),
-      ['SOT-10.01.08.01 TI Feed', 'SOT-10.01.08.02 TI Lookup', 'SOT-10.01.08.03 Indicator Aging & Deduplication', 'SOT-10.01.08.04 Threatlist Collection']);
-    assert.equal(await page.evaluate(() => SOT_OBJECTS_BY_LEAF['SOT-10.01.08'].length), 5);
+      ['SOT-10.01.08.01 TI Feed', 'SOT-10.01.08.02 TI Lookup', 'SOT-10.01.08.03 Indicator Aging Policy', 'SOT-10.01.08.04 Indicator Deduplication Policy',
+        'SOT-10.01.08.05 Threatlist Collection', 'SOT-10.01.08.06 TI Indicator']);
+    assert.equal(await page.evaluate(() => SOT_OBJECTS_BY_LEAF['SOT-10.01.08'].length), 7);
 
     // A component names its parent, links back to it and carries the parent's code in its path.
     await page.click('#sotTreeShell .tree-row[data-name="Response Plan Task"]');
