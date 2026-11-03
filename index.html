@@ -5138,7 +5138,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 170</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 171</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -50785,6 +50785,11 @@ const SOT_OBJECTS = [
     def: "An anomaly produced by an Event-based Detection that is deliberately withheld from the analyst queue as a standalone item. It is visible only when nested under a Finding / Finding group and is intended as input for Finding-based Detections or investigation context.",
     notes: "Introduced with the ES 8.0 findings model. Distinct from a regular Finding: Intermediate Findings never appear alone in the queue and cannot be the sole output of a detection that also produces Findings. Useful for reducing noise while still feeding higher-order correlation.",
     deps: ["Event-based Detection"], feeds: ["Finding", "Finding-based Detection", "Investigation"], sotCode: "SOT-10.01.30", instanceId: "IFIND-001", objectClass: "Knowledge Object", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
+{ name: "Exposure Analytics", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global (Splunk ES)",
+    config: "Enterprise Security Exposure Analytics configuration (entity discovery sources, enrichment, inventory); optional endpoint add-ons (e.g. Splunk Exposure Analytics Add-on for Linux)",
+    def: "A continuous entity-discovery and attack-surface capability in Enterprise Security that builds and maintains a living inventory of assets, users and related entities from security events and optional discovery sources, then enriches findings and investigations with attribution, change history and exposure context.",
+    notes: "GA from ES 8.5 onward (with deeper insights in 8.6+). Distinct from the classic Asset & Identity Framework (which is primarily lookup/CMDB-driven enrichment): Exposure Analytics continuously discovers and tracks entities from live telemetry, surfaces Entity Discovery Insights / Inventory dashboards, and supplies business- and risk-aware context for prioritisation. Complements Risk Score / Entity Risk Score and feeds agentic SOC workflows. Optional forwarder-side add-ons can supply additional endpoint-derived enrichment.",
+    deps: ["Asset & Identity Framework", "Event-based Detection", "Finding", "Index", "Search Head"], feeds: ["Finding", "Investigation", "Entity Risk Score", "AI Agent", "Risk Object / Risk Rule"], sotCode: "SOT-10.01.31", instanceId: "EXPA-001", objectClass: "Hybrid (Knowledge + Platform)", product: "Enterprise Security", lifecycle: "Active", validationMethod: "UI-managed", restEndpoint: "To be confirmed" },
 { name: "Threat Intelligence Framework", domain: "SOT-10 — Splunk Solution & Premium Product Objects", type: "Hybrid (Knowledge + Platform)", scope: "Private / App / Global (Splunk ES)",
     config: "threat_intelligence.conf, inputs.conf (TI modular input)",
     def: "The Enterprise Security module that ingests, normalises and manages threat intelligence feeds (STIX/TAXII/CSV) into searchable lookup tables.",
@@ -52769,6 +52774,7 @@ const SOT_TREE = {
       "SOT-10.01.28": "Entity Risk Score",
       "SOT-10.01.29": "Detection Studio",
       "SOT-10.01.30": "Intermediate Finding",
+      "SOT-10.01.31": "Exposure Analytics",
     } },
     "SOT-10.02": { label: "IT Service Intelligence", desc: "AIOps/service-monitoring objects specific to ITSI.", subclasses: {
       "SOT-10.02.01": "Service",
