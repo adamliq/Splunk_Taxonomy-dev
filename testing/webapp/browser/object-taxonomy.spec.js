@@ -119,7 +119,7 @@ test('at phone width the detail is a bottom sheet', async () => {
   });
 });
 
-test('components sit under their parent object: Response Plan and Threat Intelligence Framework', async () => {
+test('components sit under their parent object: Response Plan, Threat Intelligence Framework, Ingest Processor', async () => {
   await withServerAndPage(async ({ page, baseUrl, pageErrors }) => {
     await page.setViewportSize({ width: 1400, height: 900 });
     await page.goto(`${baseUrl}/index.html#object-taxonomy?object=Response%20Plan`, { waitUntil: 'load' });
@@ -143,6 +143,11 @@ test('components sit under their parent object: Response Plan and Threat Intelli
       ['SOT-10.01.08.01 TI Feed', 'SOT-10.01.08.02 TI Lookup', 'SOT-10.01.08.03 Indicator Aging Policy', 'SOT-10.01.08.04 Indicator Deduplication Policy',
         'SOT-10.01.08.05 Threatlist Collection', 'SOT-10.01.08.06 TI Indicator']);
     assert.equal(await page.evaluate(() => SOT_OBJECTS_BY_LEAF['SOT-10.01.08'].length), 7);
+    // Ingest Processor holds its pipeline and the pipeline's parts; LATCH taxonomy links follow the new codes.
+    assert.deepEqual(await page.evaluate(() => SOT_OBJECTS.filter(o => o.parent === 'Ingest Processor').map(o => `${o.sotCode} ${o.name}`)),
+      ['SOT-05.06.01.01 Ingest Processor Pipeline', 'SOT-05.06.01.02 Pipeline Partition', 'SOT-05.06.01.03 Pipeline Rule',
+        'SOT-05.06.01.04 Masking / Redaction Rule', 'SOT-05.06.01.05 Default splunk_indexer Destination', 'SOT-05.06.01.06 Pipeline Version']);
+    assert.deepEqual(await page.evaluate(() => [...new Set(nodes.flatMap(n => n.relatedSot || []))].filter(c => !SOT_OBJECTS.some(o => o.sotCode === c))), []);
 
     // A component names its parent, links back to it and carries the parent's code in its path.
     await page.click('#sotTreeShell .tree-row[data-name="Response Plan Task"]');
