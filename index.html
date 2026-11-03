@@ -1330,23 +1330,26 @@
     .rel-intro { max-width: 900px; margin: 14px 0 8px; color: var(--muted); line-height: 1.55; }
     .rel-facts { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
     .rel-facts strong { color: var(--text); font-variant-numeric: tabular-nums; }
-    #relGraph { display: block; width: 100%; max-width: 700px; height: auto; margin: 0 auto; }
-    #relGraph .rel-edge { fill: none; stroke: rgba(31, 78, 120, 0.15); stroke-width: 1.2px; }
+    .rel-graph { display: block; width: 100%; max-width: 700px; height: auto; margin: 0 auto; }
+    .rel-graph .rel-edge { fill: none; stroke: rgba(31, 78, 120, 0.15); stroke-width: var(--w, 1.2px); }
     #relGraph.has-sel .rel-edge { stroke: rgba(31, 78, 120, 0.06); }
-    #relGraph .rel-edge.in { stroke: #2a78d6; stroke-width: 2px; }
-    #relGraph .rel-edge.out { stroke: #eb6834; stroke-width: 2px; }
-    #relGraph .rel-edge.one-sided { stroke-dasharray: 5 3; }
-    #relGraph .rel-node { fill: #64748b; }
-    #relGraph .rel-node.sel { fill: #0f172a; }
-    #relGraph .rel-node.in { fill: #2a78d6; }
-    #relGraph .rel-node.out { fill: #eb6834; }
-    #relGraph .rel-hit { fill: transparent; cursor: pointer; }
-    #relGraph .rel-dom { fill: #dcdbd5; }
-    #relGraph .rel-dom-label { font-family: var(--mono); font-size: 13px; fill: #64748b; }
-    #relGraph .rel-sel-label { font-size: 14px; font-weight: 700; fill: #0f172a; paint-order: stroke; stroke: #ffffff; stroke-width: 4px; stroke-linejoin: round; }
+    .rel-graph .rel-edge.in { stroke: #2a78d6; stroke-width: calc(var(--w, 1.2px) + 0.8px); }
+    .rel-graph .rel-edge.out { stroke: #eb6834; stroke-width: calc(var(--w, 1.2px) + 0.8px); }
+    .rel-graph .rel-edge.one-sided { stroke-dasharray: 5 3; }
+    .rel-graph .rel-node { fill: #64748b; }
+    .rel-graph .rel-node.sel { fill: #0f172a; }
+    .rel-graph .rel-node.in { fill: #2a78d6; }
+    .rel-graph .rel-node.out { fill: #eb6834; }
+    .rel-graph .rel-hit { fill: transparent; cursor: pointer; }
+    .rel-graph .rel-dom { fill: #dcdbd5; }
+    .rel-graph .rel-dom-label { font-family: var(--mono); font-size: 13px; fill: #64748b; }
+    .rel-graph .rel-sel-label { font-size: 14px; font-weight: 700; fill: #0f172a; paint-order: stroke; stroke: #ffffff; stroke-width: 4px; stroke-linejoin: round; }
     .rel-key-in { background: #2a78d6; } .rel-key-out { background: #eb6834; } .rel-key-other { background: rgba(31, 78, 120, 0.25); }
     .sb-panel h4 .sb-swatch { margin-right: 6px; vertical-align: -1px; }
     .rel-one { display: inline-block; padding: 0 6px; font-size: 11.5px; font-weight: 600; line-height: 18px; color: #7c2d12; background: #fff1e8; border: 1px dashed #eb6834; border-radius: 9px; white-space: nowrap; }
+    .rel-why { display: inline-block; padding: 0 6px; font-size: 11.5px; line-height: 18px; color: var(--muted); background: var(--bg); border: 1px solid var(--border); border-radius: 9px; white-space: nowrap; max-width: 14em; overflow: hidden; text-overflow: ellipsis; }
+    .sb-children:has(.rel-why) button { grid-template-columns: 12px auto minmax(0, 1fr) auto; }
+    .rel-stack { display: grid; gap: 14px; }
     .rel-note { margin: 0 0 8px; font-size: 13px; color: var(--muted); }
     .sb-children button .rel-one { justify-self: end; }
     .sb-children:has(.rel-one) button { grid-template-columns: 12px auto minmax(0, 1fr) auto; }
@@ -1411,7 +1414,7 @@
     .sb-children button { cursor: pointer; white-space: normal; }
     .sb-children button:hover, .sb-children button:focus-visible { border-color: var(--primary); background: var(--primary-light); }
     .sb-children .sb-empty { color: var(--muted); border-style: dashed; }
-    .sb-children code { font-size: 12px; color: var(--muted); }
+    .sb-children code { font-size: 12px; color: #475569; } /* readable on the hover tint too */
     .sb-children li, .sb-name { min-width: 0; }
     .sb-name { overflow-wrap: anywhere; }
     .sb-n { font-variant-numeric: tabular-nums; color: var(--muted); }
@@ -5236,7 +5239,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 181</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 182</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -17193,6 +17196,7 @@ E. Assumptions and unresolved inputs</pre>
   <div class="view-tabs" role="tablist">
     <button type="button" id="taxShowTreeView" class="active" role="tab" aria-selected="true" aria-controls="taxTreeViewPanel">Tree Explorer</button>
     <button type="button" id="taxShowTableView" role="tab" aria-selected="false" aria-controls="taxTableViewPanel">Table View</button>
+    <button type="button" id="taxShowRelView" role="tab" aria-selected="false" aria-controls="taxRelViewPanel">Relationships</button>
   </div>
   <div class="layout">
     <div>
@@ -17215,6 +17219,37 @@ E. Assumptions and unresolved inputs</pre>
             <tbody id="taxTableBody"></tbody>
           </table>
         </div>
+      </section>
+      <section id="taxRelViewPanel" class="view-panel" role="tabpanel" aria-labelledby="taxShowRelView">
+        <p class="rel-intro">Links between onboard taxonomy terms, around a ring in taxonomy order and grouped by domain. Show either the cross-references written into the terms (a term that names another TAX code in its definition, relationship rule or notes, parents and children aside) or the links through current records (records that point to records under another term by ID, such as a Platform ID or Component ID); thicker lines carry more record links. Pick or point at a term to draw what it refers to in blue and what refers to it in orange; its full record shows in the panel beside.</p>
+        <div class="rel-facts" id="trelFacts"></div>
+        <div class="sb-controls">
+          <label>Links from
+            <select id="trelMode">
+              <option value="text">Cross-references in term text</option>
+              <option value="records">Links through current records</option>
+            </select>
+          </label>
+          <label>Term
+            <select id="trelPick"></select>
+          </label>
+          <div class="sb-legend">
+            <span class="sb-key"><span class="sb-swatch rel-key-in"></span><span id="trelKeyIn">Refers to</span></span>
+            <span class="sb-key"><span class="sb-swatch rel-key-out"></span><span id="trelKeyOut">Referred to by</span></span>
+            <span class="sb-key"><span class="sb-swatch rel-key-other"></span>Other links</span>
+          </div>
+        </div>
+        <div class="rel-stack">
+          <div class="sb-chart-wrap">
+            <svg id="trelGraph" class="rel-graph" viewBox="-380 -380 760 760" role="img" aria-label="Links between onboard taxonomy terms, grouped by domain around a ring. The list below the chart gives the selected term's links."></svg>
+          </div>
+          <div id="trelPanel" class="sb-panel rel-links" aria-live="polite"></div>
+        </div>
+        <section class="rel-unlinked" aria-labelledby="trelUnlinkedHead">
+          <h3 id="trelUnlinkedHead">Terms with no links (<span id="trelUnlinkedCount"></span>)</h3>
+          <p>No link of the kind shown reaches these terms. Each opens in the Tree Explorer.</p>
+          <div id="trelUnlinked"></div>
+        </section>
       </section>
     </div>
     <aside id="detail" class="detail-panel"></aside>
@@ -17355,7 +17390,7 @@ E. Assumptions and unresolved inputs</pre>
       </div>
       <div class="sb-layout">
         <div class="sb-chart-wrap">
-          <svg id="relGraph" viewBox="-380 -380 760 760" role="img" aria-label="Links between Splunk objects, grouped by domain around a ring. The panel beside it lists the selected object's links."></svg>
+          <svg id="relGraph" class="rel-graph" viewBox="-380 -380 760 760" role="img" aria-label="Links between Splunk objects, grouped by domain around a ring. The panel beside it lists the selected object's links."></svg>
         </div>
         <aside id="relPanel" class="sb-panel" aria-live="polite"></aside>
       </div>
@@ -20393,7 +20428,9 @@ function selectTaxNodeFromTable(code, reveal = true) {
 // Shareable link: #taxonomy?code=TAX-04.10.01 (the first domain, selected by default, is plain
 // #taxonomy). Unknown codes are ignored.
 function taxHash() {
-  return state.selectedCode && state.selectedCode !== "TAX-01" ? `#taxonomy?code=${encodeURIComponent(state.selectedCode)}` : "#taxonomy";
+  const base = state.selectedCode && state.selectedCode !== "TAX-01" ? `#taxonomy?code=${encodeURIComponent(state.selectedCode)}` : "#taxonomy";
+  if (taxActiveView !== "relations") return base;
+  return `${base}${base.includes("?") ? "&" : "?"}view=relationships${trelState && trelState.mode === "records" ? "&mode=records" : ""}`;
 }
 function taxUpdateHash() {
   if (!history.replaceState || !/^#taxonomy(\?|$)/.test(location.hash)) return;
@@ -20401,7 +20438,12 @@ function taxUpdateHash() {
   if (location.hash !== next) history.replaceState(null, "", next);
 }
 function applyTaxHash() {
-  const code = new URLSearchParams((location.hash.match(/^#taxonomy\?(.*)$/) || [])[1] || "").get("code");
+  const params = new URLSearchParams((location.hash.match(/^#taxonomy\?(.*)$/) || [])[1] || ""), code = params.get("code");
+  if (params.get("view") === "relations" || params.get("view") === "relationships") {
+    setActiveTaxView("relations");
+    applyTrelHash();
+    return;
+  }
   if (code && nodeIndex.has(code) && code !== state.selectedCode) selectTaxNodeFromTable(code);
 }
 // Bring the selection into view in whichever view is showing -- the tree card, or the table
@@ -20455,12 +20497,17 @@ function setActiveTaxView(view) {
   document.getElementById("taxShowTreeView").setAttribute("aria-selected", view === "tree" ? "true" : "false");
   document.getElementById("taxShowTableView").classList.toggle("active", view === "table");
   document.getElementById("taxShowTableView").setAttribute("aria-selected", view === "table" ? "true" : "false");
+  document.getElementById("taxShowRelView").classList.toggle("active", view === "relations");
+  document.getElementById("taxShowRelView").setAttribute("aria-selected", view === "relations" ? "true" : "false");
   document.getElementById("taxTreeViewPanel").classList.toggle("active", view === "tree");
   document.getElementById("taxTableViewPanel").classList.toggle("active", view === "table");
+  document.getElementById("taxRelViewPanel").classList.toggle("active", view === "relations");
   if (view === "table") renderTaxTable();
+  if (view === "relations") trelShow();
 }
-document.getElementById("taxShowTreeView").addEventListener("click", () => setActiveTaxView("tree"));
-document.getElementById("taxShowTableView").addEventListener("click", () => setActiveTaxView("table"));
+document.getElementById("taxShowTreeView").addEventListener("click", () => { setActiveTaxView("tree"); taxUpdateHash(); });
+document.getElementById("taxShowTableView").addEventListener("click", () => { setActiveTaxView("table"); taxUpdateHash(); });
+document.getElementById("taxShowRelView").addEventListener("click", () => { setActiveTaxView("relations"); trelState.select(trelState.selected); });
 
 function setActiveNetRefView(view) {
   document.getElementById("netRefShowPortsView").classList.toggle("active", view === "ports");
@@ -53974,56 +54021,19 @@ document.getElementById("sotShowTableView").addEventListener("click", () => { se
 document.getElementById("sotShowRelView").addEventListener("click", () => { setActiveView("relations"); sotSetLinked({ object: relState.selected.name }); });
 
 /* ---------------------------------------------------------------------- *
- * Relationships view: every "Depends on" and "Feeds" link between objects,
- * as a bundled ring (hierarchical edge bundling). Linked objects sit around
- * the ring in taxonomy order, grouped by domain; each link curves through its
- * two domains' points and the centre, so busy domains read as thick strands.
- * Picking or hovering an object draws what it depends on in blue and what it
- * feeds in orange. A link recorded on only one of its two objects is flagged
- * for the relationship cleanup, and objects with no links are listed below.
+ * Relationships views: links between the items of a taxonomy as a bundled
+ * ring (hierarchical edge bundling). Linked items sit around the ring in
+ * taxonomy order, grouped by domain; each link curves through its two
+ * domains' points and the centre, so busy domains read as thick strands.
+ * Picking, pointing at or following an item draws its two kinds of link in
+ * blue and orange. Items with no links are listed below. One builder serves
+ * the Splunk object taxonomy ("Depends on" / "Feeds") and the onboard
+ * taxonomy (cross-references written into terms, and links between their
+ * current records).
  * ---------------------------------------------------------------------- */
-// var, not let: setActiveView can ask for the view before this code has run.
-var relState;
+// var, not let: setActiveView / setActiveTaxView can ask for a view before this code has run.
+var relState, trelState;
 const REL_R = 290;
-
-function relBuild() {
-  // Objects in sunburst order: domain > class > subclass > object, each object's components after it.
-  const order = [];
-  Object.values(SOT_TREE).forEach(dom => Object.values(dom.classes).forEach(cls => Object.keys(cls.subclasses).forEach(sc => {
-    (SOT_OBJECTS_BY_LEAF[sc] || []).filter(o => !o.parent).forEach(o => { order.push(o); order.push(...sotChildren(o)); });
-  })));
-  // A link a -> b means a feeds b (b depends on a); note which side(s) recorded it.
-  const links = new Map();
-  const add = (a, b, side) => {
-    if (!a || !b || a === b) return;
-    const key = `${a.instanceId}>${b.instanceId}`;
-    if (!links.has(key)) links.set(key, { a, b, deps: false, feeds: false });
-    links.get(key)[side] = true;
-  };
-  SOT_OBJECTS.forEach(o => {
-    (o.deps || []).forEach(n => add(sotResolve(n), o, "deps"));
-    (o.feeds || []).forEach(n => add(o, sotResolve(n), "feeds"));
-  });
-  const list = [...links.values()];
-  const linked = new Set(list.flatMap(l => [l.a, l.b]));
-  const leaves = order.filter(o => linked.has(o));
-  // Ring positions, as d3.cluster spaces them: one unit between neighbours, two between domains.
-  const domOf = o => o.domain.slice(0, 6);
-  let unit = 0, prev = null;
-  const units = leaves.map(o => { if (prev && domOf(prev) !== domOf(o)) unit += 1; prev = o; return unit++; });
-  const total = unit + 1; // the gap that closes the ring
-  const pos = new Map(leaves.map((o, i) => [o, units[i] * 360 / total]));
-  const domains = [];
-  leaves.forEach(o => {
-    const d = domOf(o), last = domains[domains.length - 1];
-    if (!last || last.code !== d) domains.push({ code: d, first: pos.get(o), last: pos.get(o) });
-    else last.last = pos.get(o);
-  });
-  domains.forEach(d => { d.mid = (d.first + d.last) / 2; });
-  const domMid = new Map(domains.map(d => [d.code, d.mid]));
-  return { order, list, leaves, linked, pos, domains, domMid, domOf, unlinked: order.filter(o => !linked.has(o)) };
-}
-
 const relXY = (angle, r) => { const a = angle * Math.PI / 180; return [r * Math.sin(a), -r * Math.cos(a)]; };
 // d3.curveBundle(beta) over leaf > domain > centre > domain > leaf: straighten toward the chord,
 // then draw a uniform cubic B-spline (d3.curveBasis).
@@ -54040,130 +54050,275 @@ function relBundlePath(pts, beta = 0.85) {
   return d;
 }
 
-function relDraw() {
-  const g = relState.graph, svg = document.getElementById("relGraph");
-  const leafPt = o => relXY(g.pos.get(o), REL_R), domPt = o => relXY(g.domMid.get(g.domOf(o)), REL_R / 2);
-  let html = '<g class="rel-edges">';
-  g.list.forEach((l, i) => {
-    const pts = g.domOf(l.a) === g.domOf(l.b) ? [leafPt(l.a), domPt(l.a), leafPt(l.b)] : [leafPt(l.a), domPt(l.a), [0, 0], domPt(l.b), leafPt(l.b)];
-    html += `<path class="rel-edge" data-i="${i}" d="${relBundlePath(pts)}"></path>`;
-  });
-  html += '</g><g class="rel-arcs">';
-  g.domains.forEach(d => {
-    const a0 = d.first - 0.7, a1 = d.last + 0.7, [x0, y0] = relXY(a0, 300), [x1, y1] = relXY(a1, 300), [x2, y2] = relXY(a1, 308), [x3, y3] = relXY(a0, 308);
-    const large = a1 - a0 > 180 ? 1 : 0;
-    html += `<path class="rel-dom" d="M${x0.toFixed(1)},${y0.toFixed(1)}A300,300 0 ${large} 1 ${x1.toFixed(1)},${y1.toFixed(1)}L${x2.toFixed(1)},${y2.toFixed(1)}A308,308 0 ${large} 0 ${x3.toFixed(1)},${y3.toFixed(1)}Z"><title>${escapeHtml(`${d.code} ${SOT_TREE[d.code].label}`)}</title></path>`;
-    const [lx, ly] = relXY(d.mid, 332);
-    html += `<text class="rel-dom-label" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${d.mid > 200 ? "end" : d.mid < 160 && d.mid > 20 ? "start" : "middle"}" dominant-baseline="middle">${escapeHtml(d.code)}</text>`;
-  });
-  html += '</g><g class="rel-nodes">';
-  g.leaves.forEach(o => {
-    const [x, y] = leafPt(o);
-    html += `<circle class="rel-node" data-id="${escapeHtml(o.instanceId)}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6"></circle>`;
-    html += `<circle class="rel-hit" data-id="${escapeHtml(o.instanceId)}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8"><title>${escapeHtml(`${o.instanceId} ${o.name}`)}</title></circle>`;
-  });
-  html += '</g><g class="rel-label"></g>';
-  svg.innerHTML = html;
-  relState.edgeEls = [...svg.querySelectorAll(".rel-edge")];
-  relState.nodeEls = new Map([...svg.querySelectorAll(".rel-node")].map(c => [c.getAttribute("data-id"), c]));
-}
+// cfg.build(mode) -> { order: items in taxonomy order, links: [{ a, b, w? , ... }] } where a link
+// shows as "in" (blue) on b and "out" (orange) on a.
+function makeRing(cfg) {
+  const $ = id => document.getElementById(cfg.prefix + id);
+  const st = { cfg, mode: cfg.modes ? Object.keys(cfg.modes)[0] : null, graph: null, selected: null, drawn: false, edgeEls: [], nodeEls: new Map() };
 
-// Highlight one object's links (a hover preview or the selection).
-function relHighlight(o) {
-  const g = relState.graph, svg = document.getElementById("relGraph"), edgesG = svg.querySelector(".rel-edges");
-  svg.classList.toggle("has-sel", !!o);
-  const ins = new Set(), outs = new Set();
-  g.list.forEach((l, i) => {
-    const el = relState.edgeEls[i], isIn = o && l.b === o, isOut = o && l.a === o;
-    el.setAttribute("class", `rel-edge${isIn ? " in" : isOut ? " out" : ""}${(isIn || isOut) && !(l.deps && l.feeds) ? " one-sided" : ""}`);
-    if (isIn) ins.add(l.a.instanceId);
-    if (isOut) outs.add(l.b.instanceId);
-    if (isIn || isOut) edgesG.appendChild(el);
-  });
-  relState.nodeEls.forEach((c, id) => c.setAttribute("class", `rel-node${o && id === o.instanceId ? " sel" : ins.has(id) ? " in" : outs.has(id) ? " out" : ""}`));
-  const label = svg.querySelector(".rel-label");
-  if (!o) { label.innerHTML = ""; return; }
-  const a = g.pos.get(o), [x, y] = relXY(a, REL_R + 16);
-  label.innerHTML = `<text class="rel-sel-label" x="${Math.max(-372, Math.min(372, x)).toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${a > 180 ? "end" : "start"}" dominant-baseline="middle">${escapeHtml(o.name)}</text>`;
-}
-
-function relRenderPanel() {
-  const o = relState.selected, g = relState.graph, panel = document.getElementById("relPanel");
-  const ins = g.list.filter(l => l.b === o), outs = g.list.filter(l => l.a === o);
-  const item = (other, l, side) => {
-    // A link is fully recorded when the dependant lists it under Depends on and the source under Feeds.
-    const missing = !l.deps ? `${l.b.name} does not list ${l.a.name} under Depends on` : !l.feeds ? `${l.a.name} does not list ${l.b.name} under Feeds` : "";
-    return `<li><button type="button" data-rel-id="${escapeHtml(other.instanceId)}"><span class="sb-swatch rel-key-${side}"></span><code>${escapeHtml(g.domOf(other))}</code><span class="sb-name">${escapeHtml(other.name)}</span>${missing ? `<span class="rel-one" title="${escapeHtml(missing)}">one side</span>` : ""}</button></li>`;
+  const layout = () => {
+    const { order, links } = cfg.build(st.mode);
+    const linked = new Set(links.flatMap(l => [l.a, l.b]));
+    const leaves = order.filter(o => linked.has(o));
+    // Ring positions, as d3.cluster spaces them: one unit between neighbours, two between domains.
+    let unit = 0, prev = null;
+    const units = leaves.map(o => { if (prev && cfg.domOf(prev) !== cfg.domOf(o)) unit += 1; prev = o; return unit++; });
+    const total = unit + 1; // the gap that closes the ring
+    const pos = new Map(leaves.map((o, i) => [o, units[i] * 360 / total]));
+    const domains = [];
+    leaves.forEach(o => {
+      const d = cfg.domOf(o), last = domains[domains.length - 1];
+      if (!last || last.code !== d) domains.push({ code: d, first: pos.get(o), last: pos.get(o) });
+      else last.last = pos.get(o);
+    });
+    domains.forEach(d => { d.mid = (d.first + d.last) / 2; });
+    return { order, links, linked, leaves, pos, domains, domMid: new Map(domains.map(d => [d.code, d.mid])), unlinked: order.filter(o => !linked.has(o)) };
   };
-  const oneSided = [...ins, ...outs].filter(l => !(l.deps && l.feeds)).length;
-  panel.innerHTML = `
-    <h3>${escapeHtml(o.name)}</h3>
-    <p class="sb-sub"><code>${escapeHtml(o.instanceId)}</code> &middot; ${escapeHtml(o.domain)}</p>
-    ${oneSided ? `<p class="rel-note">${oneSided} of its ${ins.length + outs.length} links ${oneSided === 1 ? "is" : "are"} recorded on one object only, marked <span class="rel-one">one side</span>.</p>` : ""}
-    <h4><span class="sb-swatch rel-key-in"></span>Depends on (${ins.length})</h4>
-    <ul class="sb-children">${ins.map(l => item(l.a, l, "in")).join("") || '<li class="rel-none">Nothing recorded</li>'}</ul>
-    <h4><span class="sb-swatch rel-key-out"></span>Feeds (${outs.length})</h4>
-    <ul class="sb-children">${outs.map(l => item(l.b, l, "out")).join("") || '<li class="rel-none">Nothing recorded</li>'}</ul>
-    <div class="sb-actions"><button type="button" data-rel-open>Open in Tree Explorer</button></div>`;
-}
+  const width = l => cfg.weighted ? 1 + Math.log2(l.w) * 0.9 : 1.2;
 
-function relSelect(o, writeHash = true) {
-  if (!o || !relState.graph.linked.has(o)) return false;
-  relState.selected = o;
-  document.getElementById("relPick").value = o.instanceId;
-  relHighlight(o);
-  relRenderPanel();
-  if (writeHash) sotSetLinked({ object: o.name });
-  return true;
-}
+  st.draw = () => {
+    const g = st.graph, svg = $("Graph");
+    const leafPt = o => relXY(g.pos.get(o), REL_R), domPt = o => relXY(g.domMid.get(cfg.domOf(o)), REL_R / 2);
+    let html = '<g class="rel-edges">';
+    g.links.forEach((l, i) => {
+      const pts = cfg.domOf(l.a) === cfg.domOf(l.b) ? [leafPt(l.a), domPt(l.a), leafPt(l.b)] : [leafPt(l.a), domPt(l.a), [0, 0], domPt(l.b), leafPt(l.b)];
+      html += `<path class="rel-edge" data-i="${i}" d="${relBundlePath(pts)}" style="--w:${width(l).toFixed(2)}px"></path>`;
+    });
+    html += '</g><g class="rel-arcs">';
+    g.domains.forEach(d => {
+      const a0 = d.first - 0.7, a1 = d.last + 0.7, [x0, y0] = relXY(a0, 300), [x1, y1] = relXY(a1, 300), [x2, y2] = relXY(a1, 308), [x3, y3] = relXY(a0, 308);
+      const large = a1 - a0 > 180 ? 1 : 0;
+      html += `<path class="rel-dom" d="M${x0.toFixed(1)},${y0.toFixed(1)}A300,300 0 ${large} 1 ${x1.toFixed(1)},${y1.toFixed(1)}L${x2.toFixed(1)},${y2.toFixed(1)}A308,308 0 ${large} 0 ${x3.toFixed(1)},${y3.toFixed(1)}Z"><title>${escapeHtml(`${d.code} ${cfg.domLabel(d.code)}`)}</title></path>`;
+      const [lx, ly] = relXY(d.mid, 332);
+      html += `<text class="rel-dom-label" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${d.mid > 200 ? "end" : d.mid < 160 && d.mid > 20 ? "start" : "middle"}" dominant-baseline="middle">${escapeHtml(d.code)}</text>`;
+    });
+    html += '</g><g class="rel-nodes">';
+    g.leaves.forEach(o => {
+      const [x, y] = leafPt(o), id = escapeHtml(cfg.key(o));
+      html += `<circle class="rel-node" data-id="${id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6"></circle>`;
+      html += `<circle class="rel-hit" data-id="${id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8"><title>${escapeHtml(`${cfg.code(o)} ${cfg.name(o)}`)}</title></circle>`;
+    });
+    html += '</g><g class="rel-label"></g>';
+    svg.innerHTML = html;
+    st.edgeEls = [...svg.querySelectorAll(".rel-edge")];
+    st.nodeEls = new Map([...svg.querySelectorAll(".rel-node")].map(c => [c.getAttribute("data-id"), c]));
+    $("Facts").innerHTML = cfg.facts(g);
+    if ($("KeyIn")) { const sides = cfg.sides(st.mode); $("KeyIn").textContent = sides.in; $("KeyOut").textContent = sides.out; }
+    $("Pick").innerHTML = [...g.leaves].sort((a, b) => cfg.name(a).localeCompare(cfg.name(b))).map(o => `<option value="${escapeHtml(cfg.key(o))}">${escapeHtml(cfg.pickLabel ? cfg.pickLabel(o) : cfg.name(o))}</option>`).join("");
+    const byDomain = new Map();
+    g.unlinked.forEach(o => { const d = cfg.domOf(o); if (!byDomain.has(d)) byDomain.set(d, []); byDomain.get(d).push(o); });
+    $("UnlinkedCount").textContent = g.unlinked.length;
+    $("Unlinked").innerHTML = [...byDomain].map(([d, items]) => `
+      <details class="rel-group"><summary><code>${escapeHtml(d)}</code> ${escapeHtml(cfg.domLabel(d))} <span class="sb-n">${items.length}</span></summary>
+        <ul class="rel-chips">${items.map(o => `<li><button type="button" data-rel-tree="${escapeHtml(cfg.key(o))}"><code>${escapeHtml(cfg.code(o))}</code> ${escapeHtml(cfg.name(o))}</button></li>`).join("")}</ul>
+      </details>`).join("");
+    st.drawn = true;
+  };
 
-function relRenderUnlinked() {
-  const g = relState.graph, byDomain = new Map();
-  g.unlinked.forEach(o => { const d = g.domOf(o); if (!byDomain.has(d)) byDomain.set(d, []); byDomain.get(d).push(o); });
-  document.getElementById("relUnlinkedCount").textContent = g.unlinked.length;
-  document.getElementById("relUnlinked").innerHTML = [...byDomain].map(([d, objs]) => `
-    <details class="rel-group"><summary><code>${escapeHtml(d)}</code> ${escapeHtml(SOT_TREE[d].label)} <span class="sb-n">${objs.length}</span></summary>
-      <ul class="rel-chips">${objs.map(o => `<li><button type="button" data-rel-tree="${escapeHtml(o.name)}"><code>${escapeHtml(o.instanceId)}</code> ${escapeHtml(o.name)}</button></li>`).join("")}</ul>
-    </details>`).join("");
-}
+  // Highlight one item's links (a hover preview or the selection).
+  st.highlight = o => {
+    const g = st.graph, svg = $("Graph"), edgesG = svg.querySelector(".rel-edges");
+    svg.classList.toggle("has-sel", !!o);
+    const ins = new Set(), outs = new Set();
+    g.links.forEach((l, i) => {
+      const el = st.edgeEls[i], isIn = o && l.b === o, isOut = o && l.a === o;
+      el.setAttribute("class", `rel-edge${isIn ? " in" : isOut ? " out" : ""}${(isIn || isOut) && cfg.edgeClass ? cfg.edgeClass(l) : ""}`);
+      if (isIn) ins.add(cfg.key(l.a));
+      if (isOut) outs.add(cfg.key(l.b));
+      if (isIn || isOut) edgesG.appendChild(el);
+    });
+    st.nodeEls.forEach((c, id) => c.setAttribute("class", `rel-node${o && id === cfg.key(o) ? " sel" : ins.has(id) ? " in" : outs.has(id) ? " out" : ""}`));
+    const label = svg.querySelector(".rel-label");
+    if (!o) { label.innerHTML = ""; return; }
+    // Clear of the domain's own label when the item sits near the middle of its domain.
+    const a = g.pos.get(o), near = Math.abs(a - g.domMid.get(cfg.domOf(o))) < 10, [x, y] = relXY(a, REL_R + (near ? 54 : 16));
+    label.innerHTML = `<text class="rel-sel-label" x="${Math.max(-372, Math.min(372, x)).toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${a > 180 ? "end" : "start"}" dominant-baseline="middle">${escapeHtml(cfg.name(o))}</text>`;
+  };
 
-function relShow() {
-  if (!relState) return;
-  if (!relState.drawn) {
-    const g = relState.graph;
-    relDraw();
-    const oneSided = g.list.filter(l => !(l.deps && l.feeds)).length;
-    const cross = g.list.filter(l => g.domOf(l.a) !== g.domOf(l.b)).length;
-    document.getElementById("relFacts").innerHTML = `<span><strong>${g.leaves.length}</strong> of ${SOT_OBJECTS.length} objects linked</span><span><strong>${g.list.length}</strong> links</span><span><strong>${cross}</strong> cross a domain</span><span><strong>${oneSided}</strong> recorded on one object only</span><span><strong>${g.unlinked.length}</strong> objects with no links</span>`;
-    document.getElementById("relPick").innerHTML = [...g.leaves].sort((a, b) => a.name.localeCompare(b.name)).map(o => `<option value="${escapeHtml(o.instanceId)}">${escapeHtml(o.name)}</option>`).join("");
-    relRenderUnlinked();
-    relState.drawn = true;
-  }
-  if (!relState.selected) {
-    // Start on the linked object, or the one with the most links.
-    const linkedName = sotLinked && sotLinked.object;
-    const degree = o => relState.graph.list.filter(l => l.a === o || l.b === o).length;
-    const start = (linkedName && SOT_BY_NAME.get(linkedName)) || relState.graph.leaves.reduce((a, b) => degree(b) > degree(a) ? b : a);
-    if (!relSelect(start, false)) relSelect(relState.graph.leaves.reduce((a, b) => degree(b) > degree(a) ? b : a), false);
-  }
-}
+  st.renderPanel = () => {
+    const o = st.selected, g = st.graph;
+    const ins = g.links.filter(l => l.b === o), outs = g.links.filter(l => l.a === o);
+    const item = (other, l, side) => `<li><button type="button" data-rel-id="${escapeHtml(cfg.key(other))}"><span class="sb-swatch rel-key-${side}"></span><code>${escapeHtml(cfg.code(other))}</code><span class="sb-name">${escapeHtml(cfg.name(other))}</span>${cfg.tag ? cfg.tag(l) : ""}</button></li>`;
+    const labels = cfg.sides(st.mode);
+    $("Panel").innerHTML = `
+      ${cfg.panelHead(o, ins, outs)}
+      <h4><span class="sb-swatch rel-key-in"></span>${escapeHtml(labels.in)} (${ins.length})</h4>
+      <ul class="sb-children">${ins.map(l => item(l.a, l, "in")).join("") || '<li class="rel-none">None</li>'}</ul>
+      <h4><span class="sb-swatch rel-key-out"></span>${escapeHtml(labels.out)} (${outs.length})</h4>
+      <ul class="sb-children">${outs.map(l => item(l.b, l, "out")).join("") || '<li class="rel-none">None</li>'}</ul>
+      <div class="sb-actions"><button type="button" data-rel-open>Open in Tree Explorer</button></div>`;
+  };
 
-(function initRelationships() {
-  relState = { graph: relBuild(), selected: null, drawn: false, edgeEls: [], nodeEls: new Map() };
-  const byId = id => SOT_OBJECTS.find(o => o.instanceId === id);
-  const svg = document.getElementById("relGraph");
-  svg.addEventListener("click", e => { const hit = e.target.closest(".rel-hit"); if (hit) relSelect(byId(hit.getAttribute("data-id"))); });
-  svg.addEventListener("mouseover", e => { const hit = e.target.closest(".rel-hit"); if (hit) relHighlight(byId(hit.getAttribute("data-id"))); });
-  svg.addEventListener("mouseleave", () => relHighlight(relState.selected));
-  document.getElementById("relPick").addEventListener("change", e => relSelect(byId(e.target.value)));
-  document.getElementById("sotRelViewPanel").addEventListener("click", e => {
+  st.select = (o, writeHash = true) => {
+    if (!o || !st.graph.linked.has(o)) return false;
+    st.selected = o;
+    $("Pick").value = cfg.key(o);
+    st.highlight(o);
+    st.renderPanel();
+    if (cfg.onSelect) cfg.onSelect(o, writeHash);
+    return true;
+  };
+  const busiest = () => { const deg = o => st.graph.links.reduce((n, l) => n + (l.a === o || l.b === o ? (l.w || 1) : 0), 0); return st.graph.leaves.reduce((a, b) => deg(b) > deg(a) ? b : a); };
+  st.show = () => {
+    if (!st.graph) st.graph = layout();
+    if (!st.drawn) st.draw();
+    if (!st.selected) { const want = cfg.start && cfg.start(); if (!st.select(want, false)) st.select(busiest(), false); }
+  };
+  st.setMode = (mode, writeHash = true) => {
+    if (!cfg.modes || !cfg.modes[mode] || mode === st.mode && st.graph) return;
+    const keep = st.selected;
+    st.mode = mode;
+    $("Mode").value = mode;
+    st.graph = layout();
+    st.drawn = false;
+    st.selected = null;
+    st.draw();
+    if (!st.select(keep, writeHash)) st.select(busiest(), writeHash);
+  };
+
+  const find = key => st.graph.order.find(o => cfg.key(o) === key);
+  const svg = $("Graph");
+  svg.addEventListener("click", e => { const hit = e.target.closest(".rel-hit"); if (hit) st.select(find(hit.getAttribute("data-id"))); });
+  svg.addEventListener("mouseover", e => { const hit = e.target.closest(".rel-hit"); if (hit) st.highlight(find(hit.getAttribute("data-id"))); });
+  svg.addEventListener("mouseleave", () => st.highlight(st.selected));
+  $("Pick").addEventListener("change", e => st.select(find(e.target.value)));
+  if (cfg.modes) $("Mode").addEventListener("change", e => st.setMode(e.target.value));
+  document.getElementById(cfg.panel).addEventListener("click", e => {
     const pick = e.target.closest("[data-rel-id]"), open = e.target.closest("[data-rel-open]"), tree = e.target.closest("[data-rel-tree]");
-    if (pick) relSelect(byId(pick.getAttribute("data-rel-id")));
-    else if (open) { setActiveView("tree"); selectObjectInTree(relState.selected.name); }
-    else if (tree) { setActiveView("tree"); selectObjectInTree(tree.getAttribute("data-rel-tree")); }
+    if (pick) st.select(find(pick.getAttribute("data-rel-id")));
+    else if (open) cfg.open(st.selected);
+    else if (tree) cfg.open(find(tree.getAttribute("data-rel-tree")));
   });
-  if (sotActiveView === "relations") relShow();
-})();
+  return st;
+}
+
+/* Splunk object taxonomy: "Depends on" and "Feeds". A link a -> b means a feeds b (b depends on
+ * a); a link recorded on only one of its two objects is flagged for the relationship cleanup. */
+const REL_SOT_CONFIG = {
+  prefix: "rel", panel: "sotRelViewPanel",
+  build: () => {
+    const order = [];
+    Object.values(SOT_TREE).forEach(dom => Object.values(dom.classes).forEach(cls => Object.keys(cls.subclasses).forEach(sc => {
+      (SOT_OBJECTS_BY_LEAF[sc] || []).filter(o => !o.parent).forEach(o => { order.push(o); order.push(...sotChildren(o)); });
+    })));
+    const links = new Map();
+    const add = (a, b, side) => {
+      if (!a || !b || a === b) return;
+      const key = `${a.instanceId}>${b.instanceId}`;
+      if (!links.has(key)) links.set(key, { a, b, deps: false, feeds: false });
+      links.get(key)[side] = true;
+    };
+    SOT_OBJECTS.forEach(o => {
+      (o.deps || []).forEach(n => add(sotResolve(n), o, "deps"));
+      (o.feeds || []).forEach(n => add(o, sotResolve(n), "feeds"));
+    });
+    return { order, links: [...links.values()] };
+  },
+  key: o => o.instanceId, code: o => o.domain.slice(0, 6), name: o => o.name,
+  domOf: o => o.domain.slice(0, 6), domLabel: code => SOT_TREE[code].label,
+  sides: () => ({ in: "Depends on", out: "Feeds" }),
+  edgeClass: l => l.deps && l.feeds ? "" : " one-sided",
+  tag: l => {
+    const missing = !l.deps ? `${l.b.name} does not list ${l.a.name} under Depends on` : !l.feeds ? `${l.a.name} does not list ${l.b.name} under Feeds` : "";
+    return missing ? `<span class="rel-one" title="${escapeHtml(missing)}">one side</span>` : "";
+  },
+  facts: g => {
+    const oneSided = g.links.filter(l => !(l.deps && l.feeds)).length, cross = g.links.filter(l => l.a.domain !== l.b.domain).length;
+    return `<span><strong>${g.leaves.length}</strong> of ${SOT_OBJECTS.length} objects linked</span><span><strong>${g.links.length}</strong> links</span><span><strong>${cross}</strong> cross a domain</span><span><strong>${oneSided}</strong> recorded on one object only</span><span><strong>${g.unlinked.length}</strong> objects with no links</span>`;
+  },
+  panelHead: (o, ins, outs) => {
+    const oneSided = [...ins, ...outs].filter(l => !(l.deps && l.feeds)).length;
+    return `<h3>${escapeHtml(o.name)}</h3><p class="sb-sub"><code>${escapeHtml(o.instanceId)}</code> &middot; ${escapeHtml(o.domain)}</p>
+      ${oneSided ? `<p class="rel-note">${oneSided} of its ${ins.length + outs.length} links ${oneSided === 1 ? "is" : "are"} recorded on one object only, marked <span class="rel-one">one side</span>.</p>` : ""}`;
+  },
+  start: () => sotLinked && sotLinked.object && SOT_BY_NAME.get(sotLinked.object),
+  onSelect: (o, writeHash) => { if (writeHash) sotSetLinked({ object: o.name }); },
+  open: o => { setActiveView("tree"); selectObjectInTree(o.name); },
+};
+
+/* Onboard taxonomy: a term that names another TAX code in its definition, relationship rule or
+ * notes (parents and children aside), or current records that point to records under another
+ * term by ID. A link a -> b means b refers to a, so on b it is blue ("refers to") and on a it is
+ * orange ("referred to by"). */
+const TREL_FIELDS = [["definition", "definition"], ["relationshipRule", "relationship rule"], ["notes", "notes"], ["mandatoryAttributes", "mandatory attributes"]];
+const TREL_CONFIG = {
+  prefix: "trel", panel: "taxRelViewPanel", weighted: true,
+  modes: { text: "Cross-references in term text", records: "Links through current records" },
+  build: mode => {
+    // Taxonomy order: codes are zero-padded, so sorting by code walks the tree depth first.
+    const order = nodes.filter(n => n.nodeType === "taxonomy").sort((a, b) => a.code.localeCompare(b.code)), byCode = new Map(order.map(t => [t.code, t]));
+    const links = new Map();
+    const add = (a, b, why) => {
+      if (!a || !b || a === b) return;
+      const key = `${a.code}>${b.code}`;
+      if (!links.has(key)) links.set(key, { a, b, w: 0, why: new Map() });
+      const l = links.get(key);
+      l.w += 1;
+      l.why.set(why, (l.why.get(why) || 0) + 1);
+    };
+    if (mode === "text") {
+      order.forEach(t => TREL_FIELDS.forEach(([field, label]) => {
+        (String(t[field] || "").match(/TAX-\d\d(?:\.\d\d)*/g) || []).forEach(code => {
+          const target = byCode.get(code);
+          if (target && target.code !== t.parentCode && target.parentCode !== t.code) add(target, t, label);
+        });
+      }));
+      // A term naming the same code twice in one field is one reference.
+      links.forEach(l => { l.w = l.why.size; l.why.forEach((n, k) => l.why.set(k, 1)); });
+    } else {
+      const termOfGroup = new Map(nodes.filter(n => n.nodeType === "group").map(g => [g.code, byCode.get(g.parentCode)]));
+      const records = nodes.filter(n => n.nodeType === "instance"), byKey = new Map(records.map(r => [r.primaryKey, r]));
+      records.forEach(r => Object.entries(r.fields || {}).forEach(([field, value]) => String(value).split(/[;,]\s*/).forEach(v => {
+        const target = byKey.get(v.trim());
+        if (target && target !== r) add(termOfGroup.get(target.parentCode), termOfGroup.get(r.parentCode), field);
+      })));
+    }
+    return { order, links: [...links.values()] };
+  },
+  key: t => t.code, code: t => t.code, name: t => t.term, pickLabel: t => `${t.term} (${t.code})`,
+  domOf: t => t.code.slice(0, 6), domLabel: code => (nodes.find(n => n.code === code) || { term: code }).term,
+  sides: mode => mode === "text" ? { in: "Refers to", out: "Referred to by" } : { in: "Its records point to", out: "Pointed to by records in" },
+  tag: l => {
+    const why = [...l.why.keys()];
+    if (trelState.mode === "text") return `<span class="rel-why" title="${escapeHtml(`Named in its ${why.join(", ")}`)}">${escapeHtml(why.join(", "))}</span>`;
+    return `<span class="rel-why" title="${escapeHtml(`Through ${why.join(", ")}`)}">${l.w} record link${l.w === 1 ? "" : "s"}</span>`;
+  },
+  facts: g => {
+    const terms = g.order.length, cross = g.links.filter(l => l.a.code.slice(0, 6) !== l.b.code.slice(0, 6)).length;
+    const weight = g.links.reduce((n, l) => n + l.w, 0);
+    return `<span><strong>${g.leaves.length}</strong> of ${terms} terms linked</span><span><strong>${g.links.length}</strong> links between terms${trelState.mode === "records" ? ` from <strong>${weight}</strong> record references` : ""}</span><span><strong>${cross}</strong> cross a domain</span><span><strong>${g.unlinked.length}</strong> terms with no links</span>`;
+  },
+  panelHead: t => `<h3>${escapeHtml(t.term)}</h3><p class="sb-sub"><code>${escapeHtml(t.code)}</code> &middot; ${escapeHtml(t.entityType)} &middot; ${escapeHtml(t.status)}</p>`,
+  start: () => state.selectedCode && nodeIndex.get(state.selectedCode),
+  onSelect: (t, writeHash) => {
+    // The term's full record shows in the detail panel beside the chart (no phone sheet, no scroll).
+    if (state.selectedCode !== t.code) {
+      state.selectedCode = t.code;
+      for (let c = t; c && c.parentCode; c = nodeIndex.get(c.parentCode)) state.expanded.add(c.parentCode);
+      renderDetail();
+      renderTree();
+    }
+    if (writeHash) taxUpdateHash();
+  },
+  open: t => { setActiveTaxView("tree"); selectTaxNodeFromTable(t.code); taxUpdateHash(); },
+};
+
+function relShow() { if (relState) relState.show(); }
+function relSelect(o, writeHash) { return relState ? relState.select(o, writeHash) : false; }
+function trelShow() { if (trelState) trelState.show(); }
+// #taxonomy?code=<term>&view=relationships[&mode=records]
+function applyTrelHash() {
+  if (!trelState) return;
+  const params = new URLSearchParams((location.hash.match(/^#taxonomy\?(.*)$/) || [])[1] || "");
+  trelState.show();
+  trelState.setMode(params.get("mode") === "records" ? "records" : "text", false);
+  const t = nodeIndex.get(params.get("code") || "");
+  if (t) trelState.select(t, false);
+}
+relState = makeRing(REL_SOT_CONFIG);
+trelState = makeRing(TREL_CONFIG);
+if (sotActiveView === "relations") relShow();
+if (taxActiveView === "relations") applyTrelHash();
 
 initFilters();
 render();

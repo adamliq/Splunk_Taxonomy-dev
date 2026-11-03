@@ -210,6 +210,15 @@ feeds, links recorded on one object only tagged in the panel and dashed in the
 chart, objects with no links listed by domain and opening in the Tree Explorer,
 the view's own link, phones at 393px and 320px, and axe checks.
 
+**`browser/tax-relationships.spec.js`** -- Onboard taxonomy › Relationships:
+links between TAX terms from the cross-references written into the terms and
+from current records pointing at records under another term (counts worked out
+from the taxonomy itself), each domain together around the ring, picking and
+following a term (its record showing in the detail panel), the key and link
+following the mode, busier record links drawn thicker, Open in Tree Explorer,
+unlinked terms opening in the tree, phones at 393px and 320px without the
+detail sheet popping open, and axe checks.
+
 **`browser/sot-sunburst.spec.js`** -- Onboarding › Splunk object taxonomy sunburst:
 every Splunk object taxonomy object drawn once (components outside their parent),
 an arc zooming in and the arc in focus zooming back out, the panel's buttons and

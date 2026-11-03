@@ -84,8 +84,9 @@ test('a link opens the view on an object; unlinked objects open in the tree; pho
     // An unlinked object listed below opens in the tree.
     const group = page.locator('#relUnlinked details').first();
     await group.locator('summary').click();
-    const name = await group.locator('[data-rel-tree]').first().getAttribute('data-rel-tree');
-    assert.equal(await page.evaluate(n => SOT_OBJECTS.some(o => o.name === n && (o.deps || []).length === 0), name), true);
+    const id = await group.locator('[data-rel-tree]').first().getAttribute('data-rel-tree');
+    const name = await page.evaluate(i => { const o = SOT_OBJECTS.find(x => x.instanceId === i); return (o.deps || []).length === 0 ? o.name : null; }, id);
+    assert.ok(name, `${id} is listed as having no links`);
     await group.locator('[data-rel-tree]').first().click();
     assert.equal(await page.evaluate(() => document.querySelector('#sotTreeShell .tree-row.selected').dataset.name), name);
 
