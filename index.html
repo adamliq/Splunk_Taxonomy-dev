@@ -1326,6 +1326,46 @@
       background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 58%, #eff6ff 100%);
     }
     .patterns-hero h2 { margin: 4px 0 0; font-size: clamp(24px, 3.5vw, 34px); }
+    /* Splunk object taxonomy: Relationships view */
+    .rel-intro { max-width: 900px; margin: 14px 0 8px; color: var(--muted); line-height: 1.55; }
+    .rel-facts { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+    .rel-facts strong { color: var(--text); font-variant-numeric: tabular-nums; }
+    .rel-graph { display: block; width: 100%; max-width: 700px; height: auto; margin: 0 auto; }
+    .rel-graph .rel-edge { fill: none; stroke: rgba(31, 78, 120, 0.15); stroke-width: var(--w, 1.2px); }
+    #relGraph.has-sel .rel-edge { stroke: rgba(31, 78, 120, 0.06); }
+    .rel-graph .rel-edge.in { stroke: #2a78d6; stroke-width: calc(var(--w, 1.2px) + 0.8px); }
+    .rel-graph .rel-edge.out { stroke: #eb6834; stroke-width: calc(var(--w, 1.2px) + 0.8px); }
+    .rel-graph .rel-edge.one-sided { stroke-dasharray: 5 3; }
+    .rel-graph .rel-node { fill: #64748b; }
+    .rel-graph .rel-node.sel { fill: #0f172a; }
+    .rel-graph .rel-node.in { fill: #2a78d6; }
+    .rel-graph .rel-node.out { fill: #eb6834; }
+    .rel-graph .rel-hit { fill: transparent; cursor: pointer; }
+    .rel-graph .rel-dom { fill: #dcdbd5; }
+    .rel-graph .rel-dom-label { font-family: var(--mono); font-size: 13px; fill: #64748b; }
+    .rel-graph .rel-sel-label { font-size: 14px; font-weight: 700; fill: #0f172a; paint-order: stroke; stroke: #ffffff; stroke-width: 4px; stroke-linejoin: round; }
+    .rel-key-in { background: #2a78d6; } .rel-key-out { background: #eb6834; } .rel-key-other { background: rgba(31, 78, 120, 0.25); }
+    .sb-panel h4 .sb-swatch { margin-right: 6px; vertical-align: -1px; }
+    .rel-one { display: inline-block; padding: 0 6px; font-size: 11.5px; font-weight: 600; line-height: 18px; color: #7c2d12; background: #fff1e8; border: 1px dashed #eb6834; border-radius: 9px; white-space: nowrap; }
+    .rel-why { display: inline-block; padding: 0 6px; font-size: 11.5px; line-height: 18px; color: var(--muted); background: var(--bg); border: 1px solid var(--border); border-radius: 9px; white-space: nowrap; max-width: 14em; overflow: hidden; text-overflow: ellipsis; }
+    .sb-children:has(.rel-why) button { grid-template-columns: 12px auto minmax(0, 1fr) auto; }
+    .rel-stack { display: grid; gap: 14px; }
+    .rel-note { margin: 0 0 8px; font-size: 13px; color: var(--muted); }
+    .sb-children button .rel-one { justify-self: end; }
+    .sb-children:has(.rel-one) button { grid-template-columns: 12px auto minmax(0, 1fr) auto; }
+    .rel-none { font-size: 13px; color: var(--muted); padding: 4px 2px; }
+    .rel-unlinked { margin-top: 22px; }
+    .rel-unlinked h3 { margin: 0 0 4px; font-size: 16px; }
+    .rel-unlinked > p { margin: 0 0 10px; max-width: 900px; font-size: 13.5px; color: var(--muted); }
+    #relUnlinked { display: grid; gap: 6px; }
+    .rel-group { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 4px 12px; }
+    .rel-group summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+    .rel-group summary code { font-size: 12px; color: var(--muted); }
+    .rel-group summary .sb-n { margin-left: auto; }
+    .rel-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; padding: 0; list-style: none; }
+    .rel-chips button { min-height: 30px; padding: 4px 10px; font: inherit; font-size: 13px; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 15px; cursor: pointer; white-space: normal; text-align: left; }
+    .rel-chips button:hover, .rel-chips button:focus-visible { border-color: var(--primary); background: var(--primary-light); }
+    .rel-chips code { font-size: 11.5px; color: var(--muted); }
     /* Taxonomy sunbursts (Splunk object taxonomy, onboard taxonomy) */
     .sb-controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; margin: 16px 0 10px; }
     .sb-controls [hidden] { display: none; }
@@ -1374,7 +1414,7 @@
     .sb-children button { cursor: pointer; white-space: normal; }
     .sb-children button:hover, .sb-children button:focus-visible { border-color: var(--primary); background: var(--primary-light); }
     .sb-children .sb-empty { color: var(--muted); border-style: dashed; }
-    .sb-children code { font-size: 12px; color: var(--muted); }
+    .sb-children code { font-size: 12px; color: #475569; } /* readable on the hover tint too */
     .sb-children li, .sb-name { min-width: 0; }
     .sb-name { overflow-wrap: anywhere; }
     .sb-n { font-variant-numeric: tabular-nums; color: var(--muted); }
@@ -5080,7 +5120,8 @@ button.sot-stat-filter[aria-pressed="true"] { border-color: var(--primary); back
 
 .scroll-hint { font-size: 12px; color: var(--muted); margin: 0 0 8px; }
 
-.view-tabs { display: flex; gap: 8px; margin-bottom: 18px; border-bottom: 1px solid var(--border); }
+.view-tabs { display: flex; flex-wrap: wrap; gap: 0 8px; margin-bottom: 18px; border-bottom: 1px solid var(--border); }
+@media (max-width: 420px) { .view-tabs button { padding: 10px 12px; } }
 .view-tabs button {
   padding: 10px 18px;
   border: none;
@@ -5198,7 +5239,7 @@ ul.tree-list ul.tree-list { padding-left: 18px; border-left: 1px dashed var(--bo
       <img class="app-header-logo" id="appHeaderLogoImg" alt="" aria-hidden="true" />
       <span class="app-header-brandtext">
         <span class="app-header-wordmark">LATCH</span>
-        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 180</span>
+        <span class="app-header-version" id="appVersion" title="Release date and build number (set by scripts/release/set_version.py)">v2026.11.03 &middot; build 182</span>
         <span class="app-header-tagline">SIEM Onboarding &amp; Assurance</span>
       </span>
     </a>
@@ -17155,6 +17196,7 @@ E. Assumptions and unresolved inputs</pre>
   <div class="view-tabs" role="tablist">
     <button type="button" id="taxShowTreeView" class="active" role="tab" aria-selected="true" aria-controls="taxTreeViewPanel">Tree Explorer</button>
     <button type="button" id="taxShowTableView" role="tab" aria-selected="false" aria-controls="taxTableViewPanel">Table View</button>
+    <button type="button" id="taxShowRelView" role="tab" aria-selected="false" aria-controls="taxRelViewPanel">Relationships</button>
   </div>
   <div class="layout">
     <div>
@@ -17177,6 +17219,37 @@ E. Assumptions and unresolved inputs</pre>
             <tbody id="taxTableBody"></tbody>
           </table>
         </div>
+      </section>
+      <section id="taxRelViewPanel" class="view-panel" role="tabpanel" aria-labelledby="taxShowRelView">
+        <p class="rel-intro">Links between onboard taxonomy terms, around a ring in taxonomy order and grouped by domain. Show either the cross-references written into the terms (a term that names another TAX code in its definition, relationship rule or notes, parents and children aside) or the links through current records (records that point to records under another term by ID, such as a Platform ID or Component ID); thicker lines carry more record links. Pick or point at a term to draw what it refers to in blue and what refers to it in orange; its full record shows in the panel beside.</p>
+        <div class="rel-facts" id="trelFacts"></div>
+        <div class="sb-controls">
+          <label>Links from
+            <select id="trelMode">
+              <option value="text">Cross-references in term text</option>
+              <option value="records">Links through current records</option>
+            </select>
+          </label>
+          <label>Term
+            <select id="trelPick"></select>
+          </label>
+          <div class="sb-legend">
+            <span class="sb-key"><span class="sb-swatch rel-key-in"></span><span id="trelKeyIn">Refers to</span></span>
+            <span class="sb-key"><span class="sb-swatch rel-key-out"></span><span id="trelKeyOut">Referred to by</span></span>
+            <span class="sb-key"><span class="sb-swatch rel-key-other"></span>Other links</span>
+          </div>
+        </div>
+        <div class="rel-stack">
+          <div class="sb-chart-wrap">
+            <svg id="trelGraph" class="rel-graph" viewBox="-380 -380 760 760" role="img" aria-label="Links between onboard taxonomy terms, grouped by domain around a ring. The list below the chart gives the selected term's links."></svg>
+          </div>
+          <div id="trelPanel" class="sb-panel rel-links" aria-live="polite"></div>
+        </div>
+        <section class="rel-unlinked" aria-labelledby="trelUnlinkedHead">
+          <h3 id="trelUnlinkedHead">Terms with no links (<span id="trelUnlinkedCount"></span>)</h3>
+          <p>No link of the kind shown reaches these terms. Each opens in the Tree Explorer.</p>
+          <div id="trelUnlinked"></div>
+        </section>
       </section>
     </div>
     <aside id="detail" class="detail-panel"></aside>
@@ -17241,6 +17314,7 @@ E. Assumptions and unresolved inputs</pre>
     <div class="view-tabs" role="tablist">
       <button type="button" id="sotShowTreeView" class="active" role="tab" aria-selected="true" aria-controls="sotTreeViewPanel">Tree Explorer</button>
       <button type="button" id="sotShowTableView" role="tab" aria-selected="false" aria-controls="sotTableViewPanel">Table View</button>
+      <button type="button" id="sotShowRelView" role="tab" aria-selected="false" aria-controls="sotRelViewPanel">Relationships</button>
     </div>
 
     <div class="sot-stats-bar" id="sotStatsBar" aria-live="polite"></div>
@@ -17299,6 +17373,32 @@ E. Assumptions and unresolved inputs</pre>
           <p class="placeholder">Select an object from the table to see its full definition, notes and config-file details.</p>
         </aside>
       </div>
+    </section>
+
+    <section id="sotRelViewPanel" class="view-panel" role="tabpanel" aria-labelledby="sotShowRelView">
+      <p class="rel-intro">Every "Depends on" and "Feeds" link between objects. Linked objects sit around the ring in taxonomy order, grouped by domain, and each link bundles through its domains toward the centre. Pick or point at an object to draw what it depends on in blue and what it feeds in orange. A link recorded on only one of its two objects is marked <span class="rel-one">one side</span>; objects with no links are listed below the chart.</p>
+      <div class="rel-facts" id="relFacts"></div>
+      <div class="sb-controls">
+        <label>Object
+          <select id="relPick"></select>
+        </label>
+        <div class="sb-legend">
+          <span class="sb-key"><span class="sb-swatch rel-key-in"></span>Depends on</span>
+          <span class="sb-key"><span class="sb-swatch rel-key-out"></span>Feeds</span>
+          <span class="sb-key"><span class="sb-swatch rel-key-other"></span>Other links</span>
+        </div>
+      </div>
+      <div class="sb-layout">
+        <div class="sb-chart-wrap">
+          <svg id="relGraph" class="rel-graph" viewBox="-380 -380 760 760" role="img" aria-label="Links between Splunk objects, grouped by domain around a ring. The panel beside it lists the selected object's links."></svg>
+        </div>
+        <aside id="relPanel" class="sb-panel" aria-live="polite"></aside>
+      </div>
+      <section class="rel-unlinked" aria-labelledby="relUnlinkedHead">
+        <h3 id="relUnlinkedHead">Objects with no links (<span id="relUnlinkedCount"></span>)</h3>
+        <p>No other object lists these under "Depends on" or "Feeds", and they list none themselves: the to-do list for the relationship cleanup. Each opens in the Tree Explorer.</p>
+        <div id="relUnlinked"></div>
+      </section>
     </section>
 
     <p class="sot-note">Object names, config files and scopes reflect Splunk Enterprise/Cloud platform conventions as of Splunk 9.x/10.x; verify against your specific version's documentation before relying on an exact setting name. Attributes shown as <em>To be confirmed</em> (Owner, Cloud/Enterprise support, Namespace/App, Mutable, Exportable, Security relevance, Configuration layer, Platform) have no derivable value in the current catalogue and are placeholders for future enrichment, not fabricated data. A few nodes carry explicit cross-references between this taxonomy and the LATCH <code>TAX-XX</code> taxonomy (e.g. <code>TAX-03.06.03.01 Collection Mode</code> &harr; <code>SOT-05.01.01 Data Input</code>/<code>SOT-05.01.06 Modular Input</code>) -- click a related-code pill on either side to jump across.</p>
@@ -20328,7 +20428,9 @@ function selectTaxNodeFromTable(code, reveal = true) {
 // Shareable link: #taxonomy?code=TAX-04.10.01 (the first domain, selected by default, is plain
 // #taxonomy). Unknown codes are ignored.
 function taxHash() {
-  return state.selectedCode && state.selectedCode !== "TAX-01" ? `#taxonomy?code=${encodeURIComponent(state.selectedCode)}` : "#taxonomy";
+  const base = state.selectedCode && state.selectedCode !== "TAX-01" ? `#taxonomy?code=${encodeURIComponent(state.selectedCode)}` : "#taxonomy";
+  if (taxActiveView !== "relations") return base;
+  return `${base}${base.includes("?") ? "&" : "?"}view=relationships${trelState && trelState.mode === "records" ? "&mode=records" : ""}`;
 }
 function taxUpdateHash() {
   if (!history.replaceState || !/^#taxonomy(\?|$)/.test(location.hash)) return;
@@ -20336,7 +20438,12 @@ function taxUpdateHash() {
   if (location.hash !== next) history.replaceState(null, "", next);
 }
 function applyTaxHash() {
-  const code = new URLSearchParams((location.hash.match(/^#taxonomy\?(.*)$/) || [])[1] || "").get("code");
+  const params = new URLSearchParams((location.hash.match(/^#taxonomy\?(.*)$/) || [])[1] || ""), code = params.get("code");
+  if (params.get("view") === "relations" || params.get("view") === "relationships") {
+    setActiveTaxView("relations");
+    applyTrelHash();
+    return;
+  }
   if (code && nodeIndex.has(code) && code !== state.selectedCode) selectTaxNodeFromTable(code);
 }
 // Bring the selection into view in whichever view is showing -- the tree card, or the table
@@ -20390,12 +20497,17 @@ function setActiveTaxView(view) {
   document.getElementById("taxShowTreeView").setAttribute("aria-selected", view === "tree" ? "true" : "false");
   document.getElementById("taxShowTableView").classList.toggle("active", view === "table");
   document.getElementById("taxShowTableView").setAttribute("aria-selected", view === "table" ? "true" : "false");
+  document.getElementById("taxShowRelView").classList.toggle("active", view === "relations");
+  document.getElementById("taxShowRelView").setAttribute("aria-selected", view === "relations" ? "true" : "false");
   document.getElementById("taxTreeViewPanel").classList.toggle("active", view === "tree");
   document.getElementById("taxTableViewPanel").classList.toggle("active", view === "table");
+  document.getElementById("taxRelViewPanel").classList.toggle("active", view === "relations");
   if (view === "table") renderTaxTable();
+  if (view === "relations") trelShow();
 }
-document.getElementById("taxShowTreeView").addEventListener("click", () => setActiveTaxView("tree"));
-document.getElementById("taxShowTableView").addEventListener("click", () => setActiveTaxView("table"));
+document.getElementById("taxShowTreeView").addEventListener("click", () => { setActiveTaxView("tree"); taxUpdateHash(); });
+document.getElementById("taxShowTableView").addEventListener("click", () => { setActiveTaxView("table"); taxUpdateHash(); });
+document.getElementById("taxShowRelView").addEventListener("click", () => { setActiveTaxView("relations"); trelState.select(trelState.selected); });
 
 function setActiveNetRefView(view) {
   document.getElementById("netRefShowPortsView").classList.toggle("active", view === "ports");
@@ -53809,12 +53921,19 @@ let sotLinked = null;
 function sotSetLinked(value) { sotLinked = value; sotUpdateHash(); }
 function sotUpdateHash() {
   if (!history.replaceState || !/^#object-taxonomy(\?|$)/.test(location.hash)) return;
-  const next = !sotLinked ? "#object-taxonomy" : sotLinked.object ? `#object-taxonomy?object=${encodeURIComponent(sotLinked.object)}` : `#object-taxonomy?code=${encodeURIComponent(sotLinked.code)}`;
+  const base = !sotLinked ? "#object-taxonomy" : sotLinked.object ? `#object-taxonomy?object=${encodeURIComponent(sotLinked.object)}` : `#object-taxonomy?code=${encodeURIComponent(sotLinked.code)}`;
+  const next = sotActiveView === "relations" ? `${base}${base.includes("?") ? "&" : "?"}view=relationships` : base;
   if (location.hash !== next) history.replaceState(null, "", next);
 }
 function applySotHash() {
   const params = new URLSearchParams((location.hash.match(/^#object-taxonomy\?(.*)$/) || [])[1] || "");
   const name = params.get("object"), code = params.get("code");
+  if (params.get("view") === "relationships") {
+    setActiveView("relations");
+    if (name && SOT_BY_NAME.has(name)) relSelect(SOT_BY_NAME.get(name), false);
+    sotSetLinked({ object: relState.selected.name });
+    return;
+  }
   if (name && SOT_BY_NAME.has(name)) { setActiveView("tree"); selectObjectInTree(name); return; }
   if (!code) return;
   const path = pathToLeaf(code);
@@ -53888,11 +54007,318 @@ function setActiveView(view) {
   document.getElementById("sotShowTreeView").setAttribute("aria-selected", view === "tree" ? "true" : "false");
   document.getElementById("sotShowTableView").classList.toggle("active", view === "table");
   document.getElementById("sotShowTableView").setAttribute("aria-selected", view === "table" ? "true" : "false");
+  document.getElementById("sotShowRelView").classList.toggle("active", view === "relations");
+  document.getElementById("sotShowRelView").setAttribute("aria-selected", view === "relations" ? "true" : "false");
   document.getElementById("sotTreeViewPanel").classList.toggle("active", view === "tree");
   document.getElementById("sotTableViewPanel").classList.toggle("active", view === "table");
+  document.getElementById("sotRelViewPanel").classList.toggle("active", view === "relations");
+  // The type and lifecycle filters scope the tree and the table, not the relationships.
+  document.getElementById("sotStatsBar").hidden = view === "relations";
+  if (view === "relations") relShow();
 }
-document.getElementById("sotShowTreeView").addEventListener("click", () => { setActiveView("tree"); renderStats(getVisible()); });
-document.getElementById("sotShowTableView").addEventListener("click", () => { setActiveView("table"); renderStats(getVisible()); });
+document.getElementById("sotShowTreeView").addEventListener("click", () => { setActiveView("tree"); renderStats(getVisible()); sotUpdateHash(); });
+document.getElementById("sotShowTableView").addEventListener("click", () => { setActiveView("table"); renderStats(getVisible()); sotUpdateHash(); });
+document.getElementById("sotShowRelView").addEventListener("click", () => { setActiveView("relations"); sotSetLinked({ object: relState.selected.name }); });
+
+/* ---------------------------------------------------------------------- *
+ * Relationships views: links between the items of a taxonomy as a bundled
+ * ring (hierarchical edge bundling). Linked items sit around the ring in
+ * taxonomy order, grouped by domain; each link curves through its two
+ * domains' points and the centre, so busy domains read as thick strands.
+ * Picking, pointing at or following an item draws its two kinds of link in
+ * blue and orange. Items with no links are listed below. One builder serves
+ * the Splunk object taxonomy ("Depends on" / "Feeds") and the onboard
+ * taxonomy (cross-references written into terms, and links between their
+ * current records).
+ * ---------------------------------------------------------------------- */
+// var, not let: setActiveView / setActiveTaxView can ask for a view before this code has run.
+var relState, trelState;
+const REL_R = 290;
+const relXY = (angle, r) => { const a = angle * Math.PI / 180; return [r * Math.sin(a), -r * Math.cos(a)]; };
+// d3.curveBundle(beta) over leaf > domain > centre > domain > leaf: straighten toward the chord,
+// then draw a uniform cubic B-spline (d3.curveBasis).
+function relBundlePath(pts, beta = 0.85) {
+  const n = pts.length - 1, [x0, y0] = pts[0], [xn, yn] = pts[n];
+  const p = pts.map(([x, y], i) => [beta * x + (1 - beta) * (x0 + (i / n) * (xn - x0)), beta * y + (1 - beta) * (y0 + (i / n) * (yn - y0))]);
+  const f = v => v.toFixed(1);
+  let d = `M${f(p[0][0])},${f(p[0][1])}`;
+  const seg = (a, b, c) => { d += `C${f((2 * a[0] + b[0]) / 3)},${f((2 * a[1] + b[1]) / 3)} ${f((a[0] + 2 * b[0]) / 3)},${f((a[1] + 2 * b[1]) / 3)} ${f((a[0] + 4 * b[0] + c[0]) / 6)},${f((a[1] + 4 * b[1] + c[1]) / 6)}`; };
+  d += `L${f((5 * p[0][0] + p[1][0]) / 6)},${f((5 * p[0][1] + p[1][1]) / 6)}`;
+  for (let i = 2; i < p.length; i++) seg(p[i - 2], p[i - 1], p[i]);
+  seg(p[n - 1], p[n], p[n]);
+  d += `L${f(p[n][0])},${f(p[n][1])}`;
+  return d;
+}
+
+// cfg.build(mode) -> { order: items in taxonomy order, links: [{ a, b, w? , ... }] } where a link
+// shows as "in" (blue) on b and "out" (orange) on a.
+function makeRing(cfg) {
+  const $ = id => document.getElementById(cfg.prefix + id);
+  const st = { cfg, mode: cfg.modes ? Object.keys(cfg.modes)[0] : null, graph: null, selected: null, drawn: false, edgeEls: [], nodeEls: new Map() };
+
+  const layout = () => {
+    const { order, links } = cfg.build(st.mode);
+    const linked = new Set(links.flatMap(l => [l.a, l.b]));
+    const leaves = order.filter(o => linked.has(o));
+    // Ring positions, as d3.cluster spaces them: one unit between neighbours, two between domains.
+    let unit = 0, prev = null;
+    const units = leaves.map(o => { if (prev && cfg.domOf(prev) !== cfg.domOf(o)) unit += 1; prev = o; return unit++; });
+    const total = unit + 1; // the gap that closes the ring
+    const pos = new Map(leaves.map((o, i) => [o, units[i] * 360 / total]));
+    const domains = [];
+    leaves.forEach(o => {
+      const d = cfg.domOf(o), last = domains[domains.length - 1];
+      if (!last || last.code !== d) domains.push({ code: d, first: pos.get(o), last: pos.get(o) });
+      else last.last = pos.get(o);
+    });
+    domains.forEach(d => { d.mid = (d.first + d.last) / 2; });
+    return { order, links, linked, leaves, pos, domains, domMid: new Map(domains.map(d => [d.code, d.mid])), unlinked: order.filter(o => !linked.has(o)) };
+  };
+  const width = l => cfg.weighted ? 1 + Math.log2(l.w) * 0.9 : 1.2;
+
+  st.draw = () => {
+    const g = st.graph, svg = $("Graph");
+    const leafPt = o => relXY(g.pos.get(o), REL_R), domPt = o => relXY(g.domMid.get(cfg.domOf(o)), REL_R / 2);
+    let html = '<g class="rel-edges">';
+    g.links.forEach((l, i) => {
+      const pts = cfg.domOf(l.a) === cfg.domOf(l.b) ? [leafPt(l.a), domPt(l.a), leafPt(l.b)] : [leafPt(l.a), domPt(l.a), [0, 0], domPt(l.b), leafPt(l.b)];
+      html += `<path class="rel-edge" data-i="${i}" d="${relBundlePath(pts)}" style="--w:${width(l).toFixed(2)}px"></path>`;
+    });
+    html += '</g><g class="rel-arcs">';
+    g.domains.forEach(d => {
+      const a0 = d.first - 0.7, a1 = d.last + 0.7, [x0, y0] = relXY(a0, 300), [x1, y1] = relXY(a1, 300), [x2, y2] = relXY(a1, 308), [x3, y3] = relXY(a0, 308);
+      const large = a1 - a0 > 180 ? 1 : 0;
+      html += `<path class="rel-dom" d="M${x0.toFixed(1)},${y0.toFixed(1)}A300,300 0 ${large} 1 ${x1.toFixed(1)},${y1.toFixed(1)}L${x2.toFixed(1)},${y2.toFixed(1)}A308,308 0 ${large} 0 ${x3.toFixed(1)},${y3.toFixed(1)}Z"><title>${escapeHtml(`${d.code} ${cfg.domLabel(d.code)}`)}</title></path>`;
+      const [lx, ly] = relXY(d.mid, 332);
+      html += `<text class="rel-dom-label" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${d.mid > 200 ? "end" : d.mid < 160 && d.mid > 20 ? "start" : "middle"}" dominant-baseline="middle">${escapeHtml(d.code)}</text>`;
+    });
+    html += '</g><g class="rel-nodes">';
+    g.leaves.forEach(o => {
+      const [x, y] = leafPt(o), id = escapeHtml(cfg.key(o));
+      html += `<circle class="rel-node" data-id="${id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6"></circle>`;
+      html += `<circle class="rel-hit" data-id="${id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8"><title>${escapeHtml(`${cfg.code(o)} ${cfg.name(o)}`)}</title></circle>`;
+    });
+    html += '</g><g class="rel-label"></g>';
+    svg.innerHTML = html;
+    st.edgeEls = [...svg.querySelectorAll(".rel-edge")];
+    st.nodeEls = new Map([...svg.querySelectorAll(".rel-node")].map(c => [c.getAttribute("data-id"), c]));
+    $("Facts").innerHTML = cfg.facts(g);
+    if ($("KeyIn")) { const sides = cfg.sides(st.mode); $("KeyIn").textContent = sides.in; $("KeyOut").textContent = sides.out; }
+    $("Pick").innerHTML = [...g.leaves].sort((a, b) => cfg.name(a).localeCompare(cfg.name(b))).map(o => `<option value="${escapeHtml(cfg.key(o))}">${escapeHtml(cfg.pickLabel ? cfg.pickLabel(o) : cfg.name(o))}</option>`).join("");
+    const byDomain = new Map();
+    g.unlinked.forEach(o => { const d = cfg.domOf(o); if (!byDomain.has(d)) byDomain.set(d, []); byDomain.get(d).push(o); });
+    $("UnlinkedCount").textContent = g.unlinked.length;
+    $("Unlinked").innerHTML = [...byDomain].map(([d, items]) => `
+      <details class="rel-group"><summary><code>${escapeHtml(d)}</code> ${escapeHtml(cfg.domLabel(d))} <span class="sb-n">${items.length}</span></summary>
+        <ul class="rel-chips">${items.map(o => `<li><button type="button" data-rel-tree="${escapeHtml(cfg.key(o))}"><code>${escapeHtml(cfg.code(o))}</code> ${escapeHtml(cfg.name(o))}</button></li>`).join("")}</ul>
+      </details>`).join("");
+    st.drawn = true;
+  };
+
+  // Highlight one item's links (a hover preview or the selection).
+  st.highlight = o => {
+    const g = st.graph, svg = $("Graph"), edgesG = svg.querySelector(".rel-edges");
+    svg.classList.toggle("has-sel", !!o);
+    const ins = new Set(), outs = new Set();
+    g.links.forEach((l, i) => {
+      const el = st.edgeEls[i], isIn = o && l.b === o, isOut = o && l.a === o;
+      el.setAttribute("class", `rel-edge${isIn ? " in" : isOut ? " out" : ""}${(isIn || isOut) && cfg.edgeClass ? cfg.edgeClass(l) : ""}`);
+      if (isIn) ins.add(cfg.key(l.a));
+      if (isOut) outs.add(cfg.key(l.b));
+      if (isIn || isOut) edgesG.appendChild(el);
+    });
+    st.nodeEls.forEach((c, id) => c.setAttribute("class", `rel-node${o && id === cfg.key(o) ? " sel" : ins.has(id) ? " in" : outs.has(id) ? " out" : ""}`));
+    const label = svg.querySelector(".rel-label");
+    if (!o) { label.innerHTML = ""; return; }
+    // Clear of the domain's own label when the item sits near the middle of its domain.
+    const a = g.pos.get(o), near = Math.abs(a - g.domMid.get(cfg.domOf(o))) < 10, [x, y] = relXY(a, REL_R + (near ? 54 : 16));
+    label.innerHTML = `<text class="rel-sel-label" x="${Math.max(-372, Math.min(372, x)).toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${a > 180 ? "end" : "start"}" dominant-baseline="middle">${escapeHtml(cfg.name(o))}</text>`;
+  };
+
+  st.renderPanel = () => {
+    const o = st.selected, g = st.graph;
+    const ins = g.links.filter(l => l.b === o), outs = g.links.filter(l => l.a === o);
+    const item = (other, l, side) => `<li><button type="button" data-rel-id="${escapeHtml(cfg.key(other))}"><span class="sb-swatch rel-key-${side}"></span><code>${escapeHtml(cfg.code(other))}</code><span class="sb-name">${escapeHtml(cfg.name(other))}</span>${cfg.tag ? cfg.tag(l) : ""}</button></li>`;
+    const labels = cfg.sides(st.mode);
+    $("Panel").innerHTML = `
+      ${cfg.panelHead(o, ins, outs)}
+      <h4><span class="sb-swatch rel-key-in"></span>${escapeHtml(labels.in)} (${ins.length})</h4>
+      <ul class="sb-children">${ins.map(l => item(l.a, l, "in")).join("") || '<li class="rel-none">None</li>'}</ul>
+      <h4><span class="sb-swatch rel-key-out"></span>${escapeHtml(labels.out)} (${outs.length})</h4>
+      <ul class="sb-children">${outs.map(l => item(l.b, l, "out")).join("") || '<li class="rel-none">None</li>'}</ul>
+      <div class="sb-actions"><button type="button" data-rel-open>Open in Tree Explorer</button></div>`;
+  };
+
+  st.select = (o, writeHash = true) => {
+    if (!o || !st.graph.linked.has(o)) return false;
+    st.selected = o;
+    $("Pick").value = cfg.key(o);
+    st.highlight(o);
+    st.renderPanel();
+    if (cfg.onSelect) cfg.onSelect(o, writeHash);
+    return true;
+  };
+  const busiest = () => { const deg = o => st.graph.links.reduce((n, l) => n + (l.a === o || l.b === o ? (l.w || 1) : 0), 0); return st.graph.leaves.reduce((a, b) => deg(b) > deg(a) ? b : a); };
+  st.show = () => {
+    if (!st.graph) st.graph = layout();
+    if (!st.drawn) st.draw();
+    if (!st.selected) { const want = cfg.start && cfg.start(); if (!st.select(want, false)) st.select(busiest(), false); }
+  };
+  st.setMode = (mode, writeHash = true) => {
+    if (!cfg.modes || !cfg.modes[mode] || mode === st.mode && st.graph) return;
+    const keep = st.selected;
+    st.mode = mode;
+    $("Mode").value = mode;
+    st.graph = layout();
+    st.drawn = false;
+    st.selected = null;
+    st.draw();
+    if (!st.select(keep, writeHash)) st.select(busiest(), writeHash);
+  };
+
+  const find = key => st.graph.order.find(o => cfg.key(o) === key);
+  const svg = $("Graph");
+  svg.addEventListener("click", e => { const hit = e.target.closest(".rel-hit"); if (hit) st.select(find(hit.getAttribute("data-id"))); });
+  svg.addEventListener("mouseover", e => { const hit = e.target.closest(".rel-hit"); if (hit) st.highlight(find(hit.getAttribute("data-id"))); });
+  svg.addEventListener("mouseleave", () => st.highlight(st.selected));
+  $("Pick").addEventListener("change", e => st.select(find(e.target.value)));
+  if (cfg.modes) $("Mode").addEventListener("change", e => st.setMode(e.target.value));
+  document.getElementById(cfg.panel).addEventListener("click", e => {
+    const pick = e.target.closest("[data-rel-id]"), open = e.target.closest("[data-rel-open]"), tree = e.target.closest("[data-rel-tree]");
+    if (pick) st.select(find(pick.getAttribute("data-rel-id")));
+    else if (open) cfg.open(st.selected);
+    else if (tree) cfg.open(find(tree.getAttribute("data-rel-tree")));
+  });
+  return st;
+}
+
+/* Splunk object taxonomy: "Depends on" and "Feeds". A link a -> b means a feeds b (b depends on
+ * a); a link recorded on only one of its two objects is flagged for the relationship cleanup. */
+const REL_SOT_CONFIG = {
+  prefix: "rel", panel: "sotRelViewPanel",
+  build: () => {
+    const order = [];
+    Object.values(SOT_TREE).forEach(dom => Object.values(dom.classes).forEach(cls => Object.keys(cls.subclasses).forEach(sc => {
+      (SOT_OBJECTS_BY_LEAF[sc] || []).filter(o => !o.parent).forEach(o => { order.push(o); order.push(...sotChildren(o)); });
+    })));
+    const links = new Map();
+    const add = (a, b, side) => {
+      if (!a || !b || a === b) return;
+      const key = `${a.instanceId}>${b.instanceId}`;
+      if (!links.has(key)) links.set(key, { a, b, deps: false, feeds: false });
+      links.get(key)[side] = true;
+    };
+    SOT_OBJECTS.forEach(o => {
+      (o.deps || []).forEach(n => add(sotResolve(n), o, "deps"));
+      (o.feeds || []).forEach(n => add(o, sotResolve(n), "feeds"));
+    });
+    return { order, links: [...links.values()] };
+  },
+  key: o => o.instanceId, code: o => o.domain.slice(0, 6), name: o => o.name,
+  domOf: o => o.domain.slice(0, 6), domLabel: code => SOT_TREE[code].label,
+  sides: () => ({ in: "Depends on", out: "Feeds" }),
+  edgeClass: l => l.deps && l.feeds ? "" : " one-sided",
+  tag: l => {
+    const missing = !l.deps ? `${l.b.name} does not list ${l.a.name} under Depends on` : !l.feeds ? `${l.a.name} does not list ${l.b.name} under Feeds` : "";
+    return missing ? `<span class="rel-one" title="${escapeHtml(missing)}">one side</span>` : "";
+  },
+  facts: g => {
+    const oneSided = g.links.filter(l => !(l.deps && l.feeds)).length, cross = g.links.filter(l => l.a.domain !== l.b.domain).length;
+    return `<span><strong>${g.leaves.length}</strong> of ${SOT_OBJECTS.length} objects linked</span><span><strong>${g.links.length}</strong> links</span><span><strong>${cross}</strong> cross a domain</span><span><strong>${oneSided}</strong> recorded on one object only</span><span><strong>${g.unlinked.length}</strong> objects with no links</span>`;
+  },
+  panelHead: (o, ins, outs) => {
+    const oneSided = [...ins, ...outs].filter(l => !(l.deps && l.feeds)).length;
+    return `<h3>${escapeHtml(o.name)}</h3><p class="sb-sub"><code>${escapeHtml(o.instanceId)}</code> &middot; ${escapeHtml(o.domain)}</p>
+      ${oneSided ? `<p class="rel-note">${oneSided} of its ${ins.length + outs.length} links ${oneSided === 1 ? "is" : "are"} recorded on one object only, marked <span class="rel-one">one side</span>.</p>` : ""}`;
+  },
+  start: () => sotLinked && sotLinked.object && SOT_BY_NAME.get(sotLinked.object),
+  onSelect: (o, writeHash) => { if (writeHash) sotSetLinked({ object: o.name }); },
+  open: o => { setActiveView("tree"); selectObjectInTree(o.name); },
+};
+
+/* Onboard taxonomy: a term that names another TAX code in its definition, relationship rule or
+ * notes (parents and children aside), or current records that point to records under another
+ * term by ID. A link a -> b means b refers to a, so on b it is blue ("refers to") and on a it is
+ * orange ("referred to by"). */
+const TREL_FIELDS = [["definition", "definition"], ["relationshipRule", "relationship rule"], ["notes", "notes"], ["mandatoryAttributes", "mandatory attributes"]];
+const TREL_CONFIG = {
+  prefix: "trel", panel: "taxRelViewPanel", weighted: true,
+  modes: { text: "Cross-references in term text", records: "Links through current records" },
+  build: mode => {
+    // Taxonomy order: codes are zero-padded, so sorting by code walks the tree depth first.
+    const order = nodes.filter(n => n.nodeType === "taxonomy").sort((a, b) => a.code.localeCompare(b.code)), byCode = new Map(order.map(t => [t.code, t]));
+    const links = new Map();
+    const add = (a, b, why) => {
+      if (!a || !b || a === b) return;
+      const key = `${a.code}>${b.code}`;
+      if (!links.has(key)) links.set(key, { a, b, w: 0, why: new Map() });
+      const l = links.get(key);
+      l.w += 1;
+      l.why.set(why, (l.why.get(why) || 0) + 1);
+    };
+    if (mode === "text") {
+      order.forEach(t => TREL_FIELDS.forEach(([field, label]) => {
+        (String(t[field] || "").match(/TAX-\d\d(?:\.\d\d)*/g) || []).forEach(code => {
+          const target = byCode.get(code);
+          if (target && target.code !== t.parentCode && target.parentCode !== t.code) add(target, t, label);
+        });
+      }));
+      // A term naming the same code twice in one field is one reference.
+      links.forEach(l => { l.w = l.why.size; l.why.forEach((n, k) => l.why.set(k, 1)); });
+    } else {
+      const termOfGroup = new Map(nodes.filter(n => n.nodeType === "group").map(g => [g.code, byCode.get(g.parentCode)]));
+      const records = nodes.filter(n => n.nodeType === "instance"), byKey = new Map(records.map(r => [r.primaryKey, r]));
+      records.forEach(r => Object.entries(r.fields || {}).forEach(([field, value]) => String(value).split(/[;,]\s*/).forEach(v => {
+        const target = byKey.get(v.trim());
+        if (target && target !== r) add(termOfGroup.get(target.parentCode), termOfGroup.get(r.parentCode), field);
+      })));
+    }
+    return { order, links: [...links.values()] };
+  },
+  key: t => t.code, code: t => t.code, name: t => t.term, pickLabel: t => `${t.term} (${t.code})`,
+  domOf: t => t.code.slice(0, 6), domLabel: code => (nodes.find(n => n.code === code) || { term: code }).term,
+  sides: mode => mode === "text" ? { in: "Refers to", out: "Referred to by" } : { in: "Its records point to", out: "Pointed to by records in" },
+  tag: l => {
+    const why = [...l.why.keys()];
+    if (trelState.mode === "text") return `<span class="rel-why" title="${escapeHtml(`Named in its ${why.join(", ")}`)}">${escapeHtml(why.join(", "))}</span>`;
+    return `<span class="rel-why" title="${escapeHtml(`Through ${why.join(", ")}`)}">${l.w} record link${l.w === 1 ? "" : "s"}</span>`;
+  },
+  facts: g => {
+    const terms = g.order.length, cross = g.links.filter(l => l.a.code.slice(0, 6) !== l.b.code.slice(0, 6)).length;
+    const weight = g.links.reduce((n, l) => n + l.w, 0);
+    return `<span><strong>${g.leaves.length}</strong> of ${terms} terms linked</span><span><strong>${g.links.length}</strong> links between terms${trelState.mode === "records" ? ` from <strong>${weight}</strong> record references` : ""}</span><span><strong>${cross}</strong> cross a domain</span><span><strong>${g.unlinked.length}</strong> terms with no links</span>`;
+  },
+  panelHead: t => `<h3>${escapeHtml(t.term)}</h3><p class="sb-sub"><code>${escapeHtml(t.code)}</code> &middot; ${escapeHtml(t.entityType)} &middot; ${escapeHtml(t.status)}</p>`,
+  start: () => state.selectedCode && nodeIndex.get(state.selectedCode),
+  onSelect: (t, writeHash) => {
+    // The term's full record shows in the detail panel beside the chart (no phone sheet, no scroll).
+    if (state.selectedCode !== t.code) {
+      state.selectedCode = t.code;
+      for (let c = t; c && c.parentCode; c = nodeIndex.get(c.parentCode)) state.expanded.add(c.parentCode);
+      renderDetail();
+      renderTree();
+    }
+    if (writeHash) taxUpdateHash();
+  },
+  open: t => { setActiveTaxView("tree"); selectTaxNodeFromTable(t.code); taxUpdateHash(); },
+};
+
+function relShow() { if (relState) relState.show(); }
+function relSelect(o, writeHash) { return relState ? relState.select(o, writeHash) : false; }
+function trelShow() { if (trelState) trelState.show(); }
+// #taxonomy?code=<term>&view=relationships[&mode=records]
+function applyTrelHash() {
+  if (!trelState) return;
+  const params = new URLSearchParams((location.hash.match(/^#taxonomy\?(.*)$/) || [])[1] || "");
+  trelState.show();
+  trelState.setMode(params.get("mode") === "records" ? "records" : "text", false);
+  const t = nodeIndex.get(params.get("code") || "");
+  if (t) trelState.select(t, false);
+}
+relState = makeRing(REL_SOT_CONFIG);
+trelState = makeRing(TREL_CONFIG);
+if (sotActiveView === "relations") relShow();
+if (taxActiveView === "relations") applyTrelHash();
 
 initFilters();
 render();
