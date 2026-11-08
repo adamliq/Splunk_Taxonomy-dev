@@ -145,6 +145,8 @@ describe('Companion Tools external links page', () => {
       ['https://adamliq.github.io/Splunk-pipeline-explorer/', 'Splunk Pipeline Explorer'],
       ['https://adamliq.github.io/Shared-Responsibility/', 'Shared responsibility explorer'],
       ['https://adamliq.github.io/microsoftcloud-trace/', 'Microsoft Cloud Trace'],
+      ['https://adamliq.github.io/delvecat/#/', 'DelveCat'],
+      ['https://adamliq.github.io/splunkdashboard-breakdown/', 'Splunk Dashboard Breakdown'],
     ];
     for (const [href, title] of links) {
       const escapedHref = href.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
